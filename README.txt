@@ -54,6 +54,47 @@ Super Famicom:
   to show the Game Over screen in Endless Mode (とことんモード).
   Inherited from higan v094.
 
+=========================
+Changes in v008: nSide-fc
+=========================
+./fc/interface/interface.cpp
+./fc/interface/interface.hpp
+./fc/controller/*
+   Overhauled the procedure for adding devices to fix a bug in which the wrong
+  device is polled if the inter-port and intra-port ID numbers are not the same.
+
+./fc/cartridge/board/vs.cpp
+./fc/memory/memory.cpp
+./fc/ppu/ppu.cpp
+./fc/ppu/ppu.hpp
+   Moved some VS. System-specific features from the VS. cartridge board class
+  into the VS. Arcade board class.
+   The VS. System PPU has 4 KB of NVRAM instead of 2 KB. The PPU class now
+  allocates 4 KB, but when playing a Famicom or PlayChoice-10 game, only 2 KB
+  will be available, much like the Game Boy vs. the Game Boy Color.
+
+./fc/cartridge/board/unlicensed/single-chip.cpp
+   Fixed an error in CHR RAM mapping for the Single Chip board (Magic Floor).
+
+./fc/controller/controller.cpp
+./fc/controller/beamgun/beamgun.cpp
+./fc/controller/beamgun/beamgun.hpp
+./fc/controller/vsbeamgun/vsbeamgun.cpp
+./fc/controller/vsbeamgun/vsbeamgun.hpp
+./fc/system/input.cpp
+   Consolidated the VS. Zapper's unique protocol into the main Beam Gun class.
+
+==========================
+Changes in v008: nSide-gba
+==========================
+./gba/gba.hpp
+./gba/alt/cpu/*
+   Added an alternate CPU that ignores ROM read delays. This alternate CPU will
+  be selected when using the balanced or performance profiles, and the main CPU
+  will be used in the accuracy profile.
+  This change is not ideal, and it only exists as a work-around for the lack of
+  documentation on ROM prefetch.
+
 ========================
 Changes in v007: General
 ========================
