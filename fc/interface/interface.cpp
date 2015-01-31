@@ -336,7 +336,7 @@ Interface::Interface() {
   {
     Device device{
       (unsigned)Input::Device::Mouse,
-      ID::Port1 | ID::Port2,
+      ID::Port1 | ID::Port2 | ID::ExpansionPort,
       "Mouse"
     };
     device.input.append({0, 1, "X-axis"});
