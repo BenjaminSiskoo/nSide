@@ -1,4 +1,4 @@
-﻿nSide v007 (2015-01-26)
+﻿nSide v008 (2015-01-31)
 
 A fork of higan v094r08 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
