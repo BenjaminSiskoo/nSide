@@ -2,7 +2,7 @@
 
 uint5 SFCGamepad::data() {
   if(counter >= 16) return 1;
-  if(latched == 1) return interface->inputPoll(port, (unsigned)Input::Device::SFCJoypad, (unsigned)Input::JoypadID::A);
+  if(latched == 1) return poll(0);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -37,23 +37,23 @@ void SFCGamepad::latch(bool data) {
   counter = 0;
 
   if(latched == 0) {
-    unsigned id = (unsigned)Input::Device::SFCJoypad;
-    b      = interface->inputPoll(port, id,  0);
-    y      = interface->inputPoll(port, id,  1);
-    select = interface->inputPoll(port, id,  2);
-    start  = interface->inputPoll(port, id,  3);
-    up     = interface->inputPoll(port, id,  4);
-    down   = interface->inputPoll(port, id,  5);
-    left   = interface->inputPoll(port, id,  6);
-    right  = interface->inputPoll(port, id,  7);
-    a      = interface->inputPoll(port, id,  8);
-    x      = interface->inputPoll(port, id,  9);
-    l      = interface->inputPoll(port, id, 10);
-    r      = interface->inputPoll(port, id, 11);
+    b      = poll( 0);
+    y      = poll( 1);
+    select = poll( 2);
+    start  = poll( 3);
+    up     = poll( 4);
+    down   = poll( 5);
+    left   = poll( 6);
+    right  = poll( 7);
+    a      = poll( 8);
+    x      = poll( 9);
+    l      = poll(10);
+    r      = poll(11);
   }
 }
 
-SFCGamepad::SFCGamepad(unsigned port) : Controller(port) {
+SFCGamepad::SFCGamepad(unsigned port):
+Controller(port, (unsigned)Input::Device::SFCJoypad) {
   latched = 0;
   counter = 0;
 

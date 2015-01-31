@@ -35,8 +35,20 @@ void Controller::synchronize_cpu() {
   }
 }
 
-Controller::Controller(unsigned port) : port(port) {
+Controller::Controller(unsigned port, unsigned device):
+port(port),
+device(device) {
   if(!thread) create(Controller::Enter, 1);
+}
+
+Controller::Controller(unsigned port):
+port(port),
+device((unsigned)Input::Device::None) {
+  if(!thread) create(Controller::Enter, 1);
+}
+
+int16_t Controller::poll(unsigned input) {
+  return interface->inputPoll(port, interface->device_ref[device].port[port], input);
 }
 
 }

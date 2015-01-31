@@ -2,11 +2,11 @@
 
 uint5 FourScore::data() {
   if(counter >= 24) return 1;
-  if(latched) return interface->inputPoll(port, (unsigned)Input::Device::FourScore, 0);
+  if(latched) return poll(0);
   uint5 data = 0;
 
   if(counter >= 16) data = counter == (19 - port);
-  else data = interface->inputPoll(port, (unsigned)Input::Device::FourScore, counter);
+  else data = poll(counter);
   counter++;
 
   return data;
@@ -18,7 +18,8 @@ void FourScore::latch(bool data) {
   counter = 0;
 }
 
-FourScore::FourScore(unsigned port) : Controller(port) {
+FourScore::FourScore(unsigned port):
+Controller(port, (unsigned)Input::Device::FourScore) {
   latched = 0;
   counter = 0;
 }

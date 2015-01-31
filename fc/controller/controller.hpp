@@ -39,6 +39,7 @@
 struct Controller : Thread {
   enum : unsigned { Port1 = 0, Port2 = 1, ExpansionPort = 2 };
   const unsigned port;
+  const unsigned device;
 
   static void Enter();
   virtual void enter();
@@ -49,7 +50,11 @@ struct Controller : Thread {
   virtual uint2 data1() { return 0; }
   virtual uint5 data2() { return 0; }
   virtual void latch(bool data) {}
+  Controller(unsigned port, unsigned device);
   Controller(unsigned port);
+
+protected:
+  int16_t poll(unsigned input);
 };
 
 #include "gamepad/gamepad.hpp"

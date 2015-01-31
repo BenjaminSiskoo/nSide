@@ -2,7 +2,7 @@
 
 uint5 Gamepad::data() {
   if(counter >= 8) return 1;
-  if(latched == 1) return interface->inputPoll(port, (unsigned)Input::Device::Joypad, (unsigned)Input::JoypadID::A);
+  if(latched == 1) return poll((unsigned)Input::JoypadID::A);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -31,24 +31,24 @@ void Gamepad::latch(bool data) {
   counter = 0;
 
   if(latched == 0) {
-    unsigned id = (unsigned)Input::Device::Joypad;
-    a      = interface->inputPoll(port, id,  0);
-    b      = interface->inputPoll(port, id,  1);
+    a      = poll(0);
+    b      = poll(1);
     if(!system.vs()) {
-      select = interface->inputPoll(port, id,  2);
-      start  = interface->inputPoll(port, id,  3);
+      select = poll(2);
+      start  = poll(3);
     } else {
       select = 0;
       start  = 0;
     }
-    up     = interface->inputPoll(port, id,  4);
-    down   = interface->inputPoll(port, id,  5);
-    left   = interface->inputPoll(port, id,  6);
-    right  = interface->inputPoll(port, id,  7);
+    up     = poll(4);
+    down   = poll(5);
+    left   = poll(6);
+    right  = poll(7);
   }
 }
 
-Gamepad::Gamepad(unsigned port) : Controller(port) {
+Gamepad::Gamepad(unsigned port):
+Controller(port, (unsigned)Input::Device::Joypad) {
   latched = 0;
   counter = 0;
 

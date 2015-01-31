@@ -21,8 +21,8 @@ void BeamGun::enter() {
     if(next < prev) {
       if(triggertime > 0) triggertime -= 1;
       //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
-      int nx = interface->inputPoll(port, (unsigned)Input::Device::BeamGun, (unsigned)Input::BeamGunID::X);
-      int ny = interface->inputPoll(port, (unsigned)Input::Device::BeamGun, (unsigned)Input::BeamGunID::Y);
+      int nx = poll((unsigned)Input::BeamGunID::X);
+      int ny = poll((unsigned)Input::BeamGunID::Y);
       nx += x;
       ny += y;
       x = max(-16, min(256 + 16, nx));
@@ -57,7 +57,7 @@ uint2 BeamGun::data1() {
 }
 
 uint5 BeamGun::data2() {
-  bool newtrigger = interface->inputPoll(port, (unsigned)Input::Device::BeamGun, (unsigned)Input::BeamGunID::Trigger);
+  bool newtrigger = poll((unsigned)Input::BeamGunID::Trigger);
   if(newtrigger && !triggerlock) {
     triggertime = 2;
     triggerlock = true;
@@ -101,12 +101,13 @@ void BeamGun::latch(bool data) {
   latched = data;
   if(system.vs() && latched == 0) {
     counter = 0;
-    trigger = interface->inputPoll(port, (unsigned)Input::Device::BeamGun, (unsigned)Input::BeamGunID::Trigger);
+    trigger = poll((unsigned)Input::BeamGunID::Trigger);
     light = lighttime > 0;
   }
 }
 
-BeamGun::BeamGun(unsigned port) : Controller(port) {
+BeamGun::BeamGun(unsigned port):
+Controller(port, (unsigned)Input::Device::BeamGun) {
   create(Controller::Enter, system.cpu_frequency());
   latched = 0;
   counter = 0;

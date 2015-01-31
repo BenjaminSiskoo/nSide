@@ -2,9 +2,9 @@
 
 uint5 VSPanel::data() {
   unsigned data = 0x00;
-  if(interface->inputPoll(port, (unsigned)Input::Device::VSPanel, 4)) data |= 0x01; // service button
-  if(interface->inputPoll(port, (unsigned)Input::Device::VSPanel, 5)) data |= 0x08; // coin 1
-  if(interface->inputPoll(port, (unsigned)Input::Device::VSPanel, 6)) data |= 0x10; // coin 2
+  if(poll(4)) data |= 0x01; // service button
+  if(poll(5)) data |= 0x08; // coin 1
+  if(poll(6)) data |= 0x10; // coin 2
   // data will be left-shifted twice and OR'd into $4016 in CPU
   return data;
 }
@@ -36,14 +36,15 @@ void VSPanel::latch(bool data) {
   counter2 = 0;
 
   if(latched == 0) {
-    b1 = interface->inputPoll(port, (unsigned)Input::Device::VSPanel, 0);
-    b2 = interface->inputPoll(port, (unsigned)Input::Device::VSPanel, 1);
-    b3 = interface->inputPoll(port, (unsigned)Input::Device::VSPanel, 2);
-    b4 = interface->inputPoll(port, (unsigned)Input::Device::VSPanel, 3);
+    b1 = poll(0);
+    b2 = poll(1);
+    b3 = poll(2);
+    b4 = poll(3);
   }
 }
 
-VSPanel::VSPanel(unsigned port) : Controller(port) {
+VSPanel::VSPanel(unsigned port):
+Controller(port, (unsigned)Input::Device::VSPanel) {
   latched = 0;
   counter1 = 0;
   counter2 = 0;

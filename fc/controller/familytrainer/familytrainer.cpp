@@ -30,22 +30,23 @@ void FamilyTrainer::latch(bool data) {
   counter = 0;
 
   if(latched == 0) {
-    b1  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  0);
-    b2  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  1);
-    b3  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  2);
-    b4  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  3);
-    b5  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  4);
-    b6  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  5);
-    b7  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  6);
-    b8  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  7);
-    b9  = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  8);
-    b10 = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer,  9);
-    b11 = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer, 10);
-    b12 = interface->inputPoll(port, (unsigned)Input::Device::FamilyTrainer, 11);
+    b1  = poll( 0);
+    b2  = poll( 1);
+    b3  = poll( 2);
+    b4  = poll( 3);
+    b5  = poll( 4);
+    b6  = poll( 5);
+    b7  = poll( 6);
+    b8  = poll( 7);
+    b9  = poll( 8);
+    b10 = poll( 9);
+    b11 = poll(10);
+    b12 = poll(11);
   }
 }
 
-FamilyTrainer::FamilyTrainer(unsigned port) : Controller(port) {
+FamilyTrainer::FamilyTrainer(unsigned port):
+Controller(port, (unsigned)Input::Device::FamilyTrainer) {
   latched = 0;
   counter = 0;
 

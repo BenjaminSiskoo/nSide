@@ -170,6 +170,14 @@ Interface::Interface() {
   media.append({ID::PlayChoice10, "PlayChoice-10", "pc10", true});
   media.append({ID::VSSystem,     "VS. System",    "vs",   true});
 
+  port.append({0, "Port 1"});
+  port.append({1, "Port 2"});
+  port.append({2, "Expansion Port"});
+
+  for(unsigned i = 0; i <= (unsigned)Input::Device::None; i++) {
+    device_ref.append(DeviceRef{i, 0, 0, 0});
+  }
+
   {
     Device device{
       (unsigned)Input::Device::Joypad,
@@ -185,7 +193,7 @@ Interface::Interface() {
     device.input.append({6, 0, "Left"  });
     device.input.append({7, 0, "Right" });
     device.order = {4, 5, 6, 7, 1, 0, 2, 3};
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -206,7 +214,7 @@ Interface::Interface() {
       device.order.append(n + 4, n + 5, n + 6, n + 7);
       device.order.append(n + 1, n + 0, n + 2, n + 3);
     }
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -227,7 +235,7 @@ Interface::Interface() {
       device.order.append(n + 4, n + 5, n + 6, n + 7);
       device.order.append(n + 1, n + 0, n + 2, n + 3);
     }
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -248,7 +256,7 @@ Interface::Interface() {
       device.order.append(n + 4, n + 5, n + 6, n + 7);
       device.order.append(n + 1, n + 0, n + 2, n + 3);
     }
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -261,7 +269,7 @@ Interface::Interface() {
     device.input.append({1, 1, "Y-axis" });
     device.input.append({2, 0, "Trigger"});
     device.order = {0, 1, 2};
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -274,7 +282,7 @@ Interface::Interface() {
     device.input.append({1, 1, "Y-axis" });
     device.input.append({2, 0, "Trigger"});
     device.order = {0, 1, 2};
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -287,7 +295,7 @@ Interface::Interface() {
       device.input.append({n, 0, {"Button ", n + 1}});
     }
     device.order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -300,7 +308,7 @@ Interface::Interface() {
       device.input.append({n, 0, {"Button ", n + 1}});
     }
     device.order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -322,7 +330,7 @@ Interface::Interface() {
     device.input.append({10, 0, "L"     });
     device.input.append({11, 0, "R"     });
     device.order = {4, 5, 6, 7, 0, 8, 1, 9, 10, 11, 2, 3};
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -336,7 +344,7 @@ Interface::Interface() {
     device.input.append({2, 0, "Left"  });
     device.input.append({3, 0, "Right" });
     device.order = {0, 1, 2, 3};
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -353,7 +361,7 @@ Interface::Interface() {
     device.input.append({5, 0, "Coin 1"        });
     device.input.append({6, 0, "Coin 2"        });
     device.order = {0, 1, 2, 3, 4, 5, 6};
-    this->device.append(device);
+    addDevice(device);
   }
 
   {
@@ -362,18 +370,15 @@ Interface::Interface() {
       ID::Port1 | ID::Port2 | ID::ExpansionPort,
       "None"
     };
-    this->device.append(device);
+    addDevice(device);
   }
+}
 
-  port.append({0, "Port 1"});
-  port.append({1, "Port 2"});
-  port.append({2, "Expansion Port"});
-
-  for(auto& device : this->device) {
-    for(auto& port : this->port) {
-      if(device.portmask & (1 << port.id)) {
-        port.device.append(device);
-      }
+void Interface::addDevice(Device device) {
+  for(auto& port : this->port) {
+    if(device.portmask & (1 << port.id)) {
+      device_ref[device.id].port[port.id] = (unsigned)port.device.size();
+      port.device.append(device);
     }
   }
 }

@@ -57,7 +57,14 @@ struct Interface : Emulator::Interface {
 
   Interface();
 
-  vector<Device> device;
+  struct DeviceRef {
+    unsigned id;
+    unsigned port[3];
+  };
+  vector<DeviceRef> device_ref;
+
+private:
+  void addDevice(Device device);
 };
 
 extern Interface* interface;

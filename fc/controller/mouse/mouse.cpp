@@ -61,10 +61,10 @@ void Mouse::latch(bool data) {
   latched = data;
   counter = 0;
 
-  x = interface->inputPoll(port, (unsigned)Input::Device::Mouse, 0);  //-n = left, 0 = center, +n = right
-  y = interface->inputPoll(port, (unsigned)Input::Device::Mouse, 1);  //-n = up,   0 = center, +n = down
-  l = interface->inputPoll(port, (unsigned)Input::Device::Mouse, 2);
-  r = interface->inputPoll(port, (unsigned)Input::Device::Mouse, 3);
+  x = poll(0);  //-n = left, 0 = center, +n = right
+  y = poll(1);  //-n = up,   0 = center, +n = down
+  l = poll(2);
+  r = poll(3);
 
   dx = x < 0;  //0 = right, 1 = left
   dy = y < 0;  //0 = down,  1 = up
@@ -82,7 +82,8 @@ void Mouse::latch(bool data) {
   y = min(127, y);
 }
 
-Mouse::Mouse(unsigned port) : Controller(port) {
+Mouse::Mouse(unsigned port):
+Controller(port, (unsigned)Input::Device::Mouse) {
   latched = 0;
   counter = 0;
 
