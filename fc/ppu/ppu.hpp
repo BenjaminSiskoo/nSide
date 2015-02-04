@@ -1,5 +1,4 @@
 struct PPU : Thread {
-  uint32 buffer[256 * 312];
   uint8 ciram[4096]; // 2048 in Famicom and PlayChoice-10
   uint8 cgram[32];
   uint8 oam[256];
@@ -43,6 +42,8 @@ struct PPU : Thread {
   static const uint9_t RP2C04_0004[16 * 4];
 
   void serialize(serializer&);
+  PPU();
+  ~PPU();
 
   enum class Revision : unsigned {
     RP2C02C,
@@ -62,6 +63,9 @@ struct PPU : Thread {
     RC2C05_04,
     RC2C05_05,
   } revision;
+
+  uint32* surface;
+  uint32* output;
 
   struct Status {
     uint8 mdr;

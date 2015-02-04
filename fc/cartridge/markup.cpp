@@ -7,9 +7,10 @@ void Cartridge::parse_markup(const char* markup) {
   auto cartridge = document["cartridge"];
   region = cartridge["region"].data != "PAL" ? Region::NTSC : Region::PAL;
   if(system.revision == System::Revision::VSSystem) {
-    vsarcadeboard.swap_controllers = cartridge["vs/controller[0]/port"].integer() == 2;
-    string device1 = cartridge["vs/controller(port=1)/device"].text();
-    string device2 = cartridge["vs/controller(port=2)/device"].text();
+    cartridge = cartridge["vs[0]"];
+    vsarcadeboard.swap_controllers = cartridge["controller[0]/port"].integer() == 2;
+    string device1 = cartridge["controller(port=1)/device"].text();
+    string device2 = cartridge["controller(port=2)/device"].text();
     if(device1 == "joypad") {
       input.connect(vsarcadeboard.swap_controllers, Input::Device::Joypad);
     } else if(device1 == "none") {
@@ -22,8 +23,8 @@ void Cartridge::parse_markup(const char* markup) {
     } else if(device2 == "none") {
       input.connect(!vsarcadeboard.swap_controllers, Input::Device::None);
     }
-    vsarcadeboard.set_dip(interface->dipSettings(cartridge["vs"]));
-    string ppu_revision = cartridge["vs/ppu/revision"].data;
+    vsarcadeboard.set_dip(interface->dipSettings(cartridge));
+    string ppu_revision = cartridge["ppu/revision"].data;
     if(ppu_revision == "RP2C02C")     ppu.revision = PPU::Revision::RP2C02C;
     if(ppu_revision == "RP2C02G")     ppu.revision = PPU::Revision::RP2C02G;
     if(ppu_revision == "RP2C03B")     ppu.revision = PPU::Revision::RP2C03B;
@@ -39,8 +40,11 @@ void Cartridge::parse_markup(const char* markup) {
     if(ppu_revision == "RC2C05-03")   ppu.revision = PPU::Revision::RC2C05_03;
     if(ppu_revision == "RC2C05-04")   ppu.revision = PPU::Revision::RC2C05_04;
     if(ppu_revision == "RC2C05-05")   ppu.revision = PPU::Revision::RC2C05_05;
+
+    if(document["cartridge/vs[1]/ppu"].exists()) 
+      interface->information.width = 512;
   }
-  Board::load(cartridge);  //this call will set Cartridge::board if successful
+  Board::load(document["cartridge"]);  //this call will set Cartridge::board if successful
 }
 
 #endif

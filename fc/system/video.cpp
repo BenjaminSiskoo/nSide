@@ -141,7 +141,7 @@ const uint8_t Video::cursor[15 * 15] = {
 };
 
 void Video::draw_cursor(uint16_t color, int x, int y) {
-  uint32_t* data = (uint32_t*)ppu.buffer;
+  uint32_t* data = (uint32_t*)ppu.output;
 
   for(int cy = 0; cy < 15; cy++) {
     int vy = y + cy - 7;
@@ -168,8 +168,30 @@ void Video::update() {
     BeamGun &device = (BeamGun&)*input.expansion;
     draw_cursor(0x2D, device.x, device.y);
   }
-
-  interface->videoRefresh(video.palette, ppu.buffer, 4 * 256, 256, 240);
+  if(interface->information.width != 512) {
+    interface->videoRefresh(
+      video.palette,
+      ppu.output,
+      4 * interface->information.width,
+      interface->information.width,
+      240
+    );
+  } else { // VS. DualSystem
+    uint32 buffer[512 * 240];
+    for(unsigned y = 0; y < 240; y++) {
+      for(unsigned x = 0; x < 256; x++) {
+        buffer[y * 512 + x] = ppu.output[y * 256 + x];
+        buffer[y * 512 + x + 256] = 0;
+      }
+    }
+    interface->videoRefresh(
+      video.palette,
+      buffer,
+      4 * interface->information.width,
+      interface->information.width,
+      240
+    );
+  }
 }
 
 void Video::scanline() {

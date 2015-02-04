@@ -69,7 +69,6 @@ void PPU::serialize(serializer& s) {
     s.integer(raster.soam[n].tiledatahi);
   }
 
-  s.array(buffer);
   s.array(ciram);
   s.array(cgram);
   s.array(oam);

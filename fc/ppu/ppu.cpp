@@ -63,10 +63,20 @@ void PPU::frame() {
 }
 
 void PPU::power() {
+  status.vaddr = 0x0000;
+
+  status.nmi_hold = 0;
+  status.nmi_flag = 1;
+
+  //$2003
+  status.oam_addr = 0x00;
+
+  for(auto& n : ciram  ) n = 0xFF;
 }
 
 void PPU::reset() {
   create(PPU::Enter, system.cpu_frequency());
+  memset(surface, 0, 256 * 312 * sizeof(uint32));
 
   status.mdr = 0x00;
   status.field = 0;
@@ -74,12 +84,8 @@ void PPU::reset() {
   status.bus_data = 0x00;
   status.address_latch = 0;
 
-  status.vaddr = 0x0000;
   status.taddr = 0x0000;
   status.xaddr = 0x00;
-
-  status.nmi_hold = 0;
-  status.nmi_flag = 0;
 
   //$2000
   status.nmi_enable = false;
@@ -101,13 +107,8 @@ void PPU::reset() {
   status.sprite_zero_hit = false;
   status.sprite_overflow = false;
 
-  //$2003
-  status.oam_addr = 0x00;
-
-  for(auto& n : buffer) n = 0;
-  for(auto& n : ciram ) n = 0;
-  for(auto& n : cgram ) n = 0;
-  for(auto& n : oam   ) n = 0;
+  for(auto& n : cgram  ) n = 0;
+  for(auto& n : oam    ) n = 0;
 }
 
 uint8 PPU::read(uint16 addr) {
@@ -320,8 +321,6 @@ void PPU::scrolly_increment() {
 //
 
 void PPU::raster_pixel() {
-  uint32* output = buffer + status.ly * 256;
-
   unsigned mask = 0x8000 >> (status.xaddr + (status.lx & 7));
   unsigned palette = 0, object_palette = 0;
   bool object_priority = 0;
@@ -363,7 +362,7 @@ void PPU::raster_pixel() {
   }
 
   if(raster_enable() == false) palette = 0;
-  output[status.lx] = (status.emphasis << 6) | cgram_read(palette);
+  output[status.ly * 256 + status.lx] = (status.emphasis << 6) | cgram_read(palette);
 }
 
 void PPU::raster_sprite() {
@@ -522,6 +521,15 @@ void PPU::raster_scanline() {
   if(skip == false) tick();
 
   return scanline();
+}
+
+PPU::PPU() {
+  surface = new uint32[256 * 312];
+  output = surface + 0 * 256;
+}
+
+PPU::~PPU() {
+  delete[] surface;
 }
 
 //
