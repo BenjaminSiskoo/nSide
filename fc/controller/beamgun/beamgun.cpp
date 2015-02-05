@@ -72,7 +72,7 @@ uint5 BeamGun::data2() {
 
 bool BeamGun::read_light() {
   if(offscreen) return false;
-  uint32 palette_index = ppu.buffer[y * 256 + x];
+  uint32 palette_index = ppu.output[y * 256 + x];
   unsigned color;
   switch(ppu.revision) {
   default:
