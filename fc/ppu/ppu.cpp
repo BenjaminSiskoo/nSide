@@ -182,6 +182,12 @@ void PPU::write(uint16 addr, uint8 data) {
     return;
   case 1:  //PPUMASK
     status.emphasis = data >> 5;
+    if(revision == Revision::RP2C07) {
+      status.emphasis =
+        ((status.emphasis & 1) << 1) | // swap red
+        ((status.emphasis & 2) >> 1) | // and green
+        ((status.emphasis & 4)     );
+    }
     status.sprite_enable = data & 0x10;
     status.bg_enable = data & 0x08;
     status.sprite_edge_enable = data & 0x04;
@@ -223,7 +229,7 @@ void PPU::write(uint16 addr, uint8 data) {
     status.address_latch ^= 1;
     return;
   case 7:  //PPUDATA
-    if(raster_enable() && (status.ly <= 240 || status.ly == (system.region() == System::Region::NTSC ? 261 : 311))) {
+    if(raster_enable() && (status.ly <= 240 || status.ly == (system.region() != System::Region::PAL ? 261 : 311))) {
       return;
     }
 
