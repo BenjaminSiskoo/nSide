@@ -1,4 +1,6 @@
+#include "bandai-74-161-161-32.cpp"
 #include "bandai-fcg.cpp"
+#include "jaleco-jf-xx.cpp"
 #include "konami-vrc1.cpp"
 #include "konami-vrc2.cpp"
 #include "konami-vrc3.cpp"
@@ -233,17 +235,18 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "AVE-NINA-03") return new Nina(cartridge);
   if(type == "AVE-NINA-06") return new Nina(cartridge);
 
-  if(type == "BANDAI-74*161/32") return new NES_CxROM(cartridge);
-  if(type == "BANDAI-CNROM"    ) return new NES_CxROM(cartridge);
-  if(type == "BANDAI-FCG"      ) return new BandaiFCG(cartridge);
-  if(type == "BANDAI-FCG-1"    ) return new BandaiFCG(cartridge);
-  if(type == "BANDAI-FCG-2"    ) return new BandaiFCG(cartridge);
-  if(type == "BANDAI-GNROM"    ) return new NES_GxROM(cartridge);
-  if(type == "BANDAI-JUMP2"    ) return new BandaiFCG(cartridge);
-  if(type == "BANDAI-LZ93D50"  ) return new BandaiFCG(cartridge);
-  if(type == "BANDAI-NROM-128" ) return new NES_NROM(cartridge);
-  if(type == "BANDAI-NROM-256" ) return new NES_NROM(cartridge);
-  if(type == "BANDAI-PT-544"   ) return new NES_CxROM(cartridge);
+  if(type == "BANDAI-74*161/32"    ) return new NES_CxROM(cartridge);
+  if(type == "BANDAI-74*161/161/32") return new Bandai74_161_161_32(cartridge);
+  if(type == "BANDAI-CNROM"        ) return new NES_CxROM(cartridge);
+  if(type == "BANDAI-FCG"          ) return new BandaiFCG(cartridge);
+  if(type == "BANDAI-FCG-1"        ) return new BandaiFCG(cartridge);
+  if(type == "BANDAI-FCG-2"        ) return new BandaiFCG(cartridge);
+  if(type == "BANDAI-GNROM"        ) return new NES_GxROM(cartridge);
+  if(type == "BANDAI-JUMP2"        ) return new BandaiFCG(cartridge);
+  if(type == "BANDAI-LZ93D50"      ) return new BandaiFCG(cartridge);
+  if(type == "BANDAI-NROM-128"     ) return new NES_NROM(cartridge);
+  if(type == "BANDAI-NROM-256"     ) return new NES_NROM(cartridge);
+  if(type == "BANDAI-PT-544"       ) return new NES_CxROM(cartridge);
 
   if(type == "IREM-BNROM"   ) return new NES_BNROM(cartridge);
   if(type == "IREM-FCG-1"   ) return new BandaiFCG(cartridge);
@@ -256,6 +259,15 @@ Board* Board::load(Markup::Node cartridge) {
   //IREM-74*161/161/21/138 (iNES 077)
   //IREM-HOLYDIVER (iNES 078)
   //IREM-TAM-S1 (iNES 097)
+
+  if(type == "JALECO-JF-05") return new JalecoJFxx(cartridge);
+  if(type == "JALECO-JF-06") return new JalecoJFxx(cartridge);
+  if(type == "JALECO-JF-07") return new JalecoJFxx(cartridge);
+  if(type == "JALECO-JF-08") return new JalecoJFxx(cartridge);
+  if(type == "JALECO-JF-09") return new JalecoJFxx(cartridge);
+  if(type == "JALECO-JF-10") return new JalecoJFxx(cartridge);
+  if(type == "JALECO-JF-11") return new JalecoJFxx(cartridge);
+  if(type == "JALECO-JF-14") return new JalecoJFxx(cartridge);
 
   if(type == "KONAMI-CNROM"   ) return new NES_CxROM(cartridge);
   if(type == "KONAMI-NROM-128") return new NES_NROM(cartridge);
