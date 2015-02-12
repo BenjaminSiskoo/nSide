@@ -5,7 +5,7 @@ enum class Revision : unsigned {
   MMC3A,
   MMC3B,
   MMC3C,
-  MCACC,
+  MC_ACC,
 } revision;
 
 bool chr_mode;
@@ -37,7 +37,12 @@ void enter() {
 }
 
 void irq_test(unsigned addr) {
-  if(!(chr_abus & 0x1000) && (addr & 0x1000)) {
+  bool edge;
+  if(revision != Revision::MC_ACC)
+    edge = !(chr_abus & 0x1000) && (addr & 0x1000);
+  else
+    edge = (chr_abus & 0x1000) && !(addr & 0x1000);
+  if(edge) {
     if(irq_delay == 0) {
       if(irq_counter == 0) {
         irq_counter = irq_latch;
@@ -46,7 +51,6 @@ void irq_test(unsigned addr) {
       }
     }
     irq_delay = 6;
-    //if(revision == Revision::MCACC) irq_delay += 88;
   }
   chr_abus = addr;
 }
@@ -194,11 +198,11 @@ void serialize(serializer& s) {
 
 MMC3(Board& board, Markup::Node& cartridge) : Chip(board) {
   string type = cartridge["chip/type"].data;
-  if(type.match("*MMC3*"  )) revision = Revision::MMC3;
-  if(type.match("*MMC3A*" )) revision = Revision::MMC3A;
-  if(type.match("*MMC3B*" )) revision = Revision::MMC3B;
-  if(type.match("*MMC3C*" )) revision = Revision::MMC3C;
-  if(type.match("*MC-ACC*")) revision = Revision::MCACC;
+  if(type == "MMC3"  ) revision = Revision::MMC3;
+  if(type == "MMC3A" ) revision = Revision::MMC3A;
+  if(type == "MMC3B" ) revision = Revision::MMC3B;
+  if(type == "MMC3C" ) revision = Revision::MMC3C;
+  if(type == "MC-ACC") revision = Revision::MC_ACC;
 }
 
 };
