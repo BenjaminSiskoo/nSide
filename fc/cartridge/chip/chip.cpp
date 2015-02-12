@@ -4,6 +4,7 @@
 #include "mmc5.cpp"
 #include "mmc6.cpp"
 #include "namco-108.cpp"
+#include "ss88006.cpp"
 #include "vrc1.cpp"
 #include "vrc2.cpp"
 #include "vrc3.cpp"

@@ -7,7 +7,7 @@
 //JALECO-JF-11
 //JALECO-JF-14
 
-struct JalecoJFxx : Board {
+struct JalecoJF0x : Board {
 
 enum class Revision : unsigned {
   JF_05,
@@ -84,7 +84,7 @@ void serialize(serializer& s) {
   s.integer(chr_bank);
 }
 
-JalecoJFxx(Markup::Node& cartridge) : Board(cartridge) {
+JalecoJF0x(Markup::Node& cartridge) : Board(cartridge) {
   string type = cartridge["board/type"].data;
   if(type.match("*JF-05*" )) revision = Revision::JF_05;
   if(type.match("*JF-06*" )) revision = Revision::JF_06;

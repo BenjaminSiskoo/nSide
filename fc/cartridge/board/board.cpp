@@ -1,6 +1,7 @@
 #include "bandai-74-161-161-32.cpp"
 #include "bandai-fcg.cpp"
-#include "jaleco-jf-xx.cpp"
+#include "jaleco-jf-0x.cpp"
+#include "jaleco-jf-2x.cpp"
 #include "konami-vrc1.cpp"
 #include "konami-vrc2.cpp"
 #include "konami-vrc3.cpp"
@@ -260,14 +261,21 @@ Board* Board::load(Markup::Node cartridge) {
   //IREM-HOLYDIVER (iNES 078)
   //IREM-TAM-S1 (iNES 097)
 
-  if(type == "JALECO-JF-05") return new JalecoJFxx(cartridge);
-  if(type == "JALECO-JF-06") return new JalecoJFxx(cartridge);
-  if(type == "JALECO-JF-07") return new JalecoJFxx(cartridge);
-  if(type == "JALECO-JF-08") return new JalecoJFxx(cartridge);
-  if(type == "JALECO-JF-09") return new JalecoJFxx(cartridge);
-  if(type == "JALECO-JF-10") return new JalecoJFxx(cartridge);
-  if(type == "JALECO-JF-11") return new JalecoJFxx(cartridge);
-  if(type == "JALECO-JF-14") return new JalecoJFxx(cartridge);
+  if(type == "JALECO-JF-05") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-06") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-07") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-08") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-09") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-10") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-11") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-14") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-23") return new JalecoJF2x(cartridge);
+  if(type == "JALECO-JF-24") return new JalecoJF2x(cartridge);
+  if(type == "JALECO-JF-25") return new JalecoJF2x(cartridge);
+  if(type == "JALECO-JF-27") return new JalecoJF2x(cartridge);
+  if(type == "JALECO-JF-29") return new JalecoJF2x(cartridge);
+  if(type == "JALECO-JF-37") return new JalecoJF2x(cartridge);
+  if(type == "JALECO-JF-40") return new JalecoJF2x(cartridge);
 
   if(type == "KONAMI-CNROM"   ) return new NES_CxROM(cartridge);
   if(type == "KONAMI-NROM-128") return new NES_NROM(cartridge);
