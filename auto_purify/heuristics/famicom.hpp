@@ -182,6 +182,11 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
     }
     break;
 
+  case  18:
+    markup.append("  board type=JALECO-JF-24\n");
+    markup.append("  chip type=SS88006\n");
+    break;
+
   case  21: //VRC4a,VRC4c
   case  23: //VRC4e,VRC4f,VRC2b
   case  25: //VRC4b,VRC4d,VRC2c
@@ -241,6 +246,11 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
     if(!nes2 && !prgram) prgram = 8192;
     break;
 
+  case  70:
+    markup.append("  board type=BANDAI-74*161/161/32\n");
+    markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
+    break;
+
   case  73:
     markup.append("  board type=KONAMI-VRC-3\n");
     markup.append("  chip type=VRC3\n");
@@ -257,6 +267,22 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
     markup.append("  board type=KONAMI-VRC-7\n");
     markup.append("  chip type=VRC7\n");
     if(!nes2 && !prgram) prgram = 8192;
+    break;
+
+  case  86:
+    markup.append("  board type=JALECO-JF-13\n");
+    markup.append("  chip type=uPD7756C\n");
+    markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
+    break;
+
+  case  87:
+    markup.append("  board type=JALECO-JF-09\n");
+    markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
+    break;
+
+  case 140:
+    markup.append("  board type=JALECO-JF-14\n");
+    markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
     break;
 
   case  76:
