@@ -4,6 +4,48 @@ database revision=2012-10-22
 
 release
   cartridge region=NTSC
+    board type=KONAMI-VRC-6
+    chip type=VRC6
+      pinout a0=0 a1=1
+    prg
+      rom name=program.rom size=0x40000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    悪魔城伝説
+    name:     Akumajou Densetsu
+    region:   JP
+    revision: 1.0
+    board:    351951
+    serial:   KON-RC845
+    sha256:   c70f0f5d4054ce7c4850259879c9823add73ccc234ddcf96d95681bb78bd2c58
+    configuration
+      rom name=program.rom size=0x40000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=KONAMI-UNROM
+    chip type=74HC32
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      ram size=0x2000
+  information
+    title:    悪魔城ドラキュラ
+    name:     Akumajou Dracula
+    region:   JP
+    revision: 1.0
+    board:    353525
+    serial:   KON-RV003
+    sha256:   60b1aebdc0a19afc5d3e7dc4f09d8a968580e007197461a8a142656702c27f0d
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
     board type=HVC-TLSROM
     chip type=MMC3B
     prg
@@ -83,6 +125,26 @@ release
     configuration
       rom name=program.rom size=0x4000
       rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=JALECO-JF-05
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x4000
+    chr
+      rom name=character.rom size=0x4000
+  information
+    title:    シティコネクション
+    name:     City Connection
+    region:   JP
+    revision: 1.0
+    board:    JF-05
+    serial:   JF-05
+    sha256:   72c69f068099e42844bfe17e7d37f439243fad10b283650cac041e78443e0300
+    configuration
+      rom name=program.rom size=0x4000
+      rom name=character.rom size=0x4000
 
 release
   cartridge region=NTSC
@@ -230,6 +292,116 @@ release
 
 release
   cartridge region=NTSC
+    board type=HVC-FJROM
+    chip type=MMC4
+    prg
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x10000
+  information
+    title:    ファミコンウォーズ
+    name:     Famicom Wars
+    region:   JP
+    revision: 1.0
+    board:    HVC-FJROM-01
+    serial:   HVC-FW
+    sha256:   7586cdd8b742ba3c4f0ea3eefaa2f6f2215af197a5269e3de9026bcdf236e981
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x10000
+
+release
+  cartridge region=NTSC
+    board type=HVC-SNROM
+    chip type=MMC1A
+    prg
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+    chr
+      ram size=0x2000
+  information
+    title:    ファイナルファンタジーII
+    name:     Final Fantasy II
+    region:   JP
+    revision: 1.0
+    board:    HVC-SNROM-07
+    serial:   SQF-FY
+    sha256:   60c65138a0edecee77e7fa808291d6198ef2ebd10b1fd2bc4f047298d93a4cc0
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=HVC-TNROM
+    chip type=MMC3B
+    prg
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+    chr
+      ram size=0x2000
+  information
+    title:    ファイナルファンタジーIII
+    name:     Final Fantasy III
+    region:   JP
+    revision: 1.0
+    board:    HVC-TNROM-01
+    serial:   SQF-FC
+    sha256:   7ff89b50156b6f5b3d78d3d2eeec8a9221d9f7b18f8350abf89b7867a205f710
+    configuration
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=HVC-FKROM
+    chip type=MMC4
+    prg
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    ファイアーエムブレム 暗黒竜と光の剣
+    name:     Fire Emblem 1 - Ankoku Ryuu to Hikari no Tsurugi
+    region:   JP
+    revision: 1.0
+    board:    HVC-FKROM-01
+    serial:   HVC-VX
+    sha256:   60db7fd78cc849658a42ca648f0d294ebf21e477ddf0753f0e6bbffaad6192ab
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=HVC-FKROM
+    chip type=MMC4
+    prg
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    ファイアーエムブレム外伝
+    name:     Fire Emblem 2 - Gaiden
+    region:   JP
+    revision: 1.0
+    board:    HVC-FKROM-01
+    serial:   HVC-2I
+    sha256:   0d899d67c7a61b13151f465c38c63a0d2d6a42d6be2d4ecac0fef87d55d92f92
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=NAMCOT-3301
     mirror mode=horizontal
     prg
@@ -310,6 +482,48 @@ release
 
 release
   cartridge region=NTSC
+    board type=JALECO-JF-24
+    chip type=SS88006
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    マジック・ジョン
+    name:     Magic John
+    region:   JP
+    revision: 1.0
+    board:    JF-24A
+    serial:   JF-30
+    sha256:   497c3015516cb6ae2f20d70b8fb1b70b8c4cfcd64e118992c438cfe7b0579f2b
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=HVC-TKROM
+    chip type=MMC3A
+    prg
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    MOTHER
+    name:     MOTHER
+    region:   JP
+    revision: 1.0
+    board:    HVC-TKROM-01
+    serial:   HVC-MX
+    sha256:   aa0fe1b0b1e0c3a0a01695f1914fbb5e92649db33b74a9bdcb51be1481221f49
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=HVC-TLROM
     chip type=MMC3C
     prg
@@ -330,6 +544,46 @@ release
 
 release
   cartridge region=NTSC
+    board type=JALECO-JF-06
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x4000
+    chr
+      rom name=character.rom size=0x4000
+  information
+    title:    忍者じゃじゃ丸くん
+    name:     Ninja Jajamaru-kun
+    region:   JP
+    revision: 1.0
+    board:    JF-06
+    serial:   JF-06
+    sha256:   bf546b0ce7fc60d89020ff7c0fadc7369925ba68a84d25b03de4190a91c46a95
+    configuration
+      rom name=program.rom size=0x4000
+      rom name=character.rom size=0x4000
+
+release
+  cartridge region=NTSC
+    board type=JALECO-JF-25
+    chip type=SS88006
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    忍者じゃじゃ丸 銀河大作戦
+    name:     Ninja Jajamaru - Ginga Daisakusen
+    region:   JP
+    revision: 1.0
+    board:    JF-25
+    serial:   JF-32
+    sha256:   648cf7ac553517573cc9b3955ab50566a91974b2348154910bfa53ef15d55b56
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=NAMCOT-3416
     chip type=118
     mirror mode=vertical
@@ -342,11 +596,33 @@ release
     name:     Quest of Ki, The
     region:   JP
     revision: 1.0
+    board:    3416
     serial:   NAM-QK-3900
     sha256:   67123fe28cf5fbadeafc77400a0812f0135ab36706ec7d1267f84931d044e71d
     configuration
       rom name=program.rom size=0x20000
       rom name=character.rom size=0x10000
+
+release
+  cartridge region=NTSC
+    board type=NAMCOT-3417
+    chip type=109
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x8000
+  information
+    title:    スカイキッド
+    name:     SkyKid
+    region:   JP
+    revision: 1.0
+    board:    3417
+    serial:   NAM-NSK-3900-18
+    sha256:   4fbd928f06fbc4ea537cdae7f6a906053df7cd80c35b5cfeac9dfb9d3033efb8
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x8000
 
 release
   cartridge region=NTSC
@@ -432,6 +708,27 @@ release
 
 release
   cartridge region=NTSC
+    board type=KONAMI-VRC-2
+    chip type=VRC2
+      pinout a0=1 a1=0 chr-shift=1
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    ツインビー3 ポコポコ大魔王
+    name:     TwinBee 3 - Poko Poko Dai Maou
+    region:   JP
+    revision: 1.0
+    board:    351618
+    serial:   KON-RC841
+    sha256:   092db8cfadf0a96c67dd0734c966c47dfb80ffb830485d8ee702284ae8eac4aa
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=HVC-NROM-128
     mirror mode=vertical
     prg
@@ -503,6 +800,7 @@ release
     name:     Cybernoid - The Fighting Machine
     region:   NA
     revision: 1.0
+    board:    NES-CNROM-06
     serial:   NES-YN-USA
     sha256:   ad1e14d08657d99c8b70f779931f62524b4beb529090b82b368925d8b642e40c
     configuration
@@ -543,6 +841,7 @@ release
     name:     Destiny of an Emperor
     region:   NA
     revision: 1.0
+    board:    NES-SNROM-05
     serial:   NES-YZ-USA
     sha256:   6d082c801942ce6787b471428ab4c8a6acb3e21f3f38fa197f2aeb698d9a2d7e
     configuration
@@ -569,6 +868,116 @@ release
     configuration
       rom name=program.rom size=0x4000
       rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-SAROM
+    chip type=MMC1B2
+    prg
+      rom name=program.rom size=0x10000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x4000
+  information
+    title:    Dragon Warrior
+    name:     Dragon Warrior
+    region:   NA
+    revision: 1.0
+    board:    NES-SAROM-01
+    serial:   NES-DQ-USA
+    sha256:   abc5bcb459316a7d245065149ea72b5a8317f62fa6ed578569e15b670d3c0022
+    configuration
+      rom name=program.rom size=0x10000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x4000
+
+release
+  cartridge region=NTSC
+    board type=NES-SAROM
+    chip type=MMC1B2
+    prg
+      rom name=program.rom size=0x10000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x4000
+  information
+    title:    Dragon Warrior
+    name:     Dragon Warrior
+    region:   NA
+    revision: 1.1
+    board:    NES-SAROM-02
+    serial:   NES-DQ-USA
+    sha256:   d968a138b19d39dad24aceb3464c7b90e8d50416297273586d3faf1f094eb35c
+    configuration
+      rom name=program.rom size=0x10000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x4000
+
+release
+  cartridge region=NTSC
+    board type=NES-SNROM
+    chip type=MMC1B2
+    prg
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+    chr
+      ram size=0x2000
+  information
+    title:    Dragon Warrior II
+    name:     Dragon Warrior II
+    region:   NA
+    revision: 1.0
+    board:    NES-SNROM-05
+    serial:   NES-D2-USA
+    sha256:   c15ab051ff066f018cf4b0159780c58026114bb47a6376ef81c1571a39a8fe9b
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-SUROM
+    chip type=MMC1B3
+    prg
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+    chr
+      ram size=0x2000
+  information
+    title:    Dragon Warrior III
+    name:     Dragon Warrior III
+    region:   NA
+    revision: 1.0
+    board:    NES-SUROM-01
+    serial:   NES-D3-USA
+    sha256:   f91a8bfc25bd267f5ae77bafa7fc650f77f8e50067869e99682b32d5b410644e
+    configuration
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-SUROM
+    chip type=MMC1B3
+    prg
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+    chr
+      ram size=0x2000
+  information
+    title:    Dragon Warrior IV
+    name:     Dragon Warrior IV
+    region:   NA
+    revision: 1.0
+    board:    NES-SUROM-02
+    serial:   NES-D4-USA
+    sha256:   e49cb745370065a40aff078ae52b5de1c0db137fedcbe93b78ab18d76479deed
+    configuration
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+      ram name=character.ram size=0x2000
 
 release
   cartridge region=NTSC
@@ -635,6 +1044,29 @@ release
 
 release
   cartridge region=NTSC
+    board type=NES-SNROM
+    chip type=MMC1B2
+    prg
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+    chr
+      ram size=0x2000
+  information
+    title:    Final Fantasy
+    name:     Final Fantasy
+    region:   NA
+    revision: 1.0
+    board:    NES-SNROM-05
+    serial:   NES-FF-USA
+    serial:   NES-FF-CAN
+    sha256:   fa456d852372173ea31b192459ba1a2026f779df67793327ba6e132476c1d034
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
     board type=NES-GNROM
     mirror mode=vertical
     prg
@@ -667,6 +1099,7 @@ release
     name:     High Speed
     region:   NA
     revision: 1.0
+    board:    NES-TQROM-01
     serial:   NES-8H-USA
     sha256:   710e907230bbd82143286b40a56a298b25cf326697a9f07bfd8e043c1936a4b1
     configuration
@@ -696,8 +1129,50 @@ release
 
 release
   cartridge region=NTSC
+    board type=ACCLAIM-MC-ACC
+    chip type=MC-ACC
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    The Incredible Crash Dummies
+    name:     Incredible Crash Dummies, The
+    region:   NA
+    revision: 1.0
+    board:    55741
+    serial:   NES-CQ-USA
+    sha256:   c42fc592821b474b486ae32d1d63e8938f1735a6d45db026f7b78b2ec51427ac
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=NTSC
     board type=NES-SNROM
-    chip type=MMC1B2
+    chip type=MMC1A
+    prg
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+    chr
+      ram size=0x2000
+  information
+    title:    The Legend of Zelda
+    name:     Legend of Zelda, The
+    region:   NA
+    revision: 1.0
+    board:    NES-SNROM-02
+    serial:   NES-ZL-USA
+    sha256:   085e5397a3487357c263dfa159fb0fe20a5f3ea8ef82d7af6a7e848d3b9364e8
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-SNROM
+    chip type=MMC1B3
     prg
       rom name=program.rom size=0x20000
       ram name=save.ram size=0x2000
@@ -708,8 +1183,9 @@ release
     name:     Legend of Zelda, The
     region:   NA
     revision: 1.1
+    board:    NES-SNROM-05
     serial:   NES-ZL-USA
-    serial:   ec0d4ebf6d2fcecd1d95fef7329954efe79676959bc281ea908b226459bc6dc2
+    sha256:   ec0d4ebf6d2fcecd1d95fef7329954efe79676959bc281ea908b226459bc6dc2
     configuration
       rom name=program.rom size=0x20000
       ram name=save.ram size=0x2000
@@ -748,6 +1224,8 @@ release
     name:     Mega Man 2
     region:   NA
     revision: 1.0
+    board:    NES-SGROM-04
+    serial:   NES-XR-USA
     sha256:   1e588d435e75d80c5c0b578b4fa8d196f2cf4346c11c9a7b7e435d768828ad01
     configuration
       rom name=program.rom size=0x40000
@@ -767,6 +1245,7 @@ release
     name:     Pin-Bot
     region:   NA
     revision: 1.0
+    board:    NES-TQROM-01
     serial:   NES-IO-USA
     sha256:   f4ddb0f1a02f823ebed30b55547344de3c8fb9d87254ff993584373ecadd9141
     configuration
@@ -808,6 +1287,7 @@ release
     name:     StarTropics
     region:   NA
     revision: 1.0
+    board:    NES-HKROM-01
     serial:   NES-OC-USA
     sha256:   69de2c7552fa81ca5921da0e457abf1be35f18ffbad159788a76141be59c9f6b
     configuration
@@ -1018,7 +1498,28 @@ release
     title:    World Class Track Meet
     name:     World Class Track Meet
     region:   NA
+    revision: 1.0
+    board:    NES-CN-ROM-256-05
+    serial:   NES-WT-USA
+    sha256:   6c74bcb9ac50428266cfc4d13892b6e93c6936ba569bf3f0f2068e45a9b675fc
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x8000
+
+release
+  cartridge region=NTSC
+    board type=NES-CNROM
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x8000
+  information
+    title:    World Class Track Meet
+    name:     World Class Track Meet
+    region:   NA
     revision: 1.1
+    board:    NES-CNROM-07
     serial:   NES-WT-USA
     sha256:   ac766a8d99bfd8e95c02b9a9c68279c72ba5b3307b78edc67b52781ed185fa89
     configuration
@@ -1081,6 +1582,7 @@ release
     name:     Noah's Ark
     region:   EU
     revision: 1.0
+    board:    NES-TSROM-08
     serial:   NES-NH-NOE
     sha256:   6157c99fe7a214025c65fd3649e4afe9cd2d38c333e65af028b935e49fbeb500
     configuration
