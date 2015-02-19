@@ -46,6 +46,10 @@ void PPU::tick() {
   if(clock >= 0) co_switch(cpu.thread);
 
   status.lx++;
+
+  for(unsigned i = 0; i < 8; i++) {
+    if(--status.mdr_decay[i] == 0) status.mdr &= ~(1 << i);
+  }
 }
 
 void PPU::scanline() {
@@ -134,10 +138,14 @@ uint8 PPU::read(uint16 addr) {
     break;
   case 4:  //OAMDATA
     switch(revision) {
-    case Revision::RP2C02C: result = status.mdr; break;
-    default:                result = oam[status.oam_addr]; break;
+    case Revision::RP2C02C:
+      result = status.mdr;
+      break;
+    default:
+      result = oam[status.oam_addr];
+      if((status.oam_addr & 3) == 2) status.mdr = result;
+      break;
     }
-    //if((status.oam_addr & 3) == 3) result &= 0xe3;
     break;
   case 7:  //PPUDATA
     if(raster_enable() && (status.ly <= 240 || status.ly == (system.region() == System::Region::NTSC ? 261 : 311))) {
@@ -148,10 +156,14 @@ uint8 PPU::read(uint16 addr) {
     if(addr <= 0x3eff) {
       result = status.bus_data;
     } else if(addr <= 0x3fff) {
-      result = cgram_read(addr);
+      result = ((status.mdr & 0xc0) | cgram_read(addr));
     }
     status.bus_data = cartridge.chr_read(addr);
     status.vaddr += status.vram_increment;
+    status.mdr = result;
+    break;
+  default:
+    result = status.mdr;
     break;
   }
 
@@ -160,6 +172,9 @@ uint8 PPU::read(uint16 addr) {
 
 void PPU::write(uint16 addr, uint8 data) {
   status.mdr = data;
+  // Decay rate can vary depending on the system and temperature.
+  // Value used here is PPU's NTSC clock rate * 0.6 rounded to nearest integer.
+  for(unsigned i = 0; i < 8; i++) status.mdr_decay[i] = 3221591;
 
   switch(revision) {
   case Revision::RC2C05_01:
@@ -208,6 +223,7 @@ void PPU::write(uint16 addr, uint8 data) {
     status.oam_addr = data;
     return;
   case 4:  //OAMDATA
+    if((status.oam_addr & 3) == 2) data &= 0xe3;
     oam[status.oam_addr++] = data;
     return;
   case 5:  //PPUSCROLL

@@ -69,6 +69,7 @@ struct PPU : Thread {
 
   struct Status {
     uint8 mdr;
+    unsigned mdr_decay[8];
 
     bool field;
     unsigned lx;
