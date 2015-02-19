@@ -532,7 +532,9 @@ void PPU::raster_scanline() {
   //336-339
   chr_load(0x2000 | (status.vaddr & 0x0fff));
   tick();
-  bool skip = (raster_enable() && status.field == 1 && status.ly == last_scanline);
+  bool skip = false;
+  if(system.region() == System::Region::NTSC)
+    skip = (raster_enable() && status.field == 1 && status.ly == last_scanline);
   tick();
 
   chr_load(0x2000 | (status.vaddr & 0x0fff));
