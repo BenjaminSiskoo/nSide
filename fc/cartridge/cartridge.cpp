@@ -46,8 +46,7 @@ void Cartridge::load(System::Revision revision) {
   sha256_chunk(&sha, board->prgrom.data, board->prgrom.size);
   sha256_chunk(&sha, board->chrrom.data, board->chrrom.size);
   sha256_chunk(&sha, board->instrom.data, board->instrom.size);
-  sha256_chunk(&sha, board->key1.data, board->key1.size);
-  sha256_chunk(&sha, board->key2.data, board->key2.size);
+  sha256_chunk(&sha, board->key.data, board->key.size);
   //finalize hash
   sha256_final(&sha);
   sha256_hash(&sha, hash);

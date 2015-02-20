@@ -39,6 +39,5 @@ struct Board {
   Memory chrrom;
   Memory chrram;
   Memory instrom;
-  Memory key1;
-  Memory key2;
+  Memory key;
 };

@@ -20,8 +20,7 @@ struct ID {
     CharacterRAM,
 
     InstructionROM,
-    Key1,
-    Key2,
+    Key,
 
     //controller ports
     Port1 = 1,
