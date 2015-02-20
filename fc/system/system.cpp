@@ -138,6 +138,7 @@ void System::power() {
   case Revision::VSSystem: vsarcadeboard.power(); break;
   }
 
+  ppu.reset();
   reset();
 }
 
@@ -145,8 +146,9 @@ void System::reset() {
   cartridge.reset();
   cpu.reset();
   apu.reset();
-  // Only the Famicom's PPU will reset. The NES's PPU will not.
-  ppu.reset();
+  // Only the NES front-loader's PPU will reset. The Famicom's and NES
+  // top-loader's PPU will not.
+  //ppu.reset();
 
   switch(revision) {
   case Revision::PlayChoice10: pc10arcadeboard.reset(); break;
