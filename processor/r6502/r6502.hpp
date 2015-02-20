@@ -126,16 +126,21 @@ struct R6502 {
   void opill_dcp_absolute_y();
   void opill_dcp_indirect_zero_page_x();
   void opill_dcp_indirect_zero_page_y();
-  void opill_stp();
-  void opill_lax_immediate();
+  void opill_las_absolute_y();
+  void opill_lxa_immediate();
   void opill_nop_absolute();
   void opill_nop_absolute_x();
   void opill_nop_immediate();
   void opill_nop_implied();
   void opill_nop_zero_page();
   void opill_nop_zero_page_x();
+  void opill_sha_absolute_y();
+  void opill_sha_indirect_zero_page_y();
   void opill_shx_absolute_y();
   void opill_shy_absolute_x();
+  void opill_stp();
+  void opill_tas_absolute_y();
+  void opill_xaa_immediate();
 
   //disassembler.cpp
   string disassemble();
