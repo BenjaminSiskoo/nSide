@@ -44,6 +44,10 @@ unsigned Interface::group(unsigned id) {
     case System::Revision::PlayChoice10: return ID::PlayChoice10;
     case System::Revision::VSSystem:     return ID::VSSystem;
     }
+  case ID::InstructionROM:
+  case ID::Key1:
+  case ID::Key2:
+    return ID::PlayChoice10;
   }
 
   throw;
@@ -73,6 +77,10 @@ void Interface::load(unsigned id, const stream& stream) {
   if(id == ID::ProgramRAM) stream.read(cartridge.board->prgram.data, min(cartridge.board->prgram.size, stream.size()));
   if(id == ID::CharacterROM) stream.read(cartridge.board->chrrom.data, min(cartridge.board->chrrom.size, stream.size()));
   if(id == ID::CharacterRAM) stream.read(cartridge.board->chrram.data, min(cartridge.board->chrram.size, stream.size()));
+
+  if(id == ID::InstructionROM) stream.read(cartridge.board->instrom.data, min(cartridge.board->instrom.size, stream.size()));
+  if(id == ID::Key1) stream.read(cartridge.board->key1.data, min(cartridge.board->key1.size, stream.size()));
+  if(id == ID::Key2) stream.read(cartridge.board->key2.data, min(cartridge.board->key2.size, stream.size()));
 }
 
 void Interface::save(unsigned id, const stream& stream) {

@@ -125,6 +125,24 @@ Board::Board(Markup::Node& cartridge) {
 
   prgram.writable = true;
   chrram.writable = true;
+
+  if(system.pc10()) {
+    auto irom = cartridge["pc10/rom[0]"];
+    auto k1 = cartridge["pc10/rom[1]"];
+    auto k2 = cartridge["pc10/rom[2]"];
+
+    instrom.size = numeral(irom["size"].data);
+    key1.size = numeral(k1["size"].data);
+    key2.size = numeral(k2["size"].data);
+
+    if(instrom.size) instrom.data = new uint8[instrom.size]();
+    if(key1.size) key1.data = new uint8[key1.size]();
+    if(key2.size) key2.data = new uint8[key2.size]();
+
+    if(irom["name"].data) interface->loadRequest(ID::InstructionROM, irom["name"].data);
+    if(k1["name"].data) interface->loadRequest(ID::Key1, k1["name"].data);
+    if(k2["name"].data) interface->loadRequest(ID::Key2, k2["name"].data);
+  }
 }
 
 Board::~Board() {

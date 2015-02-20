@@ -38,4 +38,7 @@ struct Board {
   Memory prgram;
   Memory chrrom;
   Memory chrram;
+  Memory instrom;
+  Memory key1;
+  Memory key2;
 };
