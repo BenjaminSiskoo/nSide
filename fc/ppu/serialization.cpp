@@ -3,7 +3,9 @@
 void PPU::serialize(serializer& s) {
   Thread::serialize(s);
 
+  s.integer(status.chr_abus);
   s.integer(status.mdr);
+  s.array(status.mdr_decay);
 
   s.integer(status.field);
   s.integer(status.lx);

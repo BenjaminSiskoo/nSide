@@ -21,26 +21,25 @@ void PPU::enter() {
 }
 
 void PPU::tick() {
-  if(status.ly == 240 && status.lx == 340) status.nmi_hold = 1;
-  if(status.ly == 241 && status.lx ==   0) status.nmi_flag = status.nmi_hold;
-  if(status.ly == 241 && status.lx ==   2) cpu.set_nmi_line(status.nmi_enable && status.nmi_flag);
-
+  unsigned vbl;
+  unsigned pre;
   switch(system.region()) {
-  case System::Region::NTSC:
-    if(status.ly == 260 && status.lx == 340) status.sprite_zero_hit = 0, status.sprite_overflow = 0;
-
-    if(status.ly == 260 && status.lx == 340) status.nmi_hold = 0;
-    if(status.ly == 261 && status.lx ==   0) status.nmi_flag = status.nmi_hold;
-    if(status.ly == 261 && status.lx ==   2) cpu.set_nmi_line(status.nmi_enable && status.nmi_flag);
-    break;
-  case System::Region::PAL:
-    if(status.ly == 310 && status.lx == 340) status.sprite_zero_hit = 0, status.sprite_overflow = 0;
-
-    if(status.ly == 310 && status.lx == 340) status.nmi_hold = 0;
-    if(status.ly == 311 && status.lx ==   0) status.nmi_flag = status.nmi_hold;
-    if(status.ly == 311 && status.lx ==   2) cpu.set_nmi_line(status.nmi_enable && status.nmi_flag);
-    break;
+  case System::Region::NTSC:  vbl = 241; pre = 261; break;
+  case System::Region::PAL:   vbl = 241; pre = 311; break;
+//case System::Region::Dendy: vbl = 291; pre = 311; break;
   }
+
+  if(status.ly == 240 && status.lx == 340) status.nmi_hold = 1;
+
+  if(status.ly == vbl && status.lx ==   0) status.chr_abus = status.vaddr & 0x3fff;
+  if(status.ly == vbl && status.lx ==   0) status.nmi_flag = status.nmi_hold;
+  if(status.ly == vbl && status.lx ==   2) cpu.set_nmi_line(status.nmi_enable && status.nmi_flag);
+
+  if(status.ly == pre - 1 && status.lx == 340) status.sprite_zero_hit = 0, status.sprite_overflow = 0;
+
+  if(status.ly == pre - 1 && status.lx == 340) status.nmi_hold = 0;
+  if(status.ly == pre     && status.lx ==   0) status.nmi_flag = status.nmi_hold;
+  if(status.ly == pre     && status.lx ==   2) cpu.set_nmi_line(status.nmi_enable && status.nmi_flag);
 
   clock += (system.region() == System::Region::NTSC ? 4 : 5);
   if(clock >= 0) co_switch(cpu.thread);
@@ -75,7 +74,7 @@ void PPU::power() {
   //$2003
   status.oam_addr = 0x00;
 
-  for(auto& n : ciram  ) n = 0xFF;
+  for(auto& n : ciram  ) n = 0xff;
 }
 
 void PPU::reset() {
@@ -142,8 +141,11 @@ uint8 PPU::read(uint16 addr) {
       result = status.mdr;
       break;
     default:
-      result = oam[status.oam_addr];
-      if((status.oam_addr & 3) == 2) status.mdr = result;
+      result = oam_read(status.oam_addr);
+      if((status.oam_addr & 3) == 2) {
+        status.mdr = result;
+        for(unsigned i = 0; i < 8; i++) status.mdr_decay[i] = 3221591;
+      }
       break;
     }
     break;
@@ -158,8 +160,9 @@ uint8 PPU::read(uint16 addr) {
     } else if(addr <= 0x3fff) {
       result = ((status.mdr & 0xc0) | cgram_read(addr));
     }
-    status.bus_data = cartridge.chr_read(addr);
+    status.bus_data = cartridge.chr_read(status.chr_abus = addr);
     status.vaddr += status.vram_increment;
+    status.chr_abus = status.vaddr;
     status.mdr = result;
     break;
   default:
@@ -223,8 +226,7 @@ void PPU::write(uint16 addr, uint8 data) {
     status.oam_addr = data;
     return;
   case 4:  //OAMDATA
-    if((status.oam_addr & 3) == 2) data &= 0xe3;
-    oam[status.oam_addr++] = data;
+    oam_write(status.oam_addr++, data);
     return;
   case 5:  //PPUSCROLL
     if(status.address_latch == 0) {
@@ -241,6 +243,7 @@ void PPU::write(uint16 addr, uint8 data) {
     } else {
       status.taddr = (status.taddr & 0x7f00) | data;
       status.vaddr = status.taddr;
+      status.chr_abus = status.vaddr;
     }
     status.address_latch ^= 1;
     return;
@@ -250,36 +253,45 @@ void PPU::write(uint16 addr, uint8 data) {
     }
 
     addr = status.vaddr & 0x3fff;
-    if(addr <= 0x1fff) {
-      cartridge.chr_write(addr, data);
-    } else if(addr <= 0x3eff) {
-      cartridge.chr_write(addr, data);
+    if(addr <= 0x3eff) {
+      cartridge.chr_write(status.chr_abus = addr, data);
     } else if(addr <= 0x3fff) {
       cgram_write(addr, data);
     }
     status.vaddr += status.vram_increment;
+    status.chr_abus = status.vaddr;
     return;
   }
 }
 
-uint8 PPU::ciram_read(uint16 addr) {
+uint8 PPU::ciram_read(uint14 addr) {
   return ciram[addr & (!system.vs() ? 0x07ff : 0x0fff)];
 }
 
-void PPU::ciram_write(uint16 addr, uint8 data) {
+void PPU::ciram_write(uint14 addr, uint8 data) {
   ciram[addr & (!system.vs() ? 0x07ff : 0x0fff)] = data;
 }
 
-uint8 PPU::cgram_read(uint16 addr) {
+uint8 PPU::cgram_read(uint14 addr) {
   if((addr & 0x13) == 0x10) addr &= ~0x10;
   uint8 data = cgram[addr & 0x1f];
   if(status.grayscale) data &= 0x30;
   return data;
 }
 
-void PPU::cgram_write(uint16 addr, uint8 data) {
+void PPU::cgram_write(uint14 addr, uint8 data) {
   if((addr & 0x13) == 0x10) addr &= ~0x10;
   cgram[addr & 0x1f] = data;
+}
+
+uint8 PPU::oam_read(uint8 addr) {
+  uint8 data = oam[addr];
+  return data;
+}
+
+void PPU::oam_write(uint8 addr, uint8 data) {
+  if((addr & 3) == 2) data &= 0xe3;
+  oam[addr] = data;
 }
 
 //
@@ -313,9 +325,9 @@ unsigned PPU::sprite_height() const {
 
 //
 
-uint8 PPU::chr_load(uint16 addr) {
+uint8 PPU::chr_load(uint14 addr) {
   if(raster_enable() == false) return 0x00;
-  return cartridge.chr_read(addr);
+  return cartridge.chr_read(status.chr_abus = addr);
 }
 
 //

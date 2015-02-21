@@ -18,11 +18,14 @@ struct PPU : Thread {
   uint8 read(uint16 addr);
   void write(uint16 addr, uint8 data);
 
-  uint8 ciram_read(uint16 addr);
-  void ciram_write(uint16 addr, uint8 data);
+  uint8 ciram_read(uint14 addr);
+  void ciram_write(uint14 addr, uint8 data);
 
-  uint8 cgram_read(uint16 addr);
-  void cgram_write(uint16 addr, uint8 data);
+  uint8 cgram_read(uint14 addr);
+  void cgram_write(uint14 addr, uint8 data);
+
+  uint8 oam_read(uint8 addr);
+  void oam_write(uint8 addr, uint8 data);
 
   bool raster_enable() const;
   unsigned nametable_addr() const;
@@ -30,7 +33,7 @@ struct PPU : Thread {
   unsigned scrolly() const;
   unsigned sprite_height() const;
 
-  uint8 chr_load(uint16 addr);
+  uint8 chr_load(uint14 addr);
 
   void scrollx_increment();
   void scrolly_increment();
@@ -68,6 +71,7 @@ struct PPU : Thread {
   uint32* output;
 
   struct Status {
+    uint14 chr_abus;
     uint8 mdr;
     unsigned mdr_decay[8];
 
