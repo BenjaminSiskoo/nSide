@@ -50,7 +50,7 @@ void enter() {
 }
 
 unsigned prg_addr(unsigned addr) const {
-  unsigned bank = 0, banks = board.prgrom.size / 0x2000;
+  unsigned bank = 0, banks = board.prgrom.size() / 0x2000;
   switch(addr & 0xe000) {
   case 0x8000: bank = prg_mode == 0 ? (unsigned)prg_bank[0] : banks - 2; break;
   case 0xa000: bank = prg_bank[1]; break;

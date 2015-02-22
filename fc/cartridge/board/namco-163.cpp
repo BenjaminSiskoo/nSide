@@ -13,13 +13,13 @@ uint8 prg_read(unsigned addr) {
   case 0x5000: return irq_counter & 0xff;
   case 0x5800: return ((irq_counter >> 8) & 0x7f) | (irq_enable << 7);
   case 0x6000: case 0x6800: case 0x7000: case 0x7800:
-    return prgram.read(addr & 0x1fff);
+    return read(prgram, addr & 0x1fff);
   case 0x8000: case 0x8800: case 0x9000: case 0x9800:
   case 0xa000: case 0xa800: case 0xb000: case 0xb800:
   case 0xc000: case 0xc800: case 0xd000: case 0xd800:
-    return prgrom.read((prg_bank[(addr & 0x6000) >> 13] << 13) | (addr & 0x1fff));
+    return read(prgrom, (prg_bank[(addr & 0x6000) >> 13] << 13) | (addr & 0x1fff));
   case 0xe000: case 0xe800: case 0xf000: case 0xf800:
-    return prgrom.read((0x3f << 13) | (addr & 0x1fff));
+    return read(prgrom, (0x3f << 13) | (addr & 0x1fff));
   default: return cpu.mdr();
   }
 }
@@ -35,7 +35,7 @@ void prg_write(unsigned addr, uint8 data) {
     irq_enable = data & 0x80;
     break;
   case 0x6000: case 0x6800: case 0x7000: case 0x7800:
-    prgram.data[addr & 0x1fff] = data;
+    write(prgram, addr & 0x1fff, data);
     break;
   case 0x8000: case 0x8800: case 0x9000: case 0x9800: // CHR Select
   case 0xa000: case 0xa800: case 0xb000: case 0xb800:
@@ -73,16 +73,16 @@ uint8 chr_read(unsigned addr) {
   if(addr & 0x2000) return ppu.ciram_read(ciram_addr(addr));
   uint8 bank = chr_bank[(addr & 0x1c00) >> 10];
   if(bank >= 0xe0 && chrram_disable & (1 << ((addr & 0x1000) >> 12))) {
-    if(chrram.size) return chrram.read(addr);
+    if(chrram.size()) return read(chrram, addr);
     else            return ppu.ciram_read(ciram_addr(addr));
-  } else return chrrom.read((bank << 10) | (addr & 0x3ff));
+  } else return read(chrrom, ((bank << 10) | (addr & 0x3ff)));
 }
 
 void chr_write(unsigned addr, uint8 data) {
   if(addr & 0x2000) return ppu.ciram_write(ciram_addr(addr), data);
   uint8 bank = chr_bank[(addr & 0x1c00) >> 10];
   if(bank >= 0xe0 && chrram_disable & (1 << ((addr & 0x1000) >> 12))) {
-    if(chrram.size) return chrram.write(addr, data);
+    if(chrram.size()) return write(chrram, addr, data);
     else            return ppu.ciram_write(ciram_addr(addr), data);
   }
 }

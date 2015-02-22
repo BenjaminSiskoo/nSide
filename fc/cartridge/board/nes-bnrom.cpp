@@ -10,7 +10,7 @@ struct Settings {
 uint2 prg_bank;
 
 uint8 prg_read(unsigned addr) {
-  if(addr & 0x8000) return prgrom.read((prg_bank << 15) | (addr & 0x7fff));
+  if(addr & 0x8000) return read(prgrom, (prg_bank << 15) | (addr & 0x7fff));
   return cpu.mdr();
 }
 

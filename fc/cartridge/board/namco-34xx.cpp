@@ -35,12 +35,12 @@ Namco108 namco108;
 bool nametable; // for Namco3453, used only by Devil Man
 
 unsigned prg_addr(unsigned addr) {
-  if(revision == Revision::Namco3401 || prgrom.size > 0x8000) return namco108.prg_addr(addr);
+  if(revision == Revision::Namco3401 || prgrom.size() > 0x8000) return namco108.prg_addr(addr);
   else return addr & 0x7fff;
 }
 
 uint8 prg_read(unsigned addr) {
-  if(addr & 0x8000) return prgrom.read(prg_addr(addr));
+  if(addr & 0x8000) return read(prgrom, prg_addr(addr));
   return cpu.mdr();
 }
 
@@ -68,8 +68,8 @@ unsigned chr_addr(unsigned addr) {
 
 uint8 chr_read(unsigned addr) {
   if(revision == Revision::DRROM) {
-    if(addr & 0x2000) return chrram.data[mirror(addr & 0x0FFF, chrram.size)];
-    return chrrom.data[mirror(namco108.chr_addr(addr), chrrom.size)];
+    if(addr & 0x2000) return read(chrram, addr & 0x0FFF);
+    return read(chrrom, namco108.chr_addr(addr));
   }
   if(addr & 0x2000) return ppu.ciram_read(ciram_addr(addr));
   return Board::chr_read(chr_addr(addr));
@@ -77,7 +77,7 @@ uint8 chr_read(unsigned addr) {
 
 void chr_write(unsigned addr, uint8 data) {
   if(revision == Revision::DRROM) {
-    if(addr & 0x2000) chrram.data[mirror(addr & 0x0FFF, chrram.size)] = data;
+    if(addr & 0x2000) write(chrram, addr & 0x0FFF, data);
     return;
   }
   if(addr & 0x2000) return ppu.ciram_write(ciram_addr(addr), data);

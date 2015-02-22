@@ -15,7 +15,7 @@ void enter() {
 }
 
 uint8 prg_read(unsigned addr) {
-  if(addr & 0x8000) return prgrom.read(ss88006.prg_addr(addr));
+  if(addr & 0x8000) return read(prgrom, ss88006.prg_addr(addr));
   return cpu.mdr();
 }
 

@@ -109,16 +109,16 @@ uint8 prg_access(bool write, unsigned addr, uint8 data = 0x00) {
 
   if(write == false) {
     if(rom) {
-      return board.prgrom.read((bank << 13) | addr);
+      return board.read(board.prgrom, (bank << 13) | addr);
     } else {
-      return board.prgram.read((bank << 13) | addr);
+      return board.read(board.prgram, (bank << 13) | addr);
     }
   } else {
     if(rom) {
-      board.prgrom.write((bank << 13) | addr, data);
+      board.write(board.prgrom, (bank << 13) | addr, data);
     } else {
       if(prgram_write_protect[0] == 2 && prgram_write_protect[1] == 1) {
-        board.prgram.write((bank << 13) | addr, data);
+        board.write(board.prgram, (bank << 13) | addr, data);
       }
     }
     return 0x00;
@@ -352,7 +352,7 @@ uint8 chr_read(unsigned addr) {
   if(in_frame == false) {
     vs_fetch = false;
     if(addr & 0x2000) return ciram_read(addr);
-    return board.chrrom.read(chr_active ? chr_bg_addr(addr) : chr_sprite_addr(addr));
+    return board.read(board.chrrom, (chr_active ? chr_bg_addr(addr) : chr_sprite_addr(addr)));
   }
 
   bool bg_fetch = (hcounter < 256 || hcounter >= 320);
@@ -375,10 +375,10 @@ uint8 chr_read(unsigned addr) {
     result = ciram_read(addr);
     if(bg_fetch && exram_mode == 1) result = exattr;
   } else {
-    if(vs_fetch) result = board.chrrom.read(chr_vs_addr(addr));
-    else if(sprite_8x16 ? bg_fetch : chr_active) result = board.chrrom.read(chr_bg_addr(addr));
-    else result = board.chrrom.read(chr_sprite_addr(addr));
-    if(bg_fetch && exram_mode == 1) result = board.chrrom.read(exbank * 0x1000 + (addr & 0x0fff));
+    if(vs_fetch) result = board.read(board.chrrom, (chr_vs_addr(addr)));
+    else if(sprite_8x16 ? bg_fetch : chr_active) result = board.read(board.chrrom, (chr_bg_addr(addr)));
+    else result = board.read(board.chrrom, (chr_sprite_addr(addr)));
+    if(bg_fetch && exram_mode == 1) result = board.read(board.chrrom, (exbank * 0x1000 + (addr & 0x0fff)));
   }
 
   hcounter += 2;

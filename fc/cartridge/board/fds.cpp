@@ -18,8 +18,8 @@ uint8 prg_read(unsigned addr) {
   case 0x6000:
   case 0x8000:
   case 0xa000:
-  case 0xc000: return prgram.read(addr);
-  case 0xe000: return prgrom.read(addr);
+  case 0xc000: return read(prgram, addr);
+  case 0xe000: return read(prgrom, addr);
   }
   return cpu.mdr();
 }
@@ -36,7 +36,7 @@ void prg_write(unsigned addr, uint8 data) {
   case 0x6000:
   case 0x8000:
   case 0xa000:
-  case 0xc000: prgram.write(addr,data); break;
+  case 0xc000: write(prgram, addr,data); break;
   }
 }
 
@@ -45,8 +45,7 @@ uint8 chr_read(unsigned addr) {
     if(fds_control & 0x08) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
     return ppu.ciram_read(addr);
   }
-  if(chrram.size) return chrram.read(addr);
-  return chrrom.read(addr);
+  return Board::chr_read(addr);
 }
 
 void chr_write(unsigned addr, uint8 data) {
@@ -54,7 +53,7 @@ void chr_write(unsigned addr, uint8 data) {
     if(fds_control & 0x08) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
     return ppu.ciram_write(addr, data);
   }
-  if(chrram.size) return chrram.write(addr, data);
+  return Board::chr_write(addr, data);
 }
 
 void serialize(serializer& s) {

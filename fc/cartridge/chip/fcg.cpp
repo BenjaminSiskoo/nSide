@@ -57,11 +57,11 @@ unsigned ciram_addr(unsigned addr) const {
 }
 
 uint8 ram_read(unsigned addr) {
-  return board.prgram.data[addr & 0x1fff];
+  return board.read(board.prgram, addr & 0x1fff);
 }
 
 void ram_write(unsigned addr, uint8 data) {
-  board.prgram.data[addr & 0x1fff] = data;
+  board.write(board.prgram, addr & 0x1fff, data);
 }
 
 void reg_write(unsigned addr, uint8 data) {

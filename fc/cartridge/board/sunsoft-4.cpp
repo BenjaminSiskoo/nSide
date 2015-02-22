@@ -9,8 +9,8 @@ bool nametable_mode;
 uint8 prg_bank;
 
 uint8 prg_read(unsigned addr) {
-  if((addr & 0xc000) == 0x8000) return prgrom.read((prg_bank << 14) | (addr & 0x3fff));
-  if((addr & 0xc000) == 0xc000) return prgrom.read((    0xff << 14) | (addr & 0x3fff));
+  if((addr & 0xc000) == 0x8000) return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
+  if((addr & 0xc000) == 0xc000) return read(prgrom, (    0xff << 14) | (addr & 0x3fff));
   return cpu.mdr();
 }
 

@@ -29,8 +29,6 @@ enum class Revision : unsigned {
 
 MMC1 mmc1;
 
-bool last_chr_bank;
-
 void enter() {
   mmc1.enter();
 }
@@ -38,7 +36,6 @@ void enter() {
 unsigned ram_addr(unsigned addr) {
   unsigned bank = 0;
   if(revision == Revision::SOROM) bank = (mmc1.chr_bank[0] & 0x08) >> 3;
-  if(revision == Revision::SUROM) bank = (mmc1.chr_bank[0] & 0x0c) >> 2;
   if(revision == Revision::SXROM) bank = (mmc1.chr_bank[0] & 0x0c) >> 2;
   return (bank << 13) | (addr & 0x1fff);
 }
@@ -46,10 +43,10 @@ unsigned ram_addr(unsigned addr) {
 uint8 prg_read(unsigned addr) {
   if((addr & 0xe000) == 0x6000) {
     if(revision == Revision::SNROM) {
-      if(mmc1.chr_bank[last_chr_bank] & 0x10) return cpu.mdr();
+      if(mmc1.chr_bank[(ppu.status.chr_abus >> 12) & 1] & 0x10) return cpu.mdr();
     }
     if(mmc1.ram_disable) return 0x00;
-    if(prgram.size > 0) return prgram.read(ram_addr(addr));
+    if(prgram.size() > 0) return read(prgram, ram_addr(addr));
   }
 
   if(addr & 0x8000) {
@@ -61,11 +58,11 @@ uint8 prg_read(unsigned addr) {
     default:
       addr = mmc1.prg_addr(addr);
       if(revision == Revision::SUROM || revision == Revision::SXROM) {
-        addr |= ((mmc1.chr_bank[last_chr_bank] & 0x10) >> 4) << 18;
+        addr |= ((mmc1.chr_bank[(ppu.status.chr_abus >> 12) & 1] & 0x10) >> 4) << 18;
       }
       break;
     }
-    return prgrom.read(addr);
+    return read(prgrom, addr);
   }
 
   return cpu.mdr();
@@ -77,7 +74,7 @@ void prg_write(unsigned addr, uint8 data) {
       if(mmc1.chr_bank[0] & 0x10) return;
     }
     if(mmc1.ram_disable) return;
-    if(prgram.size > 0) return prgram.write(ram_addr(addr), data);
+    if(prgram.size() > 0) return write(prgram, ram_addr(addr), data);
   }
 
   if(addr & 0x8000) return mmc1.mmio_write(addr, data);
@@ -85,13 +82,11 @@ void prg_write(unsigned addr, uint8 data) {
 
 uint8 chr_read(unsigned addr) {
   if(addr & 0x2000) return ppu.ciram_read(mmc1.ciram_addr(addr));
-  last_chr_bank = mmc1.chr_mode ? ((addr & 0x1000) >> 12) : 0;
   return Board::chr_read(mmc1.chr_addr(addr));
 }
 
 void chr_write(unsigned addr, uint8 data) {
   if(addr & 0x2000) return ppu.ciram_write(mmc1.ciram_addr(addr), data);
-  last_chr_bank = mmc1.chr_mode ? ((addr & 0x1000) >> 12) : 0;
   return Board::chr_write(mmc1.chr_addr(addr), data);
 }
 
@@ -101,13 +96,11 @@ void power() {
 
 void reset() {
   mmc1.reset();
-  last_chr_bank = 0;
 }
 
 void serialize(serializer& s) {
   Board::serialize(s);
   mmc1.serialize(s);
-  s.integer(last_chr_bank);
 }
 
 NES_SxROM(Markup::Node& cartridge) : Board(cartridge), mmc1(*this, cartridge) {

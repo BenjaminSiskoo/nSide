@@ -14,14 +14,14 @@ bool latch[2];
 
 uint8 prg_read(unsigned addr) {
   if(addr < 0x6000) return cpu.mdr();
-  if(addr < 0x8000) return prgram.read(addr);
+  if(addr < 0x8000) return read(prgram, addr);
   unsigned bank = addr < 0xc000 ? prg_bank : (uint4)0x0f;
-  return prgrom.read((bank * 0x4000) | (addr & 0x3fff));
+  return read(prgrom, (bank * 0x4000) | (addr & 0x3fff));
 }
 
 void prg_write(unsigned addr, uint8 data) {
   if(addr < 0x6000) return;
-  if(addr < 0x8000) return prgram.write(addr, data);
+  if(addr < 0x8000) return write(prgram, addr, data);
 
   switch(addr & 0xf000) {
   case 0xa000: prg_bank = data & 0x0f; break;

@@ -19,12 +19,12 @@ bool nametable; // for BF9097
 uint8 prg_read(unsigned addr) {
   if((addr & 0x8000) == 0x0000) return cpu.mdr();
   if((addr & 0xc000) == 0x8000) {
-    return prgrom.read((prg_block << 16) | (prg_bank << 14) | (addr & 0x3fff));
+    return read(prgrom, (prg_block << 16) | (prg_bank << 14) | (addr & 0x3fff));
   } else {
     if(revision != Revision::ALGQ && revision != Revision::BF9096)
-      return prgrom.read((0x0f << 14) | (addr & 0x3fff));
+      return read(prgrom, (0x0f << 14) | (addr & 0x3fff));
     else
-      return prgrom.read((prg_block << 16) | (0x03 << 14) | (addr & 0x3fff));
+      return read(prgrom, (prg_block << 16) | (0x03 << 14) | (addr & 0x3fff));
   }
 }
 

@@ -11,13 +11,13 @@ void enter() {
 }
 
 uint8 prg_read(unsigned addr) {
-  if((addr & 0xe000) == 0x6000) return prgram.read(addr & 0x1fff);
-  if(addr & 0x8000) return prgrom.read(vrc3.prg_addr(addr));
+  if((addr & 0xe000) == 0x6000) return read(prgram, addr & 0x1fff);
+  if(addr & 0x8000) return read(prgrom, vrc3.prg_addr(addr));
   return cpu.mdr();
 }
 
 void prg_write(unsigned addr, uint8 data) {
-  if((addr & 0xe000) == 0x6000) return prgram.write(addr & 0x1fff, data);
+  if((addr & 0xe000) == 0x6000) return write(prgram, addr & 0x1fff, data);
   if(addr & 0x8000) return vrc3.reg_write(addr, data);
 }
 
@@ -26,7 +26,7 @@ uint8 chr_read(unsigned addr) {
     if(settings.mirror == 0) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
     return ppu.ciram_read(addr);
   }
-  return chrram.read(addr);
+  return Board::chr_read(addr);
 }
 
 void chr_write(unsigned addr, uint8 data) {
@@ -34,7 +34,7 @@ void chr_write(unsigned addr, uint8 data) {
     if(settings.mirror == 0) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
     return ppu.ciram_write(addr, data);
   }
-  return chrram.write(addr, data);
+  return Board::chr_write(addr, data);
 }
 
 void power() {

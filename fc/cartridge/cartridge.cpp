@@ -43,10 +43,10 @@ void Cartridge::load(System::Revision revision) {
   uint8 hash[32];
   sha256_init(&sha);
   //hash each ROM image that exists; any with size() == 0 is ignored by sha256_chunk()
-  sha256_chunk(&sha, board->prgrom.data, board->prgrom.size);
-  sha256_chunk(&sha, board->chrrom.data, board->chrrom.size);
-  sha256_chunk(&sha, board->instrom.data, board->instrom.size);
-  sha256_chunk(&sha, board->key.data, board->key.size);
+  sha256_chunk(&sha, board->prgrom.data(), board->prgrom.size());
+  sha256_chunk(&sha, board->chrrom.data(), board->chrrom.size());
+  sha256_chunk(&sha, board->instrom.data(), board->instrom.size());
+  sha256_chunk(&sha, board->keyrom.data(), board->keyrom.size());
   //finalize hash
   sha256_final(&sha);
   sha256_hash(&sha, hash);

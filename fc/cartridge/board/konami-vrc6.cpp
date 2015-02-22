@@ -12,7 +12,7 @@ VRC6 vrc6;
 uint8 prg_read(unsigned addr) {
   if(addr < 0x6000) return cpu.mdr();
   if(addr < 0x8000) return vrc6.ram_read(addr);
-  return prgrom.read(vrc6.prg_addr(addr));
+  return read(prgrom, vrc6.prg_addr(addr));
 }
 
 void prg_write(unsigned addr, uint8 data) {

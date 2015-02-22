@@ -17,8 +17,8 @@ uint8 prg_read(unsigned addr) {
   if(addr & 0x8000 && settings.connected_chips & (1 << prg_chip)) {
     unsigned target_bank = prg_bank;
     target_bank |= settings.chip_map[prg_chip] << 5;
-    if(prg_mode) return prgrom.read((target_bank << 14) | (addr & 0x3fff));
-    else         return prgrom.read((target_bank << 14) | (addr & 0x7fff));
+    if(prg_mode) return read(prgrom, (target_bank << 14) | (addr & 0x3fff));
+    else         return read(prgrom, (target_bank << 14) | (addr & 0x7fff));
   }
   return cpu.mdr();
 }

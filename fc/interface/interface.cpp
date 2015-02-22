@@ -45,7 +45,7 @@ unsigned Interface::group(unsigned id) {
     case System::Revision::VSSystem:     return ID::VSSystem;
     }
   case ID::InstructionROM:
-  case ID::Key:
+  case ID::KeyROM:
     return ID::PlayChoice10;
   }
 
@@ -53,6 +53,8 @@ unsigned Interface::group(unsigned id) {
 }
 
 void Interface::load(unsigned id) {
+  interface->information.width = 256;
+  interface->information.height = 240;
   switch(id) {
   case ID::Famicom:      cartridge.load(System::Revision::Famicom);      break;
   case ID::PlayChoice10: cartridge.load(System::Revision::PlayChoice10); break;
@@ -72,22 +74,22 @@ void Interface::load(unsigned id, const stream& stream) {
   }
 
   if(id == ID::Manifest) cartridge.information.markup.cartridge = stream.text();
-  if(id == ID::ProgramROM) stream.read(cartridge.board->prgrom.data, min(cartridge.board->prgrom.size, stream.size()));
-  if(id == ID::ProgramRAM) stream.read(cartridge.board->prgram.data, min(cartridge.board->prgram.size, stream.size()));
-  if(id == ID::CharacterROM) stream.read(cartridge.board->chrrom.data, min(cartridge.board->chrrom.size, stream.size()));
-  if(id == ID::CharacterRAM) stream.read(cartridge.board->chrram.data, min(cartridge.board->chrram.size, stream.size()));
+  if(id == ID::ProgramROM) cartridge.board->prgrom.read(stream);
+  if(id == ID::ProgramRAM) cartridge.board->prgram.read(stream);
+  if(id == ID::CharacterROM) cartridge.board->chrrom.read(stream);
+  if(id == ID::CharacterRAM) cartridge.board->chrram.read(stream);
 
-  if(id == ID::InstructionROM) stream.read(cartridge.board->instrom.data, min(cartridge.board->instrom.size, stream.size()));
-  if(id == ID::Key) stream.read(cartridge.board->key.data, min(cartridge.board->key.size, stream.size()));
+  if(id == ID::InstructionROM) cartridge.board->instrom.read(stream);
+  if(id == ID::KeyROM) cartridge.board->keyrom.read(stream);
 }
 
 void Interface::save(unsigned id, const stream& stream) {
   if(id == ID::ProgramRAM) {
-    stream.write(cartridge.board->prgram.data, cartridge.board->prgram.size);
+    stream.write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
   }
 
   if(id == ID::CharacterRAM) {
-    stream.write(cartridge.board->chrram.data, cartridge.board->chrram.size);
+    stream.write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
   }
 }
 
@@ -151,11 +153,11 @@ void Interface::exportMemory() {
   file::write({pathname, "video.ram"}, ppu.ciram, 2048);
   file::write({pathname, "palette.ram"}, ppu.cgram, 32);
   file::write({pathname, "sprite.ram"}, ppu.oam, 256);
-  if(cartridge.board->prgram.size) {
-    file::write({pathname, "program.ram"}, cartridge.board->prgram.data, cartridge.board->prgram.size);
+  if(cartridge.board->prgram.size()) {
+    file::write({pathname, "program.ram"}, cartridge.board->prgram.data(), cartridge.board->prgram.size());
   }
-  if(cartridge.board->chrram.size) {
-    file::write({pathname, "character.ram"}, cartridge.board->chrram.data, cartridge.board->chrram.size);
+  if(cartridge.board->chrram.size()) {
+    file::write({pathname, "character.ram"}, cartridge.board->chrram.data(), cartridge.board->chrram.size());
   }
 }
 

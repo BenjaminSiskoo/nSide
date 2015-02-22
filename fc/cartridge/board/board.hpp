@@ -1,17 +1,6 @@
 struct Board {
-  struct Memory {
-    uint8_t* data;
-    unsigned size;
-    bool writable;
-
-    inline uint8 read(unsigned addr) const;
-    inline void write(unsigned addr, uint8 data);
-
-    inline Memory(uint8_t* data, unsigned size) : data(data), size(size) {}
-    inline Memory() : data(nullptr), size(0u), writable(false) {}
-    inline ~Memory() { if(data) delete[] data; }
-  };
-
+  static uint8 read(MappedRAM& memory, unsigned addr);
+  static void write(MappedRAM& memory, unsigned addr, uint8 byte);
   static unsigned mirror(unsigned addr, unsigned size);
 
   virtual void enter();
@@ -34,10 +23,10 @@ struct Board {
 
   static Board* load(Markup::Node cartridge);
 
-  Memory prgrom;
-  Memory prgram;
-  Memory chrrom;
-  Memory chrram;
-  Memory instrom;
-  Memory key;
+  MappedRAM prgrom;
+  MappedRAM prgram;
+  MappedRAM chrrom;
+  MappedRAM chrram;
+  MappedRAM instrom;
+  MappedRAM keyrom;
 };

@@ -3,7 +3,7 @@ struct KonamiVRC1 : Board {
 VRC1 vrc1;
 
 uint8 prg_read(unsigned addr) {
-  if(addr & 0x8000) return prgrom.read(vrc1.prg_addr(addr));
+  if(addr & 0x8000) return read(prgrom, vrc1.prg_addr(addr));
   return cpu.mdr();
 }
 

@@ -5,7 +5,7 @@ struct Settings {
 } settings;
 
 uint8 prg_read(unsigned addr) {
-  if(addr & 0x8000) return prgrom.read(addr);
+  if(addr & 0x8000) return read(prgrom, addr);
   return cpu.mdr();
 }
 

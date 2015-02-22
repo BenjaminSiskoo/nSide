@@ -5,6 +5,7 @@ struct Cartridge : Thread, property<Cartridge> {
   enum class Region : unsigned {
     NTSC,
     PAL,
+    //Dendy,
   };
 
   enum : bool { Threaded = true };
@@ -61,6 +62,11 @@ struct Cartridge : Thread, property<Cartridge> {
 
 private:
   void parse_markup(const char*);
+  void parse_markup_memory(MappedRAM&, Markup::Node, unsigned id, bool writable);
+
+  void parse_markup_cartridge(Markup::Node);
+
+  friend class Interface;
 };
 
 extern Cartridge cartridge;

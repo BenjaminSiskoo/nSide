@@ -35,12 +35,12 @@
 #include "unlicensed/noconflicts-cnrom.cpp"
 #include "unlicensed/single-chip.cpp"
 
-uint8 Board::Memory::read(unsigned addr) const {
-  return data[mirror(addr, size)];
+uint8 Board::read(MappedRAM& memory, unsigned addr) {
+  return memory.read(mirror(addr, memory.size()));
 }
 
-void Board::Memory::write(unsigned addr, uint8 byte) {
-  if(writable) data[mirror(addr, size)] = byte;
+void Board::write(MappedRAM& memory, unsigned addr, uint8 byte) {
+  memory.write(mirror(addr, memory.size()), byte);
 }
 
 unsigned Board::mirror(unsigned addr, unsigned size) {
@@ -77,13 +77,13 @@ void Board::tick() {
 }
 
 uint8 Board::chr_read(unsigned addr) {
-  if(chrram.size) return chrram.data[mirror(addr, chrram.size)];
-  if(chrrom.size) return chrrom.data[mirror(addr, chrrom.size)];
-  return 0u;
+  if(chrram.size()) return read(chrram, addr);
+  if(chrrom.size()) return read(chrrom, addr);
+  return ppu.status.mdr;
 }
 
 void Board::chr_write(unsigned addr, uint8 data) {
-  if(chrram.size) chrram.data[mirror(addr, chrram.size)] = data;
+  if(chrram.size()) write(chrram, addr, data);
 }
 
 void Board::power() {
@@ -93,52 +93,12 @@ void Board::reset() {
 }
 
 void Board::serialize(serializer& s) {
-  if(prgram.size) s.array(prgram.data, prgram.size);
-  if(chrram.size) s.array(chrram.data, chrram.size);
+  if(prgram.size()) s.array(prgram.data(), prgram.size());
+  if(chrram.size()) s.array(chrram.data(), chrram.size());
 }
 
 Board::Board(Markup::Node& cartridge) {
   Famicom::cartridge.board = this;
-
-  auto prom = cartridge["prg/rom"];
-  auto pram = cartridge["prg/ram"];
-  auto crom = cartridge["chr/rom"];
-  auto cram = cartridge["chr/ram"];
-
-  prgrom.size = numeral(prom["size"].data);
-  prgram.size = numeral(pram["size"].data);
-  chrrom.size = numeral(crom["size"].data);
-  chrram.size = numeral(cram["size"].data);
-
-  if(prgrom.size) prgrom.data = new uint8[prgrom.size]();
-  if(prgram.size) prgram.data = new uint8[prgram.size]();
-  if(chrrom.size) chrrom.data = new uint8[chrrom.size]();
-  if(chrram.size) chrram.data = new uint8[chrram.size]();
-
-  if(prom["name"].data) interface->loadRequest(ID::ProgramROM, prom["name"].data);
-  if(pram["name"].data) interface->loadRequest(ID::ProgramRAM, pram["name"].data);
-  if(crom["name"].data) interface->loadRequest(ID::CharacterROM, crom["name"].data);
-  if(cram["name"].data) interface->loadRequest(ID::CharacterRAM, cram["name"].data);
-
-  if(pram["name"].data) Famicom::cartridge.memory.append({ID::ProgramRAM, pram["name"].data});
-  if(cram["name"].data) Famicom::cartridge.memory.append({ID::CharacterRAM, cram["name"].data});
-
-  prgram.writable = true;
-  chrram.writable = true;
-
-  if(system.pc10()) {
-    auto irom = cartridge["pc10/rom[0]"];
-    auto k = cartridge["pc10/rom[1]"];
-
-    instrom.size = numeral(irom["size"].data);
-    key.size = numeral(k["size"].data);
-
-    if(instrom.size) instrom.data = new uint8[instrom.size]();
-    if(key.size) key.data = new uint8[key.size]();
-
-    if(irom["name"].data) interface->loadRequest(ID::InstructionROM, irom["name"].data);
-    if(k["name"].data) interface->loadRequest(ID::Key, k["name"].data);
-  }
 }
 
 Board::~Board() {

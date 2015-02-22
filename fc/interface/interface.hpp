@@ -12,6 +12,8 @@ struct ID {
 
     //memory (files)
     PC10BIOS,
+    PC10CharacterROM,
+    PC10PaletteROM,
 
     Manifest,
     ProgramROM,
@@ -20,7 +22,7 @@ struct ID {
     CharacterRAM,
 
     InstructionROM,
-    Key,
+    KeyROM,
 
     //controller ports
     Port1 = 1,

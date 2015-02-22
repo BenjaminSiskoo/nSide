@@ -1,8 +1,38 @@
 #include <fc/fc.hpp>
 
+#define MEMORY_CPP
 namespace Famicom {
 
 Bus bus;
+
+void Bus::map(
+  const function<uint8 (unsigned)>& reader,
+  const function<void (unsigned, uint8)>& writer,
+  unsigned addrlo, unsigned addrhi,
+  unsigned size, unsigned base, unsigned mask
+) {
+  assert(addrlo <= addrhi && addrlo <= 0xffff);
+  assert(idcount < 255);
+
+  unsigned id = idcount++;
+  this->reader[id] = reader;
+  this->writer[id] = writer;
+
+  for(unsigned addr = addrlo; addr <= addrhi; addr++) {
+    unsigned offset = reduce(addr, mask);
+    if(size) offset = base + mirror(offset, size - base);
+    lookup[addr] = id;
+    target[addr] = offset;
+  }
+}
+
+void Bus::map_reset() {
+  function<uint8 (unsigned)> reader = [](unsigned) { return cpu.mdr(); };
+  function<void (unsigned, uint8)> writer = [](unsigned, uint8) {};
+
+  idcount = 0;
+  map(reader, writer, 0x0000, 0xffff);
+}
 
 //$0000-07ff = RAM (2KB)
 //$0800-1fff = RAM (mirror)
@@ -11,26 +41,14 @@ Bus bus;
 //$4000-4017 = APU + I/O
 //$4018-ffff = Cartridge
 
-uint8 Bus::read(uint16 addr) {
-  uint8 data = cartridge.prg_read(addr);
-       if(addr <= 0x1fff) data = cpu.ram_read(addr);
-  else if(addr <= 0x3fff) data = ppu.read(addr);
-  else if(addr <= 0x4017) data = cpu.read(addr);
-  else if((addr & 0xe020) == 0x4020 && system.vs()) data = cpu.read(addr);
-
-  if(cheat.enable()) {
-    if(auto result = cheat.find(addr, data)) return result();
-  }
-
-  return data;
+Bus::Bus() {
+  lookup = new uint8 [64 * 1024];
+  target = new uint32[64 * 1024];
 }
 
-void Bus::write(uint16 addr, uint8 data) {
-  cartridge.prg_write(addr, data);
-  if(addr <= 0x1fff) return cpu.ram_write(addr, data);
-  if(addr <= 0x3fff) return ppu.write(addr, data);
-  if(addr <= 0x4017) return cpu.write(addr, data);
-  if((addr & 0xe020) == 0x4020 && system.vs()) return cpu.write(addr, data);
+Bus::~Bus() {
+  delete[] lookup;
+  delete[] target;
 }
 
 }

@@ -15,13 +15,13 @@ void enter() {
 
 uint8 prg_read(unsigned addr) {
   if(addr < 0x6000) return cpu.mdr();
-  if(addr < 0x8000) return prgram.read(addr);
-  return prgrom.read(vrc4.prg_addr(addr));
+  if(addr < 0x8000) return read(prgram, addr);
+  return read(prgrom, vrc4.prg_addr(addr));
 }
 
 void prg_write(unsigned addr, uint8 data) {
   if(addr < 0x6000) return;
-  if(addr < 0x8000) return prgram.write(addr, data);
+  if(addr < 0x8000) return write(prgram, addr, data);
 
   bool a0 = (addr & settings.pinout.a0);
   bool a1 = (addr & settings.pinout.a1);

@@ -32,19 +32,19 @@ unsigned ciram_addr(unsigned addr) const {
 }
 
 uint8 ram_read(unsigned addr) {
-  if(board.prgram.size == 0) {
+  if(board.prgram.size() == 0) {
     if((addr & 0xf000) == 0x6000) return cpu.mdr() | latch;
     return cpu.mdr();
   }
-  return board.prgram.read(addr & 0x1fff);
+  return board.read(board.prgram, addr & 0x1fff);
 }
 
 void ram_write(unsigned addr, uint8 data) {
-  if(board.prgram.size == 0) {
+  if(board.prgram.size() == 0) {
     if((addr & 0xf000) == 0x6000) latch = data & 0x01;
     return;
   }
-  return board.prgram.write(addr & 0x1fff, data);
+  return board.write(board.prgram, addr & 0x1fff, data);
 }
 
 void reg_write(unsigned addr, uint8 data) {

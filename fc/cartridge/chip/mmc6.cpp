@@ -86,14 +86,14 @@ uint8 ram_read(unsigned addr) {
   if(ram_readable[0] == false && ram_readable[1] == false) return cpu.mdr();
   bool region = addr & 0x0200;
   if(ram_readable[region] == false) return 0x00;
-  return board.prgram.read((region * 0x0200) + (addr & 0x01ff));
+  return board.read(board.prgram, (region * 0x0200) + (addr & 0x01ff));
 }
 
 void ram_write(unsigned addr, uint8 data) {
   if(ram_enable == false) return;
   bool region = addr & 0x0200;
   if(ram_writable[region] == false) return;
-  return board.prgram.write((region * 0x0200) + (addr & 0x01ff), data);
+  return board.write(board.prgram, (region * 0x0200) + (addr & 0x01ff), data);
 }
 
 void reg_write(unsigned addr, uint8 data) {

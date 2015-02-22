@@ -31,6 +31,7 @@ void enter() {
     }
 
     if(irq_delay) irq_delay--;
+    //irq_test(ppu.status.chr_abus);
     cpu.set_irq_line(irq_line);
     tick();
   }
@@ -94,12 +95,12 @@ unsigned ciram_addr(unsigned addr) const {
 }
 
 uint8 ram_read(unsigned addr) {
-  if(ram_enable) return board.prgram.data[addr & 0x1fff];
+  if(ram_enable) return board.read(board.prgram, addr & 0x1fff);
   return 0x00;
 }
 
 void ram_write(unsigned addr, uint8 data) {
-  if(ram_enable && !ram_write_protect) board.prgram.data[addr & 0x1fff] = data;
+  if(ram_enable && !ram_write_protect) board.write(board.prgram, addr & 0x1fff, data);
 }
 
 void reg_write(unsigned addr, uint8 data) {

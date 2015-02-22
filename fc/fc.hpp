@@ -60,6 +60,8 @@ namespace Famicom {
   #include <fc/cartridge/cartridge.hpp>
   #include <fc/cheat/cheat.hpp>
   #include <fc/interface/interface.hpp>
+
+  #include <fc/memory/memory-inline.hpp>
 }
 
 #endif

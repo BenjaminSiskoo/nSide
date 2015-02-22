@@ -90,16 +90,15 @@ uint8 prg_read(unsigned addr) {
 
   if(ram_select) {
     if(ram_enable == false) return cpu.mdr();
-    return prgram.data[addr & 0x1fff];
+    return read(prgram, addr & 0x1fff);
   }
 
-  addr = (bank << 13) | (addr & 0x1fff);
-  return prgrom.read(addr);
+  return read(prgrom, (bank << 13) | (addr & 0x1fff));
 }
 
 void prg_write(unsigned addr, uint8 data) {
   if((addr & 0xe000) == 0x6000) {
-    prgram.data[addr & 0x1fff] = data;
+    write(prgram, addr & 0x1fff, data);
   }
 
   if(addr == 0x8000) {

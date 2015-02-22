@@ -8,7 +8,7 @@ void enter() {
 
 uint8 prg_read(unsigned addr) {
   if((addr & 0xf000) == 0x7000) return mmc6.ram_read(addr);
-  if(addr & 0x8000) return prgrom.read(mmc6.prg_addr(addr));
+  if(addr & 0x8000) return read(prgrom, mmc6.prg_addr(addr));
   return cpu.mdr();
 }
 

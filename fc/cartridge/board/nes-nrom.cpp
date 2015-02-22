@@ -25,15 +25,15 @@ struct Settings {
 } settings;
 
 uint8 prg_read(unsigned addr) {
-  if((addr & 0x8000) == 0x8000) return prgrom.read(addr);
+  if((addr & 0x8000) == 0x8000) return read(prgrom, addr);
   if(revision == Revision::FAMILYBASIC && (addr & 0xe000) == 0x6000)
-    return prgram.read(addr);
+    return read(prgram, addr);
   return cpu.mdr();
 }
 
 void prg_write(unsigned addr, uint8 data) {
   if(revision == Revision::FAMILYBASIC && (addr & 0xe000) == 0x6000)
-    prgram.write(addr, data);
+    write(prgram, addr, data);
 }
 
 uint8 chr_read(unsigned addr) {
@@ -41,8 +41,7 @@ uint8 chr_read(unsigned addr) {
     if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
     return ppu.ciram_read(addr & 0x07ff);
   }
-  if(chrram.size) return chrram.read(addr);
-  return chrrom.read(addr);
+  return Board::chr_read(addr);
 }
 
 void chr_write(unsigned addr, uint8 data) {
@@ -50,7 +49,7 @@ void chr_write(unsigned addr, uint8 data) {
     if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
     return ppu.ciram_write(addr, data);
   }
-  if(chrram.size) return chrram.write(addr, data);
+  return Board::chr_write(addr, data);
 }
 
 void serialize(serializer& s) {
