@@ -80,9 +80,17 @@ void System::load(Revision revision) {
   auto document = Markup::Document(manifest);
 
   if(pc10()) {
-    interface->loadRequest(ID::PC10BIOS, document["system/pc10/rom/name"].data);
-    if(!file::exists({interface->path(ID::System), document["system/pc10/rom/name"].data})) {
-      interface->notify("Error: required PlayChoice-10 firmware ", document["system/pc10/rom/name"].data, " not found.\n");
+    interface->loadRequest(ID::PC10BIOS, document["system/pc10/rom[0]/name"].data);
+    if(!file::exists({interface->path(ID::System), document["system/pc10/rom[0]/name"].data})) {
+      interface->notify("Error: required PlayChoice-10 firmware ", document["system/pc10/rom[0]/name"].data, " not found.\n");
+    }
+    interface->loadRequest(ID::PC10CharacterROM, document["system/pc10/rom[1]/name"].data);
+    if(!file::exists({interface->path(ID::System), document["system/pc10/rom[1]/name"].data})) {
+      interface->notify("Error: required PlayChoice-10 character data ", document["system/pc10/rom[1]/name"].data, " not found.\n");
+    }
+    interface->loadRequest(ID::PC10PaletteROM, document["system/pc10/rom[2]/name"].data);
+    if(!file::exists({interface->path(ID::System), document["system/pc10/rom[2]/name"].data})) {
+      interface->notify("Error: required PlayChoice-10 palette data ", document["system/pc10/rom[2]/name"].data, " not found.\n");
     }
   }
 
@@ -109,6 +117,7 @@ void System::load(Revision revision) {
   case Revision::Famicom:
     break;
   case Revision::PlayChoice10:
+    interface->information.height = min(max(document["system/pc10/screen/mode"].integer(), 1), 2) * 240;
     pc10arcadeboard.load();
     break;
   case Revision::VSSystem:

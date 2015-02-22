@@ -6,6 +6,8 @@ struct Video {
 
 private:
   void update();
+  void update_pc10();
+  void update_vs();
   void scanline();
   void init();
 

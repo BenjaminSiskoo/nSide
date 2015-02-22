@@ -33,6 +33,8 @@ string Interface::sha256() {
 unsigned Interface::group(unsigned id) {
   switch(id) {
   case ID::PC10BIOS:
+  case ID::PC10CharacterROM:
+  case ID::PC10PaletteROM:
     return ID::System;
   case ID::Manifest:
   case ID::ProgramROM:
@@ -69,8 +71,16 @@ void Interface::save() {
 }
 
 void Interface::load(unsigned id, const stream& stream) {
-  if(id == ID::PC10BIOS) {
+  switch(id) {
+  case ID::PC10BIOS:
     stream.read(pc10arcadeboard.bios, min(16384u, stream.size()));
+    break;
+  case ID::PC10CharacterROM:
+    stream.read(pc10arcadeboard.chrrom, min(24576u, stream.size()));
+    break;
+  case ID::PC10PaletteROM:
+    stream.read(pc10arcadeboard.cgrom, min(768u, stream.size()));
+    break;
   }
 
   if(id == ID::Manifest) cartridge.information.markup.cartridge = stream.text();

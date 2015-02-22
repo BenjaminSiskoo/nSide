@@ -13,6 +13,9 @@ struct PC10ArcadeBoard {
   //c000-dfff: cartridge instruction ROM
   //e000-ffff: cartridge IO registers
 
+  uint8 chrrom[0x2000 * 3];
+  uint8 cgrom[0x100 * 3];
+
   uint16 dip;
 
   bool vram_access;
@@ -32,6 +35,8 @@ struct PC10ArcadeBoard {
   bool prom_clock;
   uint7 prom_address;
 
+  uint32 video_output[256 * 240];
+
   void init();
   void load();
   void unload();
@@ -46,6 +51,10 @@ struct PC10ArcadeBoard {
   void io_write(uint16 addr, uint8 data);
 
   void serialize(serializer& s);
+
+private:
+  void video_power();
+  void update_video();
 };
 
 extern PC10ArcadeBoard pc10arcadeboard;

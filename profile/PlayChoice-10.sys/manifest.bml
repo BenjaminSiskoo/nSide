@@ -1,3 +1,13 @@
 system name:PlayChoice-10
   pc10
+    screen mode=2
     rom name=bios-dual.rom size=16384
+    rom name=character.rom size=24576
+    rom name=palette.rom size=768
+    setting name="Attract Mode Sounds"
+      option value="0x0040" name="Plays"
+      option value="0x0000" name="Muted"
+    setting name="Play Time / Coin"
+      option value="0x8000" name="Free Play"
+      option value="0x3f00" name="5:00"
+      option value="0x2200" name="2:30"

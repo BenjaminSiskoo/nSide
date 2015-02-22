@@ -51,10 +51,20 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
       break;
     } 
   }
+  if(system.pc10()) {
+    for(unsigned color = 0; color < 256; color++) {
+      palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color, 0,
+        uclamp<16>((15 - pc10arcadeboard.cgrom[color + 0x000]) * 4369.0),
+        uclamp<16>((15 - pc10arcadeboard.cgrom[color + 0x100]) * 4369.0),
+        uclamp<16>((15 - pc10arcadeboard.cgrom[color + 0x200]) * 4369.0)
+      );
+    }
+  }
 }
 
 Video::Video() {
-  palette = new uint32_t[1 << 9]();
+  // * 2 for second VS. System PPU (of which 256 colors are used for PlayChoice-10)
+  palette = new uint32_t[(1 << 9) * 2]();
 }
 
 Video::~Video() {
@@ -166,17 +176,39 @@ void Video::update() {
   }
   if(configuration.expansion_port == Input::Device::BeamGun) {
     BeamGun &device = (BeamGun&)*input.expansion;
-    draw_cursor(0x2D, device.x, device.y);
+    draw_cursor(0x2d, device.x, device.y);
   }
-  if(interface->information.width != 512) {
-    interface->videoRefresh(
-      video.palette,
-      ppu.output,
-      4 * interface->information.width,
-      interface->information.width,
-      240
-    );
-  } else { // VS. DualSystem
+  if(system.pc10()) return update_pc10();
+  if(system.vs()) return update_vs();
+  interface->videoRefresh(video.palette, ppu.output, 4 * 256, 256, 240);
+}
+
+void Video::update_pc10() {
+  if(interface->information.height == 240) {
+    switch(pc10arcadeboard.display) {
+    case 0: // Z80
+      interface->videoRefresh(video.palette + (1 << 9), pc10arcadeboard.video_output, 4 * 256, 256, 240);
+      break;
+    case 1: // PPU
+      interface->videoRefresh(video.palette, ppu.output, 4 * 256, 256, 240);
+      break;
+    }
+  } else if(interface->information.height == 480) {
+    uint32 buffer[256 * 480];
+    for(unsigned y = 0; y < 240; y++) {
+      for(unsigned x = 0; x < 256; x++) {
+        buffer[(y + 240) * 256 + x] = ppu.output[y * 256 + x];
+        buffer[(y +   0) * 256 + x] = (1 << 9) + pc10arcadeboard.video_output[y * 256 + x];
+      }
+    }
+    interface->videoRefresh(video.palette, buffer, 4 * 256, 256, 480);
+  }
+}
+
+void Video::update_vs() {
+  if(interface->information.width == 256) {
+    interface->videoRefresh(video.palette, ppu.output, 4 * 256, 256, 240);
+  } else if(interface->information.width == 512) {
     uint32 buffer[512 * 240];
     for(unsigned y = 0; y < 240; y++) {
       for(unsigned x = 0; x < 256; x++) {
@@ -184,13 +216,7 @@ void Video::update() {
         buffer[y * 512 + x + 256] = 0;
       }
     }
-    interface->videoRefresh(
-      video.palette,
-      buffer,
-      4 * interface->information.width,
-      interface->information.width,
-      240
-    );
+    interface->videoRefresh(video.palette, buffer, 4 * 512, 512, 240);
   }
 }
 

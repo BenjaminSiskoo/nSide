@@ -5,6 +5,7 @@ namespace Famicom {
 
 PC10ArcadeBoard pc10arcadeboard;
 
+#include "video-circuit.cpp"
 #include "serialization.cpp"
 
 void PC10ArcadeBoard::init() {
@@ -18,7 +19,7 @@ void PC10ArcadeBoard::unload() {
 }
 
 void PC10ArcadeBoard::power() {
-  vram_access = 0; // 0: Z80,                  1: video circuit
+  vram_access = 1; // 0: Z80,                  1: video circuit
   controls    = 1; // 0: disable START/SELECT, 1: enable START/SELECT
   ppu_output  = 1; // 0: disable,              1: enable
   apu_output  = 1; // 0: disable,              1: enable
@@ -30,6 +31,8 @@ void PC10ArcadeBoard::power() {
   ppu_reset   = 1; // 0: reset,                1: run
   channel     = 0; // 0-9 internally, 1-10 to players
   sram_bank   = 1; // bank at $8c00-8fff
+  video_power();
+  update_video();
 }
 
 void PC10ArcadeBoard::reset() {
