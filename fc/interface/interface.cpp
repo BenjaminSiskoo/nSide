@@ -103,8 +103,8 @@ void Interface::connect(unsigned port, unsigned device) {
     // Don't allow switching to VS. Panel
     if(device == (unsigned)Input::Device::VSPanel)
       device = (unsigned)Input::Device::None;
+    input.connect(port, (Input::Device)device);
   }
-  input.connect(port, (Input::Device)device);
 }
 
 void Interface::power() {

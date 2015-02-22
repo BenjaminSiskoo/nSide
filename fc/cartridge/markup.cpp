@@ -13,16 +13,16 @@ void Cartridge::parse_markup(const char* markup) {
     string device1 = cartridge["controller(port=1)/device"].text();
     string device2 = cartridge["controller(port=2)/device"].text();
     if(device1 == "joypad") {
-      input.connect(vsarcadeboard.swap_controllers, Input::Device::Joypad);
+      input.connect(0, Input::Device::Joypad);
     } else if(device1 == "none") {
-      input.connect(vsarcadeboard.swap_controllers, Input::Device::None);
+      input.connect(0, Input::Device::None);
     }
     if(device2 == "joypad") {
-      input.connect(!vsarcadeboard.swap_controllers, Input::Device::Joypad);
+      input.connect(1, Input::Device::Joypad);
     } else if(device2 == "beamgun") {
-    //  input.connect(!vsarcadeboard.swap_controllers, Input::Device::BeamGun);
+      input.connect(1, Input::Device::BeamGun);
     } else if(device2 == "none") {
-      input.connect(!vsarcadeboard.swap_controllers, Input::Device::None);
+      input.connect(1, Input::Device::None);
     }
     vsarcadeboard.set_dip(interface->dipSettings(cartridge));
     string ppu_revision = cartridge["ppu/revision"].data;
