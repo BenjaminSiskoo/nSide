@@ -633,10 +633,10 @@ L rd = op_read(abs.w + regs.y);
 
 void R6502::opill_lxa_immediate() {
   // line noise on the data bus interferes with what would be LAX #i.
-  //regs.x = regs.a | 0xee;
-  opi_read_immediate<&R6502::opf_lda>();
-  //regs.a = regs.a & regs.x;
-  regs.x = regs.a;
+L rd = op_readpci();
+  regs.a = regs.x = (regs.a | (rand() & 0xff)) & rd;
+  regs.p.n = (regs.a & 0x80);
+  regs.p.z = (regs.a == 0);
 }
 
 void R6502::opill_nop_absolute() {
@@ -714,5 +714,5 @@ L op_write(abs.w + regs.y, regs.a & regs.x & (abs.h + 1));
 
 void R6502::opill_xaa_immediate() {
   rd = op_readpci();
-  regs.a = (regs.a | 0xee) & regs.x & rd;
+  regs.a = (regs.a | (rand() & 0xff)) & regs.x & rd;
 }
