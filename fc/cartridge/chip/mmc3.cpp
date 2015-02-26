@@ -31,7 +31,7 @@ void enter() {
     }
 
     if(irq_delay) irq_delay--;
-    //irq_test(ppu.status.chr_abus);
+    irq_test(ppu.status.chr_abus);
     cpu.set_irq_line(irq_line);
     tick();
   }

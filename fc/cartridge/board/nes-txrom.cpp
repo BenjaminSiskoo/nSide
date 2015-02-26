@@ -37,7 +37,6 @@ void prg_write(unsigned addr, uint8 data) {
 }
 
 uint8 chr_read(unsigned addr) {
-  mmc3.irq_test(addr);
   if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
     if(addr & 0x2000) return read(chrram, addr & 0x0fff);
     return read(chrrom, mmc3.chr_addr(addr));
@@ -53,7 +52,6 @@ uint8 chr_read(unsigned addr) {
 }
 
 void chr_write(unsigned addr, uint8 data) {
-  mmc3.irq_test(addr);
   if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
     if(addr & 0x2000) write(chrram, addr & 0x0fff, data);
     return;
