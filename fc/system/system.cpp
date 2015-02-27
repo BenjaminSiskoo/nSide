@@ -172,7 +172,7 @@ void System::reset() {
 
 void System::scanline() {
   video.scanline();
-  if(ppu.status.ly == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
+  if(ppu.vcounter() == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
 }
 
 void System::frame() {

@@ -49,6 +49,7 @@ namespace Famicom {
   };
 
   #include <fc/memory/memory.hpp>
+  #include <fc/ppu/counter/counter.hpp>
 
   #include <fc/cpu/cpu.hpp>
   #include <fc/apu/apu.hpp>
@@ -62,6 +63,7 @@ namespace Famicom {
   #include <fc/interface/interface.hpp>
 
   #include <fc/memory/memory-inline.hpp>
+  #include <fc/ppu/counter/counter-inline.hpp>
 }
 
 #endif

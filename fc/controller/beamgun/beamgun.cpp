@@ -3,7 +3,7 @@
 void BeamGun::enter() {
   unsigned prev = 0;
   while(true) {
-    unsigned next = ppu.status.ly * 341 + ppu.status.lx;
+    unsigned next = ppu.vcounter() * 341 + ppu.hcounter();
 
     if(lighttime > 0) {
       lighttime -= 1;

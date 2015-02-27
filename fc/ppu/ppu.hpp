@@ -1,4 +1,4 @@
-struct PPU : Thread {
+struct PPU : Thread, public PPUcounter {
   uint8 ciram[4096]; // 2048 in Famicom and PlayChoice-10
   uint8 cgram[32];
   uint8 oam[256];
@@ -8,7 +8,6 @@ struct PPU : Thread {
   alwaysinline void synchronize_cpu();
 
   void enter();
-  void tick();
   void scanline();
   void frame();
 
@@ -75,10 +74,6 @@ struct PPU : Thread {
     uint8 mdr;
     unsigned mdr_decay[8];
 
-    bool field;
-    unsigned lx;
-    unsigned ly;
-
     uint8 bus_data;
 
     bool address_latch;
@@ -115,6 +110,7 @@ struct PPU : Thread {
   } status;
 
   static void Enter();
+  void add_clocks(unsigned);
 
   void raster_pixel();
   void raster_sprite();

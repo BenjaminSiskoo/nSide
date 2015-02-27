@@ -1,15 +1,18 @@
 #ifdef PPU_CPP
 
+void PPUcounter::serialize(serializer& s) {
+  s.integer(status.field);
+  s.integer(status.hcounter);
+  s.integer(status.vcounter);
+}
+
 void PPU::serialize(serializer& s) {
   Thread::serialize(s);
+  PPUcounter::serialize(s);
 
   s.integer(status.chr_abus);
   s.integer(status.mdr);
   s.array(status.mdr_decay);
-
-  s.integer(status.field);
-  s.integer(status.lx);
-  s.integer(status.ly);
 
   s.integer(status.bus_data);
 

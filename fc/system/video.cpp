@@ -221,7 +221,7 @@ void Video::update_vs() {
 }
 
 void Video::scanline() {
-  unsigned y = ppu.status.ly;
+  unsigned y = ppu.vcounter();
   if(y >= 240) return;
 }
 
