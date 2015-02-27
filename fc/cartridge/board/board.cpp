@@ -243,6 +243,7 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "JALECO-JF-10") return new JalecoJF0x(cartridge);
   if(type == "JALECO-JF-11") return new JalecoJF0x(cartridge);
   if(type == "JALECO-JF-14") return new JalecoJF0x(cartridge);
+  if(type == "JALECO-JF-22") return new KonamiVRC1(cartridge);
   if(type == "JALECO-JF-23") return new JalecoJF2x(cartridge);
   if(type == "JALECO-JF-24") return new JalecoJF2x(cartridge);
   if(type == "JALECO-JF-25") return new JalecoJF2x(cartridge);

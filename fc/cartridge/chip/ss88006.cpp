@@ -3,6 +3,8 @@ struct SS88006 : Chip {
 uint8 prg_bank[3];
 uint8 chr_bank[8];
 uint2 mirror;
+bool ram_enable;
+bool ram_write_enable;
 uint16 irq_counter;
 uint16 irq_latch;
 bool irq_enable;
@@ -44,6 +46,14 @@ unsigned ciram_addr(unsigned addr) const {
   }
 }
 
+uint8 ram_read(unsigned addr) {
+  if(ram_enable) return board.read(board.prgram, addr & 0x1fff);
+}
+
+void ram_write(unsigned addr, uint8 data) {
+  if(ram_enable && ram_write_enable) board.write(board.prgram, addr & 0x1fff, data);
+}
+
 void reg_write(unsigned addr, uint8 data) {
   data &= 0x0f;
   switch(addr & 0xf003) {
@@ -53,7 +63,10 @@ void reg_write(unsigned addr, uint8 data) {
   case 0x8003: prg_bank[1] = (prg_bank[1] & 0x0f) | (data << 4); break;
   case 0x9000: prg_bank[2] = (prg_bank[2] & 0xf0) | (data << 0); break;
   case 0x9001: prg_bank[2] = (prg_bank[2] & 0x0f) | (data << 4); break;
-  case 0x9002: break;
+  case 0x9002:
+    ram_enable = data & 0x01;
+    ram_write_enable = data & 0x02;
+    break;
   case 0xa000: chr_bank[0] = (chr_bank[0] & 0xf0) | (data << 0); break;
   case 0xa001: chr_bank[0] = (chr_bank[0] & 0x0f) | (data << 4); break;
   case 0xa002: chr_bank[1] = (chr_bank[1] & 0xf0) | (data << 0); break;
@@ -104,6 +117,8 @@ void reset() {
   chr_bank[6] = 0;
   chr_bank[7] = 0;
   mirror = 0;
+  ram_enable = 0;
+  ram_write_enable = 0;
   irq_counter = 0;
   irq_latch = 0;
   irq_enable = false;
@@ -114,6 +129,8 @@ void serialize(serializer& s) {
   s.array(prg_bank);
   s.array(chr_bank);
   s.integer(mirror);
+  s.integer(ram_enable);
+  s.integer(ram_write_enable);
   s.integer(irq_counter);
   s.integer(irq_latch);
   s.integer(irq_enable);
