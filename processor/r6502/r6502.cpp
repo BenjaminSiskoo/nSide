@@ -35,12 +35,11 @@ void R6502::interrupt() {
   op_readpc();
   op_writesp(regs.pc >> 8);
   op_writesp(regs.pc >> 0);
-  op_writesp(regs.p | 0x20);
   uint16 vector = 0xfffe;  //IRQ
   nmi(vector);
+  op_writesp(regs.p | 0x20);
   abs.l = op_read(vector++);
   regs.p.i = 1;
-  regs.p.d = 0;
 L abs.h = op_read(vector++);
   regs.pc = abs.w;
 }
