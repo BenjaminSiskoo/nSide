@@ -1,7 +1,9 @@
 void PPUcounter::tick(unsigned clocks) {
   status.hcounter++;
-  if(status.hcounter >= 340 && status.hcounter == lineclocks()) {
+  if(status.hcounter == 337) status.skip = 341 - lineclocks();
+  if(status.hcounter == 341 - status.skip) {
     status.hcounter = 0;
+    status.skip = false;
     vcounter_tick();
   }
 }
@@ -32,4 +34,5 @@ void PPUcounter::reset() {
   status.field    = 0;
   status.vcounter = 0;
   status.hcounter = 0;
+  status.skip     = false;
 }

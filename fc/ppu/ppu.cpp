@@ -362,7 +362,8 @@ void PPU::scrolly_increment() {
 //
 
 void PPU::raster_pixel() {
-  unsigned mask = 0x8000 >> (status.xaddr + (hcounter() & 7));
+  unsigned lx = hcounter() - 1;
+  unsigned mask = 0x8000 >> (status.xaddr + (lx & 7));
   unsigned palette = 0, object_palette = 0;
   bool object_priority = 0;
   palette |= (raster.tiledatalo & mask) ? 1 : 0;
@@ -374,14 +375,14 @@ void PPU::raster_pixel() {
   }
 
   if(status.bg_enable == false) palette = 0;
-  if(status.bg_edge_enable == false && hcounter() < 8) palette = 0;
+  if(status.bg_edge_enable == false && lx < 8) palette = 0;
 
   if(status.sprite_enable == true)
   for(signed sprite = 7; sprite >= 0; sprite--) {
-    if(status.sprite_edge_enable == false && hcounter() < 8) continue;
+    if(status.sprite_edge_enable == false && lx < 8) continue;
     if(raster.oam[sprite].id == 64) continue;
 
-    unsigned spritex = hcounter() - raster.oam[sprite].x;
+    unsigned spritex = lx - raster.oam[sprite].x;
     if(spritex >= 8) continue;
 
     if(raster.oam[sprite].attr & 0x40) spritex ^= 7;
@@ -391,7 +392,7 @@ void PPU::raster_pixel() {
     sprite_palette |= (raster.oam[sprite].tiledatahi & mask) ? 2 : 0;
     if(sprite_palette == 0) continue;
 
-    if(raster.oam[sprite].id == 0 && palette && hcounter() != 255) status.sprite_zero_hit = 1;
+    if(raster.oam[sprite].id == 0 && palette && lx != 255) status.sprite_zero_hit = 1;
     sprite_palette |= (raster.oam[sprite].attr & 3) << 2;
 
     object_priority = raster.oam[sprite].attr & 0x20;
@@ -403,7 +404,7 @@ void PPU::raster_pixel() {
   }
 
   if(raster_enable() == false) palette = 0;
-  output[vcounter() * 256 + hcounter()] = (status.emphasis << 6) | cgram_read(palette);
+  output[vcounter() * 256 + lx] = (status.emphasis << 6) | cgram_read(palette);
 }
 
 void PPU::raster_sprite() {
@@ -429,7 +430,7 @@ void PPU::raster_sprite() {
 
 void PPU::raster_scanline() {
   unsigned last_scanline = system.region() == System::Region::NTSC ? 261 : 311;
-  if((vcounter() >= 240 && vcounter() <= last_scanline - 1)) {
+  if((vcounter() >= 240 && vcounter() < last_scanline)) {
     add_clocks(341);
     return scanline();
   }
@@ -447,7 +448,10 @@ void PPU::raster_scanline() {
     raster.soam[n].tiledatahi = 0;
   }
 
-  for(unsigned tile = 0; tile < 32; tile++) {  //  0-255
+  //  0
+  add_clocks(1);
+
+  for(unsigned tile = 0; tile < 32; tile++) {  //  1-256
     unsigned nametable = chr_load(0x2000 | (status.vaddr & 0x0fff));
     unsigned tileaddr = status.bg_addr + (nametable << 4) + (scrolly() & 7);
     raster_pixel();
@@ -491,7 +495,7 @@ void PPU::raster_scanline() {
 
   for(unsigned n = 0; n < 8; n++) raster.oam[n] = raster.soam[n];
 
-  for(unsigned sprite = 0; sprite < 8; sprite++) {  //256-319
+  for(unsigned sprite = 0; sprite < 8; sprite++) {  //257-320
     unsigned nametable = chr_load(0x2000 | (status.vaddr & 0x0fff));
     add_clocks(1);
 
@@ -517,7 +521,7 @@ void PPU::raster_scanline() {
     if(raster_enable() && sprite == 6 && vcounter() == last_scanline) status.vaddr = status.taddr;  //304
   }
 
-  for(unsigned tile = 0; tile < 2; tile++) {  //320-335
+  for(unsigned tile = 0; tile < 2; tile++) {  //321-336
     unsigned nametable = chr_load(0x2000 | (status.vaddr & 0x0fff));
     unsigned tileaddr = status.bg_addr + (nametable << 4) + (scrolly() & 7);
     add_clocks(2);
@@ -542,14 +546,13 @@ void PPU::raster_scanline() {
     raster.tiledatahi = (raster.tiledatahi << 8) | tiledatahi;
   }
 
-  //336-340
+  //337-340
   chr_load(0x2000 | (status.vaddr & 0x0fff));
-  add_clocks(1);
-  bool skip = lineclocks() == 340;
-  add_clocks(1);
+  add_clocks(2);
 
   chr_load(0x2000 | (status.vaddr & 0x0fff));
-  add_clocks(3 - skip);
+  add_clocks(1);
+  if(hcounter() > 0) add_clocks(1);
 
   return scanline();
 }

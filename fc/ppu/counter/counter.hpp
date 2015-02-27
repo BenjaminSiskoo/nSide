@@ -5,6 +5,7 @@ public:
   alwaysinline bool   field   () const;
   alwaysinline uint16 vcounter() const;
   alwaysinline uint16 hcounter() const;
+  alwaysinline bool   skip    () const;
   inline uint16 lineclocks() const;
 
   inline void reset();
@@ -18,5 +19,6 @@ public:
     bool field;
     uint16 vcounter;
     uint16 hcounter;
+    bool skip;
   } status;
 };

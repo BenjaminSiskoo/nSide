@@ -2,15 +2,16 @@
 
 void BeamGun::enter() {
   unsigned prev = 0;
+  unsigned next;
   while(true) {
-    unsigned next = ppu.vcounter() * 341 + ppu.hcounter();
+    next = ppu.vcounter() * 341 + ppu.hcounter();
 
     if(lighttime > 0) {
       lighttime -= 1;
     }
 
     if(!offscreen) {
-      unsigned target = y * 341 + x + (!system.vs() ? 0 : 128);
+      unsigned target = y * 341 + x + (!system.vs() ? 8 : 8);
       if(next >= target && prev < target) {
         //CRT raster detected
         //light remains in the gun for 10-25 scanlines
@@ -31,7 +32,7 @@ void BeamGun::enter() {
     }
 
     prev = next;
-    step(2);
+    step(3);
   }
 }
 
