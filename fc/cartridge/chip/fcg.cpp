@@ -123,14 +123,14 @@ void serialize(serializer& s) {
 
 FCG(Board& board, Markup::Node& cartridge) : Chip(board) {
   string type = cartridge["chip[0]/type"].data;
-  if(type.match("*FCG-1*"  )) revision = Revision::FCG1;
-  if(type.match("*FCG-2*"  )) revision = Revision::FCG2;
-  if(type.match("*LZ93D50*")) revision = Revision::LZ93D50;
+  if(type == "FCG-1"  ) revision = Revision::FCG1;
+  if(type == "FCG-2"  ) revision = Revision::FCG2;
+  if(type == "LZ93D50") revision = Revision::LZ93D50;
 
   eeprom = EEPROM::None;
   type = cartridge["chip[1]/type"].data;
-  if(type.match("*24C01*"  )) eeprom = EEPROM::_24C01;
-  if(type.match("*24C02*"  )) eeprom = EEPROM::_24C02;
+  if(type == "24C01") eeprom = EEPROM::_24C01;
+  if(type == "24C02") eeprom = EEPROM::_24C02;
 }
 
 };

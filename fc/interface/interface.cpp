@@ -55,8 +55,8 @@ unsigned Interface::group(unsigned id) {
 }
 
 void Interface::load(unsigned id) {
-  interface->information.width = 256;
-  interface->information.height = 240;
+  information.width = 256;
+  information.height = 240;
   switch(id) {
   case ID::Famicom:      cartridge.load(System::Revision::Famicom);      break;
   case ID::PlayChoice10: cartridge.load(System::Revision::PlayChoice10); break;

@@ -132,12 +132,12 @@ void serialize(serializer& s) {
 MMC1(Board& board, Markup::Node& cartridge) : Chip(board) {
   string type = cartridge["chip/type"].data;
 
-  if(type.match("*MMC1*"  )) revision = Revision::MMC1;
-  if(type.match("*MMC1A*" )) revision = Revision::MMC1A;
-  if(type.match("*MMC1B1*")) revision = Revision::MMC1B1;
-  if(type.match("*MMC1B2*")) revision = Revision::MMC1B2;
-  if(type.match("*MMC1B3*")) revision = Revision::MMC1B3;
-  if(type.match("*MMC1C*" )) revision = Revision::MMC1C;
+  if(type == "MMC1"  ) revision = Revision::MMC1;
+  if(type == "MMC1A" ) revision = Revision::MMC1A;
+  if(type == "MMC1B1") revision = Revision::MMC1B1;
+  if(type == "MMC1B2") revision = Revision::MMC1B2;
+  if(type == "MMC1B3") revision = Revision::MMC1B3;
+  if(type == "MMC1C" ) revision = Revision::MMC1C;
 }
 
 };

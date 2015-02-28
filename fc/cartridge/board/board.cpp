@@ -252,17 +252,18 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "JALECO-JF-37") return new JalecoJF2x(cartridge);
   if(type == "JALECO-JF-40") return new JalecoJF2x(cartridge);
 
-  if(type == "KONAMI-CNROM"   ) return new NES_CxROM(cartridge);
-  if(type == "KONAMI-NROM-128") return new NES_NROM(cartridge);
-  if(type == "KONAMI-SLROM"   ) return new NES_SxROM(cartridge);
-  if(type == "KONAMI-TLROM"   ) return new NES_TxROM(cartridge);
-  if(type == "KONAMI-UNROM"   ) return new NES_UxROM(cartridge);
-  if(type == "KONAMI-VRC-1"   ) return new KonamiVRC1(cartridge);
-  if(type == "KONAMI-VRC-2"   ) return new KonamiVRC2(cartridge);
-  if(type == "KONAMI-VRC-3"   ) return new KonamiVRC3(cartridge);
-  if(type == "KONAMI-VRC-4"   ) return new KonamiVRC4(cartridge);
-  if(type == "KONAMI-VRC-6"   ) return new KonamiVRC6(cartridge);
-  if(type == "KONAMI-VRC-7"   ) return new KonamiVRC7(cartridge);
+  if(type == "KONAMI-74*139/74") return new JalecoJF0x(cartridge);
+  if(type == "KONAMI-CNROM"    ) return new NES_CxROM(cartridge);
+  if(type == "KONAMI-NROM-128" ) return new NES_NROM(cartridge);
+  if(type == "KONAMI-SLROM"    ) return new NES_SxROM(cartridge);
+  if(type == "KONAMI-TLROM"    ) return new NES_TxROM(cartridge);
+  if(type == "KONAMI-UNROM"    ) return new NES_UxROM(cartridge);
+  if(type == "KONAMI-VRC-1"    ) return new KonamiVRC1(cartridge);
+  if(type == "KONAMI-VRC-2"    ) return new KonamiVRC2(cartridge);
+  if(type == "KONAMI-VRC-3"    ) return new KonamiVRC3(cartridge);
+  if(type == "KONAMI-VRC-4"    ) return new KonamiVRC4(cartridge);
+  if(type == "KONAMI-VRC-6"    ) return new KonamiVRC6(cartridge);
+  if(type == "KONAMI-VRC-7"    ) return new KonamiVRC7(cartridge);
 
   if(type == "NAMCOT-163" ) return new Namco163(cartridge);
   if(type == "NAMCOT-3301") return new NES_NROM(cartridge);

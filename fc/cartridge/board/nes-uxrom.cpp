@@ -61,7 +61,7 @@ void serialize(serializer& s) {
 
 NES_UxROM(Markup::Node& cartridge) : Board(cartridge) {
   settings.mirror = cartridge["mirror/mode"].data == "horizontal";
-  settings.chip_type = cartridge["chip/type"].data == "74HC08" ? 1 : 0;
+  settings.chip_type = cartridge["chip/type"].data.match("74*08") ? 1 : 0;
 }
 
 };

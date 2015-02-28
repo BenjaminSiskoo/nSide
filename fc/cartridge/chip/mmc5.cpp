@@ -493,8 +493,8 @@ void serialize(serializer& s) {
 MMC5(Board& board, Markup::Node& cartridge) : Chip(board) {
   string type = cartridge["chip/type"].data;
 
-  if(type.match("*MMC5*" )) revision = Revision::MMC5;
-  if(type.match("*MMC5B*")) revision = Revision::MMC5B;
+  if(type == "MMC5" ) revision = Revision::MMC5;
+  if(type == "MMC5B") revision = Revision::MMC5B;
 }
 
 };

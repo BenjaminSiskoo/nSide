@@ -210,6 +210,46 @@ release
 
 release
   cartridge region=NTSC
+    board type=HVC-NROM-128
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x4000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    ドンキーコング
+    name:     Donkey Kong
+    region:   JP
+    revision: 1.0
+    board:    9011-01
+    serial:   HVC-DK
+    sha256:   dd108e55b60070b4c0147f7dba31844ed83065255466bfacd5038e6382483026
+    configuration
+      rom name=program.rom size=0x4000
+      rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=HVC-NROM-128
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x4000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    ドンキーコング
+    name:     Donkey Kong
+    region:   JP
+    revision: 1.1
+    board:    HVC-NROM-02
+    serial:   HVC-DK
+    sha256:   aa408f5a6b97c0d738e7e8b489a5617ad4a9ecdee2b05c4ee504210ce31b2825
+    configuration
+      rom name=program.rom size=0x4000
+      rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
     board type=HVC-HROM
     prg
       rom name=program.rom size=0x4000
@@ -462,6 +502,26 @@ release
 
 release
   cartridge region=NTSC
+    board type=KONAMI-74*139/74
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x4000
+  information
+    title:    グーニーズ
+    name:     Goonies, The
+    region:   JP
+    revision: 1.0
+    board:    302047A
+    serial:   KON-RC809
+    sha256:   f837e0807ade4bb8036d40746e2433ed66986f043fc2be722e765e45a676cd5d
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x4000
+
+release
+  cartridge region=NTSC
     board type=HVC-SROM
     mirror mode=vertical
     prg
@@ -479,6 +539,50 @@ release
     configuration
       rom name=program.rom size=0x4000
       rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=JALECO-JF-27
+    chip type=SS88006
+    prg
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    じゃじゃ丸撃魔伝 ~幻の金魔城~
+    name:     Jajamaru Gekimaden - Maboroshi no Kinmajou
+    region:   JP
+    revision: 1.0
+    board:    JF-27B
+    serial:   JF-27
+    sha256:   ea770788f68e4bb089e4205807931d64b83175a0106e7563d0a6d3ebac369991
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=HVC-EKROM
+    chip type=MMC5A
+    prg
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    ジャストブリード
+    name:     Just Breed
+    region:   JP
+    revision: 1.0
+    board:    HVC-EKROM-01
+    serial:   EFC-I5
+    sha256:   f40341cf7e76480465ba8ab2d09e44644c3e3af7d647dc04c8b38357b26e014a
+    configuration
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x40000
 
 release
   cartridge region=NTSC
@@ -687,6 +791,47 @@ release
 
 release
   cartridge region=NTSC
+    board type=KONAMI-VRC-4
+    chip type=VRC4
+      pinout a0=2 a1=3
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    タイニートゥーンアドベンチャー
+    name:     Tiny Toon Adventures
+    region:   JP
+    revision: 1.0
+    board:    352396
+    serial:   KON-RC860
+    sha256:   4b80a1db42ecde039f01c52a74146887f9dfc2ad54fe3706bcdf625ec3e2de97
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=KONAMI-VRC-7
+    chip type=VRC7
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    タイニートゥーンアドベンチャー2 モンタナランドへようこそ
+    name:     Tiny Toon Adventures 2 - Montana Land e Youkoso
+    region:   JP
+    revision: 1.0
+    board:    353429
+    serial:   KON-RV051
+    sha256:   dabde0dbf12d01237350cf6ad6463ce79651ac1e80d57b7b3b55c1819e72fd8a
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=FDS
     prg
       rom name=program.rom size=0x2000
@@ -789,6 +934,28 @@ release
 
 release
   cartridge region=NTSC
+    board type=NES-TKROM
+    chip type=MMC3B
+    prg
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    Crystalis
+    name:     Crystalis
+    region:   NA
+    revision: 1.0
+    board:    NES-TKROM-01
+    serial:   NES-G0-USA
+    sha256:   5ad644d368f70b61700b74a1d04778888efcbbf98d5435d79f9fcefd23ac39c2
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=NES-CNROM
     mirror mode=vertical
     prg
@@ -848,6 +1015,26 @@ release
       rom name=program.rom size=0x40000
       ram name=save.ram size=0x2000
       ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-NROM-128
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x4000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    Donkey Kong
+    name:     Donkey Kong
+    region:   NA
+    revision: 1.0
+    board:    NES-NROM-128-01
+    serial:   NES-DK-USA
+    sha256:   aa408f5a6b97c0d738e7e8b489a5617ad4a9ecdee2b05c4ee504210ce31b2825
+    configuration
+      rom name=program.rom size=0x4000
+      rom name=character.rom size=0x2000
 
 release
   cartridge region=NTSC
@@ -1041,6 +1228,26 @@ release
     configuration
       rom name=program.rom size=0x20000
       ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-NROM-128
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x4000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    Excitebike
+    name:     Excitebike
+    region:   NA
+    revision: 1.0
+    board:    NES-NROM-128-04
+    serial:   NES-EB-USA
+    sha256:   e9f4c9d1b7c66c6af83f2db5d4f704cf5f4b3c86e26a49c05539237807d8875e
+    configuration
+      rom name=program.rom size=0x4000
+      rom name=character.rom size=0x2000
 
 release
   cartridge region=NTSC
@@ -1338,6 +1545,28 @@ release
 release
   cartridge region=NTSC
     board type=NES-TSROM
+    chip type=MMC3A
+    prg
+      rom name=program.rom size=0x20000
+      ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    Super Mario Bros. 2
+    name:     Super Mario Bros. 2
+    region:   NA
+    revision: 1.0
+    board:    NES-TSROM-01
+    serial:   NES-MW-USA
+    sha256:   cba920f9394733c82253685d7783f26a3033ba58a94623e9abf7892329b969b9
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=work.ram size=0x2000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=NES-TSROM
     chip type=MMC3B
     prg
       rom name=program.rom size=0x20000
@@ -1423,6 +1652,26 @@ release
     configuration
       rom name=program.rom size=0x8000
       rom name=character.rom size=0x4000
+
+release
+  cartridge region=NTSC
+    board type=NES-TLROM
+    chip type=MMC3B
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    Totally Rad
+    name:     Totally Rad
+    region:   NA
+    revision: 1.0
+    board:    NES-TLROM-03
+    serial:   NES-6T-USA
+    sha256:   0bd29c5b583570e195e05a4272e69b74257db1f4ff928d59c8eb1022bad871ce
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
 
 release
   cartridge region=NTSC
