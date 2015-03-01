@@ -4,6 +4,7 @@
 #include "irem-g101.cpp"
 #include "irem-h3001.cpp"
 #include "irem-holydiver.cpp"
+#include "irem-tam-s1.cpp"
 #include "jaleco-jf-0x.cpp"
 #include "jaleco-jf-16.cpp"
 #include "jaleco-jf-2x.cpp"
@@ -236,9 +237,8 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "IREM-HOLYDIVER"        ) return new IremHolyDiver(cartridge);
   if(type == "IREM-NROM-128"         ) return new NES_NROM(cartridge);
   if(type == "IREM-NROM-256"         ) return new NES_NROM(cartridge);
+  if(type == "IREM-TAM-S1"           ) return new IremTamS1(cartridge);
   if(type == "IREM-UNROM"            ) return new NES_UxROM(cartridge);
-  //TODO:
-  //IREM-TAM-S1 (iNES 097)
 
   if(type == "JALECO-JF-05") return new JalecoJF0x(cartridge);
   if(type == "JALECO-JF-06") return new JalecoJF0x(cartridge);

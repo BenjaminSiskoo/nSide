@@ -14,11 +14,15 @@ uint8 prg_read(unsigned addr) {
   if((addr & 0x8000) == 0x0000) return cpu.mdr();
   switch(settings.chip_type) {
   case 0:
-    if((addr & 0xc000) == 0x8000) return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
-    else                          return read(prgrom, (    0x0f << 14) | (addr & 0x3fff));
+    switch(addr & 0xc000) {
+    case 0x8000: return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
+    case 0xc000: return read(prgrom, (    0x0f << 14) | (addr & 0x3fff));
+    }
   case 1:
-    if((addr & 0xc000) == 0x8000) return read(prgrom, (    0x00 << 14) | (addr & 0x3fff));
-    else                          return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
+    switch(addr & 0xc000) {
+    case 0x8000: return read(prgrom, (    0x00 << 14) | (addr & 0x3fff));
+    case 0xc000: return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
+    }
   }
 }
 

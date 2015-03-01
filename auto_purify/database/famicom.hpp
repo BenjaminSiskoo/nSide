@@ -647,6 +647,25 @@ release
 
 release
   cartridge region=NTSC
+    board type=IREM-TAM-S1
+    prg
+      rom name=program.rom size=0x40000
+    chr
+      ram size=0x2000
+  information
+    title:    快傑ヤンチャ丸
+    name:     Kaiketsu Yanchamaru
+    region:   JP
+    revision: 1.0
+    board:    FC-00-003
+    serial:   IF-07
+    sha256:   ced7f840a0cae6fe82aca994858e3c407d2ff9b2396f0b43cdbaddc7e9f2bc1d
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
     board type=JALECO-JF-24
     chip type=SS88006
     prg
