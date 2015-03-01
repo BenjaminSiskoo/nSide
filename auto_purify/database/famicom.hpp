@@ -691,6 +691,27 @@ release
 
 release
   cartridge region=NTSC
+    board type=IREM-74*161/161/21/138
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x8000
+      ram size=0x2000
+  information
+    title:    ナポレオン戦記
+    name:     Napoleon Senki
+    region:   JP
+    revision: 1.0
+    board:    LROG017-00
+    serial:   IF-09
+    sha256:   83d326a461cca8dc539283dc8017985e9a6cd1893db4674de1a086c7cb8b0269
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x8000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
     board type=HVC-TLROM
     chip type=MMC3C
     prg

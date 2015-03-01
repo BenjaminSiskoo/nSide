@@ -1,5 +1,6 @@
 #include "bandai-74-161-161-32.cpp"
 #include "bandai-fcg.cpp"
+#include "irem-74-161-161-21-138.cpp"
 #include "irem-g101.cpp"
 #include "irem-h3001.cpp"
 #include "jaleco-jf-0x.cpp"
@@ -225,15 +226,15 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "BANDAI-NROM-256"     ) return new NES_NROM(cartridge);
   if(type == "BANDAI-PT-544"       ) return new NES_CxROM(cartridge);
 
-  if(type == "IREM-BNROM"   ) return new NES_BNROM(cartridge);
-  if(type == "IREM-FCG-1"   ) return new BandaiFCG(cartridge);
-  if(type == "IREM-G101"    ) return new IremG101(cartridge);
-  if(type == "IREM-H3001"   ) return new IremH3001(cartridge);
-  if(type == "IREM-NROM-128") return new NES_NROM(cartridge);
-  if(type == "IREM-NROM-256") return new NES_NROM(cartridge);
-  if(type == "IREM-UNROM"   ) return new NES_UxROM(cartridge);
+  if(type == "IREM-BNROM"            ) return new NES_BNROM(cartridge);
+  if(type == "IREM-FCG-1"            ) return new BandaiFCG(cartridge);
+  if(type == "IREM-G101"             ) return new IremG101(cartridge);
+  if(type == "IREM-H3001"            ) return new IremH3001(cartridge);
+  if(type == "IREM-NROM-128"         ) return new NES_NROM(cartridge);
+  if(type == "IREM-NROM-256"         ) return new NES_NROM(cartridge);
+  if(type == "IREM-UNROM"            ) return new NES_UxROM(cartridge);
+  if(type == "IREM-74*161/161/21/138") return new Irem74_161_161_21_138(cartridge);
   //TODO:
-  //IREM-74*161/161/21/138 (iNES 077)
   //IREM-HOLYDIVER (iNES 078)
   //IREM-TAM-S1 (iNES 097)
 
