@@ -562,6 +562,25 @@ release
 
 release
   cartridge region=NTSC
+    board type=IREM-HOLYDIVER
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    ホーリーダイヴァー
+    name:     Holy Diver
+    region:   JP
+    revision: 1.0
+    board:    UNK-IF-12
+    serial:   IF-12
+    sha256:   1c1ad2992f728c7fb6a8f3980b1a0f8e01e5b24a0c43c713300846d87be5987a
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=IREM-G101
     chip type=G-101
     prg
@@ -972,6 +991,25 @@ release
     board:    351618
     serial:   KON-RC841
     sha256:   092db8cfadf0a96c67dd0734c966c47dfb80ffb830485d8ee702284ae8eac4aa
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=JALECO-JF-16
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    宇宙船コスモキャリア
+    name:     Uchuusen - Cosmo Carrier
+    region:   JP
+    revision: 1.0
+    board:    JF-16
+    serial:   JF-16
+    sha256:   407e54848ad9991399f0383118f138d3a0532bb03bb488ed856deb7f2eb4efbf
     configuration
       rom name=program.rom size=0x20000
       rom name=character.rom size=0x20000
