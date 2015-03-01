@@ -542,6 +542,28 @@ release
 
 release
   cartridge region=NTSC
+    board type=IREM-G101
+    chip type=G-101
+    prg
+      rom name=program.rom size=0x20000
+      ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    イメージファイト
+    name:     Image Fight
+    region:   JP
+    revision: 1.0
+    board:    FC-00-015
+    serial:   IF-14
+    sha256:   c9707547555d8c38014540204649125f7b36d3990433bfebb63c49742e2dc3a2
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=work.ram size=0x2000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=JALECO-JF-27
     chip type=SS88006
     prg
@@ -600,6 +622,27 @@ release
     board:    JF-24A
     serial:   JF-30
     sha256:   497c3015516cb6ae2f20d70b8fb1b70b8c4cfcd64e118992c438cfe7b0579f2b
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=IREM-G101
+    chip type=G-101
+    mirror mode=screen-1
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    メジャーリーグ
+    name:     Major League
+    region:   JP
+    revision: 1.0
+    board:    UNK-IF-13
+    serial:   IF-13
+    sha256:   4ef61de405406bfa9eeaf19ed1d882444c41bb606ac78673b7ec8ee323d0e073
     configuration
       rom name=program.rom size=0x20000
       rom name=character.rom size=0x20000
@@ -682,6 +725,26 @@ release
     board:    JF-25
     serial:   JF-32
     sha256:   648cf7ac553517573cc9b3955ab50566a91974b2348154910bfa53ef15d55b56
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=IREM-G101
+    chip type=G-101
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    パーマン えんばんを とりかえせ!!
+    name:     Paaman - Enban o Torikaese!!
+    region:   JP
+    revision: 1.0
+    board:    FC-00-016
+    serial:   IF-20
+    sha256:   6d2887d978262401f315836411537a208272cba7721f598308d92983f1f5731a
     configuration
       rom name=program.rom size=0x20000
       rom name=character.rom size=0x20000

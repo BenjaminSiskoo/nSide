@@ -1,5 +1,6 @@
 #include "bandai-74-161-161-32.cpp"
 #include "bandai-fcg.cpp"
+#include "irem-g101.cpp"
 #include "jaleco-jf-0x.cpp"
 #include "jaleco-jf-2x.cpp"
 #include "konami-vrc1.cpp"
@@ -225,11 +226,11 @@ Board* Board::load(Markup::Node cartridge) {
 
   if(type == "IREM-BNROM"   ) return new NES_BNROM(cartridge);
   if(type == "IREM-FCG-1"   ) return new BandaiFCG(cartridge);
+  if(type == "IREM-G101"    ) return new IremG101(cartridge);
   if(type == "IREM-NROM-128") return new NES_NROM(cartridge);
   if(type == "IREM-NROM-256") return new NES_NROM(cartridge);
   if(type == "IREM-UNROM"   ) return new NES_UxROM(cartridge);
   //TODO:
-  //IREM-G101 (iNES 032)
   //IREM-H3001 (iNES 065)
   //IREM-74*161/161/21/138 (iNES 077)
   //IREM-HOLYDIVER (iNES 078)
