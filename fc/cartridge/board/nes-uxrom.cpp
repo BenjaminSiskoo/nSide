@@ -1,24 +1,35 @@
 //NES-UNROM
+//NES-UN1ROM
 //NES-UOROM
 
 struct NES_UxROM : Board {
 
+enum class Revision : unsigned {
+  UNROM,
+  UN1ROM,
+  UOROM,
+} revision;
+
+enum class ChipType : unsigned {
+  _7432,
+  _7408,
+} chip_type;
+
 struct Settings {
   bool mirror;    //0 = vertical, 1 = horizontal
-  bool chip_type; //0 = 74HC32, 1 = 74HC08
 } settings;
 
 uint4 prg_bank;
 
 uint8 prg_read(unsigned addr) {
   if((addr & 0x8000) == 0x0000) return cpu.mdr();
-  switch(settings.chip_type) {
-  case 0:
+  switch(chip_type) {
+  case ChipType::_7432:
     switch(addr & 0xc000) {
     case 0x8000: return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
     case 0xc000: return read(prgrom, (    0x0f << 14) | (addr & 0x3fff));
     }
-  case 1:
+  case ChipType::_7408:
     switch(addr & 0xc000) {
     case 0x8000: return read(prgrom, (    0x00 << 14) | (addr & 0x3fff));
     case 0xc000: return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
@@ -30,7 +41,8 @@ void prg_write(unsigned addr, uint8 data) {
   if(addr & 0x8000) {
     // Bus conflicts
     data &= prg_read(addr);
-    prg_bank = data & 0x0f;
+    if(revision != Revision::UN1ROM) prg_bank = data & 0x0f;
+    if(revision == Revision::UN1ROM) prg_bank = (data & 0x1c) >> 2;
   }
 }
 
@@ -65,7 +77,13 @@ void serialize(serializer& s) {
 
 NES_UxROM(Markup::Node& cartridge) : Board(cartridge) {
   settings.mirror = cartridge["mirror/mode"].data == "horizontal";
-  settings.chip_type = cartridge["chip/type"].data.match("74*08") ? 1 : 0;
+  string type = cartridge["board/type"].data;
+  if(type.match("*UNROM" )) revision = Revision::UNROM;
+  if(type.match("*UN1ROM")) revision = Revision::UN1ROM;
+  if(type.match("*UOROM" )) revision = Revision::UOROM;
+  type = cartridge["chip/type"].data;
+  if(type.match("74*32")) chip_type = ChipType::_7432;
+  if(type.match("74*08")) chip_type = ChipType::_7408;
 }
 
 };

@@ -648,6 +648,7 @@ release
 release
   cartridge region=NTSC
     board type=IREM-TAM-S1
+    chip type=TAM-S1
     prg
       rom name=program.rom size=0x40000
     chr
@@ -848,6 +849,27 @@ release
     configuration
       rom name=program.rom size=0x20000
       rom name=character.rom size=0x10000
+
+release
+  cartridge region=NTSC
+    board type=HVC-UN1ROM
+    chip type=74HC32
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      ram size=0x2000
+  information
+    title:    戦場の狼
+    name:     Senjou no Ookami
+    region:   JP
+    revision: 1.0
+    board:    HVC-UN1ROM-01
+    serial:   CAP-SJ
+    sha256:   dbc22a40e8a79c5ccf1d6e5126c9b10bb3d9b3e708fe5316c298c3d03dbc7977
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=character.ram size=0x2000
 
 release
   cartridge region=NTSC

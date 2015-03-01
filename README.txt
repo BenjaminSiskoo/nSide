@@ -1,4 +1,4 @@
-﻿nSide v008 (2015-01-31)
+﻿nSide v009 (2015-03-01)
 
 A fork of higan v094r08 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
@@ -12,8 +12,8 @@ nSide adds new devices to the Famicom emulator's controller ports. The supported
 devices are:
 *Standard controller
 *Four Score
-*Zapper
-*Power Pad
+*Zapper (port 2 only)
+*Power Pad (port 2 only)
 
 In addition, it adds the Famicom expansion port for its own devices. The only
 expansion port devices supported are:
@@ -41,18 +41,131 @@ nSide uses different directories for storing configuration settings, save
 states, and shaders so as to not conflict with higan.
 In Windows, the configuration files are in "%AppData%\nSide".
 
+You will need the GBA BIOS to play Game Boy Advance games. This is no different
+from higan.
+
+GBA BIOS
+sha256: fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570
+
+In addition, the PlayChoice-10 takes 3 files:
+
+BIOS for dual-screen
+sha256: 12200cee0965b871d2a47ac09ef563214d1b1a8355beda8bd477e21a561682e8
+
+BIOS for single-screen
+sha256: 64c1a7debf4729941c60e4c722ed61282ebd2f36928a30e55c9631477ce522ac
+
+Composite character ROM (3 files 8P + 8M + 8K put together for a 24KB ROM)
+sha256: a8bf9c58e31dee0a60a2d480bd707c323212fba8963cc35a47423cadd1d7ed26
+
+Composite palette ROM (3 files 6F + 6E + 6D put together—each byte is the
+corresponding nybble with a leading 0—for a 768-byte ROM)
+sha256: 9f639da2e0248431b59a9344769a38fad8b64742ce6e0e44534e6918b8977a0a)
+
+...but if you do not wish to emulate the Game Boy Advance or PlayChoice-10, none
+of these files are necessary. Keep in mind that PlayChoice-10 emulation is still
+incomplete, so these files will not be very useful right now.
+
 Known Bugs:
 Famicom:
   *Saving a state while the Zapper or Beam Gun is connected will cause the
   emulator to hang. If the cursor was captured, it can be hard to rescue.
-  *VS. Duck Hunt's music will play 2 notes, then glitch and produce an
-  unpleasant noise from the square channels. This is an intentional game feature
-  to warn the operator that the Zapper has been disconnected. The VS. Zapper
-  with its own separate protocol is not supported yet.
+  *The VS. Zapper with its own separate protocol is badly supported (timing of
+  light sensor is not well understood).
 Super Famicom:
   *Magical Drop (JP) (1.0) does not play voice effects, and it hangs when trying
   to show the Game Over screen in Endless Mode (とことんモード).
   Inherited from higan v094.
+  *Super Bonk's demo sequence is mis-timed. Bonk falls short of entering a pipe,
+  which ruins the rest of the demo as he continues reading inputs and gets stuck
+  in the area above the pipe. It is likely that this bug is related to the
+  Magical Drop bug above.
+  Inherited from higan v094.
+
+=========================
+Changes in v009: nSide-fc
+=========================
+./fc/fc.hpp
+   Changed the serializer version from 127 to 0. That serializer version was a
+  holdover from before this fork was renamed to "nSide" to prevent bnes save
+  states from loading. Because nSide's save states are stored in a separate
+  folder from higan's save states, keeping serializer versions synchronized is
+  not necessary. From now on, if a major release changes the serialization data,
+  the serializer version will increment.
+
+./fc/memory/memory.cpp
+./fc/memory/memory.hpp
+./fc/memory/memory-inline.hpp
+./fc/interface/interface.cpp
+./fc/cartridge/*
+   Imported bsnes's Memory struct with StaticRAM and MappedRAM sub-structs and
+  replaced all references to Board::Memory with references to MappedRAM,
+  removing Board::Memory in the process. With this change, the Famicom
+  emulator's structure is further modernized towards bsnes's standard.
+  Board::Memory was causing a crash when more of them were added for the
+  PlayChoice-10's instruction and key ROMs.
+
+./fc/cartridge/board/board.cpp
+./fc/cartridge/board/bandai-74-161-161-32.cpp
+./fc/cartridge/board/jaleco-jf-0x.cpp
+./fc/cartridge/board/jaleco-jf-2x.cpp
+   Added support for the following boards:
+    HVC-UN1ROM             // 戦場の狼 (Senjou no Ookami) (JP)
+    BANDAI-74*161/161/32   // Kamen Rider Club (JP)
+    IREM-74*161/161/21/138 // ナポレオン戦記 (Napoleon Senki) (JP)
+    IREM-G101              // Image Fight (JP)
+    IREM-H3001             // 大工の源さん2 (Daiku no Gen-san 2) (JP)
+    IREM-HOLYDIVER         // Holy Diver (JP)
+    IREM-TAM-S1            // 快傑ヤンチャ丸 (Kaiketsu Yanchamaru 2) (JP)
+    JALECO-JF-05..08       // 忍者じゃじゃ丸くん (Ninja Jajamaru-kun) (JP)
+    JALECO-JF-09           // じゃじゃ丸の大冒険 (Jajamaru no Daibouken) (JP)
+    JALECO-JF-10           // うる生やつら ルムのウエヂングベル (Urusei Yatsura) (JP)
+    JALECO-JF-11           // 妖怪倶楽部 (Youkai Club) (JP)
+    JALECO-JF-14           // バイオ戦士DAN インクリーサーとの闘い (Bio Senshi DAN) (JP)
+    JALECO-JF-16           // 宇宙船コスモキャリア (Uchuusen: Cosmo Carrier) (JP)
+    JALECO-JF-24           // Magic John (JP)
+    JALECO-JF-25           // 忍者じゃじゃ丸 銀河大作戦 (Ninja Jajamaru G.D.) (JP)
+
+./fc/arcade/pc10/pc10.cpp
+./fc/arcade/pc10/pc10.hpp
+./fc/ppu/ppu.cpp
+./fc/ppu/ppu.hpp
+./fc/video/video.cpp
+   Added emulation of PPU open bus behavior according to the notes blargg wrote
+  when he published his ppu_open_bus demo. ppu.status.mdr will decay to 0x00 if
+  not refreshed after about 600 milliseconds, and reading from the palette will
+  put the 2 highest MDR bits into the read value.
+   The PAL PPU swaps the red and green color emphasis bits.
+   Changed PPU timing to account for the dummy tick in front of every scanline.
+  bnes had pixel rendering on ticks 0-255 of every scanline, whereas an actual
+  PPU renders on ticks 1-256.
+   Prepared the video renderer for dynamic adjustment of screen width for
+  VS. DualSystem and PlayChoice-10 games. To set the width to 512 pixels for a
+  VS. DualSystem game, add a second "vs" node with a "ppu" child. It is not
+  enough to simply have a 2nd "vs" node, said node needs to have a "ppu" node as
+  a child to activate the double width. This is currently not useful because of
+  lack of true DualSystem support. The height is set to 480 if using the
+  PlayChoice-10's dual screen mode (set in PlayChoice-10.sys/manifest.bml), and,
+  as a basic demonstration of the horrid frame-based renderer, it will display
+  the PlayChoice-10 logo at the top as you play.
+
+./fc/cartridge/chip/mmc3.cpp
+   Made the MMC3 read the PPU's address bus (status.chr_abus) instead of ticking
+  on every CHR ROM/RAM read.
+   Added support for Acclaim's MC-ACC chip, which fires IRQs on PPU A12 falling
+  edges instead of rising edges. Needed to properly display The Incredible Crash
+  Dummies's messages during its intro.
+
+==========================
+Changes in v009: nSide-gba
+==========================
+./gba/gba.hpp
+./gba/alt/cpu/*
+   Added an alternate CPU that ignores ROM read delays. This alternate CPU will
+  be selected when using the balanced or performance profiles, and the main CPU
+  will be used in the accuracy profile.
+  This change is not ideal, and it only exists as a work-around for the lack of
+  documentation on ROM prefetch.
 
 =========================
 Changes in v008: nSide-fc
@@ -83,17 +196,6 @@ Changes in v008: nSide-fc
 ./fc/controller/vsbeamgun/vsbeamgun.hpp
 ./fc/system/input.cpp
    Consolidated the VS. Zapper's unique protocol into the main Beam Gun class.
-
-==========================
-Changes in v008: nSide-gba
-==========================
-./gba/gba.hpp
-./gba/alt/cpu/*
-   Added an alternate CPU that ignores ROM read delays. This alternate CPU will
-  be selected when using the balanced or performance profiles, and the main CPU
-  will be used in the accuracy profile.
-  This change is not ideal, and it only exists as a work-around for the lack of
-  documentation on ROM prefetch.
 
 ========================
 Changes in v007: General

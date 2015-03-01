@@ -7,7 +7,10 @@
 namespace Famicom {
   namespace Info {
     static const char Name[] = "nSide-fc";
-    static const unsigned SerializerVersion = 127;
+    // If you import nSide's changes into another fork of higan, please do not
+    // import the serializer version unless you intend to import all of nSide-fc
+    // simultaneously.
+    static const unsigned SerializerVersion = 0;
   }
 }
 

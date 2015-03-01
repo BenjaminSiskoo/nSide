@@ -4,7 +4,7 @@
 namespace Emulator {
   static const char Name[] = "nSide";
   static const char OriginalName[] = "higan";
-  static const char Version[] = "008";
+  static const char Version[] = "009";
   static const char FromVersion[] = "094.08";
   static const char Author[] = "byuu";
   static const char Contributors[] = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, hex_usr, and more...";

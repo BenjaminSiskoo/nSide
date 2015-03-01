@@ -206,6 +206,7 @@ Board* Board::load(Markup::Node cartridge) {
     if(type == "TVROM"   ) return new NES_TxROM(cartridge);
 
     if(type == "UNROM"   ) return new NES_UxROM(cartridge);
+    if(type == "UN1ROM"  ) return new NES_UxROM(cartridge);
     if(type == "UOROM"   ) return new NES_UxROM(cartridge);
   }
 
