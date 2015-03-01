@@ -1,5 +1,6 @@
 #include "fcg.cpp"
 #include "g101.cpp"
+#include "ifh3001.cpp"
 #include "mmc1.cpp"
 #include "mmc3.cpp"
 #include "mmc5.cpp"

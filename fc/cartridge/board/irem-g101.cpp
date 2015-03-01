@@ -27,7 +27,11 @@ uint8 chr_read(unsigned addr) {
 }
 
 void chr_write(unsigned addr, uint8 data) {
-  if(addr & 0x2000) return ppu.ciram_write(g101.ciram_addr(addr), data);
+  if(addr & 0x2000) switch(settings.mirror) {
+  case 0: return ppu.ciram_write(g101.ciram_addr(addr), data);
+  case 1: return ppu.ciram_write((addr & 0x03ff) | 0x0400, data);
+  case 2: return ppu.ciram_write((addr & 0x03ff) | 0x0800, data);
+  }
   return Board::chr_write(g101.chr_addr(addr), data);
 }
 

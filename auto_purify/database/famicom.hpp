@@ -190,6 +190,26 @@ release
 
 release
   cartridge region=NTSC
+    board type=IREM-H3001
+    chip type=IF-H3001
+    prg
+      rom name=program.rom size=0x40000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    大工の源さん2 赤毛のダンの逆襲
+    name:     Daiku no Gen-san 2 - Akage no Dan no Gyakushuu
+    region:   JP
+    revision: 1.0
+    board:    FC-00-017C
+    serial:   IF-29
+    sha256:   a1d9bcf389d6837581cd33a26b4e13917d084e3e69dbe89453e443fc9976fa22
+    configuration
+      rom name=program.rom size=0x40000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=NTSC
     board type=NAMCOT-3453
     chip type=118
     prg
