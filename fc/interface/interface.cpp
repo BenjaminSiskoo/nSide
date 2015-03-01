@@ -43,8 +43,8 @@ unsigned Interface::group(unsigned id) {
   case ID::CharacterRAM:
     switch(system.revision) {
     case System::Revision::Famicom:      return ID::Famicom;
-    case System::Revision::PlayChoice10: return ID::PlayChoice10;
     case System::Revision::VSSystem:     return ID::VSSystem;
+    case System::Revision::PlayChoice10: return ID::PlayChoice10;
     }
   case ID::InstructionROM:
   case ID::KeyROM:
@@ -55,12 +55,12 @@ unsigned Interface::group(unsigned id) {
 }
 
 void Interface::load(unsigned id) {
-  information.width = 256;
+  information.width  = 256;
   information.height = 240;
   switch(id) {
   case ID::Famicom:      cartridge.load(System::Revision::Famicom);      break;
-  case ID::PlayChoice10: cartridge.load(System::Revision::PlayChoice10); break;
   case ID::VSSystem:     cartridge.load(System::Revision::VSSystem);     break;
+  case ID::PlayChoice10: cartridge.load(System::Revision::PlayChoice10); break;
   }
 }
 
@@ -185,8 +185,8 @@ Interface::Interface() {
   information.capability.cheats = true;
 
   media.append({ID::Famicom,      "Famicom",       "fc",   true});
-  media.append({ID::PlayChoice10, "PlayChoice-10", "pc10", true});
   media.append({ID::VSSystem,     "VS. System",    "vs",   true});
+  media.append({ID::PlayChoice10, "PlayChoice-10", "pc10", true});
 
   port.append({0, "Port 1"});
   port.append({1, "Port 2"});

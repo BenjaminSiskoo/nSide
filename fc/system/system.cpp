@@ -61,8 +61,8 @@ void System::runthreadtosave() {
 void System::init() {
   assert(interface != nullptr);
 
-  pc10arcadeboard.init();
   vsarcadeboard.init();
+  pc10arcadeboard.init();
 
   video.init();
 
@@ -116,13 +116,13 @@ void System::load(Revision revision) {
   switch(revision) {
   case Revision::Famicom:
     break;
-  case Revision::PlayChoice10:
-    interface->information.height = min(max(document["system/pc10/screen/mode"].integer(), 1), 2) * 240;
-    pc10arcadeboard.load();
-    break;
   case Revision::VSSystem:
     vsarcadeboard.load();
     input.connect(2, Input::Device::VSPanel);
+    break;
+  case Revision::PlayChoice10:
+    interface->information.height = min(max(document["system/pc10/screen/mode"].integer(), 1), 2) * 240;
+    pc10arcadeboard.load();
     break;
   }
 
@@ -131,8 +131,8 @@ void System::load(Revision revision) {
 
 void System::unload() {
   switch(revision) {
-  case Revision::PlayChoice10: pc10arcadeboard.unload(); break;
   case Revision::VSSystem: vsarcadeboard.unload(); break;
+  case Revision::PlayChoice10: pc10arcadeboard.unload(); break;
   }
 }
 
@@ -143,8 +143,8 @@ void System::power() {
   ppu.power();
 
   switch(revision) {
-  case Revision::PlayChoice10: pc10arcadeboard.power(); break;
   case Revision::VSSystem: vsarcadeboard.power(); break;
+  case Revision::PlayChoice10: pc10arcadeboard.power(); break;
   }
 
   ppu.reset();
@@ -160,8 +160,8 @@ void System::reset() {
   //ppu.reset();
 
   switch(revision) {
-  case Revision::PlayChoice10: pc10arcadeboard.reset(); break;
   case Revision::VSSystem: vsarcadeboard.reset(); break;
+  case Revision::PlayChoice10: pc10arcadeboard.reset(); break;
   }
 
   scheduler.init();

@@ -178,9 +178,24 @@ void Video::update() {
     BeamGun &device = (BeamGun&)*input.expansion;
     draw_cursor(0x2d, device.x, device.y);
   }
-  if(system.pc10()) return update_pc10();
   if(system.vs()) return update_vs();
+  if(system.pc10()) return update_pc10();
   interface->videoRefresh(video.palette, ppu.output, 4 * 256, 256, 240);
+}
+
+void Video::update_vs() {
+  if(interface->information.width == 256) {
+    interface->videoRefresh(video.palette, ppu.output, 4 * 256, 256, 240);
+  } else if(interface->information.width == 512) {
+    uint32 buffer[512 * 240];
+    for(unsigned y = 0; y < 240; y++) {
+      for(unsigned x = 0; x < 256; x++) {
+        buffer[y * 512 + x] = ppu.output[y * 256 + x];
+        buffer[y * 512 + x + 256] = 0;
+      }
+    }
+    interface->videoRefresh(video.palette, buffer, 4 * 512, 512, 240);
+  }
 }
 
 void Video::update_pc10() {
@@ -202,21 +217,6 @@ void Video::update_pc10() {
       }
     }
     interface->videoRefresh(video.palette, buffer, 4 * 256, 256, 480);
-  }
-}
-
-void Video::update_vs() {
-  if(interface->information.width == 256) {
-    interface->videoRefresh(video.palette, ppu.output, 4 * 256, 256, 240);
-  } else if(interface->information.width == 512) {
-    uint32 buffer[512 * 240];
-    for(unsigned y = 0; y < 240; y++) {
-      for(unsigned x = 0; x < 256; x++) {
-        buffer[y * 512 + x] = ppu.output[y * 256 + x];
-        buffer[y * 512 + x + 256] = 0;
-      }
-    }
-    interface->videoRefresh(video.palette, buffer, 4 * 512, 512, 240);
   }
 }
 

@@ -9,8 +9,8 @@ struct System : property<System> {
   } revision;
 
   inline bool fc()   const { return revision == Revision::Famicom; }
-  inline bool pc10() const { return revision == Revision::PlayChoice10; }
   inline bool vs()   const { return revision == Revision::VSSystem; }
+  inline bool pc10() const { return revision == Revision::PlayChoice10; }
 
   void run();
   void runtosave();
