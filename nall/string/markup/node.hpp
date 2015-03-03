@@ -94,8 +94,8 @@ struct Node {
       lstring side = name.split<1>("[");
       name = side(0);
       side = side(1).rtrim<1>("]").split<1>("-");
-      lo = side(0).empty() ?  0u : numeral(side(0));
-      hi = side(1).empty() ? ~0u : numeral(side(1));
+      lo = side(0).empty() ? 0u : numeral(side(0));
+      hi = side(1).empty() ? lo : numeral(side(1));
     }
 
     if(name.match("*(*)")) {

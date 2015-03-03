@@ -9,11 +9,11 @@ void Cartridge::parse_markup(const char* markup) {
 
   if(system.revision == System::Revision::VSSystem) {
     unsigned ppus = 0;
-    if(document["cartridge/vs[0]"]["ppu"].exists()) {
+    if(document["cartridge/vs[0]/ppu"].exists()) {
       cartridge = cartridge["vs[0]"];
       ppus++;
     }
-    if(document["cartridge/vs[1]"]["ppu"].exists()) {
+    if(document["cartridge/vs[1]/ppu"].exists()) {
       if(ppus == 0) cartridge = cartridge["vs[1]"];
       ppus++;
     }
