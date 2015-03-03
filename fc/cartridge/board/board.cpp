@@ -194,6 +194,7 @@ Board* Board::load(Markup::Node cartridge) {
     if(type == "TFROM"   ) return new NES_TxROM(cartridge);
     if(type == "TGROM"   ) return new NES_TxROM(cartridge);
     if(type == "TKROM"   ) return new NES_TxROM(cartridge);
+    if(type == "TKEPROM" ) return new NES_TxROM(cartridge);
     if(type == "TKSROM"  ) return new NES_TxROM(cartridge);
     if(type == "TLROM"   ) return new NES_TxROM(cartridge);
     if(type == "TL1ROM"  ) return new NES_TxROM(cartridge);
@@ -212,11 +213,6 @@ Board* Board::load(Markup::Node cartridge) {
 
   if(type == "ACCLAIM-MC-ACC") return new NES_TxROM(cartridge);
 
-  if(type == "AVE-NINA-01") return new Nina(cartridge);
-  if(type == "AVE-NINA-02") return new Nina(cartridge);
-  if(type == "AVE-NINA-03") return new Nina(cartridge);
-  if(type == "AVE-NINA-06") return new Nina(cartridge);
-
   if(type == "BANDAI-74*161/32"    ) return new NES_CxROM(cartridge);
   if(type == "BANDAI-74*161/161/32") return new Bandai74_161_161_32(cartridge);
   if(type == "BANDAI-CNROM"        ) return new NES_CxROM(cartridge);
@@ -228,7 +224,7 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "BANDAI-LZ93D50"      ) return new BandaiFCG(cartridge);
   if(type == "BANDAI-NROM-128"     ) return new NES_NROM(cartridge);
   if(type == "BANDAI-NROM-256"     ) return new NES_NROM(cartridge);
-  if(type == "BANDAI-PT-544"       ) return new NES_CxROM(cartridge);
+  if(type == "BANDAI-PT-554"       ) return new NES_CxROM(cartridge);
 
   if(type == "IREM-74*161/161/21/138") return new Irem74_161_161_21_138(cartridge);
   if(type == "IREM-BNROM"            ) return new NES_BNROM(cartridge);
@@ -294,6 +290,10 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "VS" ) return new VS(cartridge);
 
   // Unlicensed boards below; feel free to remove
+  if(type == "AVE-NINA-01"       ) return new Nina(cartridge);
+  if(type == "AVE-NINA-02"       ) return new Nina(cartridge);
+  if(type == "AVE-NINA-03"       ) return new Nina(cartridge);
+  if(type == "AVE-NINA-06"       ) return new Nina(cartridge);
   if(type == "CAMERICA-ALGN"     ) return new Camerica(cartridge);
   if(type == "CAMERICA-ALGQ"     ) return new Camerica(cartridge);
   if(type == "CAMERICA-BF9093"   ) return new Camerica(cartridge);

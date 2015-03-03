@@ -6,6 +6,7 @@ enum class Revision : unsigned {
   TFROM,
   TGROM,
   TKROM,
+  TKEPROM,
   TKSROM,
   TLROM,
   TL1ROM,
@@ -85,22 +86,23 @@ void serialize(serializer& s) {
 
 NES_TxROM(Markup::Node& cartridge) : Board(cartridge), mmc3(*this, cartridge) {
   string type = cartridge["board/type"].data;
-  if(type.match("*TBROM*" )) revision = Revision::TBROM;
-  if(type.match("*TEROM*" )) revision = Revision::TEROM;
-  if(type.match("*TFROM*" )) revision = Revision::TFROM;
-  if(type.match("*TGROM*" )) revision = Revision::TGROM;
-  if(type.match("*TKROM*" )) revision = Revision::TKROM;
-  if(type.match("*TKSROM*")) revision = Revision::TKSROM;
-  if(type.match("*TLROM*" )) revision = Revision::TLROM;
-  if(type.match("*TL1ROM*")) revision = Revision::TL1ROM;
-  if(type.match("*TL2ROM*")) revision = Revision::TL2ROM;
-  if(type.match("*TLSROM*")) revision = Revision::TLSROM;
-  if(type.match("*TNROM*" )) revision = Revision::TNROM;
-  if(type.match("*TQROM*" )) revision = Revision::TQROM;
-  if(type.match("*TR1ROM*")) revision = Revision::TR1ROM;
-  if(type.match("*TSROM*" )) revision = Revision::TSROM;
-  if(type.match("*TVROM*" )) revision = Revision::TVROM;
-  if(type.match("*MC-ACC*")) revision = Revision::MCACC;
+  if(type.match("*TBROM"  )) revision = Revision::TBROM;
+  if(type.match("*TEROM"  )) revision = Revision::TEROM;
+  if(type.match("*TFROM"  )) revision = Revision::TFROM;
+  if(type.match("*TGROM"  )) revision = Revision::TGROM;
+  if(type.match("*TKROM"  )) revision = Revision::TKROM;
+  if(type.match("*TKEPROM")) revision = Revision::TKEPROM;
+  if(type.match("*TKSROM" )) revision = Revision::TKSROM;
+  if(type.match("*TLROM"  )) revision = Revision::TLROM;
+  if(type.match("*TL1ROM" )) revision = Revision::TL1ROM;
+  if(type.match("*TL2ROM" )) revision = Revision::TL2ROM;
+  if(type.match("*TLSROM" )) revision = Revision::TLSROM;
+  if(type.match("*TNROM"  )) revision = Revision::TNROM;
+  if(type.match("*TQROM"  )) revision = Revision::TQROM;
+  if(type.match("*TR1ROM" )) revision = Revision::TR1ROM;
+  if(type.match("*TSROM"  )) revision = Revision::TSROM;
+  if(type.match("*TVROM"  )) revision = Revision::TVROM;
+  if(type.match("*MC-ACC" )) revision = Revision::MCACC;
 }
 
 };

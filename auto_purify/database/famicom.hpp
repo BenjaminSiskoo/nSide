@@ -374,6 +374,26 @@ release
 
 release
   cartridge region=NTSC
+    board type=BANDAI-PT-554
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x8000
+  information
+    title:    ファミリートレーナー3 エアロビスタジオ
+    name:     Family Trainer 3 - Aerobics Studio
+    region:   JP
+    revision: 1.0
+    board:    BA-エアロビ
+    serial:   FT-03
+    sha256:   27c6e9bf1de790ce831a4e9211c897fab813b2f4447a897efaad905f2488d761
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x8000
+
+release
+  cartridge region=NTSC
     board type=HVC-SNROM
     chip type=MMC1A
     prg
@@ -664,6 +684,26 @@ release
     configuration
       rom name=program.rom size=0x40000
       ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=HVC-NROM-256
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    マッハライダー
+    name:     Mach Rider
+    region:   JP
+    revision: 1.1
+    board:    3I
+    serial:   HVC-MR
+    sha256:   944105c6dcc57314968d53a2e0dcdfc0e2b60678a53839ba25925416a7ac0e8c
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x2000
 
 release
   cartridge region=NTSC
@@ -1539,6 +1579,72 @@ release
 
 release
   cartridge region=NTSC
+    board type=NES-TKROM
+    chip type=MMC3C
+    prg
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    Kirby's Adventure
+    name:     Kirby's Adventure
+    region:   NA
+    revision: 1.0
+    board:    NES-TKROM-10
+    serial:   NES-KR-USA
+    sha256:   a6b81fec11c24a33fd763db5c28005e760a1614e70c1bb5ccde0bd4242431000
+    configuration
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=NTSC
+    board type=NES-TKROM
+    chip type=MMC3C
+    prg
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    Kirby's Adventure
+    name:     Kirby's Adventure
+    region:   NA
+    revision: 1.1
+    board:    NES-TKROM-10
+    serial:   NES-KR-USA
+    sha256:   1250a80faf865aa5ee5585ad7639e5ef2b3fa541554effda5fad2cc5dc2acef5
+    configuration
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=NTSC
+    board type=NES-TKROM
+    chip type=MMC3C
+    prg
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    Kirby's Adventure
+    name:     Kirby's Adventure
+    region:   QC
+    revision: 1.0
+    board:    NES-TKROM-10
+    serial:   NES-K5-CAN
+    sha256:   24fca0fe86464c807ab5d58a2d56155a3fa1994e9bd78d119e3f8f84c8aee785
+    configuration
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=NTSC
     board type=NES-SNROM
     chip type=MMC1A
     prg
@@ -1600,6 +1706,67 @@ release
     configuration
       rom name=program.rom size=0x40000
       rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=NES-NROM-256
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    Mach Rider
+    name:     Mach Rider
+    region:   NA
+    revision: 1.0
+    board:    NES-NROM-256-05
+    serial:   NES-MR-USA
+    sha256:   ef238662a27934d6dbe1692e822786a74a9a2c8bc58c38aa0fd5cfb3e2f1abce
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-NROM-256
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    Mach Rider
+    name:     Mach Rider
+    region:   NA
+    revision: 1.1
+    board:    NES-NROM-256-02
+    serial:   NES-MR-CAN
+    sha256:   944105c6dcc57314968d53a2e0dcdfc0e2b60678a53839ba25925416a7ac0e8c
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-NROM-128
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x4000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    Mario Bros.
+    name:     Mario Bros.
+    region:   NA
+    revision: 1.0
+    board:    NES-NROM-128-06
+    serial:   NES-MA-USA
+    serial:   NES-MA-CAN
+    sha256:   0cc334007d3eae698cdcd034d12ec9bab2b5266e85bc703cf24ccb4e2d63b654
+    configuration
+      rom name=program.rom size=0x4000
+      rom name=character.rom size=0x2000
 
 release
   cartridge region=NTSC
