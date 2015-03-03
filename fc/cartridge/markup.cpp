@@ -8,7 +8,15 @@ void Cartridge::parse_markup(const char* markup) {
   region = cartridge["region"].data != "PAL" ? Region::NTSC : Region::PAL;
 
   if(system.revision == System::Revision::VSSystem) {
-    cartridge = cartridge["vs[0]"];
+    unsigned ppus = 0;
+    if(document["cartridge/vs[0]"]["ppu"].exists()) {
+      cartridge = cartridge["vs[0]"];
+      ppus++;
+    }
+    if(document["cartridge/vs[1]"]["ppu"].exists()) {
+      if(ppus == 0) cartridge = cartridge["vs[1]"];
+      ppus++;
+    }
     vsarcadeboard.swap_controllers = cartridge["controller[0]/port"].integer() == 2;
     string device1 = cartridge["controller(port=1)/device"].text();
     string device2 = cartridge["controller(port=2)/device"].text();
@@ -42,8 +50,7 @@ void Cartridge::parse_markup(const char* markup) {
     if(ppu_revision == "RC2C05-04")   ppu.revision = PPU::Revision::RC2C05_04;
     if(ppu_revision == "RC2C05-05")   ppu.revision = PPU::Revision::RC2C05_05;
 
-    if(document["cartridge/vs[1]/ppu"].exists()) 
-      interface->information.width = 512;
+    if(ppus == 2) interface->information.width = 512;
   }
   Board::load(document["cartridge"]);  //this call will set Cartridge::board if successful
   parse_markup_cartridge(cartridge);
