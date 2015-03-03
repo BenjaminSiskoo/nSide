@@ -96,8 +96,10 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
     break;
 
   case   2:
+  case  94:
   case 180:
-    if(prgrom <= 131072) markup.append("  board type=NES-UNROM\n");
+         if(mapper == 94)     markup.append("  board type=HVC-UN1ROM\n");
+    else if(prgrom <= 131072) markup.append("  board type=NES-UNROM\n");
     else                 markup.append("  board type=NES-UOROM\n");
     markup.append("  chip type=74HC", mapper != 180 ? "32" : "08", "\n");
     markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
@@ -230,9 +232,20 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
     if(!nes2 && !prgram) prgram = 8192;
     break;
 
+  case  32:
+    markup.append("  board type=IREM-G101\n");
+    markup.append("  chip type=G-101\n");
+    if(submapper == 1) markup.append("  mirror mode=screen-1\n");
+    break;
+
   case  34:
     markup.append("  board type=NES-BNROM\n");
     markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
+    break;
+
+  case  65:
+    markup.append("  board type=IREM-H3001\n");
+    markup.append("  chip type=IF-H3001\n");
     break;
 
   case  66:
@@ -263,6 +276,16 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
     markup.append("  chip type=VRC1\n");
     break;
 
+  case  77:
+    markup.append("  board type=IREM-74*161/161/21/138\n");
+    break;
+
+  case  78:
+    markup.append("  board type=",
+      submapper != 3 ? "JALECO-JF-16" : "IREM-HOLYDIVER",
+    "\n");
+    break;
+
   case  85:
     markup.append("  board type=KONAMI-VRC-7\n");
     markup.append("  chip type=VRC7\n");
@@ -278,6 +301,11 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
   case  87:
     markup.append("  board type=JALECO-JF-09\n");
     markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
+    break;
+
+  case  97:
+    markup.append("  board type=IREM-TAM-S1\n");
+    markup.append("  chip type=TAM-S1\n");
     break;
 
   case 140:
