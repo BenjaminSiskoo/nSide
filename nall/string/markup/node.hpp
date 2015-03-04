@@ -91,11 +91,15 @@ struct Node {
     unsigned lo = 0u, hi = ~0u;
 
     if(name.match("*[*]")) {
-      lstring side = name.split<1>("[");
+      lstring side = name.rtrim<1>("]").split<1>("[");
       name = side(0);
-      side = side(1).rtrim<1>("]").split<1>("-");
-      lo = side(0).empty() ? 0u : numeral(side(0));
-      hi = side(1).empty() ? lo : numeral(side(1));
+      if(side(1).match("*-*")) {
+        side = side(1).split<1>("-");
+        lo = side(0).empty() ?  0u : numeral(side(0));
+        hi = side(1).empty() ? ~0u : numeral(side(1));
+      } else {
+        lo = hi = numeral(side(1));
+      }
     }
 
     if(name.match("*(*)")) {
