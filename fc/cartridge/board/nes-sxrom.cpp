@@ -43,7 +43,7 @@ unsigned ram_addr(unsigned addr) {
 uint8 prg_read(unsigned addr) {
   if((addr & 0xe000) == 0x6000) {
     if(revision == Revision::SNROM) {
-      if(mmc1.chr_bank[(ppu.status.chr_abus >> 12) & 1] & 0x10) return cpu.mdr();
+      if((mmc1.chr_addr(ppu.status.chr_abus) >> 16) & 1) return cpu.mdr();
     }
     if(mmc1.ram_disable) return 0x00;
     if(prgram.size() > 0) return read(prgram, ram_addr(addr));
@@ -58,7 +58,7 @@ uint8 prg_read(unsigned addr) {
     default:
       addr = mmc1.prg_addr(addr);
       if(revision == Revision::SUROM || revision == Revision::SXROM) {
-        addr |= ((mmc1.chr_bank[(ppu.status.chr_abus >> 12) & 1] & 0x10) >> 4) << 18;
+        addr |= ((mmc1.chr_addr(ppu.status.chr_abus) >> 16) & 1) << 18;
       }
       break;
     }
