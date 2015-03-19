@@ -7,6 +7,7 @@ enum class Revision : unsigned {
   SC1ROM,
   SEROM,
   SFROM,
+  SF1ROM,
   SFEXPROM,
   SGROM,
   SHROM,
@@ -105,30 +106,31 @@ void serialize(serializer& s) {
 
 NES_SxROM(Markup::Node& cartridge) : Board(cartridge), mmc1(*this, cartridge) {
   string type = cartridge["board/type"].data;
-  if(type.match("*SAROM*"   )) revision = Revision::SAROM;
-  if(type.match("*SBROM*"   )) revision = Revision::SBROM;
-  if(type.match("*SCROM*"   )) revision = Revision::SCROM;
-  if(type.match("*SC1ROM*"  )) revision = Revision::SC1ROM;
-  if(type.match("*SEROM*"   )) revision = Revision::SEROM;
-  if(type.match("*SFROM*"   )) revision = Revision::SFROM;
-  if(type.match("*SFEXPROM*")) revision = Revision::SFEXPROM;
-  if(type.match("*SGROM*"   )) revision = Revision::SGROM;
-  if(type.match("*SHROM*"   )) revision = Revision::SHROM;
-  if(type.match("*SH1ROM*"  )) revision = Revision::SH1ROM;
-  if(type.match("*SIROM*"   )) revision = Revision::SIROM;
-  if(type.match("*SJROM*"   )) revision = Revision::SJROM;
-  if(type.match("*SKROM*"   )) revision = Revision::SKROM;
-  if(type.match("*SLROM*"   )) revision = Revision::SLROM;
-  if(type.match("*SL1ROM*"  )) revision = Revision::SL1ROM;
-  if(type.match("*SL2ROM*"  )) revision = Revision::SL2ROM;
-  if(type.match("*SL3ROM*"  )) revision = Revision::SL3ROM;
-  if(type.match("*SLRROM*"  )) revision = Revision::SLRROM;
-  if(type.match("*SMROM*"   )) revision = Revision::SMROM;
-  if(type.match("*SNROM*"   )) revision = Revision::SNROM;
-  if(type.match("*SNWEPROM*")) revision = Revision::SNWEPROM;
-  if(type.match("*SOROM*"   )) revision = Revision::SOROM;
-  if(type.match("*SUROM*"   )) revision = Revision::SUROM;
-  if(type.match("*SXROM*"   )) revision = Revision::SXROM;
+  if(type.match("*SAROM"   )) revision = Revision::SAROM;
+  if(type.match("*SBROM"   )) revision = Revision::SBROM;
+  if(type.match("*SCROM"   )) revision = Revision::SCROM;
+  if(type.match("*SC1ROM"  )) revision = Revision::SC1ROM;
+  if(type.match("*SEROM"   )) revision = Revision::SEROM;
+  if(type.match("*SFROM"   )) revision = Revision::SFROM;
+  if(type.match("*SF1ROM"  )) revision = Revision::SF1ROM;
+  if(type.match("*SFEXPROM")) revision = Revision::SFEXPROM;
+  if(type.match("*SGROM"   )) revision = Revision::SGROM;
+  if(type.match("*SHROM"   )) revision = Revision::SHROM;
+  if(type.match("*SH1ROM"  )) revision = Revision::SH1ROM;
+  if(type.match("*SIROM"   )) revision = Revision::SIROM;
+  if(type.match("*SJROM"   )) revision = Revision::SJROM;
+  if(type.match("*SKROM"   )) revision = Revision::SKROM;
+  if(type.match("*SLROM"   )) revision = Revision::SLROM;
+  if(type.match("*SL1ROM"  )) revision = Revision::SL1ROM;
+  if(type.match("*SL2ROM"  )) revision = Revision::SL2ROM;
+  if(type.match("*SL3ROM"  )) revision = Revision::SL3ROM;
+  if(type.match("*SLRROM"  )) revision = Revision::SLRROM;
+  if(type.match("*SMROM"   )) revision = Revision::SMROM;
+  if(type.match("*SNROM"   )) revision = Revision::SNROM;
+  if(type.match("*SNWEPROM")) revision = Revision::SNWEPROM;
+  if(type.match("*SOROM"   )) revision = Revision::SOROM;
+  if(type.match("*SUROM"   )) revision = Revision::SUROM;
+  if(type.match("*SXROM"   )) revision = Revision::SXROM;
 }
 
 };

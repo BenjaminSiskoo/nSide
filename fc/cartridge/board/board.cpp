@@ -35,7 +35,7 @@
 
 // Unlicensed board definitions; feel free to remove
 #include "unlicensed/camerica.cpp"
-#include "unlicensed/colordreams-74377.cpp"
+#include "unlicensed/colordreams-74-377.cpp"
 #include "unlicensed/mlt-action52.cpp"
 #include "unlicensed/nina.cpp"
 #include "unlicensed/noconflicts-cnrom.cpp"
@@ -170,6 +170,7 @@ Board* Board::load(Markup::Node cartridge) {
     if(type == "SC1ROM"  ) return new NES_SxROM(cartridge);
     if(type == "SEROM"   ) return new NES_SxROM(cartridge);
     if(type == "SFROM"   ) return new NES_SxROM(cartridge);
+    if(type == "SF1ROM"  ) return new NES_SxROM(cartridge);
     if(type == "SFEXPROM") return new NES_SxROM(cartridge);
     if(type == "SGROM"   ) return new NES_SxROM(cartridge);
     if(type == "SHROM"   ) return new NES_SxROM(cartridge);
@@ -300,7 +301,7 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "CAMERICA-BF9096"   ) return new Camerica(cartridge);
   if(type == "CAMERICA-BF9097"   ) return new Camerica(cartridge);
   if(type == "CODEMASTERS-NR8N"  ) return new Camerica(cartridge);
-  if(type == "COLORDREAMS-74*377") return new ColorDreams74377(cartridge);
+  if(type == "COLORDREAMS-74*377") return new ColorDreams74_377(cartridge);
   if(type == "MLT-ACTION52"      ) return new MLT_Action52(cartridge);
   if(type == "TENGEN-800002"     ) return new Namco34xx(cartridge);
   if(type == "TENGEN-800003"     ) return new NES_NROM(cartridge);

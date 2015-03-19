@@ -1,6 +1,6 @@
 //COLORDREAMS-74*377
 
-struct ColorDreams74377 : Board {
+struct ColorDreams74_377 : Board {
 
 struct Settings {
   bool mirror;  //0 = vertical, 1 = horizontal
@@ -57,7 +57,7 @@ void serialize(serializer& s) {
   s.integer(chr_bank);
 }
 
-ColorDreams74377(Markup::Node& cartridge) : Board(cartridge) {
+ColorDreams74_377(Markup::Node& cartridge) : Board(cartridge) {
   settings.mirror = cartridge["mirror/mode"].data == "horizontal";
 }
 
