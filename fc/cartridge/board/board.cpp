@@ -19,6 +19,7 @@
 #include "nes-axrom.cpp"
 #include "nes-bnrom.cpp"
 #include "nes-cxrom.cpp"
+#include "nes-event.cpp"
 #include "nes-exrom.cpp"
 #include "nes-fxrom.cpp"
 #include "nes-gxrom.cpp"
@@ -38,6 +39,7 @@
 #include "unlicensed/colordreams-74-377.cpp"
 #include "unlicensed/mlt-action52.cpp"
 #include "unlicensed/nina.cpp"
+// Homebrew board definitions; feel free to remove
 #include "unlicensed/noconflicts-cnrom.cpp"
 #include "unlicensed/single-chip.cpp"
 
@@ -134,6 +136,8 @@ Board* Board::load(Markup::Node cartridge) {
     if(type == "DEROM"   ) return new Namco34xx(cartridge);
     if(type == "DE1ROM"  ) return new Namco34xx(cartridge);
     if(type == "DRROM"   ) return new Namco34xx(cartridge);
+
+    if(type == "EVENT"   ) return new NES_Event(cartridge);
 
     if(type == "EKROM"   ) return new NES_ExROM(cartridge);
     if(type == "ELROM"   ) return new NES_ExROM(cartridge);
