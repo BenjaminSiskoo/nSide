@@ -102,6 +102,7 @@ void reset() {
 
 void serialize(serializer& s) {
   Board::serialize(s);
+  if(revision == Revision::Namco3453) s.integer(nametable);
 }
 
 Namco34xx(Markup::Node& cartridge) : Board(cartridge), namco108(*this, cartridge) {
