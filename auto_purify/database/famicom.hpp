@@ -289,6 +289,26 @@ release
 
 release
   cartridge region=NTSC
+    board type=NAMCOT-3425
+    chip type=118
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x8000
+  information
+    title:    ドラゴンバスター
+    name:     Dragon Buster
+    region:   JP
+    revision: 1.0
+    board:    3425
+    serial:   NAM-DB-4900
+    sha256:   b1a7377282123b3b18107e0d929666af8831bebde78ceaf7fe410c2132cd61ce
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x8000
+
+release
+  cartridge region=NTSC
     board type=HVC-RROM
     mirror mode=vertical
     prg

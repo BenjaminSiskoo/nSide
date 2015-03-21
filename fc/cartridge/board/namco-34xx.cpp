@@ -2,6 +2,7 @@
 //NAMCOT-3406
 //NAMCOT-3407
 //NAMCOT-3416
+//NAMCOT-3417
 //NAMCOT-3425
 //NAMCOT-3443
 //NAMCOT-3446
@@ -17,6 +18,7 @@ enum class Revision : unsigned {
   Namco3406,
   Namco3407,
   Namco3416,
+  Namco3417,
   Namco3425,
   Namco3443,
   Namco3446,
@@ -86,13 +88,13 @@ void chr_write(unsigned addr, uint8 data) {
 
 unsigned ciram_addr(unsigned addr) const {
   switch(revision) {
-  case Revision::Namco3425:
-    return ((namco108.chr_addr(addr) & 0x8000) >> 5) | (addr & 0x03ff);
-  case Revision::Namco3453:
-    return (addr & 0x03ff) | (nametable ? 0x0400 : 0x0000);
   default:
     if(settings.mirror == 0) return ((addr & 0x0400) >> 0) | (addr & 0x03ff);
     if(settings.mirror == 1) return ((addr & 0x0800) >> 1) | (addr & 0x03ff);
+  case Revision::Namco3425:
+    return ((namco108.chr_addr(addr & 0x1fff) & 0x8000) >> 5) | (addr & 0x03ff);
+  case Revision::Namco3453:
+    return (addr & 0x03ff) | (nametable ? 0x0400 : 0x0000);
   }
 }
 
@@ -111,6 +113,7 @@ Namco34xx(Markup::Node& cartridge) : Board(cartridge), namco108(*this, cartridge
   if(type.match("*3406*")) revision = Revision::Namco3406;
   if(type.match("*3407*")) revision = Revision::Namco3407;
   if(type.match("*3416*")) revision = Revision::Namco3416;
+  if(type.match("*3417*")) revision = Revision::Namco3417;
   if(type.match("*3425*")) revision = Revision::Namco3425;
   if(type.match("*3443*")) revision = Revision::Namco3443;
   if(type.match("*3446*")) revision = Revision::Namco3446;

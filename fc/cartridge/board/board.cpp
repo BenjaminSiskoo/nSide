@@ -284,6 +284,7 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "NAMCOT-3407") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3416") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3417") return new Namco34xx(cartridge);
+  if(type == "NAMCOT-3425") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3443") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3446") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3453") return new Namco34xx(cartridge);
