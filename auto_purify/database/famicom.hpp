@@ -1810,6 +1810,28 @@ release
 
 release
   cartridge region=NTSC
+    board type=NES-EVENT
+    chip type=MMC1B2
+    prg
+      rom name=program.rom size=0x40000
+      ram size=0x2000
+    chr
+      ram size=0x2000
+  information
+    title:    Nintendo World Championships 1990
+    name:     Nintendo World Championships 1990
+    region:   NA
+    revision: 1.0
+    board:    NES-EVENT-02
+    serial:   NES-90-USA
+    sha256:   cf4670ae9dd91bd178c80ab7391c8a059f9eecb86d744bd51b9258e21825fd3c
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=work.ram size=0x2000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
     board type=NES-TQROM
     chip type=MMC3A
     prg

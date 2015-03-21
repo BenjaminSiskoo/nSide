@@ -88,14 +88,22 @@ void serialize(serializer& s) {
 NES_Event(Markup::Node& cartridge) : Board(cartridge), mmc1(*this, cartridge) {
   dip = interface->dipSettings(Markup::Document({
     "setting name=Time\n",
-    "  option value=4 name=6:14\n",
-    "  option value=0 name=4:59\n",
-    "  option value=1 name=5:18\n",
-    "  option value=2 name=5:37\n",
-    "  option value=3 name=5:56\n",
-    "  option value=5 name=6:33\n",
-    "  option value=6 name=6:52\n",
-    "  option value=7 name=7:11\n",
+    "  option value=4 name=6:14.96\n",
+    "  option value=0 name=4:59.97\n",
+    "  option value=1 name=5:18.71\n",
+    "  option value=2 name=5:37.46\n",
+    "  option value=3 name=5:56.21\n",
+    "  option value=5 name=6:33.71\n",
+    "  option value=6 name=6:52.45\n",
+    "  option value=7 name=7:11.20\n",
+    "  option value=8 name=7:29.95\n",
+    "  option value=9 name=7:48.70\n",
+    "  option value=10 name=8:07.44\n",
+    "  option value=11 name=8:26.19\n",
+    "  option value=12 name=8:44.94\n",
+    "  option value=13 name=9:03.69\n",
+    "  option value=14 name=9:22.44\n",
+    "  option value=15 name=9:41.18\n",
   }));
 }
 
