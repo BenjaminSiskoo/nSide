@@ -2233,6 +2233,47 @@ release
 
 release
   cartridge region=PAL
+    board type=PAL-ZZ
+    chip type=MMC3
+    prg
+      rom name=program.rom size=0x40000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    Super Mario Bros. / Tetris / Nintendo World Cup
+    name:     Super Mario Bros. + Tetris + Nintendo World Cup
+    region:   EU
+    revision: 1.0
+    board:    ZZ
+    serial:   NES-ZZ-FRG
+    serial:   NES-ZZ-SCN
+    sha256:   4c00009eb345474229372fc34ebe2abb4996eef7486ce8977e69edfc88816935
+    configuration
+      rom name=program.rom size=0x40000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=PAL
+    board type=PAL-ZZ
+    chip type=MMC3
+    prg
+      rom name=program.rom size=0x40000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    Super Mario Bros. / Tetris / Nintendo World Cup
+    name:     Super Mario Bros. + Tetris + Nintendo World Cup
+    region:   EU
+    revision: 1.1
+    board:    ZZ
+    serial:   NES-ZZ-FRG
+    sha256:   18fc0f452d796e522d776c1a848ca7ca8b1c25b44d553b6fd15becd2ea65076e
+    configuration
+      rom name=program.rom size=0x40000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=PAL
     board type=NES-TKROM
     chip type=MMC3C
     prg

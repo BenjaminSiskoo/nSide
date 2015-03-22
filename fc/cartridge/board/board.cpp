@@ -30,6 +30,7 @@
 #include "nes-sxrom.cpp"
 #include "nes-txrom.cpp"
 #include "nes-uxrom.cpp"
+#include "pal-zz.cpp"
 #include "sunsoft-4.cpp"
 #include "sunsoft-5b.cpp"
 #include "fds.cpp"
@@ -290,6 +291,8 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "NAMCOT-3443") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3446") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3453") return new Namco34xx(cartridge);
+
+  if(type == "PAL-ZZ") return new PAL_ZZ(cartridge);
 
   if(type == "SUNSOFT-4" ) return new Sunsoft4(cartridge);
   if(type == "SUNSOFT-5B") return new Sunsoft5B(cartridge);
