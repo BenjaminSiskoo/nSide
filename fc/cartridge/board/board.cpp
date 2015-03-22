@@ -1,3 +1,4 @@
+#include "bandai-74-161-02-74.cpp"
 #include "bandai-74-161-161-32.cpp"
 #include "bandai-fcg.cpp"
 #include "irem-74-161-161-21-138.cpp"
@@ -218,6 +219,7 @@ Board* Board::load(Markup::Node cartridge) {
 
   if(type == "ACCLAIM-MC-ACC") return new NES_TxROM(cartridge);
 
+  if(type == "BANDAI-74*161/02/74" ) return new Bandai74_161_02_74(cartridge);
   if(type == "BANDAI-74*161/32"    ) return new NES_CxROM(cartridge);
   if(type == "BANDAI-74*161/161/32") return new Bandai74_161_161_32(cartridge);
   if(type == "BANDAI-CNROM"        ) return new NES_CxROM(cartridge);
