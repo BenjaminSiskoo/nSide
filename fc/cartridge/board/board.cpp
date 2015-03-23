@@ -27,6 +27,7 @@
 #include "nes-hkrom.cpp"
 #include "nes-nrom.cpp"
 #include "nes-pxrom.cpp"
+#include "nes-qj.cpp"
 #include "nes-sxrom.cpp"
 #include "nes-txrom.cpp"
 #include "nes-uxrom.cpp"
@@ -121,7 +122,9 @@ Board* Board::load(Markup::Node cartridge) {
   }
   string type = cartridge["board/type"].text();
 
-  if(substr(type,0,4) == "HVC-" || substr(type,0,4) == "NES-") {
+  if(substr(type,0,4) == "HVC-"
+  || substr(type,0,4) == "NES-"
+  || substr(type,0,4) == "PAL-") {
     type = substr(type,4);
     if(type == "AMROM"   ) return new NES_AxROM(cartridge);
     if(type == "ANROM"   ) return new NES_AxROM(cartridge);
@@ -170,6 +173,8 @@ Board* Board::load(Markup::Node cartridge) {
     if(type == "PEEOROM" ) return new NES_PxROM(cartridge);
     if(type == "PNROM"   ) return new NES_PxROM(cartridge);
 
+    if(type == "QJ"      ) return new NES_QJ(cartridge);
+
     if(type == "SAROM"   ) return new NES_SxROM(cartridge);
     if(type == "SBROM"   ) return new NES_SxROM(cartridge);
     if(type == "SCROM"   ) return new NES_SxROM(cartridge);
@@ -216,6 +221,8 @@ Board* Board::load(Markup::Node cartridge) {
     if(type == "UNROM"   ) return new NES_UxROM(cartridge);
     if(type == "UN1ROM"  ) return new NES_UxROM(cartridge);
     if(type == "UOROM"   ) return new NES_UxROM(cartridge);
+
+    if(type == "ZZ"      ) return new PAL_ZZ(cartridge);
   }
 
   if(type == "ACCLAIM-MC-ACC") return new NES_TxROM(cartridge);
@@ -291,8 +298,6 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "NAMCOT-3443") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3446") return new Namco34xx(cartridge);
   if(type == "NAMCOT-3453") return new Namco34xx(cartridge);
-
-  if(type == "PAL-ZZ") return new PAL_ZZ(cartridge);
 
   if(type == "SUNSOFT-4" ) return new Sunsoft4(cartridge);
   if(type == "SUNSOFT-5B") return new Sunsoft5B(cartridge);

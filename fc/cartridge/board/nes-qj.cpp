@@ -1,7 +1,6 @@
-struct PAL_ZZ : Board {
+struct NES_QJ : Board {
 
 MMC3 mmc3;
-uint2 prg_a16_force;
 bool bank;
 
 void enter() {
@@ -10,8 +9,7 @@ void enter() {
 
 uint8 prg_read(unsigned addr) {
   if(addr & 0x8000) {
-    addr = (mmc3.prg_addr(addr) & (0xffff | (bank << 16))) | (bank << 17);
-    addr |= (prg_a16_force == 0x03) << 16;
+    addr = (mmc3.prg_addr(addr) & 0x1ffff) | (bank << 17);
     return read(prgrom, addr);
   }
   return cpu.mdr();
@@ -19,8 +17,7 @@ uint8 prg_read(unsigned addr) {
 
 void prg_write(unsigned addr, uint8 data) {
   if((addr & 0xe000) == 0x6000 && mmc3.ram_enable && !mmc3.ram_write_protect) {
-    prg_a16_force = data & 0x03;
-    bank = data & 0x04;
+    bank = data & 0x01;
   }
   if(addr & 0x8000) return mmc3.reg_write(addr, data);
 }
@@ -45,25 +42,16 @@ void power() {
 
 void reset() {
   mmc3.reset();
-  cic_reset();
-}
-
-void cic_reset() {
-  // this register is cleared by the CIC reset line.
-  // On a Famicom or toploader, only a power cycle can clear it.
-  //TODO: Check if Europe got the toploader.
-  prg_a16_force = 0;
   bank = 0;
 }
 
 void serialize(serializer& s) {
   Board::serialize(s);
   mmc3.serialize(s);
-  s.integer(prg_a16_force);
   s.integer(bank);
 }
 
-PAL_ZZ(Markup::Node& cartridge) : Board(cartridge), mmc3(*this, cartridge) {
+NES_QJ(Markup::Node& cartridge) : Board(cartridge), mmc3(*this, cartridge) {
 }
 
 };
