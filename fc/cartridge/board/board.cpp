@@ -283,7 +283,10 @@ Board* Board::load(Markup::Node cartridge) {
   if(type == "KONAMI-VRC-6"    ) return new KonamiVRC6(cartridge);
   if(type == "KONAMI-VRC-7"    ) return new KonamiVRC7(cartridge);
 
+  if(type == "NAMCOT-129" ) return new Namco163(cartridge);
   if(type == "NAMCOT-163" ) return new Namco163(cartridge);
+  if(type == "NAMCOT-175" ) return new Namco163(cartridge);
+  if(type == "NAMCOT-340" ) return new Namco163(cartridge);
   if(type == "NAMCOT-3301") return new NES_NROM(cartridge);
   if(type == "NAMCOT-3302") return new NES_NROM(cartridge);
   if(type == "NAMCOT-3305") return new NES_NROM(cartridge);
