@@ -32,12 +32,12 @@ struct Settings {
   bool mirror;  //0 = vertical, 1 = horizontal
 } settings;
 
-Namco108 namco108;
+N108 n108;
 
 bool nametable; // for Namco3453, used only by Devil Man
 
 unsigned prg_addr(unsigned addr) {
-  if(revision == Revision::Namco3401 || prgrom.size() > 0x8000) return namco108.prg_addr(addr);
+  if(revision == Revision::Namco3401 || prgrom.size() > 0x8000) return n108.prg_addr(addr);
   else return addr & 0x7fff;
 }
 
@@ -48,7 +48,7 @@ uint8 prg_read(unsigned addr) {
 
 void prg_write(unsigned addr, uint8 data) {
   if(addr & 0x8000) {
-    namco108.reg_write(addr, data);
+    n108.reg_write(addr, data);
     if(revision == Revision::Namco3453) nametable = data & 0x40;
   }
 }
@@ -57,21 +57,21 @@ unsigned chr_addr(unsigned addr) {
   switch(revision) {
   case Revision::Namco3443:
   case Revision::Namco3453:
-    return namco108.chr_addr(addr) | ((addr & 0x1000) << 4);
+    return n108.chr_addr(addr) | ((addr & 0x1000) << 4);
   case Revision::Namco3446:
-    if(addr <= 0x07ff) return (namco108.chr_addr(0x1000) << 1) | (addr & 0x07ff);
-    if(addr <= 0x0fff) return (namco108.chr_addr(0x1400) << 1) | (addr & 0x07ff);
-    if(addr <= 0x17ff) return (namco108.chr_addr(0x1800) << 1) | (addr & 0x07ff);
-    if(addr <= 0x1fff) return (namco108.chr_addr(0x1c00) << 1) | (addr & 0x07ff);
+    if(addr <= 0x07ff) return (n108.chr_addr(0x1000) << 1) | (addr & 0x07ff);
+    if(addr <= 0x0fff) return (n108.chr_addr(0x1400) << 1) | (addr & 0x07ff);
+    if(addr <= 0x17ff) return (n108.chr_addr(0x1800) << 1) | (addr & 0x07ff);
+    if(addr <= 0x1fff) return (n108.chr_addr(0x1c00) << 1) | (addr & 0x07ff);
   default:
-    return namco108.chr_addr(addr);
+    return n108.chr_addr(addr);
   }
 }
 
 uint8 chr_read(unsigned addr) {
   if(revision == Revision::DRROM) {
     if(addr & 0x2000) return read(chrram, addr & 0x0FFF);
-    return read(chrrom, namco108.chr_addr(addr));
+    return read(chrrom, n108.chr_addr(addr));
   }
   if(addr & 0x2000) return ppu.ciram_read(ciram_addr(addr));
   return Board::chr_read(chr_addr(addr));
@@ -92,7 +92,7 @@ unsigned ciram_addr(unsigned addr) const {
     if(settings.mirror == 0) return ((addr & 0x0400) >> 0) | (addr & 0x03ff);
     if(settings.mirror == 1) return ((addr & 0x0800) >> 1) | (addr & 0x03ff);
   case Revision::Namco3425:
-    return ((namco108.chr_addr(addr & 0x1fff) & 0x8000) >> 5) | (addr & 0x03ff);
+    return ((n108.chr_addr(addr & 0x1fff) & 0x8000) >> 5) | (addr & 0x03ff);
   case Revision::Namco3453:
     return (addr & 0x03ff) | (nametable ? 0x0400 : 0x0000);
   }
@@ -107,7 +107,7 @@ void serialize(serializer& s) {
   if(revision == Revision::Namco3453) s.integer(nametable);
 }
 
-Namco34xx(Markup::Node& cartridge) : Board(cartridge), namco108(*this, cartridge) {
+Namco34xx(Markup::Node& cartridge) : Board(cartridge), n108(*this, cartridge) {
   string type = cartridge["board/type"].data;
   if(type.match("*3401*")) revision = Revision::Namco3401;
   if(type.match("*3406*")) revision = Revision::Namco3406;

@@ -20,6 +20,7 @@ struct ID {
     ProgramRAM,
     CharacterROM,
     CharacterRAM,
+    ChipRAM,
 
     InstructionROM,
     KeyROM,

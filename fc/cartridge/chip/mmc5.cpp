@@ -5,8 +5,6 @@ enum class Revision : unsigned {
   MMC5B,
 } revision;
 
-uint8 exram[1024];
-
 //programmable registers
 
 uint2 prg_mode;  //$5100
@@ -127,7 +125,7 @@ uint8 prg_access(bool write, unsigned addr, uint8 data = 0x00) {
 
 uint8 prg_read(unsigned addr) {
   if((addr & 0xfc00) == 0x5c00) {
-    if(exram_mode >= 2) return exram[addr & 0x03ff];
+    if(exram_mode >= 2) return ram.read(addr & 0x03ff);
     return cpu.mdr();
   }
 
@@ -149,8 +147,8 @@ uint8 prg_read(unsigned addr) {
 void prg_write(unsigned addr, uint8 data) {
   if((addr & 0xfc00) == 0x5c00) {
     //writes 0x00 *during* Vblank (not during screen rendering ...)
-    if(exram_mode == 0 || exram_mode == 1) exram[addr & 0x03ff] = in_frame ? data : 0x00;
-    if(exram_mode == 2) exram[addr & 0x03ff] = data;
+    if(exram_mode == 0 || exram_mode == 1) ram.write(addr & 0x03ff, in_frame ? data : 0x00);
+    if(exram_mode == 2) ram.write(addr & 0x03ff, data);
     return;
   }
 
@@ -326,13 +324,13 @@ void scanline() {
 }
 
 uint8 ciram_read(unsigned addr) {
-  if(vs_fetch && (hcounter & 2) == 0) return exram[vs_vpos / 8 * 32 + vs_hpos / 8];
-  if(vs_fetch && (hcounter & 2) != 0) return exram[vs_vpos / 32 * 8 + vs_hpos / 32 + 0x03c0];
+  if(vs_fetch && (hcounter & 2) == 0) return ram.read(vs_vpos / 8 * 32 + vs_hpos / 8);
+  if(vs_fetch && (hcounter & 2) != 0) return ram.read(vs_vpos / 32 * 8 + vs_hpos / 32 + 0x03c0);
 
   switch(nametable_mode[(addr >> 10) & 3]) {
   case 0: return ppu.ciram_read(0x0000 | (addr & 0x03ff));
   case 1: return ppu.ciram_read(0x0400 | (addr & 0x03ff));
-  case 2: return exram_mode < 2 ? exram[addr & 0x03ff] : 0x00;
+  case 2: return exram_mode < 2 ? ram.read(addr & 0x03ff) : 0x00;
   case 3: return (hcounter & 2) == 0 ? fillmode_tile : fillmode_color;
   }
 }
@@ -367,8 +365,8 @@ uint8 chr_read(unsigned addr) {
 
     result = ciram_read(addr);
 
-    exbank = (chr_bank_hi << 6) | (exram[addr & 0x03ff] & 0x3f);
-    exattr = exram[addr & 0x03ff] >> 6;
+    exbank = (chr_bank_hi << 6) | (ram.read(addr & 0x03ff) & 0x3f);
+    exattr = ram.read(addr & 0x03ff) >> 6;
     exattr |= exattr << 2;
     exattr |= exattr << 4;
   } else if((hcounter & 7) == 2) {
@@ -390,7 +388,7 @@ void chr_write(unsigned addr, uint8 data) {
     switch(nametable_mode[(addr >> 10) & 3]) {
     case 0: return ppu.ciram_write(0x0000 | (addr & 0x03ff), data);
     case 1: return ppu.ciram_write(0x0400 | (addr & 0x03ff), data);
-    case 2: exram[addr & 0x03ff] = data; break;
+    case 2: ram.write(addr & 0x03ff, data); break;
     }
   }
 }
@@ -399,7 +397,7 @@ void power() {
 }
 
 void reset() {
-  for(auto& n : exram) n = 0xff;
+  for(unsigned i = 0; i < ram.size(); i++) ram.write(i, 0xff);
 
   prg_mode = 3;
   chr_mode = 0;
@@ -446,7 +444,7 @@ void reset() {
 }
 
 void serialize(serializer& s) {
-  s.array(exram);
+  s.array(ram.data(), ram.size());
 
   s.integer(prg_mode);
   s.integer(chr_mode);

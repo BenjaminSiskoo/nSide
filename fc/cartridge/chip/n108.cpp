@@ -1,10 +1,10 @@
-struct Namco108 : Chip {
+struct N108 : Chip {
 
 enum class Revision : unsigned {
-  Namco108,
-  Namco109,
-  Namco118,
-  Namco119,
+  N108,
+  N109,
+  N118,
+  N119,
 } revision;
 
 uint3 bank_select;
@@ -71,13 +71,13 @@ void serialize(serializer& s) {
   s.array(chr_bank);
 }
 
-Namco108(Board& board, Markup::Node& cartridge) : Chip(board) {
+N108(Board& board, Markup::Node& cartridge) : Chip(board) {
   string type = cartridge["chip/type"].data;
 
-  if(type.match("*108*")) revision = Revision::Namco108;
-  if(type.match("*109*")) revision = Revision::Namco109;
-  if(type.match("*118*")) revision = Revision::Namco118;
-  if(type.match("*119*")) revision = Revision::Namco119;
+  if(type.match("*108*")) revision = Revision::N108;
+  if(type.match("*109*")) revision = Revision::N109;
+  if(type.match("*118*")) revision = Revision::N118;
+  if(type.match("*119*")) revision = Revision::N119;
 }
 
 };

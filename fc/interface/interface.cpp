@@ -41,6 +41,7 @@ unsigned Interface::group(unsigned id) {
   case ID::ProgramRAM:
   case ID::CharacterROM:
   case ID::CharacterRAM:
+  case ID::ChipRAM:
     switch(system.revision) {
     case System::Revision::Famicom:      return ID::Famicom;
     case System::Revision::VSSystem:     return ID::VSSystem;
@@ -88,6 +89,7 @@ void Interface::load(unsigned id, const stream& stream) {
   if(id == ID::ProgramRAM) cartridge.board->prgram.read(stream);
   if(id == ID::CharacterROM) cartridge.board->chrrom.read(stream);
   if(id == ID::CharacterRAM) cartridge.board->chrram.read(stream);
+  if(id == ID::ChipRAM) cartridge.board->chip->ram.read(stream);
 
   if(id == ID::InstructionROM) cartridge.board->instrom.read(stream);
   if(id == ID::KeyROM) cartridge.board->keyrom.read(stream);
@@ -100,6 +102,10 @@ void Interface::save(unsigned id, const stream& stream) {
 
   if(id == ID::CharacterRAM) {
     stream.write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
+  }
+
+  if(id == ID::ChipRAM) {
+    stream.write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
   }
 }
 
@@ -168,6 +174,9 @@ void Interface::exportMemory() {
   }
   if(cartridge.board->chrram.size()) {
     file::write({pathname, "character.ram"}, cartridge.board->chrram.data(), cartridge.board->chrram.size());
+  }
+  if(cartridge.board->chip && cartridge.board->chip->ram.size()) {
+    file::write({pathname, "chip.ram"}, cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
   }
 }
 

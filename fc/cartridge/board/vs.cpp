@@ -6,12 +6,12 @@ enum class ChipType : unsigned {
   None,
   _74HC32,
   MMC1,
-  Namco108,
+  N108,
 } chip_type;
 
 uint4 bank;
 MMC1 mmc1;
-Namco108 namco108;
+N108 n108;
 
 void enter() {
   if(chip_type == ChipType::MMC1) return mmc1.enter();
@@ -52,8 +52,8 @@ uint8 prg_read(unsigned addr) {
     //  addr |= ((mmc1.chr_bank[last_chr_bank] & 0x10) >> 4) << 18;
     //}
     break;
-  case ChipType::Namco108:
-    if(addr & 0x8000) return read(prgrom, namco108.prg_addr(addr));
+  case ChipType::N108:
+    if(addr & 0x8000) return read(prgrom, n108.prg_addr(addr));
     break;
   }
   if((addr & 0xe000) == 0x6000) {
@@ -76,8 +76,8 @@ void prg_write(unsigned addr, uint8 data) {
   case ChipType::MMC1:
     if(addr & 0x8000) return mmc1.mmio_write(addr, data);
     break;
-  case ChipType::Namco108:
-    if(addr & 0x8000) return namco108.reg_write(addr, data);
+  case ChipType::N108:
+    if(addr & 0x8000) return n108.reg_write(addr, data);
     break;
   }
   if((addr & 0xe000) == 0x6000) {
@@ -96,8 +96,8 @@ uint8 chr_read(unsigned addr) {
     return Board::chr_read(addr);
   case ChipType::MMC1:
     return Board::chr_read(mmc1.chr_addr(addr));
-  case ChipType::Namco108:
-    return Board::chr_read(namco108.chr_addr(addr));
+  case ChipType::N108:
+    return Board::chr_read(n108.chr_addr(addr));
   }
 }
 
@@ -110,15 +110,15 @@ void chr_write(unsigned addr, uint8 data) {
     return Board::chr_write(addr, data);
   case ChipType::MMC1:
     return Board::chr_write(mmc1.chr_addr(addr), data);
-  case ChipType::Namco108:
-    return Board::chr_write(namco108.chr_addr(addr), data);
+  case ChipType::N108:
+    return Board::chr_write(n108.chr_addr(addr), data);
   }
 }
 
 void power() {
   switch(chip_type) {
   case ChipType::MMC1: mmc1.power(); break;
-  case ChipType::Namco108: namco108.power(); break;
+  case ChipType::N108: n108.power(); break;
   }
 }
 
@@ -126,7 +126,7 @@ void reset() {
   bank = 0;
   switch(chip_type) {
   case ChipType::MMC1: mmc1.reset(); break;
-  case ChipType::Namco108: namco108.reset(); break;
+  case ChipType::N108: n108.reset(); break;
   }
 }
 
@@ -135,21 +135,21 @@ void serialize(serializer& s) {
   s.integer(bank);
   switch(chip_type) {
   case ChipType::MMC1: mmc1.serialize(s); break;
-  case ChipType::Namco108: namco108.serialize(s); break;
+  case ChipType::N108: n108.serialize(s); break;
   }
 }
 
 VS(Markup::Node& cartridge) : Board(cartridge),
 mmc1(*this, cartridge),
-namco108(*this, cartridge) {
+n108(*this, cartridge) {
   chip_type = ChipType::None;
   string type = cartridge["chip/type"].data;
   if(type.match("74HC32")) chip_type = ChipType::_74HC32;
   if(type.match("MMC1*" )) chip_type = ChipType::MMC1;
-  if(type.match("108"   )) chip_type = ChipType::Namco108;
-  if(type.match("109"   )) chip_type = ChipType::Namco108;
-  if(type.match("118"   )) chip_type = ChipType::Namco108;
-  if(type.match("119"   )) chip_type = ChipType::Namco108;
+  if(type.match("108"   )) chip_type = ChipType::N108;
+  if(type.match("109"   )) chip_type = ChipType::N108;
+  if(type.match("118"   )) chip_type = ChipType::N108;
+  if(type.match("119"   )) chip_type = ChipType::N108;
 }
 
 };
