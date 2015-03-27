@@ -121,7 +121,6 @@ Board* Board::load(Markup::Node cartridge) {
     return new VS(vs_node);
   }
   string type = cartridge["board/type"].text();
-  if(type.beginsWith("[") && type.endsWith("]")) type = substr(type,1,type.size() - 2);
 
   if(substr(type,0,4) == "HVC-"
   || substr(type,0,4) == "NES-"
