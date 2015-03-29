@@ -230,6 +230,27 @@ release
 
 release
   cartridge region=NTSC
+    board type=TAITO-TC0190FMC
+    chip type=TC0190FMC
+    chip type=PAL16R4
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    ドンドコドン2
+    name:     Don Doko Don 2
+    region:   JP
+    revision: 1.0
+    board:    J9100287A
+    serial:   TFC-DDII-5900-41
+    sha256:   fb0b3aab3fb22ab78b1d94fcbc730ed440591fdc359caec9e9f1d45682a38d01
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=NTSC
     board type=HVC-NROM-128
     mirror mode=horizontal
     prg

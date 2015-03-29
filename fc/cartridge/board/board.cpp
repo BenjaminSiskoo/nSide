@@ -34,6 +34,7 @@
 #include "pal-zz.cpp"
 #include "sunsoft-4.cpp"
 #include "sunsoft-5b.cpp"
+#include "taito-tc.cpp"
 #include "fds.cpp"
 #include "vs.cpp"
 
@@ -304,6 +305,10 @@ Board* Board::load(Markup::Node cartridge) {
 
   if(type == "SUNSOFT-4" ) return new Sunsoft4(cartridge);
   if(type == "SUNSOFT-5B") return new Sunsoft5B(cartridge);
+
+  if(type == "TAITO-TC0190FMC") return new TaitoTC(cartridge);
+  if(type == "TAITO-TC0350FMR") return new TaitoTC(cartridge);
+  if(type == "TAITO-TC0690FMR") return new TaitoTC(cartridge);
 
   if(type == "FDS") return new FDS(cartridge);
   if(type == "VS" ) return new VS(cartridge);
