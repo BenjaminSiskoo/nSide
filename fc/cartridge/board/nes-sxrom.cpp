@@ -46,7 +46,7 @@ uint8 prg_read(unsigned addr) {
     if(revision == Revision::SNROM) {
       if((mmc1.chr_addr(ppu.status.chr_abus) >> 16) & 1) return cpu.mdr();
     }
-    if(mmc1.ram_disable) return 0x00;
+    if(mmc1.ram_disable) return cpu.mdr();
     if(prgram.size() > 0) return read(prgram, ram_addr(addr));
   }
 
