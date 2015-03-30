@@ -146,7 +146,7 @@ release
 release
   cartridge linkable
     rom name=program.rom size=0x80000
-    ram name=save.ram size=0x800
+    ram name=save.ram size=0x2000
   information
     title:    SDガンダムジェネレーション コロニー格闘記
     name:     SD Gundam Generation - Colony Kakutouki
@@ -156,7 +156,7 @@ release
     sha256:   e639b5d5d722432b6809ccc6801dc584e1a3016379f34b335ed2dfa73b1ebf69
     configuration
       rom name=program.rom size=0x80000
-      ram name=save.ram size=0x800
+      ram name=save.ram size=0x2000
       linkable
 
 )";
