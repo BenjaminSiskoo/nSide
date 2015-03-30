@@ -328,12 +328,14 @@ SuperFamicomCartridge::SuperFamicomCartridge(const uint8_t *data, unsigned size)
     markup.append(
       "  bsx\n"
       "    rom name=program.rom size=0x", hex(rom_size), "\n"
-      "    ram id=save name=save.ram size=0x", hex(ram_size), "\n"
-      "    ram id=download name=bsx.ram size=0x40000\n"
+      "    ram name=save.ram size=0x", hex(ram_size), "\n"
+      "    ram name=download.ram size=0x80000\n"
       "    map id=io address=00-3f,80-bf:5000-5fff\n"
       "    map id=rom address=00-3f,80-bf:8000-ffff\n"
-      "    map id=rom address=40-7f,c0-ff:0000-ffff\n"
-      "    map id=ram address=20-3f:6000-7fff\n"
+      "    map id=rom address=40-5f,c0-ff:0000-ffff\n"
+      "    map id=rom address=78-7d:0000-ffff\n"
+      "    map id=ram address=20-3f:6000-7fff mask=0xe000\n"
+      "    map id=ram address=70-77:0000-ffff\n"
     );
   }
 
