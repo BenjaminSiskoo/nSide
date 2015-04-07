@@ -1538,6 +1538,28 @@ release
 
 release
   cartridge region=NTSC
+    board type=NES-DRROM
+    chip type=109
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x10000
+      ram size=0x800
+  information
+    title:    Gauntlet
+    name:     Gauntlet
+    region:   NA
+    revision: 1.0
+    board:    NES-DRROM-01
+    serial:   NES-GL-USA
+    sha256:   fd2a8520314fb183e15fd62f48df97f92eb9c81140da4e6ab9ff0386e4797071
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x10000
+      ram name=nametable.ram size=0x800
+
+release
+  cartridge region=NTSC
     board type=NES-GNROM
     mirror mode=vertical
     prg

@@ -78,7 +78,10 @@ unsigned chr_addr(unsigned addr) {
 
 uint8 chr_read(unsigned addr) {
   if(revision == Revision::DRROM) {
-    if(addr & 0x2000) return read(chrram, addr & 0x0FFF);
+    if(addr & 0x2000) {
+      if(!(addr & 0x0800)) return ppu.ciram_read(addr & 0x07ff);
+      else                 return read(chrram, addr & 0x07ff);
+    }
     return read(chrrom, n108.chr_addr(addr));
   }
   if(addr & 0x2000) return ppu.ciram_read(ciram_addr(addr));
@@ -87,7 +90,10 @@ uint8 chr_read(unsigned addr) {
 
 void chr_write(unsigned addr, uint8 data) {
   if(revision == Revision::DRROM) {
-    if(addr & 0x2000) write(chrram, addr & 0x0FFF, data);
+    if(addr & 0x2000) {
+      if(!(addr & 0x0800)) ppu.ciram_write(addr & 0x07ff, data);
+      else                 write(chrram, addr & 0x07ff, data);
+    }
     return;
   }
   if(addr & 0x2000) return ppu.ciram_write(ciram_addr(addr), data);
@@ -133,9 +139,9 @@ Namco34xx(Markup::Node& cartridge) : Board(cartridge), n108(*this, cartridge) {
   if(type.match("*DEROM")) revision = Revision::DEROM;
   if(type.match("*DE1ROM")) revision = Revision::DE1ROM;
   if(type.match("*DRROM")) revision = Revision::DRROM;
-  if(type == "*TENGEN-800002") revision = Revision::DEROM;
-  if(type == "*TENGEN-800030") revision = Revision::DE1ROM;
-  if(type == "*TENGEN-800004") revision = Revision::DRROM;
+  if(type == "TENGEN-800002") revision = Revision::DEROM;
+  if(type == "TENGEN-800030") revision = Revision::DE1ROM;
+  if(type == "TENGEN-800004") revision = Revision::DRROM;
 
   if(revision != Revision::Namco3425 && revision != Revision::Namco3453)
     settings.mirror = cartridge["mirror/mode"].data == "horizontal";
