@@ -1,11 +1,15 @@
 //NAMCOT-3401
 //NAMCOT-3406
 //NAMCOT-3407
+//NAMCOT-3413
+//NAMCOT-3414
+//NAMCOT-3415
 //NAMCOT-3416
 //NAMCOT-3417
 //NAMCOT-3425
 //NAMCOT-3443
 //NAMCOT-3446
+//NAMCOT-3451
 //NAMCOT-3453
 //NES-DEROM
 //NES-DE1ROM
@@ -17,11 +21,15 @@ enum class Revision : unsigned {
   Namco3401, // bankswitching used even if PRG is 32KB (バベルの塔/Tower of Babel)
   Namco3406,
   Namco3407,
+  Namco3413,
+  Namco3414,
+  Namco3415,
   Namco3416,
   Namco3417,
   Namco3425,
   Namco3443,
   Namco3446,
+  Namco3451,
   Namco3453,
   DEROM,
   DE1ROM,
@@ -109,21 +117,25 @@ void serialize(serializer& s) {
 
 Namco34xx(Markup::Node& cartridge) : Board(cartridge), n108(*this, cartridge) {
   string type = cartridge["board/type"].data;
-  if(type.match("*3401*")) revision = Revision::Namco3401;
-  if(type.match("*3406*")) revision = Revision::Namco3406;
-  if(type.match("*3407*")) revision = Revision::Namco3407;
-  if(type.match("*3416*")) revision = Revision::Namco3416;
-  if(type.match("*3417*")) revision = Revision::Namco3417;
-  if(type.match("*3425*")) revision = Revision::Namco3425;
-  if(type.match("*3443*")) revision = Revision::Namco3443;
-  if(type.match("*3446*")) revision = Revision::Namco3446;
-  if(type.match("*3453*")) revision = Revision::Namco3453;
-  if(type.match("*DEROM*")) revision = Revision::DEROM;
-  if(type.match("*DE1ROM*")) revision = Revision::DE1ROM;
-  if(type.match("*DRROM*")) revision = Revision::DRROM;
-  if(type.match("*TENGEN-800002*")) revision = Revision::DEROM;
-  if(type.match("*TENGEN-800030*")) revision = Revision::DE1ROM;
-  if(type.match("*TENGEN-800004*")) revision = Revision::DRROM;
+  if(type.match("*3401")) revision = Revision::Namco3401;
+  if(type.match("*3406")) revision = Revision::Namco3406;
+  if(type.match("*3407")) revision = Revision::Namco3407;
+  if(type.match("*3413")) revision = Revision::Namco3413;
+  if(type.match("*3414")) revision = Revision::Namco3414;
+  if(type.match("*3415")) revision = Revision::Namco3415;
+  if(type.match("*3416")) revision = Revision::Namco3416;
+  if(type.match("*3417")) revision = Revision::Namco3417;
+  if(type.match("*3425")) revision = Revision::Namco3425;
+  if(type.match("*3443")) revision = Revision::Namco3443;
+  if(type.match("*3446")) revision = Revision::Namco3446;
+  if(type.match("*3451")) revision = Revision::Namco3451;
+  if(type.match("*3453")) revision = Revision::Namco3453;
+  if(type.match("*DEROM")) revision = Revision::DEROM;
+  if(type.match("*DE1ROM")) revision = Revision::DE1ROM;
+  if(type.match("*DRROM")) revision = Revision::DRROM;
+  if(type == "*TENGEN-800002") revision = Revision::DEROM;
+  if(type == "*TENGEN-800030") revision = Revision::DE1ROM;
+  if(type == "*TENGEN-800004") revision = Revision::DRROM;
 
   if(revision != Revision::Namco3425 && revision != Revision::Namco3453)
     settings.mirror = cartridge["mirror/mode"].data == "horizontal";
