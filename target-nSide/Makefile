@@ -67,7 +67,7 @@ obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/)
 	$(compiler) $(phoenixflags) -c $< -o $@
 
 obj/resource.o: $(ui)/resource.rc
-ifeq ($(arch),win32)
+ifeq ($(arch),x86)
 	windres --target=pe-i386 $(ui)/resource.rc obj/resource.o
 else
 	windres $(ui)/resource.rc obj/resource.o
