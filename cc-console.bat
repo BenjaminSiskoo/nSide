@@ -1,3 +1,4 @@
+rem For use with Windows
 @echo off
 mkdir "obj"
 

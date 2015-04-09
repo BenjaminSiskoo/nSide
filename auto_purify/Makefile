@@ -1,4 +1,10 @@
 include ../nall/Makefile
+
+ifeq ($(arch),x86)
+  flags += -m32
+  link += -m32
+endif
+
 include ../phoenix/Makefile
 
 path := /usr/local/lib
