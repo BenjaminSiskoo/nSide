@@ -403,7 +403,10 @@ void PPU::raster_pixel() {
     if(palette == 0 || object_priority == 0) palette = object_palette;
   }
 
-  if(raster_enable() == false) palette = 0;
+  if(raster_enable() == false) {
+    if((status.vaddr & 0x3f00) != 0x3f00) palette = 0;
+    else palette = status.vaddr;
+  }
   output[vcounter() * 256 + lx] = (status.emphasis << 6) | cgram_read(palette);
 }
 
