@@ -15,13 +15,14 @@ public:
   alwaysinline void tick();
   alwaysinline void tick(unsigned clocks);
 
-  alwaysinline bool   field   () const;
-  alwaysinline uint16 vcounter() const;
-  alwaysinline uint16 hcounter() const;
-  inline uint16 hdot() const;
-  inline uint16 lineclocks() const;
+  alwaysinline bool   field     () const;
+  alwaysinline uint16 vcounter  () const;
+  alwaysinline uint16 hcounter  () const;
+  alwaysinline uint16 lineclocks() const;
+  alwaysinline uint16 fieldlines() const;
 
-  alwaysinline bool   field   (unsigned offset) const;
+  inline uint16 hdot() const;
+
   alwaysinline uint16 vcounter(unsigned offset) const;
   alwaysinline uint16 hcounter(unsigned offset) const;
 
@@ -33,17 +34,21 @@ private:
   inline void vcounter_tick();
 
   struct {
-    bool interlace;
-    bool field;
-    uint16 vcounter;
     uint16 hcounter;
+    uint16 vcounter;
+    uint16 lineclocks;
+    uint16 fieldlines[2];
+    bool field;
   } status;
 
-  struct {
-    bool field[2048];
-    uint16 vcounter[2048];
-    uint16 hcounter[2048];
+  struct History {
+    enum : unsigned {
+      Depth = 2048,
+      Mask = Depth - 1,
+    };
 
     int32 index;
+    uint16 vcounter[Depth];
+    uint16 hcounter[Depth];
   } history;
 };

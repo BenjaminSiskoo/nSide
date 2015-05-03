@@ -12,14 +12,22 @@
 namespace SuperFamicom {
   namespace Info {
     static const char Name[] = "nSide-sfc";
-    static const unsigned SerializerVersion = 28;
+    // Changes from bsnes's serializer version 28:
+    // Imported from AWJ's bsnes-classic:
+    // * PPUcounter shared serialization for all 3 profiles
+    //   (note that this one may or may not be reverted when higan v095 is released)
+    static const unsigned SerializerVersion = 0;
   }
 }
 
 /*
   nSide-sfc - Super Famicom emulator
-  based on higan/bsnes by byuu. Balanced/Performance DSP by blargg.
+  based on higan/bsnes by byuu.
   author: byuu
+  contributors:
+    blargg  (Balanced/Performance DSP)
+    AWJ     (PPUcounter NTSC/PAL timing)
+    hex_usr (exportMemory expansion chip support/PPU register dumping)
   license: GPLv3
   original project started: 2004-10-14
 */
