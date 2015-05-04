@@ -1,4 +1,6 @@
-program
+input
   filter: linear
   wrap: border
+
+program
   fragment: curvature.fs

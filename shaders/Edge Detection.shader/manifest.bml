@@ -1,4 +1,6 @@
-program
+input
   filter: linear
   wrap: edge
+
+program
   fragment: edge-detection.fs

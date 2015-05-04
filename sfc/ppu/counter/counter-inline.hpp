@@ -28,6 +28,7 @@ void PPUcounter::vcounter_tick() {
   status.lineclocks = 1364;
 
   if(vcounter() == 128) {
+    //AWJ's notes:
     //synchronize with PPU interlace state
     //fieldlines[0] = lines in even field: (262 or 312)+1 if interlace
     //fieldlines[1] = lines in odd field: always 262 or 312
