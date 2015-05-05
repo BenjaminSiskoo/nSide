@@ -1,15 +1,16 @@
 rem For use with Windows
 @echo off
 mkdir "obj"
-mkdir "obj\x64"
-mkdir "obj\x86"
 
-move "obj\*.o" "obj\x64"
-move "obj\x86\*.o" "obj"
-
-setlocal
-rem Change this to the path of your installation of MinGW32.
-set PATH=C:\MinGW32\bin
+rem The below code is set to only run on 64-bit Windows.
+if "%ProgramW6432%" == "%ProgramFiles%" (
+  mkdir "obj\x64"
+  mkdir "obj\x86"
+  move "obj\*.o" "obj\x64"
+  move "obj\x86\*.o" "obj"
+  setlocal
+  PATH=C:\MinGW32\bin
+)
 
 rem Balanced-x86 profile
 mkdir "obj\balanced-x86"
@@ -37,9 +38,10 @@ move "obj\ui-nSide.o" "obj\performance"
 move "obj\ui-settings.o" "obj\performance"
 if not exist "out\nSide-performance.exe" (pause)
 
-endlocal
-
-move "obj\*.o" "obj\x86"
-move "obj\x64\*.o" "obj"
+if "%ProgramW6432%" == "%ProgramFiles%" (
+  endlocal
+  move "obj\*.o" "obj\x86"
+  move "obj\x64\*.o" "obj"
+)
 
 @echo on

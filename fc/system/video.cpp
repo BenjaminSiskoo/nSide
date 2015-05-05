@@ -6,15 +6,48 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
   unsigned emphasis;
   unsigned luma;
   unsigned chroma;
+  bool rgb;
+  const uint9_t* ppu_pal = nullptr;
+  switch(ppu.revision) {
+  case PPU::Revision::RP2C02C:
+  case PPU::Revision::RP2C02G:
+  case PPU::Revision::RP2C07:
+    rgb = false;
+    break;
+  case PPU::Revision::RP2C03B:
+  case PPU::Revision::RP2C03G:
+  case PPU::Revision::RC2C03B:
+  case PPU::Revision::RC2C03C:
+  case PPU::Revision::RC2C05_01:
+  case PPU::Revision::RC2C05_02:
+  case PPU::Revision::RC2C05_03:
+  case PPU::Revision::RC2C05_04:
+  case PPU::Revision::RC2C05_05:
+    rgb = true;
+    ppu_pal = PPU::RP2C03;
+    break;
+  case PPU::Revision::RP2C04_0001:
+    rgb = true;
+    ppu_pal = PPU::RP2C04_0001;
+    break;
+  case PPU::Revision::RP2C04_0002:
+    rgb = true;
+    ppu_pal = PPU::RP2C04_0002;
+    break;
+  case PPU::Revision::RP2C04_0003:
+    rgb = true;
+    ppu_pal = PPU::RP2C04_0003;
+    break;
+  case PPU::Revision::RP2C04_0004:
+    ppu_pal = PPU::RP2C04_0004;
+    break;
+  }
   for(unsigned color = 0; color < (1 << 9); color++) {
     if(mode == Emulator::Interface::PaletteMode::Literal) {
       palette[color] = color;
       continue;
     }
-    switch(ppu.revision) { default:
-    case PPU::Revision::RP2C02C:
-    case PPU::Revision::RP2C02G:
-    case PPU::Revision::RP2C07:
+    if(!rgb) {
       if(mode == Emulator::Interface::PaletteMode::Standard) {
         palette[color] = generate_color(color, 2.0, 0.0, 1.0, 1.0, 2.2);
       } else if(mode == Emulator::Interface::PaletteMode::Channel) {
@@ -25,39 +58,61 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
       } else if(mode == Emulator::Interface::PaletteMode::Emulation) {
         palette[color] = generate_color(color, 2.0, 0.0, 1.0, 1.0, 1.8);
       }
-      break;
-    case PPU::Revision::RP2C03B:
-    case PPU::Revision::RP2C03G:
-    case PPU::Revision::RC2C03B:
-    case PPU::Revision::RC2C03C:
-    case PPU::Revision::RC2C05_01:
-    case PPU::Revision::RC2C05_02:
-    case PPU::Revision::RC2C05_03:
-    case PPU::Revision::RC2C05_04:
-    case PPU::Revision::RC2C05_05:
-      palette[color] = retrieve_color(PPU::RP2C03[color & 63], color);
-      break;
-    case PPU::Revision::RP2C04_0001:
-      palette[color] = retrieve_color(PPU::RP2C04_0001[color & 63], color);
-      break;
-    case PPU::Revision::RP2C04_0002:
-      palette[color] = retrieve_color(PPU::RP2C04_0002[color & 63], color);
-      break;
-    case PPU::Revision::RP2C04_0003:
-      palette[color] = retrieve_color(PPU::RP2C04_0003[color & 63], color);
-      break;
-    case PPU::Revision::RP2C04_0004:
-      palette[color] = retrieve_color(PPU::RP2C04_0004[color & 63], color);
-      break;
-    } 
+    } else {
+      unsigned r = (ppu_pal[color & 0x3f] >> 6) & 7;
+      unsigned g = (ppu_pal[color & 0x3f] >> 3) & 7;
+      unsigned b = (ppu_pal[color & 0x3f] >> 0) & 7;
+      if(mode == Emulator::Interface::PaletteMode::Standard) {
+        palette[color] = interface->videoColor(color, 0,
+          image::normalize((color & 0x040) ? 7 : r, 3, 16),
+          image::normalize((color & 0x080) ? 7 : g, 3, 16),
+          image::normalize((color & 0x100) ? 7 : b, 3, 16)
+        );
+      } else if(mode == Emulator::Interface::PaletteMode::Channel) {
+        palette[color] = interface->videoColor(color, 0,
+          image::normalize((color & 0x040) ? 7 : r, 3, 16),
+          image::normalize((color & 0x080) ? 7 : g, 3, 16),
+          image::normalize((color & 0x100) ? 7 : b, 3, 16)
+        );
+      } else if(mode == Emulator::Interface::PaletteMode::Emulation) {
+        r = gamma_ramp[(color & 0x040) ? 7 : r];
+        g = gamma_ramp[(color & 0x080) ? 7 : g];
+        b = gamma_ramp[(color & 0x100) ? 7 : b];
+        //TODO: check how arcade displays alter the signal
+        palette[color] = interface->videoColor(color, 0,
+          image::normalize(r, 8, 16),
+          image::normalize(g, 8, 16),
+          image::normalize(b, 8, 16)
+        );
+      }
+    }
   }
   if(system.pc10()) {
-    for(unsigned color = 0; color < 256; color++) {
-      palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color, 0,
-        uclamp<16>((15 - pc10arcadeboard.cgrom[color + 0x000]) * 4369.0),
-        uclamp<16>((15 - pc10arcadeboard.cgrom[color + 0x100]) * 4369.0),
-        uclamp<16>((15 - pc10arcadeboard.cgrom[color + 0x200]) * 4369.0)
-      );
+    if(mode == Emulator::Interface::PaletteMode::Standard) {
+      for(unsigned color = 0; color < 256; color++) {
+        palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color, 0,
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 16),
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x100], 4, 16),
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x200], 4, 16)
+        );
+      }
+    } else if(mode == Emulator::Interface::PaletteMode::Channel) {
+      for(unsigned color = 0; color < 256; color++) {
+        palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color,
+          65535, // distinguish from the game screen
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 16),
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x100], 4, 16),
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x200], 4, 16)
+        );
+      }
+    } else if(mode == Emulator::Interface::PaletteMode::Emulation) {
+      for(unsigned color = 0; color < 256; color++) {
+        palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color, 0,
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 16),
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x100], 4, 16),
+          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x200], 4, 16)
+        );
+      }
     }
   }
 }
@@ -72,6 +127,14 @@ Video::~Video() {
 }
 
 //internal
+
+// for RGB PPUs
+const uint8_t Video::gamma_ramp[8] = {
+  0x00, 0x0a,
+  0x2d, 0x5b,
+  0x98, 0xb8,
+  0xe0, 0xff,
+};
 
 uint32_t Video::generate_color(
   unsigned n, double saturation, double hue,
@@ -119,17 +182,6 @@ uint32_t Video::generate_color(
   unsigned b = 65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q);
 
   return interface->videoColor(n, 0, uclamp<16>(r), uclamp<16>(g), uclamp<16>(b));
-}
-
-uint32_t Video::retrieve_color(uint9_t color, unsigned index) {
-  unsigned em_r = ((index >> 6) & 1) * 7;
-  unsigned em_g = ((index >> 7) & 1) * 7;
-  unsigned em_b = ((index >> 8) & 1) * 7;
-  return interface->videoColor(index, 0,
-    uclamp<16>((((color >> 6) | em_r) & 7) * 9362.25),
-    uclamp<16>((((color >> 3) | em_g) & 7) * 9362.25),
-    uclamp<16>((((color >> 0) | em_b) & 7) * 9362.25)
-  );
 }
 
 const uint8_t Video::cursor[15 * 15] = {
