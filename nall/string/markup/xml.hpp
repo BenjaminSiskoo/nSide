@@ -36,7 +36,7 @@ protected:
 
   //copy part of string from source document into target string; decode markup while copying
   inline void copy(string& target, const char* source, unsigned length) {
-    target.reserve(length + 1);
+    target.resize(length);
 
     #if defined(NALL_XML_LITERAL)
     memcpy(target(), source, length);
