@@ -457,6 +457,28 @@ release
 
 release
   cartridge region=NTSC
+    board type=HVC-SXROM
+    chip type=MMC1B2
+    prg
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x8000
+    chr
+      ram size=0x2000
+  information
+    title:    ファイナルファンタジーI・II
+    name:     Final Fantasy I & II
+    region:   JP
+    revision: 1.0
+    board:    HVC-SXROM-01
+    serial:   SQF-FO
+    sha256:   a637619a8b794ac9382723930b5be0e5a3d37991d2804b1ee637eced44b2b494
+    configuration
+      rom name=program.rom size=0x80000
+      ram name=save.ram size=0x8000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
     board type=HVC-TNROM
     chip type=MMC3B
     prg
@@ -789,6 +811,48 @@ release
 
 release
   cartridge region=NTSC
+    board type=IREM-BNROM
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      ram size=0x2000
+  information
+    title:    魔鐘
+    name:     Mashou
+    region:   JP
+    revision: 1.0
+    board:    IREM-I-IM
+    serial:   IF-05
+    sha256:   4ac0926d1e4704e75e7dfc27c4d990ebdbe685002b9af1a80a385604f3cb162c
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=HVC-SJROM
+    chip type=MMC1A
+    prg
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x8000
+  information
+    title:    ザ・マネーゲーム
+    name:     Money Game, The
+    region:   JP
+    revision: 1.0
+    board:    HVC-SJROM-01
+    serial:   SFL-MY
+    sha256:   f2aef1a9ade54330ff821083fda7e03c7a5f93d77f4da359069d84f98ab1f852
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x8000
+
+release
+  cartridge region=NTSC
     board type=HVC-TKROM
     chip type=MMC3A
     prg
@@ -910,6 +974,26 @@ release
       rom name=program.rom size=0x20000
       rom name=character.rom size=0x20000
 
+cartridge region=NTSC
+  board type=IREM-G101
+  chip type=G-101
+  prg
+    rom name=program.rom size=0x40000
+  chr
+    rom name=character.rom size=0x20000
+
+information
+  title:    パーマン2 秘密結社マドー団をたおせ!
+  name:     Paaman Part 2 - Himitsu Kessha Madoodan o Taose!
+  region:   JP
+  revision: 1.0
+  board:    FC-00-018
+  serial:   IF-25
+  sha256:   ece3f1fefbcc9c4a6da801d931a5bda85241975d96b5b4931bcd635bc3e0f1a5
+  configuration
+    rom name=program.rom size=0x40000
+    rom name=character.rom size=0x20000
+
 release
   cartridge region=NTSC
     board type=NAMCOT-3416
@@ -1013,6 +1097,28 @@ release
     configuration
       rom name=program.rom size=0x8000
       rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=HVC-SKROM
+    chip type=MMC1A
+    prg
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    闘将!! 拉麺男 炸裂超人一○二芸
+    name:     Tatakae!! Rahmen Man - Sakuretsu Choujin 102 Gei
+    region:   JP
+    revision: 1.0
+    board:    HVC-SKROM-02
+    serial:   SHI-RN
+    sha256:   a086ff08e7eae822285975d04f5d227f2434d5f1819969e233ff8670f7d57439
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x20000
 
 release
   cartridge region=NTSC
@@ -1155,6 +1261,28 @@ release
     configuration
       rom name=program.rom size=0x4000
       rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-SKROM
+    chip type=MMC1B2
+    prg
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    Advanced Dungeons & Dragons: Heroes of the Lance
+    name:     Advanced Dungeons & Dragons - Heroes of the Lance
+    region:   NA
+    revision: 1.0
+    board:    NES-SKROM-04
+    serial:   NES-LQ-USA
+    sha256:   df2609c80e818bb95983b30a3ac1435ea2332ac83e29fde469f397e1d5a2db93
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=save.ram size=0x2000
+      rom name=character.rom size=0x20000
 
 release
   cartridge region=NTSC
@@ -1642,6 +1770,28 @@ release
 
 release
   cartridge region=NTSC
+    board type=NES-TSROM
+    chip type=MMC3C
+    prg
+      rom name=program.rom size=0x40000
+      ram size=0x2000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    King's Quest V
+    name:     King's Quest V
+    region:   NA
+    revision: 1.0
+    board:    NES-TSROM-08
+    serial:   NES-8Q-USA
+    sha256:   997ddca52ac724481ad5daafbc4e61547a541d673214eac579a8de746b26978d
+    configuration
+      rom name=program.rom size=0x40000
+      ram name=work.ram size=0x2000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=NTSC
     board type=NES-TKROM
     chip type=MMC3C
     prg
@@ -2066,6 +2216,26 @@ release
       rom name=program.rom size=0x40000
       ram name=work.ram size=0x2000
       rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
+    board type=NES-QJ
+    chip type=MMC3
+    prg
+      rom name=program.rom size=0x40000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    Super Spike V'Ball / Nintendo World Cup
+    name:     Super Spike V'Ball + Nintendo World Cup
+    region:   NA
+    revision: 1.0
+    board:    NES-QJ
+    serial:   NES-QJ-USA
+    sha256:   8951dccb6640b48c857f321ef01c06110c5b8870f5d901dcc538ab1b8db7e2a1
+    configuration
+      rom name=program.rom size=0x40000
+      rom name=character.rom size=0x40000
 
 release
   cartridge region=NTSC
