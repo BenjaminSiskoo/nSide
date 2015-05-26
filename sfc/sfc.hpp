@@ -14,9 +14,10 @@ namespace SuperFamicom {
     static const char Name[] = "nSide-sfc";
     // Changes from bsnes's serializer version 28:
     // Imported from AWJ's bsnes-classic:
+    // * CPU/PPU timing refactoring to make History management simpler
     // * PPUcounter shared serialization for all 3 profiles
-    //   (note that this one may or may not be reverted when higan v095 is released)
-    static const unsigned SerializerVersion = 0;
+    //   (note that these ones may or may not be reverted when higan v095 is released)
+    static const unsigned SerializerVersion = 1;
   }
 }
 
@@ -25,9 +26,33 @@ namespace SuperFamicom {
   based on higan/bsnes by byuu.
   author: byuu
   contributors:
-    blargg  (Balanced/Performance DSP)
-    AWJ     (PPUcounter NTSC/PAL timing)
-    hex_usr (exportMemory expansion chip support/PPU register dumping)
+    Andreas Naive     (S-DD1 decompression algorithm)
+    anomie
+    AWJ               (PPUcounter NTSC/PAL timing)
+    blargg            (Balanced/Performance DSP)
+    Cydrak            (ST-018 discoveries and bug fixes)
+    _Demo_
+    Derrick Sobodash
+    DMV27
+    Dr. Decapitator   (DSP-1,2,3,4, ST-010,011,018 ROM dumps)
+    FirebrandX
+    FitzRoy
+    GIGO
+    Jonas Quinn       (DSP fixes, Game Boy fixes)
+    kode54
+    krom
+    LostTemplar       (ST-018 program ROM analysis)
+    Matthew Callis
+    Nach
+    neviksti          (SPC7110 decompression algorithm)
+    Overload          (Cx4 data ROM dump)
+    RedDwarf
+    Richard Bannister
+    segher            (Cx4 reverse engineering)
+    tetsuo55
+    TRAC
+    zones
+    hex_usr           (exportMemory PPU register/expansion chip support)
   license: GPLv3
   original project started: 2004-10-14
 */

@@ -23,58 +23,21 @@ uint16 PPU::get_vram_address() {
 //write occurs during the very last clock cycle of vblank.
 
 uint8 PPU::vram_mmio_read(uint16 addr) {
-  uint8 data;
+  if(regs.display_disabled == true || cpu.vcounter_future(2) >= (!overscan() ? 225 : 240))
+    return vram[addr];
 
-  if(regs.display_disabled == true) {
-    data = vram[addr];
-  } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
-    uint16 ls = ((system.region() == System::Region::NTSC ? 525 : 625) >> 1) - 1;
-    if(interlace() && !cpu.field()) ls++;
-
-    if(v == ls && h == 1362) {
-      data = 0x00;
-    } else if(v < (!overscan() ? 224 : 239)) {
-      data = 0x00;
-    } else if(v == (!overscan() ? 224 : 239)) {
-      if(h == 1362) {
-        data = vram[addr];
-      } else {
-        data = 0x00;
-      }
-    } else {
-      data = vram[addr];
-    }
-  }
-
-  return data;
+  return 0;
 }
 
 void PPU::vram_mmio_write(uint16 addr, uint8 data) {
   if(regs.display_disabled == true) {
     vram[addr] = data;
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
-    if(v == 0) {
-      if(h <= 4) {
-        vram[addr] = data;
-      } else if(h == 6) {
-        vram[addr] = cpu.regs.mdr;
-      } else {
-        //no write
-      }
-    } else if(v < (!overscan() ? 225 : 240)) {
-      //no write
-    } else if(v == (!overscan() ? 225 : 240)) {
-      if(h <= 4) {
-        //no write
-      } else {
-        vram[addr] = data;
-      }
-    } else {
+    uint16 v = cpu.vcounter_past(6);
+    if(v != (!overscan() ? 225 : 240)) {
       vram[addr] = data;
+    } else if(v == 0 && cpu.hcounter_past(6) == 0) {
+      vram[addr] = cpu.regs.mdr;
     }
   }
 }

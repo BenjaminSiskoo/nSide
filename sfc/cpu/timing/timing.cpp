@@ -37,8 +37,7 @@ void CPU::add_clocks(unsigned clocks) {
 
 //called by ppu.tick() when Hcounter=0
 void CPU::scanline() {
-  status.dma_counter = (status.dma_counter + status.line_clocks) & 7;
-  status.line_clocks = lineclocks();
+  status.dma_counter = (status.dma_counter + prev_lineclocks()) & 7;
 
   //forcefully sync S-CPU to other processors, in case chips are not communicating
   synchronize_smp();
@@ -162,7 +161,6 @@ void CPU::timing_power() {
 
 void CPU::timing_reset() {
   status.clock_count = 0;
-  status.line_clocks = lineclocks();
 
   status.irq_lock = false;
   status.dram_refresh_position = (cpu_version == 1 ? 530 : 538);
