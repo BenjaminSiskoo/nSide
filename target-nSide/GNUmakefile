@@ -7,12 +7,12 @@ ifndef DESTDIR
 endif
 
 processors := arm gsu hg51b lr35902 r6502 r65816 spc700 upd96050
-include processor/Makefile
+include processor/GNUmakefile
 
-include fc/Makefile
-include sfc/Makefile
-include gb/Makefile
-include gba/Makefile
+include fc/GNUmakefile
+include sfc/GNUmakefile
+include gb/GNUmakefile
+include gba/GNUmakefile
 
 ui_objects := ui-nSide ui-configuration ui-interface ui-utility
 ui_objects += ui-input ui-window ui-general ui-settings ui-tools
@@ -39,11 +39,11 @@ else ifeq ($(platform),bsd)
 endif
 
 # phoenix
-include phoenix/Makefile
+include phoenix/GNUmakefile
 link += $(phoenixlink)
 
 # ruby
-include ruby/Makefile
+include ruby/GNUmakefile
 link += $(rubylink)
 
 # rules

@@ -1,11 +1,11 @@
-include ../nall/Makefile
+include ../nall/GNUmakefile
 
 ifeq ($(arch),x86)
   flags += -m32
   link += -m32
 endif
 
-include ../phoenix/Makefile
+include ../phoenix/GNUmakefile
 
 path := /usr/local/lib
 flags := $(flags) -O3 -fomit-frame-pointer -I..

@@ -7,10 +7,10 @@ ifndef DESTDIR
 endif
 
 processors := arm gsu hg51b lr35902 r65816 spc700 upd96050
-include processor/Makefile
+include processor/GNUmakefile
 
-include sfc/Makefile
-include gb/Makefile
+include sfc/GNUmakefile
+include gb/GNUmakefile
 
 ui_objects := ui-loki ui-settings ui-input
 ui_objects += ui-interface ui-debugger
@@ -28,10 +28,10 @@ else ifeq ($(platform),bsd)
   ruby := video.glx audio.openal input.x
 endif
 
-include ruby/Makefile
+include ruby/GNUmakefile
 link += $(rubylink)
 
-include phoenix/Makefile
+include phoenix/GNUmakefile
 link += $(phoenixlink)
 
 objects := $(ui_objects) $(objects)

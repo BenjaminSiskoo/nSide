@@ -1,4 +1,4 @@
-include nall/Makefile
+include nall/GNUMakefile
 
 fc  := fc
 sfc := sfc
@@ -12,7 +12,11 @@ ifndef target
   target := nSide
 endif
 
-# options += debugger
+ifeq ($(target),loki)
+  options += debugger
+else ifeq ($(target),laevateinn)
+  options += debugger
+endif
 # arch := x86
 # console := true
 
@@ -76,7 +80,7 @@ all: build;
 
 obj/libco.o: libco/libco.c libco/*
 
-include $(ui)/Makefile
+include $(ui)/GNUmakefile
 flags := $(flags) $(foreach o,$(call strupper,$(options)),-D$o)
 
 # targets
