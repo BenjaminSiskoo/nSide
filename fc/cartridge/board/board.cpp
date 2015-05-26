@@ -161,15 +161,16 @@ Board* Board::load(Markup::Node cartridge) {
     if(type == "JLROM"   ) return new Sunsoft5B(cartridge);
     if(type == "JSROM"   ) return new Sunsoft5B(cartridge);
 
-    if(type == "NROM"    ) return new NES_NROM(cartridge);
-    if(type == "NROM-128") return new NES_NROM(cartridge);
-    if(type == "NROM-256") return new NES_NROM(cartridge);
-    if(type == "HROM"    ) return new NES_NROM(cartridge);
-    if(type == "RROM"    ) return new NES_NROM(cartridge);
-    if(type == "RROM-128") return new NES_NROM(cartridge);
-    if(type == "RTROM"   ) return new NES_NROM(cartridge);
-    if(type == "SROM"    ) return new NES_NROM(cartridge);
-    if(type == "STROM"   ) return new NES_NROM(cartridge);
+    if(type == "FAMILYBASIC") return new NES_NROM(cartridge);
+    if(type == "HROM"       ) return new NES_NROM(cartridge);
+    if(type == "NROM"       ) return new NES_NROM(cartridge);
+    if(type == "NROM-128"   ) return new NES_NROM(cartridge);
+    if(type == "NROM-256"   ) return new NES_NROM(cartridge);
+    if(type == "RROM"       ) return new NES_NROM(cartridge);
+    if(type == "RROM-128"   ) return new NES_NROM(cartridge);
+    if(type == "RTROM"      ) return new NES_NROM(cartridge);
+    if(type == "SROM"       ) return new NES_NROM(cartridge);
+    if(type == "STROM"      ) return new NES_NROM(cartridge);
 
     if(type == "PEEOROM" ) return new NES_PxROM(cartridge);
     if(type == "PNROM"   ) return new NES_PxROM(cartridge);
