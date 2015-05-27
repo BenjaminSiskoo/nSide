@@ -1,5 +1,4 @@
 struct APU : Thread {
-  enum : bool { Threaded = true };
   static void Enter();
   void enter();
   void tick();

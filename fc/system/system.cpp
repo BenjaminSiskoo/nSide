@@ -22,28 +22,20 @@ void System::run() {
 }
 
 void System::runtosave() {
-  if(PPU::Threaded == true) {
-    scheduler.sync = Scheduler::SynchronizeMode::PPU;
-    runthreadtosave();
-  }
+  scheduler.sync = Scheduler::SynchronizeMode::PPU;
+  runthreadtosave();
 
-  if(CPU::Threaded == true) {
-    scheduler.sync = Scheduler::SynchronizeMode::All;
-    scheduler.thread = cpu.thread;
-    runthreadtosave();
-  }
+  scheduler.sync = Scheduler::SynchronizeMode::All;
+  scheduler.thread = cpu.thread;
+  runthreadtosave();
 
-  if(APU::Threaded == true) {
-    scheduler.sync = Scheduler::SynchronizeMode::All;
-    scheduler.thread = apu.thread;
-    runthreadtosave();
-  }
+  scheduler.sync = Scheduler::SynchronizeMode::All;
+  scheduler.thread = apu.thread;
+  runthreadtosave();
 
-  if(Cartridge::Threaded == true) {
-    scheduler.sync = Scheduler::SynchronizeMode::All;
-    scheduler.thread = cartridge.thread;
-    runthreadtosave();
-  }
+  scheduler.sync = Scheduler::SynchronizeMode::All;
+  scheduler.thread = cartridge.thread;
+  runthreadtosave();
 
   scheduler.sync = Scheduler::SynchronizeMode::None;
 }

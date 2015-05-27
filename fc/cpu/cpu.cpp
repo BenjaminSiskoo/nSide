@@ -25,27 +25,15 @@ void CPU::step(unsigned clocks) {
 }
 
 void CPU::synchronize_apu() {
-  if(APU::Threaded == true) {
-    if(apu.clock < 0) co_switch(apu.thread);
-  } else {
-    while(apu.clock < 0) apu.enter();
-  }
+  if(apu.clock < 0) co_switch(apu.thread);
 }
 
 void CPU::synchronize_ppu() {
-  if(PPU::Threaded == true) {
-    if(ppu.clock < 0) co_switch(ppu.thread);
-  } else {
-    while(ppu.clock < 0) ppu.enter();
-  }
+  if(ppu.clock < 0) co_switch(ppu.thread);
 }
 
 void CPU::synchronize_cartridge() {
-  if(Cartridge::Threaded == true) {
-    if(cartridge.clock < 0) co_switch(cartridge.thread);
-  } else {
-    while(cartridge.clock < 0) cartridge.enter();
-  }
+  if(cartridge.clock < 0) co_switch(cartridge.thread);
 }
 
 void CPU::synchronize_controllers() {

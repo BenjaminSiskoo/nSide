@@ -3,7 +3,6 @@ struct PPU : Thread, public PPUcounter {
   uint8 cgram[32];
   uint8 oam[256];
 
-  enum : bool { Threaded = true };
   alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_cpu();
 

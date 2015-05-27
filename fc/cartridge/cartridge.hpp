@@ -8,7 +8,6 @@ struct Cartridge : Thread, property<Cartridge> {
     //Dendy,
   };
 
-  enum : bool { Threaded = true };
   static void Enter();
   void enter();
 

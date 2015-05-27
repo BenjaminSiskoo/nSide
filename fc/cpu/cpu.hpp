@@ -1,7 +1,6 @@
 struct CPU : Processor::R6502, Thread {
   uint8 ram[0x0800];
 
-  enum : bool { Threaded = true };
   alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_apu();
   void synchronize_ppu();

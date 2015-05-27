@@ -28,11 +28,7 @@ void Controller::step(unsigned clocks) {
 }
 
 void Controller::synchronize_cpu() {
-  if(CPU::Threaded == true) {
-    if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
-  } else {
-    while(clock >= 0) cpu.enter();
-  }
+  if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
 }
 
 Controller::Controller(unsigned port, unsigned device):
