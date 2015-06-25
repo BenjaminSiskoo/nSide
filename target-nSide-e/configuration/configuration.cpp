@@ -1,4 +1,4 @@
-#include "../nSide.hpp"
+#include "../ethos.hpp"
 ConfigurationSettings* config = nullptr;
 
 ConfigurationSettings::ConfigurationSettings() {

@@ -1,5 +1,5 @@
 ifndef name
-  name := nSide
+  name := nSide-e
 endif
 
 ifndef DESTDIR
@@ -14,7 +14,7 @@ include sfc/GNUmakefile
 include gb/GNUmakefile
 include gba/GNUmakefile
 
-ui_objects := ui-nSide ui-configuration ui-interface ui-utility
+ui_objects := ui-ethos ui-configuration ui-interface ui-utility
 ui_objects += ui-input ui-window ui-general ui-settings ui-tools
 ui_objects += phoenix ruby
 ui_objects += $(if $(call streq,$(platform),windows),resource)
@@ -50,7 +50,7 @@ link += $(rubylink)
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
-obj/ui-nSide.o: $(ui)/nSide.cpp $(call rwildcard,$(ui)/)
+obj/ui-ethos.o: $(ui)/ethos.cpp $(call rwildcard,$(ui)/)
 obj/ui-configuration.o: $(ui)/configuration/configuration.cpp $(call rwildcard,$(ui)/)
 obj/ui-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/)
 obj/ui-utility.o: $(ui)/utility/utility.cpp $(call rwildcard,$(ui)/)

@@ -1,4 +1,4 @@
-#include "nSide.hpp"
+#include "ethos.hpp"
 #include "bootstrap.cpp"
 #include "resource/resource.cpp"
 
@@ -46,8 +46,8 @@ Program::Program(int argc, char** argv) {
   autopause = false;
 
   basepath = nall::programpath();
-  userpath = {nall::configpath(), "nSide/"};
-  sharedpath = {nall::sharedpath(), "nSide/"};
+  userpath = {nall::configpath(), "nSide-e/"};
+  sharedpath = {nall::sharedpath(), "nSide-e/"};
   directory::create(userpath);
 
   bootstrap();
@@ -127,7 +127,7 @@ int main(int argc, char** argv) {
   utf8_args(argc, argv);
   #endif
 
-  Application::setName("nSide");
+  Application::setName("nSide-e");
 
   Application::Windows::onModalBegin = [&] {
     audio.clear();

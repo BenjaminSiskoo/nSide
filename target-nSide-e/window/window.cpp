@@ -1,4 +1,4 @@
-#include "../nSide.hpp"
+#include "../ethos.hpp"
 WindowManager* windowManager = nullptr;
 
 void WindowManager::append(Window* window, string name) {

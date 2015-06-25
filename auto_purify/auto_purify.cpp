@@ -95,7 +95,7 @@ struct AutoPurify {
 FileDialog *fileDialog = nullptr;
 
 AutoPurify::AutoPurify() {
-  libraryPath = string::read({configpath(), "nSide/library.bml"}).strip().ltrim<1>("Path: ").replace("\\", "/");
+  libraryPath = string::read({configpath(), "nSide-e/library.bml"}).strip().ltrim<1>("Path: ").replace("\\", "/");
   if(libraryPath.empty()) libraryPath = {userpath(), "Emulation/"};
   if(libraryPath.endsWith("/") == false) libraryPath.append("/");
 }

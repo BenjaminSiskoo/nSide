@@ -1,4 +1,4 @@
-#include "../nSide.hpp"
+#include "../ethos.hpp"
 Interface* interface = nullptr;
 
 void Interface::loadRequest(unsigned id, string name, string type) {

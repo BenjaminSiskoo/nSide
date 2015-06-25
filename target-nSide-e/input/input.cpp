@@ -1,4 +1,4 @@
-#include "../nSide.hpp"
+#include "../ethos.hpp"
 #include "hotkeys.cpp"
 InputManager* inputManager = nullptr;
 HID::Null hidNull;

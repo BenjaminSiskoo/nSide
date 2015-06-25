@@ -1,4 +1,4 @@
-#include "../nSide.hpp"
+#include "../ethos.hpp"
 
 Utility* utility = nullptr;
 
@@ -89,7 +89,7 @@ void Utility::load() {
   presentation->setTitle(system().title());
 
   cheatEditor->load({pathname[0], "cheats.bml"});
-  stateManager->load({pathname[0], "nSide/states.bsa"}, 1);
+  stateManager->load({pathname[0], "nSide-e/states.bsa"}, 1);
 
   synchronizeDSP();
 
@@ -103,7 +103,7 @@ void Utility::unload() {
   if(program->active == nullptr) return;
 
   cheatEditor->save({pathname[0], "cheats.bml"});
-  stateManager->save({pathname[0], "nSide/states.bsa"}, 1);
+  stateManager->save({pathname[0], "nSide-e/states.bsa"}, 1);
 
   system().unload();
   path.reset();
@@ -124,14 +124,14 @@ void Utility::saveState(unsigned slot) {
   if(program->active == nullptr) return;
   serializer s = system().serialize();
   if(s.size() == 0) return;
-  directory::create({pathname[0], "nSide/"});
-  if(file::write({pathname[0], "nSide/state-", slot, ".bsa"}, s.data(), s.size()) == false);
+  directory::create({pathname[0], "nSide-e/"});
+  if(file::write({pathname[0], "nSide-e/state-", slot, ".bsa"}, s.data(), s.size()) == false);
   showMessage({"Saved to slot ", slot});
 }
 
 void Utility::loadState(unsigned slot) {
   if(program->active == nullptr) return;
-  auto memory = file::read({pathname[0], "nSide/state-", slot, ".bsa"});
+  auto memory = file::read({pathname[0], "nSide-e/state-", slot, ".bsa"});
   if(memory.size() == 0) return showMessage({"Unable to locate slot ", slot, " state"});
   serializer s(memory.data(), memory.size());
   if(system().unserialize(s) == false) return showMessage({"Slot ", slot, " state incompatible"});
@@ -307,7 +307,7 @@ void Utility::showMessage(string message) {
 }
 
 string Utility::libraryPath() {
-  string path = string::read({configpath(), "nSide/library.bml"}).strip().ltrim<1>("Path: ").transform("\\", "/");
+  string path = string::read({configpath(), "nSide-e/library.bml"}).strip().ltrim<1>("Path: ").transform("\\", "/");
   if(path.empty()) path = {userpath(), "Emulation/"};
   if(path.endsWith("/") == false) path.append("/");
   return path;
