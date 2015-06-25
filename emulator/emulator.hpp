@@ -29,7 +29,6 @@ namespace Emulator {
 #include <nall/endian.hpp>
 #include <nall/file.hpp>
 #include <nall/function.hpp>
-#include <nall/http.hpp>
 #include <nall/image.hpp>
 #include <nall/invoke.hpp>
 #include <nall/priority-queue.hpp>
@@ -56,7 +55,7 @@ template<typename T> struct hook;
 template<typename R, typename... P> struct hook<R (P...)> {
   function<R (P...)> callback;
 
-  R operator()(P... p) const {
+  auto operator()(P... p) const -> R {
     #if defined(DEBUGGER)
     if(callback) return callback(std::forward<P>(p)...);
     #endif
@@ -71,7 +70,7 @@ template<typename R, typename... P> struct hook<R (P...)> {
   template<typename C> hook(R (C::*function)(P...) const, C* object) { callback = {function, object}; }
   template<typename L> hook(const L& function) { callback = function; }
 
-  hook& operator=(const hook& hook) { callback = hook.callback; return *this; }
+  auto operator=(const hook& source) -> hook& { callback = source.callback; return *this; }
 };
 
 #if defined(DEBUGGER)

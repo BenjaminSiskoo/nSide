@@ -16,8 +16,8 @@ include gba/GNUmakefile
 
 ui_objects := ui-ethos ui-configuration ui-interface ui-utility
 ui_objects += ui-input ui-window ui-general ui-settings ui-tools
-ui_objects += phoenix ruby
-ui_objects += $(if $(call streq,$(platform),windows),resource)
+ui_objects += ruby phoenix
+ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
 
 # platform
 ifeq ($(platform),windows)
@@ -50,6 +50,12 @@ link += $(rubylink)
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
+obj/ruby.o: ruby/ruby.cpp $(call rwildcard,ruby/)
+	$(compiler) $(rubyflags) -c $< -o $@
+
+obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/)
+	$(compiler) $(phoenixflags) -c $< -o $@
+
 obj/ui-ethos.o: $(ui)/ethos.cpp $(call rwildcard,$(ui)/)
 obj/ui-configuration.o: $(ui)/configuration/configuration.cpp $(call rwildcard,$(ui)/)
 obj/ui-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/)
@@ -60,17 +66,11 @@ obj/ui-general.o: $(ui)/general/general.cpp $(call rwildcard,$(ui)/)
 obj/ui-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
 obj/ui-tools.o: $(ui)/tools/tools.cpp $(call rwildcard,$(ui)/)
 
-obj/ruby.o: ruby/ruby.cpp $(call rwildcard,ruby/)
-	$(compiler) $(rubyflags) -c $< -o $@
-
-obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/)
-	$(compiler) $(phoenixflags) -c $< -o $@
-
-obj/resource.o: $(ui)/resource.rc
+obj/ui-resource.o:
 ifeq ($(arch),x86)
-	windres --target=pe-i386 $(ui)/resource.rc obj/resource.o
+	windres --target=pe-i386 data/resource.rc obj/ui-resource.o
 else
-	windres $(ui)/resource.rc obj/resource.o
+	windres data/resource.rc obj/ui-resource.o
 endif
 
 # targets
@@ -95,7 +95,9 @@ resource:
 	sourcery $(ui)/resource/resource.bml $(ui)/resource/resource.cpp $(ui)/resource/resource.hpp
 
 install:
-ifeq ($(platform),windows)
+ifeq ($(shell id -un),root)
+	$(error "make install should not be run as root")
+else ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
 	install -d $(DESTDIR)Library/Application\ Support/$(name)
 	cp -R profile/* $(DESTDIR)Library/Application\ Support/$(name)
@@ -115,7 +117,9 @@ else
 endif
 
 uninstall:
-ifeq ($(platform),windows)
+ifeq ($(shell id -un),root)
+	$(error "make uninstall should not be run as root")
+else ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
 else
  	rm $(DESTDIR)$(prefix)/bin/$(name)
