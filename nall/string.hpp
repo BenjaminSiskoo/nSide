@@ -12,10 +12,10 @@
 
 #include <nall/platform.hpp>
 #include <nall/atoi.hpp>
-#include <nall/crc32.hpp>
+#include <nall/hash/crc32.hpp>
 #include <nall/function.hpp>
 #include <nall/intrinsics.hpp>
-#include <nall/sha256.hpp>
+#include <nall/hash/sha256.hpp>
 #include <nall/stdint.hpp>
 #include <nall/utility.hpp>
 #include <nall/varint.hpp>

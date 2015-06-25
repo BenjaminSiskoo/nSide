@@ -1,5 +1,5 @@
-#ifndef NALL_CRC32_HPP
-#define NALL_CRC32_HPP
+#ifndef NALL_HASH_CRC32_HPP
+#define NALL_HASH_CRC32_HPP
 
 #include <nall/stdint.hpp>
 

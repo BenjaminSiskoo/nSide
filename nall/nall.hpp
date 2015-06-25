@@ -14,8 +14,6 @@
 #include <nall/bitvector.hpp>
 #include <nall/bmp.hpp>
 #include <nall/config.hpp>
-#include <nall/crc16.hpp>
-#include <nall/crc32.hpp>
 #include <nall/directory.hpp>
 #include <nall/dl.hpp>
 #include <nall/endian.hpp>
@@ -38,9 +36,9 @@
 #include <nall/png.hpp>
 #include <nall/property.hpp>
 #include <nall/random.hpp>
+#include <nall/range.hpp>
 #include <nall/serializer.hpp>
 #include <nall/set.hpp>
-#include <nall/sha256.hpp>
 #include <nall/sort.hpp>
 #include <nall/stdint.hpp>
 #include <nall/stream.hpp>
@@ -52,6 +50,9 @@
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
 #include <nall/zip.hpp>
+#include <nall/hash/crc16.hpp>
+#include <nall/hash/crc32.hpp>
+#include <nall/hash/sha256.hpp>
 
 #if defined(PLATFORM_WINDOWS)
   #include <nall/windows/registry.hpp>

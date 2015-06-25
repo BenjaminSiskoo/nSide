@@ -37,12 +37,12 @@ namespace Emulator {
 #include <nall/random.hpp>
 #include <nall/serializer.hpp>
 #include <nall/set.hpp>
-#include <nall/sha256.hpp>
 #include <nall/stdint.hpp>
 #include <nall/string.hpp>
 #include <nall/utility.hpp>
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
+#include <nall/hash/sha256.hpp>
 #include <nall/stream/memory.hpp>
 #include <nall/stream/vector.hpp>
 using namespace nall;

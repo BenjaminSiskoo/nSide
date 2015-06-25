@@ -1,5 +1,5 @@
-#ifndef NALL_SHA256_HPP
-#define NALL_SHA256_HPP
+#ifndef NALL_HASH_SHA256_HPP
+#define NALL_HASH_SHA256_HPP
 
 //author: vladitx
 

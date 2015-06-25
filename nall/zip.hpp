@@ -3,7 +3,7 @@
 
 //creates uncompressed ZIP archives
 
-#include <nall/crc32.hpp>
+#include <nall/hash/crc32.hpp>
 #include <nall/string.hpp>
 
 namespace nall {

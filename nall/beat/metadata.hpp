@@ -1,7 +1,7 @@
 #ifndef NALL_BEAT_METADATA_HPP
 #define NALL_BEAT_METADATA_HPP
 
-#include <nall/crc32.hpp>
+#include <nall/hash/crc32.hpp>
 #include <nall/file.hpp>
 #include <nall/filemap.hpp>
 #include <nall/stdint.hpp>
