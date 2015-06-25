@@ -66,22 +66,22 @@ void Cartridge::load(System::Revision revision) {
   auto rom = document["cartridge/rom"];
   auto ram = document["cartridge/ram"];
 
-  romsize = numeral(rom["size"].data);
+  romsize = rom["size"].decimal();
   romdata = allocate<uint8>(romsize, 0xff);
 
-  ramsize = numeral(ram["size"].data);
+  ramsize = ram["size"].decimal();
   ramdata = allocate<uint8>(ramsize, 0xff);
 
   //Super Game Boy core loads memory from Super Famicom core
   if(revision != System::Revision::SuperGameBoy) {
-    if(rom["name"].exists()) interface->loadRequest(ID::ROM, rom["name"].data);
-    if(ram["name"].exists()) interface->loadRequest(ID::RAM, ram["name"].data);
-    if(ram["name"].exists()) memory.append({ID::RAM, ram["name"].data});
+    if(auto name = rom["name"].text()) interface->loadRequest(ID::ROM, name);
+    if(auto name = ram["name"].text()) interface->loadRequest(ID::RAM, name);
+    if(auto name = ram["name"].text()) memory.append({ID::RAM, name});
   }
 
-  information.romsize = numeral(rom["size"].data);
-  information.ramsize = numeral(ram["size"].data);
-  information.battery = ram["name"].exists();
+  information.romsize = rom["size"].decimal();
+  information.ramsize = ram["size"].decimal();
+  information.battery = (bool)ram["name"];
 
   switch(information.mapper) { default:
   case Mapper::MBC0:  mapper = &mbc0;  break;

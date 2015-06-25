@@ -117,10 +117,7 @@ Board::~Board() {
 }
 
 Board* Board::load(Markup::Node cartridge) {
-  if(cartridge["vs"].exists()) {
-    auto vs_node = cartridge["vs"];
-    return new VS(vs_node);
-  }
+  if(auto vs_node = cartridge["vs"]) return new VS(vs_node);
   string type = cartridge["board/type"].text();
 
   if(substr(type,0,4) == "HVC-"

@@ -49,7 +49,7 @@ void serialize(serializer& s) {
 }
 
 IremG101(Markup::Node& cartridge) : Board(cartridge), g101(*this, cartridge) {
-  if(!cartridge["mirror"].exists()) {
+  if(!cartridge["mirror"]) {
     settings.mirror = 0;
   } else {
     string mirror = cartridge["mirror/mode"].text();

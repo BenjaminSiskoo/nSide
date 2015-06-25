@@ -95,7 +95,7 @@ void System::load(Revision revision) {
 
   if(!vs()) { // VS. System PPU is set within cartridge.load().
     auto game_manifest = Markup::Document(cartridge.information.markup.cartridge);
-    if(!game_manifest["cartridge/pc10"].exists()) {
+    if(!game_manifest["cartridge/pc10"]) {
       // most Famicoms use a PPU with open bus OAMDATA (read).
       // For now, we use an NES PPU where OAMDATA (read) is defined.
       if(region == Region::NTSC) ppu.revision = PPU::Revision::RP2C02G;

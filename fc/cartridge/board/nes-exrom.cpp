@@ -48,7 +48,7 @@ void serialize(serializer& s) {
 
 NES_ExROM(Markup::Node& cartridge) : Board(cartridge), mmc5(*this, cartridge) {
   chip = &mmc5;
-  if(cartridge["chip/ram"].exists()) {
+  if(cartridge["chip/ram"]) {
     string name = cartridge["chip/ram/name"].text();
     unsigned size = cartridge["chip/ram/size"].decimal();
     mmc5.ram.map(allocate<uint8>(size, 0xff), size);

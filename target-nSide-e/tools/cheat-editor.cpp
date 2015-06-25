@@ -126,7 +126,7 @@ bool CheatEditor::load(string filename) {
   auto document = Markup::Document(data);
   for(auto& node : document["cartridge"]) {
     if(node.name != "cheat") continue;
-    cheatList.setChecked(n, node["enabled"].exists());
+    cheatList.setChecked(n, (bool)node["enabled"]);
     cheat[n].code = node["code"].text();
     cheat[n].desc = node["description"].text();
     if(++n >= Codes) break;

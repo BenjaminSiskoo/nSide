@@ -161,7 +161,7 @@ TC(Board& board, Markup::Node& cartridge) : Chip(board) {
   if(type == "TC0190FMC") revision = Revision::TC0190FMC;
   if(type == "TC0350FMR") revision = Revision::TC0350FMR;
   if(type == "TC0690FMR") revision = Revision::TC0690FMR;
-  settings.pal16r4 = cartridge["chip(type=PAL16R4)"].exists();
+  settings.pal16r4 = (bool)cartridge["chip(type=PAL16R4)"];
 }
 
 };

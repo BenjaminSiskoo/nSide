@@ -85,7 +85,7 @@ NES_CxROM(Markup::Node& cartridge) : Board(cartridge) {
   if(type == "TENGEN-800008") revision = Revision::CNROM;
 
   settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
-  settings.security = cartridge["board/security"].exists();
+  settings.security = (bool)cartridge["board/security"];
   if(settings.security) {
     settings.pass = cartridge["board/security/pass"].integer();
   }

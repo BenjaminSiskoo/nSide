@@ -12,9 +12,7 @@ struct Node {
   string data;
   bool attribute;
 
-  bool exists() const {
-    return !name.empty();
-  }
+  explicit operator bool() const { return name || children; }
 
   string text() const {
     return string{data}.strip();

@@ -18,7 +18,7 @@ void Cartridge::load() {
   information.title = document["information/title"].text();
 
   unsigned rom_size = 0;
-  if(document["cartridge/rom"].exists()) {
+  if(document["cartridge/rom"]) {
     auto info = document["cartridge/rom"];
     interface->loadRequest(ID::ROM, info["name"].data);
     rom_size = numeral(info["size"].data);
@@ -31,7 +31,7 @@ void Cartridge::load() {
   has_eeprom   = false;
   has_flashrom = false;
 
-  if(document["cartridge/ram"].exists()) {
+  if(document["cartridge/ram"]) {
     auto info = document["cartridge/ram"];
 
     if(info["type"].data == "SRAM" || info["type"].data == "FRAM") {
