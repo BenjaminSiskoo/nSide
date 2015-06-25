@@ -9,8 +9,8 @@ struct Sprite {
     uint8 priority;
     uint8 palette;
     bool size;
-    unsigned width() const;
-    unsigned height() const;
+    alwaysinline unsigned width() const;
+    alwaysinline unsigned height() const;
   } list[128];
 
   struct TileItem {

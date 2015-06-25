@@ -49,7 +49,7 @@ privileged:
   Screen screen;
 
   static void Enter();
-  void add_clocks(unsigned);
+  alwaysinline void add_clocks(unsigned);
 
   void scanline();
   void frame();

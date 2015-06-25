@@ -147,7 +147,7 @@ void Cartridge::parse_markup_sufamiturbo(Markup::Node root, bool slot) {
   }
 
   for(auto node : root.find("map")) {
-    SufamiTurboCartridge &cart = (slot == 0 ? sufamiturboA : sufamiturboB);
+    SufamiTurboCartridge& cart = (slot == 0 ? sufamiturboA : sufamiturboB);
 
     if(node["id"].text() == "rom") {
       if(cart.rom.size() == 0) continue;
@@ -172,7 +172,6 @@ void Cartridge::parse_markup_sufamiturbo(Markup::Node root, bool slot) {
 void Cartridge::parse_markup_nss(Markup::Node root) {
   if(!root) return;
   has_nss_dip = true;
-  if(!root["setting"]) return;
   nss.dip = interface->dipSettings(root);
 
   for(auto node : root.find("map")) {
@@ -188,8 +187,7 @@ void Cartridge::parse_markup_event(Markup::Node root) {
   if(!root) return;
   has_event = true;
 
-  for(auto node : root) {
-    if(node.name != "rom") continue;
+  for(auto node : root.find("rom")) {
     unsigned id = node["id"].decimal();
     if(id > 3) continue;
     parse_markup_memory(event.rom[id], node, ID::EventROM0 + id, false);
@@ -236,9 +234,12 @@ void Cartridge::parse_markup_sa1(Markup::Node root) {
   if(!root) return;
   has_sa1 = true;
 
-  parse_markup_memory(sa1.rom, root["rom"], ID::SA1ROM, false);
-  parse_markup_memory(sa1.bwram, root["ram[0]"], ID::SA1BWRAM, true);
-  parse_markup_memory(sa1.iram, root["ram[1]"], ID::SA1IRAM, true);
+  auto rom = root.find("rom");
+  auto ram = root.find("ram");
+
+  parse_markup_memory(sa1.rom, rom(0), ID::SA1ROM, false);
+  parse_markup_memory(sa1.bwram, ram(0), ID::SA1BWRAM, true);
+  parse_markup_memory(sa1.iram, ram(1), ID::SA1IRAM, true);
 
   for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
@@ -272,8 +273,11 @@ void Cartridge::parse_markup_superfx(Markup::Node root) {
   if(!root) return;
   has_superfx = true;
 
-  parse_markup_memory(superfx.rom, root["rom"], ID::SuperFXROM, false);
-  parse_markup_memory(superfx.ram, root["ram"], ID::SuperFXRAM, true);
+  auto rom = root.find("rom");
+  auto ram = root.find("ram");
+
+  parse_markup_memory(superfx.rom, rom(0), ID::SuperFXROM, false);
+  parse_markup_memory(superfx.ram, ram(0), ID::SuperFXRAM, true);
 
   for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
@@ -302,9 +306,12 @@ void Cartridge::parse_markup_armdsp(Markup::Node root) {
   if(!root) return;
   has_armdsp = true;
 
-  string programROMName = root["rom[0]/name"].text();
-  string dataROMName = root["rom[1]/name"].text();
-  string dataRAMName = root["ram/name"].text();
+  auto rom = root.find("rom");
+  auto ram = root.find("ram");
+
+  string programROMName = rom(0)["name"].text();
+  string dataROMName = rom(1)["name"].text();
+  string dataRAMName = ram(0)["name"].text();
 
   interface->loadRequest(ID::ArmDSPPROM, programROMName);
   interface->loadRequest(ID::ArmDSPDROM, dataROMName);
@@ -326,8 +333,11 @@ void Cartridge::parse_markup_hitachidsp(Markup::Node root, unsigned roms) {
   if(!root) return;
   has_hitachidsp = true;
 
-  parse_markup_memory(hitachidsp.rom, root["rom[0]"], ID::HitachiDSPROM, false);
-  parse_markup_memory(hitachidsp.ram, root["ram[0]"], ID::HitachiDSPRAM, true);
+  auto rom = root.find("rom");
+  auto ram = root.find("ram");
+
+  parse_markup_memory(hitachidsp.rom, rom(0), ID::HitachiDSPROM, false);
+  parse_markup_memory(hitachidsp.ram, ram(0), ID::HitachiDSPRAM, true);
 
   for(auto& word : hitachidsp.dataROM) word = 0x000000;
   for(auto& word : hitachidsp.dataRAM) word = 0x00;
@@ -336,8 +346,8 @@ void Cartridge::parse_markup_hitachidsp(Markup::Node root, unsigned roms) {
   if(hitachidsp.Frequency == 0) hitachidsp.frequency = 20000000;
   hitachidsp.Roms = roms;
 
-  string dataROMName = root["rom[1]/name"].text();
-  string dataRAMName = root["ram[1]/name"].text();
+  string dataROMName = rom(1)["name"].text();
+  string dataRAMName = ram(1)["name"].text();
 
   interface->loadRequest(ID::HitachiDSPDROM, dataROMName);
   if(dataRAMName.empty() == false) {
@@ -382,9 +392,12 @@ void Cartridge::parse_markup_necdsp(Markup::Node root) {
   : root["model"].text() == "uPD96050" ? NECDSP::Revision::uPD96050
   : NECDSP::Revision::uPD7725;
 
-  string programROMName = root["rom[0]/name"].text();
-  string dataROMName = root["rom[1]/name"].text();
-  string dataRAMName = root["ram/name"].text();
+  auto rom = root.find("rom");
+  auto ram = root.find("ram");
+
+  string programROMName = rom(0)["name"].text();
+  string dataROMName = rom(1)["name"].text();
+  string dataRAMName = ram(0)["name"].text();
 
   if(necdsp.revision == NECDSP::Revision::uPD7725) {
     interface->loadRequest(ID::Nec7725DSPPROM, programROMName);
@@ -458,9 +471,12 @@ void Cartridge::parse_markup_spc7110(Markup::Node root) {
   if(!root) return;
   has_spc7110 = true;
 
-  parse_markup_memory(spc7110.prom, root["rom[0]"], ID::SPC7110PROM, false);
-  parse_markup_memory(spc7110.drom, root["rom[1]"], ID::SPC7110DROM, false);
-  parse_markup_memory(spc7110.ram, root["ram"], ID::SPC7110RAM, true);
+  auto rom = root.find("rom");
+  auto ram = root.find("ram");
+
+  parse_markup_memory(spc7110.prom, rom(0), ID::SPC7110PROM, false);
+  parse_markup_memory(spc7110.drom, rom(1), ID::SPC7110DROM, false);
+  parse_markup_memory(spc7110.ram, ram(0), ID::SPC7110RAM, true);
 
   for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
@@ -487,8 +503,11 @@ void Cartridge::parse_markup_sdd1(Markup::Node root) {
   if(!root) return;
   has_sdd1 = true;
 
-  parse_markup_memory(sdd1.rom, root["rom"], ID::SDD1ROM, false);
-  parse_markup_memory(sdd1.ram, root["ram"], ID::SDD1RAM, true);
+  auto rom = root.find("rom");
+  auto ram = root.find("ram");
+
+  parse_markup_memory(sdd1.rom, rom(0), ID::SDD1ROM, false);
+  parse_markup_memory(sdd1.ram, ram(0), ID::SDD1RAM, true);
 
   for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {

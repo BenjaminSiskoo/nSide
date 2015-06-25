@@ -63,7 +63,7 @@ void Event::submitScore() {
   lstring side = interface->server().split<1>("@");
   string username = side(0).split<1>(":")(0);
   string password = side(0).split<1>(":")(1);
-  side(1).ltrim<1>("http://");
+  side(1).ltrim("http://");
   string hostname = side(1).split<1>("/")(0);
   string hostpath = side(1).split<1>("/")(1);
   side = hostname.split<1>(":");
