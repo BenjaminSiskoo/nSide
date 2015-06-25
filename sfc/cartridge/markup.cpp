@@ -1,7 +1,7 @@
 #ifdef CARTRIDGE_CPP
 
 void Cartridge::parse_markup(const char* markup) {
-  auto document = Markup::Document(markup);
+  auto document = BML::unserialize(markup);
   information.title.cartridge = document["information/title"].text();
 
   auto cartridge = document["cartridge"];

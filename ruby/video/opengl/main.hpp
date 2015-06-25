@@ -12,7 +12,7 @@ void OpenGL::shader(const char* pathname) {
 
   unsigned historySize = 0;
   if(pathname) {
-    auto document = Markup::Document(file::read({pathname, "manifest.bml"}));
+    auto document = BML::unserialize(file::read({pathname, "manifest.bml"}));
 
     for(auto& node : document["settings"]) {
       settings.insert({node.name, node.text()});

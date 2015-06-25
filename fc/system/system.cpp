@@ -69,7 +69,7 @@ void System::term() {
 void System::load(Revision revision) {
   this->revision = revision;
   string manifest = string::read({interface->path(ID::System), "manifest.bml"});
-  auto document = Markup::Document(manifest);
+  auto document = BML::unserialize(manifest);
 
   if(pc10()) {
     interface->loadRequest(ID::PC10BIOS, document["system/pc10/rom[0]/name"].text());
@@ -94,7 +94,7 @@ void System::load(Revision revision) {
   cpu_frequency = region() == Region::NTSC ? 21477272 : 26601712;
 
   if(!vs()) { // VS. System PPU is set within cartridge.load().
-    auto game_manifest = Markup::Document(cartridge.information.markup.cartridge);
+    auto game_manifest = BML::unserialize(cartridge.information.markup.cartridge);
     if(!game_manifest["cartridge/pc10"]) {
       // most Famicoms use a PPU with open bus OAMDATA (read).
       // For now, we use an NES PPU where OAMDATA (read) is defined.

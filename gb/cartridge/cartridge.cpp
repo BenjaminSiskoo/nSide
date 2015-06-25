@@ -47,7 +47,7 @@ void Cartridge::load(System::Revision revision) {
   information.romsize = 0;
   information.ramsize = 0;
 
-  auto document = Markup::Document(information.markup);
+  auto document = BML::unserialize(information.markup);
   information.title = document["information/title"].text();
 
   auto mapperid = document["cartridge/board/type"].text();

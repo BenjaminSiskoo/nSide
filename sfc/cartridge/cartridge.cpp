@@ -126,7 +126,7 @@ void Cartridge::load() {
 
 void Cartridge::load_super_game_boy() {
   interface->loadRequest(ID::SuperGameBoyManifest, "manifest.bml");
-  auto document = Markup::Document(information.markup.gameBoy);
+  auto document = BML::unserialize(information.markup.gameBoy);
   information.title.gameBoy = document["information/title"].text();
 
   auto rom = document["cartridge/rom"];
@@ -142,7 +142,7 @@ void Cartridge::load_super_game_boy() {
 
 void Cartridge::load_satellaview() {
   interface->loadRequest(ID::SatellaviewManifest, "manifest.bml");
-  auto document = Markup::Document(information.markup.satellaview);
+  auto document = BML::unserialize(information.markup.satellaview);
   information.title.satellaview = document["information/title"].text();
 
   auto rom = document["cartridge/rom"];
@@ -158,7 +158,7 @@ void Cartridge::load_satellaview() {
 
 void Cartridge::load_sufami_turbo_a() {
   interface->loadRequest(ID::SufamiTurboSlotAManifest, "manifest.bml");
-  auto document = Markup::Document(information.markup.sufamiTurboA);
+  auto document = BML::unserialize(information.markup.sufamiTurboA);
   information.title.sufamiTurboA = document["information/title"].text();
 
   auto rom = document["cartridge/rom"];
@@ -184,7 +184,7 @@ void Cartridge::load_sufami_turbo_a() {
 
 void Cartridge::load_sufami_turbo_b() {
   interface->loadRequest(ID::SufamiTurboSlotBManifest, "manifest.bml");
-  auto document = Markup::Document(information.markup.sufamiTurboB);
+  auto document = BML::unserialize(information.markup.sufamiTurboB);
   information.title.sufamiTurboB = document["information/title"].text();
 
   auto rom = document["cartridge/rom"];

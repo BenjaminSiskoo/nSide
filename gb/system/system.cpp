@@ -50,7 +50,7 @@ void System::load(Revision revision) {
   if(revision == Revision::SuperGameBoy) return;  //Super Famicom core loads boot ROM for SGB
 
   string manifest = string::read({interface->path(ID::System), "manifest.bml"});
-  auto document = Markup::Document(manifest);
+  auto document = BML::unserialize(manifest);
 
   auto bootROM = document["system/cpu/rom/name"].text();
   interface->loadRequest(

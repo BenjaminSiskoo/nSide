@@ -151,6 +151,10 @@ struct Document : Node {
   }
 };
 
+inline auto unserialize(const string& markup) -> Markup::Node {
+  return BML::Document(markup);
+}
+
 }
 }
 

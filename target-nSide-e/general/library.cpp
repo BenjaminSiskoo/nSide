@@ -47,7 +47,7 @@ void LibraryBrowser::onChange() {
   if(folders.selected() == false) return information.setText("");
 
   string manifest = {pathname, folders.text(folders.selection(), 0), typeSuffix, "manifest.bml"};
-  auto document = Markup::Document(file::read(manifest));
+  auto document = BML::unserialize(file::read(manifest));
 
   information.setText({
     document["information/title"].text(), "\n",

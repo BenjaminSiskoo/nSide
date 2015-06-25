@@ -94,7 +94,7 @@ void System::term() {
 
 void System::load() {
   string manifest = string::read({interface->path(ID::System), "manifest.bml"});
-  auto document = Markup::Document(manifest);
+  auto document = BML::unserialize(manifest);
 
   auto iplrom = document["system/smp/rom/name"].text();
   interface->loadRequest(ID::IPLROM, iplrom);

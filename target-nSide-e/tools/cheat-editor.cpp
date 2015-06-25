@@ -123,7 +123,7 @@ bool CheatEditor::load(string filename) {
   if(data.empty()) return false;
 
   unsigned n = 0;
-  auto document = Markup::Document(data);
+  auto document = BML::unserialize(data);
   for(auto& node : document["cartridge"]) {
     if(node.name != "cheat") continue;
     cheatList.setChecked(n, (bool)node["enabled"]);

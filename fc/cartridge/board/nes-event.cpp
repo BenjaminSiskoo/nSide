@@ -86,7 +86,7 @@ void serialize(serializer& s) {
 }
 
 NES_Event(Markup::Node& cartridge) : Board(cartridge), mmc1(*this, cartridge) {
-  dip = interface->dipSettings(Markup::Document({
+  dip = interface->dipSettings(BML::unserialize({
     "setting name=Time\n",
     "  option value=4 name=6:14.96\n",
     "  option value=0 name=4:59.97\n",
