@@ -62,7 +62,7 @@ string AutoPurify::openSufamiTurbo(vector<uint8_t> &buffer) {
 
   for(auto &item : databaseItem) {
     item.append("\n");
-    auto document = Markup::Document(item);
+    auto document = BML::unserialize(item);
 
     if(document["release/information/sha256"].text() == sha256) {
       return createSufamiTurboDatabase(buffer, document, item);

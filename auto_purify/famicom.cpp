@@ -78,7 +78,7 @@ string AutoPurify::openFamicom(vector<uint8_t> &buffer) {
   lstring databaseItem = databaseText.split("\n\n");
 
   for(auto &item : databaseItem) {
-    auto document = Markup::Document(item);
+    auto document = BML::unserialize(item);
 
     if(document["release/information/sha256"].text() == sha256) {
       if(ines) buffer.remove(0, 16);

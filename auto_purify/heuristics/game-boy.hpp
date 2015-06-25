@@ -1,7 +1,7 @@
 #ifndef NALL_EMULATION_GAME_BOY_HPP
 #define NALL_EMULATION_GAME_BOY_HPP
 
-#include <nall/sha256.hpp>
+#include <nall/hash/sha256.hpp>
 #include <nall/string.hpp>
 
 namespace nall {
