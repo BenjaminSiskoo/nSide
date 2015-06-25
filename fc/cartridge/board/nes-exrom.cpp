@@ -49,8 +49,8 @@ void serialize(serializer& s) {
 NES_ExROM(Markup::Node& cartridge) : Board(cartridge), mmc5(*this, cartridge) {
   chip = &mmc5;
   if(cartridge["chip/ram"].exists()) {
-    string name = cartridge["chip/ram/name"].data;
-    unsigned size = numeral(cartridge["chip/ram/size"].data);
+    string name = cartridge["chip/ram/name"].text();
+    unsigned size = cartridge["chip/ram/size"].decimal();
     mmc5.ram.map(allocate<uint8>(size, 0xff), size);
     if(!name.empty()) {
       interface->loadRequest(ID::ChipRAM, name);
@@ -59,7 +59,7 @@ NES_ExROM(Markup::Node& cartridge) : Board(cartridge), mmc5(*this, cartridge) {
   } else {
     mmc5.ram.map(allocate<uint8>(1024, 0xff), 1024);
   }
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*EKROM*")) revision = Revision::EKROM;
   if(type.match("*ELROM*")) revision = Revision::ELROM;
   if(type.match("*ETROM*")) revision = Revision::ETROM;

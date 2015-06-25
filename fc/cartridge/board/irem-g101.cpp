@@ -52,7 +52,7 @@ IremG101(Markup::Node& cartridge) : Board(cartridge), g101(*this, cartridge) {
   if(!cartridge["mirror"].exists()) {
     settings.mirror = 0;
   } else {
-    string mirror = cartridge["mirror/mode"].data;
+    string mirror = cartridge["mirror/mode"].text();
     if(mirror == "screen-0") settings.mirror = 1;
     if(mirror == "screen-1") settings.mirror = 2;
   }

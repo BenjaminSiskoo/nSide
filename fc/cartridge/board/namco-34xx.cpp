@@ -122,7 +122,7 @@ void serialize(serializer& s) {
 }
 
 Namco34xx(Markup::Node& cartridge) : Board(cartridge), n108(*this, cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*3401")) revision = Revision::Namco3401;
   if(type.match("*3406")) revision = Revision::Namco3406;
   if(type.match("*3407")) revision = Revision::Namco3407;
@@ -144,7 +144,7 @@ Namco34xx(Markup::Node& cartridge) : Board(cartridge), n108(*this, cartridge) {
   if(type == "TENGEN-800004") revision = Revision::DRROM;
 
   if(revision != Revision::Namco3425 && revision != Revision::Namco3453)
-    settings.mirror = cartridge["mirror/mode"].data == "horizontal";
+    settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
 }
 
 };

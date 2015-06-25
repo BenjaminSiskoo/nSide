@@ -92,14 +92,14 @@ void serialize(serializer& s) {
 }
 
 Camerica(Markup::Node& cartridge) : Board(cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*ALGN*"  )) revision = Revision::ALGN;
   if(type.match("*ALGQ*"  )) revision = Revision::ALGQ;
   if(type.match("*BF9093*")) revision = Revision::BF9093;
   if(type.match("*BF9096*")) revision = Revision::BF9096;
   if(type.match("*BF9097*")) revision = Revision::BF9097;
 
-  settings.mirror = cartridge["mirror/mode"].data == "horizontal";
+  settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
 }
 
 };

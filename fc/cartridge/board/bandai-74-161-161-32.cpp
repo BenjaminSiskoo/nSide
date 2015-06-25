@@ -57,7 +57,7 @@ void serialize(serializer& s) {
 }
 
 Bandai74_161_161_32(Markup::Node& cartridge) : Board(cartridge) {
-  settings.mirror = cartridge["mirror/mode"].data == "horizontal";
+  settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
 }
 
 };

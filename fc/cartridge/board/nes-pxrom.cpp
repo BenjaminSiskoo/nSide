@@ -91,7 +91,7 @@ void serialize(serializer& s) {
 }
 
 NES_PxROM(Markup::Node& cartridge) : Board(cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*PEEOROM*")) revision = Revision::PEEOROM;
   if(type.match("*PNROM*"  )) revision = Revision::PNROM;
 }

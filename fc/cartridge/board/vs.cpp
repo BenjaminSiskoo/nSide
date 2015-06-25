@@ -143,7 +143,7 @@ VS(Markup::Node& cartridge) : Board(cartridge),
 mmc1(*this, cartridge),
 n108(*this, cartridge) {
   chip_type = ChipType::None;
-  string type = cartridge["chip/type"].data;
+  string type = cartridge["chip/type"].text();
   if(type.match("74HC32")) chip_type = ChipType::_74HC32;
   if(type.match("MMC1*" )) chip_type = ChipType::MMC1;
   if(type.match("108"   )) chip_type = ChipType::N108;

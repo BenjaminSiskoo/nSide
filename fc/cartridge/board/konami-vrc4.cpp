@@ -54,8 +54,8 @@ void serialize(serializer& s) {
 }
 
 KonamiVRC4(Markup::Node& cartridge) : Board(cartridge), vrc4(*this) {
-  settings.pinout.a0 = 1 << decimal(cartridge["chip/pinout/a0"].data);
-  settings.pinout.a1 = 1 << decimal(cartridge["chip/pinout/a1"].data);
+  settings.pinout.a0 = 1 << decimal(cartridge["chip/pinout/a0"].text());
+  settings.pinout.a1 = 1 << decimal(cartridge["chip/pinout/a1"].text());
 }
 
 };

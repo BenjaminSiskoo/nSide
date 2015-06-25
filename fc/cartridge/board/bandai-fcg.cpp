@@ -89,7 +89,7 @@ void serialize(serializer& s) {
 }
 
 BandaiFCG(Markup::Node& cartridge) : Board(cartridge), fcg(*this, cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   revision = Revision::FCGAll;
   if(type.match("*FCG-1*"  )) revision = Revision::FCG1;
   if(type.match("*FCG-2*"  )) revision = Revision::FCG2;

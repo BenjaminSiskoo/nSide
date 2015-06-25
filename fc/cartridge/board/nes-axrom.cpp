@@ -55,7 +55,7 @@ void serialize(serializer& s) {
 }
 
 NES_AxROM(Markup::Node& cartridge) : Board(cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*AMROM*" )) revision = Revision::AMROM;
   if(type.match("*ANROM*" )) revision = Revision::ANROM;
   if(type.match("*AN1ROM*")) revision = Revision::AN1ROM;

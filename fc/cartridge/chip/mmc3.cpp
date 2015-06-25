@@ -198,7 +198,7 @@ void serialize(serializer& s) {
 }
 
 MMC3(Board& board, Markup::Node& cartridge) : Chip(board) {
-  string type = cartridge["chip/type"].data;
+  string type = cartridge["chip/type"].text();
   if(type == "MMC3"  ) revision = Revision::MMC3;
   if(type == "MMC3A" ) revision = Revision::MMC3A;
   if(type == "MMC3B" ) revision = Revision::MMC3B;

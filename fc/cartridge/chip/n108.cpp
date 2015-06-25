@@ -72,7 +72,7 @@ void serialize(serializer& s) {
 }
 
 N108(Board& board, Markup::Node& cartridge) : Chip(board) {
-  string type = cartridge["chip/type"].data;
+  string type = cartridge["chip/type"].text();
 
   if(type.match("*108*")) revision = Revision::N108;
   if(type.match("*109*")) revision = Revision::N109;

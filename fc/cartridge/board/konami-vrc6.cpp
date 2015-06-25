@@ -46,8 +46,8 @@ void power() { vrc6.power(); }
 void reset() { vrc6.reset(); }
 
 KonamiVRC6(Markup::Node& cartridge) : Board(cartridge), vrc6(*this) {
-  settings.pinout.a0 = 1 << decimal(cartridge["chip/pinout/a0"].data);
-  settings.pinout.a1 = 1 << decimal(cartridge["chip/pinout/a1"].data);
+  settings.pinout.a0 = 1 << decimal(cartridge["chip/pinout/a0"].text());
+  settings.pinout.a1 = 1 << decimal(cartridge["chip/pinout/a1"].text());
 }
 
 };

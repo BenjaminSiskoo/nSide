@@ -27,7 +27,7 @@ void serialize(serializer& s) {
 }
 
 SingleChip(Markup::Node& cartridge) : Board(cartridge) {
-  settings.va10 = numeral(cartridge["board/va10"].data);
+  settings.va10 = cartridge["board/va10"].decimal();
 }
 
 };

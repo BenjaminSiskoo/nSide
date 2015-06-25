@@ -215,7 +215,7 @@ void reset() {
 }
 
 N163(Board& board, Markup::Node& cartridge) : Chip(board) {
-  string type = cartridge["chip/type"].data;
+  string type = cartridge["chip/type"].text();
 
   if(type == "129") revision = Revision::N129;
   if(type == "163") revision = Revision::N163;

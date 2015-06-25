@@ -489,7 +489,7 @@ void serialize(serializer& s) {
 }
 
 MMC5(Board& board, Markup::Node& cartridge) : Chip(board) {
-  string type = cartridge["chip/type"].data;
+  string type = cartridge["chip/type"].text();
 
   if(type == "MMC5" ) revision = Revision::MMC5;
   if(type == "MMC5B") revision = Revision::MMC5B;

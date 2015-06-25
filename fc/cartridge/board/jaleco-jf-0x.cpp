@@ -85,7 +85,7 @@ void serialize(serializer& s) {
 }
 
 JalecoJF0x(Markup::Node& cartridge) : Board(cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*JF-05*" )) revision = Revision::JF_05;
   if(type.match("*JF-06*" )) revision = Revision::JF_06;
   if(type.match("*JF-07*" )) revision = Revision::JF_07;
@@ -95,7 +95,7 @@ JalecoJF0x(Markup::Node& cartridge) : Board(cartridge) {
   if(type.match("*JF-11*" )) revision = Revision::JF_11;
   if(type.match("*JF-14*" )) revision = Revision::JF_14;
 
-  settings.mirror = cartridge["mirror/mode"].data == "horizontal";
+  settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
 }
 
 };

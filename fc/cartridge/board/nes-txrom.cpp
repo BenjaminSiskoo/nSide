@@ -85,7 +85,7 @@ void serialize(serializer& s) {
 }
 
 NES_TxROM(Markup::Node& cartridge) : Board(cartridge), mmc3(*this, cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*TBROM"  )) revision = Revision::TBROM;
   if(type.match("*TEROM"  )) revision = Revision::TEROM;
   if(type.match("*TFROM"  )) revision = Revision::TFROM;

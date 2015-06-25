@@ -5,7 +5,7 @@ void Cartridge::parse_markup(const char* markup) {
   information.title.cartridge = document["information/title"].text();
 
   auto cartridge = document["cartridge"];
-  region = cartridge["region"].data != "PAL" ? Region::NTSC : Region::PAL;
+  region = cartridge["region"].text() != "PAL" ? Region::NTSC : Region::PAL;
 
   if(system.revision == System::Revision::VSSystem) {
     unsigned ppus = 0;
@@ -33,7 +33,7 @@ void Cartridge::parse_markup(const char* markup) {
       input.connect(1, Input::Device::None);
     }
     vsarcadeboard.set_dip(interface->dipSettings(cartridge));
-    string ppu_revision = cartridge["ppu/revision"].data;
+    string ppu_revision = cartridge["ppu/revision"].text();
     if(ppu_revision == "RP2C02C")     ppu.revision = PPU::Revision::RP2C02C;
     if(ppu_revision == "RP2C02G")     ppu.revision = PPU::Revision::RP2C02G;
     if(ppu_revision == "RP2C03B")     ppu.revision = PPU::Revision::RP2C03B;
@@ -59,8 +59,8 @@ void Cartridge::parse_markup(const char* markup) {
 //
 
 void Cartridge::parse_markup_memory(MappedRAM& ram, Markup::Node node, unsigned id, bool writable) {
-  string name = node["name"].data;
-  unsigned size = numeral(node["size"].data);
+  string name = node["name"].text();
+  unsigned size = node["size"].decimal();
   ram.map(allocate<uint8>(size, 0xff), size);
   if(name.empty() == false) {
     interface->loadRequest(id, name);

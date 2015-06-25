@@ -105,7 +105,7 @@ void serialize(serializer& s) {
 }
 
 NES_SxROM(Markup::Node& cartridge) : Board(cartridge), mmc1(*this, cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*SAROM"   )) revision = Revision::SAROM;
   if(type.match("*SBROM"   )) revision = Revision::SBROM;
   if(type.match("*SCROM"   )) revision = Revision::SCROM;

@@ -57,7 +57,7 @@ void serialize(serializer& s) {
 }
 
 NES_NROM(Markup::Node& cartridge) : Board(cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*FAMILYBASIC*")) revision = Revision::FAMILYBASIC;
   if(type.match("*HROM*"       )) revision = Revision::HROM;
   if(type.match("*RROM*"       )) revision = Revision::RROM;
@@ -65,7 +65,7 @@ NES_NROM(Markup::Node& cartridge) : Board(cartridge) {
   if(revision == Revision::HROM)
     settings.mirror = 0;
   else
-    settings.mirror = cartridge["mirror/mode"].data == "horizontal";
+    settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
 }
 
 };

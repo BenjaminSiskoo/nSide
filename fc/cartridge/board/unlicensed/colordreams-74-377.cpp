@@ -58,7 +58,7 @@ void serialize(serializer& s) {
 }
 
 ColorDreams74_377(Markup::Node& cartridge) : Board(cartridge) {
-  settings.mirror = cartridge["mirror/mode"].data == "horizontal";
+  settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
 }
 
 };

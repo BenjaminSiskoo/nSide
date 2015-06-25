@@ -85,7 +85,7 @@ void serialize(serializer& s) {
 }
 
 NES_FxROM(Markup::Node& cartridge) : Board(cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*FJROM*" )) revision = Revision::FJROM;
   if(type.match("*FKROM*" )) revision = Revision::FKROM;
 }

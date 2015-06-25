@@ -157,7 +157,7 @@ void serialize(serializer& s) {
 }
 
 TC(Board& board, Markup::Node& cartridge) : Chip(board) {
-  string type = cartridge["chip[0]/type"].data;
+  string type = cartridge["chip[0]/type"].text();
   if(type == "TC0190FMC") revision = Revision::TC0190FMC;
   if(type == "TC0350FMR") revision = Revision::TC0350FMR;
   if(type == "TC0690FMR") revision = Revision::TC0690FMR;

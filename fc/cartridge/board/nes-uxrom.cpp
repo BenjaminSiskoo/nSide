@@ -76,12 +76,12 @@ void serialize(serializer& s) {
 }
 
 NES_UxROM(Markup::Node& cartridge) : Board(cartridge) {
-  settings.mirror = cartridge["mirror/mode"].data == "horizontal";
-  string type = cartridge["board/type"].data;
+  settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
+  string type = cartridge["board/type"].text();
   if(type.match("*UNROM" )) revision = Revision::UNROM;
   if(type.match("*UN1ROM")) revision = Revision::UN1ROM;
   if(type.match("*UOROM" )) revision = Revision::UOROM;
-  type = cartridge["chip/type"].data;
+  type = cartridge["chip/type"].text();
   if(type.match("74*32")) chip_type = ChipType::_7432;
   if(type.match("74*08")) chip_type = ChipType::_7408;
 }

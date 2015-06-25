@@ -54,7 +54,7 @@ void serialize(serializer& s) {
 }
 
 JalecoJF2x(Markup::Node& cartridge) : Board(cartridge), ss88006(*this, cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*JF-23")) revision = Revision::JF_23;
   if(type.match("*JF-24")) revision = Revision::JF_24;
   if(type.match("*JF-25")) revision = Revision::JF_25;

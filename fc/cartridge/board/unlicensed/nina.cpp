@@ -77,7 +77,7 @@ void serialize(serializer& s) {
 }
 
 Nina(Markup::Node& cartridge) : Board(cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*NINA-01*")) revision =  1;
   if(type.match("*NINA-02*")) revision =  2;
   if(type.match("*NINA-03*")) revision =  3;
@@ -87,7 +87,7 @@ Nina(Markup::Node& cartridge) : Board(cartridge) {
   if(revision ==  1 || revision ==  2) {
     settings.mirror = 1;
   } else {
-    settings.mirror = cartridge["mirror/mode"].data == "horizontal";
+    settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
   }
 }
 

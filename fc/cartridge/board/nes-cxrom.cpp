@@ -78,13 +78,13 @@ void serialize(serializer& s) {
 }
 
 NES_CxROM(Markup::Node& cartridge) : Board(cartridge) {
-  string type = cartridge["board/type"].data;
+  string type = cartridge["board/type"].text();
   if(type.match("*CNROM" )) revision = Revision::CNROM;
   if(type.match("*CPROM" )) revision = Revision::CPROM;
   if(type.match("*PT-554")) revision = Revision::CNROM;
   if(type == "TENGEN-800008") revision = Revision::CNROM;
 
-  settings.mirror = cartridge["mirror/mode"].data == "horizontal";
+  settings.mirror = cartridge["mirror/mode"].text() == "horizontal";
   settings.security = cartridge["board/security"].exists();
   if(settings.security) {
     settings.pass = cartridge["board/security/pass"].integer();

@@ -51,7 +51,7 @@ void serialize(serializer& s) {
 }
 
 KonamiVRC3(Markup::Node& cartridge) : Board(cartridge), vrc3(*this) {
-  settings.mirror = cartridge["mirror/mode"].data == "vertical" ? 1 : 0;
+  settings.mirror = cartridge["mirror/mode"].text() == "vertical" ? 1 : 0;
 }
 
 };

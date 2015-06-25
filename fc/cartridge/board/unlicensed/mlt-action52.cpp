@@ -72,7 +72,7 @@ void serialize(serializer &s) {
 }
 
 MLT_Action52(Markup::Node& cartridge) : Board(cartridge) {
-  settings.connected_chips = numeral(cartridge["board/connected-chips"].data);
+  settings.connected_chips = cartridge["board/connected-chips"].decimal();
   uint2 chip_block = 0;
   for(unsigned chip_id = 0; chip_id < 4; chip_id++) {
     if(settings.connected_chips & (0x1 << chip_id)) settings.chip_map[chip_id] = chip_block++;

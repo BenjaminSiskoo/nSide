@@ -53,9 +53,9 @@ void serialize(serializer& s) {
 }
 
 KonamiVRC2(Markup::Node& cartridge) : Board(cartridge), vrc2(*this) {
-  settings.pinout.a0 = 1 << decimal(cartridge["chip/pinout/a0"].data);
-  settings.pinout.a1 = 1 << decimal(cartridge["chip/pinout/a1"].data);
-  settings.pinout.chr_shift = decimal(cartridge["chip/pinout/chr-shift"].data);
+  settings.pinout.a0 = 1 << decimal(cartridge["chip/pinout/a0"].text());
+  settings.pinout.a1 = 1 << decimal(cartridge["chip/pinout/a1"].text());
+  settings.pinout.chr_shift = decimal(cartridge["chip/pinout/chr-shift"].text());
 }
 
 };
