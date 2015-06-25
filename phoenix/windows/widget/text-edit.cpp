@@ -1,6 +1,8 @@
 namespace phoenix {
 
 void pTextEdit::setBackgroundColor(Color color) {
+  if(backgroundBrush) DeleteObject(backgroundBrush);
+  backgroundBrush = CreateSolidBrush(RGB(color.red, color.green, color.blue));
 }
 
 void pTextEdit::setCursorPosition(unsigned position) {
@@ -49,6 +51,7 @@ void pTextEdit::constructor() {
   );
   SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&textEdit);
   setDefaultFont();
+  setBackgroundColor(textEdit.state.backgroundColor);
   setCursorPosition(textEdit.state.cursorPosition);
   setEditable(textEdit.state.editable);
   setText(textEdit.state.text);

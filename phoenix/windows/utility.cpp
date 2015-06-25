@@ -245,13 +245,41 @@ static LRESULT CALLBACK Shared_windowProc(WindowProc windowProc, HWND hwnd, UINT
 
   switch(msg) {
   case WM_CTLCOLORBTN:
+  case WM_CTLCOLOREDIT:
   case WM_CTLCOLORSTATIC: {
     Object* object = (Object*)GetWindowLongPtr((HWND)lparam, GWLP_USERDATA);
     if(object == nullptr) break;
-    if(dynamic_cast<HexEdit*>(object) || dynamic_cast<LineEdit*>(object) || dynamic_cast<TextEdit*>(object)) {
-      //text edit controls, when disabled, use CTLCOLORSTATIC instead of CTLCOLOREDIT
-      //override this behavior: we do not want read-only edit controls to use the parent window background color
-      return windowProc(hwnd, WM_CTLCOLOREDIT, wparam, lparam);
+    //allow custom colors for various widgets
+    //note that this happens always: default colors are black text on a white background, unless overridden
+    //this intentionally overrides the default behavior of Windows to paint disabled controls with the window background color
+    if(dynamic_cast<Console*>(object)) {
+      Console& console = *(Console*)object;
+      Color& background = console.state.backgroundColor;
+      Color& foreground = console.state.foregroundColor;
+      SetTextColor((HDC)wparam, RGB(foreground.red, foreground.green, foreground.blue));
+      SetBkColor((HDC)wparam, RGB(background.red, background.green, background.blue));
+      return (LRESULT)console.p.backgroundBrush;
+    } else if(dynamic_cast<HexEdit*>(object)) {
+      HexEdit& hexEdit = *(HexEdit*)object;
+      Color& background = hexEdit.state.backgroundColor;
+      Color& foreground = hexEdit.state.foregroundColor;
+      SetTextColor((HDC)wparam, RGB(foreground.red, foreground.green, foreground.blue));
+      SetBkColor((HDC)wparam, RGB(background.red, background.green, background.blue));
+      return (LRESULT)hexEdit.p.backgroundBrush;
+    } else if(dynamic_cast<LineEdit*>(object)) {
+      LineEdit& lineEdit = *(LineEdit*)object;
+      Color& background = lineEdit.state.backgroundColor;
+      Color& foreground = lineEdit.state.foregroundColor;
+      SetTextColor((HDC)wparam, RGB(foreground.red, foreground.green, foreground.blue));
+      SetBkColor((HDC)wparam, RGB(background.red, background.green, background.blue));
+      return (LRESULT)lineEdit.p.backgroundBrush;
+    } else if(dynamic_cast<TextEdit*>(object)) {
+      TextEdit& textEdit = *(TextEdit*)object;
+      Color& background = textEdit.state.backgroundColor;
+      Color& foreground = textEdit.state.foregroundColor;
+      SetTextColor((HDC)wparam, RGB(foreground.red, foreground.green, foreground.blue));
+      SetBkColor((HDC)wparam, RGB(background.red, background.green, background.blue));
+      return (LRESULT)textEdit.p.backgroundBrush;
     } else if(!GetParentWidget((Sizable*)object) && window.p.brush) {
       SetBkColor((HDC)wparam, window.p.brushColor);
       return (INT_PTR)window.p.brush;

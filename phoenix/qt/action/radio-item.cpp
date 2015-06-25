@@ -1,13 +1,13 @@
 namespace phoenix {
 
 void pRadioItem::setChecked() {
-  locked = true;
+  lock();
   for(auto& item : radioItem.state.group) {
     bool checkState = item.p.qtAction == qtAction;
     item.state.checked = checkState;
     item.p.qtAction->setChecked(checkState);
   }
-  locked = false;
+  unlock();
 }
 
 void pRadioItem::setGroup(const group<RadioItem>& group) {
@@ -35,7 +35,7 @@ void pRadioItem::destructor() {
 void pRadioItem::onActivate() {
   if(!radioItem.state.checked) {
     setChecked();
-    if(!locked && radioItem.onActivate) radioItem.onActivate();
+    if(!locked() && radioItem.onActivate) radioItem.onActivate();
   }
 }
 

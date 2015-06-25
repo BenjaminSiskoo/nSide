@@ -57,6 +57,7 @@ void pListView::reset() {
 }
 
 void pListView::setBackgroundColor(Color color) {
+  ListView_SetBkColor(hwnd, RGB(color.red, color.green, color.blue));
 }
 
 void pListView::setCheckable(bool checkable) {
@@ -152,6 +153,7 @@ void pListView::constructor() {
   SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&listView);
   setDefaultFont();
   setHeaderText(listView.state.headerText);
+  setBackgroundColor(listView.state.backgroundColor);
   setHeaderVisible(listView.state.headerVisible);
   setCheckable(listView.state.checkable);
   for(auto& text : listView.state.text) append(text);
@@ -259,16 +261,27 @@ LRESULT pListView::onCustomDraw(LPARAM lparam) {
   LPNMLVCUSTOMDRAW lvcd = (LPNMLVCUSTOMDRAW)lparam;
 
   switch(lvcd->nmcd.dwDrawStage) {
-  case CDDS_PREPAINT:
+
+  case CDDS_PREPAINT: {
     return CDRF_NOTIFYITEMDRAW;
-  case CDDS_ITEMPREPAINT:
-    if(listView.state.headerText.size() >= 2) {
-      //draw alternating row colors of there are two or more columns
-      if(lvcd->nmcd.dwItemSpec % 2) lvcd->clrTextBk = GetSysColor(COLOR_WINDOW) ^ 0x070707;
+  }
+
+  case CDDS_ITEMPREPAINT: {
+    Color& background = listView.state.backgroundColor;
+    Color& foreground = listView.state.foregroundColor;
+    lvcd->clrText = RGB(foreground.red, foreground.green, foreground.blue);
+    lvcd->clrTextBk = RGB(background.red, background.green, background.blue);
+    if(listView.state.headerText.size() >= 2 && lvcd->nmcd.dwItemSpec % 2) {
+      //draw alternating row colors if there are two or more columns
+      lvcd->clrTextBk = RGB(max(0, (signed)background.red - 17), max(0, (signed)background.green - 17), max(0, (signed)background.blue - 17));
     }
     return CDRF_DODEFAULT;
-  default:
+  }
+
+  default: {
     return CDRF_DODEFAULT;
+  }
+
   }
 }
 

@@ -84,9 +84,13 @@ struct pMessageWindow {
 
 struct pObject {
   Object& object;
-  bool locked;
+  signed locks = 0;
 
-  pObject(Object& object) : object(object), locked(false) {}
+  bool locked() const { return locks != 0; }
+  void lock() { locks++; }
+  void unlock() { locks--; }
+
+  pObject(Object& object) : object(object) {}
   virtual ~pObject() {}
   void constructor() {}
   void destructor() {}
@@ -138,7 +142,6 @@ public:
   void append(Widget& widget);
   Geometry frameMargin();
   bool focused();
-  Geometry geometry();
   void remove(Layout& layout);
   void remove(Menu& menu);
   void remove(Widget& widget);
@@ -162,6 +165,19 @@ public:
   void constructor();
   void destructor();
   void updateFrameGeometry();
+};
+
+struct pPopupMenu : public pObject {
+  PopupMenu& popupMenu;
+  QMenu* qtMenu;
+
+  void append(Action& action);
+  void remove(Action& action);
+  void setVisible();
+
+  pPopupMenu(PopupMenu& popupMenu) : pObject(popupMenu), popupMenu(popupMenu) {}
+  void constructor();
+  void destructor();
 };
 
 struct pAction : public pObject {
@@ -304,6 +320,7 @@ public:
   QToolButton* qtButton;
 
   Size minimumSize();
+  void setBordered(bool bordered);
   void setImage(const image& image, Orientation orientation);
   void setText(string text);
 
@@ -400,12 +417,11 @@ public:
   ComboButton& comboButton;
   QComboBox* qtComboButton;
 
-  void append(string text);
+  void append();
   Size minimumSize();
   void remove(unsigned selection);
   void reset();
-  unsigned selection();
-  void setSelection(unsigned selection);
+  void setSelected(unsigned selection);
   void setText(unsigned selection, string text);
 
   pComboButton(ComboButton& comboButton) : pWidget(comboButton), comboButton(comboButton) {}
@@ -543,6 +559,42 @@ public slots:
   void onChange();
 };
 
+struct pIconView : public QObject, public pWidget {
+  Q_OBJECT
+
+public:
+  IconView& iconView;
+  struct QtListWidget : public QListWidget {
+    void resizeEvent(QResizeEvent*);
+  };
+  QtListWidget* qtIconView;
+
+  void append();
+  void remove(unsigned selection);
+  void reset();
+  void setBackgroundColor(Color color);
+  void setFlow(Orientation flow);
+  void setForegroundColor(Color color);
+  void setImage(unsigned selection, const image& image);
+  void setOrientation(Orientation orientation);
+  void setSelected(unsigned selection, bool selected);
+  void setSelected(const vector<unsigned>& selections);
+  void setSelectedAll();
+  void setSelectedNone();
+  void setSingleSelection(bool singleSelection);
+  void setText(unsigned selection, const string& text);
+
+  pIconView(IconView& iconView) : pWidget(iconView), iconView(iconView) {}
+  void constructor();
+  void destructor();
+  void orphan();
+
+public slots:
+  void onActivate();
+  void onChange();
+  void onContext();
+};
+
 struct pLabel : public pWidget {
   Label& label;
   QLabel* qtLabel;
@@ -585,22 +637,53 @@ struct pListView : public QObject, public pWidget {
 
 public:
   ListView& listView;
-  QTreeWidget* qtListView;
+  struct QtTreeWidget : public QTreeWidget {
+    pListView& self;
+    void mousePressEvent(QMouseEvent*);
+    QtTreeWidget(pListView& self);
+  };
+  struct QtTreeWidgetDelegate : public QStyledItemDelegate {
+    pListView& self;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    QtTreeWidgetDelegate(pListView& self);
+  };
+  QtTreeWidget* qtListView;
+  QtTreeWidgetDelegate* qtListViewDelegate;
 
-  void append(const lstring& text);
-  void autoSizeColumns();
-  void remove(unsigned selection);
+  void appendColumn();
+  void appendItem();
+  void removeColumn(unsigned position);
+  void removeItem(unsigned position);
   void reset();
+  void resizeColumns();
+  void setActiveColumn(unsigned column);
   void setBackgroundColor(Color color);
   void setCheckable(bool checkable);
-  void setChecked(unsigned selection, bool checked);
+  void setChecked(unsigned position, bool checked);
+  void setChecked(const vector<unsigned>& selections);
+  void setCheckedAll();
+  void setCheckedNone();
+  void setColumnBackgroundColor(unsigned position, maybe<Color> color);
+  void setColumnEditable(unsigned position, bool editable);
+  void setColumnFont(unsigned position, maybe<string> font);
+  void setColumnForegroundColor(unsigned position, maybe<Color> color);
+  void setColumnHorizontalAlignment(unsigned position, double alignment);
+  void setColumnResizable(unsigned position, bool resizable);
+  void setColumnSortable(unsigned position, bool sortable);
+  void setColumnText(unsigned position, const string& text);
+  void setColumnVerticalAlignment(unsigned position, double alignment);
+  void setColumnVisible(unsigned position, bool visible);
+  void setColumnWidth(unsigned position, signed width);
   void setForegroundColor(Color color);
-  void setHeaderText(const lstring& text);
+  void setGridVisible(bool visible);
   void setHeaderVisible(bool visible);
-  void setImage(unsigned selection, unsigned position, const image& image);
-  void setSelected(bool selected);
-  void setSelection(unsigned selection);
-  void setText(unsigned selection, unsigned position, string text);
+  void setImage(unsigned row, unsigned column, const image& image);
+  void setSelected(unsigned position, bool selected);
+  void setSelected(const vector<unsigned>& selections);
+  void setSelectedAll();
+  void setSelectedNone();
+  void setSingleSelection(bool singleSelection);
+  void setText(unsigned row, unsigned column, string text);
 
   pListView(ListView& listView) : pWidget(listView), listView(listView) {}
   void constructor();
@@ -609,8 +692,11 @@ public:
 
 public slots:
   void onActivate();
-  void onChange(QTreeWidgetItem* item);
+  void onChange();
+  void onContext();
+  void onSort(int column);
   void onToggle(QTreeWidgetItem* item);
+  int calculateAlignment(double horizontal, double vertical);
 };
 
 struct pProgressBar : public pWidget {
@@ -679,14 +765,14 @@ public:
   TabFrame& tabFrame;
   QTabWidget* qtTabFrame;
 
-  void append(string text, const image& image);
+  void append();
   QWidget* container(Widget& widget);
   Position displacement();
   void remove(unsigned selection);
   void setEnabled(bool enabled);
   void setGeometry(Geometry geometry);
   void setImage(unsigned selection, const image& image);
-  void setSelection(unsigned selection);
+  void setSelected(unsigned selection);
   void setText(unsigned selection, string text);
   void setVisible(bool visible);
 

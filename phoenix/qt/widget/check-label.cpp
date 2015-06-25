@@ -6,9 +6,9 @@ Size pCheckLabel::minimumSize() {
 }
 
 void pCheckLabel::setChecked(bool checked) {
-  locked = true;
+  lock();
   qtCheckLabel->setChecked(checked);
-  locked = false;
+  unlock();
 }
 
 void pCheckLabel::setText(string text) {
@@ -36,7 +36,7 @@ void pCheckLabel::orphan() {
 
 void pCheckLabel::onToggle() {
   checkLabel.state.checked = qtCheckLabel->isChecked();
-  if(!locked && checkLabel.onToggle) checkLabel.onToggle();
+  if(!locked() && checkLabel.onToggle) checkLabel.onToggle();
 }
 
 }

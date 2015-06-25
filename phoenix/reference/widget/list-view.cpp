@@ -1,6 +1,6 @@
 namespace phoenix {
 
-void pListView::append(const lstring& text) {
+void pListView::append() {
 }
 
 void pListView::autoSizeColumns() {
@@ -21,6 +21,15 @@ void pListView::setCheckable(bool checkable) {
 void pListView::setChecked(unsigned selection, bool checked) {
 }
 
+void pListView::setChecked(const vector<unsigned>& selections) {
+}
+
+void pListView::setCheckedAll() {
+}
+
+void pListView::setCheckedNone() {
+}
+
 void pListView::setForegroundColor(Color color) {
 }
 
@@ -33,10 +42,19 @@ void pListView::setHeaderVisible(bool visible) {
 void pListView::setImage(unsigned selection, unsigned position, const image& image) {
 }
 
-void pListView::setSelected(bool selected) {
+void pListView::setSelected(unsigned selection, bool selected) {
 }
 
-void pListView::setSelection(unsigned selection) {
+void pListView::setSelected(const vector<unsigned>& selections) {
+}
+
+void pListView::setSelectedAll() {
+}
+
+void pListView::setSelectedNone() {
+}
+
+void pListView::setSingleSelection(bool singleSelection) {
 }
 
 void pListView::setText(unsigned selection, unsigned position, string text) {

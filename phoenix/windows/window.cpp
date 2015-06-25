@@ -192,7 +192,11 @@ void pWindow::setModal(bool modality) {
     updateModality();
     while(window.state.modal) {
       Application::processEvents();
-      usleep(20 * 1000);
+      if(Application::main) {
+        Application::main();
+      } else {
+        usleep(20 * 1000);
+      }
     }
     if(auto position = modal.find(this)) modal.remove(position());
     updateModality();

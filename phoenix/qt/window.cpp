@@ -41,16 +41,6 @@ bool pWindow::focused() {
   return qtWindow->isActiveWindow() && !qtWindow->isMinimized();
 }
 
-Geometry pWindow::geometry() {
-  if(window.state.fullScreen) {
-    unsigned menuHeight = window.state.menuVisible ? qtMenu->height() : 0;
-    unsigned statusHeight = window.state.statusVisible ? qtStatus->height() : 0;
-    QRect geometry = qtWindow->geometry();  //frameGeometry() includes frame even though it's not visible in fullscreen mode
-    return {geometry.x(), geometry.y() + menuHeight, geometry.width(), geometry.height() - menuHeight - statusHeight};
-  }
-  return window.state.geometry;
-}
-
 void pWindow::remove(Layout& layout) {
 }
 
@@ -97,10 +87,9 @@ void pWindow::setFullScreen(bool fullScreen) {
 }
 
 void pWindow::setGeometry(Geometry geometry) {
-  locked = true;
+  lock();
   Application::processEvents();
   QApplication::syncX();
-  Geometry margin = frameMargin();
 
   setResizable(window.state.resizable);
   qtWindow->move(geometry.x - frameMargin().x, geometry.y - frameMargin().y);
@@ -116,7 +105,7 @@ void pWindow::setGeometry(Geometry geometry) {
     geometry.x = geometry.y = 0;
     layout.setGeometry(geometry);
   }
-  locked = false;
+  unlock();
 }
 
 void pWindow::setMenuFont(string font) {
@@ -137,7 +126,11 @@ void pWindow::setModal(bool modal) {
     setVisible(true);
     while(window.state.modal) {
       Application::processEvents();
-      usleep(20 * 1000);
+      if(Application::main) {
+        Application::main();
+      } else {
+        usleep(20 * 1000);
+      }
     }
     qtWindow->setWindowModality(Qt::NonModal);
   }
@@ -172,13 +165,13 @@ void pWindow::setTitle(string text) {
 }
 
 void pWindow::setVisible(bool visible) {
-  locked = true;
+  lock();
   qtWindow->setVisible(visible);
   if(visible) {
     updateFrameGeometry();
     setGeometry(window.state.geometry);
   }
-  locked = false;
+  unlock();
 }
 
 void pWindow::setWidgetFont(string font) {
@@ -194,6 +187,8 @@ void pWindow::constructor() {
       qtWindow->setWindowIcon(QIcon(string{"/usr/share/pixmaps/", applicationState.name, ".png"}));
     } else if(file::exists({"/usr/local/share/pixmaps/", applicationState.name, ".png"})) {
       qtWindow->setWindowIcon(QIcon(string{"/usr/local/share/pixmaps/", applicationState.name, ".png"}));
+    } else if(file::exists({userpath(), ".local/share/icons/", applicationState.name, ".png"})) {
+      qtWindow->setWindowIcon(QIcon(string{userpath(), ".local/share/icons/", applicationState.name, ".png"}));
     }
   }
 
@@ -263,14 +258,12 @@ void pWindow::QtWindow::closeEvent(QCloseEvent* event) {
 }
 
 void pWindow::QtWindow::moveEvent(QMoveEvent* event) {
-  if(self.locked == false && self.window.state.fullScreen == false && self.qtWindow->isVisible() == true) {
+  if(!self.locked() && self.window.state.fullScreen == false && self.qtWindow->isVisible() == true) {
     self.window.state.geometry.x += event->pos().x() - event->oldPos().x();
     self.window.state.geometry.y += event->pos().y() - event->oldPos().y();
   }
 
-  if(self.locked == false) {
-    if(self.window.onMove) self.window.onMove();
-  }
+  if(!self.locked() && self.window.onMove) self.window.onMove();
 }
 
 void pWindow::QtWindow::dragEnterEvent(QDragEnterEvent* event) {
@@ -296,20 +289,18 @@ void pWindow::QtWindow::keyReleaseEvent(QKeyEvent* event) {
 }
 
 void pWindow::QtWindow::resizeEvent(QResizeEvent*) {
-  if(self.locked == false && self.window.state.fullScreen == false && self.qtWindow->isVisible() == true) {
+  if(!self.locked() && self.window.state.fullScreen == false && self.qtWindow->isVisible() == true) {
     self.window.state.geometry.width = self.qtContainer->geometry().width();
     self.window.state.geometry.height = self.qtContainer->geometry().height();
   }
 
   for(auto& layout : self.window.state.layout) {
-    Geometry geometry = self.geometry();
+    Geometry geometry = self.window.state.geometry;
     geometry.x = geometry.y = 0;
     layout.setGeometry(geometry);
   }
 
-  if(self.locked == false) {
-    if(self.window.onSize) self.window.onSize();
-  }
+  if(!self.locked() && self.window.onSize) self.window.onSize();
 }
 
 QSize pWindow::QtWindow::sizeHint() const {

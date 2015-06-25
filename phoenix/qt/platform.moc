@@ -1,8 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'platform.moc.hpp'
 **
-** Created: Fri Feb 14 13:37:55 2014
-**      by: The Qt Meta Object Compiler version 63 (Qt 4.8.2)
+** Created by: The Qt Meta Object Compiler version 63 (Qt 4.8.5)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -10,7 +9,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'platform.moc.hpp' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 63
-#error "This file was generated using the moc from 4.8.2. It"
+#error "This file was generated using the moc from 4.8.5. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -30,13 +29,13 @@ static const uint qt_meta_data_phoenix__pTimer[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      17,   16,   16,   16, 0x0a,
+      16,   29,   29,   29, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pTimer[] = {
-    "phoenix::pTimer\0\0onActivate()\0"
+    "phoenix::pTimer\0onActivate()\0\0"
 };
 
 void phoenix::pTimer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -169,13 +168,13 @@ static const uint qt_meta_data_phoenix__pItem[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      16,   15,   15,   15, 0x0a,
+      15,   28,   28,   28, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pItem[] = {
-    "phoenix::pItem\0\0onActivate()\0"
+    "phoenix::pItem\0onActivate()\0\0"
 };
 
 void phoenix::pItem::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -245,13 +244,13 @@ static const uint qt_meta_data_phoenix__pCheckItem[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      21,   20,   20,   20, 0x0a,
+      20,   31,   31,   31, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pCheckItem[] = {
-    "phoenix::pCheckItem\0\0onToggle()\0"
+    "phoenix::pCheckItem\0onToggle()\0\0"
 };
 
 void phoenix::pCheckItem::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -321,13 +320,13 @@ static const uint qt_meta_data_phoenix__pRadioItem[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      21,   20,   20,   20, 0x0a,
+      20,   33,   33,   33, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pRadioItem[] = {
-    "phoenix::pRadioItem\0\0onActivate()\0"
+    "phoenix::pRadioItem\0onActivate()\0\0"
 };
 
 void phoenix::pRadioItem::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -397,13 +396,13 @@ static const uint qt_meta_data_phoenix__pButton[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      18,   17,   17,   17, 0x0a,
+      17,   30,   30,   30, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pButton[] = {
-    "phoenix::pButton\0\0onActivate()\0"
+    "phoenix::pButton\0onActivate()\0\0"
 };
 
 void phoenix::pButton::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -536,14 +535,14 @@ static const uint qt_meta_data_phoenix__pCheckButton[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      31,   23,   22,   22, 0x0a,
+      22,   37,   45,   45, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pCheckButton[] = {
-    "phoenix::pCheckButton\0\0checked\0"
-    "onToggle(bool)\0"
+    "phoenix::pCheckButton\0onToggle(bool)\0"
+    "checked\0\0"
 };
 
 void phoenix::pCheckButton::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -612,13 +611,13 @@ static const uint qt_meta_data_phoenix__pCheckLabel[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      22,   21,   21,   21, 0x0a,
+      21,   32,   32,   32, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pCheckLabel[] = {
-    "phoenix::pCheckLabel\0\0onToggle()\0"
+    "phoenix::pCheckLabel\0onToggle()\0\0"
 };
 
 void phoenix::pCheckLabel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -688,13 +687,13 @@ static const uint qt_meta_data_phoenix__pComboButton[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      23,   22,   22,   22, 0x0a,
+      22,   33,   33,   33, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pComboButton[] = {
-    "phoenix::pComboButton\0\0onChange()\0"
+    "phoenix::pComboButton\0onChange()\0\0"
 };
 
 void phoenix::pComboButton::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -890,13 +889,13 @@ static const uint qt_meta_data_phoenix__pHexEdit[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      19,   18,   18,   18, 0x0a,
+      18,   29,   29,   29, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pHexEdit[] = {
-    "phoenix::pHexEdit\0\0onScroll()\0"
+    "phoenix::pHexEdit\0onScroll()\0\0"
 };
 
 void phoenix::pHexEdit::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -966,13 +965,14 @@ static const uint qt_meta_data_phoenix__pHorizontalScroller[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      30,   29,   29,   29, 0x0a,
+      29,   40,   40,   40, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pHorizontalScroller[] = {
-    "phoenix::pHorizontalScroller\0\0onChange()\0"
+    "phoenix::pHorizontalScroller\0onChange()\0"
+    "\0"
 };
 
 void phoenix::pHorizontalScroller::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -1042,13 +1042,14 @@ static const uint qt_meta_data_phoenix__pHorizontalSlider[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      28,   27,   27,   27, 0x0a,
+      27,   38,   38,   38, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pHorizontalSlider[] = {
-    "phoenix::pHorizontalSlider\0\0onChange()\0"
+    "phoenix::pHorizontalSlider\0onChange()\0"
+    "\0"
 };
 
 void phoenix::pHorizontalSlider::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -1104,6 +1105,87 @@ int phoenix::pHorizontalSlider::qt_metacall(QMetaObject::Call _c, int _id, void 
     }
     return _id;
 }
+static const uint qt_meta_data_phoenix__pIconView[] = {
+
+ // content:
+       6,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       3,   14, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+ // slots: signature, parameters, type, tag, flags
+      19,   32,   32,   32, 0x0a,
+      33,   32,   32,   32, 0x0a,
+      44,   32,   32,   32, 0x0a,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_phoenix__pIconView[] = {
+    "phoenix::pIconView\0onActivate()\0\0"
+    "onChange()\0onContext()\0"
+};
+
+void phoenix::pIconView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        Q_ASSERT(staticMetaObject.cast(_o));
+        pIconView *_t = static_cast<pIconView *>(_o);
+        switch (_id) {
+        case 0: _t->onActivate(); break;
+        case 1: _t->onChange(); break;
+        case 2: _t->onContext(); break;
+        default: ;
+        }
+    }
+    Q_UNUSED(_a);
+}
+
+const QMetaObjectExtraData phoenix::pIconView::staticMetaObjectExtraData = {
+    0,  qt_static_metacall 
+};
+
+const QMetaObject phoenix::pIconView::staticMetaObject = {
+    { &QObject::staticMetaObject, qt_meta_stringdata_phoenix__pIconView,
+      qt_meta_data_phoenix__pIconView, &staticMetaObjectExtraData }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &phoenix::pIconView::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *phoenix::pIconView::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *phoenix::pIconView::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_phoenix__pIconView))
+        return static_cast<void*>(const_cast< pIconView*>(this));
+    if (!strcmp(_clname, "pWidget"))
+        return static_cast< pWidget*>(const_cast< pIconView*>(this));
+    return QObject::qt_metacast(_clname);
+}
+
+int phoenix::pIconView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QObject::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 3)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 3;
+    }
+    return _id;
+}
 static const uint qt_meta_data_phoenix__pLineEdit[] = {
 
  // content:
@@ -1118,14 +1200,14 @@ static const uint qt_meta_data_phoenix__pLineEdit[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      20,   19,   19,   19, 0x0a,
-      33,   19,   19,   19, 0x0a,
+      19,   32,   32,   32, 0x0a,
+      33,   32,   32,   32, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pLineEdit[] = {
-    "phoenix::pLineEdit\0\0onActivate()\0"
+    "phoenix::pLineEdit\0onActivate()\0\0"
     "onChange()\0"
 };
 
@@ -1189,7 +1271,7 @@ static const uint qt_meta_data_phoenix__pListView[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -1197,17 +1279,22 @@ static const uint qt_meta_data_phoenix__pListView[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      20,   19,   19,   19, 0x0a,
-      38,   33,   19,   19, 0x0a,
-      65,   33,   19,   19, 0x0a,
+      19,   32,   32,   32, 0x0a,
+      33,   32,   32,   32, 0x0a,
+      44,   32,   32,   32, 0x0a,
+      56,   68,   32,   32, 0x0a,
+      75,  102,   32,   32, 0x0a,
+     107,  141,  161,   32, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pListView[] = {
-    "phoenix::pListView\0\0onActivate()\0item\0"
-    "onChange(QTreeWidgetItem*)\0"
-    "onToggle(QTreeWidgetItem*)\0"
+    "phoenix::pListView\0onActivate()\0\0"
+    "onChange()\0onContext()\0onSort(int)\0"
+    "column\0onToggle(QTreeWidgetItem*)\0"
+    "item\0calculateAlignment(double,double)\0"
+    "horizontal,vertical\0int\0"
 };
 
 void phoenix::pListView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -1217,8 +1304,12 @@ void phoenix::pListView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
         pListView *_t = static_cast<pListView *>(_o);
         switch (_id) {
         case 0: _t->onActivate(); break;
-        case 1: _t->onChange((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1]))); break;
-        case 2: _t->onToggle((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1]))); break;
+        case 1: _t->onChange(); break;
+        case 2: _t->onContext(); break;
+        case 3: _t->onSort((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 4: _t->onToggle((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1]))); break;
+        case 5: { int _r = _t->calculateAlignment((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])));
+            if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
         default: ;
         }
     }
@@ -1258,9 +1349,9 @@ int phoenix::pListView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 6;
     }
     return _id;
 }
@@ -1278,13 +1369,13 @@ static const uint qt_meta_data_phoenix__pRadioLabel[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      22,   21,   21,   21, 0x0a,
+      21,   34,   34,   34, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pRadioLabel[] = {
-    "phoenix::pRadioLabel\0\0onActivate()\0"
+    "phoenix::pRadioLabel\0onActivate()\0\0"
 };
 
 void phoenix::pRadioLabel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -1354,13 +1445,13 @@ static const uint qt_meta_data_phoenix__pRadioButton[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      23,   22,   22,   22, 0x0a,
+      22,   35,   35,   35, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pRadioButton[] = {
-    "phoenix::pRadioButton\0\0onActivate()\0"
+    "phoenix::pRadioButton\0onActivate()\0\0"
 };
 
 void phoenix::pRadioButton::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -1430,14 +1521,14 @@ static const uint qt_meta_data_phoenix__pTabFrame[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      30,   20,   19,   19, 0x0a,
+      19,   33,   43,   43, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pTabFrame[] = {
-    "phoenix::pTabFrame\0\0selection\0"
-    "onChange(int)\0"
+    "phoenix::pTabFrame\0onChange(int)\0"
+    "selection\0\0"
 };
 
 void phoenix::pTabFrame::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -1506,13 +1597,13 @@ static const uint qt_meta_data_phoenix__pTextEdit[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      20,   19,   19,   19, 0x0a,
+      19,   30,   30,   30, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pTextEdit[] = {
-    "phoenix::pTextEdit\0\0onChange()\0"
+    "phoenix::pTextEdit\0onChange()\0\0"
 };
 
 void phoenix::pTextEdit::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -1582,13 +1673,14 @@ static const uint qt_meta_data_phoenix__pVerticalScroller[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      28,   27,   27,   27, 0x0a,
+      27,   38,   38,   38, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pVerticalScroller[] = {
-    "phoenix::pVerticalScroller\0\0onChange()\0"
+    "phoenix::pVerticalScroller\0onChange()\0"
+    "\0"
 };
 
 void phoenix::pVerticalScroller::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -1658,13 +1750,14 @@ static const uint qt_meta_data_phoenix__pVerticalSlider[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      26,   25,   25,   25, 0x0a,
+      25,   36,   36,   36, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_phoenix__pVerticalSlider[] = {
-    "phoenix::pVerticalSlider\0\0onChange()\0"
+    "phoenix::pVerticalSlider\0onChange()\0"
+    "\0"
 };
 
 void phoenix::pVerticalSlider::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)

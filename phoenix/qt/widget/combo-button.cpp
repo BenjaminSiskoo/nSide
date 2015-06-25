@@ -1,9 +1,9 @@
 namespace phoenix {
 
-void pComboButton::append(string text) {
-  locked = true;
-  qtComboButton->addItem(QString::fromUtf8(text));
-  locked = false;
+void pComboButton::append() {
+  lock();
+  qtComboButton->addItem("");
+  unlock();
 }
 
 Size pComboButton::minimumSize() {
@@ -14,23 +14,22 @@ Size pComboButton::minimumSize() {
 }
 
 void pComboButton::remove(unsigned selection) {
-  locked = true;
+  lock();
   qtComboButton->removeItem(selection);
-  locked = false;
-
-  if(selection == comboButton.state.selection) comboButton.setSelection(0);
+  if(selection == comboButton.state.selection) comboButton[0].setSelected();
+  unlock();
 }
 
 void pComboButton::reset() {
-  locked = true;
+  lock();
   while(qtComboButton->count()) qtComboButton->removeItem(0);
-  locked = false;
+  unlock();
 }
 
-void pComboButton::setSelection(unsigned selection) {
-  locked = true;
+void pComboButton::setSelected(unsigned selection) {
+  lock();
   qtComboButton->setCurrentIndex(selection);
-  locked = false;
+  unlock();
 }
 
 void pComboButton::setText(unsigned selection, string text) {
@@ -43,10 +42,11 @@ void pComboButton::constructor() {
 
   pWidget::synchronizeState();
   unsigned selection = comboButton.state.selection;
-  locked = true;
-  for(auto& text : comboButton.state.text) append(text);
-  locked = false;
-  comboButton.setSelection(selection);
+  for(unsigned n = 0; n < comboButton.count(); n++) {
+    append();
+    setText(n, comboButton.state.text[n]);
+  }
+  comboButton[selection].setSelected();
 }
 
 void pComboButton::destructor() {
@@ -61,7 +61,7 @@ void pComboButton::orphan() {
 
 void pComboButton::onChange() {
   comboButton.state.selection = qtComboButton->currentIndex();
-  if(!locked && comboButton.onChange) comboButton.onChange();
+  if(!locked() && comboButton.onChange) comboButton.onChange();
 }
 
 }

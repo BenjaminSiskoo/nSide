@@ -1,9 +1,7 @@
 namespace phoenix {
 
-void pTabFrame::append(string text, const image& image) {
-  unsigned selection = tabFrame.state.text.size() - 1;
-  qtTabFrame->addTab(new QWidget, QString::fromUtf8(text));
-  if(!image.empty()) setImage(selection, image);
+void pTabFrame::append() {
+  qtTabFrame->addTab(new QWidget, "");
 }
 
 QWidget* pTabFrame::container(Widget& widget) {
@@ -45,11 +43,11 @@ void pTabFrame::setImage(unsigned selection, const image& image) {
   qtTabFrame->setTabIcon(selection, CreateIcon(image));
 }
 
-void pTabFrame::setSelection(unsigned selection) {
-  locked = true;
+void pTabFrame::setSelected(unsigned selection) {
+  lock();
   qtTabFrame->setCurrentIndex(selection);
   synchronizeLayout();
-  locked = false;
+  unlock();
 }
 
 void pTabFrame::setText(unsigned selection, string text) {
@@ -67,7 +65,7 @@ void pTabFrame::constructor() {
   qtWidget = qtTabFrame = new QTabWidget;
   connect(qtTabFrame, SIGNAL(currentChanged(int)), SLOT(onChange(int)));
 
-  setSelection(tabFrame.state.selection);
+  setSelected(tabFrame.state.selection);
 }
 
 void pTabFrame::destructor() {
@@ -91,7 +89,7 @@ void pTabFrame::synchronizeLayout() {
 void pTabFrame::onChange(int selection) {
   tabFrame.state.selection = selection;
   synchronizeLayout();
-  if(!locked && tabFrame.onChange) tabFrame.onChange();
+  if(!locked() && tabFrame.onChange) tabFrame.onChange();
 }
 
 }

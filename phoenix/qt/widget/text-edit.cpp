@@ -1,6 +1,10 @@
 namespace phoenix {
 
 void pTextEdit::setBackgroundColor(Color color) {
+  QPalette palette = qtTextEdit->palette();
+  palette.setColor(QPalette::Base, QColor(color.red, color.green, color.blue));
+  qtTextEdit->setPalette(palette);
+  qtTextEdit->setAutoFillBackground(true);
 }
 
 void pTextEdit::setCursorPosition(unsigned position) {
@@ -15,6 +19,9 @@ void pTextEdit::setEditable(bool editable) {
 }
 
 void pTextEdit::setForegroundColor(Color color) {
+  QPalette palette = qtTextEdit->palette();
+  palette.setColor(QPalette::Text, QColor(color.red, color.green, color.blue));
+  qtTextEdit->setPalette(palette);
 }
 
 void pTextEdit::setText(string text) {

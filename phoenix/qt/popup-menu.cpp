@@ -1,6 +1,6 @@
 namespace phoenix {
 
-void pMenu::append(Action& action) {
+void pPopupMenu::append(Action& action) {
   if(dynamic_cast<Menu*>(&action)) {
     qtMenu->addMenu(((Menu&)action).p.qtMenu);
   } else if(dynamic_cast<Separator*>(&action)) {
@@ -14,11 +14,11 @@ void pMenu::append(Action& action) {
   }
 }
 
-void pMenu::remove(Action& action) {
+void pPopupMenu::remove(Action& action) {
   if(dynamic_cast<Menu*>(&action)) {
     //QMenu::removeMenu() does not exist
     qtMenu->clear();
-    for(auto& action : menu.state.action) append(action);
+    for(auto& action : popupMenu.state.action) append(action);
   } else if(dynamic_cast<Separator*>(&action)) {
     qtMenu->removeAction(((Separator&)action).p.qtAction);
   } else if(dynamic_cast<Item*>(&action)) {
@@ -26,29 +26,19 @@ void pMenu::remove(Action& action) {
   } else if(dynamic_cast<CheckItem*>(&action)) {
     qtMenu->removeAction(((CheckItem&)action).p.qtAction);
   } else if(dynamic_cast<RadioItem*>(&action)) {
-    qtMenu->removeAction(((CheckItem&)action).p.qtAction);
+    qtMenu->removeAction(((RadioItem&)action).p.qtAction);
   }
 }
 
-void pMenu::setFont(string font) {
-  qtMenu->setFont(pFont::create(font));
-  for(auto &item : menu.state.action) item.p.setFont(font);
+void pPopupMenu::setVisible() {
+  qtMenu->popup(QCursor::pos());
 }
 
-void pMenu::setImage(const image& image) {
-  qtMenu->setIcon(CreateIcon(image));
-}
-
-void pMenu::setText(string text) {
-  qtMenu->setTitle(QString::fromUtf8(text));
-}
-
-void pMenu::constructor() {
+void pPopupMenu::constructor() {
   qtMenu = new QMenu;
 }
 
-void pMenu::destructor() {
-  if(action.state.menu) action.state.menu->remove(menu);
+void pPopupMenu::destructor() {
   delete qtMenu;
   qtMenu = nullptr;
 }

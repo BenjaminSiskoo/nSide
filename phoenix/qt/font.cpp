@@ -23,9 +23,7 @@ Size pFont::size(string font, string text) {
 }
 
 QFont pFont::create(string description) {
-  lstring part;
-  part.split<2>(",", description);
-  for(auto& item : part) item.trim(" ");
+  lstring part = description.split<2>(",").strip();
 
   string family = "Sans";
   unsigned size = 8u;

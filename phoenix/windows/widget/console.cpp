@@ -15,6 +15,8 @@ void pConsole::reset() {
 }
 
 void pConsole::setBackgroundColor(Color color) {
+  if(backgroundBrush) DeleteObject(backgroundBrush);
+  backgroundBrush = CreateSolidBrush(RGB(color.red, color.green, color.blue));
 }
 
 void pConsole::setForegroundColor(Color color) {
@@ -31,6 +33,7 @@ void pConsole::constructor() {
   );
   SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&console);
   setDefaultFont();
+  setBackgroundColor(console.state.backgroundColor);
 
   windowProc = (LRESULT CALLBACK (*)(HWND, UINT, LPARAM, WPARAM))GetWindowLongPtr(hwnd, GWLP_WNDPROC);
   SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)Console_windowProc);

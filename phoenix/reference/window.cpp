@@ -23,10 +23,6 @@ Geometry pWindow::frameMargin() {
   return {0, 0, 0, 0};
 }
 
-Geometry pWindow::geometry() {
-  return {0, 0, 0, 0};
-}
-
 void pWindow::remove(Layout& layout) {
 }
 

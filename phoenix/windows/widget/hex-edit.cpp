@@ -50,6 +50,8 @@ static LRESULT CALLBACK HexEdit_windowProc(HWND hwnd, UINT msg, WPARAM wparam, L
 }
 
 void pHexEdit::setBackgroundColor(Color color) {
+  if(backgroundBrush) DeleteObject(backgroundBrush);
+  backgroundBrush = CreateSolidBrush(RGB(color.red, color.green, color.blue));
 }
 
 void pHexEdit::setColumns(unsigned columns) {
@@ -131,6 +133,7 @@ void pHexEdit::constructor() {
   SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)HexEdit_windowProc);
 
   setDefaultFont();
+  setBackgroundColor(hexEdit.state.backgroundColor);
   setLength(hexEdit.state.length);
   setOffset(hexEdit.state.offset);
   update();

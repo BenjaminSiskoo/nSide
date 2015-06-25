@@ -6,20 +6,20 @@ Size pRadioLabel::minimumSize() {
 }
 
 void pRadioLabel::setChecked() {
-  parent().locked = true;
+  parent().lock();
   for(auto& item : radioLabel.state.group) {
     bool checked = &item == &radioLabel;
     item.p.qtRadioLabel->setChecked(item.state.checked = checked);
   }
-  parent().locked = false;
+  parent().unlock();
 }
 
 void pRadioLabel::setGroup(const group<RadioLabel>& group) {
-  parent().locked = true;
+  parent().lock();
   for(auto& item : radioLabel.state.group) {
     item.p.qtRadioLabel->setChecked(item.state.checked);
   }
-  parent().locked = false;
+  parent().unlock();
 }
 
 void pRadioLabel::setText(string text) {
@@ -52,7 +52,7 @@ void pRadioLabel::orphan() {
 }
 
 void pRadioLabel::onActivate() {
-  if(parent().locked) return;
+  if(parent().locked()) return;
   bool wasChecked = radioLabel.state.checked;
   setChecked();
   if(!wasChecked) {

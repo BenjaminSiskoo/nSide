@@ -13,7 +13,11 @@ Size pButton::minimumSize() {
     size.height += button.state.image.height;
   }
 
-  return {size.width + 20, size.height + 12};
+  return {size.width + (button.state.text ? 20 : 12), size.height + 12};
+}
+
+void pButton::setBordered(bool bordered) {
+  qtButton->setAutoRaise(bordered == false);
 }
 
 void pButton::setImage(const image& image, Orientation orientation) {
@@ -36,6 +40,8 @@ void pButton::constructor() {
   connect(qtButton, SIGNAL(released()), SLOT(onActivate()));
 
   pWidget::synchronizeState();
+  setBordered(button.state.bordered);
+  setImage(button.state.image, button.state.orientation);
   setText(button.state.text);
 }
 

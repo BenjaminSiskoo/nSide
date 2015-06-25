@@ -6,6 +6,10 @@ Size pLineEdit::minimumSize() {
 }
 
 void pLineEdit::setBackgroundColor(Color color) {
+  QPalette palette = qtLineEdit->palette();
+  palette.setColor(QPalette::Base, QColor(color.red, color.green, color.blue));
+  qtLineEdit->setPalette(palette);
+  qtLineEdit->setAutoFillBackground(true);
 }
 
 void pLineEdit::setEditable(bool editable) {
@@ -13,6 +17,9 @@ void pLineEdit::setEditable(bool editable) {
 }
 
 void pLineEdit::setForegroundColor(Color color) {
+  QPalette palette = qtLineEdit->palette();
+  palette.setColor(QPalette::Text, QColor(color.red, color.green, color.blue));
+  qtLineEdit->setPalette(palette);
 }
 
 void pLineEdit::setText(string text) {

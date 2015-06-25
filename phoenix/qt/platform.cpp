@@ -13,6 +13,7 @@
 #include "font.cpp"
 #include "timer.cpp"
 #include "window.cpp"
+#include "popup-menu.cpp"
 
 #include "action/action.cpp"
 #include "action/menu.cpp"
@@ -32,6 +33,7 @@
 #include "widget/hex-edit.cpp"
 #include "widget/horizontal-scroller.cpp"
 #include "widget/horizontal-slider.cpp"
+#include "widget/icon-view.cpp"
 #include "widget/label.cpp"
 #include "widget/line-edit.cpp"
 #include "widget/list-view.cpp"

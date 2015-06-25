@@ -273,6 +273,7 @@ struct pButton : public pWidget {
   HIMAGELIST himagelist;
 
   Size minimumSize();
+  void setBordered(bool bordered);
   void setImage(const image& image, Orientation orientation);
   void setText(string text);
 
@@ -360,6 +361,7 @@ struct pComboButton : public pWidget {
 struct pConsole : public pWidget {
   Console& console;
   LRESULT CALLBACK (*windowProc)(HWND, UINT, LPARAM, WPARAM);
+  HBRUSH backgroundBrush = nullptr;
 
   void print(string text);
   void reset();
@@ -392,6 +394,7 @@ struct pHexEdit : public pWidget {
   HexEdit& hexEdit;
   WindowProc windowProc = nullptr;
   HWND scrollBar = nullptr;
+  HBRUSH backgroundBrush = nullptr;
 
   void setBackgroundColor(Color color);
   void setColumns(unsigned columns);
@@ -456,6 +459,7 @@ struct pLabel : public pWidget {
 
 struct pLineEdit : public pWidget {
   LineEdit& lineEdit;
+  HBRUSH backgroundBrush = nullptr;
 
   Size minimumSize();
   void setBackgroundColor(Color color);
@@ -580,6 +584,7 @@ struct pTabFrame : public pWidget {
 
 struct pTextEdit : public pWidget {
   TextEdit& textEdit;
+  HBRUSH backgroundBrush = nullptr;
 
   void setBackgroundColor(Color color);
   void setCursorPosition(unsigned position);

@@ -32,7 +32,10 @@ Size pButton::minimumSize() {
     size.height += button.state.image.height;
   }
 
-  return {size.width + 20, size.height + 10};
+  return {size.width + (button.state.text ? 20 : 10), size.height + 10};
+}
+
+void pButton::setBordered(bool bordered) {
 }
 
 void pButton::setImage(const image& image, Orientation orientation) {
@@ -75,6 +78,7 @@ void pButton::constructor() {
   hwnd = CreateWindow(L"BUTTON", L"", WS_CHILD | WS_TABSTOP, 0, 0, 0, 0, parentHwnd, (HMENU)id, GetModuleHandle(0), 0);
   SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&button);
   setDefaultFont();
+  setBordered(button.state.bordered);
   setImage(button.state.image, button.state.orientation);
 //setText(button.state.text);  //called by setImage();
   synchronize();

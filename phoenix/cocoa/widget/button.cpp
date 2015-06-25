@@ -32,7 +32,10 @@ Size pButton::minimumSize() {
     size.height += button.state.image.height;
   }
 
-  return {size.width + 20, size.height + 4};
+  return {size.width + (button.state.text ? 20 : 4), size.height + 4};
+}
+
+void pButton::setBordered(bool bordered) {
 }
 
 void pButton::setGeometry(Geometry geometry) {

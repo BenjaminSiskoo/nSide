@@ -943,6 +943,11 @@ Orientation Button::orientation() const {
   return state.orientation;
 }
 
+void Button::setBordered(bool bordered) {
+  state.bordered = bordered;
+  return p.setBordered(bordered);
+}
+
 void Button::setImage(const nall::image& image, Orientation orientation) {
   state.image = image;
   state.orientation = orientation;

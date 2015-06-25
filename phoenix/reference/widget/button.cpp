@@ -1,5 +1,8 @@
 namespace phoenix {
 
+void pButton::setBordered(bool bordered) {
+}
+
 void pButton::setImage(const image& image, Orientation orientation) {
 }
 

@@ -17,9 +17,9 @@ Size pCheckButton::minimumSize() {
 }
 
 void pCheckButton::setChecked(bool checked) {
-  locked = true;
+  lock();
   qtCheckButton->setChecked(checked);
-  locked = false;
+  unlock();
 }
 
 void pCheckButton::setImage(const image& image, Orientation orientation) {
@@ -57,7 +57,7 @@ void pCheckButton::orphan() {
 
 void pCheckButton::onToggle(bool checked) {
   checkButton.state.checked = checked;
-  if(!locked && checkButton.onToggle) checkButton.onToggle();
+  if(!locked() && checkButton.onToggle) checkButton.onToggle();
 }
 
 }

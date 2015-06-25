@@ -6,6 +6,8 @@ Size pLineEdit::minimumSize() {
 }
 
 void pLineEdit::setBackgroundColor(Color color) {
+  if(backgroundBrush) DeleteObject(backgroundBrush);
+  backgroundBrush = CreateSolidBrush(RGB(color.red, color.green, color.blue));
 }
 
 void pLineEdit::setEditable(bool editable) {
@@ -37,6 +39,7 @@ void pLineEdit::constructor() {
   );
   SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&lineEdit);
   setDefaultFont();
+  setBackgroundColor(lineEdit.state.backgroundColor);
   setEditable(lineEdit.state.editable);
   setText(lineEdit.state.text);
   synchronize();

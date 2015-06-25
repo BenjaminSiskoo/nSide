@@ -1,6 +1,10 @@
 namespace phoenix {
 
 void pHexEdit::setBackgroundColor(Color color) {
+  QPalette palette = qtHexEdit->palette();
+  palette.setColor(QPalette::Base, QColor(color.red, color.green, color.blue));
+  qtHexEdit->setPalette(palette);
+  qtHexEdit->setAutoFillBackground(true);
 }
 
 void pHexEdit::setColumns(unsigned columns) {
@@ -8,6 +12,9 @@ void pHexEdit::setColumns(unsigned columns) {
 }
 
 void pHexEdit::setForegroundColor(Color color) {
+  QPalette palette = qtHexEdit->palette();
+  palette.setColor(QPalette::Text, QColor(color.red, color.green, color.blue));
+  qtHexEdit->setPalette(palette);
 }
 
 void pHexEdit::setLength(unsigned length) {
@@ -18,9 +25,9 @@ void pHexEdit::setLength(unsigned length) {
 }
 
 void pHexEdit::setOffset(unsigned offset) {
-  locked = true;
+  lock();
   qtScroll->setSliderPosition(hexEdit.state.offset / hexEdit.state.columns);
-  locked = false;
+  unlock();
   update();
 }
 
@@ -254,7 +261,7 @@ void pHexEdit::scrollTo(signed position) {
 }
 
 void pHexEdit::onScroll() {
-  if(locked) return;
+  if(locked()) return;
   unsigned offset = qtScroll->sliderPosition();
   hexEdit.state.offset = offset * hexEdit.state.columns;
   update();

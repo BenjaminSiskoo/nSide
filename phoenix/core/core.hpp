@@ -423,6 +423,7 @@ struct Button : private nall::base_from_member<pButton&>, Widget {
 
   nall::image image() const;
   Orientation orientation() const;
+  void setBordered(bool bordered);
   void setImage(const nall::image& image = nall::image{}, Orientation orientation = Orientation::Horizontal);
   void setText(const nall::string& text);
   nall::string text() const;

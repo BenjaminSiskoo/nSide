@@ -20,6 +20,10 @@ Size pButton::minimumSize() {
   return {size.width + 24, size.height + 12};
 }
 
+void pButton::setBordered(bool bordered) {
+  gtk_button_set_relief(gtkButton, bordered ? GTK_RELIEF_NORMAL : GTK_RELIEF_NONE);
+}
+
 void pButton::setImage(const image& image, Orientation orientation) {
   if(image.empty() == false) {
     GtkImage* gtkImage = CreateImage(image);

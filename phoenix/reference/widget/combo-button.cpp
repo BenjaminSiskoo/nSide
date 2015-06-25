@@ -1,6 +1,6 @@
 namespace phoenix {
 
-void pComboButton::append(string text) {
+void pComboButton::append() {
 }
 
 void pComboButton::remove(unsigned selection) {
@@ -9,7 +9,7 @@ void pComboButton::remove(unsigned selection) {
 void pComboButton::reset() {
 }
 
-void pComboButton::setSelection(unsigned selection) {
+void pComboButton::setSelected(unsigned selection) {
 }
 
 void pComboButton::setText(unsigned selection, string text) {

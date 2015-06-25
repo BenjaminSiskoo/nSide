@@ -17,20 +17,20 @@ Size pRadioButton::minimumSize() {
 }
 
 void pRadioButton::setChecked() {
-  parent().locked = true;
+  parent().lock();
   for(auto& item : radioButton.state.group) {
     bool checked = &item.p == this;
     item.p.qtRadioButton->setChecked(item.state.checked = checked);
   }
-  parent().locked = false;
+  parent().unlock();
 }
 
 void pRadioButton::setGroup(const group<RadioButton>& group) {
-  parent().locked = true;
+  parent().lock();
   for(auto& item : radioButton.state.group) {
     item.p.qtRadioButton->setChecked(item.state.checked);
   }
-  parent().locked = false;
+  parent().unlock();
 }
 
 void pRadioButton::setImage(const image& image, Orientation orientation) {
@@ -74,7 +74,7 @@ void pRadioButton::orphan() {
 }
 
 void pRadioButton::onActivate() {
-  if(parent().locked) return;
+  if(parent().locked()) return;
   bool wasChecked = radioButton.state.checked;
   setChecked();
   if(!wasChecked) {

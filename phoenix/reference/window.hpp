@@ -10,7 +10,6 @@ struct pWindow : public pObject {
   void append(Widget& widget);
   bool focused();
   Geometry frameMargin();
-  Geometry geometry();
   void remove(Layout& layout);
   void remove(Menu& menu);
   void remove(Widget& widget);

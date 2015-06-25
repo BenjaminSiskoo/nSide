@@ -91,6 +91,7 @@ struct Widget::State {
 };
 
 struct Button::State {
+  bool bordered;
   nall::image image;
   Orientation orientation = Orientation::Horizontal;
   string text;

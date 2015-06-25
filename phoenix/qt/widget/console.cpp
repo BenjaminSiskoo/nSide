@@ -7,9 +7,16 @@ void pConsole::reset() {
 }
 
 void pConsole::setBackgroundColor(Color color) {
+  QPalette palette = qtConsole->palette();
+  palette.setColor(QPalette::Base, QColor(color.red, color.green, color.blue));
+  qtConsole->setPalette(palette);
+  qtConsole->setAutoFillBackground(true);
 }
 
 void pConsole::setForegroundColor(Color color) {
+  QPalette palette = qtConsole->palette();
+  palette.setColor(QPalette::Text, QColor(color.red, color.green, color.blue));
+  qtConsole->setPalette(palette);
 }
 
 void pConsole::setPrompt(string prompt) {
