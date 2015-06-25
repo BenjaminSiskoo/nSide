@@ -20,8 +20,8 @@ void Cartridge::load() {
   unsigned rom_size = 0;
   if(document["cartridge/rom"]) {
     auto info = document["cartridge/rom"];
-    interface->loadRequest(ID::ROM, info["name"].data);
-    rom_size = numeral(info["size"].data);
+    interface->loadRequest(ID::ROM, info["name"].text());
+    rom_size = info["size"].decimal();
     for(unsigned addr = rom_size; addr < rom.size; addr++) {
       rom.data[addr] = rom.data[Bus::mirror(addr, rom_size)];
     }
@@ -34,37 +34,37 @@ void Cartridge::load() {
   if(document["cartridge/ram"]) {
     auto info = document["cartridge/ram"];
 
-    if(info["type"].data == "SRAM" || info["type"].data == "FRAM") {
+    if(info["type"].text() == "SRAM" || info["type"].text() == "FRAM") {
       has_sram = true;
-      ram.size = numeral(info["size"].data);
+      ram.size = info["size"].decimal();
       ram.mask = ram.size - 1;
       for(unsigned n = 0; n < ram.size; n++) ram.data[n] = 0xff;
 
-      interface->loadRequest(ID::RAM, info["name"].data);
-      memory.append({ID::RAM, info["name"].data});
+      interface->loadRequest(ID::RAM, info["name"].text());
+      memory.append({ID::RAM, info["name"].text()});
     }
 
-    if(info["type"].data == "EEPROM") {
+    if(info["type"].text() == "EEPROM") {
       has_eeprom = true;
-      eeprom.size = numeral(info["size"].data);
+      eeprom.size = info["size"].decimal();
       eeprom.bits = eeprom.size <= 512 ? 6 : 14;
       if(eeprom.size == 0) eeprom.size = 8192, eeprom.bits = 0;  //auto-detect size
       eeprom.mask = rom_size > 16 * 1024 * 1024 ? 0x0fffff00 : 0x0f000000;
       eeprom.test = rom_size > 16 * 1024 * 1024 ? 0x0dffff00 : 0x0d000000;
       for(unsigned n = 0; n < eeprom.size; n++) eeprom.data[n] = 0xff;
 
-      interface->loadRequest(ID::EEPROM, info["name"].data);
-      memory.append({ID::EEPROM, info["name"].data});
+      interface->loadRequest(ID::EEPROM, info["name"].text());
+      memory.append({ID::EEPROM, info["name"].text()});
     }
 
-    if(info["type"].data == "FlashROM") {
+    if(info["type"].text() == "FlashROM") {
       has_flashrom = true;
-      flashrom.id = numeral(info["id"].data);
-      flashrom.size = numeral(info["size"].data);
+      flashrom.id = info["id"].decimal();
+      flashrom.size = info["size"].decimal();
       for(unsigned n = 0; n < flashrom.size; n++) flashrom.data[n] = 0xff;
 
-      interface->loadRequest(ID::FlashROM, info["name"].data);
-      memory.append({ID::FlashROM, info["name"].data});
+      interface->loadRequest(ID::FlashROM, info["name"].text());
+      memory.append({ID::FlashROM, info["name"].text()});
     }
   }
 

@@ -9,7 +9,6 @@ namespace Markup {
 
 struct Node {
   string name;
-  string data;
   bool attribute;
 
   explicit operator bool() const { return name || children; }
@@ -139,6 +138,7 @@ struct Node {
   Node() : attribute(false), level(0) {}
 
 protected:
+  string data;
   unsigned level;
   vector<Node> children;
 };

@@ -52,11 +52,12 @@ void System::load(Revision revision) {
   string manifest = string::read({interface->path(ID::System), "manifest.bml"});
   auto document = Markup::Document(manifest);
 
+  auto bootROM = document["system/cpu/rom/name"].text();
   interface->loadRequest(
     revision == Revision::GameBoy ? ID::GameBoyBootROM : ID::GameBoyColorBootROM,
-    document["system/cpu/rom/name"].data
+    bootROM
   );
-  if(!file::exists({interface->path(ID::System), document["system/cpu/rom/name"].data})) {
+  if(!file::exists({interface->path(ID::System), bootROM})) {
     interface->notify("Error: required Game Boy firmware boot.rom not found.\n");
   }
 }

@@ -57,7 +57,7 @@ void Cartridge::parse_markup_cartridge(Markup::Node root) {
   parse_markup_memory(rom, root["rom"], ID::ROM, false);
   parse_markup_memory(ram, root["ram"], ID::RAM, true);
 
-  for(auto& node : root.find("map")) {
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "rom") {
       Mapping m(rom);
       parse_markup_map(m, node);
@@ -85,7 +85,7 @@ void Cartridge::parse_markup_icd2(Markup::Node root) {
   string bootROMName = root["rom/name"].text();
   interface->loadRequest(ID::SuperGameBoyBootROM, bootROMName);
 
-  for(auto& node : root.find("map")) {
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&ICD2::read, &icd2}, {&ICD2::write, &icd2});
       parse_markup_map(m, node);
@@ -105,9 +105,7 @@ void Cartridge::parse_markup_bsx(Markup::Node root) {
   parse_markup_memory(bsxcartridge.ram, root["ram"], ID::BsxRAM, true);
   parse_markup_memory(bsxcartridge.psram, root["psram"], ID::BsxPSRAM, true);
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "rom"
     || node["id"].text() == "ram") {
       Mapping m({&BSXCartridge::mcu_read, &bsxcartridge}, {&BSXCartridge::mcu_write, &bsxcartridge});
@@ -129,7 +127,7 @@ void Cartridge::parse_markup_satellaview(Markup::Node root) {
 
   interface->loadRequest(ID::Satellaview, "BS-X Satellaview", "bs");
 
-  for(auto& node : root.find("map")) {
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "rom") {
       if(satellaviewcartridge.memory.size() == 0) continue;
 
@@ -149,7 +147,7 @@ void Cartridge::parse_markup_sufamiturbo(Markup::Node root, bool slot) {
     interface->loadRequest(ID::SufamiTurboSlotA, "Sufami Turbo - Slot A", "st");
   }
 
-  for(auto& node : root.find("map")) {
+  for(auto node : root.find("map")) {
     SufamiTurboCartridge &cart = (slot == 0 ? sufamiturboA : sufamiturboB);
 
     if(node["id"].text() == "rom") {
@@ -178,7 +176,7 @@ void Cartridge::parse_markup_nss(Markup::Node root) {
   if(!root["setting"]) return;
   nss.dip = interface->dipSettings(root);
 
-  for(auto& node : root.find("map")) {
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&NSS::read, &nss}, {&NSS::write, &nss});
       parse_markup_map(m, node);
@@ -191,7 +189,7 @@ void Cartridge::parse_markup_event(Markup::Node root) {
   if(!root) return;
   has_event = true;
 
-  for(auto& node : root) {
+  for(auto node : root) {
     if(node.name != "rom") continue;
     unsigned id = node["id"].decimal();
     if(id > 3) continue;
@@ -208,9 +206,7 @@ void Cartridge::parse_markup_event(Markup::Node root) {
   if(part.size() == 1) event.timer = decimal(part(0));
   if(part.size() == 2) event.timer = decimal(part(0)) * 60 + decimal(part(1));
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "rom") {
       Mapping m({&Event::rom_read, &event}, [](unsigned, uint8) {});
       parse_markup_map(m, node);
@@ -245,9 +241,7 @@ void Cartridge::parse_markup_sa1(Markup::Node root) {
   parse_markup_memory(sa1.bwram, root["ram[0]"], ID::SA1BWRAM, true);
   parse_markup_memory(sa1.iram, root["ram[1]"], ID::SA1IRAM, true);
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&SA1::mmio_read, &sa1}, {&SA1::mmio_write, &sa1});
       parse_markup_map(m, node);
@@ -282,9 +276,7 @@ void Cartridge::parse_markup_superfx(Markup::Node root) {
   parse_markup_memory(superfx.rom, root["rom"], ID::SuperFXROM, false);
   parse_markup_memory(superfx.ram, root["ram"], ID::SuperFXRAM, true);
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&SuperFX::mmio_read, &superfx}, {&SuperFX::mmio_write, &superfx});
       parse_markup_map(m, node);
@@ -322,9 +314,7 @@ void Cartridge::parse_markup_armdsp(Markup::Node root) {
     memory.append({ID::ArmDSPRAM, dataRAMName});
   }
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&ArmDSP::mmio_read, &armdsp}, {&ArmDSP::mmio_write, &armdsp});
       parse_markup_map(m, node);
@@ -355,9 +345,7 @@ void Cartridge::parse_markup_hitachidsp(Markup::Node root, unsigned roms) {
     interface->loadRequest(ID::HitachiDSPDRAM, dataRAMName);
   }
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&HitachiDSP::dsp_read, &hitachidsp}, {&HitachiDSP::dsp_write, &hitachidsp});
       parse_markup_map(m, node);
@@ -417,9 +405,7 @@ void Cartridge::parse_markup_necdsp(Markup::Node root) {
     }
   }
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
       parse_markup_map(m, node);
@@ -443,9 +429,7 @@ void Cartridge::parse_markup_epsonrtc(Markup::Node root) {
   interface->loadRequest(ID::EpsonRTC, name);
   memory.append({ID::EpsonRTC, name});
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&EpsonRTC::read, &epsonrtc}, {&EpsonRTC::write, &epsonrtc});
       parse_markup_map(m, node);
@@ -462,9 +446,7 @@ void Cartridge::parse_markup_sharprtc(Markup::Node root) {
   interface->loadRequest(ID::SharpRTC, name);
   memory.append({ID::SharpRTC, name});
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&SharpRTC::read, &sharprtc}, {&SharpRTC::write, &sharprtc});
       parse_markup_map(m, node);
@@ -481,9 +463,7 @@ void Cartridge::parse_markup_spc7110(Markup::Node root) {
   parse_markup_memory(spc7110.drom, root["rom[1]"], ID::SPC7110DROM, false);
   parse_markup_memory(spc7110.ram, root["ram"], ID::SPC7110RAM, true);
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&SPC7110::read, &spc7110}, {&SPC7110::write, &spc7110});
       parse_markup_map(m, node);
@@ -511,9 +491,7 @@ void Cartridge::parse_markup_sdd1(Markup::Node root) {
   parse_markup_memory(sdd1.rom, root["rom"], ID::SDD1ROM, false);
   parse_markup_memory(sdd1.ram, root["ram"], ID::SDD1RAM, true);
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&SDD1::read, &sdd1}, {&SDD1::write, &sdd1});
       parse_markup_map(m, node);
@@ -540,9 +518,7 @@ void Cartridge::parse_markup_obc1(Markup::Node root) {
 
   parse_markup_memory(obc1.ram, root["ram"], ID::OBC1RAM, true);
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&OBC1::read, &obc1}, {&OBC1::write, &obc1});
       parse_markup_map(m, node);
@@ -555,9 +531,7 @@ void Cartridge::parse_markup_hsu1(Markup::Node root) {
   if(!root) return;
   has_hsu1 = true;
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&HSU1::read, &hsu1}, {&HSU1::write, &hsu1});
       parse_markup_map(m, node);
@@ -570,9 +544,7 @@ void Cartridge::parse_markup_msu1(Markup::Node root) {
   if(!root) return;
   has_msu1 = true;
 
-  for(auto& node : root) {
-    if(node.name != "map") continue;
-
+  for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&MSU1::mmio_read, &msu1}, {&MSU1::mmio_write, &msu1});
       parse_markup_map(m, node);

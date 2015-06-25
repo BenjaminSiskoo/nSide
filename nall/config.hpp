@@ -58,10 +58,10 @@ struct Node {
 
   void load(Markup::Node path) {
     for(auto& child : children) {
-      auto leaf = path[child.name];
-      if(!leaf) continue;
-      if(!child.empty()) child.set(leaf.data.trim<1>(" ", "\r"));
-      child.load(leaf);
+      if(auto leaf = path[child.name]) {
+        if(!child.empty()) child.set(leaf.text());
+        child.load(leaf);
+      }
     }
   }
 

@@ -348,9 +348,9 @@ public:
     shader_source_markup = source;
 
     XML::Document document(shader_source_markup);
-    bool is_hlsl = document["shader"]["language"].data == "HLSL";
-    string shader_source = document["shader"]["source"].data;
-    if(shader_source == "") return;
+    bool is_hlsl = document["shader/language"].text() == "HLSL";
+    string shader_source = document["shader/source"].text();
+    if(!shader_source) return;
 
     HMODULE d3dx;
     for(unsigned i = 0; i < 256; i++) {
