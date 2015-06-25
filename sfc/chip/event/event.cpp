@@ -71,7 +71,7 @@ void Event::submitScore() {
   string hostport = side(1);
   if(hostport.empty()) hostport = "80";
 
-  http server;
+/*http server;
   if(server.connect(hostname, decimal(hostport))) {
     string content = {
       "username:", username, "\n",
@@ -92,7 +92,7 @@ void Event::submitScore() {
     };
     server.send(packet);
     server.disconnect();
-  }
+  }*/
 }
 
 void Event::init() {

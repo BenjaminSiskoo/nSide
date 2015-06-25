@@ -46,7 +46,6 @@ void Cartridge::load() {
   has_spc7110    = false;
   has_sdd1       = false;
   has_obc1       = false;
-  has_hsu1       = false;
   has_msu1       = false;
 
   information.markup.cartridge    = "";

@@ -26,7 +26,6 @@ void Cartridge::parse_markup(const char* markup) {
   parse_markup_spc7110(cartridge["spc7110"]);
   parse_markup_sdd1(cartridge["sdd1"]);
   parse_markup_obc1(cartridge["obc1"]);
-  parse_markup_hsu1(cartridge["hsu1"]);
   parse_markup_msu1(cartridge["msu1"]);
 }
 
@@ -521,19 +520,6 @@ void Cartridge::parse_markup_obc1(Markup::Node root) {
   for(auto node : root.find("map")) {
     if(node["id"].text() == "io") {
       Mapping m({&OBC1::read, &obc1}, {&OBC1::write, &obc1});
-      parse_markup_map(m, node);
-      mapping.append(m);
-    }
-  }
-}
-
-void Cartridge::parse_markup_hsu1(Markup::Node root) {
-  if(!root) return;
-  has_hsu1 = true;
-
-  for(auto node : root.find("map")) {
-    if(node["id"].text() == "io") {
-      Mapping m({&HSU1::read, &hsu1}, {&HSU1::write, &hsu1});
       parse_markup_map(m, node);
       mapping.append(m);
     }
