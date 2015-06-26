@@ -35,13 +35,11 @@ void CheatDatabase::findCodes() {
   cheat.reset();
 
   auto document = BML::unserialize(string::read(program->path("cheats.bml")));
-  for(auto& node : document) {
-    if(node.name != "cartridge") continue;
-    if(node["sha256"].text() != sha256) continue;
+  for(auto cartridge : document.find("cartridge")) {
+    if(cartridge["sha256"].text() != sha256) continue;
 
-    setTitle(node["name"].text());
-    for(auto& cheat : node) {
-      if(cheat.name != "cheat") continue;
+    setTitle(cartridge["name"].text());
+    for(auto cheat : cartridge.find("cheat")) {
       cheatList.append(cheat["description"].text());
       this->cheat.append({cheat["code"].text(), cheat["description"].text()});
     }

@@ -1,3 +1,5 @@
+#include <nall/intrinsics.hpp>
+
 #if defined(PHOENIX_WINDOWS)
   #include "../windows/header.hpp"
 #elif defined(PHOENIX_QT)

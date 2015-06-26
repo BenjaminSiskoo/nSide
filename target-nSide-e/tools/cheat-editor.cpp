@@ -68,7 +68,7 @@ void CheatEditor::refresh() {
     string desc = cheat[n].code.empty() && cheat[n].desc.empty() ? "(empty)" : cheat[n].desc;
     lstring codes = code.split("+");
     if(codes.size() > 1) code = {codes[0], "+..."};
-    cheatList.setText(n, {format<3>(1 + n), code, desc});
+    cheatList.setText(n, {decimal<3>(1 + n), code, desc});
   }
   cheatList.autoSizeColumns();
 }
@@ -124,8 +124,7 @@ bool CheatEditor::load(string filename) {
 
   unsigned n = 0;
   auto document = BML::unserialize(data);
-  for(auto& node : document["cartridge"]) {
-    if(node.name != "cheat") continue;
+  for(auto node : document["cartridge"].find("cheat")) {
     cheatList.setChecked(n, (bool)node["enabled"]);
     cheat[n].code = node["code"].text();
     cheat[n].desc = node["description"].text();

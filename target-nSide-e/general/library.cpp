@@ -60,7 +60,7 @@ void LibraryBrowser::refresh() {
   lstring pathnames = directory::ifolders(pathname, typeMask);
   unsigned selection = 0;
   for(auto& pathname : pathnames) {
-    folders.append(string{pathname}.rtrim<1>(typeSuffix));
+    folders.append(string{pathname}.rtrim(typeSuffix));
     folders.setImage(selection++, 0, {resource::game, sizeof resource::game});
   }
   folders.setSelection(0);
@@ -106,11 +106,11 @@ void LibraryImport::onImportActivate() {
   if(!browse) return;
   audio.clear();  //auto_purify's browser is modal
   string pathname = browse();
-  pathname.rtrim<1>("/");
+  pathname.rtrim("/");
   if(pathname.empty()) return;
 
   //after importing game, take user to the relevant game list to show the newly imported title
-  string type = extension(pathname);
+  string type = suffixname(pathname);
   for(signed bootable = 1; bootable >= 0; bootable--) {
     unsigned selection = 0;
     for(auto& browser : libraryManager->browsers) {
@@ -122,7 +122,7 @@ void LibraryImport::onImportActivate() {
           libraryManager->onChange();
 
           //find game in list and select it
-          string name = notdir(nall::basename(pathname));
+          string name = filename(nall::basename(pathname));
           for(unsigned n = 0; n < browser->folders.rows(); n++) {
             if(browser->folders.text(n, 0) == name) {
               browser->folders.setSelection(n);

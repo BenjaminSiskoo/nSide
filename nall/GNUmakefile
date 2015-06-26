@@ -1,7 +1,3 @@
-# Makefile
-# author: byuu
-# license: public domain
-
 [A-Z] = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 [a-z] = a b c d e f g h i j k l m n o p q r s t u v w x y z
 [0-9] = 0 1 2 3 4 5 6 7 8 9
@@ -36,8 +32,8 @@ endif
 
 cflags := -x c -std=c99
 objcflags := -x objective-c -std=c99
-cppflags := -x c++ -std=c++11
-objcppflags := -x objective-c++ -std=c++11
+cppflags := -x c++ -std=c++14
+objcppflags := -x objective-c++ -std=c++14
 flags :=
 link :=
 
@@ -45,23 +41,27 @@ link :=
 ifeq ($(compiler),)
   ifeq ($(platform),windows)
     compiler := g++
+    cppflags := -x c++ -std=gnu++14
   else ifeq ($(platform),macosx)
     compiler := clang++
   else ifeq ($(platform),bsd)
-    compiler := g++47
+    compiler := g++49
   else
     compiler := g++
   endif
 endif
 
+# clang settings
+ifeq ($(findstring clang++,$(compiler)),clang++)
+  flags += -fwrapv
 # gcc settings
-ifeq ($(findstring g++,$(compiler)),g++)
+else ifeq ($(findstring g++,$(compiler)),g++)
   flags += -fwrapv
 endif
 
-# clang settings
-ifeq ($(findstring clang++,$(compiler)),clang++)
-  flags += -fwrapv -w
+# windows settings
+ifeq ($(platform),windows)
+  link := $(link) -lws2_32 -lole32
 endif
 
 # macosx settings
@@ -73,6 +73,8 @@ endif
 # bsd settings
 ifeq ($(platform),bsd)
   flags += -I/usr/local/include
+  link += -Wl,-rpath=/usr/local/lib
+  link += -Wl,-rpath=/usr/local/lib/gcc49
 endif
 
 # cross-compilation support
@@ -81,9 +83,8 @@ ifeq ($(arch),x86)
   link := -m32 $(link)
 endif
 
-ifeq ($(prefix),)
-  prefix := /usr/local
-endif
+# paths
+prefix := $(HOME)/.local
 
 # function rwildcard(directory, pattern)
 rwildcard = \

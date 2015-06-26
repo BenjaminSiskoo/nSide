@@ -3,7 +3,7 @@ StateManager* stateManager = nullptr;
 StateManager::StateManager() {
   stateList.setHeaderText({"Slot", "Description"});
   stateList.setHeaderVisible();
-  for(unsigned n = 0; n < Slots; n++) stateList.append({format<2>(1 + n), "(empty)"});
+  for(unsigned n = 0; n < Slots; n++) stateList.append({decimal<2>(1 + n), "(empty)"});
   stateList.autoSizeColumns();
   descLabel.setText("Description:");
   saveButton.setText("Save");
@@ -53,7 +53,7 @@ void StateManager::synchronize() {
 
 void StateManager::refresh() {
   for(unsigned n = 0; n < Slots; n++) {
-    stateList.setText(n, {format<2>(1 + n), slotLoadDescription(n)});
+    stateList.setText(n, {decimal<2>(1 + n), slotLoadDescription(n)});
   }
   stateList.autoSizeColumns();
 }
@@ -95,7 +95,7 @@ bool StateManager::save(string filename, unsigned revision) {
     return true;
   }
 
-  directory::create(dir(filename));
+  directory::create(filename.pathname());
 
   file fp;
   if(fp.open(filename, file::mode::write) == false) return false;
@@ -139,15 +139,20 @@ void StateManager::slotErase() {
 string StateManager::slotLoadDescription(unsigned id) {
   if(slot[id].capacity() == 0) return "(empty)";
   char text[DescriptionLength];
-  strmcpy(text, (const char*)slot[id].data() + HeaderLength, DescriptionLength);
+  memory::copy(text, (const char*)slot[id].data() + HeaderLength, DescriptionLength);
   return text;
+  //string text;
+  //text.reserve(DescriptionLength);
+  //memory::copy(text.pointer(), (const char*)slot[id].data() + HeaderLength, DescriptionLength);
+  //text.resize(text.length());
+  //return text;
 }
 
 void StateManager::slotSaveDescription() {
   if(stateList.selected() == false) return;
   string text = descEdit.text();
   if(slot[stateList.selection()].capacity() > 0) {
-    strmcpy((char*)slot[stateList.selection()].data() + HeaderLength, (const char*)text, DescriptionLength);
+    memory::copy((char*)slot[stateList.selection()].data() + HeaderLength, (const char*)text, DescriptionLength);
   }
   refresh();
 }

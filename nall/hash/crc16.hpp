@@ -1,27 +1,43 @@
 #ifndef NALL_HASH_CRC16_HPP
 #define NALL_HASH_CRC16_HPP
 
-#include <nall/stdint.hpp>
+#include <nall/range.hpp>
 
 namespace nall {
+struct string;
+namespace Hash {
 
-inline uint16_t crc16_adjust(uint16_t crc16, uint8_t data) {
-  for(unsigned n = 0; n < 8; n++) {
-    if((crc16 & 1) ^ (data & 1)) crc16 = (crc16 >> 1) ^ 0x8408;
-    else crc16 >>= 1;
-    data >>= 1;
+struct CRC16 {
+  CRC16() { reset(); }
+  CRC16(const void* values, unsigned size) : CRC16() { data(values, size); }
+
+  auto reset() -> void {
+    checksum = ~0;
   }
-  return crc16;
-}
 
-inline uint16_t crc16_calculate(const uint8_t* data, unsigned length) {
-  uint16_t crc16 = ~0;
-  for(unsigned n = 0; n < length; n++) {
-    crc16 = crc16_adjust(crc16, data[n]);
+  auto data(uint8_t value) -> void {
+    for(auto n : range(8)) {
+      if((checksum & 1) ^ (value & 1)) checksum = (checksum >> 1) ^ 0x8408;
+      else checksum >>= 1;
+      value >>= 1;
+    }
   }
-  return ~crc16;
-}
 
-}
+  auto data(const void* values, unsigned size) -> void {
+    auto p = (const uint8_t*)values;
+    while(size--) data(*p++);
+  }
+
+  auto value() -> uint16_t {
+    return ~checksum;
+  }
+
+  inline auto digest() -> string;
+
+private:
+  uint16_t checksum;
+};
+
+}}
 
 #endif

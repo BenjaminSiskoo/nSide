@@ -13,7 +13,7 @@ void Utility::loadMedia(string pathname) {
   if(pathname.endsWith("/")) pathname.rtrim("/");
 
   if(!directory::exists(pathname)) return;
-  string type = extension(pathname);
+  string type = suffixname(pathname).ltrim(".");
 
   //determine type by comparing extension against all emulation cores
   for(auto& emulator : program->emulator) {
@@ -307,7 +307,7 @@ void Utility::showMessage(string message) {
 }
 
 string Utility::libraryPath() {
-  string path = string::read({configpath(), "nSide-e/library.bml"}).strip().ltrim<1>("Path: ").transform("\\", "/");
+  string path = string::read({configpath(), "nSide-e/library.bml"}).strip().ltrim("Path: ").transform("\\", "/");
   if(path.empty()) path = {userpath(), "Emulation/"};
   if(path.endsWith("/") == false) path.append("/");
   return path;

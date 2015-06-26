@@ -37,6 +37,7 @@ struct Cartridge : property<Cartridge> {
   readonly<bool> has_spc7110;
   readonly<bool> has_sdd1;
   readonly<bool> has_obc1;
+  readonly<bool> has_hsu1;
   readonly<bool> has_msu1;
 
   struct Mapping {

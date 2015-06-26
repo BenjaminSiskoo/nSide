@@ -14,7 +14,7 @@ string Cartridge::title() {
 void Cartridge::load() {
   interface->loadRequest(ID::Manifest, "manifest.bml");
 
-  auto document = Markup::Document(information.markup);
+  auto document = BML::unserialize(information.markup);
   information.title = document["information/title"].text();
 
   unsigned rom_size = 0;
@@ -68,7 +68,7 @@ void Cartridge::load() {
     }
   }
 
-  sha256 = nall::sha256(rom.data, rom_size);
+  sha256 = Hash::SHA256(rom.data, rom_size).digest();
 
   system.load();
   loaded = true;

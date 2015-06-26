@@ -35,13 +35,11 @@ unsigned DipSwitches::run(const Markup::Node& node) {
   }
 
   unsigned index = 0;
-  for(auto& setting : node) {
-    if(setting.name != "setting") continue;
+  for(auto& setting : node.find("setting")) {
     dip[index].name.setEnabled();
     dip[index].name.setText(setting["name"].text());
     dip[index].value.setEnabled();
-    for(auto& option : setting) {
-      if(option.name != "option") continue;
+    for(auto& option : setting.find("option")) {
       if(auto result = Eval::integer(option["value"].text())) {
         dip[index].value.append(option["name"].text());
         dip[index].values.append(result());

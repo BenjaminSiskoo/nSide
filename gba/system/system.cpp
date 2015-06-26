@@ -25,7 +25,7 @@ void System::power() {
 
 void System::load() {
   string manifest = string::read({interface->path(ID::System), "manifest.bml"});
-  auto document = Markup::Document(manifest);
+  auto document = BML::unserialize(manifest);
 
   auto bios = document["system/cpu/rom/name"].text();
   interface->loadRequest(ID::BIOS, bios);

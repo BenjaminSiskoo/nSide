@@ -84,7 +84,7 @@ struct Node {
 struct Document : Node {
   bool load(const string& filename) {
     if(!file::exists(filename)) return false;
-    auto document = Markup::Document(string::read(filename));
+    auto document = BML::unserialize(string::read(filename));
     Node::load(document);
     return true;
   }

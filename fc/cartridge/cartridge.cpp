@@ -39,20 +39,12 @@ void Cartridge::load(System::Revision revision) {
 
   if(board == nullptr) return;
 
-  sha256_ctx sha;
-  uint8 hash[32];
-  sha256_init(&sha);
-  //hash each ROM image that exists; any with size() == 0 is ignored by sha256_chunk()
-  sha256_chunk(&sha, board->prgrom.data(), board->prgrom.size());
-  sha256_chunk(&sha, board->chrrom.data(), board->chrrom.size());
-  sha256_chunk(&sha, board->instrom.data(), board->instrom.size());
-  sha256_chunk(&sha, board->keyrom.data(), board->keyrom.size());
-  //finalize hash
-  sha256_final(&sha);
-  sha256_hash(&sha, hash);
-  string result;
-  for(auto& byte : hash) result.append(hex<2>(byte));
-  sha256 = result;
+  Hash::SHA256 sha;
+  sha.data(board->prgrom.data(), board->prgrom.size());
+  sha.data(board->chrrom.data(), board->chrrom.size());
+  sha.data(board->instrom.data(), board->instrom.size());
+  sha.data(board->keyrom.data(), board->keyrom.size());
+  sha256 = sha.digest();
 
   system.load(system.revision);
   loaded = true;

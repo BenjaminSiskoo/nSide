@@ -72,17 +72,24 @@ void System::load(Revision revision) {
   auto document = BML::unserialize(manifest);
 
   if(pc10()) {
-    interface->loadRequest(ID::PC10BIOS, document["system/pc10/rom[0]/name"].text());
-    if(!file::exists({interface->path(ID::System), document["system/pc10/rom[0]/name"].text()})) {
-      interface->notify("Error: required PlayChoice-10 firmware ", document["system/pc10/rom[0]/name"].text(), " not found.\n");
+    auto rom = document["system/pc10"].find("rom");
+
+    auto firmware = rom(0)["name"].text();
+    interface->loadRequest(ID::PC10BIOS, firmware);
+    if(!file::exists({interface->path(ID::System), firmware})) {
+      interface->notify("Error: required PlayChoice-10 firmware ", firmware, " not found.\n");
     }
-    interface->loadRequest(ID::PC10CharacterROM, document["system/pc10/rom[1]/name"].text());
-    if(!file::exists({interface->path(ID::System), document["system/pc10/rom[1]/name"].text()})) {
-      interface->notify("Error: required PlayChoice-10 character data ", document["system/pc10/rom[1]/name"].text(), " not found.\n");
+
+    auto character = rom(1)["name"].text();
+    interface->loadRequest(ID::PC10CharacterROM, character);
+    if(!file::exists({interface->path(ID::System), character})) {
+      interface->notify("Error: required PlayChoice-10 character data ", character, " not found.\n");
     }
-    interface->loadRequest(ID::PC10PaletteROM, document["system/pc10/rom[2]/name"].text());
-    if(!file::exists({interface->path(ID::System), document["system/pc10/rom[2]/name"].text()})) {
-      interface->notify("Error: required PlayChoice-10 palette data ", document["system/pc10/rom[2]/name"].text(), " not found.\n");
+
+    auto palette = rom(2)["name"].text();
+    interface->loadRequest(ID::PC10PaletteROM, palette);
+    if(!file::exists({interface->path(ID::System), palette})) {
+      interface->notify("Error: required PlayChoice-10 palette data ", palette, " not found.\n");
     }
   }
 

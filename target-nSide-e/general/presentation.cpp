@@ -14,7 +14,7 @@ void Presentation::synchronize() {
   if(config->video.shader == "Blur") shaderBlur.setChecked();
   if(config->video.shader == "Display Emulation") shaderEmulation.setChecked();
   for(auto& shader : shaderList) {
-    string name = notdir(config->video.shader.split<1>(".shader/")(0));
+    string name = filename(config->video.shader.split<1>(".shader/")(0));
     if(name == shader->text()) shader->setChecked();
   }
 

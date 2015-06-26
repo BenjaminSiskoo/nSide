@@ -10,7 +10,6 @@
   #include <Carbon/Carbon.h>
   #undef decimal
 #elif defined(PLATFORM_WINDOWS)
-  #define _WIN32_WINNT 0x0501
   #include <windows.h>
 #endif
 
@@ -20,20 +19,20 @@ using namespace nall;
 
 #define DeclareVideo(Name) \
   struct Video##Name : Video { \
-    bool cap(const string& name) { return p.cap(name); } \
-    any get(const string& name) { return p.get(name); } \
-    bool set(const string& name, const any& value) { return p.set(name, value); } \
-    \
-    bool lock(uint32_t*& data, unsigned& pitch, unsigned width, unsigned height) { return p.lock(data, pitch, width, height); } \
-    void unlock() { p.unlock(); } \
-    \
-    void clear() { p.clear(); } \
-    void refresh() { p.refresh(); } \
-    bool init() { return p.init(); } \
-    void term() { p.term(); } \
-    \
     Video##Name() : p(*new pVideo##Name) {} \
     ~Video##Name() { delete &p; } \
+    \
+    auto cap(const string& name) -> bool { return p.cap(name); } \
+    auto get(const string& name) -> any { return p.get(name); } \
+    auto set(const string& name, const any& value) -> bool { return p.set(name, value); } \
+    \
+    auto lock(uint32_t*& data, unsigned& pitch, unsigned width, unsigned height) -> bool { return p.lock(data, pitch, width, height); } \
+    auto unlock() -> void { p.unlock(); } \
+    auto clear() -> void { p.clear(); } \
+    auto refresh() -> void { p.refresh(); } \
+    \
+    auto init() -> bool { return p.init(); } \
+    auto term() -> void { p.term(); } \
   \
   private: \
     pVideo##Name& p; \
@@ -79,17 +78,18 @@ using namespace nall;
 
 #define DeclareAudio(Name) \
   struct Audio##Name : Audio { \
-    bool cap(const string& name) { return p.cap(name); } \
-    any get(const string& name) { return p.get(name); } \
-    bool set(const string& name, const any& value) { return p.set(name, value); } \
-    \
-    void sample(uint16_t left, uint16_t right) { p.sample(left, right); } \
-    void clear() { p.clear(); } \
-    bool init() { return p.init(); } \
-    void term() { p.term(); } \
-    \
     Audio##Name() : p(*new pAudio##Name) {} \
     ~Audio##Name() { delete &p; } \
+    \
+    auto cap(const string& name) -> bool { return p.cap(name); } \
+    auto get(const string& name) -> any { return p.get(name); } \
+    auto set(const string& name, const any& value) -> bool { return p.set(name, value); } \
+    \
+    auto sample(uint16_t left, uint16_t right) -> void { p.sample(left, right); } \
+    auto clear() -> void { p.clear(); } \
+    \
+    auto init() -> bool { return p.init(); } \
+    auto term() -> void { p.term(); } \
   \
   private: \
     pAudio##Name& p; \
@@ -131,21 +131,21 @@ using namespace nall;
 
 #define DeclareInput(Name) \
   struct Input##Name : Input { \
-    bool cap(const string& name) { return p.cap(name); } \
-    any get(const string& name) { return p.get(name); } \
-    bool set(const string& name, const any& value) { return p.set(name, value); } \
-    \
-    bool acquire() { return p.acquire(); } \
-    bool unacquire() { return p.unacquire(); } \
-    bool acquired() { return p.acquired(); } \
-    \
-    vector<HID::Device*> poll() { return p.poll(); } \
-    bool rumble(uint64_t id, bool enable) { return p.rumble(id, enable); } \
-    bool init() { return p.init(); } \
-    void term() { p.term(); } \
-    \
     Input##Name() : p(*new pInput##Name) {} \
     ~Input##Name() { delete &p; } \
+    \
+    auto cap(const string& name) -> bool { return p.cap(name); } \
+    auto get(const string& name) -> any { return p.get(name); } \
+    auto set(const string& name, const any& value) -> bool { return p.set(name, value); } \
+    \
+    auto acquire() -> bool { return p.acquire(); } \
+    auto unacquire() -> bool { return p.unacquire(); } \
+    auto acquired() -> bool { return p.acquired(); } \
+    auto poll() -> vector<shared_pointer<HID::Device>> { return p.poll(); } \
+    auto rumble(uint64_t id, bool enable) -> bool { return p.rumble(id, enable); } \
+    \
+    auto init() -> bool { return p.init(); } \
+    auto term() -> void { p.term(); } \
   \
   private: \
     pInput##Name& p; \

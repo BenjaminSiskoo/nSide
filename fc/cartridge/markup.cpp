@@ -9,15 +9,17 @@ void Cartridge::parse_markup(const char* markup) {
 
   if(system.revision == System::Revision::VSSystem) {
     unsigned ppus = 0;
-    if(document["cartridge/vs[0]/ppu"]) {
-      cartridge = cartridge["vs[0]"];
+    auto vs = document["cartridge"].find("vs");
+    if(vs(0)["ppu"]) {
+      cartridge = vs(0);
       ppus++;
     }
-    if(document["cartridge/vs[1]/ppu"]) {
-      if(ppus == 0) cartridge = cartridge["vs[1]"];
+    if(vs(1)["ppu"]) {
+      if(ppus == 0) cartridge = vs(1);
       ppus++;
     }
-    vsarcadeboard.swap_controllers = cartridge["controller[0]/port"].integer() == 2;
+    auto controller = cartridge.find("controller");
+    vsarcadeboard.swap_controllers = controller(0)["port"].integer() == 2;
     string device1 = cartridge["controller(port=1)/device"].text();
     string device2 = cartridge["controller(port=2)/device"].text();
     if(device1 == "joypad") {

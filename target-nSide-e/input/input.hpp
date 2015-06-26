@@ -47,12 +47,12 @@ struct HotkeyInput : DigitalInput {
 };
 
 struct InputManager {
-  vector<HID::Device*> devices;
+  vector<shared_pointer<HID::Device>> devices;
   vector<AbstractInput*> inputMap;
   vector<HotkeyInput*> hotkeyMap;
 
   string sanitize(string mapping, string concatenate) const;
-  void onChange(HID::Device& device, unsigned group, unsigned input, int16_t oldValue, int16_t newValue);
+  void onChange(shared_pointer<HID::Device> device, unsigned group, unsigned input, int16_t oldValue, int16_t newValue);
   HID::Device* findMouse();
   void bind();
   void poll();

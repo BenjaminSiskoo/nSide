@@ -17,18 +17,18 @@ void AbstractInput::bind() {
     string qualifier = values(3, "");
 
     Input item;
-    for(auto device : inputManager->devices) {
-      if(id != device->id) continue;
+    for(auto& device : inputManager->devices) {
+      if(id != device->id()) continue;
       if(group == "Rumble") {
-        item.device = device;
+        item.device = &*device;
         item.id = id;
         item.group = 0;
         item.input = 0;
         break;
       }
       if(auto groupID = device->find(group)) {
-        if(auto inputID = device->group[groupID()].find(input)) {
-          item.device = device;
+        if(auto inputID = device->group(groupID()).find(input)) {
+          item.device = &*device;
           item.id = id;
           item.group = groupID();
           item.input = inputID();
@@ -57,13 +57,13 @@ bool AbstractInput::append(string encode) {
 //
 
 bool DigitalInput::bind(HID::Device& device, unsigned group, unsigned input, int16_t oldValue, int16_t newValue) {
-  if(device.isNull() || (device.isKeyboard() && device.group[group].input[input].name == "Escape")) {
+  if(device.isNull() || (device.isKeyboard() && device.group(group).input(input).name() == "Escape")) {
     inputList.reset();
     mapping = "None";
     return true;
   }
 
-  string encode = {hex(device.id), "/", device.group[group].name, "/", device.group[group].input[input].name};
+  string encode = {hex(device.id()), "/", device.group(group).name(), "/", device.group(group).input(input).name()};
 
   if((device.isKeyboard() && group == HID::Keyboard::GroupID::Button)
   || (device.isMouse() && group == HID::Mouse::GroupID::Button)
@@ -89,7 +89,7 @@ int16_t DigitalInput::poll() {
 
   for(auto& item : inputList) {
     HID::Device& device = *(item.device);
-    int16_t value = device.group[item.group].input[item.input].value;
+    int16_t value = device.group(item.group).input(item.input).value();
     bool output = logic;
     if((device.isKeyboard() && item.group == HID::Keyboard::GroupID::Button)
     || (device.isMouse() && item.group == HID::Mouse::GroupID::Button)
@@ -113,13 +113,13 @@ int16_t DigitalInput::poll() {
 //
 
 bool RelativeInput::bind(HID::Device& device, unsigned group, unsigned input, int16_t oldValue, int16_t newValue) {
-  if(device.isNull() || (device.isKeyboard() && device.group[group].input[input].name == "Escape")) {
+  if(device.isNull() || (device.isKeyboard() && device.group(group).input(input).name() == "Escape")) {
     inputList.reset();
     mapping = "None";
     return true;
   }
 
-  string encode = {hex(device.id), "/", device.group[group].name, "/", device.group[group].input[input].name};
+  string encode = {hex(device.id()), "/", device.group(group).name(), "/", device.group(group).input(input).name()};
 
   if((device.isMouse() && group == HID::Mouse::GroupID::Axis)
   || (device.isJoypad() && group == HID::Joypad::GroupID::Axis)
@@ -139,7 +139,7 @@ int16_t RelativeInput::poll() {
 
   for(auto& item : inputList) {
     HID::Device& device = *(item.device);
-    int16_t value = device.group[item.group].input[item.input].value;
+    int16_t value = device.group(item.group).input(item.input).value();
     if(device.isJoypad() && item.group == HID::Joypad::GroupID::Axis) value >>= 8;
     if(device.isJoypad() && item.group == HID::Joypad::GroupID::Hat) value = (value < 0 ? -1 : value > 0 ? + 1 : 0);
     if(device.isMouse() && input.acquired() == false) value = 0;
@@ -152,13 +152,13 @@ int16_t RelativeInput::poll() {
 //
 
 bool RumbleInput::bind(HID::Device& device, unsigned group, unsigned input, int16_t oldValue, int16_t newValue) {
-  if(device.isNull() || (device.isKeyboard() && device.group[group].input[input].name == "Escape")) {
+  if(device.isNull() || (device.isKeyboard() && device.group(group).input(input).name() == "Escape")) {
     inputList.reset();
     mapping = "None";
     return true;
   }
 
-  string encode = {hex(device.id), "/Rumble"};
+  string encode = {hex(device.id()), "/Rumble"};
 
   if(device.isJoypad() && group == HID::Joypad::GroupID::Button) {
     if(newValue != 0) return append(encode);
@@ -199,16 +199,16 @@ string InputManager::sanitize(string mapping, string concatenate) const {
   return values.merge(concatenate);
 }
 
-void InputManager::onChange(HID::Device& device, unsigned group, unsigned input, int16_t oldValue, int16_t newValue) {
+void InputManager::onChange(shared_pointer<HID::Device> device, unsigned group, unsigned input, int16_t oldValue, int16_t newValue) {
   if(settings->focused()) {
-    inputSettings->inputEvent(device, group, input, oldValue, newValue);
-    hotkeySettings->inputEvent(device, group, input, oldValue, newValue);
+    inputSettings->inputEvent(*device, group, input, oldValue, newValue);
+    hotkeySettings->inputEvent(*device, group, input, oldValue, newValue);
   }
 }
 
 HID::Device* InputManager::findMouse() {
-  for(auto device : devices) {
-    if(device->isMouse()) return device;
+  for(auto& device : devices) {
+    if(device->isMouse()) return &*device;
   }
   return nullptr;
 }
@@ -258,7 +258,7 @@ void InputManager::bootstrap() {
         Configuration::Node deviceNode;
 
         for(auto& number : device.order) {
-          auto& input = device.input[number];
+          auto& input = device.input(number);
 
           AbstractInput* abstract = nullptr;
           if(input.type == 0) abstract = new DigitalInput;

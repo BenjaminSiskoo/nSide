@@ -1,3 +1,11 @@
+/* nall
+ * author: byuu
+ * license: ISC
+ *
+ * nall is a header library that provides both fundamental and useful classes
+ * its goals are portability, consistency, minimalism and reusability
+ */
+
 #ifndef NALL_HPP
 #define NALL_HPP
 
@@ -21,35 +29,38 @@
 #include <nall/filemap.hpp>
 #include <nall/function.hpp>
 #include <nall/group.hpp>
-#include <nall/gzip.hpp>
 #include <nall/hashset.hpp>
 #include <nall/hid.hpp>
-#include <nall/http.hpp>
 #include <nall/image.hpp>
-#include <nall/inflate.hpp>
 #include <nall/interpolation.hpp>
 #include <nall/intrinsics.hpp>
 #include <nall/invoke.hpp>
 #include <nall/map.hpp>
 #include <nall/matrix.hpp>
 #include <nall/maybe.hpp>
-#include <nall/png.hpp>
+#include <nall/memory.hpp>
 #include <nall/property.hpp>
 #include <nall/random.hpp>
 #include <nall/range.hpp>
 #include <nall/serializer.hpp>
 #include <nall/set.hpp>
+#include <nall/shared-pointer.hpp>
 #include <nall/sort.hpp>
 #include <nall/stdint.hpp>
+#include <nall/storage.hpp>
 #include <nall/stream.hpp>
 #include <nall/string.hpp>
 #include <nall/thread.hpp>
 #include <nall/traits.hpp>
-#include <nall/unzip.hpp>
 #include <nall/utility.hpp>
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
-#include <nall/zip.hpp>
+#include <nall/decode/bmp.hpp>
+#include <nall/decode/gzip.hpp>
+#include <nall/decode/inflate.hpp>
+#include <nall/decode/png.hpp>
+#include <nall/decode/url.hpp>
+#include <nall/decode/zip.hpp>
 #include <nall/hash/crc16.hpp>
 #include <nall/hash/crc32.hpp>
 #include <nall/hash/sha256.hpp>
