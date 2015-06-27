@@ -21,8 +21,7 @@ endif
 # console := true
 
 # compiler
-flags += -I. -O3 -fomit-frame-pointer
-link +=
+flags += -I. -O3
 objects := libco
 
 # profile-guided optimization mode
@@ -47,16 +46,21 @@ ifeq ($(platform),windows)
   else
     link += -mwindows
   endif
-  link += -s -mthreads -luuid -lkernel32 -luser32 -lgdi32 -lcomctl32 -lcomdlg32 -lshell32 -lole32 -lws2_32
-  link += -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
+  link += -mthreads -luuid -lkernel32 -luser32 -lgdi32 -lcomctl32 -lcomdlg32 -lshell32 -lole32 -lws2_32
+  link += -Wl,-enable-auto-import
+  link += -Wl,-enable-runtime-pseudo-reloc
 else ifeq ($(platform),macosx)
   flags += -march=native
 else ifeq ($(platform),linux)
-  flags += -march=native
-  link += -s -Wl,-export-dynamic -lX11 -lXext -ldl
+  flags += -march=native -fopenmp
+  link += -fopenmp
+  link += -Wl,-export-dynamic
+  link += -lX11 -lXext -ldl
 else ifeq ($(platform),bsd)
-  flags += -march=native
-  link += -s -Wl,-export-dynamic -lX11 -lXext
+  flags += -march=native -fopenmp
+  link += -fopenmp
+  link += -Wl,-export-dynamic
+  link += -lX11 -lXext
 else
   $(error unsupported platform.)
 endif
@@ -91,8 +95,6 @@ clean:
 	-@$(call delete,obj/*.so)
 	-@$(call delete,obj/*.dylib)
 	-@$(call delete,obj/*.dll)
-	-@$(call delete,*.res)
-	-@$(call delete,*.manifest)
 
 archive:
 	if [ -f nSide.tar.xz ]; then rm nSide.tar.xz; fi
@@ -103,15 +105,18 @@ ifeq ($(shell id -un),byuu)
 	if [ -d ./libco ]; then rm -r ./libco; fi
 	if [ -d ./nall ]; then rm -r ./nall; fi
 	if [ -d ./ruby ]; then rm -r ./ruby; fi
+	if [ -d ./hiro ]; then rm -r ./hiro; fi
 	if [ -d ./phoenix ]; then rm -r ./phoenix; fi
 	cp -r ../libco ./libco
 	cp -r ../nall ./nall
 	cp -r ../ruby ./ruby
+	cp -r ../hiro ./hiro
 	cp -r ../phoenix ./phoenix
 	rm -r libco/doc
-	rm -r libco/.test
-	rm -r nall/.test
-	rm -r ruby/.test
+	rm -r libco/-test
+	rm -r nall/-test
+	rm -r ruby/-test
+	rm -r hiro/-test
 	rm -r phoenix/.test
 endif
 
