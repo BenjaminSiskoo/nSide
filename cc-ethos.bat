@@ -10,7 +10,7 @@ move "obj\accuracy\sfc-*.o" "obj"
 move "obj\accuracy\gba-*.o" "obj"
 move "obj\accuracy\ui-ethos.o" "obj"
 move "obj\accuracy\ui-settings.o" "obj"
-mingw32-make -j4 profile=accuracy
+mingw32-make -j4 target=nSide-e profile=accuracy
 move "obj\sfc-*.o" "obj\accuracy"
 move "obj\gba-*.o" "obj\accuracy"
 move "obj\ui-ethos.o" "obj\accuracy"
@@ -23,7 +23,7 @@ move "obj\balanced\sfc-*.o" "obj"
 move "obj\balanced\gba-*.o" "obj"
 move "obj\balanced\ui-ethos.o" "obj"
 move "obj\balanced\ui-settings.o" "obj"
-mingw32-make -j4 profile=balanced name=nSide-e-balanced
+mingw32-make -j4 target=nSide-e profile=balanced name=nSide-e-balanced
 move "obj\sfc-*.o" "obj\balanced"
 move "obj\gba-*.o" "obj\balanced"
 move "obj\ui-ethos.o" "obj\balanced"

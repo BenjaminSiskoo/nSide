@@ -74,7 +74,7 @@ struct Interface {
   auto dipSettings(const Markup::Node& node) -> unsigned { return bind->dipSettings(node); }
   auto path(unsigned group) -> string { return bind->path(group); }
   auto server() -> string { return bind->server(); }
-  template<typename... P> auto notify(P&&... p) -> void { return bind->notify({std::forward<P>(p)...}); }
+  template<typename... P> auto notify(P&&... p) -> void { return bind->notify({forward<P>(p)...}); }
 
   //information
   virtual auto title() -> string = 0;
