@@ -11,13 +11,8 @@
 
 namespace SuperFamicom {
   namespace Info {
-    static const char Name[] = "nSide-sfc";
-    // Changes from bsnes's serializer version 28:
-    // Imported from AWJ's bsnes-classic:
-    // * CPU/PPU timing refactoring to make History management simpler
-    // * PPUcounter shared serialization for all 3 profiles
-    //   (note that these ones may or may not be reverted when higan v095 is released)
-    static const unsigned SerializerVersion = 1;
+    static const string Name = "nSide-sfc";
+    static const unsigned SerializerVersion = 28;
   }
 }
 
@@ -62,28 +57,25 @@ namespace SuperFamicom {
 
 namespace SuperFamicom {
   struct Thread {
-    cothread_t thread;
-    unsigned frequency;
-    int64 clock;
+    ~Thread() {
+      if(thread) co_delete(thread);
+    }
 
-    inline void create(void (*entrypoint)(), unsigned frequency) {
+    auto create(void (*entrypoint)(), unsigned frequency) -> void {
       if(thread) co_delete(thread);
       thread = co_create(65536 * sizeof(void*), entrypoint);
       this->frequency = frequency;
       clock = 0;
     }
 
-    inline void serialize(serializer& s) {
+    auto serialize(serializer& s) -> void {
       s.integer(frequency);
       s.integer(clock);
     }
 
-    inline Thread() : thread(nullptr) {
-    }
-
-    inline ~Thread() {
-      if(thread) co_delete(thread);
-    }
+    cothread_t thread = nullptr;
+    unsigned frequency = 0;
+    int64 clock = 0;
   };
 
   #include <sfc/memory/memory.hpp>

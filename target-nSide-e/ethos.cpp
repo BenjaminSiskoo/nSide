@@ -3,6 +3,9 @@
 #include "resource/resource.cpp"
 
 Program* program = nullptr;
+Video* video = nullptr;
+Audio* audio = nullptr;
+Input* input = nullptr;
 DSP dspaudio;
 
 Emulator::Interface& system() {
@@ -30,7 +33,7 @@ void Program::main() {
   autopause = config->input.focus.pause && presentation->focused() == false;
 
   if(active == nullptr || system().loaded() == false || pause || autopause) {
-    audio.clear();
+    audio->clear();
     usleep(20 * 1000);
     return;
   }
@@ -59,9 +62,9 @@ Program::Program(int argc, char** argv) {
   monospaceFont = Font::monospace(8);
 
   config = new ConfigurationSettings;
-  video.driver(config->video.driver);
-  audio.driver(config->audio.driver);
-  input.driver(config->input.driver);
+  video = Video::create(config->video.driver);
+  audio = Audio::create(config->audio.driver);
+  input = Input::create(config->input.driver);
 
   utility = new Utility;
   inputManager = new InputManager;
@@ -87,17 +90,30 @@ Program::Program(int argc, char** argv) {
 
   if(argc == 1 && config->library.showOnStartup) libraryManager->show();
 
-  video.set(Video::Handle, presentation->viewport.handle());
-  if(!video.cap(Video::Depth) || !video.set(Video::Depth, depth = 30u)) {
-    video.set(Video::Depth, depth = 24u);
+  video->set(Video::Handle, presentation->viewport.handle());
+  //video->set(Video::Synchronize, config->video.synchronize);
+  if(!video->cap(Video::Depth) || !video->set(Video::Depth, depth = 30u)) {
+    video->set(Video::Depth, depth = 24u);
   }
-  if(video.init() == false) { video.driver("None"); video.init(); }
+  if(!video->init()) {
+    delete video;
+    video = Video::create("None");
+    video->init();
+  }
 
-  audio.set(Audio::Handle, presentation->viewport.handle());
-  if(audio.init() == false) { audio.driver("None"); audio.init(); }
+  audio->set(Audio::Handle, presentation->viewport.handle());
+  if(!audio->init()) {
+    delete audio;
+    audio = Audio::create("None");
+    audio->init();
+  }
 
-  input.set(Input::Handle, presentation->viewport.handle());
-  if(input.init() == false) { input.driver("None"); input.init(); }
+  input->set(Input::Handle, presentation->viewport.handle());
+  if(!input->init()) {
+    delete input;
+    input = Input::create("None");
+    input->init();
+  }
 
   dspaudio.setPrecision(16);
   dspaudio.setBalance(0.0);
@@ -130,7 +146,7 @@ int main(int argc, char** argv) {
   Application::setName("nSide-e");
 
   Application::Windows::onModalBegin = [&] {
-    audio.clear();
+    audio->clear();
   };
 
   Application::Cocoa::onActivate = [&] {

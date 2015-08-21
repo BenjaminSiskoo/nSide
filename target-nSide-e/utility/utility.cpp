@@ -1,5 +1,4 @@
 #include "../ethos.hpp"
-
 Utility* utility = nullptr;
 
 void Utility::setInterface(Emulator::Interface* emulator) {
@@ -112,9 +111,9 @@ void Utility::unload() {
   stateManager->reset();
   setInterface(nullptr);
 
-  video.clear();
-  audio.clear();
-  presentation->setTitle({Emulator::Name, " v", Emulator::Version});
+  video->clear();
+  audio->clear();
+  presentation->setTitle({"nSide-e v", Emulator::Version});
   cheatDatabase->setVisible(false);
   cheatEditor->setVisible(false);
   stateManager->setVisible(false);
@@ -153,10 +152,10 @@ void Utility::synchronizeDSP() {
 }
 
 void Utility::synchronizeRuby() {
-  video.set(Video::Synchronize, config->video.synchronize);
-  audio.set(Audio::Synchronize, config->audio.synchronize);
-  audio.set(Audio::Frequency, config->audio.frequency);
-  audio.set(Audio::Latency, config->audio.latency);
+  video->set(Video::Synchronize, config->video.synchronize);
+  audio->set(Audio::Synchronize, config->audio.synchronize);
+  audio->set(Audio::Frequency, config->audio.frequency);
+  audio->set(Audio::Latency, config->audio.latency);
 
   switch(config->audio.resampler) {
   case 0: dspaudio.setResampler(DSP::ResampleEngine::Linear);  break;
@@ -182,31 +181,31 @@ void Utility::updatePalette() {
 
 void Utility::updateShader() {
   if(config->video.shader == "None") {
-    video.set(Video::Shader, (const char*)"");
-    video.set(Video::Filter, Video::FilterNearest);
+    video->set(Video::Shader, (const char*)"");
+    video->set(Video::Filter, Video::FilterNearest);
   } else if(config->video.shader == "Blur") {
-    video.set(Video::Shader, (const char*)"");
-    video.set(Video::Filter, Video::FilterLinear);
+    video->set(Video::Shader, (const char*)"");
+    video->set(Video::Filter, Video::FilterLinear);
   } else if(config->video.shader == "Display Emulation" && config->video.driver != "OpenGL") {
-    video.set(Video::Shader, (const char*)"");
-    video.set(Video::Filter, Video::FilterLinear);
+    video->set(Video::Shader, (const char*)"");
+    video->set(Video::Filter, Video::FilterLinear);
   } else if(config->video.shader == "Display Emulation") {
     if(program->active) {
       string pathname = program->path("Video Shaders/");
       pathname.append("Display Emulation/");
       pathname.append(presentation->systemName, ".shader/");
       if(directory::exists(pathname)) {
-        video.set(Video::Shader, (const char*)pathname);
+        video->set(Video::Shader, (const char*)pathname);
       } else {
-        video.set(Video::Shader, (const char*)"");
-        video.set(Video::Filter, Video::FilterLinear);
+        video->set(Video::Shader, (const char*)"");
+        video->set(Video::Filter, Video::FilterLinear);
       }
     } else {
-      video.set(Video::Shader, (const char*)"");
-      video.set(Video::Filter, Video::FilterLinear);
+      video->set(Video::Shader, (const char*)"");
+      video->set(Video::Filter, Video::FilterLinear);
     }
   } else {
-    video.set(Video::Shader, (const char*)config->video.shader);
+    video->set(Video::Shader, (const char*)config->video.shader);
   }
   updatePalette();
 }
@@ -268,9 +267,9 @@ void Utility::toggleFullScreen() {
     presentation->setMenuVisible(false);
     presentation->setStatusVisible(false);
     presentation->setFullScreen(true);
-    input.acquire();
+    if(!input->acquired()) input->acquire();
   } else {
-    input.unacquire();
+    if(input->acquired()) input->release();
     presentation->setMenuVisible(true);
     presentation->setStatusVisible(true);
     presentation->setFullScreen(false);

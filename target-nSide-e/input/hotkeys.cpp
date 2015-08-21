@@ -15,7 +15,7 @@ void InputManager::appendHotkeys() {
     hotkey->mapping = "1/Button/F12";
 
     hotkey->press = [] {
-      input.acquired() ? input.unacquire() : input.acquire();
+      input->acquired() ? input->release() : input->acquire();
     };
   }
 
@@ -45,13 +45,13 @@ void InputManager::appendHotkeys() {
     hotkey->mapping = "1/Button/Tilde";
 
     hotkey->press = [] {
-      video.set(Video::Synchronize, false);
-      audio.set(Audio::Synchronize, false);
+      video->set(Video::Synchronize, false);
+      audio->set(Audio::Synchronize, false);
     };
 
     hotkey->release = [] {
-      video.set(Video::Synchronize, ::config->video.synchronize);
-      audio.set(Audio::Synchronize, ::config->audio.synchronize);
+      video->set(Video::Synchronize, ::config->video.synchronize);
+      audio->set(Audio::Synchronize, ::config->audio.synchronize);
     };
   }
 

@@ -60,7 +60,7 @@ void Event::submitScore() {
     data.append("ba:", ba[0], ",", ba[1], "\n");
   }
 
-  lstring side = interface->server().split<1>("@");
+/*lstring side = interface->server().split<1>("@");
   string username = side(0).split<1>(":")(0);
   string password = side(0).split<1>(":")(1);
   side(1).ltrim("http://");
@@ -71,12 +71,12 @@ void Event::submitScore() {
   string hostport = side(1);
   if(hostport.empty()) hostport = "80";
 
-/*http server;
+  http server;
   if(server.connect(hostname, decimal(hostport))) {
     string content = {
       "username:", username, "\n",
       "password:", password, "\n",
-      "emulator:nSide-sfc\n",
+      "emulator:bsnes\n",
       "sha256:", interface->sha256(), "\n",
       "\n",
       data

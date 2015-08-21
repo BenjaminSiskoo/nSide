@@ -104,7 +104,7 @@ void LibraryImport::onImportActivate() {
   }
   function<string ()> browse = program->auto_purify.sym("auto_purify_browse");
   if(!browse) return;
-  audio.clear();  //auto_purify's browser is modal
+  audio->clear();  //auto_purify's browser is modal
   string pathname = browse();
   pathname.rtrim("/");
   if(pathname.empty()) return;

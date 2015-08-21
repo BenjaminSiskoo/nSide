@@ -57,7 +57,7 @@ void Interface::videoRefresh(const uint32_t* palette, const uint32_t* data, unsi
   uint32_t* output;
   unsigned outputPitch;
 
-  if(video.lock(output, outputPitch, width, height)) {
+  if(video->lock(output, outputPitch, width, height)) {
     pitch >>= 2, outputPitch >>= 2;
 
     for(unsigned y = 0; y < height; y++) {
@@ -83,8 +83,8 @@ void Interface::videoRefresh(const uint32_t* palette, const uint32_t* data, unsi
       }
     }
 
-    video.unlock();
-    video.refresh();
+    video->unlock();
+    video->refresh();
   }
 
   static unsigned frameCounter = 0;
@@ -104,7 +104,7 @@ void Interface::audioSample(int16_t lsample, int16_t rsample) {
   dspaudio.sample(samples);
   while(dspaudio.pending()) {
     dspaudio.read(samples);
-    audio.sample(samples[0], samples[1]);
+    audio->sample(samples[0], samples[1]);
   }
 }
 

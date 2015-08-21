@@ -4,13 +4,13 @@ Size pCheckButton::minimumSize() {
   Size size = pFont::size(qtWidget->font(), checkButton.state.text);
 
   if(checkButton.state.orientation == Orientation::Horizontal) {
-    size.width += checkButton.state.image.width;
-    size.height = max(checkButton.state.image.height, size.height);
+    size.width += checkButton.state.image.width();
+    size.height = max(checkButton.state.image.height(), size.height);
   }
 
   if(checkButton.state.orientation == Orientation::Vertical) {
-    size.width = max(checkButton.state.image.width, size.width);
-    size.height += checkButton.state.image.height;
+    size.width = max(checkButton.state.image.width(), size.width);
+    size.height += checkButton.state.image.height();
   }
 
   return {size.width + 20, size.height + 12};
@@ -23,7 +23,7 @@ void pCheckButton::setChecked(bool checked) {
 }
 
 void pCheckButton::setImage(const image& image, Orientation orientation) {
-  qtCheckButton->setIconSize(QSize(image.width, image.height));
+  qtCheckButton->setIconSize(QSize(image.width(), image.height()));
   qtCheckButton->setIcon(CreateIcon(image));
   qtCheckButton->setStyleSheet("text-align: top;");
   switch(orientation) {

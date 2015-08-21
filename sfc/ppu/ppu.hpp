@@ -16,6 +16,8 @@ struct PPU : Thread, public PPUcounter {
   void enable();
   void power();
   void reset();
+
+  //debugger functions
   void exportRegisters(string &markup);
 
   void serialize(serializer&);

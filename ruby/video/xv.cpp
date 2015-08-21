@@ -6,9 +6,9 @@
 
 extern "C" auto XvShmCreateImage(Display*, XvPortID, signed, char*, signed, signed, XShmSegmentInfo*) -> XvImage*;
 
-namespace ruby {
+struct VideoXv : Video {
+  ~VideoXv() { term(); }
 
-struct pVideoXv {
   uint32_t* buffer = nullptr;
   uint8_t* ytable = nullptr;
   uint8_t* utable = nullptr;
@@ -51,14 +51,13 @@ struct pVideoXv {
     unsigned height = 0;
   } settings;
 
-  ~pVideoXv() {
-    term();
-  }
-
   auto cap(const string& name) -> bool {
     if(name == Video::Handle) return true;
     if(name == Video::Synchronize) {
-      return XInternAtom(XOpenDisplay(0), "XV_SYNC_TO_VBLANK", true) != None;
+      Display* display = XOpenDisplay(nullptr);
+      bool result = XInternAtom(display, "XV_SYNC_TO_VBLANK", true) != None;
+      XCloseDisplay(display);
+      return result;
     }
     return false;
   }
@@ -76,14 +75,16 @@ struct pVideoXv {
     }
 
     if(name == Video::Synchronize && value.is<bool>()) {
-      Display* display = XOpenDisplay(0);
+      bool result = false;
+      Display* display = XOpenDisplay(nullptr);
       Atom atom = XInternAtom(display, "XV_SYNC_TO_VBLANK", true);
       if(atom != None && device.port >= 0) {
         settings.synchronize = value.get<bool>();
         XvSetPortAttribute(display, device.port, atom, settings.synchronize);
-        return true;
+        result = true;
       }
-      return false;
+      XCloseDisplay(display);
+      return result;
     }
 
     return false;
@@ -96,7 +97,7 @@ struct pVideoXv {
 
     XShmDetach(device.display, &device.shminfo);
     shmdt(device.shminfo.shmaddr);
-    shmctl(device.shminfo.shmid, IPC_RMID, NULL);
+    shmctl(device.shminfo.shmid, IPC_RMID, nullptr);
     XFree(device.image);
     delete[] buffer;
 
@@ -165,7 +166,7 @@ struct pVideoXv {
   }
 
   auto init() -> bool {
-    device.display = XOpenDisplay(0);
+    device.display = XOpenDisplay(nullptr);
 
     if(!XShmQueryExtension(device.display)) {
       fprintf(stderr, "VideoXv: XShm extension not found.\n");
@@ -206,7 +207,7 @@ struct pVideoXv {
     visualtemplate.depth    = device.depth;
     visualtemplate.visual   = 0;
     signed visualmatches    = 0;
-    XVisualInfo *visualinfo = XGetVisualInfo(device.display, VisualIDMask | VisualScreenMask | VisualDepthMask, &visualtemplate, &visualmatches);
+    XVisualInfo* visualinfo = XGetVisualInfo(device.display, VisualIDMask | VisualScreenMask | VisualDepthMask, &visualtemplate, &visualmatches);
     if(visualmatches < 1 || !visualinfo->visual) {
       if(visualinfo) XFree(visualinfo);
       fprintf(stderr, "VideoXv: unable to find Xv-compatible visual.\n");
@@ -327,7 +328,7 @@ struct pVideoXv {
   auto term() -> void {
     XShmDetach(device.display, &device.shminfo);
     shmdt(device.shminfo.shmaddr);
-    shmctl(device.shminfo.shmid, IPC_RMID, NULL);
+    shmctl(device.shminfo.shmid, IPC_RMID, nullptr);
     XFree(device.image);
 
     if(device.window) {
@@ -338,6 +339,11 @@ struct pVideoXv {
     if(device.colormap) {
       XFreeColormap(device.display, device.colormap);
       device.colormap = 0;
+    }
+
+    if(device.display) {
+      XCloseDisplay(device.display);
+      device.display = nullptr;
     }
 
     if(buffer) { delete[] buffer; buffer = nullptr; }
@@ -480,8 +486,4 @@ private:
       vtable[i] = v < 0 ? 0 : v > 255 ? 255 : v;
     }
   }
-};
-
-DeclareVideo(Xv)
-
 };

@@ -62,6 +62,7 @@ struct PPU : Thread, public PPUcounter {
   void power();
   void reset();
 
+  //debugger functions
   void exportRegisters(string &markup);
 
   bool layer_enabled[5][4];

@@ -42,14 +42,14 @@ ConfigurationManager::ConfigurationManager() {
   timing.append(timing.audio, "Audio");
   append(timing, "Timing");
 
-  load({configpath(), "nSide-t/settings.bml"});
+  load(locate({configpath(), "nSide-t/"}, "settings.bml"));
   if(!library.location) library.location = {userpath(), "Emulation/"};
-  if(!video.driver) video.driver = ruby::video.safestDriver();
-  if(!audio.driver) audio.driver = ruby::audio.safestDriver();
-  if(!input.driver) input.driver = ruby::input.safestDriver();
-  save({configpath(), "nSide-t/settings.bml"});
+  if(!video.driver) video.driver = ruby::Video::safestDriver();
+  if(!audio.driver) audio.driver = ruby::Audio::safestDriver();
+  if(!input.driver) input.driver = ruby::Input::safestDriver();
+  save(locate({configpath(), "nSide-t/"}, "settings.bml"));
 }
 
 auto ConfigurationManager::quit() -> void {
-  save({configpath(), "nSide-t/settings.bml"});
+  save(locate({configpath(), "nSide-t/"}, "settings.bml"));
 }

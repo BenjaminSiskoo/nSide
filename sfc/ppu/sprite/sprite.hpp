@@ -64,8 +64,8 @@ struct Sprite {
   void synchronize();
 
   //sprite.cpp
-  void address_reset();
-  void set_first_sprite();
+  alwaysinline void address_reset();
+  alwaysinline void set_first_sprite();
   void frame();
   void scanline();
   void run();

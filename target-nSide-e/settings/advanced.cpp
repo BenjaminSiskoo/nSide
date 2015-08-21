@@ -17,7 +17,7 @@ AdvancedSettings::AdvancedSettings() {
   information.setText("Note: changing advanced settings requires program restart to take effect.");
   infoLabel.setFont(program->boldFont);
   infoLabel.setText({
-    Emulator::Name, " v", Emulator::Version, "\n",
+    "nSide-e v", Emulator::Version, "\n",
     "Based on ", Emulator::OriginalName, " v", Emulator::FromVersion, "\n",
     #if defined(PROFILE_ACCURACY) or defined(PROFILE_BALANCED) or defined(PROFILE_PERFORMANCE)
     "  ", Emulator::Profile, " Profile\n",
@@ -28,24 +28,27 @@ AdvancedSettings::AdvancedSettings() {
     "  Website of ", Emulator::OriginalName, ": ", Emulator::Website
   });
 
-  lstring list;
+  //lstring list;
 
-  list.split(";", video.availableDrivers());
-  for(unsigned n = 0; n < list.size(); n++) {
-    videoDriver.append(list[n]);
-    if(list[n] == config->video.driver) videoDriver.setSelection(n);
+  //list.split(";", video->availableDrivers());
+  //for(unsigned n = 0; n < list.size(); n++) {
+  //  videoDriver.append(list[n]);
+  //  if(list[n] == config->video.driver) videoDriver.setSelection(n);
+  //}
+
+  for(auto& driver : Video::availableDrivers()) {
+    videoDriver.append(driver);
+    if(driver == config->video.driver) videoDriver.setSelection(videoDriver.rows() - 1);
   }
 
-  list.split(";", audio.availableDrivers());
-  for(unsigned n = 0; n < list.size(); n++) {
-    audioDriver.append(list[n]);
-    if(list[n] == config->audio.driver) audioDriver.setSelection(n);
+  for(auto& driver : Audio::availableDrivers()) {
+    audioDriver.append(driver);
+    if(driver == config->audio.driver) audioDriver.setSelection(audioDriver.rows() - 1);
   }
 
-  list.split(";", input.availableDrivers());
-  for(unsigned n = 0; n < list.size(); n++) {
-    inputDriver.append(list[n]);
-    if(list[n] == config->input.driver) inputDriver.setSelection(n);
+  for(auto& driver : Input::availableDrivers()) {
+    inputDriver.append(driver);
+    if(driver == config->input.driver) inputDriver.setSelection(inputDriver.rows() - 1);
   }
 
   append(driverTitle, {~0, 0});

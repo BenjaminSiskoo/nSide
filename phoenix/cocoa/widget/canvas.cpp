@@ -168,7 +168,7 @@ void pCanvas::rasterize() {
         nall::image image;
         image.allocate(width, height);
         image.fill(canvas.state.color.argb());
-        memcpy(target, image.data, image.size);
+        memcpy(target, image.data(), image.size());
       }
 
       if(canvas.state.mode == Canvas::Mode::Gradient) {
@@ -177,14 +177,14 @@ void pCanvas::rasterize() {
         image.gradient(
           canvas.state.gradient[0].argb(), canvas.state.gradient[1].argb(), canvas.state.gradient[2].argb(), canvas.state.gradient[3].argb()
         );
-        memcpy(target, image.data, image.size);
+        memcpy(target, image.data(), image.size());
       }
 
       if(canvas.state.mode == Canvas::Mode::Image) {
         nall::image image = canvas.state.image;
         image.scale(width, height);
         image.transform(0, 32, 255u << 24, 255u << 16, 255u << 8, 255u << 0);
-        memcpy(target, image.data, image.size);
+        memcpy(target, image.data(), image.size());
       }
 
       if(canvas.state.mode == Canvas::Mode::Data) {

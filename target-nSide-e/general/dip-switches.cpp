@@ -52,7 +52,7 @@ unsigned DipSwitches::run(const Markup::Node& node) {
   setVisible();
   accept.setFocused();
 
-  audio.clear();
+  audio->clear();
   setModal();
 
   unsigned result = 0;

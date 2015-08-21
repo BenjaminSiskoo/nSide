@@ -8,13 +8,13 @@ Size pCheckButton::minimumSize() {
   Size size = pFont::size(widget.state.font, checkButton.state.text);
 
   if(checkButton.state.orientation == Orientation::Horizontal) {
-    size.width += checkButton.state.image.width;
-    size.height = max(checkButton.state.image.height, size.height);
+    size.width += checkButton.state.image.width();
+    size.height = max(checkButton.state.image.height(), size.height);
   }
 
   if(checkButton.state.orientation == Orientation::Vertical) {
-    size.width = max(checkButton.state.image.width, size.width);
-    size.height += checkButton.state.image.height;
+    size.width = max(checkButton.state.image.width(), size.width);
+    size.height += checkButton.state.image.height();
   }
 
   return {size.width + 24, size.height + 12};

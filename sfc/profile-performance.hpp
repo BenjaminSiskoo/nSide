@@ -1,5 +1,5 @@
 #if defined(DEBUGGER)
-  #error "nSide-sfc: debugger not supported with performance profile."
+  #error "bsnes: debugger not supported with performance profile."
 #endif
 
 #include <sfc/alt/cpu/cpu.hpp>

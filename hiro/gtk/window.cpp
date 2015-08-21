@@ -182,6 +182,7 @@ auto pWindow::construct() -> void {
 }
 
 auto pWindow::destruct() -> void {
+  gtk_widget_destroy(widget);
 }
 
 auto pWindow::append(sLayout layout) -> void {
@@ -281,13 +282,13 @@ auto pWindow::setGeometry(Geometry geometry) -> void {
 auto pWindow::setModal(bool modal) -> void {
   if(modal) {
     gtk_window_set_modal(GTK_WINDOW(widget), true);
-    while(state().modal) {
-      Application::processEvents();
+    while(!Application::state.quit && state().modal) {
       if(Application::state.onMain) {
         Application::doMain();
       } else {
         usleep(20 * 1000);
       }
+      Application::processEvents();
     }
     gtk_window_set_modal(GTK_WINDOW(widget), false);
   }
@@ -369,9 +370,9 @@ auto pWindow::_setIcon(const string& pathname) -> bool {
   filename = {pathname, Application::state.name, ".png"};
   if(file::exists(filename)) {
     //maximum image size GTK+ supports is 256x256; scale image down if necessary to prevent error
-    nall::image icon(filename);
-    icon.scale(min(256u, icon.width), min(256u, icon.height), true);
-    GdkPixbuf* pixbuf = CreatePixbuf(icon);
+    image icon(filename);
+    icon.scale(min(256u, icon.width()), min(256u, icon.height()), true);
+    auto pixbuf = CreatePixbuf(icon);
     gtk_window_set_icon(GTK_WINDOW(widget), pixbuf);
     g_object_unref(G_OBJECT(pixbuf));
     return true;

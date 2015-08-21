@@ -23,13 +23,13 @@ Size pButton::minimumSize() {
   Size size = pFont::size(hfont, button.state.text);
 
   if(button.state.orientation == Orientation::Horizontal) {
-    size.width += button.state.image.width;
-    size.height = max(button.state.image.height, size.height);
+    size.width += button.state.image.width();
+    size.height = max(button.state.image.height(), size.height);
   }
 
   if(button.state.orientation == Orientation::Vertical) {
-    size.width = max(button.state.image.width, size.width);
-    size.height += button.state.image.height;
+    size.width = max(button.state.image.width(), size.width);
+    size.height += button.state.image.height();
   }
 
   return {size.width + (button.state.text ? 20 : 10), size.height + 10};
@@ -49,7 +49,7 @@ void pButton::setImage(const image& image, Orientation orientation) {
   //so we must blend with the button background color (which does not look great with XP gradient-button themes)
   if(OsVersion() < WindowsVista) nallImage.alphaBlend(GetSysColor(COLOR_BTNFACE));
   hbitmap = CreateBitmap(nallImage);
-  himagelist = ImageList_Create(nallImage.width, nallImage.height, ILC_COLOR32, 1, 0);
+  himagelist = ImageList_Create(nallImage.width(), nallImage.height(), ILC_COLOR32, 1, 0);
   ImageList_Add(himagelist, hbitmap, NULL);
   BUTTON_IMAGELIST list;
   list.himl = himagelist;

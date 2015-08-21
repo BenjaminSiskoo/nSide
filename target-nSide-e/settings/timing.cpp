@@ -44,36 +44,36 @@ TimingSettings::TimingSettings() {
 }
 
 void TimingSettings::analyzeVideoFrequency() {
-  video.set(Video::Synchronize, true);
-  audio.set(Audio::Synchronize, false);
+  video->set(Video::Synchronize, true);
+  audio->set(Audio::Synchronize, false);
   videoAdjust.stop.setEnabled(true);
   analyzeStart();
   do {
     uint32_t* output;
     unsigned pitch;
-    if(video.lock(output, pitch, 16, 16)) {
+    if(video->lock(output, pitch, 16, 16)) {
       pitch >>= 2;
       for(unsigned y = 0; y < 16; y++) memset(output + y * pitch, 0, 4 * 16);
-      video.unlock();
-      video.refresh();
+      video->unlock();
+      video->refresh();
     }
   } while(analyzeTick("Video"));
   analyzeStop();
 }
 
 void TimingSettings::analyzeAudioFrequency() {
-  video.set(Video::Synchronize, false);
-  audio.set(Audio::Synchronize, true);
+  video->set(Video::Synchronize, false);
+  audio->set(Audio::Synchronize, true);
   audioAdjust.stop.setEnabled(true);
   analyzeStart();
   do {
-    audio.sample(0, 0);
+    audio->sample(0, 0);
   } while(analyzeTick("Audio"));
   analyzeStop();
 }
 
 void TimingSettings::analyzeStart() {
-  audio.clear();
+  audio->clear();
 
 //settings->panels.setEnabled(false);
   videoAdjust.analyze.setEnabled(false);
@@ -115,8 +115,8 @@ bool TimingSettings::analyzeTick(string type) {
 }
 
 void TimingSettings::analyzeStop() {
-  video.set(Video::Synchronize, config->video.synchronize);
-  audio.set(Audio::Synchronize, config->audio.synchronize);
+  video->set(Video::Synchronize, config->video.synchronize);
+  audio->set(Audio::Synchronize, config->audio.synchronize);
 
 //settings->panels.setEnabled(true);
   videoAdjust.analyze.setEnabled(true);

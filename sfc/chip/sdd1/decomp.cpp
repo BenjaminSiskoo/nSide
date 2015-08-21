@@ -2,9 +2,9 @@
 //original code written by Andreas Naive (public domain license)
 //bsnes port written by byuu
 
-//note: decompression module does not need to be serialized
-//this is because decompression only runs during DMA, and any pending DMA
-//transfers will be completed prior to serialization.
+//note: decompression module does not need to be serialized with bsnes
+//this is because decompression only runs during DMA, and bsnes will complete
+//any pending DMA transfers prior to serialization.
 
 //input manager
 

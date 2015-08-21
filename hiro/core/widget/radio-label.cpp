@@ -14,7 +14,7 @@ auto mRadioLabel::doActivate() const -> void {
   if(state.onActivate) return state.onActivate();
 }
 
-auto mRadioLabel::group() const -> sGroup {
+auto mRadioLabel::group() const -> Group {
   return state.group;
 }
 
@@ -41,6 +41,7 @@ auto mRadioLabel::setChecked() -> type& {
 auto mRadioLabel::setGroup(sGroup group) -> type& {
   state.group = group;
   signal(setGroup, group);
+  if(group && group->objects() == 1) setChecked();
   return *this;
 }
 

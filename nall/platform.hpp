@@ -54,7 +54,7 @@ namespace Math {
   #include <poll.h>
 #endif
 
-#if defined(COMPILER_CL)
+#if defined(COMPILER_VISUALCPP)
   #define va_copy(dest, src) ((dest) = (src))
 #endif
 
@@ -65,14 +65,15 @@ namespace Math {
   #define dllexport __declspec(dllexport)
   #define MSG_NOSIGNAL 0
 
-  extern "C" {
-    //using pollfd = WSAPOLLFD;
-  }
+  //extern "C" {
+  //  using pollfd = WSAPOLLFD;
+  //}
 
   inline auto access(const char* path, int amode) -> int { return _waccess(nall::utf16_t(path), amode); }
   inline auto getcwd(char* buf, size_t size) -> char* { wchar_t wpath[PATH_MAX] = L""; if(!_wgetcwd(wpath, size)) return nullptr; strcpy(buf, nall::utf8_t(wpath)); return buf; }
   inline auto mkdir(const char* path, int mode) -> int { return _wmkdir(nall::utf16_t(path)); }
   //inline auto poll(struct pollfd fds[], unsigned long nfds, int timeout) -> int { return WSAPoll(fds, nfds, timeout); }
+  //inline auto poll(struct pollfd fds[], unsigned long nfds, int timeout) -> int { return 0; }
   inline auto putenv(const char* value) -> int { return _wputenv(nall::utf16_t(value)); }
   inline auto realpath(const char* file_name, char* resolved_name) -> char* { wchar_t wfile_name[PATH_MAX] = L""; if(!_wfullpath(wfile_name, nall::utf16_t(file_name), PATH_MAX)) return nullptr; strcpy(resolved_name, nall::utf8_t(wfile_name)); return resolved_name; }
   inline auto rename(const char* oldname, const char* newname) -> int { return _wrename(nall::utf16_t(oldname), nall::utf16_t(newname)); }
@@ -101,7 +102,7 @@ namespace Math {
   #define neverinline   __attribute__((noinline))
   #define alwaysinline  inline __attribute__((always_inline))
   #define deprecated    __attribute__((deprecated))
-#elif defined(COMPILER_CL)
+#elif defined(COMPILER_VISUALCPP)
   #define neverinline   __declspec(noinline)
   #define alwaysinline  inline __forceinline
   #define deprecated    __declspec(deprecated)

@@ -1,22 +1,14 @@
-#include <emulator/emulator.hpp>
-
-#include <nall/platform.hpp>
-#include <nall/config.hpp>
-#include <nall/directory.hpp>
-#include <nall/dsp.hpp>
-#include <nall/invoke.hpp>
-#include <nall/map.hpp>
-#include <nall/stream/file.hpp>
-#include <nall/stream/memory.hpp>
-#include <nall/stream/mmap.hpp>
-#include <nall/stream/vector.hpp>
-using namespace nall;
-
-#include <phoenix/phoenix.hpp>
-using namespace phoenix;
-
+#include <nall/nall.hpp>
 #include <ruby/ruby.hpp>
+#include <phoenix/phoenix.hpp>
+using namespace nall;
 using namespace ruby;
+using namespace phoenix;
+extern Video* video;
+extern Audio* audio;
+extern Input* input;
+
+#include <emulator/emulator.hpp>
 
 #include "configuration/configuration.hpp"
 #include "interface/interface.hpp"

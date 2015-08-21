@@ -37,7 +37,7 @@ void pMenu::destructor() {
 void pMenu::createBitmap() {
   if(hbitmap) { DeleteObject(hbitmap); hbitmap = 0; }
 
-  if(menu.state.image.width && menu.state.image.height) {
+  if(menu.state.image.width() && menu.state.image.height()) {
     nall::image nallImage = menu.state.image;
     nallImage.transform(0, 32, 255u << 24, 255u << 16, 255u << 8, 255u << 0);
     nallImage.alphaBlend(GetSysColor(COLOR_MENU));  //Windows does not alpha blend menu icons properly (leaves black outline)
@@ -66,7 +66,7 @@ void pMenu::update(Window& parentWindow, Menu* parentMenu) {
         item.p.update(parentWindow, &menu);
         AppendMenu(hmenu, MF_STRING | MF_POPUP | enabled, (UINT_PTR)item.p.hmenu, utf16_t(item.state.text));
 
-        if(item.state.image.width && item.state.image.height) {
+        if(item.state.image.width() && item.state.image.height()) {
           MENUITEMINFO mii = {sizeof(MENUITEMINFO)};
           //Windows XP and below displays MIIM_BITMAP + hbmpItem in its own column (separate from check/radio marks)
           //this causes too much spacing, so use a custom checkmark image instead
@@ -85,7 +85,7 @@ void pMenu::update(Window& parentWindow, Menu* parentMenu) {
       if(action.state.visible) {
         AppendMenu(hmenu, MF_STRING | enabled, item.p.id, utf16_t(item.state.text));
 
-        if(item.state.image.width && item.state.image.height) {
+        if(item.state.image.width() && item.state.image.height()) {
           MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
           //Windows XP and below displays MIIM_BITMAP + hbmpItem in its own column (separate from check/radio marks)
           //this causes too much spacing, so use a custom checkmark image instead

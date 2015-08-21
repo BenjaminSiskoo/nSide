@@ -12,20 +12,20 @@ static unsigned OsVersion() {
   return (versionInfo.dwMajorVersion << 8) + (versionInfo.dwMajorVersion << 0);
 }
 
-static HBITMAP CreateBitmap(const image& image) {
+static HBITMAP CreateBitmap(const image& icon) {
   HDC hdc = GetDC(0);
   BITMAPINFO bitmapInfo;
   memset(&bitmapInfo, 0, sizeof(BITMAPINFO));
   bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-  bitmapInfo.bmiHeader.biWidth = image.width;
-  bitmapInfo.bmiHeader.biHeight = -image.height;  //bitmaps are stored upside down unless we negate height
+  bitmapInfo.bmiHeader.biWidth = icon.width();
+  bitmapInfo.bmiHeader.biHeight = -(signed)icon.height();  //bitmaps are stored upside down unless we negate height
   bitmapInfo.bmiHeader.biPlanes = 1;
   bitmapInfo.bmiHeader.biBitCount = 32;
   bitmapInfo.bmiHeader.biCompression = BI_RGB;
-  bitmapInfo.bmiHeader.biSizeImage = image.width * image.height * 4;
+  bitmapInfo.bmiHeader.biSizeImage = icon.size();
   void* bits = nullptr;
   HBITMAP hbitmap = CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &bits, NULL, 0);
-  if(bits) memcpy(bits, image.data, image.width * image.height * 4);
+  if(bits) memory::copy(bits, icon.data(), icon.size());
   ReleaseDC(0, hdc);
   return hbitmap;
 }

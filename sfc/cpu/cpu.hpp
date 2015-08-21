@@ -37,6 +37,7 @@ privileged:
     bool interrupt_pending;
 
     unsigned clock_count;
+    unsigned line_clocks;
 
     //timing
     bool irq_lock;

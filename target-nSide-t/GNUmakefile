@@ -1,4 +1,6 @@
-name := nSide-t
+ifndef name
+  name := nSide-t
+endif
 
 processors := arm gsu hg51b lr35902 r6502 r65816 spc700 upd96050
 include processor/GNUmakefile

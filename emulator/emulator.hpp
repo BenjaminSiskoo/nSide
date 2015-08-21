@@ -1,50 +1,29 @@
 #ifndef EMULATOR_HPP
 #define EMULATOR_HPP
 
+#include <nall/nall.hpp>
+#include <nall/dsp.hpp>
+#include <nall/priority-queue.hpp>
+using namespace nall;
+
 namespace Emulator {
-  static const char Name[] = "nSide";
-  static const char OriginalName[] = "higan";
-  static const char Version[] = "009";
-  static const char FromVersion[] = "094.08";
-  static const char Author[] = "byuu";
-  static const char Contributors[] = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, hex_usr, and more...";
-  static const char License[] = "GPLv3";
-  static const char Website[] = "http://byuu.org/";
+  static const string Name = "nSide";
+  static const string OriginalName = "higan";
+  static const string Version = "009r01";
+  static const string FromVersion = "094r36";
+  static const string Author = "byuu";
+  static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, hex_usr, and more...";
+  static const string License = "GPLv3";
+  static const string Website = "http://byuu.org/";
 
   #if defined(PROFILE_ACCURACY)
-  static const char Profile[] = "Accuracy";
+  static const string Profile = "Accuracy";
   #elif defined(PROFILE_BALANCED)
-  static const char Profile[] = "Balanced";
+  static const string Profile = "Balanced";
   #elif defined(PROFILE_PERFORMANCE)
-  static const char Profile[] = "Performance";
+  static const string Profile = "Performance";
   #endif
 }
-
-#include <nall/platform.hpp>
-#include <nall/algorithm.hpp>
-#include <nall/base64.hpp>
-#include <nall/directory.hpp>
-#include <nall/dl.hpp>
-#include <nall/dsp.hpp>
-#include <nall/endian.hpp>
-#include <nall/file.hpp>
-#include <nall/function.hpp>
-#include <nall/image.hpp>
-#include <nall/invoke.hpp>
-#include <nall/priority-queue.hpp>
-#include <nall/property.hpp>
-#include <nall/random.hpp>
-#include <nall/serializer.hpp>
-#include <nall/set.hpp>
-#include <nall/stdint.hpp>
-#include <nall/string.hpp>
-#include <nall/utility.hpp>
-#include <nall/varint.hpp>
-#include <nall/vector.hpp>
-#include <nall/hash/sha256.hpp>
-#include <nall/stream/memory.hpp>
-#include <nall/stream/vector.hpp>
-using namespace nall;
 
 #include "interface.hpp"
 
@@ -57,7 +36,7 @@ template<typename R, typename... P> struct hook<R (P...)> {
 
   auto operator()(P... p) const -> R {
     #if defined(DEBUGGER)
-    if(callback) return callback(std::forward<P>(p)...);
+    if(callback) return callback(forward<P>(p)...);
     #endif
     return R();
   }

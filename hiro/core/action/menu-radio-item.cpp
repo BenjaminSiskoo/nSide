@@ -14,7 +14,7 @@ auto mMenuRadioItem::doActivate() const -> void {
   if(state.onActivate) return state.onActivate();
 }
 
-auto mMenuRadioItem::group() const -> sGroup {
+auto mMenuRadioItem::group() const -> Group {
   return state.group;
 }
 
@@ -41,6 +41,7 @@ auto mMenuRadioItem::setChecked() -> type& {
 auto mMenuRadioItem::setGroup(sGroup group) -> type& {
   state.group = group;
   signal(setGroup, group);
+  if(group && group->objects() == 1) setChecked();
   return *this;
 }
 

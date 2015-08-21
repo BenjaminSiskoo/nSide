@@ -131,7 +131,6 @@ auto InputMapping::deviceName() -> string {
 
 InputManager::InputManager() {
   inputManager = this;
-  input.onChange = {&InputManager::onChange, this};
 
   for(auto& emulator : program->emulators) {
     Configuration::Node nodeEmulator;
@@ -173,9 +172,8 @@ InputManager::InputManager() {
   }
 
   appendHotkeys();
-  config.load({configpath(), "nSide-t/input.bml"});
-  config.save({configpath(), "nSide-t/input.bml"});
-  poll();  //will call bind();
+  config.load(locate({configpath(), "nSide-t/"}, "input.bml"));
+  config.save(locate({configpath(), "nSide-t/"}, "input.bml"));
 }
 
 auto InputManager::bind() -> void {
@@ -195,7 +193,7 @@ auto InputManager::bind() -> void {
 }
 
 auto InputManager::poll() -> void {
-  auto devices = input.poll();
+  auto devices = input->poll();
   bool changed = devices.size() != this->devices.size();
   if(changed == false) {
     for(auto n : range(devices)) {
@@ -219,7 +217,7 @@ auto InputManager::onChange(shared_pointer<HID::Device> device, unsigned group, 
 }
 
 auto InputManager::quit() -> void {
-  config.save({configpath(), "nSide-t/input.bml"});
+  config.save(locate({configpath(), "nSide-t/"}, "input.bml"));
   emulators.reset();
   hotkeys.reset();
 }

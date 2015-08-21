@@ -383,11 +383,7 @@ Interface::Interface() {
   media.append({ID::SuperFamicom, "Sufami Turbo",     "st",  false});
 
   {
-    Device device{
-      (unsigned)Input::Device::Joypad,
-      ID::Port1 | ID::Port2,
-      "Controller"
-    };
+    Device device{0, ID::Port1 | ID::Port2, "Controller"};
     device.input.append({ 0, 0, "B"     });
     device.input.append({ 1, 0, "Y"     });
     device.input.append({ 2, 0, "Select"});
@@ -405,11 +401,7 @@ Interface::Interface() {
   }
 
   {
-    Device device{
-      (unsigned)Input::Device::Multitap,
-      ID::Port1 | ID::Port2,
-      "Multitap"
-    };
+    Device device{1, ID::Port1 | ID::Port2, "Multitap"};
     for(unsigned p = 1, n = 0; p <= 4; p++, n += 12) {
       device.input.append({n +  0, 0, {"Port ", p, " - ", "B"     }});
       device.input.append({n +  1, 0, {"Port ", p, " - ", "Y"     }});
@@ -430,11 +422,7 @@ Interface::Interface() {
   }
 
   {
-    Device device{
-      (unsigned)Input::Device::Mouse,
-      ID::Port1 | ID::Port2,
-      "Mouse"
-    };
+    Device device{2, ID::Port1 | ID::Port2, "Mouse"};
     device.input.append({0, 1, "X-axis"});
     device.input.append({1, 1, "Y-axis"});
     device.input.append({2, 0, "Left"  });
@@ -444,11 +432,7 @@ Interface::Interface() {
   }
 
   {
-    Device device{
-      (unsigned)Input::Device::SuperScope,
-      ID::Port2,
-      "Super Scope"
-    };
+    Device device{3, ID::Port2, "Super Scope"};
     device.input.append({0, 1, "X-axis" });
     device.input.append({1, 1, "Y-axis" });
     device.input.append({2, 0, "Trigger"});
@@ -460,11 +444,7 @@ Interface::Interface() {
   }
 
   {
-    Device device{
-      (unsigned)Input::Device::Justifier,
-      ID::Port2,
-      "Justifier"
-    };
+    Device device{4, ID::Port2, "Justifier"};
     device.input.append({0, 1, "X-axis" });
     device.input.append({1, 1, "Y-axis" });
     device.input.append({2, 0, "Trigger"});
@@ -474,11 +454,7 @@ Interface::Interface() {
   }
 
   {
-    Device device{
-      (unsigned)Input::Device::Justifiers,
-      ID::Port2,
-      "Justifiers"
-    };
+    Device device{5, ID::Port2, "Justifiers"};
     device.input.append({0, 1, "Port 1 - X-axis" });
     device.input.append({1, 1, "Port 1 - Y-axis" });
     device.input.append({2, 0, "Port 1 - Trigger"});
@@ -493,20 +469,12 @@ Interface::Interface() {
   }
 
   {
-    Device device{
-      (unsigned)Input::Device::USART,
-      ID::Port1,
-      "Serial USART"
-    };
+    Device device{6, ID::Port1, "Serial USART"};
     this->device.append(device);
   }
 
   {
-    Device device{
-      (unsigned)Input::Device::None,
-      ID::Port1 | ID::Port2,
-      "None"
-    };
+    Device device{7, ID::Port1 | ID::Port2, "None"};
     this->device.append(device);
   }
 

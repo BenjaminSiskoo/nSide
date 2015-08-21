@@ -22,7 +22,7 @@ ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
 # platform
 ifeq ($(platform),windows)
   ruby := video.direct3d video.wgl video.directdraw video.gdi
-  ruby += audio.directsound audio.xaudio2
+  ruby += audio.xaudio2 audio.directsound
   ruby += input.windows
 else ifeq ($(platform),macosx)
   ruby := video.cgl
@@ -33,18 +33,18 @@ else ifeq ($(platform),linux)
   ruby += audio.alsa audio.openal audio.oss audio.pulseaudio audio.pulseaudiosimple audio.ao
   ruby += input.udev input.sdl input.xlib
 else ifeq ($(platform),bsd)
-  ruby := video.glx
+  ruby := video.glx video.xv video.xshm video.sdl
   ruby += audio.openal audio.oss
-  ruby += input.xlib
+  ruby += input.sdl input.xlib
 endif
-
-# phoenix
-include phoenix/GNUmakefile
-link += $(phoenixlink)
 
 # ruby
 include ruby/GNUmakefile
 link += $(rubylink)
+
+# phoenix
+include phoenix/GNUmakefile
+link += $(phoenixlink)
 
 # rules
 objects := $(ui_objects) $(objects)
@@ -75,7 +75,9 @@ endif
 
 # targets
 build: $(objects)
-ifeq ($(platform),windows)
+ifeq ($(shell id -un),root)
+	$(error "make install should not be run as root")
+else ifeq ($(platform),windows)
 	$(strip $(compiler) -shared -o out/phoenix.dll obj/phoenix.o $(phoenixlink))
 	$(strip $(compiler) -o out/$(name) $(subst obj/phoenix.o,,$(objects)) $(link) -Lout -lphoenix)
 else ifeq ($(platform),macosx)

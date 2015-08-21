@@ -142,7 +142,7 @@ int16_t RelativeInput::poll() {
     int16_t value = device.group(item.group).input(item.input).value();
     if(device.isJoypad() && item.group == HID::Joypad::GroupID::Axis) value >>= 8;
     if(device.isJoypad() && item.group == HID::Joypad::GroupID::Hat) value = (value < 0 ? -1 : value > 0 ? + 1 : 0);
-    if(device.isMouse() && input.acquired() == false) value = 0;
+    if(device.isMouse() && input->acquired() == false) value = 0;
     result += value;
   }
 
@@ -172,7 +172,7 @@ void RumbleInput::rumble(bool enable) {
   if(inputList.size() == 0) return;
 
   for(auto& item : inputList) {
-    input.rumble(item.id, enable);
+    input->rumble(item.id, enable);
   }
 }
 
@@ -219,7 +219,7 @@ void InputManager::bind() {
 }
 
 void InputManager::poll() {
-  auto devices = input.poll();
+  auto devices = input->poll();
   bool changed = devices.size() != this->devices.size();
   if(changed == false) {
     for(unsigned n = 0; n < devices.size(); n++) {
@@ -243,7 +243,7 @@ InputManager::InputManager() {
   inputManager = this;
   bootstrap();
 
-  input.onChange = {&InputManager::onChange, this};
+  input->onChange({&InputManager::onChange, this});
 }
 
 void InputManager::bootstrap() {

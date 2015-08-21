@@ -10,7 +10,7 @@
 #include "object.cpp"
 #include "timer.cpp"
 #include "window.cpp"
-#include "popup-menu.cpp"
+//#include "popup-menu.cpp"
 
 #include "action/action.cpp"
 #include "action/menu.cpp"

@@ -23,13 +23,13 @@ Size pButton::minimumSize() {
   Size size = Font::size(button.font(), button.state.text);
 
   if(button.state.orientation == Orientation::Horizontal) {
-    size.width += button.state.image.width;
-    size.height = max(button.state.image.height, size.height);
+    size.width += button.state.image.width();
+    size.height = max(button.state.image.height(), size.height);
   }
 
   if(button.state.orientation == Orientation::Vertical) {
-    size.width = max(button.state.image.width, size.width);
-    size.height += button.state.image.height;
+    size.width = max(button.state.image.width(), size.width);
+    size.height += button.state.image.height();
   }
 
   return {size.width + (button.state.text ? 20 : 4), size.height + 4};

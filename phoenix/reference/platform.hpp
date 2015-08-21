@@ -16,7 +16,7 @@ namespace phoenix {
 #include "object.hpp"
 #include "timer.hpp"
 #include "window.hpp"
-#include "popup-menu.hpp"
+//#include "popup-menu.hpp"
 
 #include "action/action.hpp"
 #include "action/menu.hpp"

@@ -4,13 +4,13 @@ Size pButton::minimumSize() {
   Size size = pFont::size(qtWidget->font(), button.state.text);
 
   if(button.state.orientation == Orientation::Horizontal) {
-    size.width += button.state.image.width;
-    size.height = max(button.state.image.height, size.height);
+    size.width += button.state.image.width();
+    size.height = max(button.state.image.height(), size.height);
   }
 
   if(button.state.orientation == Orientation::Vertical) {
-    size.width = max(button.state.image.width, size.width);
-    size.height += button.state.image.height;
+    size.width = max(button.state.image.width(), size.width);
+    size.height += button.state.image.height();
   }
 
   return {size.width + (button.state.text ? 20 : 12), size.height + 12};
@@ -21,7 +21,7 @@ void pButton::setBordered(bool bordered) {
 }
 
 void pButton::setImage(const image& image, Orientation orientation) {
-  qtButton->setIconSize(QSize(image.width, image.height));
+  qtButton->setIconSize(QSize(image.width(), image.height()));
   qtButton->setIcon(CreateIcon(image));
   qtButton->setStyleSheet("text-align: top;");
   switch(orientation) {

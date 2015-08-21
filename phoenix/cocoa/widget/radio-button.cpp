@@ -28,13 +28,13 @@ Size pRadioButton::minimumSize() {
   Size size = Font::size(radioButton.font(), radioButton.state.text);
 
   if(radioButton.state.orientation == Orientation::Horizontal) {
-    size.width += radioButton.state.image.width;
-    size.height = max(radioButton.state.image.height, size.height);
+    size.width += radioButton.state.image.width();
+    size.height = max(radioButton.state.image.height(), size.height);
   }
 
   if(radioButton.state.orientation == Orientation::Vertical) {
-    size.width = max(radioButton.state.image.width, size.width);
-    size.height += radioButton.state.image.height;
+    size.width = max(radioButton.state.image.width(), size.width);
+    size.height += radioButton.state.image.height();
   }
 
   return {size.width + 20, size.height + 4};
