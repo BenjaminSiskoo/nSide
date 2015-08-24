@@ -14,10 +14,10 @@ include sfc/GNUmakefile
 include gb/GNUmakefile
 include gba/GNUmakefile
 
-ui_objects := ui-ethos ui-configuration ui-interface ui-utility
-ui_objects += ui-input ui-window ui-general ui-settings ui-tools
+ui_objects := ethos-ethos ethos-configuration ethos-interface ethos-utility
+ui_objects += ethos-input ethos-window ethos-general ethos-settings ethos-tools
 ui_objects += ruby phoenix
-ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
+ui_objects += $(if $(call streq,$(platform),windows),ethos-resource)
 
 # platform
 ifeq ($(platform),windows)
@@ -56,21 +56,21 @@ obj/ruby.o: ruby/ruby.cpp $(call rwildcard,ruby/)
 obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/)
 	$(compiler) $(phoenixflags) -c $< -o $@
 
-obj/ui-ethos.o: $(ui)/ethos.cpp $(call rwildcard,$(ui)/)
-obj/ui-configuration.o: $(ui)/configuration/configuration.cpp $(call rwildcard,$(ui)/)
-obj/ui-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/)
-obj/ui-utility.o: $(ui)/utility/utility.cpp $(call rwildcard,$(ui)/)
-obj/ui-input.o: $(ui)/input/input.cpp $(call rwildcard,$(ui)/)
-obj/ui-window.o: $(ui)/window/window.cpp $(call rwildcard,$(ui)/)
-obj/ui-general.o: $(ui)/general/general.cpp $(call rwildcard,$(ui)/)
-obj/ui-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
-obj/ui-tools.o: $(ui)/tools/tools.cpp $(call rwildcard,$(ui)/)
+obj/ethos-ethos.o: $(ui)/ethos.cpp $(call rwildcard,$(ui)/)
+obj/ethos-configuration.o: $(ui)/configuration/configuration.cpp $(call rwildcard,$(ui)/)
+obj/ethos-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/)
+obj/ethos-utility.o: $(ui)/utility/utility.cpp $(call rwildcard,$(ui)/)
+obj/ethos-input.o: $(ui)/input/input.cpp $(call rwildcard,$(ui)/)
+obj/ethos-window.o: $(ui)/window/window.cpp $(call rwildcard,$(ui)/)
+obj/ethos-general.o: $(ui)/general/general.cpp $(call rwildcard,$(ui)/)
+obj/ethos-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
+obj/ethos-tools.o: $(ui)/tools/tools.cpp $(call rwildcard,$(ui)/)
 
-obj/ui-resource.o:
+obj/ethos-resource.o:
 ifeq ($(arch),x86)
-	windres --target=pe-i386 data/resource.rc obj/ui-resource.o
+	windres --target=pe-i386 data/resource.rc obj/ethos-resource.o
 else
-	windres data/resource.rc obj/ui-resource.o
+	windres data/resource.rc obj/ethos-resource.o
 endif
 
 # targets
