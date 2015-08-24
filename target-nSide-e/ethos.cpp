@@ -13,6 +13,14 @@ Emulator::Interface& system() {
   return *program->active;
 }
 
+//if file already exists in the same path as the binary; use it (portable mode)
+//if not, use default requested path (*nix/user mode)
+auto locate(string pathname, string filename) -> string {
+  string location{programpath(), filename};
+  if(file_system_object::exists(location)) return location;
+  return {pathname, filename};
+}
+
 bool Program::focused() {
   return config->input.focus.allow || presentation->focused();
 }

@@ -32,7 +32,8 @@ void Utility::loadMedia(string pathname) {
 void Utility::loadMedia(Emulator::Interface* emulator, Emulator::Interface::Media& media, string pathname) {
   unload();
   setInterface(emulator);
-  path(0) = program->path({media.name, ".sys/"});
+  //path(0) = program->path({media.name, ".sys/"});
+  path(0) = locate({utility->libraryPath(), "System/"}, {media.name, ".sys/"});
   path(media.id) = pathname;
   this->pathname.append(pathname);
 

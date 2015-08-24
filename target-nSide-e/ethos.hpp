@@ -9,6 +9,7 @@ extern Audio* audio;
 extern Input* input;
 
 #include <emulator/emulator.hpp>
+Emulator::Interface& system();
 
 #include "configuration/configuration.hpp"
 #include "interface/interface.hpp"
@@ -20,7 +21,7 @@ extern Input* input;
 #include "tools/tools.hpp"
 #include "resource/resource.hpp"
 
-Emulator::Interface& system();
+auto locate(string pathname, string filename) -> string;
 
 struct Program {
   vector<Emulator::Interface*> emulator;
