@@ -127,15 +127,15 @@ void PPU::exportRegisters(string &markup) {
       case 4: bg = &bg4; break;
     }
     markup.append("  bg\n");
-    markup.append("    tile-size:     ",   bg->regs.tile_size,             "\n");
-    markup.append("    mosaic:        ",   bg->regs.mosaic,                "\n");
-    markup.append("    screen-addr:   0x", hex<4>(bg->regs.screen_addr),   "\n");
-    markup.append("    screen-size:   ",   bg->regs.screen_size,           "\n");
-    markup.append("    tiledata-addr: 0x", hex<4>(bg->regs.tiledata_addr), "\n");
-    markup.append("    hoffset:       0x", hex<3>(bg->regs.hoffset),       "\n");
-    markup.append("    voffset:       0x", hex<3>(bg->regs.voffset),       "\n");
-    markup.append("    main-enable:   ",   bg->regs.main_enable,           "\n");
-    markup.append("    sub-enable:    ",   bg->regs.sub_enable,            "\n");
+    markup.append("    tile-size:     ",   bg->regs.tile_size,              "\n");
+    markup.append("    mosaic:        ",   bg->regs.mosaic,                 "\n");
+    markup.append("    screen-addr:   0x", hex(bg->regs.screen_addr, 4L),   "\n");
+    markup.append("    screen-size:   ",   bg->regs.screen_size,            "\n");
+    markup.append("    tiledata-addr: 0x", hex(bg->regs.tiledata_addr, 4L), "\n");
+    markup.append("    hoffset:       0x", hex(bg->regs.hoffset, 3L),       "\n");
+    markup.append("    voffset:       0x", hex(bg->regs.voffset, 3L),       "\n");
+    markup.append("    main-enable:   ",   bg->regs.main_enable,            "\n");
+    markup.append("    sub-enable:    ",   bg->regs.sub_enable,             "\n");
   }
 }
 

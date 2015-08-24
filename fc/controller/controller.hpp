@@ -38,23 +38,24 @@
 
 struct Controller : Thread {
   enum : unsigned { Port1 = 0, Port2 = 1, ExpansionPort = 2 };
+  Controller(unsigned port, unsigned device);
+  Controller(unsigned port);
+  static auto Enter() -> void;
+  virtual auto enter() -> void;
+
+  auto step(unsigned clocks) -> void;
+  auto synchronize_cpu() -> void;
+
+  virtual auto data() -> uint5 { return 0; }
+  virtual auto data1() -> uint2 { return 0; }
+  virtual auto data2() -> uint5 { return 0; }
+  virtual auto latch(bool data) -> void {}
+
   const unsigned port;
   const unsigned device;
 
-  static void Enter();
-  virtual void enter();
-  void step(unsigned clocks);
-  void synchronize_cpu();
-
-  virtual uint5 data() { return 0; }
-  virtual uint2 data1() { return 0; }
-  virtual uint5 data2() { return 0; }
-  virtual void latch(bool data) {}
-  Controller(unsigned port, unsigned device);
-  Controller(unsigned port);
-
 protected:
-  int16_t poll(unsigned input);
+  auto poll(unsigned input) -> int16_t;
 };
 
 #include "gamepad/gamepad.hpp"

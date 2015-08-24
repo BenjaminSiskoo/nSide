@@ -1,16 +1,16 @@
 #include "../ethos.hpp"
 Interface* interface = nullptr;
 
-void Interface::loadRequest(unsigned id, string name, string type) {
-  return utility->loadRequest(id, name, type);
+void Interface::loadRequest(unsigned id, string name, string type, bool required) {
+  return utility->loadRequest(id, name, type, required);
 }
 
-void Interface::loadRequest(unsigned id, string path) {
-  return utility->loadRequest(id, path);
+void Interface::loadRequest(unsigned id, string path, bool required) {
+  return utility->loadRequest(id, path, required);
 }
 
-void Interface::saveRequest(unsigned id, string path) {
-  return utility->saveRequest(id, path);
+void Interface::saveRequest(unsigned id, string path, bool required) {
+  return utility->saveRequest(id, path, required);
 }
 
 uint32_t Interface::videoColor(unsigned source, uint16_t a, uint16_t r, uint16_t g, uint16_t b) {

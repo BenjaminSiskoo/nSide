@@ -32,7 +32,7 @@ void R6502::opf_bit() {
 void R6502::opf_cmp() {
   signed r = regs.a - rd;
   regs.p.n = (r & 0x80);
-  regs.p.z = ((uint8)r == 0);
+  regs.p.z = (uint8)(r == 0);
   regs.p.c = (r >= 0);
 }
 

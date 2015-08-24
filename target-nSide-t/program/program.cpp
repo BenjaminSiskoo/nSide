@@ -9,7 +9,7 @@
 #include "utility.cpp"
 Program* program = nullptr;
 
-Program::Program() {
+Program::Program(lstring args) {
   program = this;
   directory::create({configpath(), "tomoko/"});
   directory::create({configpath(), "nSide-t/"});
@@ -68,6 +68,10 @@ Program::Program() {
   presentation->drawSplashScreen();
 
   updateVideoFilter();
+
+  if(args.size() == 2 && directory::exists(args[1])) {
+    loadMedia(args[1]);
+  }
 }
 
 auto Program::main() -> void {

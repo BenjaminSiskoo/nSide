@@ -4,182 +4,6 @@ namespace Famicom {
 
 Interface* interface = nullptr;
 
-string Interface::title() {
-  return cartridge.title();
-}
-
-double Interface::videoFrequency() {
-  switch(system.region()) { default:
-  case System::Region::NTSC: return system.cpu_frequency() / (262.0 * 1364.0 - 4.0);
-  case System::Region::PAL:  return system.cpu_frequency() / (312.0 * 1705.0);
-  }
-}
-
-double Interface::audioFrequency() {
-  switch(system.region()) { default:
-  case System::Region::NTSC: return system.cpu_frequency() / 12.0;
-  case System::Region::PAL:  return system.cpu_frequency() / 16.0;
-  }
-}
-
-bool Interface::loaded() {
-  return cartridge.loaded();
-}
-
-string Interface::sha256() {
-  return cartridge.sha256();
-}
-
-unsigned Interface::group(unsigned id) {
-  switch(id) {
-  case ID::PC10BIOS:
-  case ID::PC10CharacterROM:
-  case ID::PC10PaletteROM:
-    return ID::System;
-  case ID::Manifest:
-  case ID::ProgramROM:
-  case ID::ProgramRAM:
-  case ID::CharacterROM:
-  case ID::CharacterRAM:
-  case ID::ChipRAM:
-    switch(system.revision) {
-    case System::Revision::Famicom:      return ID::Famicom;
-    case System::Revision::VSSystem:     return ID::VSSystem;
-    case System::Revision::PlayChoice10: return ID::PlayChoice10;
-    }
-  case ID::InstructionROM:
-  case ID::KeyROM:
-    return ID::PlayChoice10;
-  }
-
-  throw;
-}
-
-void Interface::load(unsigned id) {
-  information.width  = 256;
-  information.height = 240;
-  switch(id) {
-  case ID::Famicom:      cartridge.load(System::Revision::Famicom);      break;
-  case ID::VSSystem:     cartridge.load(System::Revision::VSSystem);     break;
-  case ID::PlayChoice10: cartridge.load(System::Revision::PlayChoice10); break;
-  }
-}
-
-void Interface::save() {
-  for(auto& memory : cartridge.memory) {
-    saveRequest(memory.id, memory.name);
-  }
-}
-
-void Interface::load(unsigned id, const stream& stream) {
-  switch(id) {
-  case ID::PC10BIOS:
-    stream.read(pc10arcadeboard.bios, min(16384u, stream.size()));
-    break;
-  case ID::PC10CharacterROM:
-    stream.read(pc10arcadeboard.chrrom, min(24576u, stream.size()));
-    break;
-  case ID::PC10PaletteROM:
-    stream.read(pc10arcadeboard.cgrom, min(768u, stream.size()));
-    break;
-  }
-
-  if(id == ID::Manifest) cartridge.information.markup.cartridge = stream.text();
-  if(id == ID::ProgramROM) cartridge.board->prgrom.read(stream);
-  if(id == ID::ProgramRAM) cartridge.board->prgram.read(stream);
-  if(id == ID::CharacterROM) cartridge.board->chrrom.read(stream);
-  if(id == ID::CharacterRAM) cartridge.board->chrram.read(stream);
-  if(id == ID::ChipRAM) cartridge.board->chip->ram.read(stream);
-
-  if(id == ID::InstructionROM) cartridge.board->instrom.read(stream);
-  if(id == ID::KeyROM) cartridge.board->keyrom.read(stream);
-}
-
-void Interface::save(unsigned id, const stream& stream) {
-  if(id == ID::ProgramRAM) {
-    stream.write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
-  }
-
-  if(id == ID::CharacterRAM) {
-    stream.write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
-  }
-
-  if(id == ID::ChipRAM) {
-    stream.write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
-  }
-}
-
-void Interface::unload() {
-  save();
-  cartridge.unload();
-}
-
-void Interface::connect(unsigned port, unsigned device) {
-  if(!system.vs()) {
-    // Don't allow switching to VS. Panel
-    if(device == (unsigned)Input::Device::VSPanel)
-      device = (unsigned)Input::Device::None;
-    input.connect(port, (Input::Device)device);
-  }
-}
-
-void Interface::power() {
-  system.power();
-}
-
-void Interface::reset() {
-  system.reset();
-}
-
-void Interface::run() {
-  system.run();
-}
-
-serializer Interface::serialize() {
-  system.runtosave();
-  return system.serialize();
-}
-
-bool Interface::unserialize(serializer& s) {
-  return system.unserialize(s);
-}
-
-void Interface::cheatSet(const lstring& list) {
-  cheat.reset();
-
-  for(auto& codeset : list) {
-    lstring codes = codeset.split("+");
-    for(auto& code : codes) {
-      lstring part = code.split("/");
-      if(part.size() == 2) cheat.append(hex(part[0]), hex(part[1]));
-      if(part.size() == 3) cheat.append(hex(part[0]), hex(part[1]), hex(part[2]));
-    }
-  }
-}
-
-void Interface::paletteUpdate(PaletteMode mode) {
-  video.generate_palette(mode);
-}
-
-void Interface::exportMemory() {
-  string pathname = {path(group(ID::ProgramROM)), "debug/"};
-  directory::create(pathname);
-
-  file::write({pathname, "work.ram"}, cpu.ram, 0x0800);
-  file::write({pathname, "video.ram"}, ppu.ciram, 2048);
-  file::write({pathname, "palette.ram"}, ppu.cgram, 32);
-  file::write({pathname, "sprite.ram"}, ppu.oam, 256);
-  if(cartridge.board->prgram.size()) {
-    file::write({pathname, "program.ram"}, cartridge.board->prgram.data(), cartridge.board->prgram.size());
-  }
-  if(cartridge.board->chrram.size()) {
-    file::write({pathname, "character.ram"}, cartridge.board->chrram.data(), cartridge.board->chrram.size());
-  }
-  if(cartridge.board->chip && cartridge.board->chip->ram.size()) {
-    file::write({pathname, "chip.ram"}, cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
-  }
-}
-
 Interface::Interface() {
   interface = this;
   system.init();
@@ -205,8 +29,7 @@ Interface::Interface() {
     device_ref.append(DeviceRef{i, 0, 0, 0});
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::Joypad,
       ID::Port1 | ID::Port2 | ID::ExpansionPort,
       "Controller"
@@ -223,8 +46,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::FourPlayers,
       ID::ExpansionPort,
       "4-Players Adaptor"
@@ -244,8 +66,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::FourScore,
       ID::Port1,
       "Four Score"
@@ -265,8 +86,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::FourScore,
       ID::Port2,
       "Four Score"
@@ -286,8 +106,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::BeamGun,
       ID::ExpansionPort,
       "Beam Gun"
@@ -299,8 +118,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::BeamGun,
       ID::Port2,
       "Zapper"
@@ -312,8 +130,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::FamilyTrainer,
       ID::ExpansionPort,
       "Family Trainer"
@@ -325,8 +142,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::FamilyTrainer,
       ID::Port2,
       "Power Pad"
@@ -338,8 +154,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::SFCJoypad,
       ID::Port1 | ID::Port2,
       "SFC Controller"
@@ -360,8 +175,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::Mouse,
       ID::Port1 | ID::Port2 | ID::ExpansionPort,
       "Mouse"
@@ -374,8 +188,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::VSPanel,
       ID::ExpansionPort,
       "VS. Panel"
@@ -391,8 +204,7 @@ Interface::Interface() {
     addDevice(device);
   }
 
-  {
-    Device device{
+  { Device device{
       (unsigned)Input::Device::None,
       ID::Port1 | ID::Port2 | ID::ExpansionPort,
       "None"
@@ -401,12 +213,192 @@ Interface::Interface() {
   }
 }
 
-void Interface::addDevice(Device device) {
+auto Interface::title() -> string {
+  return cartridge.title();
+}
+
+auto Interface::videoFrequency() -> double {
+  switch(system.region()) { default:
+  case System::Region::NTSC: return system.cpu_frequency() / (262.0 * 1364.0 - 4.0);
+  case System::Region::PAL:  return system.cpu_frequency() / (312.0 * 1705.0);
+  }
+}
+
+auto Interface::audioFrequency() -> double {
+  switch(system.region()) { default:
+  case System::Region::NTSC: return system.cpu_frequency() / 12.0;
+  case System::Region::PAL:  return system.cpu_frequency() / 16.0;
+  }
+}
+
+auto Interface::loaded() -> bool {
+  return cartridge.loaded();
+}
+
+auto Interface::sha256() -> string {
+  return cartridge.sha256();
+}
+
+auto Interface::group(unsigned id) -> unsigned {
+  switch(id) {
+  case ID::SystemManifest:
+  case ID::PC10BIOS:
+  case ID::PC10CharacterROM:
+  case ID::PC10PaletteROM:
+    return ID::System;
+  case ID::Manifest:
+  case ID::ProgramROM:
+  case ID::ProgramRAM:
+  case ID::CharacterROM:
+  case ID::CharacterRAM:
+  case ID::ChipRAM:
+    switch(system.revision) {
+    case System::Revision::Famicom:      return ID::Famicom;
+    case System::Revision::VSSystem:     return ID::VSSystem;
+    case System::Revision::PlayChoice10: return ID::PlayChoice10;
+    }
+  case ID::InstructionROM:
+  case ID::KeyROM:
+    return ID::PlayChoice10;
+  }
+
+  throw;
+}
+
+auto Interface::load(unsigned id) -> void {
+  information.width  = 256;
+  information.height = 240;
+  switch(id) {
+  case ID::Famicom:      cartridge.load(System::Revision::Famicom);      break;
+  case ID::VSSystem:     cartridge.load(System::Revision::VSSystem);     break;
+  case ID::PlayChoice10: cartridge.load(System::Revision::PlayChoice10); break;
+  }
+}
+
+auto Interface::save() -> void {
+  for(auto& memory : cartridge.memory) {
+    saveRequest(memory.id, memory.name);
+  }
+}
+
+auto Interface::load(unsigned id, const stream& stream) -> void {
+  switch(id) {
+  case ID::SystemManifest:
+    system.information.manifest = stream.text();
+    break;
+  case ID::PC10BIOS:
+    stream.read(pc10arcadeboard.bios, min(16384u, stream.size()));
+    break;
+  case ID::PC10CharacterROM:
+    stream.read(pc10arcadeboard.chrrom, min(24576u, stream.size()));
+    break;
+  case ID::PC10PaletteROM:
+    stream.read(pc10arcadeboard.cgrom, min(768u, stream.size()));
+    break;
+  }
+
+  if(id == ID::Manifest) cartridge.information.markup.cartridge = stream.text();
+  if(id == ID::ProgramROM) cartridge.board->prgrom.read(stream);
+  if(id == ID::ProgramRAM) cartridge.board->prgram.read(stream);
+  if(id == ID::CharacterROM) cartridge.board->chrrom.read(stream);
+  if(id == ID::CharacterRAM) cartridge.board->chrram.read(stream);
+  if(id == ID::ChipRAM) cartridge.board->chip->ram.read(stream);
+
+  if(id == ID::InstructionROM) cartridge.board->instrom.read(stream);
+  if(id == ID::KeyROM) cartridge.board->keyrom.read(stream);
+}
+
+auto Interface::save(unsigned id, const stream& stream) -> void {
+  if(id == ID::ProgramRAM) {
+    stream.write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
+  }
+
+  if(id == ID::CharacterRAM) {
+    stream.write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
+  }
+
+  if(id == ID::ChipRAM) {
+    stream.write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
+  }
+}
+
+auto Interface::unload() -> void {
+  save();
+  cartridge.unload();
+}
+
+auto Interface::connect(unsigned port, unsigned device) -> void {
+  if(!system.vs()) {
+    // Don't allow switching to VS. Panel
+    if(device == (unsigned)Input::Device::VSPanel)
+      device = (unsigned)Input::Device::None;
+    input.connect(port, (Input::Device)device);
+  }
+}
+
+auto Interface::power() -> void {
+  system.power();
+}
+
+auto Interface::reset() -> void {
+  system.reset();
+}
+
+auto Interface::run() -> void {
+  system.run();
+}
+
+auto Interface::serialize() -> serializer {
+  system.runtosave();
+  return system.serialize();
+}
+
+auto Interface::unserialize(serializer& s) -> bool {
+  return system.unserialize(s);
+}
+
+auto Interface::cheatSet(const lstring& list) -> void {
+  cheat.reset();
+
+  for(auto& codeset : list) {
+    lstring codes = codeset.split("+");
+    for(auto& code : codes) {
+      lstring part = code.split("/");
+      if(part.size() == 2) cheat.append(hex(part[0]), hex(part[1]));
+      if(part.size() == 3) cheat.append(hex(part[0]), hex(part[1]), hex(part[2]));
+    }
+  }
+}
+
+auto Interface::paletteUpdate(PaletteMode mode) -> void {
+  video.generate_palette(mode);
+}
+
+auto Interface::addDevice(Device device) -> void {
   for(auto& port : this->port) {
     if(device.portmask & (1 << port.id)) {
       device_ref[device.id].port[port.id] = (unsigned)port.device.size();
       port.device.append(device);
     }
+  }
+}
+
+auto Interface::exportMemory() -> void {
+  string pathname = {path(group(ID::ProgramROM)), "debug/"};
+  directory::create(pathname);
+
+  file::write({pathname, "work.ram"}, cpu.ram, 0x0800);
+  file::write({pathname, "video.ram"}, ppu.ciram, 2048);
+  file::write({pathname, "palette.ram"}, ppu.cgram, 32);
+  file::write({pathname, "sprite.ram"}, ppu.oam, 256);
+  if(cartridge.board->prgram.size()) {
+    file::write({pathname, "program.ram"}, cartridge.board->prgram.data(), cartridge.board->prgram.size());
+  }
+  if(cartridge.board->chrram.size()) {
+    file::write({pathname, "character.ram"}, cartridge.board->chrram.data(), cartridge.board->chrram.size());
+  }
+  if(cartridge.board->chip && cartridge.board->chip->ram.size()) {
+    file::write({pathname, "chip.ram"}, cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
   }
 }
 

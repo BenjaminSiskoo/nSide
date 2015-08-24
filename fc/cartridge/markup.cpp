@@ -1,11 +1,11 @@
 #ifdef CARTRIDGE_CPP
 
-void Cartridge::parse_markup(const char* markup) {
+void Cartridge::parseMarkup(const char* markup) {
   auto document = BML::unserialize(markup);
   information.title.cartridge = document["information/title"].text();
 
   auto cartridge = document["cartridge"];
-  region = cartridge["region"].text() != "PAL" ? Region::NTSC : Region::PAL;
+  _region = cartridge["region"].text() != "PAL" ? Region::NTSC : Region::PAL;
 
   if(system.revision == System::Revision::VSSystem) {
     unsigned ppus = 0;
@@ -55,31 +55,31 @@ void Cartridge::parse_markup(const char* markup) {
     if(ppus == 2) interface->information.width = 512;
   }
   Board::load(document["cartridge"]);  //this call will set Cartridge::board if successful
-  parse_markup_cartridge(cartridge);
+  parseMarkupCartridge(cartridge);
 }
 
 //
 
-void Cartridge::parse_markup_memory(MappedRAM& ram, Markup::Node node, unsigned id, bool writable) {
+void Cartridge::parseMarkupMemory(MappedRAM& ram, Markup::Node node, unsigned id, bool writable) {
   string name = node["name"].text();
   unsigned size = node["size"].decimal();
   ram.map(allocate<uint8>(size, 0xff), size);
   if(name.empty() == false) {
-    interface->loadRequest(id, name);
+    interface->loadRequest(id, name, !writable);
     if(writable) memory.append({id, name});
   }
 }
 
 //
 
-void Cartridge::parse_markup_cartridge(Markup::Node root) {
-  parse_markup_memory(board->prgrom, root["prg/rom"], ID::ProgramROM, false);
-  parse_markup_memory(board->prgram, root["prg/ram"], ID::ProgramRAM, true);
-  parse_markup_memory(board->chrrom, root["chr/rom"], ID::CharacterROM, false);
-  parse_markup_memory(board->chrram, root["chr/ram"], ID::CharacterRAM, true);
+void Cartridge::parseMarkupCartridge(Markup::Node root) {
+  parseMarkupMemory(board->prgrom, root["prg/rom"], ID::ProgramROM, false);
+  parseMarkupMemory(board->prgram, root["prg/ram"], ID::ProgramRAM, true);
+  parseMarkupMemory(board->chrrom, root["chr/rom"], ID::CharacterROM, false);
+  parseMarkupMemory(board->chrram, root["chr/ram"], ID::CharacterRAM, true);
   if(system.pc10()) {
-    parse_markup_memory(board->instrom, root["pc10/rom[0]"], ID::InstructionROM, false);
-    parse_markup_memory(board->keyrom, root["pc10/rom[1]"], ID::KeyROM, false);
+    parseMarkupMemory(board->instrom, root["pc10/rom[0]"], ID::InstructionROM, false);
+    parseMarkupMemory(board->keyrom, root["pc10/rom[1]"], ID::KeyROM, false);
   }
 }
 

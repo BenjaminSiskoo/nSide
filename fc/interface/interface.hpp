@@ -11,6 +11,7 @@ struct ID {
     VSSystem,
 
     //memory (files)
+    SystemManifest,
     PC10BIOS,
     PC10CharacterROM,
     PC10PaletteROM,

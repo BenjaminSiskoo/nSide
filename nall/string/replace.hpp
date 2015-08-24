@@ -2,9 +2,9 @@
 
 namespace nall {
 
-template<unsigned Limit, bool Insensitive, bool Quoted>
-auto _replace(string& self, rstring from, rstring to) -> string& {
-  if(Limit == 0 || from.size() == 0) return self;
+template<bool Insensitive, bool Quoted>
+auto _replace(string& self, rstring from, rstring to, long limit) -> string& {
+  if(limit <= 0 || from.size() == 0) return self;
 
   signed size = self.size();
   signed matches = 0;
@@ -17,7 +17,7 @@ auto _replace(string& self, rstring from, rstring to) -> string& {
       if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n++; continue; } if(quoted) { n++; continue; } }
       if(_compare<Insensitive>(p + n, size - n, from.data(), from.size())) { n++; continue; }
 
-      if(++matches >= Limit) break;
+      if(++matches >= limit) break;
       n += from.size();
     }
   }
@@ -25,7 +25,7 @@ auto _replace(string& self, rstring from, rstring to) -> string& {
 
   //in-place overwrite
   if(to.size() == from.size()) {
-    char* p = self.pointer();
+    char* p = self.get();
 
     for(signed n = 0, remaining = matches, quoted = 0; n <= size - (signed)from.size();) {
       if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n++; continue; } if(quoted) { n++; continue; } }
@@ -40,7 +40,7 @@ auto _replace(string& self, rstring from, rstring to) -> string& {
 
   //left-to-right shrink
   else if(to.size() < from.size()) {
-    char* p = self.pointer();
+    char* p = self.get();
     signed offset = 0;
     signed base = 0;
 
@@ -64,7 +64,7 @@ auto _replace(string& self, rstring from, rstring to) -> string& {
   //right-to-left expand
   else if(to.size() > from.size()) {
     self.resize(size + matches * (to.size() - from.size()));
-    char* p = self.pointer();
+    char* p = self.get();
 
     signed offset = self.size();
     signed base = size;
@@ -86,10 +86,10 @@ auto _replace(string& self, rstring from, rstring to) -> string& {
   return self;
 }
 
-template<unsigned L> auto replace(string& self, rstring from, rstring to) -> string& { return _replace<L, 0, 0>(self, from, to); }
-template<unsigned L> auto ireplace(string& self, rstring from, rstring to) -> string& { return _replace<L, 1, 0>(self, from, to); }
-template<unsigned L> auto qreplace(string& self, rstring from, rstring to) -> string& { return _replace<L, 0, 1>(self, from, to); }
-template<unsigned L> auto iqreplace(string& self, rstring from, rstring to) -> string& { return _replace<L, 1, 1>(self, from, to); }
+auto replace(string& self, rstring from, rstring to, long limit) -> string& { return _replace<0, 0>(self, from, to, limit); }
+auto ireplace(string& self, rstring from, rstring to, long limit) -> string& { return _replace<1, 0>(self, from, to, limit); }
+auto qreplace(string& self, rstring from, rstring to, long limit) -> string& { return _replace<0, 1>(self, from, to, limit); }
+auto iqreplace(string& self, rstring from, rstring to, long limit) -> string& { return _replace<1, 1>(self, from, to, limit); }
 
 };
 

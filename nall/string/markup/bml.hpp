@@ -75,7 +75,7 @@ protected:
       if(length == 0) throw "Invalid attribute name";
       node->_name = substr(p, 0, length);
       node->parseData(p += length);
-      node->_value.rtrim("\n");
+      node->_value.rtrim("\n", 1L);
       _children.append(node);
     }
   }
@@ -102,14 +102,14 @@ protected:
       _children.append(node);
     }
 
-    _value.rtrim("\n");
+    _value.rtrim("\n", 1L);
   }
 
   //read top-level nodes
   auto parse(string document) -> void {
     //in order to simplify the parsing logic; we do an initial pass to normalize the data
     //the below code will turn '\r\n' into '\n'; skip empty lines; and skip comment lines
-    char* p = document.pointer(), *output = p;
+    char* p = document.get(), *output = p;
     while(*p) {
       char* origin = p;
       bool empty = true;

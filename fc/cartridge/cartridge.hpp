@@ -2,19 +2,14 @@
 #include "board/board.hpp"
 
 struct Cartridge : Thread, property<Cartridge> {
-  enum class Region : unsigned {
-    NTSC,
-    PAL,
-    //Dendy,
-  };
+  enum class Region : unsigned { NTSC, PAL/*, Dendy*/ };
 
   static void Enter();
   void enter();
 
-  readonly<bool> loaded;
-  readonly<string> sha256;
-
-  readonly<Region> region;
+  auto loaded() const -> bool { return _loaded; }
+  auto sha256() const -> string { return _sha256; }
+  auto region() const -> Region { return _region; }
 
   struct Memory {
     unsigned id;
@@ -34,38 +29,43 @@ struct Cartridge : Thread, property<Cartridge> {
     } title;
   } information;
 
-  string title();
+  auto power() -> void;
+  auto reset() -> void;
+  Cartridge() = default;
+  ~Cartridge() { unload(); }
 
-  void load(System::Revision revision);
-  void unload();
+  auto title() -> string;
 
-  void power();
-  void reset();
+  auto load(System::Revision) -> void;
+  auto unload() -> void;
 
-  void serialize(serializer&);
-  Cartridge();
-  ~Cartridge();
+  auto serialize(serializer&) -> void;
 
 //privileged:
   Board *board;
 
-  uint8 prg_read(unsigned addr);
-  void prg_write(unsigned addr, uint8 data);
+  auto prg_read(unsigned addr) -> uint8;
+  auto prg_write(unsigned addr, uint8 data) -> void;
 
-  uint8 chr_read(unsigned addr);
-  void chr_write(unsigned addr, uint8 data);
+  auto chr_read(unsigned addr) -> uint8;
+  auto chr_write(unsigned addr, uint8 data) -> void;
 
   //scanline() is for debugging purposes only:
   //boards must detect scanline edges on their own
-  void scanline(unsigned y);
+  auto scanline(unsigned y) -> void;
 
 private:
-  void parse_markup(const char*);
-  void parse_markup_memory(MappedRAM&, Markup::Node, unsigned id, bool writable);
-
-  void parse_markup_cartridge(Markup::Node);
-
   friend class Interface;
+
+  //markup.cpp
+  auto parseMarkup(const char*) -> void;
+  auto parseMarkupMemory(MappedRAM&, Markup::Node, unsigned id, bool writable) -> void;
+
+  auto parseMarkupCartridge(Markup::Node) -> void;
+
+  bool _loaded = false;
+  string _sha256;
+  Region _region = Region::NTSC;
 };
 
 extern Cartridge cartridge;

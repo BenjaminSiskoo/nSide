@@ -12,25 +12,6 @@ namespace Famicom {
 #include "mouse/mouse.cpp"
 #include "vspanel/vspanel.cpp"
 
-void Controller::Enter() {
-  if(co_active() == input.port1->thread) input.port1->enter();
-  if(co_active() == input.port2->thread) input.port2->enter();
-  if(co_active() == input.expansion->thread) input.expansion->enter();
-}
-
-void Controller::enter() {
-  while(true) step(1);
-}
-
-void Controller::step(unsigned clocks) {
-  clock += clocks * (uint64)cpu.frequency;
-  synchronize_cpu();
-}
-
-void Controller::synchronize_cpu() {
-  if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
-}
-
 Controller::Controller(unsigned port, unsigned device):
 port(port),
 device(device) {
@@ -43,7 +24,26 @@ device((unsigned)Input::Device::None) {
   if(!thread) create(Controller::Enter, 1);
 }
 
-int16_t Controller::poll(unsigned input) {
+auto Controller::Enter() -> void {
+  if(co_active() == input.port1->thread) input.port1->enter();
+  if(co_active() == input.port2->thread) input.port2->enter();
+  if(co_active() == input.expansion->thread) input.expansion->enter();
+}
+
+auto Controller::enter() -> void {
+  while(true) step(1);
+}
+
+auto Controller::step(unsigned clocks) -> void {
+  clock += clocks * (uint64)cpu.frequency;
+  synchronize_cpu();
+}
+
+auto Controller::synchronize_cpu() -> void {
+  if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
+}
+
+auto Controller::poll(unsigned input) -> int16_t {
   return interface->inputPoll(port, interface->device_ref[device].port[port], input);
 }
 

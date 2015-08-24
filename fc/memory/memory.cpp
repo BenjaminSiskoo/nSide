@@ -5,12 +5,30 @@ namespace Famicom {
 
 Bus bus;
 
-void Bus::map(
+Bus::Bus() {
+  lookup = new uint8 [64 * 1024];
+  target = new uint32[64 * 1024];
+}
+
+Bus::~Bus() {
+  delete[] lookup;
+  delete[] target;
+}
+
+auto Bus::reset() -> void {
+  function<uint8 (unsigned)> reader = [](unsigned) { return cpu.mdr(); };
+  function<void (unsigned, uint8)> writer = [](unsigned, uint8) {};
+
+  idcount = 0;
+  map(reader, writer, 0x0000, 0xffff);
+}
+
+auto Bus::map(
   const function<uint8 (unsigned)>& reader,
   const function<void (unsigned, uint8)>& writer,
   unsigned addrlo, unsigned addrhi,
   unsigned size, unsigned base, unsigned mask
-) {
+) -> void {
   assert(addrlo <= addrhi && addrlo <= 0xffff);
   assert(idcount < 255);
 
@@ -26,29 +44,11 @@ void Bus::map(
   }
 }
 
-void Bus::map_reset() {
-  function<uint8 (unsigned)> reader = [](unsigned) { return cpu.mdr(); };
-  function<void (unsigned, uint8)> writer = [](unsigned, uint8) {};
-
-  idcount = 0;
-  map(reader, writer, 0x0000, 0xffff);
-}
-
 //$0000-07ff = RAM (2KB)
 //$0800-1fff = RAM (mirror)
 //$2000-2007 = PPU
 //$2008-3fff = PPU (mirror)
 //$4000-4017 = APU + I/O
 //$4018-ffff = Cartridge
-
-Bus::Bus() {
-  lookup = new uint8 [64 * 1024];
-  target = new uint32[64 * 1024];
-}
-
-Bus::~Bus() {
-  delete[] lookup;
-  delete[] target;
-}
 
 }

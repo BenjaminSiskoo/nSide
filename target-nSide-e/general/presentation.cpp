@@ -14,7 +14,7 @@ void Presentation::synchronize() {
   if(config->video.shader == "Blur") shaderBlur.setChecked();
   if(config->video.shader == "Display Emulation") shaderEmulation.setChecked();
   for(auto& shader : shaderList) {
-    string name = filename(config->video.shader.split<1>(".shader/")(0));
+    string name = filename(config->video.shader.split(".shader/", 1L)(0));
     if(name == shader->text()) shader->setChecked();
   }
 
@@ -239,7 +239,7 @@ void Presentation::loadShaders() {
     lstring shaders = directory::folders(pathname, "*.shader");
     for(auto& name : shaders) {
       auto shader = new RadioItem;
-      shader->setText(name.split<1>(".shader/")(0));
+      shader->setText(name.split(".shader/", 1L)(0));
       shader->onActivate = [=] {
         config->video.shader = {pathname, name};
         utility->updateShader();

@@ -4,9 +4,9 @@ struct Utility {
   void loadMedia(string pathname);
   void loadMedia(Emulator::Interface* emulator, Emulator::Interface::Media& media, string pathname);
 
-  void loadRequest(unsigned id, string name, string type);
-  void loadRequest(unsigned id, string path);
-  void saveRequest(unsigned id, string path);
+  void loadRequest(unsigned id, string name, string type, bool required);
+  void loadRequest(unsigned id, string path, bool required);
+  void saveRequest(unsigned id, string path, bool required);
 
   void connect(unsigned port, unsigned device);
   void power();

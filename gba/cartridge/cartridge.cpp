@@ -12,7 +12,7 @@ string Cartridge::title() {
 }
 
 void Cartridge::load() {
-  interface->loadRequest(ID::Manifest, "manifest.bml");
+  interface->loadRequest(ID::Manifest, "manifest.bml", true);
 
   auto document = BML::unserialize(information.markup);
   information.title = document["information/title"].text();
@@ -20,7 +20,7 @@ void Cartridge::load() {
   unsigned rom_size = 0;
   if(document["cartridge/rom"]) {
     auto info = document["cartridge/rom"];
-    interface->loadRequest(ID::ROM, info["name"].text());
+    interface->loadRequest(ID::ROM, info["name"].text(), true);
     rom_size = info["size"].decimal();
     for(unsigned addr = rom_size; addr < rom.size; addr++) {
       rom.data[addr] = rom.data[Bus::mirror(addr, rom_size)];
@@ -40,7 +40,7 @@ void Cartridge::load() {
       ram.mask = ram.size - 1;
       for(unsigned n = 0; n < ram.size; n++) ram.data[n] = 0xff;
 
-      interface->loadRequest(ID::RAM, info["name"].text());
+      interface->loadRequest(ID::RAM, info["name"].text(), false);
       memory.append({ID::RAM, info["name"].text()});
     }
 
@@ -53,7 +53,7 @@ void Cartridge::load() {
       eeprom.test = rom_size > 16 * 1024 * 1024 ? 0x0dffff00 : 0x0d000000;
       for(unsigned n = 0; n < eeprom.size; n++) eeprom.data[n] = 0xff;
 
-      interface->loadRequest(ID::EEPROM, info["name"].text());
+      interface->loadRequest(ID::EEPROM, info["name"].text(), false);
       memory.append({ID::EEPROM, info["name"].text()});
     }
 
@@ -63,7 +63,12 @@ void Cartridge::load() {
       flashrom.size = info["size"].decimal();
       for(unsigned n = 0; n < flashrom.size; n++) flashrom.data[n] = 0xff;
 
-      interface->loadRequest(ID::FlashROM, info["name"].text());
+      //if FlashROM ID not provided; guess that it's a Macronix chip
+      //this will not work for all games; in which case, the ID must be specified manually
+      if(!flashrom.id && flashrom.size ==  64 * 1024) flashrom.id = 0x1cc2;
+      if(!flashrom.id && flashrom.size == 128 * 1024) flashrom.id = 0x09c2;
+
+      interface->loadRequest(ID::FlashROM, info["name"].text(), false);
       memory.append({ID::FlashROM, info["name"].text()});
     }
   }

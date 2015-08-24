@@ -1,3 +1,7 @@
+# disable built-in rules and variables
+MAKEFLAGS := Rr
+.SUFFIXES:
+
 [A-Z] = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 [a-z] = a b c d e f g h i j k l m n o p q r s t u v w x y z
 [0-9] = 0 1 2 3 4 5 6 7 8 9
@@ -79,6 +83,14 @@ ifeq ($(platform),bsd)
   flags += -I/usr/local/include
   link += -Wl,-rpath=/usr/local/lib
   link += -Wl,-rpath=/usr/local/lib/gcc49
+endif
+
+# threading support
+ifeq ($(threaded),true)
+  ifneq ($(filter $(platform),linux bsd),)
+    flags += -pthread
+    link += -lrt
+  endif
 endif
 
 # cross-compilation support

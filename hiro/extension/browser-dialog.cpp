@@ -13,17 +13,17 @@ struct BrowserDialogWindow {
 private:
   Window window;
     VerticalLayout layout{&window};
-      HorizontalLayout pathLayout{&layout, Size{~0, 0}, 8};
+      HorizontalLayout pathLayout{&layout, Size{~0, 0}, 5};
         LineEdit pathName{&pathLayout, Size{~0, 0}, 0};
         Button pathHome{&pathLayout, Size{0, 0}, 0};
         Button pathRefresh{&pathLayout, Size{0, 0}, 0};
         Button pathUp{&pathLayout, Size{0, 0}, 0};
-      ListView view{&layout, Size{~0, ~0}, 8};
+      ListView view{&layout, Size{~0, ~0}, 5};
       HorizontalLayout controlLayout{&layout, Size{~0, 0}};
-        ComboButton filterList{&controlLayout, Size{120, 0}, 8};
-        LineEdit fileName{&controlLayout, Size{~0, 0}, 8};
-        Button acceptButton{&controlLayout, Size{80, 0}, 8};
-        Button cancelButton{&controlLayout, Size{80, 0}, 8};
+        ComboButton filterList{&controlLayout, Size{120, 0}, 5};
+        LineEdit fileName{&controlLayout, Size{~0, 0}, 5};
+        Button acceptButton{&controlLayout, Size{80, 0}, 5};
+        Button cancelButton{&controlLayout, Size{80, 0}, 5};
 
   BrowserDialog::State& state;
   vector<lstring> filters;
@@ -32,30 +32,30 @@ private:
 //accept button clicked, or enter pressed on file name line edit
 //also called by list view activate after special case handling
 auto BrowserDialogWindow::accept() -> void {
-  auto selectedItems = view.selectedItems();
+  auto batched = view.batched();
 
-  if(state.action == "openFile" && selectedItems) {
-    string name = selectedItems.first()->cell(0)->text();
+  if(state.action == "openFile" && batched) {
+    string name = batched.first()->cell(0)->text();
     if(isFolder(name)) return setPath({state.path, name});
     state.response.append(string{state.path, name});
   }
 
   if(state.action == "openFiles") {
-    for(auto selectedItem : selectedItems) {
-      string name = selectedItem->cell(0)->text();
+    for(auto item : batched) {
+      string name = item->cell(0)->text();
       state.response.append(string{state.path, name, isFolder(name) ? "/" : ""});
     }
   }
 
-  if(state.action == "openFolder" && selectedItems) {
-    string name = selectedItems.first()->cell(0)->text();
+  if(state.action == "openFolder" && batched) {
+    string name = batched.first()->cell(0)->text();
     if(!isMatch(name)) return setPath({state.path, name});
     state.response.append(string{state.path, name, "/"});
   }
 
   if(state.action == "saveFile") {
     string name = fileName.text();
-    if(!name && selectedItems) name = selectedItems.first()->cell(0)->text();
+    if(!name && batched) name = batched.first()->cell(0)->text();
     if(!name || isFolder(name)) return;
     if(file::exists({state.path, name})) {
       if(MessageDialog("File already exists; overwrite it?").question() != "Yes") return;
@@ -63,8 +63,8 @@ auto BrowserDialogWindow::accept() -> void {
     state.response.append(string{state.path, name});
   }
 
-  if(state.action == "selectFolder" && selectedItems) {
-    string name = selectedItems.first()->cell(0)->text();
+  if(state.action == "selectFolder" && batched) {
+    string name = batched.first()->cell(0)->text();
     if(isFolder(name)) state.response.append(string{state.path, name, "/"});
   }
 
@@ -116,7 +116,7 @@ auto BrowserDialogWindow::isMatch(const string& name) -> bool {
 auto BrowserDialogWindow::run() -> lstring {
   state.response.reset();
 
-  layout.setMargin(8);
+  layout.setMargin(5);
   pathName.onActivate([&] { setPath(pathName.text()); });
   pathHome.setBordered(false).setIcon(Icon::Go::Home).onActivate([&] { setPath(userpath()); });
   pathRefresh.setBordered(false).setIcon(Icon::Action::Refresh).onActivate([&] { setPath(state.path); });
@@ -124,7 +124,7 @@ auto BrowserDialogWindow::run() -> lstring {
   view.setBatchable(state.action == "openFiles").onActivate([&] { activate(); }).onChange([&] { change(); });
   filterList.setVisible(state.action != "selectFolder").onChange([&] { setPath(state.path); });
   for(auto& filter : state.filters) {
-    auto part = filter.split<1>("|");
+    auto part = filter.split("|", 1L);
     filterList.append(ComboButtonItem().setText(part.first()));
   }
   fileName.setVisible(state.action == "saveFile").onActivate([&] { accept(); });
@@ -136,7 +136,7 @@ auto BrowserDialogWindow::run() -> lstring {
 
   if(!state.filters) state.filters.append("All|*");
   for(auto& filter : state.filters) {
-    auto part = filter.split<1>("|");
+    auto part = filter.split("|", 1L);
     filters.append(part.last().split(":"));
   }
 
@@ -162,10 +162,11 @@ auto BrowserDialogWindow::setPath(string path) -> void {
   pathName.setText(state.path = path);
 
   view.reset();
-  view.append(ListViewColumn().setExpandable());
-  view.append(ListViewColumn().setForegroundColor({192, 128, 128}));
+  view.append(ListViewHeader().setVisible(false)
+    .append(ListViewColumn().setExpandable())
+  );
 
-  auto contents = directory::contents(path);
+  auto contents = directory::icontents(path);
   bool folderMode = state.action == "openFolder";
 
   for(auto content : contents) {
@@ -175,7 +176,6 @@ auto BrowserDialogWindow::setPath(string path) -> void {
 
     view.append(ListViewItem()
       .append(ListViewCell().setText(content).setIcon(Icon::Emblem::Folder))
-      .append(ListViewCell().setText(octal<3>(storage::mode({path, content}) & 0777)))
     );
   }
 
@@ -186,7 +186,6 @@ auto BrowserDialogWindow::setPath(string path) -> void {
 
     view.append(ListViewItem()
       .append(ListViewCell().setText(content).setIcon(folderMode ? Icon::Action::Open : Icon::Emblem::File))
-      .append(ListViewCell().setText(octal<3>(storage::mode({path, content}) & 0777)))
     );
   }
 

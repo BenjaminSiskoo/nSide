@@ -53,7 +53,7 @@ NES_ExROM(Markup::Node& cartridge) : Board(cartridge), mmc5(*this, cartridge) {
     unsigned size = cartridge["chip/ram/size"].decimal();
     mmc5.ram.map(allocate<uint8>(size, 0xff), size);
     if(!name.empty()) {
-      interface->loadRequest(ID::ChipRAM, name);
+      interface->loadRequest(ID::ChipRAM, name, false);
       Famicom::cartridge.memory.append({ID::ChipRAM, name});
     }
   } else {

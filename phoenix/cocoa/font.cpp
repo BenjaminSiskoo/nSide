@@ -28,7 +28,7 @@ Size pFont::size(string font, string text) {
 }
 
 NSFont* pFont::cocoaFont(string description) {
-  lstring part = description.split<2>(",").strip();
+  lstring part = description.split(",", 2L).strip();
 
   NSString* family = @"Lucida Grande";
   NSFontTraitMask traits = 0;

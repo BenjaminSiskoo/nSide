@@ -25,7 +25,7 @@ void Cartridge::enter() {
 }
 
 void Cartridge::load(System::Revision revision) {
-  region = Region::NTSC;
+  _region = Region::NTSC;
   system.revision = revision;
 
   information.markup.cartridge         = "";
@@ -34,8 +34,8 @@ void Cartridge::load(System::Revision revision) {
   information.title.cartridge         = "";
   //information.title.famicomDiskSystem = "";
 
-  interface->loadRequest(ID::Manifest, "manifest.bml");
-  parse_markup(information.markup.cartridge);
+  interface->loadRequest(ID::Manifest, "manifest.bml", true);
+  parseMarkup(information.markup.cartridge);
 
   if(board == nullptr) return;
 
@@ -44,19 +44,19 @@ void Cartridge::load(System::Revision revision) {
   sha.data(board->chrrom.data(), board->chrrom.size());
   sha.data(board->instrom.data(), board->instrom.size());
   sha.data(board->keyrom.data(), board->keyrom.size());
-  sha256 = sha.digest();
+  _sha256 = sha.digest();
 
   system.load(system.revision);
-  loaded = true;
+  _loaded = true;
 }
 
 void Cartridge::unload() {
-  if(loaded == false) return;
+  if(_loaded) {
+    system.unload();
 
-  system.unload();
-
-  loaded = false;
-  memory.reset();
+    _loaded = false;
+    memory.reset();
+  }
 }
 
 void Cartridge::power() {
@@ -66,14 +66,6 @@ void Cartridge::power() {
 void Cartridge::reset() {
   create(Cartridge::Enter, system.cpu_frequency());
   board->reset();
-}
-
-Cartridge::Cartridge() {
-  loaded = false;
-}
-
-Cartridge::~Cartridge() {
-  unload();
 }
 
 uint8 Cartridge::prg_read(unsigned addr) {

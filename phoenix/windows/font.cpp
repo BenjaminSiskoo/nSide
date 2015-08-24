@@ -26,7 +26,7 @@ Size pFont::size(string font, string text) {
 }
 
 HFONT pFont::create(string description) {
-  lstring part = description.split<2>(",").strip();
+  lstring part = description.split(",", 2L).strip();
 
   string family = "Sans";
   unsigned size = 8u;

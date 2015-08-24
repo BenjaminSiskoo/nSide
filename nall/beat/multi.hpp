@@ -160,13 +160,13 @@ protected:
   void ls(lstring& list, const string& path, const string& basepath) {
     lstring paths = directory::folders(path);
     for(auto& pathname : paths) {
-      list.append(string{path, pathname}.ltrim(basepath));
+      list.append(string{path, pathname}.ltrim(basepath, 1L));
       ls(list, {path, pathname}, basepath);
     }
 
     lstring files = directory::files(path);
     for(auto& filename : files) {
-      list.append(string{path, filename}.ltrim(basepath));
+      list.append(string{path, filename}.ltrim(basepath, 1L));
     }
   }
 
@@ -222,7 +222,7 @@ protected:
   string readString(unsigned length) {
     string text;
     text.resize(length + 1);
-    char* p = text.pointer();
+    char* p = text.get();
     while(length--) *p++ = read();
     return text;
   }

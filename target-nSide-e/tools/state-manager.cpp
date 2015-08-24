@@ -3,7 +3,7 @@ StateManager* stateManager = nullptr;
 StateManager::StateManager() {
   stateList.setHeaderText({"Slot", "Description"});
   stateList.setHeaderVisible();
-  for(unsigned n = 0; n < Slots; n++) stateList.append({decimal<2>(1 + n), "(empty)"});
+  for(unsigned n = 0; n < Slots; n++) stateList.append({decimal(1 + n, 2L), "(empty)"});
   stateList.autoSizeColumns();
   descLabel.setText("Description:");
   saveButton.setText("Save");
@@ -53,7 +53,7 @@ void StateManager::synchronize() {
 
 void StateManager::refresh() {
   for(unsigned n = 0; n < Slots; n++) {
-    stateList.setText(n, {decimal<2>(1 + n), slotLoadDescription(n)});
+    stateList.setText(n, {decimal(1 + n, 2L), slotLoadDescription(n)});
   }
   stateList.autoSizeColumns();
 }

@@ -2,9 +2,9 @@
 
 namespace nall {
 
-template<unsigned Limit, bool Insensitive, bool Quoted> auto _split(lstring& self, rstring source, rstring find) -> lstring& {
+template<bool Insensitive, bool Quoted> auto _split(lstring& self, rstring source, rstring find, long limit) -> lstring& {
   self.reset();
-  if(find.size() == 0) return self;
+  if(limit <= 0 || find.size() == 0) return self;
 
   const char* p = source.data();
   signed size = source.size();
@@ -14,11 +14,11 @@ template<unsigned Limit, bool Insensitive, bool Quoted> auto _split(lstring& sel
   for(signed n = 0, quoted = 0; n <= size - (signed)find.size();) {
     if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n++; continue; } if(quoted) { n++; continue; } }
     if(_compare<Insensitive>(p + n, size - n, find.data(), find.size())) { n++; continue; }
-    if(matches >= Limit) break;
+    if(matches >= limit) break;
 
     string& s = self(matches);
     s.resize(n - base);
-    memory::copy(s.pointer(), p + base, n - base);
+    memory::copy(s.get(), p + base, n - base);
 
     n += find.size();
     base = n;
@@ -27,20 +27,20 @@ template<unsigned Limit, bool Insensitive, bool Quoted> auto _split(lstring& sel
 
   string& s = self(matches);
   s.resize(size - base);
-  memory::copy(s.pointer(), p + base, size - base);
+  memory::copy(s.get(), p + base, size - base);
 
   return self;
 }
 
-template<unsigned L> auto split(string& self, rstring on) -> lstring { return lstring().split<L>(self, on); }
-template<unsigned L> auto isplit(string& self, rstring on) -> lstring { return lstring().isplit<L>(self, on); }
-template<unsigned L> auto qsplit(string& self, rstring on) -> lstring { return lstring().qsplit<L>(self, on); }
-template<unsigned L> auto iqsplit(string& self, rstring on) -> lstring { return lstring().iqsplit<L>(self, on); }
+auto split(string& self, rstring on, long limit) -> lstring { return lstring().split(self, on, limit); }
+auto isplit(string& self, rstring on, long limit) -> lstring { return lstring().isplit(self, on, limit); }
+auto qsplit(string& self, rstring on, long limit) -> lstring { return lstring().qsplit(self, on, limit); }
+auto iqsplit(string& self, rstring on, long limit) -> lstring { return lstring().iqsplit(self, on, limit); }
 
-template<unsigned L> auto string::split(rstring on) const -> lstring { return lstring().split<L>(*this, on); }
-template<unsigned L> auto string::isplit(rstring on) const -> lstring { return lstring().isplit<L>(*this, on); }
-template<unsigned L> auto string::qsplit(rstring on) const -> lstring { return lstring().qsplit<L>(*this, on); }
-template<unsigned L> auto string::iqsplit(rstring on) const -> lstring { return lstring().iqsplit<L>(*this, on); }
+auto string::split(rstring on, long limit) const -> lstring { return lstring().split(*this, on, limit); }
+auto string::isplit(rstring on, long limit) const -> lstring { return lstring().isplit(*this, on, limit); }
+auto string::qsplit(rstring on, long limit) const -> lstring { return lstring().qsplit(*this, on, limit); }
+auto string::iqsplit(rstring on, long limit) const -> lstring { return lstring().iqsplit(*this, on, limit); }
 
 }
 

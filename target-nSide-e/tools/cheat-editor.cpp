@@ -68,7 +68,7 @@ void CheatEditor::refresh() {
     string desc = cheat[n].code.empty() && cheat[n].desc.empty() ? "(empty)" : cheat[n].desc;
     lstring codes = code.split("+");
     if(codes.size() > 1) code = {codes[0], "+..."};
-    cheatList.setText(n, {decimal<3>(1 + n), code, desc});
+    cheatList.setText(n, {decimal(1 + n, 3L), code, desc});
   }
   cheatList.autoSizeColumns();
 }

@@ -69,7 +69,7 @@ void pHexEdit::update() {
   string output;
   unsigned offset = hexEdit.state.offset;
   for(unsigned row = 0; row < hexEdit.state.rows; row++) {
-    output.append(hex<8>(offset));
+    output.append(hex(offset, 8L));
     output.append("  ");
 
     string hexdata;
@@ -77,7 +77,7 @@ void pHexEdit::update() {
     for(unsigned column = 0; column < hexEdit.state.columns; column++) {
       if(offset < hexEdit.state.length) {
         uint8_t data = hexEdit.onRead(offset++);
-        hexdata.append(hex<2>(data));
+        hexdata.append(hex(data, 2L));
         hexdata.append(" ");
         ansidata.append(data >= 0x20 && data <= 0x7e ? (char)data : '.');
       } else {

@@ -35,6 +35,10 @@ struct System : property<System> {
 
   System();
 
+  struct Information {
+    string manifest;
+  } information;
+
 private:
   void runthreadtosave();
 

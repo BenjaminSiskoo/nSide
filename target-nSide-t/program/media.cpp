@@ -3,7 +3,7 @@ auto Program::loadMedia(string location) -> void {
   if(!location.endsWith("/")) location.append("/");
   if(!directory::exists(location)) return;
 
-  string type = suffixname(location).ltrim(".");
+  string type = suffixname(location).ltrim(".", 1L);
   for(auto& emulator : emulators) {
     for(auto& media : emulator->media) {
       if(media.bootable == false) continue;
@@ -13,14 +13,14 @@ auto Program::loadMedia(string location) -> void {
   }
 }
 
-auto Program::loadMedia(Emulator::Interface& _emulator, Emulator::Interface::Media& media, const string& location) -> void {
+auto Program::loadMedia(Emulator::Interface& emulator_, Emulator::Interface::Media& media, const string& location) -> void {
   unloadMedia();
 
-  mediaPaths(0) = locate({userpath(), "Emulation/System/"}, {media.name, ".sys/"});
+  mediaPaths(0) = locate({config->library.location, "System/"}, {media.name, ".sys/"});
   mediaPaths(media.id) = location;
   folderPaths.append(location);
 
-  emulator = &_emulator;
+  emulator = &emulator_;
   emulator->load(media.id);
   updateVideoPalette();
   dsp.setFrequency(emulator->audioFrequency());

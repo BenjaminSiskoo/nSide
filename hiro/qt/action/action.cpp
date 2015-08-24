@@ -1,53 +1,49 @@
-namespace phoenix {
+#if defined(Hiro_Action)
 
-void pAction::setEnabled(bool enabled) {
-  if(dynamic_cast<Menu*>(&action)) {
-    ((Menu&)action).p.qtMenu->setEnabled(enabled);
-  } else if(dynamic_cast<Separator*>(&action)) {
-    ((Separator&)action).p.qtAction->setEnabled(enabled);
-  } else if(dynamic_cast<Item*>(&action)) {
-    ((Item&)action).p.qtAction->setEnabled(enabled);
-  } else if(dynamic_cast<CheckItem*>(&action)) {
-    ((CheckItem&)action).p.qtAction->setEnabled(enabled);
-  } else if(dynamic_cast<RadioItem*>(&action)) {
-    ((RadioItem&)action).p.qtAction->setEnabled(enabled);
+namespace hiro {
+
+auto pAction::construct() -> void {
+}
+
+auto pAction::destruct() -> void {
+}
+
+auto pAction::setEnabled(bool enabled) -> void {
+  _setState();
+}
+
+auto pAction::setFont(const string& font) -> void {
+  _setState();
+}
+
+auto pAction::setVisible(bool visible) -> void {
+  _setState();
+}
+
+auto pAction::_parentMenu() -> maybe<pMenu&> {
+  if(auto parent = self().parentMenu()) {
+    if(auto self = parent->self()) return *self;
   }
+  return nothing;
 }
 
-void pAction::setFont(string font) {
-  QFont qtFont = pFont::create(font);
-
-  if(dynamic_cast<Menu*>(&action)) {
-    ((Menu&)action).p.setFont(font);
-  } else if(dynamic_cast<Separator*>(&action)) {
-    ((Separator&)action).p.qtAction->setFont(qtFont);
-  } else if(dynamic_cast<Item*>(&action)) {
-    ((Item&)action).p.qtAction->setFont(qtFont);
-  } else if(dynamic_cast<CheckItem*>(&action)) {
-    ((CheckItem&)action).p.qtAction->setFont(qtFont);
-  } else if(dynamic_cast<RadioItem*>(&action)) {
-    ((RadioItem&)action).p.qtAction->setFont(qtFont);
+auto pAction::_parentMenuBar() -> maybe<pMenuBar&> {
+  if(auto parent = self().parentMenuBar()) {
+    if(auto self = parent->self()) return *self;
   }
+  return nothing;
 }
 
-void pAction::setVisible(bool visible) {
-  if(dynamic_cast<Menu*>(&action)) {
-    ((Menu&)action).p.qtMenu->menuAction()->setVisible(visible);
-  } else if(dynamic_cast<Separator*>(&action)) {
-    ((Separator&)action).p.qtAction->setVisible(visible);
-  } else if(dynamic_cast<Item*>(&action)) {
-    ((Item&)action).p.qtAction->setVisible(visible);
-  } else if(dynamic_cast<CheckItem*>(&action)) {
-    ((CheckItem&)action).p.qtAction->setVisible(visible);
-  } else if(dynamic_cast<RadioItem*>(&action)) {
-    ((RadioItem&)action).p.qtAction->setVisible(visible);
+auto pAction::_parentPopupMenu() -> maybe<pPopupMenu&> {
+  if(auto parent = self().parentPopupMenu()) {
+    if(auto self = parent->self()) return *self;
   }
+  return nothing;
 }
 
-void pAction::constructor() {
-}
-
-void pAction::destructor() {
+auto pAction::_setState() -> void {
 }
 
 }
+
+#endif

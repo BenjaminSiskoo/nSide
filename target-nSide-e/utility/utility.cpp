@@ -45,7 +45,7 @@ void Utility::loadMedia(Emulator::Interface* emulator, Emulator::Interface::Medi
 }
 
 //request from emulation core to load non-volatile media folder
-void Utility::loadRequest(unsigned id, string name, string type) {
+void Utility::loadRequest(unsigned id, string name, string type, bool required) {
   string pathname = libraryManager->load(type);
   if(pathname.empty()) return;
   path(id) = pathname;
@@ -55,15 +55,21 @@ void Utility::loadRequest(unsigned id, string name, string type) {
 }
 
 //request from emulation core to load non-volatile media file
-void Utility::loadRequest(unsigned id, string path) {
+void Utility::loadRequest(unsigned id, string path, bool required) {
   string pathname = {this->path(system().group(id)), path};
-  if(file::exists(pathname) == false) return;
+  if(file::exists(pathname) == false) {
+    if(required) MessageWindow().setParent(*presentation).setText({
+      "Missing required file: ", path, "\n\n",
+      "From location:\n", this->path(system().group(id))
+    }).error();
+    return;
+  }
   mmapstream stream(pathname);
   return system().load(id, stream);
 }
 
 //request from emulation core to save non-volatile media file
-void Utility::saveRequest(unsigned id, string path) {
+void Utility::saveRequest(unsigned id, string path, bool required) {
   string pathname = {this->path(system().group(id)), path};
   filestream stream(pathname, file::mode::write);
   return system().save(id, stream);

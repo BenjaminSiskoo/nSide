@@ -16,7 +16,7 @@ void System::run() {
   scheduler.sync = Scheduler::SynchronizeMode::None;
 
   scheduler.enter();
-  if(scheduler.exit_reason() == Scheduler::ExitReason::FrameEvent) {
+  if(scheduler.exit_reason == Scheduler::ExitReason::FrameEvent) {
     video.update();
   }
 }
@@ -43,8 +43,8 @@ void System::runtosave() {
 void System::runthreadtosave() {
   while(true) {
     scheduler.enter();
-    if(scheduler.exit_reason() == Scheduler::ExitReason::SynchronizeEvent) break;
-    if(scheduler.exit_reason() == Scheduler::ExitReason::FrameEvent) {
+    if(scheduler.exit_reason == Scheduler::ExitReason::SynchronizeEvent) break;
+    if(scheduler.exit_reason == Scheduler::ExitReason::FrameEvent) {
       video.update();
     }
   }
@@ -68,26 +68,26 @@ void System::term() {
 
 void System::load(Revision revision) {
   this->revision = revision;
-  string manifest = string::read({interface->path(ID::System), "manifest.bml"});
-  auto document = BML::unserialize(manifest);
+  interface->loadRequest(ID::SystemManifest, "manifest.bml", true);
+  auto document = BML::unserialize(information.manifest);
 
   if(pc10()) {
     auto rom = document["system/pc10"].find("rom");
 
     auto firmware = rom(0)["name"].text();
-    interface->loadRequest(ID::PC10BIOS, firmware);
+    interface->loadRequest(ID::PC10BIOS, firmware, true);
     if(!file::exists({interface->path(ID::System), firmware})) {
       interface->notify("Error: required PlayChoice-10 firmware ", firmware, " not found.\n");
     }
 
     auto character = rom(1)["name"].text();
-    interface->loadRequest(ID::PC10CharacterROM, character);
+    interface->loadRequest(ID::PC10CharacterROM, character, true);
     if(!file::exists({interface->path(ID::System), character})) {
       interface->notify("Error: required PlayChoice-10 character data ", character, " not found.\n");
     }
 
     auto palette = rom(2)["name"].text();
-    interface->loadRequest(ID::PC10PaletteROM, palette);
+    interface->loadRequest(ID::PC10PaletteROM, palette, true);
     if(!file::exists({interface->path(ID::System), palette})) {
       interface->notify("Error: required PlayChoice-10 palette data ", palette, " not found.\n");
     }
