@@ -188,13 +188,13 @@ void Utility::updatePalette() {
 
 void Utility::updateShader() {
   if(config->video.shader == "None") {
-    video->set(Video::Shader, (const char*)"");
+    video->set(Video::Shader, (string)"");
     video->set(Video::Filter, Video::FilterNearest);
   } else if(config->video.shader == "Blur") {
-    video->set(Video::Shader, (const char*)"");
+    video->set(Video::Shader, (string)"");
     video->set(Video::Filter, Video::FilterLinear);
   } else if(config->video.shader == "Display Emulation" && config->video.driver != "OpenGL") {
-    video->set(Video::Shader, (const char*)"");
+    video->set(Video::Shader, (string)"");
     video->set(Video::Filter, Video::FilterLinear);
   } else if(config->video.shader == "Display Emulation") {
     if(program->active) {
@@ -202,17 +202,17 @@ void Utility::updateShader() {
       pathname.append("Display Emulation/");
       pathname.append(presentation->systemName, ".shader/");
       if(directory::exists(pathname)) {
-        video->set(Video::Shader, (const char*)pathname);
+        video->set(Video::Shader, pathname);
       } else {
-        video->set(Video::Shader, (const char*)"");
+        video->set(Video::Shader, (string)"");
         video->set(Video::Filter, Video::FilterLinear);
       }
     } else {
-      video->set(Video::Shader, (const char*)"");
+      video->set(Video::Shader, (string)"");
       video->set(Video::Filter, Video::FilterLinear);
     }
   } else {
-    video->set(Video::Shader, (const char*)config->video.shader);
+    video->set(Video::Shader, config->video.shader);
   }
   updatePalette();
 }
