@@ -5,14 +5,18 @@ static const unsigned WindowsXP    = 0x0501;
 static const unsigned WindowsVista = 0x0600;
 static const unsigned Windows7     = 0x0601;
 
+static auto Button_CustomDraw(HWND, PAINTSTRUCT&, unsigned, const Font&, const Image&, Orientation, const string&) -> void;
+
 static auto OsVersion() -> unsigned {
-  OSVERSIONINFO versionInfo = {0};
+  OSVERSIONINFO versionInfo{0};
   versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
   GetVersionEx(&versionInfo);
   return (versionInfo.dwMajorVersion << 8) + (versionInfo.dwMajorVersion << 0);
 }
 
-static auto CreateBitmap(const image& icon) -> HBITMAP {
+static auto CreateBitmap(image icon) -> HBITMAP {
+  icon.alphaMultiply();  //Windows AlphaBlend() requires premultiplied image data
+  icon.transform();
   HDC hdc = GetDC(0);
   BITMAPINFO bitmapInfo;
   memset(&bitmapInfo, 0, sizeof(BITMAPINFO));
@@ -26,6 +30,33 @@ static auto CreateBitmap(const image& icon) -> HBITMAP {
   void* bits = nullptr;
   HBITMAP hbitmap = CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &bits, NULL, 0);
   if(bits) memory::copy(bits, icon.data(), icon.size());
+  ReleaseDC(0, hdc);
+  return hbitmap;
+}
+
+static auto CreateBitmap(const Image& image) -> HBITMAP {
+  HDC hdc = GetDC(0);
+  BITMAPINFO bitmapInfo{0};
+  bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+  bitmapInfo.bmiHeader.biWidth = image.width();
+  bitmapInfo.bmiHeader.biHeight = -image.height();  //bitmaps are stored upside down unless we negate height
+  bitmapInfo.bmiHeader.biPlanes = 1;
+  bitmapInfo.bmiHeader.biBitCount = 32;
+  bitmapInfo.bmiHeader.biCompression = BI_RGB;
+  bitmapInfo.bmiHeader.biSizeImage = image.width() * image.height() * sizeof(uint32_t);
+  void* bits = nullptr;
+  HBITMAP hbitmap = CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &bits, nullptr, 0);
+  if(bits) {
+    auto source = (const uint8_t*)image.data();
+    auto target = (uint8_t*)bits;
+    for(auto n : range(image.width() * image.height())) {
+      target[0] = (source[0] * source[3]) / 255;
+      target[1] = (source[1] * source[3]) / 255;
+      target[2] = (source[2] * source[3]) / 255;
+      target[3] = (source[3]);
+      source += 4, target += 4;
+    }
+  }
   ReleaseDC(0, hdc);
   return hbitmap;
 }
@@ -62,16 +93,18 @@ static auto GetWindowZOrder(HWND hwnd) -> unsigned {
   return z;
 }
 
-static auto ImageList_Append(HIMAGELIST imageList, const image& source, unsigned scale) -> void {
-  auto image = source;
-  if(image.empty()) {
-    image.allocate(scale, scale);
-    image.fill(GetSysColor(COLOR_WINDOW));
+static auto ImageList_Append(HIMAGELIST imageList, const Image& image, unsigned scale) -> void {
+  nall::image icon;
+  if(image) {
+    icon.allocate(image.width(), image.height());
+    memory::copy(icon.data(), image.data(), icon.size());
+    icon.scale(scale, scale);
+  } else {
+    icon.allocate(scale, scale);
+    icon.fill(GetSysColor(COLOR_WINDOW));
   }
-  image.transform();
-  image.scale(scale, scale);
-  HBITMAP bitmap = CreateBitmap(image);
-  ImageList_Add(imageList, bitmap, NULL);
+  HBITMAP bitmap = CreateBitmap(icon);
+  ImageList_Add(imageList, bitmap, nullptr);
   DeleteObject(bitmap);
 }
 
@@ -283,6 +316,20 @@ static auto CALLBACK Shared_windowProc(WindowProc windowProc, HWND hwnd, UINT ms
   }
 
   case WM_NOTIFY: {
+    //WC_TABCONTROL requires parenting widgets to it; rather than the WINDOW
+    //without doing this; backgrounds on transparent controls (eg STATIC) are painted wrong
+    //this causes some WC_LISTVIEW WM_NOTIFY messages to only go to the WC_TABCONTROL WNDPROC
+    //all other controls also send their messages to the WC_TABCONTROL WNDPROC
+    //to avoid duplicating all message logic, hiro shares a WNDPROC with Window and TabFrame
+    //LVN_ITEM(ACTIVATE,CHANGED) are only sent to the TabFrame, as expected
+    //yet for unknown reasons, LVN_COLUMNCLICK and NM_(CLICK,DBLCLK,RCLICK) are
+    //sent to both the TabFrame, and then again to the Window's WNDPROC
+    //this causes on(Sort,Toggle,Context) to trigger callbacks twice
+    //if we try to block propagation to the Window (via return instead of break); then
+    //this will result in the LVN_ITEM(ACTIVATE,CHANGED) never being invoked (unsure why)
+    //as a workaround; we must detect these message to the Windows' WNDPROC, and block them
+    bool isWindowCallback = (object == window);
+
     auto header = (LPNMHDR)lparam;
     auto object = (mObject*)GetWindowLongPtr((HWND)header->hwndFrom, GWLP_USERDATA);
     if(!object) break;
@@ -298,15 +345,16 @@ static auto CALLBACK Shared_windowProc(WindowProc windowProc, HWND hwnd, UINT ms
         break;
       }
       if(header->code == LVN_COLUMNCLICK) {
-        listView->self()->onSort(lparam);
+        if(!isWindowCallback) listView->self()->onSort(lparam);
         break;
       }
       if(header->code == NM_CLICK || header->code == NM_DBLCLK) {
-        listView->self()->onToggle(lparam);
+        //onToggle performs the test to ensure the ListViewItem clicked was checkable
+        if(!isWindowCallback) listView->self()->onToggle(lparam);
         break;
       }
       if(header->code == NM_RCLICK) {
-        listView->self()->onContext(lparam);
+        if(!isWindowCallback) listView->self()->onContext(lparam);
         break;
       }
       if(header->code == NM_CUSTOMDRAW) {
