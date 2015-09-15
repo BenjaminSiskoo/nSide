@@ -8,8 +8,10 @@ namespace Famicom {
   namespace Info {
     static const string Name[] = "nSide-fc";
     // If you import nSide's changes into another fork of higan, please do not
-    // import the serializer version unless you intend to import all of nSide-fc
-    // simultaneously.
+    // import the serializer version ID unless you intend to import all of
+    // nSide-fc simultaneously.
+    // This is required to avoid errors in case a save state created in one
+    // higan fork is loaded into another.
     static const unsigned SerializerVersion = 0;
   }
 }
