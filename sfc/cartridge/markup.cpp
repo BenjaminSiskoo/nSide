@@ -101,7 +101,7 @@ auto Cartridge::parseMarkupMCC(Markup::Node root) -> void {
   hasSatellaviewSlot = true;
   hasMCC = true;
 
-  interface->loadRequest(ID::Satellaview, "BS-X Satellaview", "bs");
+  interface->loadRequest(ID::Satellaview, "BS-X Satellaview", "bs", false);
 
   parseMarkupMemory(mcc.rom, root["rom"], ID::MCCROM, false);
   parseMarkupMemory(mcc.ram, root["ram"], ID::MCCRAM, true);
@@ -126,7 +126,7 @@ auto Cartridge::parseMarkupMCC(Markup::Node root) -> void {
 auto Cartridge::parseMarkupSatellaview(Markup::Node root) -> void {
   hasSatellaviewSlot = true;
 
-  interface->loadRequest(ID::Satellaview, "BS-X Satellaview", "bs");
+  interface->loadRequest(ID::Satellaview, "BS-X Satellaview", "bs", false);
 
   for(auto node : root.find("map")) {
     if(node["id"].text() == "rom") {
@@ -144,7 +144,7 @@ auto Cartridge::parseMarkupSufamiTurbo(Markup::Node root, bool slot) -> void {
 
   if(slot == 0) {
     //load required slot A (will request slot B if slot A cartridge is linkable)
-    interface->loadRequest(ID::SufamiTurboSlotA, "Sufami Turbo - Slot A", "st");
+    interface->loadRequest(ID::SufamiTurboSlotA, "Sufami Turbo - Slot A", "st", false);
   }
 
   for(auto node : root.find("map")) {

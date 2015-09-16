@@ -5,10 +5,10 @@ database revision=2013-01-22
 release
   cartridge region=NTSC
     board id:BSC-1A5B9P-01
-    bsx
+    mcc
       rom name=program.rom size=0x100000
       ram name=save.ram size=0x8000
-      ram name=download.ram size=0x80000
+      psram name=download.ram size=0x80000
       map id=io address=00-3f,80-bf:5000-5fff
       map id=rom address=00-3f,80-bf:8000-ffff
       map id=rom address=40-5f,c0-ff:0000-ffff
