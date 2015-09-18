@@ -8,7 +8,7 @@ endif
 include ../phoenix/GNUmakefile
 
 path := /usr/local/lib
-flags := $(flags) -O3 -fomit-frame-pointer -I..
+flags := $(flags) -I.. -O3
 
 all:
 	$(compiler) $(cppflags) $(flags) -fPIC -o obj/auto_purify.o -c auto_purify.cpp

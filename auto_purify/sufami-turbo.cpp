@@ -1,7 +1,7 @@
 void AutoPurify::copySufamiTurboSaves(const string &pathname) {
   if(!file::exists({pathname, "save.ram"})) {
-    if(file::exists({information.path, nall::basename(information.name), ".srm"})) {
-      file::copy({information.path, nall::basename(information.name), ".srm"}, {pathname, "save.ram"});
+    if(file::exists({information.path, prefixname(information.name), ".srm"})) {
+      file::copy({information.path, prefixname(information.name), ".srm"}, {pathname, "save.ram"});
     }
   }
 }
@@ -20,7 +20,7 @@ string AutoPurify::createSufamiTurboDatabase(vector<uint8_t> &buffer, Markup::No
   string markup = manifest;
   markup.replace("\n  ", "\n");
   markup.replace("information", "\ninformation");
-  markup.ltrim<1>("release\n");
+  markup.ltrim("release\n", 1L);
 
   file::write({pathname, "manifest.bml"}, markup);
   file::write({pathname, "program.rom"}, buffer);
@@ -32,7 +32,7 @@ string AutoPurify::createSufamiTurboDatabase(vector<uint8_t> &buffer, Markup::No
 string AutoPurify::createSufamiTurboHeuristic(vector<uint8_t> &buffer) {
   string pathname = {
     libraryPath, "Sufami Turbo/",
-    nall::basename(information.name),
+    prefixname(information.name),
     ".st/"
   };
   directory::create(pathname);
@@ -45,7 +45,7 @@ string AutoPurify::createSufamiTurboHeuristic(vector<uint8_t> &buffer) {
     "  ram name=save.ram size=0x2000\n",
     "\n",
     "information\n",
-    "  title: ", nall::basename(information.name), "\n"
+    "  title: ", prefixname(information.name), "\n"
   });
   file::write({pathname, "program.rom"}, buffer);
   copySufamiTurboSaves(pathname);
@@ -54,7 +54,7 @@ string AutoPurify::createSufamiTurboHeuristic(vector<uint8_t> &buffer) {
 }
 
 string AutoPurify::openSufamiTurbo(vector<uint8_t> &buffer) {
-  string sha256 = nall::sha256(buffer.data(), buffer.size());
+  string sha256 = Hash::SHA256(buffer.data(), buffer.size()).digest();
 
   string databaseText = string::read({configpath(), "auto_purify/database/Sufami Turbo.bml"}).strip();
   if(databaseText.empty()) databaseText = string{Database::SufamiTurbo}.strip();
@@ -81,7 +81,7 @@ string AutoPurify::syncSufamiTurbo(const string &pathname) {
 
   directory::remove(pathname);
   information.path = pathname;
-  information.name = notdir(string{pathname}.rtrim<1>("/"));
+  information.name = basename(pathname).rtrim("/", 1L);
   string outputPath = openSufamiTurbo(buffer);
 
   if(save.size()) file::write({outputPath, "save.ram"}, save);

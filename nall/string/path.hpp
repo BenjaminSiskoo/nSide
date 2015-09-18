@@ -19,7 +19,7 @@ auto filename(const string& self) -> string {
   for(signed offset = self.size() - 1; offset >= 0; offset--, p--) {
     if(*p == '/') return slice(self, offset + 1);
   }
-  return "";
+  return self;
 }
 
 // (/parent/)child.type/
@@ -41,7 +41,7 @@ auto basename(const string& self) -> string {
     if(*p == '/' && p == last) continue;
     if(*p == '/') return slice(self, offset + 1);
   }
-  return "";
+  return self;
 }
 
 // /parent/(child).type/

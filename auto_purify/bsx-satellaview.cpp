@@ -12,7 +12,7 @@ string AutoPurify::createBsxSatellaviewDatabase(vector<uint8_t> &buffer, Markup:
   string markup = manifest;
   markup.replace("\n  ", "\n");
   markup.replace("information", "\ninformation");
-  markup.ltrim<1>("release\n");
+  markup.ltrim("release\n", 1L);
 
   file::write({pathname, "manifest.bml"}, markup);
   file::write({pathname, "program.rom"}, buffer);
@@ -23,7 +23,7 @@ string AutoPurify::createBsxSatellaviewDatabase(vector<uint8_t> &buffer, Markup:
 string AutoPurify::createBsxSatellaviewHeuristic(vector<uint8_t> &buffer) {
   string pathname = {
     libraryPath, "BS-X Satellaview/",
-    nall::basename(information.name),
+    prefixname(information.name),
     ".bs/"
   };
   directory::create(pathname);
@@ -35,7 +35,7 @@ string AutoPurify::createBsxSatellaviewHeuristic(vector<uint8_t> &buffer) {
     "  rom name=program.rom size=0x", hex(buffer.size()), " type=FlashROM\n",
     "\n",
     "information\n",
-    "  title: ", nall::basename(information.name), "\n"
+    "  title: ", prefixname(information.name), "\n"
   });
   file::write({pathname, "program.rom"}, buffer);
 
@@ -43,7 +43,7 @@ string AutoPurify::createBsxSatellaviewHeuristic(vector<uint8_t> &buffer) {
 }
 
 string AutoPurify::openBsxSatellaview(vector<uint8_t> &buffer) {
-  string sha256 = nall::sha256(buffer.data(), buffer.size());
+  string sha256 = Hash::SHA256(buffer.data(), buffer.size()).digest();
 
   string databaseText = string::read({configpath(), "auto_purify/database/BS-X Satellaview.bml"}).strip();
   if(databaseText.empty()) databaseText = string{Database::BsxSatellaview}.strip();
@@ -67,6 +67,6 @@ string AutoPurify::syncBsxSatellaview(const string &pathname) {
 
   directory::remove(pathname);
   information.path = pathname;
-  information.name = notdir(string{pathname}.rtrim<1>("/"));
+  information.name = basename(pathname).rtrim("/", 1L);
   return openBsxSatellaview(buffer);
 }

@@ -1,13 +1,13 @@
 void AutoPurify::copyGameBoyAdvanceSaves(const string &pathname) {
   if(!file::exists({pathname, "save.ram"})) {
-    if(file::exists({information.path, nall::basename(information.name), ".sav"})) {
-      file::copy({information.path, nall::basename(information.name), ".sav"}, {pathname, "save.ram"});
+    if(file::exists({information.path, prefixname(information.name), ".sav"})) {
+      file::copy({information.path, prefixname(information.name), ".sav"}, {pathname, "save.ram"});
     }
   }
 
   if(!file::exists({pathname, "rtc.ram"})) {
-    if(file::exists({information.path, nall::basename(information.name), ".rtc"})) {
-      file::copy({information.path, nall::basename(information.name), ".rtc"}, {pathname, "rtc.ram"});
+    if(file::exists({information.path, prefixname(information.name), ".rtc"})) {
+      file::copy({information.path, prefixname(information.name), ".rtc"}, {pathname, "rtc.ram"});
     }
   }
 }
@@ -15,14 +15,14 @@ void AutoPurify::copyGameBoyAdvanceSaves(const string &pathname) {
 string AutoPurify::createGameBoyAdvanceHeuristic(vector<uint8_t> &buffer) {
   string pathname = {
     libraryPath, "Game Boy Advance/",
-    nall::basename(information.name),
+    prefixname(information.name),
     ".gba/"
   };
   directory::create(pathname);
 
   GameBoyAdvanceCartridge info(buffer.data(), buffer.size());
   string markup = {"unverified\n\n", info.markup};
-  markup.append("\ninformation\n  title: ", nall::basename(information.name), "\n");
+  markup.append("\ninformation\n  title: ", prefixname(information.name), "\n");
   if(!information.manifest.empty()) markup = information.manifest;  //override with embedded beat manifest, if one exists
 
   file::write({pathname, "manifest.bml"}, markup);
@@ -48,7 +48,7 @@ string AutoPurify::syncGameBoyAdvance(const string &pathname) {
 
   directory::remove(pathname);
   information.path = pathname;
-  information.name = notdir(string{pathname}.rtrim<1>("/"));
+  information.name = basename(pathname).rtrim("/", 1L);
   string outputPath = openGameBoyAdvance(buffer);
 
   if(save.size()) file::write({outputPath, "save.ram"}, save);

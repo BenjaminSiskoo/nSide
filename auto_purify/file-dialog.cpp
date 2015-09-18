@@ -29,21 +29,21 @@ struct FileDialog : Window {
 
     lstring folders = directory::ifolders(pathname);
     for(auto &folder : folders) {
-      fileList.append(string{folder}.rtrim<1>("/"));
+      fileList.append(string{folder}.rtrim("/", 1L));
       fileList.setImage(filenameList.size(), 0, {resource::folder, sizeof resource::folder});
-      filenameList.append({pathname, folder});
+      filenameList.append(string{pathname, folder});
     }
 
     lstring files = directory::ifiles(pathname);
     for(auto &file : files) {
       if(AutoPurify::supported(file) == false) continue;  //ignore unsupported extensions
       fileList.append(file);
-      if(extension(file) == "zip") {
+      if(suffixname(file) == "zip") {
         fileList.setImage(filenameList.size(), 0, {resource::archive, sizeof resource::archive});
       } else {
         fileList.setImage(filenameList.size(), 0, {resource::file, sizeof resource::file});
       }
-      filenameList.append({pathname, file});
+      filenameList.append(string{pathname, file});
     }
 
     fileList.setSelection(0);
@@ -80,7 +80,7 @@ struct FileDialog : Window {
     };
 
     upButton.onActivate = [&] {
-      setPath(parentdir(pathname));
+      setPath(dirname(pathname));
     };
 
     fileList.onActivate = openButton.onActivate = [&] {

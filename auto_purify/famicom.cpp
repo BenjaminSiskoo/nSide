@@ -1,7 +1,7 @@
 void AutoPurify::copyFamicomSaves(const string &pathname) {
   if(!file::exists({pathname, "save.ram"})) {
-    if(file::exists({information.path, nall::basename(information.name), ".sav"})) {
-      file::copy({information.path, nall::basename(information.name), ".sav"}, {pathname, "save.ram"});
+    if(file::exists({information.path, prefixname(information.name), ".sav"})) {
+      file::copy({information.path, prefixname(information.name), ".sav"}, {pathname, "save.ram"});
     }
   }
 }
@@ -20,13 +20,12 @@ string AutoPurify::createFamicomDatabase(vector<uint8_t> &buffer, Markup::Node &
   string markup = manifest;
   markup.replace("\n  ", "\n");
   markup.replace("information", "\ninformation");
-  markup.ltrim<1>("release\n");
+  markup.ltrim("release\n", 1L);
 
   file::write({pathname, "manifest.bml"}, markup);
 
   unsigned offset = 0;
-  for(auto &node : document["release/information/configuration"]) {
-    if(node.name != "rom") continue;
+  for(auto node : document["release/information/configuration"].find("rom")) {
     string name = node["name"].text();
     unsigned size = node["size"].decimal();
     file::write({pathname, name}, buffer.data() + offset, size);
@@ -40,17 +39,18 @@ string AutoPurify::createFamicomDatabase(vector<uint8_t> &buffer, Markup::Node &
 string AutoPurify::createFamicomHeuristic(vector<uint8_t> &buffer) {
   string pathname = {
     libraryPath, "Famicom/",
-    nall::basename(information.name),
+    prefixname(information.name),
     ".fc/"
   };
   directory::create(pathname);
 
   FamicomCartridge info(buffer.data(), buffer.size());
   string markup = {"unverified\n\n", info.markup};
-  markup.append("\ninformation\n  title: ", nall::basename(information.name));
+  markup.append("\ninformation\n  title: ", prefixname(information.name));
   if(!information.manifest.empty()) markup = information.manifest;  //override with embedded beat manifest, if one exists
 
   file::write({pathname, "manifest.bml"}, markup);
+  file::write({pathname, "ines.rom"}, buffer.data() + 0, 16);
   file::write({pathname, "program.rom"}, buffer.data() + 16, info.prgrom);
   if(info.chrrom > 0) file::write({pathname, "character.rom"}, buffer.data() + 16 + info.prgrom, info.chrrom);
 
@@ -65,13 +65,13 @@ string AutoPurify::openFamicom(vector<uint8_t> &buffer) {
   ines = ines && buffer.data()[2] == 'S';
   ines = ines && buffer.data()[3] == 0x1A;
   if(ines && buffer.data()[4] == 0x01) {
-    string sha256_1 = nall::sha256(buffer.data() + 0x0010, 0x2000);
-    string sha256_2 = nall::sha256(buffer.data() + 0x2010, 0x2000);
+    string sha256_1 = Hash::SHA256(buffer.data() + 0x0010, 0x2000).digest();
+    string sha256_2 = Hash::SHA256(buffer.data() + 0x2010, 0x2000).digest();
     if(sha256_1 == sha256_2) {
       buffer.remove(16,0x2000);
     }
   }
-  string sha256 = nall::sha256(buffer.data() + (ines ? 16 : 0), buffer.size() - (ines ? 16 : 0));
+  string sha256 = Hash::SHA256(buffer.data() + (ines ? 16 : 0), buffer.size() - (ines ? 16 : 0)).digest();
 
   string databaseText = string::read({configpath(), "auto_purify/database/Famicom.bml"}).strip();
   if(databaseText.empty()) databaseText = string{Database::Famicom}.strip();
@@ -115,7 +115,7 @@ string AutoPurify::syncFamicom(const string &pathname) {
 
   directory::remove(pathname);
   information.path = pathname;
-  information.name = notdir(string{pathname}.rtrim<1>("/"));
+  information.name = basename(pathname).rtrim("/", 1L);
   string outputPath = openFamicom(buffer);
 
   if(save.size()) file::write({outputPath, "save.ram"}, save);

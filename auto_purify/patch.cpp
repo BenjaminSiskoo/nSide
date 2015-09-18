@@ -1,5 +1,5 @@
 void AutoPurify::applyBeatPatch(vector<uint8_t> &buffer) {
-  string name = {information.path, nall::basename(information.name), ".bps"};
+  string name = {information.path, prefixname(information.name), ".bps"};
   if(!file::exists(name)) return;
 
   bpspatch patch;

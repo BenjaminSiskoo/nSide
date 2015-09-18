@@ -95,13 +95,13 @@ struct AutoPurify {
 FileDialog *fileDialog = nullptr;
 
 AutoPurify::AutoPurify() {
-  libraryPath = string::read({configpath(), "nSide-e/library.bml"}).strip().ltrim<1>("Path: ").replace("\\", "/");
+  libraryPath = string::read({configpath(), "nSide-e/library.bml"}).strip().ltrim("Path: ", 1L).replace("\\", "/");
   if(libraryPath.empty()) libraryPath = {userpath(), "Emulation/"};
   if(libraryPath.endsWith("/") == false) libraryPath.append("/");
 }
 
 bool AutoPurify::supported(const string &filename) {
-  string extension = nall::extension(filename);
+  string extension = suffixname(filename).ltrim(".", 1L);
 
   if(extension == "fc" ) return true;
   if(extension == "nes") return true;
@@ -130,8 +130,8 @@ string AutoPurify::open(string filename) {
 
   if(filename.empty()) return "";
 
-  information.path = dir(filename);
-  information.name = notdir(filename);
+  information.path = dirname(filename);
+  information.name = basename(filename);
   config.path = information.path;  //remember last used directory
 
   vector<uint8_t> buffer;

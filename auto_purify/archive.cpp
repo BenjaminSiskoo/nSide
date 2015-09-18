@@ -1,5 +1,5 @@
 vector<uint8_t> AutoPurify::extractROM() {
-  unzip archive;
+  Decode::ZIP archive;
   if(archive.open(information.archive)) {
     for(auto& file : archive.file) {
       if(file.name.endsWith(".fc")  || file.name.endsWith(".nes")
@@ -8,7 +8,7 @@ vector<uint8_t> AutoPurify::extractROM() {
       || file.name.endsWith(".gb")  || file.name.endsWith(".gbc")
       || file.name.endsWith(".gba")
       ) {
-        information.name = notdir(file.name);
+        information.name = filename(file.name);
         return archive.extract(file);
       }
     }
@@ -16,11 +16,11 @@ vector<uint8_t> AutoPurify::extractROM() {
   return vector<uint8_t>();
 }
 
-vector<uint8_t> AutoPurify::extractFile(const string& filename) {
-  unzip archive;
+vector<uint8_t> AutoPurify::extractFile(const string& name) {
+  Decode::ZIP archive;
   if(archive.open(information.archive)) {
     for(auto& file : archive.file) {
-      if(notdir(file.name) == filename) {
+      if(filename(file.name) == name) {
         return archive.extract(file);
       }
     }

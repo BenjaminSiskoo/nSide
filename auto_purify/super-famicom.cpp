@@ -1,13 +1,13 @@
 void AutoPurify::copySuperFamicomSaves(const string &pathname) {
   if(!file::exists({pathname, "save.ram"})) {
-    if(file::exists({information.path, nall::basename(information.name), ".srm"})) {
-      file::copy({information.path, nall::basename(information.name), ".srm"}, {pathname, "save.ram"});
+    if(file::exists({information.path, prefixname(information.name), ".srm"})) {
+      file::copy({information.path, prefixname(information.name), ".srm"}, {pathname, "save.ram"});
     }
   }
 
   if(!file::exists({pathname, "rtc.ram"})) {
-    if(file::exists({information.path, nall::basename(information.name), ".rtc"})) {
-      file::copy({information.path, nall::basename(information.name), ".rtc"}, {pathname, "rtc.ram"});
+    if(file::exists({information.path, prefixname(information.name), ".rtc"})) {
+      file::copy({information.path, prefixname(information.name), ".rtc"}, {pathname, "rtc.ram"});
     }
   }
 }
@@ -26,13 +26,12 @@ string AutoPurify::createSuperFamicomDatabase(vector<uint8_t> &buffer, Markup::N
   string markup = manifest;
   markup.replace("\n  ", "\n");
   markup.replace("information", "\ninformation");
-  markup.ltrim<1>("release\n");
+  markup.ltrim("release\n", 1L);
 
   file::write({pathname, "manifest.bml"}, markup);
 
   unsigned offset = 0;
-  for(auto &node : document["release/information/configuration"]) {
-    if(node.name != "rom") continue;
+  for(auto node : document["release/information/configuration"].find("rom")) {
     string name = node["name"].text();
     unsigned size = node["size"].decimal();
     file::write({pathname, name}, buffer.data() + offset, size);
@@ -46,7 +45,7 @@ string AutoPurify::createSuperFamicomDatabase(vector<uint8_t> &buffer, Markup::N
 string AutoPurify::createSuperFamicomHeuristic(vector<uint8_t> &buffer) {
   string pathname = {
     libraryPath, "Super Famicom/",
-    nall::basename(information.name),
+    prefixname(information.name),
     ".sfc/"
   };
   directory::create(pathname);
@@ -55,7 +54,7 @@ string AutoPurify::createSuperFamicomHeuristic(vector<uint8_t> &buffer) {
 
   SuperFamicomCartridge info(buffer.data(), buffer.size());
   string markup = {"unverified\n\n", info.markup};
-  markup.append("\ninformation\n  title: ", nall::basename(information.name), "\n");
+  markup.append("\ninformation\n  title: ", prefixname(information.name), "\n");
   if(!information.manifest.empty()) markup = information.manifest;  //override with embedded beat manifest, if one exists
   information.manifest = markup;  //save for use with firmware routine below
 
@@ -77,7 +76,7 @@ string AutoPurify::createSuperFamicomHeuristic(vector<uint8_t> &buffer) {
 void AutoPurify::createSuperFamicomHeuristicFirmware(vector<uint8_t> &buffer, const string &pathname, bool firmware_appended) {
   auto copyFirmwareInternal = [&](const string &name, unsigned programSize, unsigned dataSize, unsigned bootSize) {
     //firmware appended directly onto .sfc file
-    string basename = nall::basename(name);
+    string basename = prefixname(name);
     if(programSize) file::write({pathname, basename, ".program.rom"}, buffer.data() + buffer.size() - programSize - dataSize - bootSize, programSize);
     if(dataSize) file::write({pathname, basename, ".data.rom"}, buffer.data() + buffer.size() - dataSize - bootSize, dataSize);
     if(bootSize) file::write({pathname, basename, ".boot.rom"}, buffer.data() + buffer.size() - bootSize, bootSize);
@@ -88,7 +87,7 @@ void AutoPurify::createSuperFamicomHeuristicFirmware(vector<uint8_t> &buffer, co
     auto buffer = file::read({information.path, name});  //try and read from the containing directory
     if(buffer.size() == 0) buffer = extractFile(name);  //try and read from the containing archive, if one exists
     if(buffer.size() == 0) {
-      if(thread::primary()) MessageWindow().setText({
+      /*if(thread::primary())*/ MessageWindow().setText({
         "Error: ", information.name, "\n\n",
         "Required firmware ", name, " not found. Game will not be playable!\n\n",
         "You must obtain this file, and place it in the same folder as this game."
@@ -96,7 +95,7 @@ void AutoPurify::createSuperFamicomHeuristicFirmware(vector<uint8_t> &buffer, co
       return;
     }
 
-    string basename = nall::basename(name);
+    string basename = prefixname(name);
     if(programSize) file::write({pathname, basename, ".program.rom"}, buffer.data(), programSize);
     if(dataSize) file::write({pathname, basename, ".data.rom"}, buffer.data() + programSize, dataSize);
     if(bootSize) file::write({pathname, basename, ".boot.rom"}, buffer.data() + programSize + dataSize, bootSize);
@@ -121,7 +120,7 @@ void AutoPurify::createSuperFamicomHeuristicFirmware(vector<uint8_t> &buffer, co
 }
 
 string AutoPurify::openSuperFamicom(vector<uint8_t> &buffer) {
-  string sha256 = nall::sha256(buffer.data(), buffer.size());
+  string sha256 = Hash::SHA256(buffer.data(), buffer.size()).digest();
 
   string databaseText = string::read({configpath(), "auto_purify/database/Super Famicom.bml"}).strip();
   if(databaseText.empty()) databaseText = string{Database::SuperFamicom}.strip();
@@ -205,7 +204,7 @@ string AutoPurify::syncSuperFamicom(const string &pathname) {
 
   directory::remove(pathname);
   information.path = pathname;
-  information.name = notdir(string{pathname}.rtrim<1>("/"));
+  information.name = basename(pathname).rtrim("/", 1L);
   string outputPath = openSuperFamicom(buffer);
 
   if(save.size()) file::write({outputPath, "save.ram"}, save);
