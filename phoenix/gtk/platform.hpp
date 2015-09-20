@@ -218,7 +218,7 @@ struct pRadioItem : public pAction {
   RadioItem& radioItem;
 
   void setChecked();
-  void setGroup(const group<RadioItem>& group);
+  void setGroup(const nall::group<RadioItem>& group);
   void setText(string text);
 
   pRadioItem(RadioItem& radioItem) : pAction(radioItem), radioItem(radioItem) {}
@@ -521,7 +521,7 @@ struct pRadioButton : public pWidget {
 
   Size minimumSize();
   void setChecked();
-  void setGroup(const group<RadioButton>& group);
+  void setGroup(const nall::group<RadioButton>& group);
   void setImage(const image& image, Orientation orientation);
   void setText(string text);
 
@@ -538,7 +538,7 @@ struct pRadioLabel : public pWidget {
 
   Size minimumSize();
   void setChecked();
-  void setGroup(const group<RadioLabel>& group);
+  void setGroup(const nall::group<RadioLabel>& group);
   void setText(string text);
 
   pRadioLabel(RadioLabel& radioLabel) : pWidget(radioLabel), radioLabel(radioLabel) {}

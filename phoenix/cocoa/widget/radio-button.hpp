@@ -15,7 +15,7 @@ struct pRadioButton : public pWidget {
   Size minimumSize();
   void setChecked();
   void setGeometry(Geometry geometry);
-  void setGroup(const group<RadioButton>& group);
+  void setGroup(const nall::group<RadioButton>& group);
   void setImage(const image& image, Orientation orientation);
   void setText(string text);
 

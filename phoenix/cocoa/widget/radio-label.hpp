@@ -15,7 +15,7 @@ struct pRadioLabel : public pWidget {
   Size minimumSize();
   void setChecked();
   void setGeometry(Geometry geometry);
-  void setGroup(const group<RadioLabel>& group);
+  void setGroup(const nall::group<RadioLabel>& group);
   void setText(string text);
 
   pRadioLabel(RadioLabel& radioLabel) : pWidget(radioLabel), radioLabel(radioLabel) {}

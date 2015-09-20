@@ -28,8 +28,8 @@ struct Window::State {
   bool droppable = false;
   bool fullScreen = false;
   Geometry geometry = {128, 128, 256, 256};
-  group<Layout> layout;
-  group<Menu> menu;
+  nall::group<Layout> layout;
+  nall::group<Menu> menu;
   string menuFont;
   bool menuVisible = false;
   bool modal = false;
@@ -39,7 +39,7 @@ struct Window::State {
   bool statusVisible = false;
   string title;
   bool visible = false;
-  group<Widget> widget;
+  nall::group<Widget> widget;
   string widgetFont;
 };
 
@@ -51,7 +51,7 @@ struct Action::State {
 };
 
 struct Menu::State {
-  group<Action> action;
+  nall::group<Action> action;
   nall::image image;
   string text;
 };

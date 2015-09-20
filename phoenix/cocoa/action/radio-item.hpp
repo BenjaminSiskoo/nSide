@@ -13,7 +13,7 @@ struct pRadioItem : public pAction {
   CocoaRadioItem* cocoaRadioItem = nullptr;
 
   void setChecked();
-  void setGroup(const group<RadioItem>& group);
+  void setGroup(const nall::group<RadioItem>& group);
   void setText(string text);
 
   pRadioItem(RadioItem& radioItem) : pAction(radioItem), radioItem(radioItem) {}
