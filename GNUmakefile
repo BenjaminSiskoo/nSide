@@ -9,7 +9,7 @@ ifndef profile
   profile := accuracy
 endif
 ifndef target
-  target := nSide-e
+  target := nSide-t
 endif
 
 ifeq ($(target),loki)
