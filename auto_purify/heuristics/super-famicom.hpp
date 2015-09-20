@@ -306,7 +306,7 @@ SuperFamicomCartridge::SuperFamicomCartridge(const uint8_t *data, unsigned size)
       "  map id=rom address=80-9f:8000-ffff base=0x200000 mask=0x8000\n"
       "  map id=rom address=a0-bf:8000-ffff base=0x100000 mask=0x8000\n"
       "  map id=ram address=70-7f,f0-ff:0000-7fff\n"
-      "  bsxslot\n"
+      "  satellaview\n"
       "    map id=rom address=c0-ef:0000-ffff\n"
     );
   }
@@ -318,7 +318,7 @@ SuperFamicomCartridge::SuperFamicomCartridge(const uint8_t *data, unsigned size)
       "  map id=rom address=00-1f,80-9f:8000-ffff\n"
       "  map id=rom address=40-5f,c0-df:0000-ffff\n"
       "  map id=ram address=20-3f,a0-bf:6000-7fff\n"
-      "  bsxslot\n"
+      "  satellaview\n"
       "    map id=rom address=20-3f,a0-bf:8000-ffff\n"
       "    map id=rom address=60-7f,e0-ff:0000-ffff\n"
     );
@@ -326,7 +326,7 @@ SuperFamicomCartridge::SuperFamicomCartridge(const uint8_t *data, unsigned size)
 
   else if(mapper == BSXROM) {
     markup.append(
-      "  bsx\n"
+      "  mcc\n"
       "    rom name=program.rom size=0x", hex(rom_size), "\n"
       "    ram name=save.ram size=0x", hex(ram_size), "\n"
       "    ram name=download.ram size=0x80000\n"
@@ -342,14 +342,13 @@ SuperFamicomCartridge::SuperFamicomCartridge(const uint8_t *data, unsigned size)
   else if(mapper == STROM) {
     markup.append(
       "  rom name=program.rom size=0x", hex(rom_size), "\n"
-      "  map id=rom address='00-1f,80-9f:8000-ffff mask=0x8000\n"
+      "  map id=rom address=00-1f,80-9f:8000-ffff mask=0x8000\n"
       "  sufamiturbo\n"
-      "    slot id=A\n"
-      "      map id=rom address=20-3f,a0-bf:8000-ffff mask=0x8000\n"
-      "      map id=ram address=60-63,e0-e3:8000-ffff\n"
-      "    slot id=B\n"
-      "      map id=rom address=40-5f,c0-df:8000-ffff mask=0x8000\n"
-      "      map id=ram address=70-73,f0-f3:8000-ffff\n"
+      "    map id=rom address=20-3f,a0-bf:8000-ffff mask=0x8000\n"
+      "    map id=ram address=60-63,e0-e3:8000-ffff\n"
+      "  sufamiturbo\n"
+      "    map id=rom address=40-5f,c0-df:8000-ffff mask=0x8000\n"
+      "    map id=ram address=70-73,f0-f3:8000-ffff\n"
     );
   }
 
