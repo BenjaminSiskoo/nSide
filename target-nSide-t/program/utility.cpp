@@ -51,7 +51,7 @@ auto Program::updateVideoShader() -> void {
     if(emulator) {
       string pathname = locate({configpath(), "nSide-t/"}, "Video Shaders/");
       pathname.append("Display Emulation/");
-      pathname.append(presentation->systemMenu.text(), ".shader/");
+      pathname.append(prefixname(mediaPaths(0)), ".shader/");
       if(directory::exists(pathname)) {
         video->set(Video::Shader, pathname);
       } else {

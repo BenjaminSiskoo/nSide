@@ -22,7 +22,7 @@ auto Program::loadMedia(Emulator::Interface& emulator_, Emulator::Interface::Med
 
   emulator = &emulator_;
   emulator->load(media.id);
-  updateVideoPalette();
+  updateVideoShader();
   dsp.setFrequency(emulator->audioFrequency());
   emulator->power();
 
