@@ -35,17 +35,49 @@ auto Program::updateStatusText() -> void {
   }
 }
 
-auto Program::updateVideoFilter() -> void {
-  if(config->video.filter == "None") video->set(Video::Filter, Video::FilterNearest);
-  if(config->video.filter == "Blur") video->set(Video::Filter, Video::FilterLinear);
+auto Program::updateVideoShader() -> void {
+  //if(config->video.filter == "None") video->set(Video::Filter, Video::FilterNearest);
+  //if(config->video.filter == "Blur") video->set(Video::Filter, Video::FilterLinear);
+  if(config->video.shader == "None") {
+    video->set(Video::Shader, (string)"");
+    video->set(Video::Filter, Video::FilterNearest);
+  } else if(config->video.shader == "Blur") {
+    video->set(Video::Shader, (string)"");
+    video->set(Video::Filter, Video::FilterLinear);
+  } else if(config->video.shader == "Display Emulation" && config->video.driver != "OpenGL") {
+    video->set(Video::Shader, (string)"");
+    video->set(Video::Filter, Video::FilterLinear);
+  } else if(config->video.shader == "Display Emulation") {
+    if(emulator) {
+      string pathname = locate({configpath(), "nSide-t/"}, "Video Shaders/");
+      pathname.append("Display Emulation/");
+      pathname.append(presentation->systemMenu.text(), ".shader/");
+      if(directory::exists(pathname)) {
+        video->set(Video::Shader, pathname);
+      } else {
+        video->set(Video::Shader, (string)"");
+        video->set(Video::Filter, Video::FilterLinear);
+      }
+    } else {
+      video->set(Video::Shader, (string)"");
+      video->set(Video::Filter, Video::FilterLinear);
+    }
+  } else {
+    video->set(Video::Shader, config->video.shader);
+  }
+  updateVideoPalette();
 }
 
 auto Program::updateVideoPalette() -> void {
   if(!emulator) return;
-  emulator->paletteUpdate(config->video.colorEmulation
-  ? Emulator::Interface::PaletteMode::Emulation
-  : Emulator::Interface::PaletteMode::Standard
-  );
+  if(config->video.shader == "Display Emulation" && config->video.driver == "OpenGL") {
+    emulator->paletteUpdate(Emulator::Interface::PaletteMode::Channel);
+  } else {
+    emulator->paletteUpdate(config->video.colorEmulation
+    ? Emulator::Interface::PaletteMode::Emulation
+    : Emulator::Interface::PaletteMode::Standard
+    );
+  }
 }
 
 auto Program::updateAudio() -> void {

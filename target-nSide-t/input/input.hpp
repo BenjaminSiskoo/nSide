@@ -21,7 +21,8 @@ struct InputMapping {
 };
 
 struct InputHotkey : InputMapping {
-  function<void ()> action;
+  function<void ()> press;
+  function<void ()> release;
 
   int16 state = 0;
 };

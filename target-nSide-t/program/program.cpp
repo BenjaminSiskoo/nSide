@@ -67,7 +67,7 @@ Program::Program(lstring args) {
 
   presentation->drawSplashScreen();
 
-  updateVideoFilter();
+  updateVideoShader();
 
   if(args.size() == 2 && directory::exists(args[1])) {
     loadMedia(args[1]);

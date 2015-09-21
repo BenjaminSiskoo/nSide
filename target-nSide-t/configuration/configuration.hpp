@@ -13,9 +13,9 @@ struct ConfigurationManager : Configuration::Document {
   struct Video : Configuration::Node {
     string driver;
     bool synchronize = false;
-    string scale = "Normal";
+    string scale = "Small";
     bool aspectCorrection = true;
-    string filter = "Blur";
+    string shader = "Blur";
     bool colorEmulation = true;
     unsigned saturation = 100;
     unsigned gamma = 100;

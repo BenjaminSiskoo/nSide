@@ -31,9 +31,14 @@ Presentation::Presentation() {
 
   settingsMenu.setText("Settings");
   videoScaleMenu.setText("Video Scale");
+  if(config->video.scale == "Tiny") videoScaleTiny.setChecked();
   if(config->video.scale == "Small") videoScaleSmall.setChecked();
   if(config->video.scale == "Normal") videoScaleNormal.setChecked();
   if(config->video.scale == "Large") videoScaleLarge.setChecked();
+  videoScaleTiny.setText("Tiny").onActivate([&] {
+    config->video.scale = "Tiny";
+    resizeViewport();
+  });
   videoScaleSmall.setText("Small").onActivate([&] {
     config->video.scale = "Small";
     resizeViewport();
@@ -50,11 +55,22 @@ Presentation::Presentation() {
     config->video.aspectCorrection = aspectCorrection.checked();
     resizeViewport();
   });
-  videoFilterMenu.setText("Video Filter");
-  if(config->video.filter == "None") videoFilterNone.setChecked();
-  if(config->video.filter == "Blur") videoFilterBlur.setChecked();
-  videoFilterNone.setText("None").onActivate([&] { config->video.filter = "None"; program->updateVideoFilter(); });
-  videoFilterBlur.setText("Blur").onActivate([&] { config->video.filter = "Blur"; program->updateVideoFilter(); });
+  videoShaderMenu.setText("Video Shader");
+  if(config->video.shader == "None") videoShaderNone.setChecked();
+  if(config->video.shader == "Blur") videoShaderBlur.setChecked();
+  if(config->video.shader == "Display Emulation") videoShaderEmulation.setChecked();
+  videoShaderNone.setText("None").onActivate([&] {
+    config->video.shader = "None";
+    program->updateVideoShader();
+  });
+  videoShaderBlur.setText("Blur").onActivate([&] {
+    config->video.shader = "Blur";
+    program->updateVideoShader();
+  });
+  videoShaderEmulation.setText("Display Emulation").onActivate([&] {
+    config->video.shader = "Display Emulation";
+    program->updateVideoShader();
+  });
   colorEmulation.setText("Color Emulation").setChecked(config->video.colorEmulation).onToggle([&] {
     config->video.colorEmulation = colorEmulation.checked();
     program->updateVideoPalette();
@@ -137,8 +153,9 @@ auto Presentation::updateEmulator() -> void {
 
 auto Presentation::resizeViewport() -> void {
   signed scale = 1;
-  if(config->video.scale == "Small" ) scale = 1;
-  if(config->video.scale == "Normal") scale = 2;
+  if(config->video.scale == "Tiny"  ) scale = 1;
+  if(config->video.scale == "Small" ) scale = 2;
+  if(config->video.scale == "Normal") scale = 3;
   if(config->video.scale == "Large" ) scale = 4;
 
   signed width  = 256;
