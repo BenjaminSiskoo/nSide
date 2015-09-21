@@ -106,16 +106,16 @@ else ifeq ($(platform),macosx)
 	cp data/cheats.bml $(DESTDIR)Library/Application\ Support/$(name)/cheats.bml
 	chmod -R 777 $(DESTDIR)Library/Application\ Support/$(name)
 else
- 	install -d $(DESTDIR)$(prefix)/bin/
- 	cp out/$(name) $(DESTDIR)$(prefix)/bin/$(name)
- 	install -d $(DESTDIR)$(prefix)/share/pixmaps/
- 	cp data/$(name).png $(DESTDIR)$(prefix)/share/pixmaps/$(name).png
- 	install -d $(DESTDIR)$(prefix)/share/applications/
- 	cp data/$(name).desktop $(DESTDIR)$(prefix)/share/applications/$(name).desktop
- 	install -d $(DESTDIR)usr/share/$(name)
- 	cp -R profile/* $(DESTDIR)usr/share/$(name)
- 	cp data/cheats.bml $(DESTDIR)usr/share/$(name)/cheats.bml
- 	chmod -R 777 $(DESTDIR)usr/share/$(name)
+	install -d $(DESTDIR)$(prefix)/bin/
+	cp out/$(name) $(DESTDIR)$(prefix)/bin/$(name)
+	install -d $(DESTDIR)$(prefix)/share/pixmaps/
+	cp data/$(name).png $(DESTDIR)$(prefix)/share/pixmaps/$(name).png
+	install -d $(DESTDIR)$(prefix)/share/applications/
+	cp data/$(name).desktop $(DESTDIR)$(prefix)/share/applications/$(name).desktop
+	install -d $(DESTDIR)usr/share/$(name)
+	cp -R profile/* $(DESTDIR)usr/share/$(name)
+	cp data/cheats.bml $(DESTDIR)usr/share/$(name)/cheats.bml
+	chmod -R 777 $(DESTDIR)usr/share/$(name)
 endif
 
 uninstall:
@@ -124,5 +124,5 @@ ifeq ($(shell id -un),root)
 else ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
 else
- 	rm $(DESTDIR)$(prefix)/bin/$(name)
+	rm $(DESTDIR)$(prefix)/bin/$(name)
 endif

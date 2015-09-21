@@ -1,4 +1,4 @@
-include nall/GNUMakefile
+include nall/GNUmakefile
 
 fc  := fc
 sfc := sfc
