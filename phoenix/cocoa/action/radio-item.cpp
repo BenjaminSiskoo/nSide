@@ -28,7 +28,7 @@ void pRadioItem::setChecked() {
   }
 }
 
-void pRadioItem::setGroup(const group<RadioItem>& group) {
+void pRadioItem::setGroup(const Group<RadioItem>& group) {
 }
 
 void pRadioItem::setText(string text) {

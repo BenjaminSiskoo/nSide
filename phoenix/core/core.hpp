@@ -2,75 +2,6 @@
 #include <nall/config.hpp>
 #include <nall/directory.hpp>
 #include <nall/function.hpp>
-//#include <nall/group.hpp>
-
-#ifndef NALL_GROUP_HPP
-#define NALL_GROUP_HPP
-
-//group
-//vector of unique references
-
-#include <nall/vector.hpp>
-
-namespace nall {
-
-template<typename T> struct group : protected vector<T*> {
-  group& operator=(const group& source) { vector<T*>::operator=(source); return *this; }
-  group& operator=(group&& source) { vector<T*>::operator=(std::move(source)); return *this; }
-  template<typename... Args> group(Args&&... args) { construct(std::forward<Args>(args)...); }
-
-  bool empty() const { return vector<T*>::empty(); }
-  unsigned size() const { return vector<T*>::size(); }
-  void reset() { vector<T*>::reset(); }
-
-  T& first() const { return *vector<T*>::operator[](0); }
-
-  //return true if at least one item was appended
-  template<typename... Args> bool append(T& value, Args&&... args) {
-    bool result = append(value);
-    return append(std::forward<Args>(args)...) | result;
-  }
-
-  bool append(T& value) {
-    if(vector<T*>::find(&value)) return false;
-    return vector<T*>::append(&value), true;
-  }
-
-  //return true if at least one item was removed
-  template<typename... Args> bool remove(T& value, Args&&... args) {
-    bool result = remove(value);
-    return remove(std::forward<Args>(args)...) | result;
-  }
-
-  bool remove(T& value) {
-    if(auto position = vector<T*>::find(&value)) return vector<T*>::remove(position()), true;
-    return false;
-  }
-
-  struct iterator : protected vector<T*>::constIterator {
-    T& operator*() const { return *vector<T*>::constIterator::operator*(); }
-    bool operator!=(const iterator& source) const { return vector<T*>::constIterator::operator!=(source); }
-    iterator& operator++() { vector<T*>::constIterator::operator++(); return *this; }
-    iterator(const group& source, unsigned position) : vector<T*>::constIterator(source, position) {}
-  };
-
-  const iterator begin() const { return iterator(*this, 0); }
-  const iterator end() const { return iterator(*this, size()); }
-
-private:
-  void construct() {}
-  void construct(const group& source) { vector<T*>::operator=(source); }
-  void construct(group&& source) { vector<T*>::operator=(std::move(source)); }
-  template<typename... Args> void construct(T& value, Args&&... args) {
-    append(value);
-    construct(std::forward<Args>(args)...);
-  }
-};
-
-}
-
-#endif
-
 #include <nall/image.hpp>
 #include <nall/map.hpp>
 #include <nall/stdint.hpp>
@@ -79,6 +10,8 @@ private:
 #include <nall/vector.hpp>
 
 namespace phoenix {
+
+#include "group.hpp"
 
 struct Application;
 struct Font;
@@ -362,9 +295,9 @@ struct Action : Object {
 };
 
 struct Menu : private nall::base_from_member<pMenu&>, Action {
-  void append(const nall::group<Action>& list);
+  void append(const Group<Action>& list);
   nall::image image() const;
-  void remove(const nall::group<Action>& list);
+  void remove(const Group<Action>& list);
   void setImage(const nall::image& image = nall::image{});
   void setText(const nall::string& text);
   nall::string text() const;
@@ -414,7 +347,7 @@ struct CheckItem : private nall::base_from_member<pCheckItem&>, Action {
 
 struct RadioItem : private nall::base_from_member<pRadioItem&>, Action {
   template<typename... Args> static void group(Args&&... args) { group({std::forward<Args>(args)...}); }
-  static void group(const nall::group<RadioItem>& list);
+  static void group(const Group<RadioItem>& list);
 
   nall::function<void ()> onActivate;
 
@@ -760,7 +693,7 @@ struct ProgressBar : private nall::base_from_member<pProgressBar&>, Widget {
 
 struct RadioButton : private nall::base_from_member<pRadioButton&>, Widget {
   template<typename... Args> static void group(Args&&... args) { group({std::forward<Args>(args)...}); }
-  static void group(const nall::group<RadioButton>& list);
+  static void group(const Group<RadioButton>& list);
 
   nall::function<void ()> onActivate;
 
@@ -780,7 +713,7 @@ struct RadioButton : private nall::base_from_member<pRadioButton&>, Widget {
 
 struct RadioLabel : private nall::base_from_member<pRadioLabel&>, Widget {
   template<typename... Args> static void group(Args&&... args) { group({std::forward<Args>(args)...}); }
-  static void group(const nall::group<RadioLabel>& list);
+  static void group(const Group<RadioLabel>& list);
 
   nall::function<void ()> onActivate;
 

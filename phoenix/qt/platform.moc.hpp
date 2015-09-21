@@ -261,7 +261,7 @@ public:
   QActionGroup* qtGroup;
 
   void setChecked();
-  void setGroup(const nall::group<RadioItem>& group);
+  void setGroup(const Group<RadioItem>& group);
   void setText(string text);
 
   pRadioItem(RadioItem& radioItem) : pAction(radioItem), radioItem(radioItem) {}
@@ -722,7 +722,7 @@ public:
   bool checked();
   Size minimumSize();
   void setChecked();
-  void setGroup(const nall::group<RadioLabel>& group);
+  void setGroup(const Group<RadioLabel>& group);
   void setText(string text);
 
   pRadioLabel(RadioLabel& radioLabel) : pWidget(radioLabel), radioLabel(radioLabel) {}
@@ -744,7 +744,7 @@ public:
 
   Size minimumSize();
   void setChecked();
-  void setGroup(const nall::group<RadioButton>& group);
+  void setGroup(const Group<RadioButton>& group);
   void setImage(const image& image, Orientation orientation);
   void setText(string text);
 

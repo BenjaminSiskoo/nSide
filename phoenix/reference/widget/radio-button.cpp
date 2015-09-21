@@ -3,7 +3,7 @@ namespace phoenix {
 void pRadioButton::setChecked() {
 }
 
-void pRadioButton::setGroup(const group<RadioButton>& group) {
+void pRadioButton::setGroup(const Group<RadioButton>& group) {
 }
 
 void pRadioButton::setImage(const image& image, Orientation orientation) {

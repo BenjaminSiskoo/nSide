@@ -16,7 +16,7 @@ void pRadioLabel::setChecked() {
   parent().locked = false;
 }
 
-void pRadioLabel::setGroup(const group<RadioLabel>& group) {
+void pRadioLabel::setGroup(const Group<RadioLabel>& group) {
   if(&parent() == this) return;
   parent().locked = true;
   gtk_radio_button_set_group(

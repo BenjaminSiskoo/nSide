@@ -4,7 +4,7 @@ struct pRadioButton : public pWidget {
   RadioButton& radioButton;
 
   void setChecked();
-  void setGroup(const nall::group<RadioButton>& group);
+  void setGroup(const Group<RadioButton>& group);
   void setImage(const image& image, Orientation orientation);
   void setText(string text);
 

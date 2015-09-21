@@ -12,7 +12,7 @@ struct Presentation : Window {
       Separator controllerSeparator;
       struct Port {
         Menu menu;
-        nall::group<RadioItem> group;
+        phoenix::Group<RadioItem> group;
         vector<RadioItem*> device;
       };
       vector<Port*> port;

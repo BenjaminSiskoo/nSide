@@ -29,7 +29,7 @@ void pRadioButton::setChecked() {
   parent().locked = false;
 }
 
-void pRadioButton::setGroup(const group<RadioButton>& group) {
+void pRadioButton::setGroup(const Group<RadioButton>& group) {
   parent().locked = true;
   for(auto& item : radioButton.state.group) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(item.p.gtkWidget), item.state.checked);

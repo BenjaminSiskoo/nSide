@@ -248,7 +248,7 @@ void Presentation::loadShaders() {
     }
   }
 
-  nall::group<RadioItem> group;
+  phoenix::Group<RadioItem> group;
   group.append(shaderNone);
   group.append(shaderBlur);
   group.append(shaderEmulation);

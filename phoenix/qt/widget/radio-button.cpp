@@ -25,7 +25,7 @@ void pRadioButton::setChecked() {
   parent().unlock();
 }
 
-void pRadioButton::setGroup(const group<RadioButton>& group) {
+void pRadioButton::setGroup(const Group<RadioButton>& group) {
   parent().lock();
   for(auto& item : radioButton.state.group) {
     item.p.qtRadioButton->setChecked(item.state.checked);

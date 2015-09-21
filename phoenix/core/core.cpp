@@ -591,7 +591,7 @@ Action::~Action() {
 //Menu
 //====
 
-void Menu::append(const group<Action>& list) {
+void Menu::append(const Group<Action>& list) {
   for(auto& action : list) {
     if(state.action.append(action)) {
       action.state.menu = this;
@@ -604,7 +604,7 @@ image Menu::image() const {
   return state.image;
 }
 
-void Menu::remove(const group<Action>& list) {
+void Menu::remove(const Group<Action>& list) {
   for(auto& action : list) {
     if(state.action.remove(action)) {
       action.state.menu = nullptr;
@@ -725,7 +725,7 @@ CheckItem::~CheckItem() {
 //RadioItem
 //=========
 
-void RadioItem::group(const nall::group<RadioItem>& list) {
+void RadioItem::group(const Group<RadioItem>& list) {
   for(auto& item : list) item.p.setGroup(item.state.group = list);
   if(list.size()) list.first().setChecked();
 }
@@ -1710,7 +1710,7 @@ ProgressBar::~ProgressBar() {
 //RadioButton
 //===========
 
-void RadioButton::group(const nall::group<RadioButton>& list) {
+void RadioButton::group(const Group<RadioButton>& list) {
   for(auto& item : list) item.p.setGroup(item.state.group = list);
   if(list.size()) list.first().setChecked();
 }
@@ -1763,7 +1763,7 @@ RadioButton::~RadioButton() {
 //RadioLabel
 //==========
 
-void RadioLabel::group(const nall::group<RadioLabel>& list) {
+void RadioLabel::group(const Group<RadioLabel>& list) {
   for(auto& item : list) item.p.setGroup(item.state.group = list);
   if(list.size()) list.first().setChecked();
 }

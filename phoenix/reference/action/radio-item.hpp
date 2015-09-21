@@ -4,7 +4,7 @@ struct pRadioItem : public pAction {
   RadioItem& radioItem;
 
   void setChecked();
-  void setGroup(const nall::group<RadioItem>& group);
+  void setGroup(const Group<RadioItem>& group);
   void setText(string text);
 
   pRadioItem(RadioItem& radioItem) : pAction(radioItem), radioItem(radioItem) {}

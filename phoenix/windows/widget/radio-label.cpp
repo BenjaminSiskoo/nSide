@@ -11,7 +11,7 @@ void pRadioLabel::setChecked() {
   }
 }
 
-void pRadioLabel::setGroup(const group<RadioLabel>& group) {
+void pRadioLabel::setGroup(const Group<RadioLabel>& group) {
 }
 
 void pRadioLabel::setText(string text) {

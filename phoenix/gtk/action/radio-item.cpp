@@ -11,7 +11,7 @@ void pRadioItem::setChecked() {
   parent().locked = false;
 }
 
-void pRadioItem::setGroup(const group<RadioItem>& group) {
+void pRadioItem::setGroup(const Group<RadioItem>& group) {
   parent().locked = true;
   for(auto& item : group) {
     if(&item == &group.first()) continue;

@@ -14,7 +14,7 @@ void pRadioLabel::setChecked() {
   parent().unlock();
 }
 
-void pRadioLabel::setGroup(const group<RadioLabel>& group) {
+void pRadioLabel::setGroup(const Group<RadioLabel>& group) {
   parent().lock();
   for(auto& item : radioLabel.state.group) {
     item.p.qtRadioLabel->setChecked(item.state.checked);
