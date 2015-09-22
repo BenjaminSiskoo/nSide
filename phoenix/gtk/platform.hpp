@@ -267,6 +267,7 @@ struct pButton : public pWidget {
   Button& button;
 
   Size minimumSize();
+  void setBordered(bool bordered);
   void setImage(const image& image, Orientation orientation);
   void setText(string text);
 
