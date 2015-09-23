@@ -1,6 +1,7 @@
 struct Presentation : Window {
   Presentation();
   auto updateEmulator() -> void;
+  auto loadShaders() -> void;
   auto resizeViewport() -> void;
   auto toggleFullScreen() -> void;
   auto drawSplashScreen() -> void;
@@ -29,8 +30,7 @@ struct Presentation : Window {
         MenuRadioItem videoShaderNone{&videoShaderMenu};
         MenuRadioItem videoShaderBlur{&videoShaderMenu};
         MenuRadioItem videoShaderEmulation{&videoShaderMenu};
-          Group videoDefaultShaders{&videoShaderNone, &videoShaderBlur, &videoShaderEmulation};
-          Group videoShaders{};
+          Group videoShaders{&videoShaderNone, &videoShaderBlur, &videoShaderEmulation};
         MenuSeparator videoShaderSeparator{&videoShaderMenu};
         MenuCheckItem colorEmulation{&videoShaderMenu};
         MenuCheckItem maskOverscan{&videoShaderMenu};

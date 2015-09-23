@@ -63,7 +63,8 @@ auto Program::updateVideoShader() -> void {
       video->set(Video::Filter, Video::FilterLinear);
     }
   } else {
-    video->set(Video::Shader, config->video.shader);
+    string pathname = locate({configpath(), "nSide-t/"}, "Video Shaders/");
+    video->set(Video::Shader, string{pathname, config->video.shader, ".shader/"});
   }
   updateVideoPalette();
 }

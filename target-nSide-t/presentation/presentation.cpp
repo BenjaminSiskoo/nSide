@@ -56,9 +56,6 @@ Presentation::Presentation() {
     resizeViewport();
   });
   videoShaderMenu.setText("Video Shader");
-  if(config->video.shader == "None") videoShaderNone.setChecked();
-  if(config->video.shader == "Blur") videoShaderBlur.setChecked();
-  if(config->video.shader == "Display Emulation") videoShaderEmulation.setChecked();
   videoShaderNone.setText("None").onActivate([&] {
     config->video.shader = "None";
     program->updateVideoShader();
@@ -71,6 +68,17 @@ Presentation::Presentation() {
     config->video.shader = "Display Emulation";
     program->updateVideoShader();
   });
+  loadShaders();
+  // videoShaders.objects() returns a vector of hiro::Object objects, which
+  // cannot be cast into hiro::MenuRadioItem.
+  // This means having to dig into hiro's internals just to get a vector of
+  // hiro::mMenuRadioItem objects (note the "m" at the beginning), which may be
+  // dangerously vulnerable to changes in hiro.
+  for(auto& object : videoShaders.objects()) {
+    if(auto shader = dynamic_cast<mMenuRadioItem*>(object.data())) {
+      if(config->video.shader == shader->text()) shader->setChecked();
+    }
+  }
   colorEmulation.setText("Color Emulation").setChecked(config->video.colorEmulation).onToggle([&] {
     config->video.colorEmulation = colorEmulation.checked();
     program->updateVideoPalette();
@@ -149,6 +157,27 @@ auto Presentation::updateEmulator() -> void {
   }
 
   systemMenuSeparatorPorts.setVisible(inputPort1.visible() || inputPort2.visible());
+}
+
+auto Presentation::loadShaders() -> void {
+  //only the OpenGL driver has video shader support
+  if(config->video.driver == "OpenGL") {
+    string pathname = locate({configpath(), "nSide-t/"}, "Video Shaders/");
+    lstring shaders = directory::folders(pathname, "*.shader");
+    for(auto& name : shaders) {
+      MenuRadioItem shader{&videoShaderMenu};
+      shader.setText(name.rtrim(".shader/"));
+      shader.onActivate([=] {
+        config->video.shader = name;
+        program->updateVideoShader();
+      });
+      videoShaders.append(shader);
+    }
+  }
+
+  videoShaderMenu.remove(videoShaderSeparator).append(videoShaderSeparator);
+  videoShaderMenu.remove(colorEmulation).append(colorEmulation);
+  videoShaderMenu.remove(maskOverscan).append(maskOverscan);
 }
 
 auto Presentation::resizeViewport() -> void {
