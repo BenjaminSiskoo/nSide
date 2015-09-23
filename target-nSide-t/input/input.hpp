@@ -2,6 +2,7 @@ struct InputMapping {
   auto bind() -> void;
   auto bind(shared_pointer<HID::Device> device, unsigned group, unsigned input, int16 oldValue, int16 newValue) -> bool;
   auto poll() -> int16;
+  auto rumble(bool enable) -> void;
   auto unbind() -> void;
 
   auto isDigital() const -> bool { return !link || link->type == 0; }

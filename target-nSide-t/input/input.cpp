@@ -4,11 +4,18 @@ InputManager* inputManager = nullptr;
 
 auto InputMapping::bind() -> void {
   auto token = assignment.split("/");
-  if(token.size() < 3) return unbind();
+  if(token.size() < 3 && token(1, "0") != "Rumble") return unbind();
   uint64_t id = token[0].decimal();
-  unsigned group = token[1].decimal();
-  unsigned input = token[2].decimal();
-  string qualifier = token(3, "None");
+  unsigned group = 0;
+  unsigned input = 0;
+  string qualifier;
+  if(token[1] != "Rumble") {
+    group = token[1].decimal();
+    input = token[2].decimal();
+    qualifier = token(3, "None");
+  } else {
+    qualifier = "Rumble";
+  }
 
   for(auto& device : inputManager->devices) {
     if(id != device->id()) continue;
@@ -69,7 +76,7 @@ auto InputMapping::bind(shared_pointer<HID::Device> device, unsigned group, unsi
   if(isRumble()) {
     if(device->isJoypad() && group == HID::Joypad::GroupID::Button) {
       if(newValue) {
-        encoding = {this->assignment, "/Rumble"};
+        this->assignment = {"0x", hex(device->id()), "/Rumble"};
         return bind(), true;
       }
     }
@@ -102,6 +109,11 @@ auto InputMapping::poll() -> int16 {
   return 0;
 }
 
+auto InputMapping::rumble(bool enable) -> void {
+  if(!device) return;
+  if(device->isJoypad()) ::input->rumble(device->id(), enable);
+}
+
 auto InputMapping::unbind() -> void {
   this->assignment = "None";
   this->device = nullptr;
@@ -114,10 +126,12 @@ auto InputMapping::assignmentName() -> string {
   if(!device) return "None";
   string path;
   path.append(device->name());
-  path.append(".", device->group(group).name());
-  path.append(".", device->group(group).input(input).name());
-  if(qualifier == Qualifier::Lo) path.append(".Lo");
-  if(qualifier == Qualifier::Hi) path.append(".Hi");
+  if(qualifier != Qualifier::Rumble) {
+    path.append(".", device->group(group).name());
+    path.append(".", device->group(group).input(input).name());
+    if(qualifier == Qualifier::Lo) path.append(".Lo");
+    if(qualifier == Qualifier::Hi) path.append(".Hi");
+  }
   if(qualifier == Qualifier::Rumble) path.append(".Rumble");
   return path;
 }
