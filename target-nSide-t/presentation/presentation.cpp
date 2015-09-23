@@ -138,11 +138,18 @@ auto Presentation::updateEmulator() -> void {
   resetSystem.setVisible(emulator->information.resettable);
   inputPort1.setVisible(false).reset();
   inputPort2.setVisible(false).reset();
+  inputPort3.setVisible(false).reset();
+  inputPort4.setVisible(false).reset();
 
   for(auto n : range(emulator->port)) {
-    if(n >= 2) break;
+    if(n >= 4) break;
     auto& port = emulator->port[n];
-    auto& menu = (n == 0 ? inputPort1 : inputPort2);
+    auto& menu = (
+    n == 0 ? inputPort1 :
+    n == 1 ? inputPort2 :
+    n == 2 ? inputPort3 :
+             inputPort4
+    );
     menu.setText(port.name);
 
     Group devices;
