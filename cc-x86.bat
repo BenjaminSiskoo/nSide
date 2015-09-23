@@ -18,12 +18,12 @@ move "obj\balanced-x86\sfc-*.o" "obj"
 move "obj\balanced-x86\gba-*.o" "obj"
 move "obj\balanced-x86\ui-ethos.o" "obj"
 move "obj\balanced-x86\ui-settings.o" "obj"
-mingw32-make.exe -j6 profile=balanced arch=x86 name=nSide-e-balanced-x86
+mingw32-make.exe -j6 profile=balanced arch=x86 name=nSide-t-balanced-x86
 move "obj\sfc-*.o" "obj\balanced-x86"
 move "obj\gba-*.o" "obj\balanced-x86"
 move "obj\ui-ethos.o" "obj\balanced-x86"
 move "obj\ui-settings.o" "obj\balanced-x86"
-if not exist "out\nSide-e-balanced-x86.exe" (pause)
+if not exist "out\nSide-t-balanced-x86.exe" (pause)
 
 rem Performance profile
 mkdir "obj\performance"
@@ -31,12 +31,12 @@ move "obj\performance\sfc-*.o" "obj"
 move "obj\balanced-x86\gba-*.o" "obj"
 move "obj\performance\ui-ethos.o" "obj"
 move "obj\performance\ui-settings.o" "obj"
-mingw32-make.exe -j6 profile=performance arch=x86 name=nSide-e-performance
+mingw32-make.exe -j6 profile=performance arch=x86 name=nSide-t-performance
 move "obj\sfc-*.o" "obj\performance"
 move "obj\gba-*.o" "obj\balanced-x86"
 move "obj\ui-ethos.o" "obj\performance"
 move "obj\ui-settings.o" "obj\performance"
-if not exist "out\nSide-e-performance.exe" (pause)
+if not exist "out\nSide-t-performance.exe" (pause)
 
 if "%ProgramW6432%" == "%ProgramFiles%" (
   endlocal
