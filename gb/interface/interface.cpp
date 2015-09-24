@@ -146,6 +146,22 @@ void Interface::paletteUpdate(PaletteMode mode) {
   video.generate_palette(mode);
 }
 
+auto Interface::exportMemory() -> void {
+  string pathname = {path(group(ID::ROM)), "debug/"};
+  directory::create(pathname);
+
+  file::write({pathname, "work.ram"}, cpu.wram, !system.cgb() ? 8192 : 32768);
+  file::write({pathname, "internal.ram"}, cpu.hram, 128);
+  file::write({pathname, "video.ram"}, ppu.vram, !system.cgb() ? 8192 : 16384);
+  file::write({pathname, "sprite.ram"}, ppu.oam, 160);
+  if(system.cgb()) {
+    filestream stream{{pathname, "palette.ram"}, file::mode::write};
+    stream.write(ppu.bgpd, 64);
+    stream.write(ppu.obpd, 64);
+  }
+  if(cartridge.ramsize) saveRequest(ID::RAM, "debug/program-save.ram");
+}
+
 Interface::Interface() {
   interface = this;
   hook = nullptr;

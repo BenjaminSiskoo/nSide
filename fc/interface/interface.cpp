@@ -387,19 +387,25 @@ auto Interface::exportMemory() -> void {
   string pathname = {path(group(ID::ProgramROM)), "debug/"};
   directory::create(pathname);
 
+  // Registers
+  string markup = "";
+  markup.append("ppu\n");
+  markup.append("  vaddr:       0x", hex(ppu.status.vaddr, 4L), "\n");
+  markup.append("  taddr:       0x", hex(ppu.status.taddr, 4L), "\n");
+  markup.append("  xaddr:       0x", hex(ppu.status.xaddr, 1L), "\n");
+  markup.append("  sprite-size: ",   ppu.status.sprite_size ? "8x16" : "8x8", "\n");
+  markup.append("  bg-addr:     0x", hex(ppu.status.bg_addr, 4L), "\n");
+  markup.append("  sprite-addr: 0x", hex(ppu.status.sprite_addr, 4L), "\n");
+  file::write({pathname, "registers.bml"}, markup);
+
   file::write({pathname, "work.ram"}, cpu.ram, 0x0800);
-  file::write({pathname, "video.ram"}, ppu.ciram, 2048);
-  file::write({pathname, "palette.ram"}, ppu.cgram, 32);
+  file::write({pathname, "video.ram"}, ppu.ciram, !system.vs() ? 2048 : 4096);
   file::write({pathname, "sprite.ram"}, ppu.oam, 256);
-  if(cartridge.board->prgram.size()) {
-    file::write({pathname, "program.ram"}, cartridge.board->prgram.data(), cartridge.board->prgram.size());
-  }
-  if(cartridge.board->chrram.size()) {
-    file::write({pathname, "character.ram"}, cartridge.board->chrram.data(), cartridge.board->chrram.size());
-  }
-  if(cartridge.board->chip && cartridge.board->chip->ram.size()) {
-    file::write({pathname, "chip.ram"}, cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
-  }
+  file::write({pathname, "palette.ram"}, ppu.cgram, 32);
+  if(cartridge.board->prgram.size()) saveRequest(ID::ProgramRAM, "debug/program.ram");
+  if(cartridge.board->chrram.size()) saveRequest(ID::CharacterRAM, "debug/character.ram");
+  if(cartridge.board->chip && cartridge.board->chip->ram.size())
+    saveRequest(ID::ChipRAM, "debug/chip.ram");
 }
 
 }

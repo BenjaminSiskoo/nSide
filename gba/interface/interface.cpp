@@ -125,14 +125,21 @@ void Interface::exportMemory() {
   directory::create(pathname);
 
   file::write({pathname, "i-work.ram"}, cpu.iwram, 32 * 1024);
-  //file::write({pathname, "e-work.ram"}, cpu.ewram, 256 * 1024);
+  file::write({pathname, "e-work.ram"}, cpu.ewram, 256 * 1024);
   file::write({pathname, "video.ram"}, ppu.vram, 96 * 1024);
-  uint8 pal_data[1024];
-  for(unsigned color_id = 0; color_id < 512; color_id++) {
-    pal_data[(color_id << 1) + 0] = (ppu.pram[color_id] >> 0) & 0xFF;
-    pal_data[(color_id << 1) + 1] = (ppu.pram[color_id] >> 8) & 0x7F;
+  uint8 obj_data[128 * 8];
+  for(unsigned addr = 0; addr < 128 * 8; addr++) {
+    obj_data[addr] = ppu.oam_read(Byte, addr | 0x0700'0000);
   }
-  file::write({pathname, "palette.ram"}, pal_data, 1024);
+  file::write({pathname, "sprite.ram"}, obj_data, 128 * 8);
+  uint8 pal_data[256 * 2 * 2];
+  for(unsigned addr = 0; addr < 256 * 2 * 2; addr++) {
+    pal_data[addr] = ppu.pram_read(Byte, addr | 0x0500'0000);
+  }
+  file::write({pathname, "palette.ram"}, pal_data, 256 * 2 * 2);
+  if(cartridge.has_sram()) saveRequest(ID::RAM, "debug/save-static.ram");
+  if(cartridge.has_eeprom()) saveRequest(ID::EEPROM, "debug/save-eeprom.ram");
+  if(cartridge.has_flashrom()) saveRequest(ID::FlashROM, "debug/save-flashrom.ram");
 }
 
 Interface::Interface() {

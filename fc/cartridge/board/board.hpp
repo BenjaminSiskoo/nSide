@@ -23,7 +23,7 @@ struct Board {
 
   static Board* load(Markup::Node cartridge);
 
-  Chip *chip;
+  Chip* chip = nullptr;
 
   MappedRAM prgrom;
   MappedRAM prgram;

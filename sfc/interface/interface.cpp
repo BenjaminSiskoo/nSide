@@ -477,14 +477,25 @@ auto Interface::exportMemory() -> void {
   file::write({pathname, "sprite.ram"}, ppu.oam, 544);
   file::write({pathname, "palette.ram"}, ppu.cgram, 512);
   file::write({pathname, "apu.ram"}, smp.apuram, 64 * 1024);
-  if(cartridge.hasSA1())
-    file::write({pathname, "sa1.internal.ram"}, sa1.iram.data(), sa1.iram.size());
-  if(cartridge.hasARMDSP())
-    file::write({pathname, "st018.program.ram"}, armdsp.programRAM, sizeof(armdsp.programRAM));
-  if(cartridge.hasHitachiDSP())
-    file::write({pathname, "cx4.data.ram"}, hitachidsp.ram.data(), hitachidsp.ram.size());
-  //if(cartridge.hasNECDSP())
-  //  file::write({pathname, "dsp.data.ram"}, necdsp.dataRAM, sizeof(necdsp.dataRAM));
+  if(cartridge.ram.size()) saveRequest(ID::RAM, "debug/program-save.ram");
+  if(cartridge.hasEvent()) saveRequest(ID::EventRAM, "debug/event.ram");
+  if(cartridge.hasSA1()) {
+    saveRequest(ID::SA1IRAM, "debug/sa1.internal.ram");
+    saveRequest(ID::SA1BWRAM, "debug/sa1.backup-work.ram");
+  }
+  if(cartridge.hasSuperFX()) saveRequest(ID::SuperFXRAM, "debug/superfx.ram");
+  if(cartridge.hasARMDSP()) saveRequest(ID::ArmDSPRAM, "debug/st018.program.ram");
+  if(cartridge.hasHitachiDSP()) {
+    if(hitachidsp.ram.size()) saveRequest(ID::HitachiDSPRAM, "debug/cx4.program.ram");
+    saveRequest(ID::HitachiDSPDRAM, "debug/cx4.data.ram");
+  }
+  if(cartridge.hasNECDSP()) {
+    if(necdsp.revision == NECDSP::Revision::uPD7725) {
+      saveRequest(ID::Nec7725DSPRAM, "debug/dsp.data.ram");
+    } else { // uPD96050
+      saveRequest(ID::Nec96050DSPRAM, "debug/dsp.data.ram");
+    }
+  }
 }
 
 }
