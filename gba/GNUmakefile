@@ -1,6 +1,6 @@
 gba_objects := gba-memory gba-interface gba-scheduler gba-system
 gba_objects += gba-video gba-cartridge gba-player
-gba_objects += gba-cpu gba-ppu gba-apu
+gba_objects += gba-cpu gba-ppu gba-apu gba-cheat
 objects += $(gba_objects)
 
 obj/gba-memory.o:    $(gba)/memory/memory.cpp $(call rwildcard,$(gba)/memory)
@@ -13,3 +13,4 @@ obj/gba-player.o:    $(gba)/player/player.cpp $(call rwildcard,$(gba)/player)
 obj/gba-cpu.o:       $(gba)/cpu/cpu.cpp $(call rwildcard,$(gba)/cpu)
 obj/gba-ppu.o:       $(gba)/ppu/ppu.cpp $(call rwildcard,$(gba)/ppu)
 obj/gba-apu.o:       $(gba)/apu/apu.cpp $(call rwildcard,$(gba)/apu)
+obj/gba-cheat.o:     $(gba)/cheat/cheat.cpp $(call rwildcard,$(gba)/cheat)

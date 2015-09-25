@@ -32,6 +32,7 @@ struct CPU : Processor::ARM, Thread, MMIO {
   auto read(uint32 addr) -> uint8;
   auto write(uint32 addr, uint8 byte) -> void;
 
+  //memory.cpp
   auto iwram_read(unsigned mode, uint32 addr) -> uint32;
   auto iwram_write(unsigned mode, uint32 addr, uint32 word) -> void;
 

@@ -1,22 +1,23 @@
 #include <fc/fc.hpp>
 
+#define CHEAT_CPP
 namespace Famicom {
 
 Cheat cheat;
 
-void Cheat::reset() {
+auto Cheat::reset() -> void {
   codes.reset();
 }
 
-void Cheat::append(unsigned addr, unsigned data) {
+auto Cheat::append(unsigned addr, unsigned data) -> void {
   codes.append({addr, Unused, data});
 }
 
-void Cheat::append(unsigned addr, unsigned comp, unsigned data) {
+auto Cheat::append(unsigned addr, unsigned comp, unsigned data) -> void {
   codes.append({addr, comp, data});
 }
 
-maybe<unsigned> Cheat::find(unsigned addr, unsigned comp) {
+auto Cheat::find(unsigned addr, unsigned comp) -> maybe<unsigned> {
   for(auto& code : codes) {
     if(code.addr == addr && (code.comp == Unused || code.comp == comp)) {
       return code.data;

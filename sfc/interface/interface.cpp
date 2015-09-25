@@ -492,10 +492,13 @@ auto Interface::exportMemory() -> void {
   if(cartridge.hasNECDSP()) {
     if(necdsp.revision == NECDSP::Revision::uPD7725) {
       saveRequest(ID::Nec7725DSPRAM, "debug/dsp.data.ram");
-    } else { // uPD96050
+    } else { // NECDSP::Revision::uPD96050
       saveRequest(ID::Nec96050DSPRAM, "debug/dsp.data.ram");
     }
   }
+  if(cartridge.hasSPC7110()) saveRequest(ID::SPC7110RAM, "debug/spc7110.ram");
+  if(cartridge.hasSDD1()) saveRequest(ID::SDD1RAM, "debug/sdd1.ram");
+  if(cartridge.hasOBC1()) saveRequest(ID::OBC1RAM, "debug/obc1.ram");
 }
 
 }

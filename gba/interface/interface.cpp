@@ -116,6 +116,30 @@ bool Interface::unserialize(serializer& s) {
   return system.unserialize(s);
 }
 
+void Interface::cheatSet(const lstring& list) {
+  cheat.reset();
+  for(auto& codeset : list) {
+    lstring codes = codeset.split("+");
+    for(auto& code : codes) {
+      lstring part = code.split("/");
+      unsigned mode;
+      if(part.size() == 2) {
+        if(part[1].size() == 2) mode = Byte;
+        if(part[1].size() == 4) mode = Half;
+        if(part[1].size() == 8) mode = Word;
+        cheat.append(hex(part[0]), hex(part[1]), mode);
+      }
+      if(part.size() == 3) {
+        if(part[1].size() != part[2].size()) continue;
+        if(part[2].size() == 2) mode = Byte;
+        if(part[2].size() == 4) mode = Half;
+        if(part[2].size() == 8) mode = Word;
+        cheat.append(hex(part[0]), hex(part[1]), hex(part[2]), mode);
+      }
+    }
+  }
+}
+
 void Interface::paletteUpdate(PaletteMode mode) {
   video.generate_palette(mode);
 }
@@ -152,7 +176,7 @@ Interface::Interface() {
   information.aspectRatio = 1.0;
   information.resettable  = false;
   information.capability.states = true;
-  information.capability.cheats = false;
+  information.capability.cheats = true;
 
   media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", true});
 

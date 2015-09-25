@@ -44,6 +44,8 @@ struct Interface : Emulator::Interface {
   serializer serialize();
   bool unserialize(serializer&);
 
+  void cheatSet(const lstring&);
+
   void paletteUpdate(PaletteMode mode);
 
   //debugger functions
