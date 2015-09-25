@@ -10,7 +10,11 @@ BIOS::~BIOS() {
 auto BIOS::read(unsigned mode, uint32 addr) -> uint32 {
   //GBA BIOS is read-protected; only the BIOS itself can read its own memory
   //when accessed elsewhere; this returns the last value read by the BIOS program
-  if(cpu.r(15) >= 0x02000000) {
+  if(addr < 0x0000'4000 && cpu.r(15) >= 0x0000'4000) {
+    return mdr;
+  }
+  if(addr >= 0x0000'4000) {
+    //unused memory
     return cpu.pipeline.fetch.instruction;
   }
 

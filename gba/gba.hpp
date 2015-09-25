@@ -14,6 +14,7 @@ namespace GameBoyAdvance {
 /*
   bgba - Game Boy Advance emulator
   authors: byuu, Cydrak
+  contributors: Jonas Quinn
   license: GPLv3
   project started: 2012-03-19
 */
