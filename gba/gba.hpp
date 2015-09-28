@@ -6,17 +6,18 @@
 
 namespace GameBoyAdvance {
   namespace Info {
-    static const string Name = "bgba";
+    static const string Name = "nSide-gba";
     static const unsigned SerializerVersion = 2;
   }
 }
 
 /*
-  bgba - Game Boy Advance emulator
+  nSide-gba - Game Boy Advance emulator
+  based on higan/bgba by byuu and Cydrak.
   authors: byuu, Cydrak
   contributors: Jonas Quinn
   license: GPLv3
-  project started: 2012-03-19
+  original project started: 2012-03-19
 */
 
 #include <libco/libco.h>

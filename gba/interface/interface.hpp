@@ -25,31 +25,32 @@ struct ID {
 };
 
 struct Interface : Emulator::Interface {
-  string title();
-  double videoFrequency();
-  double audioFrequency();
+  auto title() -> string;
+  auto videoFrequency() -> double;
+  auto audioFrequency() -> double;
 
-  bool loaded();
-  unsigned group(unsigned id);
-  void load(unsigned id);
-  void save();
-  void load(unsigned id, const stream& stream);
-  void save(unsigned id, const stream& stream);
-  void unload();
+  auto loaded() -> bool;
+  auto sha256() -> string;
+  auto group(unsigned id) -> unsigned;
+  auto load(unsigned id) -> void;
+  auto save() -> void;
+  auto load(unsigned id, const stream& stream) -> void;
+  auto save(unsigned id, const stream& stream) -> void;
+  auto unload() -> void;
 
-  void power();
-  void reset();
-  void run();
+  auto power() -> void;
+  auto reset() -> void;
+  auto run() -> void;
 
   serializer serialize();
-  bool unserialize(serializer&);
+  auto unserialize(serializer&) -> bool;
 
-  void cheatSet(const lstring&);
+  auto cheatSet(const lstring&) -> void;
 
-  void paletteUpdate(PaletteMode mode);
+  auto paletteUpdate(PaletteMode mode) -> void;
 
   //debugger functions
-  void exportMemory();
+  auto exportMemory() -> void;
 
   Interface();
 

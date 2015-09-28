@@ -4,23 +4,27 @@ namespace GameBoyAdvance {
 
 Interface* interface = nullptr;
 
-string Interface::title() {
+auto Interface::title() -> string {
   return cartridge.title();
 }
 
-double Interface::videoFrequency() {
+auto Interface::videoFrequency() -> double {
   return 16777216.0 / (228.0 * 1232.0);
 }
 
-double Interface::audioFrequency() {
+auto Interface::audioFrequency() -> double {
   return 16777216.0 / 512.0;
 }
 
-bool Interface::loaded() {
+auto Interface::loaded() -> bool {
   return cartridge.loaded();
 }
 
-unsigned Interface::group(unsigned id) {
+auto Interface::sha256() -> string {
+  return cartridge.sha256();
+}
+
+auto Interface::group(unsigned id) -> unsigned {
   switch(id) {
   case ID::SystemManifest:
   case ID::BIOS:
@@ -36,17 +40,17 @@ unsigned Interface::group(unsigned id) {
   throw;
 }
 
-void Interface::load(unsigned id) {
+auto Interface::load(unsigned id) -> void {
   cartridge.load();
 }
 
-void Interface::save() {
+auto Interface::save() -> void {
   for(auto& memory : cartridge.memory) {
     interface->saveRequest(memory.id, memory.name);
   }
 }
 
-void Interface::load(unsigned id, const stream& stream) {
+auto Interface::load(unsigned id, const stream& stream) -> void {
   if(id == ID::SystemManifest) {
     system.information.manifest = stream.text();
   }
@@ -76,7 +80,7 @@ void Interface::load(unsigned id, const stream& stream) {
   }
 }
 
-void Interface::save(unsigned id, const stream& stream) {
+auto Interface::save(unsigned id, const stream& stream) -> void {
   if(id == ID::RAM) {
     stream.write(cartridge.ram.data, cartridge.ram.size);
   }
@@ -90,33 +94,33 @@ void Interface::save(unsigned id, const stream& stream) {
   }
 }
 
-void Interface::unload() {
+auto Interface::unload() -> void {
   save();
   cartridge.unload();
 }
 
-void Interface::power() {
+auto Interface::power() -> void {
   system.power();
 }
 
-void Interface::reset() {
+auto Interface::reset() -> void {
   system.power();
 }
 
-void Interface::run() {
+auto Interface::run() -> void {
   system.run();
 }
 
-serializer Interface::serialize() {
+auto Interface::serialize() -> serializer {
   system.runtosave();
   return system.serialize();
 }
 
-bool Interface::unserialize(serializer& s) {
+auto Interface::unserialize(serializer& s) -> bool {
   return system.unserialize(s);
 }
 
-void Interface::cheatSet(const lstring& list) {
+auto Interface::cheatSet(const lstring& list) -> void {
   cheat.reset();
   for(auto& codeset : list) {
     lstring codes = codeset.split("+");
@@ -140,11 +144,11 @@ void Interface::cheatSet(const lstring& list) {
   }
 }
 
-void Interface::paletteUpdate(PaletteMode mode) {
+auto Interface::paletteUpdate(PaletteMode mode) -> void {
   video.generate_palette(mode);
 }
 
-void Interface::exportMemory() {
+auto Interface::exportMemory() -> void {
   string pathname = {path(group(ID::ROM)), "debug/"};
   directory::create(pathname);
 
