@@ -103,9 +103,12 @@ auto Cartridge::parseMarkupMCC(Markup::Node root) -> void {
 
   interface->loadRequest(ID::Satellaview, "BS-X Satellaview", "bs", false);
 
-  parseMarkupMemory(mcc.rom, root["rom"], ID::MCCROM, false);
-  parseMarkupMemory(mcc.ram, root["ram"], ID::MCCRAM, true);
-  parseMarkupMemory(mcc.psram, root["psram"], ID::MCCPSRAM, true);
+  auto rom = root.find("rom");
+  auto ram = root.find("ram");
+
+  parseMarkupMemory(mcc.rom, rom(0), ID::MCCROM, false);
+  parseMarkupMemory(mcc.ram, ram(0), ID::MCCRAM, true);
+  parseMarkupMemory(mcc.psram, ram(1) ? ram(1) : root["psram"], ID::MCCPSRAM, true);
 
   for(auto node : root.find("map")) {
     if(node["id"].text() == "rom"
