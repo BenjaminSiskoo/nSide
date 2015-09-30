@@ -4,7 +4,7 @@ AdvancedSettings::AdvancedSettings(TabFrame* parent) : TabFrameItem(parent) {
 
   layout.setMargin(5);
 
-  driverLabel.setText("Driver Selection").setFont(Font("sans", 8).setBold(true));
+  driverLabel.setText("Driver Selection").setFont(Font().setBold());
   videoLabel.setText("Video:");
   videoDriver.onChange([&] { config->video.driver = videoDriver.selected()->text(); });
   for(auto& driver : Video::availableDrivers()) {
@@ -30,7 +30,7 @@ AdvancedSettings::AdvancedSettings(TabFrame* parent) : TabFrameItem(parent) {
     if(config->input.driver == driver) item.setSelected();
   }
 
-  libraryLabel.setText("Game Library").setFont(Font("sans", 8).setBold(true));
+  libraryLabel.setText("Game Library").setFont(Font().setBold());
   libraryPrefix.setText("Location:");
   libraryLocation.setEditable(false).setText(config->library.location);
   libraryChange.setText("Change ...").onActivate([&] {

@@ -255,7 +255,6 @@ struct Geometry {
   Geometry();
   Geometry(Position position, Size size);
   Geometry(signed x, signed y, signed width, signed height);
-  Geometry(const string& text);
 
   explicit operator bool() const;
   auto operator==(const Geometry& source) const -> bool;
@@ -276,7 +275,6 @@ struct Geometry {
   auto setX(signed x) -> type&;
   auto setY(signed y) -> type&;
   auto size() const -> Size;
-  auto text() const -> string;
   auto width() const -> signed;
   auto x() const -> signed;
   auto y() const -> signed;
@@ -311,6 +309,10 @@ struct Font {
   auto setSize(unsigned size = 0) -> type&;
   auto size() const -> unsigned;
   auto size(const string& text) const -> Size;
+
+  static const string Sans;
+  static const string Serif;
+  static const string Mono;
 
 //private:
   struct State {

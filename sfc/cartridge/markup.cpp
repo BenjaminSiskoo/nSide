@@ -108,7 +108,7 @@ auto Cartridge::parseMarkupMCC(Markup::Node root) -> void {
 
   parseMarkupMemory(mcc.rom, rom(0), ID::MCCROM, false);
   parseMarkupMemory(mcc.ram, ram(0), ID::MCCRAM, true);
-  parseMarkupMemory(mcc.psram, ram(1) ? ram(1) : root["psram"], ID::MCCPSRAM, true);
+  parseMarkupMemory(mcc.psram, ram(1), ID::MCCPSRAM, true);
 
   for(auto node : root.find("map")) {
     if(node["id"].text() == "rom"

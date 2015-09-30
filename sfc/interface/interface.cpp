@@ -499,6 +499,17 @@ auto Interface::exportMemory() -> void {
   if(cartridge.hasSPC7110()) saveRequest(ID::SPC7110RAM, "debug/spc7110.ram");
   if(cartridge.hasSDD1()) saveRequest(ID::SDD1RAM, "debug/sdd1.ram");
   if(cartridge.hasOBC1()) saveRequest(ID::OBC1RAM, "debug/obc1.ram");
+  if(cartridge.hasMCC()) {
+    saveRequest(ID::MCCRAM, "debug/mcc.save.ram");
+    saveRequest(ID::MCCPSRAM, "debug/mcc.download.ram");
+  }
+  if(cartridge.hasICD2() && GameBoy::cartridge.ramsize) {
+    saveRequest(ID::SuperGameBoyRAM, "debug/gameboy.save.ram");
+  }
+  if(cartridge.hasSufamiTurboSlots()) {
+    saveRequest(ID::SufamiTurboSlotARAM, "debug/sufamiturbo.slota.ram");
+    saveRequest(ID::SufamiTurboSlotBRAM, "debug/sufamiturbo.slotb.ram");
+  }
 }
 
 }

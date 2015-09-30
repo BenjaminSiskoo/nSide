@@ -28,8 +28,7 @@ auto Program::loadMedia(Emulator::Interface& emulator_, Emulator::Interface::Med
 
   presentation->resizeViewport();
   presentation->setTitle(emulator->title());
-  presentation->systemMenu.setText(media.name);
-  presentation->systemMenu.setVisible(true);
+  presentation->systemMenu.setText(media.name).setVisible(true);
   presentation->toolsMenu.setVisible(true);
   presentation->updateEmulator();
   toolsManager->cheatEditor.loadCheats();
@@ -46,9 +45,8 @@ auto Program::unloadMedia() -> void {
   mediaPaths.reset();
   folderPaths.reset();
 
-  presentation->setTitle({"nSide-t v", Emulator::Version});
+  presentation->setTitle({"nSide v", Emulator::Version});
   presentation->systemMenu.setVisible(false);
-  presentation->systemMenu.setText("System");
   presentation->toolsMenu.setVisible(false);
   toolsManager->setVisible(false);
 }

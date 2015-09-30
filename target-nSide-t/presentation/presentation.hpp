@@ -23,9 +23,9 @@ struct Presentation : Window {
       Menu videoScaleMenu{&settingsMenu};
         MenuRadioItem videoScaleTiny{&videoScaleMenu};
         MenuRadioItem videoScaleSmall{&videoScaleMenu};
-        MenuRadioItem videoScaleNormal{&videoScaleMenu};
+        MenuRadioItem videoScaleMedium{&videoScaleMenu};
         MenuRadioItem videoScaleLarge{&videoScaleMenu};
-          Group videoScales{&videoScaleTiny, &videoScaleSmall, &videoScaleNormal, &videoScaleLarge};
+          Group videoScales{&videoScaleTiny, &videoScaleSmall, &videoScaleMedium, &videoScaleLarge};
         MenuSeparator videoScaleSeparator{&videoScaleMenu};
         MenuCheckItem aspectCorrection{&videoScaleMenu};
       Menu videoShaderMenu{&settingsMenu};

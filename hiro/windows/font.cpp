@@ -19,9 +19,9 @@ auto pFont::size(HFONT hfont, const string& text) -> Size {
 }
 
 auto pFont::family(const string& family) -> string {
-  if(family == "sans") return "Tahoma";
-  if(family == "serif") return "Georgia";
-  if(family == "monospace") return "Lucida Console";
+  if(family == Font::Sans ) return "Tahoma";
+  if(family == Font::Serif) return "Georgia";
+  if(family == Font::Mono ) return "Lucida Console";
   return family ? family : "Tahoma";
 }
 

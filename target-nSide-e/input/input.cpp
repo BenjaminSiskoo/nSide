@@ -193,7 +193,7 @@ string InputManager::sanitize(string mapping, string concatenate) const {
     if(part.size() < 2) continue;  //skip "None" mapping
     if(part[0] == "1") part[0] = "Keyboard";
     else if(part[0] == "2") part[0] = "Mouse";
-    else part[0] = {"Joypad(", part[0].slice(0, 3), ")"};
+    else part[0] = {"Joypad(", slice(part[0], 0, 3), ")"};
     value = part.merge(".");
   }
   return values.merge(concatenate);

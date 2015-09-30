@@ -120,10 +120,10 @@ Board* Board::load(Markup::Node cartridge) {
   if(auto vs_node = cartridge["vs"]) return new VS(vs_node);
   string type = cartridge["board/type"].text();
 
-  if(substr(type,0,4) == "HVC-"
-  || substr(type,0,4) == "NES-"
-  || substr(type,0,4) == "PAL-") {
-    type = substr(type,4);
+  if(slice(type,0,4) == "HVC-"
+  || slice(type,0,4) == "NES-"
+  || slice(type,0,4) == "PAL-") {
+    type = slice(type,4);
     if(type == "AMROM"   ) return new NES_AxROM(cartridge);
     if(type == "ANROM"   ) return new NES_AxROM(cartridge);
     if(type == "AN1ROM"  ) return new NES_AxROM(cartridge);

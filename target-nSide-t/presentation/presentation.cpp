@@ -33,7 +33,7 @@ Presentation::Presentation() {
   videoScaleMenu.setText("Video Scale");
   if(config->video.scale == "Tiny") videoScaleTiny.setChecked();
   if(config->video.scale == "Small") videoScaleSmall.setChecked();
-  if(config->video.scale == "Normal") videoScaleNormal.setChecked();
+  if(config->video.scale == "Medium") videoScaleMedium.setChecked();
   if(config->video.scale == "Large") videoScaleLarge.setChecked();
   videoScaleTiny.setText("Tiny").onActivate([&] {
     config->video.scale = "Tiny";
@@ -43,8 +43,8 @@ Presentation::Presentation() {
     config->video.scale = "Small";
     resizeViewport();
   });
-  videoScaleNormal.setText("Normal").onActivate([&] {
-    config->video.scale = "Normal";
+  videoScaleMedium.setText("Medium").onActivate([&] {
+    config->video.scale = "Medium";
     resizeViewport();
   });
   videoScaleLarge.setText("Large").onActivate([&] {
@@ -121,12 +121,12 @@ Presentation::Presentation() {
   cheatEditor.setText("Cheat Editor").onActivate([&] { toolsManager->show(0); });
   stateManager.setText("State Manager").onActivate([&] { toolsManager->show(1); });
 
-  statusBar.setFont(Font("sans", 8).setBold(true));
+  statusBar.setFont(Font().setBold());
   statusBar.setVisible(config->userInterface.showStatusBar);
 
   onClose([&] { program->quit(); });
 
-  setTitle({"nSide-t v", Emulator::Version});
+  setTitle({"nSide v", Emulator::Version});
   setResizable(false);
   setBackgroundColor({0, 0, 0});
   resizeViewport();
@@ -189,9 +189,8 @@ auto Presentation::loadShaders() -> void {
 
 auto Presentation::resizeViewport() -> void {
   signed scale = 1;
-  if(config->video.scale == "Tiny"  ) scale = 1;
   if(config->video.scale == "Small" ) scale = 2;
-  if(config->video.scale == "Normal") scale = 3;
+  if(config->video.scale == "Medium") scale = 3;
   if(config->video.scale == "Large" ) scale = 4;
 
   signed width  = 256;
@@ -216,24 +215,25 @@ auto Presentation::resizeViewport() -> void {
     setSize({windowWidth, windowHeight});
     viewport.setGeometry({(windowWidth - width) / 2, (windowHeight - height) / 2, width, height});
   } else {
-    auto desktop = Desktop::size();
+    signed windowWidth  = geometry().width();
+    signed windowHeight = geometry().height();
 
     //aspect ratio correction is always enabled in fullscreen mode
     //note that below algorithm yields 7:6 ratio on 2560x(1440,1600) monitors
     //this is extremely close to the optimum 8:7 ratio
     //it is used so that linear interpolation isn't required
     //todo: we should handle other resolutions nicely as well
-    unsigned multiplier = desktop.height() / height;
+    unsigned multiplier = windowHeight / height;
     width *= 1 + multiplier;
     height *= multiplier;
 
-    signed x = (desktop.width() - width) / 2;
-    signed y = (desktop.height() - height) / 2;
+    signed x = (windowWidth - width) / 2;
+    signed y = (windowHeight - height) / 2;
 
     if(x < 0) x = 0;
     if(y < 0) y = 0;
-    if(width > desktop.width()) width = desktop.width();
-    if(height > desktop.height()) height = desktop.height();
+    if(width > windowWidth) width = windowWidth;
+    if(height > windowHeight) height = windowHeight;
 
     viewport.setGeometry({x, y, width, height});
   }

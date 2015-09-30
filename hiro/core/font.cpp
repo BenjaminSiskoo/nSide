@@ -1,5 +1,9 @@
 #if defined(Hiro_Font)
 
+const string Font::Sans  = "{sans}";
+const string Font::Serif = "{serif}";
+const string Font::Mono  = "{mono}";
+
 Font::Font(const string& family, unsigned size) {
   setFamily(family);
   setSize(size);

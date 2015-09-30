@@ -11,7 +11,7 @@ SettingsManager::SettingsManager() {
   settingsManager = this;
 
   layout.setMargin(5);
-  statusBar.setFont(Font("sans", 8).setBold(true));
+  statusBar.setFont(Font().setBold());
 
   setTitle("Configuration Settings");
   setSize({600, 400});

@@ -32,10 +32,6 @@ auto CPU::bus_read(unsigned mode, uint32 addr) -> uint32 {
     prefetch_step(1);
   }
 
-  if(cheat.enable()) {
-    if(auto result = cheat.find(addr, word, mode)) return result();
-  }
-
   return word;
 }
 
@@ -62,12 +58,12 @@ auto CPU::bus_write(unsigned mode, uint32 addr, uint32 word) -> void {
 }
 
 auto CPU::bus_wait(unsigned mode, uint32 addr) -> unsigned {
-  if(addr >= 0x1000'0000) return 1;
-  if(addr < 0x0200'0000) return 1;
-  if(addr < 0x0300'0000) return (16 - regs.memory.control.ewramwait) * (mode & Word ? 2 : 1);
-  if(addr < 0x0500'0000) return 1;
-  if(addr < 0x0700'0000) return mode & Word ? 2 : 1;
-  if(addr < 0x0800'0000) return 1;
+  if(addr >= 0x1000'0000) return 1;  //unmapped
+  if(addr <  0x0200'0000) return 1;
+  if(addr <  0x0300'0000) return (16 - regs.memory.control.ewramwait) * (mode & Word ? 2 : 1);
+  if(addr <  0x0500'0000) return 1;
+  if(addr <  0x0700'0000) return mode & Word ? 2 : 1;
+  if(addr <  0x0800'0000) return 1;
 
   static unsigned timings[] = {5, 4, 3, 9};
   unsigned n = timings[regs.wait.control.nwait[addr >> 25 & 3]];

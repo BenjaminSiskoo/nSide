@@ -35,9 +35,9 @@ auto Program::loadRequest(unsigned id, string filename, bool required) -> void {
       return emulator->load(id, stream);
     }
   }
-  if(required) MessageDialog().setTitle("nSide-t").setText({
-    "Missing required file: ", location.filename(), "\n\n",
-    "From location:\n", location.pathname()
+  if(required) MessageDialog().setTitle("nSide").setText({
+    "Missing required file: ", nall::filename(location), "\n\n",
+    "From location:\n", nall::pathname(location)
   }).error();
 }
 
@@ -146,7 +146,7 @@ auto Program::inputPoll(unsigned port, unsigned device, unsigned input) -> int16
 }
 
 auto Program::inputRumble(unsigned port, unsigned device, unsigned input, bool enable) -> void {
-  if(presentation->focused()) {
+  if(presentation->focused() || !enable) {
     auto guid = emulator->port[port].device[device].input[input].guid;
     auto mapping = (InputMapping*)guid;
     if(mapping) return mapping->rumble(enable);

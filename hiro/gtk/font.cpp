@@ -21,10 +21,19 @@ auto pFont::size(PangoFontDescription* font, const string& text) -> Size {
 }
 
 auto pFont::family(const string& family) -> string {
-  if(family == "sans") return "Sans";
-  if(family == "serif") return "Serif";
-  if(family == "mono") return "Liberation Mono";
+  #if defined(DISPLAY_WINDOWS)
+  if(family == Font::Sans ) return "Tahoma";
+  if(family == Font::Serif) return "Georgia";
+  if(family == Font::Mono ) return "Lucida Console";
+  return family ? family : "Tahoma";
+  #elif defined(DISPLAY_XORG)
+  if(family == Font::Sans ) return "Sans";
+  if(family == Font::Serif) return "Serif";
+  if(family == Font::Mono ) return "Liberation Mono";
   return family ? family : "Sans";
+  #else
+  return family;
+  #endif
 }
 
 auto pFont::create(const Font& font) -> PangoFontDescription* {
