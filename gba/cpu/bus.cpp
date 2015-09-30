@@ -32,6 +32,10 @@ auto CPU::bus_read(unsigned mode, uint32 addr) -> uint32 {
     prefetch_step(1);
   }
 
+  if(cheat.enable()) {
+    if(auto result = cheat.find(addr, word, mode)) return result();
+  }
+
   return word;
 }
 
