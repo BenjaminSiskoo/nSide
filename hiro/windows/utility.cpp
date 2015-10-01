@@ -345,16 +345,16 @@ static auto CALLBACK Shared_windowProc(WindowProc windowProc, HWND hwnd, UINT ms
         break;
       }
       if(header->code == LVN_COLUMNCLICK) {
-        if(!isWindowCallback) listView->self()->onSort(lparam);
+        if(isWindowCallback) listView->self()->onSort(lparam);
         break;
       }
       if(header->code == NM_CLICK || header->code == NM_DBLCLK) {
         //onToggle performs the test to ensure the ListViewItem clicked was checkable
-        if(!isWindowCallback) listView->self()->onToggle(lparam);
+        if(isWindowCallback) listView->self()->onToggle(lparam);
         break;
       }
       if(header->code == NM_RCLICK) {
-        if(!isWindowCallback) listView->self()->onContext(lparam);
+        if(isWindowCallback) listView->self()->onContext(lparam);
         break;
       }
       if(header->code == NM_CUSTOMDRAW) {
