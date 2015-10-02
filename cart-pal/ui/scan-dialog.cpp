@@ -32,7 +32,7 @@ ScanDialog::ScanDialog() {
   });
   importButton.setText("Import ...").onActivate([&] { import(); });
 
-  setTitle("icarus");
+  setTitle("cart-pal");
   setSize({800, 480});
   setCentered();
 }

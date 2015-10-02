@@ -22,7 +22,7 @@ auto Program::loadRequest(unsigned id, string filename, bool required) -> void {
   }
   if(filename == "manifest.bml") {
     string manifest;
-    if(auto fp = popen(string{"icarus -m \"", pathname, "\""}, "r")) {
+    if(auto fp = popen(string{"cart-pal -m \"", pathname, "\""}, "r")) {
       while(true) {
         auto byte = fgetc(fp);
         if(byte == EOF) break;

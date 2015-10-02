@@ -25,7 +25,7 @@ Settings settings;
 #include "core/game-boy-advance.cpp"
 #include "core/bsx-satellaview.cpp"
 #include "core/sufami-turbo.cpp"
-Icarus icarus;
+CartPal cart_pal;
 
 #include "ui/ui.hpp"
 #include "ui/scan-dialog.cpp"
@@ -36,7 +36,7 @@ Icarus icarus;
 auto nall::main(lstring args) -> void {
   if(args.size() == 3 && args[1] == "-m") {
     if(!directory::exists(args[2])) return print("error: directory not found\n");
-    return print(icarus.manifest(args[2]));
+    return print(cart_pal.manifest(args[2]));
   }
 
   new ScanDialog;

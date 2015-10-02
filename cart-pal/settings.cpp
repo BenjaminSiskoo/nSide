@@ -18,14 +18,14 @@ Settings::Settings() {
   root.append(useHeuristics, "UseHeuristics");
   append(root, "Settings");
 
-  directory::create({configpath(), "icarus/"});
-  load({configpath(), "icarus/settings.bml"});
-  save({configpath(), "icarus/settings.bml"});
+  directory::create({configpath(), "cart-pal/"});
+  load({configpath(), "cart-pal/settings.bml"});
+  save({configpath(), "cart-pal/settings.bml"});
 
   if(!activePath) activePath = userpath();
   if(!libraryPath) libraryPath = {userpath(), "Emulation/"};
 }
 
 Settings::~Settings() {
-  save({configpath(), "icarus/settings.bml"});
+  save({configpath(), "cart-pal/settings.bml"});
 }

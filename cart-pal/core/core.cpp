@@ -7,7 +7,7 @@ namespace Database {
   #include "../database/sufami-turbo.hpp"
 }
 
-Icarus::Icarus() {
+CartPal::CartPal() {
   database.famicom = BML::unserialize(Database::Famicom);
   database.vsSystem = BML::unserialize(Database::VSSystem);
   database.playchoice10 = BML::unserialize(Database::PlayChoice10);
@@ -16,21 +16,21 @@ Icarus::Icarus() {
   database.sufamiTurbo = BML::unserialize(Database::SufamiTurbo);
 }
 
-auto Icarus::error() const -> string {
+auto CartPal::error() const -> string {
   return errorMessage;
 }
 
-auto Icarus::success() -> bool {
+auto CartPal::success() -> bool {
   errorMessage = "";
   return true;
 }
 
-auto Icarus::failure(const string& message) -> bool {
+auto CartPal::failure(const string& message) -> bool {
   errorMessage = message;
   return false;
 }
 
-auto Icarus::manifest(string location) -> string {
+auto CartPal::manifest(string location) -> string {
   location.transform("\\", "/").rtrim("/").append("/");
   if(!directory::exists(location)) return "";
 
@@ -48,7 +48,7 @@ auto Icarus::manifest(string location) -> string {
   return "";
 }
 
-auto Icarus::import(string location) -> bool {
+auto CartPal::import(string location) -> bool {
   location.transform("\\", "/").rtrim("/");
   if(!file::exists(location)) return failure("file does not exist");
   if(!file::readable(location)) return failure("file is unreadable");
@@ -83,7 +83,7 @@ auto Icarus::import(string location) -> bool {
   return failure("unrecognized file extension");
 }
 
-auto Icarus::concatenate(vector<uint8_t>& output, const string& location) -> void {
+auto CartPal::concatenate(vector<uint8_t>& output, const string& location) -> void {
   if(auto input = file::read(location)) {
     auto size = output.size();
     output.resize(size + input.size());

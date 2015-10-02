@@ -8,7 +8,7 @@ ImportDialog::ImportDialog() {
   layout.setMargin(5);
   stopButton.setText("Stop").onActivate([&] { doClose(); });
 
-  setTitle("icarus - Importing ...");
+  setTitle("cart-pal - Importing ...");
   setSize({480, layout.minimumSize().height()});
   setCentered();
 }
@@ -32,21 +32,21 @@ auto ImportDialog::run(lstring locations) -> void {
     progressBar.setPosition((unsigned)progress);
     Application::processEvents();
 
-    if(!icarus.import(location)) {
-      errors.append(string{"[", name, "] ", icarus.error()});
+    if(!cart_pal.import(location)) {
+      errors.append(string{"[", name, "] ", cart_pal.error()});
     }
   }
   setVisible(false);
 
   if(errors) {
     string message{"Import completed, but with ", errors.size(), " error", errors.size() ? "s" : "", ". View log?"};
-    if(MessageDialog().setTitle("icarus").setText(message).question() == "Yes") {
+    if(MessageDialog().setTitle("cart-pal").setText(message).question() == "Yes") {
       errorDialog->show(errors.merge("\n"));
     } else {
       scanDialog->show();
     }
   } else {
-    MessageDialog().setTitle("icarus").setText("Import completed successfully.").information();
+    MessageDialog().setTitle("cart-pal").setText("Import completed successfully.").information();
     scanDialog->show();
   }
 }

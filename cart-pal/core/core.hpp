@@ -1,6 +1,6 @@
-struct Icarus {
+struct CartPal {
   //core.cpp
-  Icarus();
+  CartPal();
 
   auto error() const -> string;
   auto success() -> bool;
