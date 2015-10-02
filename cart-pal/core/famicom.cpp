@@ -82,6 +82,7 @@ auto CartPal::famicomImport(vector<uint8_t>& buffer, const string& location) -> 
   for(auto rom : roms) {
     auto name = rom["name"].text();
     auto size = rom["size"].decimal();
+    if(size > buffer.size() - offset) return failure("ROM image is missing data");
     file::write({target, name}, buffer.data() + offset, size);
     offset += size;
   }

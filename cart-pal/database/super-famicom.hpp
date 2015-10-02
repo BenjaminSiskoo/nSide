@@ -1,6 +1,6 @@
 string SuperFamicom = R"(
 
-database revision=2015-09-28
+database revision=2015-10-02 owner=byuu
 
 release
   cartridge region=NTSC

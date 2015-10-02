@@ -1,6 +1,6 @@
 string SufamiTurbo = R"(
 
-database revision=2013-01-22
+database revision=2013-01-22 owner=byuu
 
 release
   cartridge linkable

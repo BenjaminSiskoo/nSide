@@ -1,6 +1,6 @@
 string Famicom = R"(
 
-database revision=2012-10-22
+database revision=2012-10-22 owner=bootgod
 
 release
   cartridge region=NTSC

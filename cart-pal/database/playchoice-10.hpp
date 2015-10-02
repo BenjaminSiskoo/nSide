@@ -1,6 +1,6 @@
 string PlayChoice10 = R"(
 
-database revision=2015-09-30
+database revision=2015-09-30 owner=hex_usr
 
 release
   cartridge region=NTSC
