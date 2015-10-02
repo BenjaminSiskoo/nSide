@@ -11,6 +11,7 @@ using namespace phoenix;
 
 namespace Database {
   #include "database/famicom.hpp"
+  #include "database/playchoice-10.hpp"
   #include "database/super-famicom.hpp"
   #include "database/sufami-turbo.hpp"
   #include "database/bsx-satellaview.hpp"

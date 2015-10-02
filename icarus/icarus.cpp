@@ -17,6 +17,8 @@ Settings settings;
 #include "core/core.hpp"
 #include "core/core.cpp"
 #include "core/famicom.cpp"
+#include "core/vs-system.cpp"
+#include "core/playchoice-10.cpp"
 #include "core/super-famicom.cpp"
 #include "core/game-boy.cpp"
 #include "core/game-boy-color.cpp"

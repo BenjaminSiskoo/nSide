@@ -1,12 +1,14 @@
-auto Icarus::famicomManifest(const string& location) -> string {
+auto Icarus::playchoice10Manifest(const string& location) -> string {
   vector<uint8_t> buffer;
   concatenate(buffer, {location, "ines.rom"});
   concatenate(buffer, {location, "program.rom"});
   concatenate(buffer, {location, "character.rom"});
-  return famicomManifest(buffer, location);
+  concatenate(buffer, {location, "instructions.rom"});
+  concatenate(buffer, {location, "key.rom"});
+  return playchoice10Manifest(buffer, location);
 }
 
-auto Icarus::famicomManifest(vector<uint8_t>& buffer, const string& location) -> string {
+auto Icarus::playchoice10Manifest(vector<uint8_t>& buffer, const string& location) -> string {
   FamicomCartridge cartridge{buffer.data(), buffer.size()};
   if(auto markup = cartridge.markup) {
     unsigned offset = (buffer.size() & 0x1fff) == 0 ? 0 : 16;
@@ -24,7 +26,12 @@ auto Icarus::famicomManifest(vector<uint8_t>& buffer, const string& location) ->
   return "";
 }
 
-auto Icarus::famicomImport(vector<uint8_t>& buffer, const string& location) -> bool {
+auto Icarus::playchoice10Import(vector<uint8_t>& buffer, const string& location) -> bool {
+  auto name = prefixname(location);
+  auto source = pathname(location);
+  string target{settings.libraryPath, "PlayChoice-10/", name, ".pc10/"};
+//if(directory::exists(target)) return failure("game already exists");
+
   bool has_ines_header = true;
   if(buffer.data()[0] != 'N'
   || buffer.data()[1] != 'E'
@@ -32,24 +39,23 @@ auto Icarus::famicomImport(vector<uint8_t>& buffer, const string& location) -> b
   || buffer.data()[3] !=  26) has_ines_header = false;
   unsigned offset = has_ines_header ? 16 : 0;
 
-  if(has_ines_header) {
-    if(buffer.data()[7] & 0x01) return vsSystemImport(buffer, location);
-    if((buffer.data()[7] & 0x0c) == 0x08) { // NES 2.0
-      if(buffer.data()[7] & 0x02) return playchoice10Import(buffer, location);
-    }
-  }
-
-  auto name = prefixname(location);
-  auto source = pathname(location);
-  string target{settings.libraryPath, "Famicom/", name, ".fc/"};
-//if(directory::exists(target)) return failure("game already exists");
-
   string markup;
   vector<Markup::Node> roms;
 
   if(settings.useDatabase && !markup) {
+    unsigned offset = 16;
+    if(buffer.data()[0] != 'N'
+    || buffer.data()[1] != 'E'
+    || buffer.data()[2] != 'S'
+    || buffer.data()[3] !=  26) offset = 0;
+    //PlayChoice-10 ROMs in iNES format store 16 bytes for the key,
+    //and 16 more bytes for Counter Out.
+    //However, only 9 key bytes actually exist in the cartridge.
+    //The remaining 7 key bytes, as well as the entire Counter Out,
+    //follow a pattern based on hardware behavior.
+    //TODO: Detect extraneous bytes and exclude them from SHA256
     auto digest = Hash::SHA256(buffer.data() + offset, buffer.size() - offset).digest();
-    for(auto node : database.famicom) {
+    for(auto node : database.playchoice10) {
       if(node.name() != "release") continue;
       if(node["information/sha256"].text() == digest) {
         markup.append(BML::serialize(node["cartridge"]), "\n");
@@ -73,7 +79,7 @@ auto Icarus::famicomImport(vector<uint8_t>& buffer, const string& location) -> b
   }
 
   auto document = BML::unserialize(markup);
-  famicomImportScanManifest(roms, document["cartridge"]);
+  playchoice10ImportScanManifest(roms, document["cartridge"]);
 
   if(!markup) return failure("failed to parse ROM image");
   if(!directory::create(target)) return failure("library path unwritable");
@@ -88,7 +94,7 @@ auto Icarus::famicomImport(vector<uint8_t>& buffer, const string& location) -> b
   return success();
 }
 
-auto Icarus::famicomImportScanManifest(vector<Markup::Node>& roms, Markup::Node node) -> void {
+auto Icarus::playchoice10ImportScanManifest(vector<Markup::Node>& roms, Markup::Node node) -> void {
   if(node.name() == "rom") roms.append(node);
-  for(auto leaf : node) famicomImportScanManifest(roms, leaf);
+  for(auto leaf : node) playchoice10ImportScanManifest(roms, leaf);
 }

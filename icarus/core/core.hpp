@@ -15,6 +15,19 @@ struct Icarus {
   auto famicomManifest(const string& location) -> string;
   auto famicomManifest(vector<uint8_t>& buffer, const string& location) -> string;
   auto famicomImport(vector<uint8_t>& buffer, const string& location) -> bool;
+  auto famicomImportScanManifest(vector<Markup::Node>& roms, Markup::Node node) -> void;
+
+  //vs-system.cpp
+  auto vsSystemManifest(const string& location) -> string;
+  auto vsSystemManifest(vector<uint8_t>& buffer, const string& location) -> string;
+  auto vsSystemImport(vector<uint8_t>& buffer, const string& location) -> bool;
+  auto vsSystemImportScanManifest(vector<Markup::Node>& roms, Markup::Node node) -> void;
+
+  //playchoice-10.cpp
+  auto playchoice10Manifest(const string& location) -> string;
+  auto playchoice10Manifest(vector<uint8_t>& buffer, const string& location) -> string;
+  auto playchoice10Import(vector<uint8_t>& buffer, const string& location) -> bool;
+  auto playchoice10ImportScanManifest(vector<Markup::Node>& roms, Markup::Node node) -> void;
 
   //super-famicom.cpp
   auto superFamicomManifest(const string& location) -> string;
@@ -51,6 +64,9 @@ private:
   string errorMessage;
 
   struct {
+    Markup::Node famicom;
+    Markup::Node vsSystem;
+    Markup::Node playchoice10;
     Markup::Node superFamicom;
     Markup::Node bsxSatellaview;
     Markup::Node sufamiTurbo;

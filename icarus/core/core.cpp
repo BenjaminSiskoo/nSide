@@ -1,10 +1,16 @@
 namespace Database {
+  #include "../database/famicom.hpp"
+  #include "../database/vs-system.hpp"
+  #include "../database/playchoice-10.hpp"
   #include "../database/super-famicom.hpp"
   #include "../database/bsx-satellaview.hpp"
   #include "../database/sufami-turbo.hpp"
 }
 
 Icarus::Icarus() {
+  database.famicom = BML::unserialize(Database::Famicom);
+  database.vsSystem = BML::unserialize(Database::VSSystem);
+  database.playchoice10 = BML::unserialize(Database::PlayChoice10);
   database.superFamicom = BML::unserialize(Database::SuperFamicom);
   database.bsxSatellaview = BML::unserialize(Database::BsxSatellaview);
   database.sufamiTurbo = BML::unserialize(Database::SufamiTurbo);
@@ -30,6 +36,8 @@ auto Icarus::manifest(string location) -> string {
 
   auto type = suffixname(location).downcase();
   if(type == ".fc") return famicomManifest(location);
+  if(type == ".vs") return vsSystemManifest(location);
+  if(type == ".pc10") return playchoice10Manifest(location);
   if(type == ".sfc") return superFamicomManifest(location);
   if(type == ".gb") return gameBoyManifest(location);
   if(type == ".gbc") return gameBoyColorManifest(location);
@@ -63,6 +71,8 @@ auto Icarus::import(string location) -> bool {
   }
 
   if(type == ".fc" || type == ".nes") return famicomImport(buffer, location);
+  if(type == ".vs") return vsSystemImport(buffer, location);
+  if(type == ".pc10") return playchoice10Import(buffer, location);
   if(type == ".sfc" || type == ".smc") return superFamicomImport(buffer, location);
   if(type == ".gb") return gameBoyImport(buffer, location);
   if(type == ".gbc") return gameBoyColorImport(buffer, location);

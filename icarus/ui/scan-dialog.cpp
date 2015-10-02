@@ -18,10 +18,14 @@ ScanDialog::ScanDialog() {
   });
   scanList.onActivate([&] { activate(); });
   selectAllButton.setText("Select All").onActivate([&] {
-    for(auto& item : scanList.items()) item.cell(0).setChecked(true);
+    for(auto& item : scanList.items()) {
+      if(item.cell(0).checkable()) item.cell(0).setChecked(true);
+    }
   });
   unselectAllButton.setText("Unselect All").onActivate([&] {
-    for(auto& item : scanList.items()) item.cell(0).setChecked(false);
+    for(auto& item : scanList.items()) {
+      if(item.cell(0).checkable()) item.cell(0).setChecked(false);
+    }
   });
   createManifestsLabel.setChecked(settings.createManifests).setText("Create Manifests").onToggle([&] {
     settings.createManifests = createManifestsLabel.checked();
@@ -96,6 +100,8 @@ auto ScanDialog::import() -> void {
 auto ScanDialog::gamePakType(const string& type) -> bool {
   return type == ".sys"
   || type == ".fc"
+  || type == ".vs"
+  || type == ".pc10"
   || type == ".sfc"
   || type == ".gb"
   || type == ".gbc"
@@ -107,6 +113,8 @@ auto ScanDialog::gamePakType(const string& type) -> bool {
 auto ScanDialog::gameRomType(const string& type) -> bool {
   return type == ".zip"
   || type == ".fc" || type == ".nes"
+  || type == ".vs"
+  || type == ".pc10"
   || type == ".sfc" || type == ".smc"
   || type == ".gb"
   || type == ".gbc"

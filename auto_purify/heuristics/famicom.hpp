@@ -42,7 +42,7 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
   mirror  = ((data[6] & 0x08) >> 2) | (data[6] & 0x01);
   battery = data[6] & 0x02;
   vs      = data[7] & 0x01;
-  nes2    = data[7] & 0x0c == 0x08;
+  nes2    = (data[7] & 0x0c) == 0x08;
   if(!nes2) {
     // ignore the last 9 bytes of headers that have "DiskDude!" or other
     // messages written there
@@ -60,9 +60,9 @@ FamicomCartridge::FamicomCartridge(const uint8_t *data, unsigned size) {
     submapper |= data[8] >> 4;
     prgrom += (data[9] & 0x0f) * 0x400000;
     chrrom += (data[9] >> 4) * 0x200000;
-    prgram = (data[10] & 0x0f == 0 ? 0 : 64) << (data[10] & 0x0f); // no battery
+    prgram = ((data[10] & 0x0f) == 0 ? 0 : 64) << (data[10] & 0x0f); // no battery
     prgram += (data[10] >> 4 == 0 ? 0 : 64) << (data[10] >> 4); // battery
-    chrram = (data[11] & 0x0f == 0 ? 0 : 64) << (data[11] & 0x0f); // no battery
+    chrram = ((data[11] & 0x0f) == 0 ? 0 : 64) << (data[11] & 0x0f); // no battery
     chrram += (data[11] >> 4 == 0 ? 0 : 64) << (data[11] >> 4); // battery
     region = data[12] & 0x01;
   }

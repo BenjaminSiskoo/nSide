@@ -1,4 +1,6 @@
 auto_purify/obj/*
+auto_purify/auto_purify.dll
 icarus/obj/*
+icarus/icarus.exe
 obj/*
 out/*
