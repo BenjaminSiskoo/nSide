@@ -78,8 +78,9 @@ void Cartridge::parseMarkupCartridge(Markup::Node root) {
   parseMarkupMemory(board->chrrom, root["chr/rom"], ID::CharacterROM, false);
   parseMarkupMemory(board->chrram, root["chr/ram"], ID::CharacterRAM, true);
   if(system.pc10()) {
-    parseMarkupMemory(board->instrom, root["pc10/rom[0]"], ID::InstructionROM, false);
-    parseMarkupMemory(board->keyrom, root["pc10/rom[1]"], ID::KeyROM, false);
+    auto rom = root["pc10"].find("rom");
+    parseMarkupMemory(board->instrom, rom(0), ID::InstructionROM, false);
+    parseMarkupMemory(board->keyrom, rom(1), ID::KeyROM, false);
   }
 }
 

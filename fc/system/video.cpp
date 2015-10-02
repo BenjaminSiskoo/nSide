@@ -39,6 +39,7 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
     ppu_pal = PPU::RP2C04_0003;
     break;
   case PPU::Revision::RP2C04_0004:
+    rgb = true;
     ppu_pal = PPU::RP2C04_0004;
     break;
   }
