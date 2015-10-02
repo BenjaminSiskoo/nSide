@@ -10,11 +10,11 @@ using namespace nall;
 using namespace phoenix;
 
 namespace Database {
-  #include "database/famicom.hpp"
-  #include "database/playchoice-10.hpp"
-  #include "database/super-famicom.hpp"
-  #include "database/sufami-turbo.hpp"
-  #include "database/bsx-satellaview.hpp"
+  #include "../cart-pal/database/famicom.hpp"
+  #include "../cart-pal/database/playchoice-10.hpp"
+  #include "../cart-pal/database/super-famicom.hpp"
+  #include "../cart-pal/database/sufami-turbo.hpp"
+  #include "../cart-pal/database/bsx-satellaview.hpp"
 };
 
 struct AutoPurify {
