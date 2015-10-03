@@ -28,7 +28,7 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
   if(data[2] != 'S') return;
   if(data[3] !=  26) return;
 
-  mapper = ((data[7] >> 4) << 4) | (data[6] >> 4);
+  mapper = (data[7] & 0x80) | (data[6] >> 4);
   mirror = ((data[6] & 0x08) >> 2) | (data[6] & 0x01);
   prgrom = data[4] * 0x4000;
   chrrom = data[5] * 0x2000;
@@ -70,9 +70,9 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
   default:
     if(prgram) {
       markup.append("  board type=HVC-FAMILYBASIC\n");
-    } else if(prgrom <= 8192) {
+    } else if(prgrom <= 0x2000) {
       markup.append("  board type=NAMCOT-3301\n");
-    } else if(prgrom <= 16384) {
+    } else if(prgrom <= 0x4000) {
       markup.append("  board type=NES-NROM-128\n");
     } else {
       markup.append("  board type=NES-NROM-256\n");
@@ -82,13 +82,17 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
 
   case   1:
   case 155:
-    if(prgram <= 8192) {
-      markup.append("  board type=NES-SUROM\n");
+    if(prgram <= 0x2000) {
+      if(submapper != 5 || prgrom >= 0x8000) {
+        markup.append("  board type=NES-", prgrom <= 0x40000 ? "SNROM" : "SUROM", "\n");
+      } else {
+        markup.append("  board type=NES-SHROM\n");
+      }
     } else {
-      markup.append("  board type=NES-SXROM\n");
+      markup.append("  board type=", prgrom <= 0x40000 ? "NES-SOROM" : "HVC-SXROM", "\n");
     }
     markup.append("  chip type=MMC1", mapper != 155 ? "B2" : "A", "\n");
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     break;
 
   case   2:
@@ -114,25 +118,33 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
   case 118:
   case 119:
     if(prgram != 0x400) {
-      switch(mapper) {
-      case   4:
-        if(mirror & 2) markup.append("  board type=NES-TR1ROM\n");
-        else           markup.append("  board type=NES-TLROM\n");
-        break;
-      case 118: markup.append("  board type=NES-TLSROM\n"); break;
-      case 119: markup.append("  board type=NES-TQROM\n"); break;
+      if(submapper != 3) {
+        switch(mapper) {
+        case   4:
+          if(mirror & 2) markup.append("  board type=NES-TR1ROM\n");
+          else           markup.append("  board type=NES-TLROM\n");
+          break;
+        case 118: markup.append("  board type=NES-TLSROM\n"); break;
+        case 119: markup.append("  board type=NES-TQROM\n"); break;
+        }
+        markup.append("  chip type=MMC3B\n");
+      } else {
+        markup.append("  chip type=ACCLAIM-MC-ACC\n");
+        markup.append("  chip type=MC-ACC\n");
       }
-      markup.append("  chip type=MMC3B\n");
     } else {
       markup.append("  board type=NES-HKROM\n");
       markup.append("  chip type=MMC6n");
     }
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     if(mapper == 119 && !nes2 && !chrram) chrram = 0x2000;
     break;
 
   case   5:
-    markup.append("  board type=NES-ELROM\n");
+         if(prgram ==      0) markup.append("  board type=NES-ELROM\n");
+    else if(prgram <= 0x2000) markup.append("  board type=NES-EKROM\n");
+    else if(prgram == 0x8000) markup.append("  board type=NES-EWROM\n");
+    else if(prgram == 0x4000) markup.append("  board type=NES-ETROM\n");
     markup.append("  chip type=MMC5\n");
     if(!nes2 && !prgram) prgram = 32768;
     break;
@@ -144,13 +156,13 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
   case   9:
     markup.append("  board type=NES-PNROM\n");
     markup.append("  chip type=MMC2\n");
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     break;
 
   case  10:
     markup.append("  board type=HVC-FKROM\n");
     markup.append("  chip type=MMC4\n");
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     break;
 
   case  13:
@@ -170,7 +182,7 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
     case 153:
       markup.append("  board type=BANDAI-JUMP2\n");
       markup.append("  chip type=LZ93D50\n");
-      if(!nes2 && !prgram) prgram = 8192;
+      if(!nes2 && !prgram) prgram = 0x2000;
       break;
     case 159:
       markup.append("  board type=BANDAI-LZ93D50\n");
@@ -185,10 +197,32 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
     markup.append("  chip type=SS88006\n");
     break;
 
+  case  19:
+  case 210:
+    {
+      string chip_type;
+      switch(mapper) {
+      case  19: chip_type = "163"; break;
+      case 210: chip_type = submapper == 1 ? "175" : "340"; break;
+      }
+      markup.append("  board type=NAMCOT-", chip_type, "\n");
+      markup.append("  chip type=", chip_type, "\n");
+    }
+    if(prgram == 0x80) {
+      markup.append("    ram name=sound.ram size=0x80\n");
+      prgram = 0;
+    } else {
+      markup.append("    ram size=0x80\n");
+    }
+    if(mapper == 210 && submapper == 1) {
+      markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
+    }
+    break;
+
   case  21: //VRC4a,VRC4c
   case  23: //VRC4e,VRC4f,VRC2b
   case  25: //VRC4b,VRC4d,VRC2c
-    //VRC4
+    //VRC4f is not confirmed to exist.
     markup.append("  board type=KONAMI-VRC-4\n");
     markup.append("  chip type=", submapper == 15 ? "VRC2" : "VRC4", "\n");
     if(submapper == 0) {
@@ -208,7 +242,7 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
         " a1=", (submapper & 7) + (((submapper & 8) >> 2) - 1),
       "\n");
     }
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     break;
 
   case  22:
@@ -226,7 +260,7 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
     case 24: markup.append("    pinout a0=0 a1=1\n"); break;
     case 26: markup.append("    pinout a0=1 a1=0\n"); break;
     }
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     break;
 
   case  32:
@@ -250,10 +284,15 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
     markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
     break;
 
+  case  68:
+    markup.append("  board type=SUNSOFT-4\n");
+    if(!nes2 && !prgram) prgram = 0x2000;
+    break;
+
   case  69:
     markup.append("  board type=SUNSOFT-5B\n");
     markup.append("  chip type=5B\n");
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     break;
 
   case  70:
@@ -265,7 +304,7 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
     markup.append("  board type=KONAMI-VRC-3\n");
     markup.append("  chip type=VRC3\n");
     markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     break;
 
   case  75:
@@ -278,15 +317,13 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
     break;
 
   case  78:
-    markup.append("  board type=",
-      submapper != 3 ? "JALECO-JF-16" : "IREM-HOLYDIVER",
-    "\n");
+    markup.append("  board type=", submapper != 3 ? "JALECO-JF-16" : "IREM-HOLYDIVER", "\n");
     break;
 
   case  85:
     markup.append("  board type=KONAMI-VRC-7\n");
     markup.append("  chip type=VRC7\n");
-    if(!nes2 && !prgram) prgram = 8192;
+    if(!nes2 && !prgram) prgram = 0x2000;
     break;
 
   case  86:
@@ -349,7 +386,7 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, unsigned size) {
 }
 
 auto FamicomCartridge::vsSystemHeuristic(const uint8_t* data, unsigned size) -> void {
-  mapper = ((data[7] >> 4) << 4) | (data[6] >> 4);
+  mapper = (data[7] & 0x80) | (data[6] >> 4);
   mirror = ((data[6] & 0x08) >> 2) | (data[6] & 0x01);
   prgrom = data[4] * 0x4000;
   chrrom = data[5] * 0x2000;
@@ -365,9 +402,7 @@ auto FamicomCartridge::vsSystemHeuristic(const uint8_t* data, unsigned size) -> 
       prgram = data[8] * 0x2000;
       region = data[9] & 0x01;
     } else {
-      mapper &= 0x0f;
-      vs = false;
-      pc10 = false;
+      return;
     }
   } else {
     pc10 = data[7] & 0x02;

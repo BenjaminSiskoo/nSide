@@ -4,6 +4,25 @@ database revision=2012-10-22 owner=bootgod
 
 release
   cartridge region=NTSC
+    board type=SUNSOFT-4
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x40000
+  information
+    title:    アフターバーナーII
+    name:     After Burner II
+    region:   JP
+    revision: 1.0
+    board:    UNK-SUNSOFT-AFB
+    serial:   SUN-AFB-6200
+    sha256:   4fb12ad1c791c7ee8d5ec824eff871d71b43b92c4e93b45ed0b60f022459b917
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x40000
+
+release
+  cartridge region=NTSC
     board type=KONAMI-VRC-6
     chip type=VRC6
       pinout a0=0 a1=1
@@ -1183,6 +1202,26 @@ release
 
 release
   cartridge region=NTSC
+    board type=NAMCOT-3305
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x2000
+  information
+    title:    ドルアーガの塔: The Tower of Druaga
+    name:     Tower of Druaga, The
+    region:   JP
+    revision: 1.0
+    board:    3305
+    serial:   NAM-NTD-4900-07
+    sha256:   5ec7c3e91bfd5800073286ee978b1d152c19f924837788eb72700c7c01261fa4
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
     board type=FDS
     prg
       rom name=program.rom size=0x2000
@@ -1261,6 +1300,47 @@ release
     configuration
       rom name=program.rom size=0x4000
       rom name=character.rom size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-UNROM
+    chip type=74HC32
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      ram size=0x2000
+  information
+    title:    The 3-D Battles of WorldRunner
+    name:     3-D Battles of WorldRunner, The
+    region:   NA
+    revision: 1.0
+    board:    NES-UN-ROM-04
+    serial:   NES-WO-USA
+    sha256:   c457644ccfb93f8978326e728931800283821e531edc409fca9c0167495319c4
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-SLROM
+    chip type=MMC1B2
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    Abadox: The Deadly Inner War
+    name:     Abadox - The Deadly Inner War
+    region:   NA
+    revision: 1.0
+    board:    NES-SLROM-05
+    serial:   NES-A3-USA
+    sha256:   c4d4ff0bd283656c63d9a30dfc7dc6d2956744730a3641ba2c8f9f8e7204d9a1
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
 
 release
   cartridge region=NTSC
@@ -1922,6 +2002,26 @@ release
 
 release
   cartridge region=NTSC
+    board type=NES-TLROM
+    chip type=MMC3B
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    Low G Man: The Low Gravity Man
+    name:     Low G Man - The Low Gravity Man
+    region:   NA
+    revision: 1.0
+    board:    NES-TLROM-03
+    serial:   NES-L7-USA
+    sha256:   4fb6c5c8359dcbabcb4d05cf36192c790e68a509ef8666c20ebdb81541df3243
+    configuration
+      rom name=program.rom size=0x20000
+      rom name=character.rom size=0x20000
+
+release
+  cartridge region=NTSC
     board type=NES-NROM-256
     mirror mode=vertical
     prg
@@ -1983,6 +2083,27 @@ release
 
 release
   cartridge region=NTSC
+    board type=NES-UNROM
+    chip type=74HC32
+    mirror mode=vertical
+    prg
+      rom name=program.rom size=0x20000
+    chr
+      ram size=0x2000
+  information
+    title:    Mega Man
+    name:     Mega Man
+    region:   NA
+    revision: 1.0
+    board:    NES-UN-ROM-06
+    serial:   NES-MN-USA
+    sha256:   5314ad0c406161195b6bb100ee11304bab8af121bba85992be896d5cb26b109e
+    configuration
+      rom name=program.rom size=0x20000
+      ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
     board type=NES-SGROM
     chip type=MMC1B2
     prg
@@ -2000,6 +2121,26 @@ release
     configuration
       rom name=program.rom size=0x40000
       ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-TLROM
+    chip type=MMC3B
+    prg
+      rom name=program.rom size=0x40000
+    chr
+      rom name=character.rom size=0x20000
+  information
+    title:    Mega Man 3
+    name:     Mega Man 3
+    region:   NA
+    revision: 1.0
+    board:    NES-TLROM-03
+    serial:   NES-XU-USA
+    sha256:   5b85c1ff632c6ac34742ac87b9c8ddee9a13827caf1212ecfa1d11f1f9dece50
+    configuration
+      rom name=program.rom size=0x40000
+      rom name=character.rom size=0x20000
 
 release
   cartridge region=NTSC
@@ -2022,6 +2163,26 @@ release
       rom name=program.rom size=0x40000
       ram name=work.ram size=0x2000
       ram name=character.ram size=0x2000
+
+release
+  cartridge region=NTSC
+    board type=NES-CNROM
+    mirror mode=horizontal
+    prg
+      rom name=program.rom size=0x8000
+    chr
+      rom name=character.rom size=0x8000
+  information
+    title:    Paperboy
+    name:     Paperboy
+    region:   NA
+    revision: 1.0
+    board:    NES-CNROM-08
+    serial:   NES-PY-USA
+    sha256:   f1c9c4723190d6be5f1f683ad5fd8cc123abd70d42f486c175a25f1237db6199
+    configuration
+      rom name=program.rom size=0x8000
+      rom name=character.rom size=0x8000
 
 release
   cartridge region=NTSC

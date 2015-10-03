@@ -1,8 +1,8 @@
 include ../nall/GNUmakefile
 include ../hiro/GNUmakefile
 
-flags += -O3 -I..
-link +=
+flags += -I.. -O3
+link += -mwindows
 objects := obj/hiro.o obj/cart-pal.o
 objects += $(if $(call streq,$(platform),windows),obj/resource.o)
 
