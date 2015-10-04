@@ -28,6 +28,7 @@ Program::Program(lstring args) {
   new CheatDatabase;
   new ToolsManager;
   new Presentation;
+  new DipSwitches;
 
   presentation->setVisible();
 

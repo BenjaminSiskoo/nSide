@@ -154,6 +154,7 @@ auto Program::inputRumble(unsigned port, unsigned device, unsigned input, bool e
 }
 
 auto Program::dipSettings(const Markup::Node& node) -> unsigned {
+  return dipSwitches->run(node);
 }
 
 auto Program::path(unsigned group) -> string {
