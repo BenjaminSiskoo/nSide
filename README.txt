@@ -1,6 +1,6 @@
-﻿nSide v009 (2015-03-01)
+﻿nSide v009r05 (2015-10-08)
 
-A fork of higan v094r08 by byuu (http://byuu.org/emulation/higan/), which was
+A fork of higan v095 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
 Individual emulators are also renamed to the following:
 bnes  -> nSide-fc
@@ -31,15 +31,16 @@ ones that use the NES Four Score such as A Nightmare on Elm Street. If the
 expansion slot is not explicitly set to "None", this can result in Player 3's
 controller controlling both Player 1 and Player 3.
 
-The Export Memory function for the Super Famicom emulator now exports a limited
-selection of PPU registers in BML format and expansion chip memory (except for
-the NEC DSPs). The Famicom and Game Boy emulators will also dump their RAMs but
-not registers. Note that this function was removed in higan v094r06 but
-preserved in nSide.
+The Export Memory functions for the Famicom and Super Famicom emulators now
+export a limited selection of PPU registers in BML format and expansion chip
+memory (except for the NEC DSPs). The Game Boy and Game Boy Advance emulators
+will also dump their RAMs but not registers.
+(This function was removed in higan v094r06. Preserved in nSide for the benefit
+of 3rd-party tools that depend on it)
 
 nSide uses different directories for storing configuration settings, save
 states, and shaders so as to not conflict with higan.
-In Windows, the configuration files are in "%AppData%\nSide".
+In Windows, the configuration files are in "%AppData%\nSide-t".
 
 You will need the GBA BIOS to play Game Boy Advance games. This is no different
 from higan.
@@ -62,9 +63,9 @@ Composite palette ROM (3 files 6F + 6E + 6D put together—each byte is the
 corresponding nybble with a leading 0—for a 768-byte ROM)
 sha256: 9f639da2e0248431b59a9344769a38fad8b64742ce6e0e44534e6918b8977a0a)
 
-...but if you do not wish to emulate the Game Boy Advance or PlayChoice-10, none
-of these files are necessary. Keep in mind that PlayChoice-10 emulation is still
-incomplete, so these files will not be very useful right now.
+...but if you do not wish to emulate the PlayChoice-10, the above 3 files are
+not necessary. Keep in mind that PlayChoice-10 emulation is still incomplete, so
+these files will not be very useful right now.
 
 Known Bugs:
 Famicom:
@@ -81,353 +82,21 @@ Super Famicom:
   in the area above the pipe. It is likely that this bug is related to the
   Magical Drop bug above.
   Inherited from higan v094.
+Game Boy:
+  *When loading a Game Boy game in Game Boy Color mode, colors are applied to
+  the wrong areas, making game displays terrible on the eyes.
+  Inherited from higan v094.
+Game Boy Advance:
+  *The Classic NES Series games will not work. Loading them would cause higan
+  to hang, and so too do they cause nSide to hang.
+  There is still much to know about the Game Boy Advance's inner workings, so
+  it is recommended that you either use mGBA (by endrift) to play these games,
+  or play the original Famicom/NES versions instead.
+  Inherited from higan v095.
 
-=========================
-Changes in v009: nSide-fc
-=========================
-./fc/fc.hpp
-   Changed the serializer version from 127 to 0. That serializer version was a
-  holdover from before this fork was renamed to "nSide" to prevent bnes save
-  states from loading. Because nSide's save states are stored in a separate
-  folder from higan's save states, keeping serializer versions synchronized is
-  not necessary. From now on, if a major release changes the serialization data,
-  the serializer version will increment.
-
-./fc/memory/memory.cpp
-./fc/memory/memory.hpp
-./fc/memory/memory-inline.hpp
-./fc/interface/interface.cpp
-./fc/cartridge/*
-   Imported bsnes's Memory struct with StaticRAM and MappedRAM sub-structs and
-  replaced all references to Board::Memory with references to MappedRAM,
-  removing Board::Memory in the process. With this change, the Famicom
-  emulator's structure is further modernized towards bsnes's standard.
-  Board::Memory was causing a crash when more of them were added for the
-  PlayChoice-10's instruction and key ROMs.
-
-./fc/cartridge/board/board.cpp
-./fc/cartridge/board/bandai-74-161-161-32.cpp
-./fc/cartridge/board/jaleco-jf-0x.cpp
-./fc/cartridge/board/jaleco-jf-2x.cpp
-   Added support for the following boards:
-    HVC-UN1ROM             // 戦場の狼 (Senjou no Ookami) (JP)
-    BANDAI-74*161/161/32   // Kamen Rider Club (JP)
-    IREM-74*161/161/21/138 // ナポレオン戦記 (Napoleon Senki) (JP)
-    IREM-G101              // Image Fight (JP)
-    IREM-H3001             // 大工の源さん2 (Daiku no Gen-san 2) (JP)
-    IREM-HOLYDIVER         // Holy Diver (JP)
-    IREM-TAM-S1            // 快傑ヤンチャ丸 (Kaiketsu Yanchamaru 2) (JP)
-    JALECO-JF-05..08       // 忍者じゃじゃ丸くん (Ninja Jajamaru-kun) (JP)
-    JALECO-JF-09           // じゃじゃ丸の大冒険 (Jajamaru no Daibouken) (JP)
-    JALECO-JF-10           // うる生やつら ルムのウエヂングベル (Urusei Yatsura) (JP)
-    JALECO-JF-11           // 妖怪倶楽部 (Youkai Club) (JP)
-    JALECO-JF-14           // バイオ戦士DAN インクリーサーとの闘い (Bio Senshi DAN) (JP)
-    JALECO-JF-16           // 宇宙船コスモキャリア (Uchuusen: Cosmo Carrier) (JP)
-    JALECO-JF-24           // Magic John (JP)
-    JALECO-JF-25           // 忍者じゃじゃ丸 銀河大作戦 (Ninja Jajamaru G.D.) (JP)
-
-./fc/arcade/pc10/pc10.cpp
-./fc/arcade/pc10/pc10.hpp
-./fc/ppu/ppu.cpp
-./fc/ppu/ppu.hpp
-./fc/video/video.cpp
-   Added emulation of PPU open bus behavior according to the notes blargg wrote
-  when he published his ppu_open_bus demo. ppu.status.mdr will decay to 0x00 if
-  not refreshed after about 600 milliseconds, and reading from the palette will
-  put the 2 highest MDR bits into the read value.
-   The PAL PPU swaps the red and green color emphasis bits.
-   Changed PPU timing to account for the dummy tick in front of every scanline.
-  bnes had pixel rendering on ticks 0-255 of every scanline, whereas an actual
-  PPU renders on ticks 1-256.
-   Prepared the video renderer for dynamic adjustment of screen width for
-  VS. DualSystem and PlayChoice-10 games. To set the width to 512 pixels for a
-  VS. DualSystem game, add a second "vs" node with a "ppu" child. It is not
-  enough to simply have a 2nd "vs" node, said node needs to have a "ppu" node as
-  a child to activate the double width. This is currently not useful because of
-  lack of true DualSystem support. The height is set to 480 if using the
-  PlayChoice-10's dual screen mode (set in PlayChoice-10.sys/manifest.bml), and,
-  as a basic demonstration of the horrid frame-based renderer, it will display
-  the PlayChoice-10 logo at the top as you play.
-
-./fc/cartridge/chip/mmc3.cpp
-   Made the MMC3 read the PPU's address bus (status.chr_abus) instead of ticking
-  on every CHR ROM/RAM read.
-   Added support for Acclaim's MC-ACC chip, which fires IRQs on PPU A12 falling
-  edges instead of rising edges. Needed to properly display The Incredible Crash
-  Dummies's messages during its intro.
-
-==========================
-Changes in v009: nSide-gba
-==========================
-./gba/gba.hpp
-./gba/alt/cpu/*
-   Added an alternate CPU that ignores ROM read delays. This alternate CPU will
-  be selected when using the balanced or performance profiles, and the main CPU
-  will be used in the accuracy profile.
-  This change is not ideal, and it only exists as a work-around for the lack of
-  documentation on ROM prefetch.
-
-=========================
-Changes in v008: nSide-fc
-=========================
-./fc/interface/interface.cpp
-./fc/interface/interface.hpp
-./fc/controller/*
-   Overhauled the procedure for adding devices to fix a bug in which the wrong
-  device is polled if the inter-port and intra-port ID numbers are not the same.
-
-./fc/cartridge/board/vs.cpp
-./fc/memory/memory.cpp
-./fc/ppu/ppu.cpp
-./fc/ppu/ppu.hpp
-   Moved some VS. System-specific features from the VS. cartridge board class
-  into the VS. Arcade board class.
-   The VS. System PPU has 4 KB of NVRAM instead of 2 KB. The PPU class now
-  allocates 4 KB, but when playing a Famicom or PlayChoice-10 game, only 2 KB
-  will be available, much like the Game Boy vs. the Game Boy Color.
-
-./fc/cartridge/board/unlicensed/single-chip.cpp
-   Fixed an error in CHR RAM mapping for the Single Chip board (Magic Floor).
-
-./fc/controller/controller.cpp
-./fc/controller/beamgun/beamgun.cpp
-./fc/controller/beamgun/beamgun.hpp
-./fc/controller/vsbeamgun/vsbeamgun.cpp
-./fc/controller/vsbeamgun/vsbeamgun.hpp
-./fc/system/input.cpp
-   Consolidated the VS. Zapper's unique protocol into the main Beam Gun class.
-
-========================
-Changes in v007: General
-========================
-./target-<emulator_name>/Makefile
-./*.bat
-   Imported changes from quequotion's higan-qq fork to remove the "install as
-  root" requirement for all platforms and increase command-line options.
-  You can now specify a name for the compiled executable. See the *.bat files
-  for examples.
-
-./target-<emulator_name>/<emulator_name>.cpp
-./target-<emulator_name>/settings/advanced.cpp
-   Made the Profile text in the About information only load if the Super Famicom
-  emulator is included. This means removing the Super Famicom emulator takes the
-  same amount of effort as removing the Famicom and Game Boy Advance emulators
-  (and Game Boy emulator, but only if the Super Famicom emulator is also
-  removed).
-
-=========================
-Changes in v007: nSide-fc
-=========================
-./fc/ppu/ppu.cpp
-   Fixed an order of operations error that was preventing VS. System games that
-  use the RC2C05 PPUs from working properly. Needed to play VS. Ninja
-  Jajamaru-kun.
-
-./fc/arcade/pc10/pc10.cpp
-./fc/arcade/pc10/pc10.hpp
-./fc/interface/interface.cpp
-./fc/interface/interface.hpp
-./fc/system/system.cpp
-   The PlayChoice-10 board will now load the BIOS from the install directory's
-  PlayChoice-10.sys folder and throw a warning if one is not found, but because
-  it is not actually used in any way, you can put any 16384-byte file in there
-  to avoid the warning.
-   Which PPU to use is now decided by the presence of the "pc10" node in the
-  cartridge manifest, so if you want to bypass loading the PlayChoice-10 BIOS
-  while still using the RGB PPU, rename a ".pc10" folder to ".fc".
-
-==========================
-Changes in v007: nSide-sfc
-==========================
-./sfc/cartridge/markup.cpp
-   When loading a Nintendo Super System game, if the manifest has no DIP switch
-  settings, the emulator will not prompt you to set the DIP switches.
-   A total of 4 Nintendo Super System games do not have DIP switches:
-  Super Mario World
-  F-Zero
-  Super Tennis
-  Super Soccer
-
-========================
-Changes in v006: General
-========================
-./*
-   Migrated changes between higan v094 and higan v094r08 concerning changes to
-  nall, phoenix, ruby, and the UI. This has resulted in the name "ethos" being
-  dropped, so now "target-ethos" has been renamed to "target-<emulator_name>".
-   The requirement that "make install must be run as root" was altered to not
-  apply to Windows or Mac OS X.
-   loki has been added to the source code.
-   However, the exportMemory function was not removed like it was in higan
-  v094r06. There is a 3rd-party tool that depends on exportMemory to work, and
-  said tool will stop working if exportMemory is removed.
-
-=========================
-Changes in v006: nSide-fc
-=========================
-./fc/interface/interface.cpp
-  exportMemory now dumps cartridge PRG RAM and CHR RAM.
-
-./fc/Makefile
-./fc/arcade/vs/vs.cpp
-./fc/arcade/vs/vs.hpp
-./fc/arcade/vs/serialization.cpp
-./fc/controller/controller.cpp
-./fc/controller/vsbeamgun/vsbeamgun.cpp
-./fc/controller/vsbeamgun/vsbeamgun.hpp
-./fc/cpu/cpu.cpp
-./fc/cpu/cpu.hpp
-./fc/cpu/serialization.cpp
-./fc/system/input.cpp
-./fc/system/serialization.cpp
-   The VS. System's modifications to the Famicom's structure are extensive and
-  need a new class to be done justice.
-   The CPU had unused variables related to reading the controllers, so they were
-  removed.
-   The Zapper works completely different for the VS. System compared to the
-  Famicom. To customize the Zapper's inputs for VS. games, customize the Zapper
-  in Port 2, not the Beam Gun in the expansion port.
-
-==========================
-Changes in v006: nSide-sfc
-==========================
-./sfc/chip/icd2/icd2.cpp
-./sfc/chip/icd2/icd2.hpp
-./sfc/chip/icd2/interface/interface.cpp
-./sfc/chip/icd2/interface/interface.hpp
-./sfc/chip/icd2/mmio/mmio.cpp
-./sfc/chip/icd2/mmio/mmio.hpp
-./sfc/memory/memory-inline.hpp
-   Migrated changes between higan v094 and higan v094r01 concerning the Super
-  Game Boy and the Bus::reduce method.
-  It seems that, previously, Space Invaders could not load the SNES version, but
-  with this change, now it can. Why is that, and was it a known bug?
-
-=========================
-Changes in v006: nSide-gb
-=========================
-./gb/cpu/mmio.cpp
-./gb/interface/interface.cpp
-./gb/interface/interface.hpp
-./gb/ppu/dmg.cpp
-./gb/ppu/ppu.cpp
-   Migrated changes between higan v094 and higan v094r01 concerning the Super
-  Game Boy.
-
-=========================
-Changes in v005: nSide-fc
-=========================
-./fc/controller/beamgun/beamgun.cpp
-./fc/controller/beamgun/beamgun.hpp
-./fc/controller/familytrainer/familytrainer.cpp
-./fc/controller/familytrainer/familytrainer.hpp
-./fc/cpu/cpu.cpp
-./fc/cpu/cpu.hpp
-./fc/cpu/timing.cpp
-./fc/input/input.cpp
-./fc/system/serialization.cpp
-./fc/video/video.cpp
-   Overhauled the device implementation to depend on controller objects like in
-  the Super Famicom emulator. The amateur mistake of omitting "break;" after
-  every case statement was what prevented this from happening earlier.
-   Added buggy support for the Zapper. Use it the same way you would use the
-  Super Scope (press F12 to capture the cursor), but it sometimes misses even
-  when it should hit.
-  Light is defined as any Famicom color with a luma of 0x20 or greater and a
-  chroma less than 0x0D, not taking into account emphasis or RGB PPUs.
-   Refined the draw_cursor method to depend on the Zapper controller object 
-  instead of the Input object. If both a Zapper and Beam Gun are connected, 2
-  cursors are drawn and can be moved separately. Orange represents the Zapper,
-  and dark gray represents the Beam Gun.
-   Added the ability to directly connect a standard controller into the
-  expansion port where it will count as Player 3 (Famicom style). Because of a
-  limitation of the UI, this will be the default controller for the slot.
-   Added the Family Trainer as an expansion port alternative to the Power Pad,
-  much like the Beam Gun for the Zapper.
-
-./fc/cpu/cpu.cpp
-./fc/cpu/cpu.hpp
-./fc/interface/interface.cpp
-./fc/interface/interface.hpp
-./fc/system/system.cpp
-./fc/cartridge/board/board.cpp
-./fc/cartridge/board/vs.cpp
-   Added basic and buggy support for the VS. System. Only UniSystem games will
-  work right now (Tennis and Baseball are DualSystem games that would require
-  emulating 2 Famicoms). The Start and Select buttons are disabled in favor of
-  Buttons 1, 2, 3, and 4, which can be configured in the new Famicom Expansion
-  device, the VS. Panel. The VS. Panel also controls the service button and coin
-  slots. It is connected automatically and cannot be disconnected, but a
-  limitation of the UI prevents the interface from acknowledging that a device
-  change was refused.
-   VS. games are stored in a separate "VS. System" folder in the library, just
-  like PlayChoice-10 games. The VS. manifest format selects the PPU revision in
-  "cartridge/vs/ppu/revision" and specifies DIP switch settings in the same
-  format as the Nintendo Super System's DIP switch settings
-  ("cartridge/vs/setting/option/value").
-  Example:
-  cartridge
-    vs
-      setting name="Price"
-        option value=0x00 name="1 Coin - 1 Credit"
-        option value=0x07 name="Free Play"
-
-===================================================
-Changes in v004: processor/r6502 (affects nSide-fc)
-===================================================
-./processor/r6502/r6502.cpp
-./processor/r6502/r6502.hpp
-./processor/r6502/instructions.cpp
-   BRK was improperly clearing the Decimal flag when it should leave it alone.
-  Only the interrupt flag is set now.
-   An NMI can now redirect a BRK if it occurs after BRK's 4th cycle (after
-  pushing the return vector into the stack but before pushing register P).
-   Opcode 0x80 was being treated as NOP abs, when it should be NOP #imm.
-  NOP #imm now advances the program counter properly, fixing Puzznic's columns
-  of corruption bug.
-   Added support for the unofficial opcodes ALR, ANC, AXS, DCP, ISC (ISB), LAX,
-  RLA, RRA, SAX, SLO, SRE, and STP (KIL).
-
-=========================
-Changes in v004: nSide-fc
-=========================
-./fc/cartridge/board/bandai-fcg.cpp
-   Added support for BANDAI-JUMP2, the only LZ93D50 variant to use SRAM instead
-  of EEPROM. Needed to play ファミコンジャンプII 最強の７人 (Famicom Jump II).
-
-./fc/cartridge/board/nes-txrom.cpp
-   Prevented saving to non-existent SRAM/WRAM.
-
-./fc/cartridge/board/unlicensed/nina.cpp
-   Fixed a bug in AVE-NINA-01 and AVE-NINA-02 that was causing writes out of
-  $6000-7FFF to save to SRAM (causing, among other things, the program stack to
-  be copied into $6100-61FF), so now Impossible Mission II will run.
-
-=====================
-Changes in v004: Misc
-=====================
-./Makefile
-./reinstall.bat
-   Fixed a bug that was causing the accuracy build to show "Balanced Profile" in
-  the advanced settings (and Cocoa's about box?) despite not actually being
-  the Balanced profile.
-   Eliminated "Makefile-accuracy" and "Makefile-balanced" by using an --eval
-  command in the batch file to select the profile.
-
-============================
-Changes in v004: auto_purify
-============================
-./auto_purify/famicom.cpp
-./auto_purify/heuristics/famicom.hpp
-   Added support for PRG ROMs that are 8192 bytes long, half the minimum size
-  needed for iNES and NES 2.0. If a 16384-byte PRG ROM has 2 halves with the
-  same data, it is truncated to 8192 bytes.
-   NES 2.0 submappers are now supported for the Konami VRC4 (iNES 21, 23, and
-  25).
-
-=====================
-Past Changes: General
-=====================
+===========================
+Changes from higan: General
+===========================
    Changed "higan" to "nSide" and added a Contributors field for Ryphecha and
   Cydrak, which were credited in comments in fc.hpp and gba.hpp, on the
   Configuration Settings Advanced tab and Cocoa About box.
@@ -441,24 +110,96 @@ Past Changes: General
 
    Reformatted the "About" text to show contributors to higan and show which
   program nSide branched from.
-  Also applies to the Cocoa compilation target's unique About box.
 
-   Renamed "{game}/bsnes" folder for save states to "{game}/nSide"
-  (was "{game}/higan" in higan v094r01 and in nSide's earliest builds prior to
-  the v001 release).
+   Renamed "{game}/higan" folder for save states to "{game}/nSide".
 
-======================
-Past Changes: nSide-fc
-======================
+   Renamed the ethos-based UI to "nSide-e", imported tomoko with hiro, and
+  re-branded it as "nSide-t".
+   Notable, nall v094r37 dropped nall::group, which phoenix depends on, so
+  moved nall::group's definition into phoenix/core/core.hpp.
+
+   Renamed icarus to "cart-pal".
+
+============================
+Changes from higan: nSide-fc
+============================
    Revised emulator name and copyright information.
 
-   Moved video.cpp and video.hpp into fc/system and changed references to point
-  to the new location.
+   Moved fc/video/*, fc/audio/*, and fc/input/* into fc/system and changed
+  references to point to the new locations.
 
-   Added new board types referenced in the following files:
-    ./fc/cartridge/board/namco-34xx.cpp // SkyKid (JP), The Quest of Ki (JP)
-    ./fc/cartridge/board/sunsoft4.cpp   // After Burner (JP)
-    ./fc/cartridge/chip/namco-108.cpp
+   Changed the Serializer version from 2 to 127. This step is necessary because
+  of the addition of the Famicom's expansion port. Why 127 instead of 3? To
+  account for official revisions in the future.
+
+   The read registers at $4016 and $4017 only have 5 bits each, not 6, so
+  cpu.mdr() is ANDed with 0xe0 instead of 0xc0.
+
+   Commented out a line in ppu_read for the OAMREAD register that was making
+  Magic Floor's ball sprite behave strangely. The mystery of this behavior is
+  still not solved, however: a shadow ball copies the ball's previous X
+  coördinate upon update, which does not appear in Nestopia or FCEUX.
+
+   Added emulation of PPU open bus behavior according to the notes blargg wrote
+  when he published his ppu_open_bus demo. ppu.status.mdr will decay to 0x00 if
+  not refreshed after about 600 milliseconds, and reading from the palette will
+  put the 2 highest MDR bits into the read value.
+
+   Changed PPU timing to account for the dummy tick in front of every scanline.
+  bnes had pixel rendering on ticks 0-255 of every scanline, whereas an actual
+  PPU renders on ticks 1-256.
+
+   Added direct color support (when rendering is disabled and PPUADDR points to
+  the palette at $3F00-$3FFF, the selected color will render instead of the
+  background color).
+
+   Added PAL support, which reduces games to 50Hz and swaps the red and green
+  color emphasis bits.
+
+   Overhauled the device implementation to depend on controller objects like in
+  the Super Famicom emulator.
+
+   Added the ability to change controllers for the Famicom, which required
+  adding an Interface#connect method that calls Input#connect.
+   Added Four Score support. It is split into 2 devices, so for best results,
+  plug a Four Score into both slots.
+   Added support for the Zapper/Beam Gun.
+   Added support for the Power Pad/Family Trainer.
+   Added support for the 4-Players Adaptor.
+  Light is defined as any Famicom color with a luma of 0x20 or greater and a
+  chroma less than 0x0D, not taking into account emphasis or RGB PPUs.
+
+   Added new board types:
+    NES-EVENT              // Nintendo World Championships 1990
+    NES-QJ                 // Super Spike V'Ball / Nintendo World Cup
+    NES-SF1ROM             // Bases Loaded II (1.2)
+    HVC-UN1ROM             // 戦場の狼 (Senjou no Ookami) (JP)
+    PAL-ZZ                 // Super Mario Bros. / Tetris / Nintendo World Cup (EU)
+    BANDAI-74*161/02/74    // Oeka Kids (JP)
+    BANDAI-74*161/161/32   // Kamen Rider Club (JP)
+    BANDAI-PT-554          // Family Trainer 3 - Aerobics Studio (JP)
+    IREM-74*161/161/21/138 // ナポレオン戦記 (Napoleon Senki) (JP)
+    IREM-G101              // Image Fight (JP)
+    IREM-H3001             // 大工の源さん2 (Daiku no Gen-san 2) (JP)
+    IREM-HOLYDIVER         // Holy Diver (JP)
+    IREM-TAM-S1            // 快傑ヤンチャ丸 (Kaiketsu Yanchamaru 2) (JP)
+    JALECO-JF-05..08       // 忍者じゃじゃ丸くん (Ninja Jajamaru-kun) (JP)
+    JALECO-JF-09           // じゃじゃ丸の大冒険 (Jajamaru no Daibouken) (JP)
+    JALECO-JF-10           // うる生やつら ルムのウエヂングベル (Urusei Yatsura) (JP)
+    JALECO-JF-11           // 妖怪倶楽部 (Youkai Club) (JP)
+    JALECO-JF-14           // バイオ戦士DAN インクリーサーとの闘い (Bio Senshi DAN) (JP)
+    JALECO-JF-16           // 宇宙船コスモキャリア (Uchuusen: Cosmo Carrier) (JP)
+    JALECO-JF-24           // Magic John (JP)
+    JALECO-JF-25           // 忍者じゃじゃ丸 銀河大作戦 (Ninja Jajamaru G.D.) (JP)
+    NAMCOT-129
+    NAMCOT-163             // 貝獣物語 (Kaijuu Monogatari) (JP)
+    NAMCOT-175
+    NAMCOT-340
+    NAMCOT-34xx            // SkyKid (JP), The Quest of Ki (JP)
+    SUNSOFT-4              // After Burner (JP)
+    TAITO-TC0190FMC
+    TAITO-TC0350FMR
+    TAITO-TC0690FMC
 
    Added aliases for existing board classes:
     HVC-??????      to NES-??????  // Games released in Japan
@@ -495,22 +236,29 @@ Past Changes: nSide-fc
     NAMCOT-3305     to NES-NROM    // The Tower of Druaga (JP)
     NAMCOT-3311     to NES-NROM    // Tag Team Pro-Wrestling (JP)
     NAMCOT-3312     to NES-NROM    // Dig Dug II (JP)
+    TENGEN-800008
 
    Added unlicensed aliases for existing board classes:
     TENGEN-800003 to NES-NROM     // Pac-Man (Unlicensed) (NA)
     TENGEN-800008 to NES-CNROM    // Tetris: The Soviet Mind Game (NA)
     TENGEN-800042 to SUNSOFT-4    // After Burner (NA)
 
-   Added new unlicensed board types referenced in the following files (note that
-  they are sectioned off separately from the licensed ones for easy removal):
-    ./fc/cartridge/board/unlicensed/camerica.cpp          // Micro Machines
-    ./fc/cartridge/board/unlicensed/colordreams-74377.cpp // Bible Adventures
-    ./fc/cartridge/board/unlicensed/mlt-action52.cpp      // Action 52
-    ./fc/cartridge/board/unlicensed/nina.cpp              // Impos. Msn. II
-    ./fc/cartridge/board/unlicensed/single-chip.cpp       // Magic Floor (no$)
+   Added unlicensed board types: (note that they are sectioned off separately
+   from the licensed ones for easy removal):
+    CAMERICA-BF909x        // Micro Machines
+    CAMERICA-ALGN
+    CAMERICA-ALGQ
+    COLORDREAMS-74*377.cpp // Bible Adventures
+    MLT-ACTION52           // Action 52
+    AVE-NINA-xx            // Impossible Mission II
+    SingleChip             // Magic Floor (nocash)
    Many games published on Camerica boards were made by Codemasters who is
   notorious for exploiting rarely-used aspects of the NES. This is not a problem
   with the Camerica board but with Famicom hardware timing.
+
+   Prevented saving to non-existent SRAM/WRAM for the following board families:
+    SxROM
+    TxROM
 
    The board definitions for the following board families now read the board and
   chip types and choose a board and chip revisions accordingly:
@@ -534,6 +282,9 @@ Past Changes: nSide-fc
       Added support for TVROM. TR1ROM support already existed, which provides
       four-screen mirroring, but it did not recognize TVROM as also having it.
       Needed to play Rad Racer II.
+      Added support for Acclaim's MC-ACC chip, which fires IRQs on PPU A12
+      falling edges instead of rising edges. Needed to properly display The
+      Incredible Crash Dummies's messages during its intro.
     ExROM (MMC5)
       Fixed a bug in CHR mode 0 concerning background access to the PPU.
       Originally, though an increment of 1 to $512B advanced by 0x2000 bytes,
@@ -559,6 +310,9 @@ Past Changes: nSide-fc
     AxROM (AMROM only; AOROM has no quality database coverage)
     BNROM
     GNROM/MHROM
+
+   Made the MMC3 read the PPU's address bus (status.chr_abus) instead of ticking
+  on every CHR ROM/RAM read.
 
    Added support for VRC2a, which is similar to VRC2c except that CHR banks are
   right-shifted by 1. "cartridge/chip/pinout/chr-shift" indicates the shift
@@ -594,69 +348,81 @@ Past Changes: nSide-fc
    Added support for the Camerica boards ALGQ, BF9096 and BF9097. Needed to play
   Fire Hawk and the Quattro multicarts.
 
-   The read registers at $4016 and $4017 only have 5 bits each, not 6, so
-  mdr() is ANDed with 0xe0 instead of 0xc0.
+   Added the exportMemory function, which can dump WRAM, CIRAM, CGRAM, OAM,
+  cartridge PRG RAM, and cartridge CHR RAM.
 
-   Added the ability to change controllers for the Famicom, which required
-  adding an Interface#connect method that calls Input#connect.
-   Added Four Score support. It is split into 2 devices, so for best results,
-  plug a Four Score into both slots.
-   Added support for the Power Pad.
-   Added support for the 4-Players Adaptor.
-
-   Added the exportMemory function, which can dump WRAM, CIRAM, CGRAM, and OAM.
-
-   Commented out a line in ppu_read for the OAMREAD register that was making
-  Magic Floor's ball sprite behave strangely. The mystery of this behavior is
-  still not solved, however: a shadow ball copies the ball's previous X
-  coördinate upon update, which does not appear in Nestopia or FCEUX.
-
-   Added PAL support, which reduces games to 50Hz. May or may not be complete.
-
-   Moved interface->videoRefresh into Video::update as part of the effort to add
-  a cursor for the NES Zapper.
-
-   Changed the Serializer version from 2 to 127. This step is necessary because
-  of the addition of the Famicom's expansion port. Why 127 instead of 3? To
-  account for official revisions in the future.
+   Added limited support for the VS. System. Only UniSystem games will work
+  right now (Tennis and Baseball are DualSystem games that would require
+  emulating 2 Famicoms). The Start and Select buttons are disabled in favor of
+  Buttons 1, 2, 3, and 4, which can be configured in the new Famicom Expansion
+  device, the VS. Panel. The VS. Panel also controls the service button and coin
+  slots. It is connected automatically and cannot be disconnected, but a
+  limitation of the UI prevents the interface from acknowledging that a device
+  change was refused.
+   VS. games are stored in a separate "VS. System" folder in the library, just
+  like PlayChoice-10 games. The VS. manifest format selects the PPU revision in
+  "cartridge/vs/ppu/revision" and specifies DIP switch settings in the same
+  format as the Nintendo Super System's DIP switch settings
+  ("cartridge/vs/setting/option/value").
 
    Added support for loading games with the .pc10 extension.
   Currently, PlayChoice-10 games load the same way as Famicom games but with the
-  RGB palette in the 2C03. They won't even load PlayChoice-10-specific files, so
-  the BIOSes are not required to load games right now.
+  RGB palette in the 2C03. It will now load the BIOS from the PlayChoice-10.sys
+  folder and throw a warning if one is not found, but because it is not
+  actually used in any way, you can put any 16384-byte file in there to avoid
+  the warning.
   Note that RGB PPUs do not support the Color Emulation option or Display
   Emulation shader. They display the same colors as when both are turned off.
+   Which PPU to use is decided by the presence of the "pc10" node in the
+  cartridge manifest, so if you want to bypass loading the PlayChoice-10 BIOS
+  while still using the RGB PPU, rename a ".pc10" folder to ".fc".
 
-=======================
-Past Changes: nSide-sfc
-=======================
-   Revised emulator name and copyright information.
+   Prepared the video renderer for dynamic adjustment of screen width for
+  VS. DualSystem and PlayChoice-10 games. To set the width to 512 pixels for a
+  VS. DualSystem game, add a second "vs" node with a "ppu" child. It is not
+  enough to simply have a 2nd "vs" node, said node needs to have a "ppu" node as
+  a child to activate the double width. This is currently not useful because of
+  lack of true DualSystem support. The height is set to 480 if using the
+  PlayChoice-10's dual screen mode (set in PlayChoice-10.sys/manifest.bml), and,
+  as a basic demonstration of the horrid frame-based renderer, it will display
+  the PlayChoice-10 logo at the top as you play.
 
-   Changed reference to "bsnes" in HSU1::write to instead read "nSide-sfc".
+======================================================
+Changes from higan: processor/r6502 (affects nSide-fc)
+======================================================
+   BRK was improperly clearing the Decimal flag when it should leave it alone.
+  Only the interrupt flag is set now.
+   An NMI can now redirect a BRK if it occurs after BRK's 4th cycle (after
+  pushing the return vector into the stack but before pushing register P).
+   Opcode 0x80 was being treated as NOP abs, when it should be NOP #imm.
+  NOP #imm now advances the program counter properly, fixing Puzznic's columns
+  of corruption bug.
+   Added support for the unofficial opcodes ALR, ANC, AXS, DCP, ISC (ISB), LAX,
+  RLA, RRA, SAX, SLO, SRE, and STP (KIL).
 
-   Expanded exportMemory to dump expansion chip-specific memory. Currently, only
-  the SA-1, ST-018, and Cx4 are supported.
+=============================
+Changes from higan: nSide-sfc
+=============================
+   Revised emulator name and copyright information. Credited multiple people who
+  helped out with bsnes in the past.
+
+   Expanded exportMemory to dump expansion chip-specific memory.
 
    Added exportRegisters for exporting some PPU registers to a debug report in
   BML format. Not all registers are supported yet.
 
-   Fixed a bug in drawing the cursor for the Super Scope and Justifier.
-  In draw_cursor, change all occurrences of "palette[pixelcolor]" to just
-  "pixelcolor".
-
-======================
-Past Changes: nSide-gb
-======================
-   Revised emulator name and copyright information.
-
+============================
+Changes from higan: nSide-gb
+============================
    Added the exportMemory function, which can dump WRAM, HRAM (internal RAM),
   VRAM, OAM, and the palette, which is different for the Game Boy and Game Boy
   Color.
 
-=======================
-Past Changes: nSide-gba
-=======================
-   Revised emulator name and copyright information.
+=============================
+Changes from higan: nSide-gba
+=============================
+   Revised emulator name and copyright information. Credited endrift, jchadwick,
+  and Jonas Quinn for various improvements to GBA emulation.
 
    Added the exportMemory function, which can dump External WRAM, Internal WRAM,
   VRAM, and PRAM (Palette RAM).
@@ -664,16 +430,30 @@ Past Changes: nSide-gba
   dumped, so it has been temporarily disabled (External WRAM is 262144 bytes
   long, the longest of any file dumped by any emulator's exportMemory function).
 
-=============================================
-Past Changes: auto_purify (formerly "ananke")
-=============================================
-   Renamed "ananke" to "auto_purify" in case byuu wants it renamed.
+===================================================================
+Changes from higan: processor/arm (affects nSide-sfc and nSide-gba)
+===================================================================
+   Added Jonas Quinn's rd delayed write code, which fixed multiple errors that
+  armwrestler reported.
 
-   Added support for the following boards:
-    CPROM
-    UNROM+74HC08
-    TQROM
-    TVROM
+========================================
+Changes from higan: cart-pal/auto_purify
+========================================
+   Renamed "ananke" to "auto_purify".
+   Renamed "icarus" to "cart-pal".
+
+   Added support for the following Famicom boards:
+    NES-CPROM
+    HVC-UN1ROM
+    HVC-UNROM+74HC08
+    NES_TQROM
+    NES-TVROM
+    IREM-G101
+    IREM-H3001
+    IREM-74*161/161/21/138
+    IREM-HOLYDIVER (NES 2.0 only)
+    IREM-TAM-S1
+    JALECO-JF-16
     NAMCOT-34xx
 
    Revised the header information for iNES mappers 21, 23, 24, 25, and 26 to
@@ -685,4 +465,14 @@ Past Changes: auto_purify (formerly "ananke")
 
    Began planning support for purification based on bootgod's database.
 
-   Added preliminary support for NES 2.0.
+   Added preliminary support for NES 2.0. This allows submappers to influence
+  purification of Konami VRC games, distinguish between IREM-HOLYDIVER and
+  JALECO-JF-16 (Cosmo Carrier), among other things.
+
+   (auto_purify only) Added support for PRG ROMs that are 8192 bytes long, half
+  the minimum size needed for iNES and NES 2.0. If a 16384-byte PRG ROM has 2
+  halves with the same data, it is truncated to 8192 bytes.
+
+   (auto_purify only) Corrected the Sufami Turbo database to give SD Gundam
+  Generation - Colony Kakutouki 0x2000 bytes of RAM. It erroneously had 0x800,
+  preventing it from saving properly.
