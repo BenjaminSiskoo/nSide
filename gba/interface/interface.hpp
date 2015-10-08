@@ -42,7 +42,7 @@ struct Interface : Emulator::Interface {
   auto reset() -> void;
   auto run() -> void;
 
-  serializer serialize();
+  auto serialize() -> serializer;
   auto unserialize(serializer&) -> bool;
 
   auto cheatSet(const lstring&) -> void;

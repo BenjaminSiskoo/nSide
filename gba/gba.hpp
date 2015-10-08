@@ -15,7 +15,7 @@ namespace GameBoyAdvance {
   nSide-gba - Game Boy Advance emulator
   based on higan/bgba by byuu and Cydrak.
   authors: byuu, Cydrak
-  contributors: Jonas Quinn
+  contributors: endrift, jchadwick, Jonas Quinn
   license: GPLv3
   original project started: 2012-03-19
 */

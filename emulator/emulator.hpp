@@ -9,8 +9,8 @@ using namespace nall;
 namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
-  static const string Version = "009.04";
-  static const string FromVersion = "094.44";
+  static const string Version = "009.05";
+  static const string FromVersion = "095";
   static const string Author = "byuu";
   static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, hex_usr, and more...";
   static const string License = "GPLv3";
