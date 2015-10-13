@@ -205,9 +205,9 @@ auto Presentation::resizeViewport() -> void {
   if(fullScreen() == false) {
     signed windowWidth  = 256 * scale;
     signed windowHeight = 240 * scale;
-    if(arc) windowWidth = windowWidth * 8 / 7;
+    if(arc) windowWidth = windowWidth * (emulator ? emulator->information.aspectRatio : 1.0);
 
-    double stretch = (arc && emulator && emulator->information.aspectRatio != 1.0) ? 8.0 / 7.0 : 1.0;
+    double stretch = (arc && emulator) ? emulator->information.aspectRatio : 1.0;
     signed multiplier = min(windowWidth / (signed)(width * stretch), windowHeight / height);
     width = width * multiplier * stretch;
     height = height * multiplier;
@@ -224,7 +224,7 @@ auto Presentation::resizeViewport() -> void {
     //it is used so that linear interpolation isn't required
     //todo: we should handle other resolutions nicely as well
     unsigned multiplier = windowHeight / height;
-    width *= 1 + multiplier;
+    width *= (arc && emulator->information.aspectRatio != 1.0 ? 1 : 0) + multiplier;
     height *= multiplier;
 
     signed x = (windowWidth - width) / 2;
