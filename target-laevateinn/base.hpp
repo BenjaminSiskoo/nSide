@@ -40,11 +40,13 @@ extern uint8_t laevateinnLogo[121905];
 struct Program {
   string basepath;
   string userpath;
+  string sharedpath;
 
   string proportionalFont;
   string proportionalFontBold;
   string monospaceFont;
 
+  string path(string name);
   void main();
   Program(string pathname);
 };

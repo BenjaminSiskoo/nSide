@@ -6,6 +6,16 @@ Audio* audio = nullptr;
 Input* input = nullptr;
 DSP dspaudio;
 
+string Program::path(string name) {
+  string path = {basepath, name};
+  if(file::exists(path) || directory::exists(path)) return path;
+  path = {userpath, name};
+  if(file::exists(path) || directory::exists(path)) return path;
+  path = {sharedpath, name};
+  if(file::exists(path) || directory::exists(path)) return path;
+  return {userpath, name};
+}
+
 void Program::main() {
   debugger->run();
 }
@@ -13,19 +23,10 @@ void Program::main() {
 Program::Program(string pathname) {
   program = this;
 
-  {
-    char path[PATH_MAX];
-    auto unused = ::realpath(argv[0], path);
-    basepath = dir(path);
-    unused = ::userpath(path);
-    userpath = path;
-    if(Intrinsics::platform() == Intrinsics::Platform::Windows) {
-      userpath.append("laevateinn/");
-    } else {
-      userpath.append(".config/laevateinn/");
-    }
-    mkdir(userpath, 0755);
-  }
+  basepath = nall::programpath();
+  userpath = {nall::configpath(), "laevateinn/"};
+  sharedpath = {nall::sharedpath(), "higan/"};
+  directory::create(userpath);
 
   if(Intrinsics::platform() == Intrinsics::Platform::Windows) {
     proportionalFont = "Tahoma, 8";
@@ -39,6 +40,11 @@ Program::Program(string pathname) {
 
   settings = new Settings;
   settings->load();
+
+  string path = string::read({nall::configpath(), "higan/library.bml"}).strip().ltrim("Path: ").transform("\\", "/");
+  if(path.empty()) path = {nall::userpath(), "Emulation/"};
+  if(path.endsWith("/") == false) path.append("/");
+  path.append("Super Famicom/");
 
   string foldername;
   if(pathname) foldername = pathname.transform("\\", "/").rtrim("/").append("/");
@@ -81,7 +87,7 @@ Program::Program(string pathname) {
   audio->set(Audio::Handle, videoWindow->viewport.handle());
   audio->set(Audio::Synchronize, settings->audio.synchronize);
   audio->set(Audio::Frequency, 48000u);
-  if(audio->init() == false) {
+  if(!audio->init()) {
     delete audio;
     audio = Audio::create("None");
     audio->init();
