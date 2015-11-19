@@ -74,7 +74,7 @@ ConsoleWindow::ConsoleWindow() {
   runButton.setText("Run");
   stepButton.setText("Step");
   clearButton.setText("Clear");
-  console.setFont(program->monospaceFont);
+  console.setFont(Font::monospace(8));
 
   layout.append(commandLayout, {~0, 0}, 5);
     commandLayout.append(runButton, {80, ~0}, 5);

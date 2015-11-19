@@ -6,7 +6,7 @@ VideoWindow::VideoWindow() {
   setTitle("Video");
 //setResizable(false);
   setGeometry({64, 64, 512, 480});
-  setStatusFont(program->proportionalFontBold);
+  setStatusFont(Font::sans(8, "Bold"));
   setStatusVisible();
 
   canvas.setSize({512, 480});

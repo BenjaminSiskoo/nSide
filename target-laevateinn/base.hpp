@@ -42,10 +42,6 @@ struct Program {
   string userpath;
   string sharedpath;
 
-  string proportionalFont;
-  string proportionalFontBold;
-  string monospaceFont;
-
   string path(string name);
   void main();
   Program(string pathname);

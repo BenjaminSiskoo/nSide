@@ -6,13 +6,13 @@ SMPRegisterEditor::SMPRegisterEditor() {
 
   layout.setMargin(5);
   regALabel.setText("A:");
-  regAValue.setFont(program->monospaceFont);
+  regAValue.setFont(Font::monospace(8));
   regXLabel.setText("X:");
-  regXValue.setFont(program->monospaceFont);
+  regXValue.setFont(Font::monospace(8));
   regYLabel.setText("Y:");
-  regYValue.setFont(program->monospaceFont);
+  regYValue.setFont(Font::monospace(8));
   regSLabel.setText("S:01");
-  regSValue.setFont(program->monospaceFont);
+  regSValue.setFont(Font::monospace(8));
   flagN.setText("N");
   flagV.setText("V");
   flagP.setText("P");

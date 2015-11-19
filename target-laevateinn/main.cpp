@@ -28,16 +28,6 @@ Program::Program(string pathname) {
   sharedpath = {nall::sharedpath(), "higan/"};
   directory::create(userpath);
 
-  if(Intrinsics::platform() == Intrinsics::Platform::Windows) {
-    proportionalFont = "Tahoma, 8";
-    proportionalFontBold = "Tahoma, 8, Bold";
-    monospaceFont = "Lucida Console, 8";
-  } else {
-    proportionalFont = "Sans, 8";
-    proportionalFontBold = "Sans, 8, Bold";
-    monospaceFont = "Liberation Mono, 8";
-  }
-
   settings = new Settings;
   settings->load();
 

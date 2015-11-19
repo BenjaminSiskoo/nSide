@@ -120,8 +120,8 @@ CPUDebugger::CPUDebugger() {
   stepIRQ.setText("IRQ");
   autoUpdate.setText("Auto");
   update.setText("Update");
-  disassembly.setFont(program->monospaceFont);
-  registers.setFont(program->monospaceFont);
+  disassembly.setFont(Font::monospace(8));
+  registers.setFont(Font::monospace(8));
   registers.setText(" ");
 
   layout.append(controlLayout, {~0, 0}, 5);
