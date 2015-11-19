@@ -2,9 +2,9 @@ struct PropertiesViewer : Window {
   VerticalLayout layout;
     HorizontalLayout controlLayout;
       Label sourceLabel;
-      ComboBox sourceSelection;
+      ComboButton sourceSelection;
       Widget spacer;
-      CheckBox autoUpdate;
+      CheckLabel autoUpdate;
       Button update;
     TextEdit properties;
 

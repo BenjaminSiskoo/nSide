@@ -2,9 +2,9 @@ struct VRAMViewer : Window {
   VerticalLayout layout;
     HorizontalLayout controlLayout;
       Label modeLabel;
-      ComboBox modeSelection;
+      ComboButton modeSelection;
       Widget spacer;
-      CheckBox autoUpdate;
+      CheckLabel autoUpdate;
       Button update;
     Canvas canvas;
 

@@ -7,7 +7,7 @@ struct CPUDebugger : Window {
       Button stepNMI;
       Button stepIRQ;
       Widget spacer;
-      CheckBox autoUpdate;
+      CheckLabel autoUpdate;
       Button update;
     TextEdit disassembly;
     Button registers;
@@ -37,16 +37,16 @@ struct CPURegisterEditor : Window {
       Label regDBLabel;
       LineEdit regDBValue;
     HorizontalLayout secondaryLayout;
-      CheckBox flagN;
-      CheckBox flagV;
-      CheckBox flagM;
-      CheckBox flagX;
-      CheckBox flagD;
-      CheckBox flagI;
-      CheckBox flagZ;
-      CheckBox flagC;
+      CheckLabel flagN;
+      CheckLabel flagV;
+      CheckLabel flagM;
+      CheckLabel flagX;
+      CheckLabel flagD;
+      CheckLabel flagI;
+      CheckLabel flagZ;
+      CheckLabel flagC;
     HorizontalLayout tertiaryLayout;
-      CheckBox flagE;
+      CheckLabel flagE;
       Widget spacer;
       Button update;
 

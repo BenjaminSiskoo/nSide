@@ -3,10 +3,10 @@ struct MemoryEditor : Window {
     HorizontalLayout controlLayout;
       Label gotoLabel;
       LineEdit gotoAddress;
-      ComboBox source;
+      ComboButton source;
       Button exportMemory;
       Widget spacer;
-      CheckBox autoUpdate;
+      CheckLabel autoUpdate;
       Button update;
     HexEdit editor;
 

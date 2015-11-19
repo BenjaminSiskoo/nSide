@@ -1,9 +1,9 @@
 struct BreakpointEntry : HorizontalLayout {
-  CheckBox enable;
+  CheckLabel enable;
   LineEdit addr;
   LineEdit data;
-  ComboBox type;
-  ComboBox source;
+  ComboButton type;
+  ComboButton source;
 
   BreakpointEntry();
 };
