@@ -1,11 +1,12 @@
-options += debugger
+ifndef name
+  name := laevateinn
+endif
 
 processors := arm gsu hg51b lr35902 r65816 spc700 upd96050
-include processor/Makefile
+include processor/GNUmakefile
 
-include $(sfc)/Makefile
-include $(gb)/Makefile
-name := laevateinn
+include sfc/GNUmakefile
+include gb/GNUmakefile
 
 ui_objects := ui-main ui-settings ui-interface ui-debugger ui-tracer ui-window
 ui_objects += ui-console ui-video ui-cpu ui-smp ui-memory ui-breakpoint ui-properties ui-vram
@@ -22,11 +23,11 @@ else ifeq ($(platform),win)
 endif
 
 # phoenix
-include phoenix/Makefile
+include phoenix/GNUmakefile
 link += $(phoenixlink)
 
 # ruby
-include ruby/Makefile
+include ruby/GNUmakefile
 link += $(rubylink)
 
 # rules
@@ -55,32 +56,49 @@ obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/*)
 	$(call compile,$(phoenixflags))
 
 obj/resource.o: $(ui)/resource.rc
-#	windres --target=pe-i386 $(ui)/resource.rc obj/resource.o
-	windres $(ui)/resource.rc obj/resource.o
+ifeq ($(arch),x86)
+	windres --target=pe-i386 data/resource.rc obj/laevateinn-resource.o
+else
+	windres data/resource.rc obj/laevateinn-resource.o
+endif
 
 # targets
 build: $(objects)
-ifeq ($(platform),osx)
+ifeq ($(shell id -un),root)
+	$(error "make install should not be run as root")
+else ifeq ($(platform),windows)
+	$(strip $(compiler) -shared -o out/phoenix.dll obj/phoenix.o $(phoenixlink))
+	$(strip $(compiler) -o out/$(name) $(subst obj/phoenix.o,,$(objects)) $(link) -Lout -lphoenix)
+else ifeq ($(platform),macosx)
 	test -d ../$(name).app || mkdir -p ../$(name).app/Contents/MacOS
-	$(strip $(cpp) -o ../$(name).app/Contents/MacOS/$(name) $(objects) $(link))
+	$(strip $(compiler) -o ../$(name).app/Contents/MacOS/$(name) $(objects) $(link))
 else
-	$(strip $(cpp) -o out/$(name) $(objects) $(link))
+	$(strip $(compiler) -o out/$(name) $(objects) $(link))
 endif
 
 install:
-ifeq ($(USER),root)
-	@echo Please do not run make install as root.
-	@echo The installer needs to know your home directory to install important files.
-else ifeq ($(platform),x)
+ifeq ($(shell id -un),root)
+	$(error "make install should not be run as root")
+else ifeq ($(platform),windows)
+else ifeq ($(platform),macosx)
+	sudo mkdir -p /Library/Application\ Support/$(name)
+	sudo cp -R profile/* /Library/Application\ Support/$(name)
+	sudo cp data/cheats.bml /Library/Application\ Support/$(name)/cheats.bml
+	sudo chmod -R 777 /Library/Application\ Support/$(name)
+else
 	sudo install -D -m 755 out/$(name) $(DESTDIR)$(prefix)/bin/$(name)
 
-	mkdir -p ~/.config/$(name)
-	cp -R profile/* ~/.config/$(name)
-	cp data/cheats.xml ~/.config/$(name)/cheats.xml
-	chmod -R 777 ~/.config/$(name)
+	sudo mkdir -p /usr/share/$(name)
+	sudo cp -R profile/* /usr/share/$(name)
+	sudo cp data/cheats.bml /usr/share/$(name)/cheats.bml
+	sudo chmod -R 777 /usr/share/$(name)
 endif
 
 uninstall:
-ifeq ($(platform),x)
+ifeq ($(shell id -un),root)
+	$(error "make uninstall should not be run as root")
+else ifeq ($(platform),windows)
+else ifeq ($(platform),macosx)
+else
 	sudo rm $(DESTDIR)$(prefix)/bin/$(name)
 endif
