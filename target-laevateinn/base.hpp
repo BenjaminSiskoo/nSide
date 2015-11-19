@@ -38,6 +38,8 @@ extern Input* input;
 extern uint8_t laevateinnLogo[121905];
 
 struct Program {
+  Emulator::Interface* active = nullptr;
+
   string basepath;
   string userpath;
   string sharedpath;

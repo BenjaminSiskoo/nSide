@@ -12,7 +12,7 @@ PropertiesViewer::PropertiesViewer() {
   sourceSelection.setEnabled(false);
   autoUpdate.setText("Auto");
   update.setText("Update");
-  properties.setFont(program->monospaceFont);
+  properties.setFont(Font::monospace(8));
 
   layout.append(controlLayout, {~0, 0}, 5);
     controlLayout.append(sourceLabel, {0, 0}, 5);

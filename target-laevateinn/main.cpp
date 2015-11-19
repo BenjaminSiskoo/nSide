@@ -29,19 +29,6 @@ Program::Program(string pathname) {
   directory::create(userpath);
 
   settings = new Settings;
-  settings->load();
-
-  string path = string::read({nall::configpath(), "higan/library.bml"}).strip().ltrim("Path: ").transform("\\", "/");
-  if(path.empty()) path = {nall::userpath(), "Emulation/"};
-  if(path.endsWith("/") == false) path.append("/");
-  path.append("Super Famicom/");
-
-  string foldername;
-  if(pathname) foldername = pathname.transform("\\", "/").rtrim("/").append("/");
-  if(!directory::exists(foldername)) foldername = BrowserWindow().setPath(path).directory();
-  if(!foldername.endsWith(".sfc/")) return;
-  if(!directory::exists(foldername)) return;
-
   new Interface;
   new Debugger;
   new Tracer;
@@ -57,6 +44,21 @@ Program::Program(string pathname) {
   new BreakpointEditor;
   new PropertiesViewer;
   new VRAMViewer;
+
+  active = emulator;
+
+  settings->load();
+
+  string path = string::read({nall::configpath(), "higan/library.bml"}).strip().ltrim("Path: ").transform("\\", "/");
+  if(path.empty()) path = {nall::userpath(), "Emulation/"};
+  if(path.endsWith("/") == false) path.append("/");
+  path.append("Super Famicom/");
+
+  string foldername;
+  if(pathname) foldername = pathname.transform("\\", "/").rtrim("/").append("/");
+  if(!directory::exists(foldername)) foldername = BrowserWindow().setPath(path).directory();
+  if(!foldername.endsWith(".sfc/")) return;
+  if(!directory::exists(foldername)) return;
 
   windowManager->loadGeometry();
   consoleWindow->setVisible();
@@ -107,7 +109,7 @@ Program::Program(string pathname) {
   Application::main = {&Program::main, this};
   Application::run();
 
-  interface->saveMemory();
+  interface->unload();
   windowManager->saveGeometry();
   settings->unload();
 }
