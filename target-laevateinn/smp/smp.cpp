@@ -5,25 +5,25 @@ SMPDebugger *smpDebugger = nullptr;
 
 uint8 SMPDebugger::read(uint16 addr) {
   if((addr & 0xfff0) == 0x00f0) return ~0;  //$00f0-00ff  MMIO
-  return SFC::smp.op_busread(addr);
+  return SuperFamicom::smp.op_busread(addr);
 }
 
 void SMPDebugger::write(uint16 addr, uint8 data) {
   if((addr & 0xfff0) == 0x00f0) return;  //$00f0-00ff  MMIO
-  return SFC::smp.op_buswrite(addr, data);
+  return SuperFamicom::smp.op_buswrite(addr, data);
 }
 
 unsigned SMPDebugger::opcodeLength(uint16 addr) {
   static unsigned lengthTable[256] = {
     0
   };
-  return lengthTable[SFC::smp.op_busread(addr)];
+  return lengthTable[SuperFamicom::smp.op_busread(addr)];
 }
 
 void SMPDebugger::updateDisassembly() {
   string line[15];
 
-  line[7] = { "> ", SFC::smp.disassemble_opcode(opcodePC) };
+  line[7] = { "> ", SuperFamicom::smp.disassemble_opcode(opcodePC) };
   line[7][31] = 0;
 
   signed addr = opcodePC;
@@ -31,7 +31,7 @@ void SMPDebugger::updateDisassembly() {
     for(signed b = 1; b <= 3; b++) {
       if(addr - b >= 0 && (debugger->apuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        line[o] = { "  ", SFC::smp.disassemble_opcode(addr) };
+        line[o] = { "  ", SuperFamicom::smp.disassemble_opcode(addr) };
         line[o][31] = 0;
         break;
       }
@@ -43,7 +43,7 @@ void SMPDebugger::updateDisassembly() {
     for(signed b = 1; b <= 3; b++) {
       if(addr - b <= 0xffff && (debugger->apuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        line[o] = { "  ", SFC::smp.disassemble_opcode(addr) };
+        line[o] = { "  ", SuperFamicom::smp.disassemble_opcode(addr) };
         line[o][31] = 0;
         break;
       }
@@ -59,13 +59,13 @@ void SMPDebugger::updateDisassembly() {
 
   disassembly.setText(output);
   registers.setText({
-    "YA:", hex<2>(SFC::smp.regs.y), hex<2>(SFC::smp.regs.a),
-    " A:", hex<2>(SFC::smp.regs.a), " X:", hex<2>(SFC::smp.regs.x),
-    " Y:", hex<2>(SFC::smp.regs.y), " S:01", hex<2>(SFC::smp.regs.s), " ",
-    SFC::smp.regs.p.n ? "N" : "n", SFC::smp.regs.p.v ? "V" : "v",
-    SFC::smp.regs.p.p ? "P" : "p", SFC::smp.regs.p.b ? "B" : "b",
-    SFC::smp.regs.p.h ? "H" : "h", SFC::smp.regs.p.i ? "I" : "i",
-    SFC::smp.regs.p.z ? "Z" : "z", SFC::smp.regs.p.c ? "C" : "c",
+    "YA:", hex<2>(SuperFamicom::smp.regs.y), hex<2>(SuperFamicom::smp.regs.a),
+    " A:", hex<2>(SuperFamicom::smp.regs.a), " X:", hex<2>(SuperFamicom::smp.regs.x),
+    " Y:", hex<2>(SuperFamicom::smp.regs.y), " S:01", hex<2>(SuperFamicom::smp.regs.s), " ",
+    SuperFamicom::smp.regs.p.n ? "N" : "n", SuperFamicom::smp.regs.p.v ? "V" : "v",
+    SuperFamicom::smp.regs.p.p ? "P" : "p", SuperFamicom::smp.regs.p.b ? "B" : "b",
+    SuperFamicom::smp.regs.p.h ? "H" : "h", SuperFamicom::smp.regs.p.i ? "I" : "i",
+    SuperFamicom::smp.regs.p.z ? "Z" : "z", SuperFamicom::smp.regs.p.c ? "C" : "c",
   });
 }
 

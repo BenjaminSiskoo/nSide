@@ -90,12 +90,12 @@ ConsoleWindow::ConsoleWindow() {
   };
 
   menuEmulationPowerCycle.onActivate = [&] {
-    SFC::system.power();
+    SuperFamicom::system.power();
     print("System power cycled\n");
   };
 
   menuEmulationReset.onActivate = [&] {
-    SFC::system.reset();
+    SuperFamicom::system.reset();
     print("System reset\n");
   };
 

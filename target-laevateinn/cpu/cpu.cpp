@@ -11,14 +11,14 @@ uint24 CPUDebugger::mirror(uint24 addr) {
 uint8 CPUDebugger::read(uint24 addr) {
   if((addr & 0x40e000) == 0x2000) return ~0;  //$00-3f|80-bf:2000-3fff  MMIO
   if((addr & 0x40e000) == 0x4000) return ~0;  //$00-3f|80-bf:4000-5fff  MMIO
-  return SFC::bus.read(mirror(addr));
+  return SuperFamicom::bus.read(mirror(addr));
 }
 
 void CPUDebugger::write(uint24 addr, uint8 data) {
   if((addr & 0x40e000) == 0x2000) return;  //$00-3f|80-bf:2000-3fff  MMIO
   if((addr & 0x40e000) == 0x4000) return;  //$00-3f|80-bf:4000-5fff  MMIO
   if((addr & 0x40e000) == 0x0000) addr = 0x7e0000 | (addr & 0x1fff);  //$00-3f:80-bf:0000-1fff WRAM
-  return SFC::bus.write(mirror(addr), data);
+  return SuperFamicom::bus.write(mirror(addr), data);
 }
 
 unsigned CPUDebugger::opcodeLength(uint24 addr) {
@@ -46,9 +46,9 @@ unsigned CPUDebugger::opcodeLength(uint24 addr) {
     2, 2, 2, 2,  3, 2, 2, 2,  1, 3, 1, 1,  3, 3, 3, 4,
   };
 
-  unsigned length = lengthTable[SFC::bus.read(addr)];
-  if(length == M) return 3 - (SFC::cpu.regs.e | SFC::cpu.regs.p.m);
-  if(length == X) return 3 - (SFC::cpu.regs.e | SFC::cpu.regs.p.x);
+  unsigned length = lengthTable[SuperFamicom::bus.read(addr)];
+  if(length == M) return 3 - (SuperFamicom::cpu.regs.e | SuperFamicom::cpu.regs.p.m);
+  if(length == X) return 3 - (SuperFamicom::cpu.regs.e | SuperFamicom::cpu.regs.p.x);
   return length;
   #undef M
   #undef X
@@ -58,7 +58,7 @@ void CPUDebugger::updateDisassembly() {
   string line[15];
   char text[512];
 
-  SFC::cpu.disassemble_opcode(text, opcodePC);
+  SuperFamicom::cpu.disassemble_opcode(text, opcodePC);
   text[29] = 0;
   line[7] = { "> ", text };
 
@@ -67,7 +67,7 @@ void CPUDebugger::updateDisassembly() {
     for(signed b = 1; b <= 4; b++) {
       if(addr - b >= 0 && (debugger->cpuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        SFC::cpu.disassemble_opcode(text, addr);
+        SuperFamicom::cpu.disassemble_opcode(text, addr);
         text[29] = 0;
         line[o] = { "  ", text };
         break;
@@ -80,7 +80,7 @@ void CPUDebugger::updateDisassembly() {
     for(signed b = 1; b <= 4; b++) {
       if(addr + b <= 0xffffff && (debugger->cpuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        SFC::cpu.disassemble_opcode(text, addr);
+        SuperFamicom::cpu.disassemble_opcode(text, addr);
         text[29] = 0;
         line[o] = { "  ", text };
         break;
@@ -97,13 +97,13 @@ void CPUDebugger::updateDisassembly() {
 
   disassembly.setText(output);
   registers.setText({
-     "A:", hex<4>(SFC::cpu.regs.a), " X:", hex<4>(SFC::cpu.regs.x), " Y:", hex<4>(SFC::cpu.regs.y),
-    " S:", hex<4>(SFC::cpu.regs.s), " D:", hex<4>(SFC::cpu.regs.d), " DB:", hex<2>(SFC::cpu.regs.db), " ",
-    SFC::cpu.regs.p.n ? "N" : "n", SFC::cpu.regs.p.v ? "V" : "v",
-    SFC::cpu.regs.e ? (SFC::cpu.regs.p.m ? "1" : "0") : (SFC::cpu.regs.p.m ? "M" : "m"),
-    SFC::cpu.regs.e ? (SFC::cpu.regs.p.x ? "B" : "b") : (SFC::cpu.regs.p.x ? "X" : "x"),
-    SFC::cpu.regs.p.d ? "D" : "d", SFC::cpu.regs.p.i ? "I" : "i",
-    SFC::cpu.regs.p.z ? "Z" : "z", SFC::cpu.regs.p.c ? "C" : "c",
+     "A:", hex<4>(SuperFamicom::cpu.regs.a), " X:", hex<4>(SuperFamicom::cpu.regs.x), " Y:", hex<4>(SuperFamicom::cpu.regs.y),
+    " S:", hex<4>(SuperFamicom::cpu.regs.s), " D:", hex<4>(SuperFamicom::cpu.regs.d), " DB:", hex<2>(SuperFamicom::cpu.regs.db), " ",
+    SuperFamicom::cpu.regs.p.n ? "N" : "n", SuperFamicom::cpu.regs.p.v ? "V" : "v",
+    SuperFamicom::cpu.regs.e ? (SuperFamicom::cpu.regs.p.m ? "1" : "0") : (SuperFamicom::cpu.regs.p.m ? "M" : "m"),
+    SuperFamicom::cpu.regs.e ? (SuperFamicom::cpu.regs.p.x ? "B" : "b") : (SuperFamicom::cpu.regs.p.x ? "X" : "x"),
+    SuperFamicom::cpu.regs.p.d ? "D" : "d", SuperFamicom::cpu.regs.p.i ? "I" : "i",
+    SuperFamicom::cpu.regs.p.z ? "Z" : "z", SuperFamicom::cpu.regs.p.c ? "C" : "c",
   });
 }
 

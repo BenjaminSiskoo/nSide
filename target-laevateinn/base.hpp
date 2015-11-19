@@ -2,24 +2,25 @@
   #error "debugger is only compatible with accuracy profile"
 #endif
 
-#include <sfc/sfc.hpp>
-namespace SFC = SuperFamicom;
-
 #include <nall/config.hpp>
 #include <nall/directory.hpp>
 #include <nall/dsp.hpp>
 #include <nall/file.hpp>
 #include <nall/filemap.hpp>
 #include <nall/stream/file.hpp>
+#include <nall/stream/memory.hpp>
+#include <nall/stream/mmap.hpp>
 #include <nall/stream/vector.hpp>
-#include <nall/snes/cartridge.hpp>
-using namespace nall;
-
-#include <phoenix/phoenix.hpp>
-using namespace phoenix;
-
 #include <ruby/ruby.hpp>
+#include <phoenix/phoenix.hpp>
+using namespace nall;
 using namespace ruby;
+using namespace phoenix;
+extern Video* video;
+extern Audio* audio;
+extern Input* input;
+
+#include <sfc/sfc.hpp>
 
 #include "settings/settings.hpp"
 #include "interface/interface.hpp"

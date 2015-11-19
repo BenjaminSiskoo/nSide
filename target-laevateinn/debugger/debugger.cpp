@@ -10,7 +10,7 @@ void Debugger::run() {
     return;
   }
 
-  SFC::system.run();
+  SuperFamicom::system.run();
   if(cpuDebugger->autoUpdate.checked()) cpuDebugger->updateDisassembly();
   if(smpDebugger->autoUpdate.checked()) smpDebugger->updateDisassembly();
   if(memoryEditor->autoUpdate.checked()) memoryEditor->updateView();
@@ -54,23 +54,23 @@ Debugger::Debugger() {
   cpuUsage.allocate(16 * 1024 * 1024);
   apuUsage.allocate(64 * 1024);
 
-  SFC::cpu.debugger.op_exec = {&Debugger::cpu_op_exec, this};
-  SFC::cpu.debugger.op_read = {&Debugger::cpu_op_read, this};
-  SFC::cpu.debugger.op_write = {&Debugger::cpu_op_write, this};
+  SuperFamicom::cpu.debugger.op_exec = {&Debugger::cpu_op_exec, this};
+  SuperFamicom::cpu.debugger.op_read = {&Debugger::cpu_op_read, this};
+  SuperFamicom::cpu.debugger.op_write = {&Debugger::cpu_op_write, this};
 
-  SFC::cpu.debugger.op_nmi = {&Debugger::cpu_op_nmi, this};
-  SFC::cpu.debugger.op_irq = {&Debugger::cpu_op_irq, this};
+  SuperFamicom::cpu.debugger.op_nmi = {&Debugger::cpu_op_nmi, this};
+  SuperFamicom::cpu.debugger.op_irq = {&Debugger::cpu_op_irq, this};
 
-  SFC::smp.debugger.op_exec = {&Debugger::smp_op_exec, this};
-  SFC::smp.debugger.op_read = {&Debugger::smp_op_read, this};
-  SFC::smp.debugger.op_write = {&Debugger::smp_op_write, this};
+  SuperFamicom::smp.debugger.op_exec = {&Debugger::smp_op_exec, this};
+  SuperFamicom::smp.debugger.op_read = {&Debugger::smp_op_read, this};
+  SuperFamicom::smp.debugger.op_write = {&Debugger::smp_op_write, this};
 
-  SFC::ppu.debugger.vram_read = {&Debugger::ppu_vram_read, this};
-  SFC::ppu.debugger.vram_write = {&Debugger::ppu_vram_write, this};
+  SuperFamicom::ppu.debugger.vram_read = {&Debugger::ppu_vram_read, this};
+  SuperFamicom::ppu.debugger.vram_write = {&Debugger::ppu_vram_write, this};
 
-  SFC::ppu.debugger.oam_read = {&Debugger::ppu_oam_read, this};
-  SFC::ppu.debugger.oam_write = {&Debugger::ppu_oam_write, this};
+  SuperFamicom::ppu.debugger.oam_read = {&Debugger::ppu_oam_read, this};
+  SuperFamicom::ppu.debugger.oam_write = {&Debugger::ppu_oam_write, this};
 
-  SFC::ppu.debugger.cgram_read = {&Debugger::ppu_cgram_read, this};
-  SFC::ppu.debugger.cgram_write = {&Debugger::ppu_cgram_write, this};
+  SuperFamicom::ppu.debugger.cgram_read = {&Debugger::ppu_cgram_read, this};
+  SuperFamicom::ppu.debugger.cgram_write = {&Debugger::ppu_cgram_write, this};
 }

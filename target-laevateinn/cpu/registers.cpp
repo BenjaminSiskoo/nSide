@@ -68,38 +68,38 @@ CPURegisterEditor::CPURegisterEditor() {
 }
 
 void CPURegisterEditor::loadRegisters() {
-  regAValue.setText(hex<4>(SFC::cpu.regs.a));
-  regXValue.setText(hex<4>(SFC::cpu.regs.x));
-  regYValue.setText(hex<4>(SFC::cpu.regs.y));
-  regSValue.setText(hex<4>(SFC::cpu.regs.s));
-  regDValue.setText(hex<4>(SFC::cpu.regs.d));
-  regDBValue.setText(hex<2>(SFC::cpu.regs.db));
-  flagN.setChecked(SFC::cpu.regs.p.n);
-  flagV.setChecked(SFC::cpu.regs.p.v);
-  flagM.setChecked(SFC::cpu.regs.p.m);
-  flagX.setChecked(SFC::cpu.regs.p.x);
-  flagD.setChecked(SFC::cpu.regs.p.d);
-  flagI.setChecked(SFC::cpu.regs.p.i);
-  flagZ.setChecked(SFC::cpu.regs.p.z);
-  flagC.setChecked(SFC::cpu.regs.p.c);
-  flagE.setChecked(SFC::cpu.regs.e);
+  regAValue.setText(hex<4>(SuperFamicom::cpu.regs.a));
+  regXValue.setText(hex<4>(SuperFamicom::cpu.regs.x));
+  regYValue.setText(hex<4>(SuperFamicom::cpu.regs.y));
+  regSValue.setText(hex<4>(SuperFamicom::cpu.regs.s));
+  regDValue.setText(hex<4>(SuperFamicom::cpu.regs.d));
+  regDBValue.setText(hex<2>(SuperFamicom::cpu.regs.db));
+  flagN.setChecked(SuperFamicom::cpu.regs.p.n);
+  flagV.setChecked(SuperFamicom::cpu.regs.p.v);
+  flagM.setChecked(SuperFamicom::cpu.regs.p.m);
+  flagX.setChecked(SuperFamicom::cpu.regs.p.x);
+  flagD.setChecked(SuperFamicom::cpu.regs.p.d);
+  flagI.setChecked(SuperFamicom::cpu.regs.p.i);
+  flagZ.setChecked(SuperFamicom::cpu.regs.p.z);
+  flagC.setChecked(SuperFamicom::cpu.regs.p.c);
+  flagE.setChecked(SuperFamicom::cpu.regs.e);
 }
 
 void CPURegisterEditor::saveRegisters() {
-  SFC::cpu.regs.a = hex(regAValue.text());
-  SFC::cpu.regs.x = hex(regXValue.text());
-  SFC::cpu.regs.y = hex(regYValue.text());
-  SFC::cpu.regs.s = hex(regSValue.text());
-  SFC::cpu.regs.d = hex(regDValue.text());
-  SFC::cpu.regs.db = hex(regDBValue.text());
-  SFC::cpu.regs.p.n = flagN.checked();
-  SFC::cpu.regs.p.v = flagV.checked();
-  SFC::cpu.regs.p.m = flagM.checked();
-  SFC::cpu.regs.p.x = flagX.checked();
-  SFC::cpu.regs.p.d = flagD.checked();
-  SFC::cpu.regs.p.i = flagI.checked();
-  SFC::cpu.regs.p.z = flagZ.checked();
-  SFC::cpu.regs.p.c = flagC.checked();
-  SFC::cpu.regs.e = flagE.checked();
-  SFC::cpu.update_table();  //cache E/M/X flags
+  SuperFamicom::cpu.regs.a = hex(regAValue.text());
+  SuperFamicom::cpu.regs.x = hex(regXValue.text());
+  SuperFamicom::cpu.regs.y = hex(regYValue.text());
+  SuperFamicom::cpu.regs.s = hex(regSValue.text());
+  SuperFamicom::cpu.regs.d = hex(regDValue.text());
+  SuperFamicom::cpu.regs.db = hex(regDBValue.text());
+  SuperFamicom::cpu.regs.p.n = flagN.checked();
+  SuperFamicom::cpu.regs.p.v = flagV.checked();
+  SuperFamicom::cpu.regs.p.m = flagM.checked();
+  SuperFamicom::cpu.regs.p.x = flagX.checked();
+  SuperFamicom::cpu.regs.p.d = flagD.checked();
+  SuperFamicom::cpu.regs.p.i = flagI.checked();
+  SuperFamicom::cpu.regs.p.z = flagZ.checked();
+  SuperFamicom::cpu.regs.p.c = flagC.checked();
+  SuperFamicom::cpu.regs.e = flagE.checked();
+  SuperFamicom::cpu.update_table();  //cache E/M/X flags
 }

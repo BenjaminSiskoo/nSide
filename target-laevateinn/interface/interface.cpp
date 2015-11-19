@@ -5,9 +5,9 @@ bool Interface::loadCartridge(const string &foldername) {
   auto memory = file::read({foldername, "program.rom"});
   if(memory.empty()) return false;
 
-  if(SFC::cartridge.loaded()) {
+  if(SuperFamicom::cartridge.loaded()) {
     saveMemory();
-    SFC::cartridge.unload();
+    SuperFamicom::cartridge.unload();
     debugger->print("Cartridge unloaded\n");
   }
 
@@ -18,15 +18,15 @@ bool Interface::loadCartridge(const string &foldername) {
   markup.readfile({pathName, "manifest.xml"});
   if(markup.empty()) markup = SuperFamicomCartridge(memory.data(), memory.size()).markup;
 
-  SFC::cartridge.load(markup, vectorstream{memory});
-  SFC::system.power();
+  SuperFamicom::cartridge.load(markup, vectorstream{memory});
+  SuperFamicom::system.power();
 
   string name = pathName;
   name.rtrim<1>("/");
   name = notdir(name);
 
   videoWindow->setTitle(name);
-  SFC::video.generate_palette();
+  SuperFamicom::video.generate_palette();
   debugger->print("Loaded ", pathName, "program.rom\n");
   loadMemory();
   debugger->print(markup, "\n");
@@ -35,7 +35,7 @@ bool Interface::loadCartridge(const string &foldername) {
 }
 
 void Interface::loadMemory() {
-  for(auto &memory : SFC::interface->memory) {
+  for(auto &memory : SuperFamicom::interface->memory) {
     string filename{pathName, memory.name};
     filestream fs(filename, file::mode::read);
     instance->load(memory.id, fs);
@@ -46,7 +46,7 @@ void Interface::loadMemory() {
 }
 
 void Interface::saveMemory() {
-  for(auto &memory : SFC::interface->memory) {
+  for(auto &memory : SuperFamicom::interface->memory) {
     string filename{pathName, memory.name};
     filestream fs(filename, file::mode::write);
     instance->save(memory.id, fs);
@@ -61,14 +61,14 @@ bool Interface::loadState(unsigned slot) {
   auto memory = file::read(filename);
   if(memory.empty()) return false;
   serializer s(memory.data(), memory.size());
-  bool result = SFC::system.unserialize(s);
+  bool result = SuperFamicom::system.unserialize(s);
   if(result) debugger->print("Loaded state from ", filename, "\n");
   return result;
 }
 
 bool Interface::saveState(unsigned slot) {
-  SFC::system.runtosave();
-  serializer s = SFC::system.serialize();
+  SuperFamicom::system.runtosave();
+  serializer s = SuperFamicom::system.serialize();
   string filename = {pathName, "state-", slot, ".bst"};
   bool result = file::write(filename, s.data(), s.size());
   if(result) debugger->print("Saved state to ", filename, "\n");
@@ -118,20 +118,20 @@ int16_t Interface::inputPoll(unsigned port, unsigned device, unsigned index) {
   auto keyboardState = phoenix::Keyboard::state();
 
   if(port == 0) {
-    if(device == (unsigned)SFC::Input::Device::Joypad) {
-      switch((SFC::Input::JoypadID)index) {
-      case SFC::Input::JoypadID::Up:     return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Up];
-      case SFC::Input::JoypadID::Down:   return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Down];
-      case SFC::Input::JoypadID::Left:   return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Left];
-      case SFC::Input::JoypadID::Right:  return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Right];
-      case SFC::Input::JoypadID::B:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Z];
-      case SFC::Input::JoypadID::A:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::X];
-      case SFC::Input::JoypadID::Y:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::A];
-      case SFC::Input::JoypadID::X:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::S];
-      case SFC::Input::JoypadID::L:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::D];
-      case SFC::Input::JoypadID::R:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::C];
-      case SFC::Input::JoypadID::Select: return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Apostrophe];
-      case SFC::Input::JoypadID::Start:  return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Return];
+    if(device == (unsigned)SuperFamicom::Input::Device::Joypad) {
+      switch((SuperFamicom::Input::JoypadID)index) {
+      case SuperFamicom::Input::JoypadID::Up:     return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Up];
+      case SuperFamicom::Input::JoypadID::Down:   return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Down];
+      case SuperFamicom::Input::JoypadID::Left:   return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Left];
+      case SuperFamicom::Input::JoypadID::Right:  return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Right];
+      case SuperFamicom::Input::JoypadID::B:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Z];
+      case SuperFamicom::Input::JoypadID::A:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::X];
+      case SuperFamicom::Input::JoypadID::Y:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::A];
+      case SuperFamicom::Input::JoypadID::X:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::S];
+      case SuperFamicom::Input::JoypadID::L:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::D];
+      case SuperFamicom::Input::JoypadID::R:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::C];
+      case SuperFamicom::Input::JoypadID::Select: return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Apostrophe];
+      case SuperFamicom::Input::JoypadID::Start:  return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Return];
       }
     }
   }
@@ -139,7 +139,7 @@ int16_t Interface::inputPoll(unsigned port, unsigned device, unsigned index) {
   return 0;
 }
 
-string Interface::path(SFC::Cartridge::Slot slot, const string &hint) {
+string Interface::path(SuperFamicom::Cartridge::Slot slot, const string &hint) {
   return {pathName, hint};
 }
 
@@ -148,12 +148,12 @@ void Interface::message(const string &text) {
 }
 
 Interface::Interface() {
-  instance = new SFC::Interface;
+  instance = new SuperFamicom::Interface;
   instance->bind = this;
 
-  SFC::video.generate_palette();
-  SFC::system.init();
+  SuperFamicom::video.generate_palette();
+  SuperFamicom::system.init();
 
   filestream fs{{application->userpath, "Super Famicom.sys/spc700.rom"}};
-  fs.read(SFC::smp.iplrom, min(64u, fs.size()));
+  fs.read(SuperFamicom::smp.iplrom, min(64u, fs.size()));
 }
