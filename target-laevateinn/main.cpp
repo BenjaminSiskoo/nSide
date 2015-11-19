@@ -1,4 +1,5 @@
 #include "base.hpp"
+#include "resource/resource.cpp"
 
 Program* program = nullptr;
 Video* video = nullptr;
@@ -28,7 +29,7 @@ Program::Program(string pathname) {
   sharedpath = {nall::sharedpath(), "higan/"};
   directory::create(userpath);
 
-  settings = new Settings;
+  new Settings;
   new Interface;
   new Debugger;
   new Tracer;
@@ -99,6 +100,8 @@ Program::Program(string pathname) {
   dspaudio.setResampler(DSP::ResampleEngine::Hermite);
   dspaudio.setResamplerFrequency(48000);
 
+  presentation->showSplash();
+
   if(interface->loadCartridge(foldername) == false) return;
   cpuDebugger->updateDisassembly();
   smpDebugger->updateDisassembly();
@@ -114,7 +117,7 @@ Program::Program(string pathname) {
   settings->unload();
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   #if defined(PLATFORM_WINDOWS)
   utf8_args(argc, argv);
   #endif

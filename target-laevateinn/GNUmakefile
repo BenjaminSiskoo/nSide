@@ -8,54 +8,56 @@ include processor/GNUmakefile
 include sfc/GNUmakefile
 include gb/GNUmakefile
 
-ui_objects := ui-main ui-settings ui-interface ui-debugger ui-tracer ui-window
-ui_objects += ui-console ui-presentation ui-cpu ui-smp ui-memory ui-breakpoint ui-properties ui-vram
+ui_objects := laevateinn-main laevateinn-settings
+ui_objects += laevateinn-interface laevateinn-debugger laevateinn-tracer
+ui_objects += laevateinn-window
+ui_objects += laevateinn-console laevateinn-presentation
+ui_objects += laevateinn-cpu laevateinn-smp laevateinn-memory
+ui_objects += laevateinn-breakpoint laevateinn-properties laevateinn-vram
 ui_objects += phoenix ruby
-ui_objects += $(if $(call streq,$(platform),win),resource)
+ui_objects += $(if $(call streq,$(platform),windows),laevateinn-resource)
 
-# platform
-ifeq ($(platform),x)
-  ruby := audio.alsa
-else ifeq ($(platform),osx)
-  ruby := audio.openal
-else ifeq ($(platform),win)
-  ruby := audio.xaudio2
+ifeq ($(platform),windows)
+  ruby := video.wgl audio.xaudio2 input.windows
+else ifeq ($(platform),macosx)
+  ruby := video.cgl audio.openal input.carbon
+else ifeq ($(platform),linux)
+  ruby := video.glx audio.alsa input.udev
+else ifeq ($(platform),bsd)
+  ruby := video.glx audio.openal input.x
 endif
 
-# phoenix
-include phoenix/GNUmakefile
-link += $(phoenixlink)
-
-# ruby
 include ruby/GNUmakefile
 link += $(rubylink)
 
-# rules
+include phoenix/GNUmakefile
+link += $(phoenixlink)
+
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
-obj/ui-main.o: $(ui)/main.cpp $(call rwildcard,$(ui)/)
-obj/ui-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/*)
-obj/ui-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/*)
-obj/ui-debugger.o: $(ui)/debugger/debugger.cpp $(call rwildcard,$(ui)/*)
-obj/ui-tracer.o: $(ui)/tracer/tracer.cpp $(call rwildcard,$(ui)/*)
-obj/ui-window.o: $(ui)/window/window.cpp $(call rwildcard,$(ui)/*)
-obj/ui-console.o: $(ui)/console/console.cpp $(call rwildcard,$(ui)/*)
-obj/ui-cpu.o: $(ui)/cpu/cpu.cpp $(call rwildcard,$(ui)/*)
-obj/ui-smp.o: $(ui)/smp/smp.cpp $(call rwildcard,$(ui)/*)
-obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/*)
-obj/ui-memory.o: $(ui)/memory/memory.cpp $(call rwildcard,$(ui)/*)
-obj/ui-breakpoint.o: $(ui)/breakpoint/breakpoint.cpp $(call rwildcard,$(ui)/*)
-obj/ui-properties.o: $(ui)/properties/properties.cpp $(call rwildcard,$(ui)/*)
-obj/ui-vram.o: $(ui)/vram/vram.cpp $(call rwildcard,$(ui)/*)
+obj/ruby.o: ruby/ruby.cpp $(call rwildcard,ruby/)
+	$(compiler) $(rubyflags) -c $< -o $@
 
-obj/ruby.o: ruby/ruby.cpp $(call rwildcard,ruby/*)
-	$(call compile,$(rubyflags))
+obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/)
+	$(compiler) $(phoenixflags) -c $< -o $@
 
-obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/*)
-	$(call compile,$(phoenixflags))
+obj/laevateinn-main.o: $(ui)/main.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-debugger.o: $(ui)/debugger/debugger.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-tracer.o: $(ui)/tracer/tracer.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-window.o: $(ui)/window/window.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-console.o: $(ui)/console/console.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-cpu.o: $(ui)/cpu/cpu.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-smp.o: $(ui)/smp/smp.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-memory.o: $(ui)/memory/memory.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-breakpoint.o: $(ui)/breakpoint/breakpoint.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-properties.o: $(ui)/properties/properties.cpp $(call rwildcard,$(ui)/)
+obj/laevateinn-vram.o: $(ui)/vram/vram.cpp $(call rwildcard,$(ui)/)
 
-obj/resource.o: $(ui)/resource.rc
+obj/laevateinn-resource.o: $(ui)/resource.rc
 ifeq ($(arch),x86)
 	windres --target=pe-i386 data/resource.rc obj/laevateinn-resource.o
 else

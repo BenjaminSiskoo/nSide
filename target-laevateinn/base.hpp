@@ -35,7 +35,7 @@ extern Input* input;
 #include "breakpoint/breakpoint.hpp"
 #include "properties/properties.hpp"
 #include "vram/vram.hpp"
-extern uint8_t laevateinnLogo[121905];
+#include "resource/resource.hpp"
 
 struct Program {
   Emulator::Interface* active = nullptr;

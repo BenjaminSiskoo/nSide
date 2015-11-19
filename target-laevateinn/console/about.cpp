@@ -22,7 +22,7 @@ AboutWindow::AboutWindow() {
   layout.append(website, {0, 0});
   append(layout);
 
-  image logo(laevateinnLogo, sizeof laevateinnLogo);
+  image logo(resource::loki, sizeof resource::loki);
   logo.alphaBlend(backgroundColor().rgb());
   canvas.setImage(logo);
 

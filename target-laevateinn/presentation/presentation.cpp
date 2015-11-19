@@ -19,8 +19,8 @@ Presentation::Presentation() {
   floor.allocate(512, 480);
   floor.radialGradient(0xffff0000, 0x00000000, 384, 240, 256, 415);
   splash.impose(image::blend::sourceAlpha, 0, 0, floor, 0, 0, floor.width(), floor.height());
-  nall::image logo(laevateinnLogo, sizeof laevateinnLogo);
-  splash.impose(image::blend::sourceAlpha, (512 - logo.width()) / 2, (480 - logo.height()) / 2, logo, 0, 0, logo.width(), logo.height());
+  nall::image loki(resource::loki, sizeof resource::loki);
+  splash.impose(image::blend::sourceAlpha, (512 - loki.width()) / 2, (480 - loki.height()) / 2, loki, 0, 0, loki.width(), loki.height());
 
   windowManager->append(this, "Presentation");
 }
