@@ -12,6 +12,7 @@ VRAMViewer::VRAMViewer() {
   modeSelection.append("2bpp");
   modeSelection.append("4bpp");
   modeSelection.append("8bpp");
+  modeSelection.append("Mode 7");
   paletteLabel.setText("Palette:");
   autoUpdate.setText("Auto");
   update.setText("Update");
@@ -36,12 +37,14 @@ VRAMViewer::VRAMViewer() {
     unsigned x = position.x, y = position.y, mode = modeSelection.selection();
     if(x >= 256 && mode >= 1) return setStatusText("");
     if(y >= 256 && mode >= 2) return setStatusText("");
+    if(x >= 128 && mode >= 3) return setStatusText("");
     string output = { x, ", ", y, ", " };
     x /= 8, y /= 8;
     unsigned tile = 0;
     if(mode == 0) tile = y * 64 + x;
     if(mode == 1) tile = y * 32 + x;
     if(mode == 2) tile = y * 32 + x;
+    if(mode == 3) tile = y * 16 + x;
     output.append("Tile: 0x", hex(tile, 4L), ", Address: 0x", hex(tile * (16 << mode), 4L));
     setStatusText(output);
   };
@@ -71,6 +74,7 @@ void VRAMViewer::modeChanged() {
     }
     break;
   case 2: // 8BPP
+  case 3: // Mode 7
     paletteSelection.append("BG");
     break;
   }
@@ -165,6 +169,24 @@ void VRAMViewer::updateTiles() {
           sp += 2;
         }
         sp += 48;
+      }
+    }
+    break;
+
+  case 3: // Mode 7
+    for(unsigned tileY = 0; tileY < 32; tileY++) {
+      for(unsigned tileX = 0; tileX < 16; tileX++) {
+        for(unsigned y = 0; y < 8; y++) {
+          for(unsigned x = 0; x < 8; x++) {
+            unsigned color = 0;
+            color += sp[x << 1 | 1];
+            //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
+            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
+            color = (255u << 24) | SuperFamicom::video.palette[(15u << 15) | color];
+            dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
+          }
+          sp += 16;
+        }
       }
     }
     break;
