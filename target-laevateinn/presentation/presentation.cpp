@@ -4,44 +4,35 @@ Presentation* presentation = nullptr;
 Presentation::Presentation() {
   presentation = this;
   setTitle("Video");
-//setResizable(false);
+  setBackgroundColor({0, 0, 0});
+  setResizable(false);
   setGeometry({64, 64, 512, 480});
   setStatusFont(Font::sans(8, "Bold"));
   setStatusVisible();
 
-  canvas.setSize({512, 480});
-  layout.append(canvas, {~0, ~0});
+  layout.append(viewport, {0, 0, 512, 480});
   append(layout);
 
-  image logo(0, 32, 255u << 24, 255u << 16, 255u << 8, 255u << 0);
-  logo.loadPNG(laevateinnLogo, sizeof laevateinnLogo);
-  logo.alphaBlend(0x000000);
-
-  unsigned cx = (512 - logo.width) / 2, cy = (480 - logo.height) / 2;
-  for(unsigned y = 0; y < logo.height; y++) {
-    uint32_t *dp = canvas.data() + (y + cy) * 512 + cx;
-    const uint32_t *sp = (const uint32_t*)logo.data + y * logo.width;
-    for(unsigned x = 0; x < logo.width; x++) {
-      *dp++ = *sp++;
-    }
-  }
-
-  canvas.update();
-
-  canvas.onMouseLeave = [&] {
-    setStatusText("");
-  };
-
-  canvas.onMouseMove = [&](Position position) {
-    uint32_t color = canvas.data()[position.y * 512 + position.x];
-    unsigned r = (color >> 19) & 31, g = (color >> 11) & 31, b = (color >> 3) & 31;
-
-    setStatusText({
-      decimal(position.x / 2), ".", decimal((position.x & 1) * 5), ", ",
-      decimal(position.y / 2), ".", decimal((position.y & 1) * 5), ", ",
-      "0x", hex<4>((b << 10) + (g << 5) + (r << 0))
-    });
-  };
+  splash.allocate(512, 480);
+  splash.verticalGradient(0xff00005f, 0xff000000, 512, 480, 256, 0);
+  nall::image floor;
+  floor.allocate(512, 480);
+  floor.radialGradient(0xffff0000, 0x00000000, 384, 240, 256, 415);
+  splash.impose(image::blend::sourceAlpha, 0, 0, floor, 0, 0, floor.width(), floor.height());
+  nall::image logo(laevateinnLogo, sizeof laevateinnLogo);
+  splash.impose(image::blend::sourceAlpha, (512 - logo.width()) / 2, (480 - logo.height()) / 2, logo, 0, 0, logo.width(), logo.height());
 
   windowManager->append(this, "Presentation");
+}
+
+void Presentation::showSplash() {
+  uint32_t* data;
+  unsigned pitch;
+  if(video->lock(data, pitch, 512, 480)) {
+    for(unsigned y = 0; y < 480; y++) {
+      memcpy((uint8_t*)data + y * pitch, splash.data() + y * splash.pitch(), 512 * sizeof(uint32_t));
+    }
+    video->unlock();
+    video->refresh();
+  }
 }

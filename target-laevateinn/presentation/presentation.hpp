@@ -1,8 +1,11 @@
 struct Presentation : Window {
-  VerticalLayout layout;
-  Canvas canvas;
-
   Presentation();
+  void showSplash();
+
+  FixedLayout layout;
+  Viewport viewport;
+
+  nall::image splash;
 };
 
-extern Presentation *presentation;
+extern Presentation* presentation;
