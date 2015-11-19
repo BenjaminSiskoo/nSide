@@ -9,7 +9,7 @@ include sfc/GNUmakefile
 include gb/GNUmakefile
 
 ui_objects := ui-main ui-settings ui-interface ui-debugger ui-tracer ui-window
-ui_objects += ui-console ui-video ui-cpu ui-smp ui-memory ui-breakpoint ui-properties ui-vram
+ui_objects += ui-console ui-presentation ui-cpu ui-smp ui-memory ui-breakpoint ui-properties ui-vram
 ui_objects += phoenix ruby
 ui_objects += $(if $(call streq,$(platform),win),resource)
 
@@ -43,7 +43,7 @@ obj/ui-window.o: $(ui)/window/window.cpp $(call rwildcard,$(ui)/*)
 obj/ui-console.o: $(ui)/console/console.cpp $(call rwildcard,$(ui)/*)
 obj/ui-cpu.o: $(ui)/cpu/cpu.cpp $(call rwildcard,$(ui)/*)
 obj/ui-smp.o: $(ui)/smp/smp.cpp $(call rwildcard,$(ui)/*)
-obj/ui-video.o: $(ui)/video/video.cpp $(call rwildcard,$(ui)/*)
+obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/*)
 obj/ui-memory.o: $(ui)/memory/memory.cpp $(call rwildcard,$(ui)/*)
 obj/ui-breakpoint.o: $(ui)/breakpoint/breakpoint.cpp $(call rwildcard,$(ui)/*)
 obj/ui-properties.o: $(ui)/properties/properties.cpp $(call rwildcard,$(ui)/*)

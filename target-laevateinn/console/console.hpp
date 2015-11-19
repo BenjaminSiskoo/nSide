@@ -17,7 +17,7 @@ struct ConsoleWindow : Window {
     Item menuTracerMaskReset;
 
   Menu menuWindows;
-    Item menuWindowsVideoWindow;
+    Item menuWindowsPresentation;
     Separator menuWindowsSeparator1;
     Item menuWindowsCPUDebugger;
     Item menuWindowsSMPDebugger;

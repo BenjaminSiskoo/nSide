@@ -45,14 +45,14 @@ ConsoleWindow::ConsoleWindow() {
   append(menuTracer);
 
   menuWindows.setText("&Windows");
-    menuWindowsVideoWindow.setText("Video");
+    menuWindowsPresentation.setText("Video");
     menuWindowsCPUDebugger.setText("CPU Debugger");
     menuWindowsSMPDebugger.setText("SMP Debugger");
     menuWindowsMemoryEditor.setText("Memory Editor");
     menuWindowsBreakpointEditor.setText("Breakpoint Editor");
     menuWindowsPropertiesViewer.setText("Properties Viewer");
     menuWindowsVRAMViewer.setText("VRAM Viewer");
-    menuWindows.append(menuWindowsVideoWindow);
+    menuWindows.append(menuWindowsPresentation);
     menuWindows.append(menuWindowsSeparator1);
     menuWindows.append(menuWindowsCPUDebugger);
     menuWindows.append(menuWindowsSMPDebugger);
@@ -147,9 +147,9 @@ ConsoleWindow::ConsoleWindow() {
     debugger->print("Tracer mask reset\n");
   };
 
-  menuWindowsVideoWindow.onActivate = [&] {
-    videoWindow->setVisible();
-    videoWindow->setFocused();
+  menuWindowsPresentation.onActivate = [&] {
+    presentation->setVisible();
+    presentation->setFocused();
   };
 
   menuWindowsCPUDebugger.onActivate = [&] {

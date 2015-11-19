@@ -27,7 +27,7 @@ bool Interface::loadCartridge(const string& foldername) {
   name = basename(name);
   name.rtrim("/");
 
-  videoWindow->setTitle(name);
+  presentation->setTitle(name);
   emulator->paletteUpdate(Emulator::Interface::PaletteMode::Standard);
   debugger->print(SuperFamicom::cartridge.information.markup.cartridge, "\n");
   debugger->suspend();
@@ -108,7 +108,7 @@ void Interface::videoRefresh(const uint32_t* palette, const uint32_t* data, unsi
   }
 
   /*
-  uint32_t* output = videoWindow->canvas.data();
+  uint32_t* output = presentation->canvas.data();
   pitch >>= 2;
 
   bool interlace = pitch == 512;
@@ -131,7 +131,7 @@ void Interface::videoRefresh(const uint32_t* palette, const uint32_t* data, unsi
     }
   }
 
-  videoWindow->canvas.setData();
+  presentation->canvas.setData();
   */
 }
 
@@ -146,7 +146,7 @@ void Interface::audioSample(int16_t lsample, int16_t rsample) {
 }
 
 int16_t Interface::inputPoll(unsigned port, unsigned device, unsigned input) {
-  if(videoWindow->focused() == false) return 0;
+  if(presentation->focused() == false) return 0;
   auto keyboardState = phoenix::Keyboard::state();
 
   if(port == 0) {

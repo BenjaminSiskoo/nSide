@@ -35,7 +35,7 @@ Program::Program(string pathname) {
   new WindowManager;
   new ConsoleWindow;
   new AboutWindow;
-  new VideoWindow;
+  new Presentation;
   new CPUDebugger;
   new CPURegisterEditor;
   new SMPDebugger;
@@ -62,11 +62,11 @@ Program::Program(string pathname) {
 
   windowManager->loadGeometry();
   consoleWindow->setVisible();
-  videoWindow->setVisible();
+  presentation->setVisible();
   consoleWindow->setFocused();
 
   video = Video::create(settings->video.driver);
-  video->set(Video::Handle, videoWindow->viewport.handle());
+  video->set(Video::Handle, presentation->viewport.handle());
   if(!video->init()) {
     delete video;
     video = Video::create("None");
@@ -76,7 +76,7 @@ Program::Program(string pathname) {
   video->set(Video::Filter, Video::FilterNearest);
 
   audio = Audio::create(settings->audio.driver);
-  audio->set(Audio::Handle, videoWindow->viewport.handle());
+  audio->set(Audio::Handle, presentation->viewport.handle());
   audio->set(Audio::Synchronize, settings->audio.synchronize);
   audio->set(Audio::Frequency, 48000u);
   if(!audio->init()) {
@@ -86,7 +86,7 @@ Program::Program(string pathname) {
   }
 
   input = Input::create(settings->input.driver);
-  input->set(Input::Handle, videoWindow->viewport.handle());
+  input->set(Input::Handle, presentation->viewport.handle());
   if(!input->init()) {
     delete input;
     input = Input::create("None");

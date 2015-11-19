@@ -1,8 +1,8 @@
 #include "../base.hpp"
-VideoWindow* videoWindow = nullptr;
+Presentation* presentation = nullptr;
 
-VideoWindow::VideoWindow() {
-  videoWindow = this;
+Presentation::Presentation() {
+  presentation = this;
   setTitle("Video");
 //setResizable(false);
   setGeometry({64, 64, 512, 480});
@@ -43,5 +43,5 @@ VideoWindow::VideoWindow() {
     });
   };
 
-  windowManager->append(this, "VideoWindow");
+  windowManager->append(this, "Presentation");
 }
