@@ -64,17 +64,17 @@ CPURegisterEditor::CPURegisterEditor() {
     setVisible(false);
   };
 
-  setGeometry({{128, 128}, layout.minimumGeometry().size()});
+  setGeometry({{128, 128}, layout.minimumSize()});
   windowManager->append(this, "CPURegisterEditor");
 }
 
 void CPURegisterEditor::loadRegisters() {
-  regAValue.setText(hex<4>(SuperFamicom::cpu.regs.a));
-  regXValue.setText(hex<4>(SuperFamicom::cpu.regs.x));
-  regYValue.setText(hex<4>(SuperFamicom::cpu.regs.y));
-  regSValue.setText(hex<4>(SuperFamicom::cpu.regs.s));
-  regDValue.setText(hex<4>(SuperFamicom::cpu.regs.d));
-  regDBValue.setText(hex<2>(SuperFamicom::cpu.regs.db));
+  regAValue.setText(hex(SuperFamicom::cpu.regs.a, 4L));
+  regXValue.setText(hex(SuperFamicom::cpu.regs.x, 4L));
+  regYValue.setText(hex(SuperFamicom::cpu.regs.y, 4L));
+  regSValue.setText(hex(SuperFamicom::cpu.regs.s, 4L));
+  regDValue.setText(hex(SuperFamicom::cpu.regs.d, 4L));
+  regDBValue.setText(hex(SuperFamicom::cpu.regs.db, 2L));
   flagN.setChecked(SuperFamicom::cpu.regs.p.n);
   flagV.setChecked(SuperFamicom::cpu.regs.p.v);
   flagM.setChecked(SuperFamicom::cpu.regs.p.m);
@@ -102,5 +102,5 @@ void CPURegisterEditor::saveRegisters() {
   SuperFamicom::cpu.regs.p.z = flagZ.checked();
   SuperFamicom::cpu.regs.p.c = flagC.checked();
   SuperFamicom::cpu.regs.e = flagE.checked();
-  SuperFamicom::cpu.update_table();  //cache E/M/X flags
+  //SuperFamicom::cpu.update_table();  //cache E/M/X flags
 }

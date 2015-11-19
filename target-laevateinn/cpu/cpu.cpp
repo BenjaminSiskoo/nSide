@@ -58,7 +58,7 @@ void CPUDebugger::updateDisassembly() {
   string line[15];
   char text[512];
 
-  SuperFamicom::cpu.disassemble_opcode(text, opcodePC);
+  SuperFamicom::cpu.disassemble_opcode(text, opcodePC, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
   text[29] = 0;
   line[7] = { "> ", text };
 
@@ -67,7 +67,7 @@ void CPUDebugger::updateDisassembly() {
     for(signed b = 1; b <= 4; b++) {
       if(addr - b >= 0 && (debugger->cpuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        SuperFamicom::cpu.disassemble_opcode(text, addr);
+        SuperFamicom::cpu.disassemble_opcode(text, addr + b, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
         text[29] = 0;
         line[o] = { "  ", text };
         break;
@@ -80,7 +80,7 @@ void CPUDebugger::updateDisassembly() {
     for(signed b = 1; b <= 4; b++) {
       if(addr + b <= 0xffffff && (debugger->cpuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        SuperFamicom::cpu.disassemble_opcode(text, addr);
+        SuperFamicom::cpu.disassemble_opcode(text, addr - b, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
         text[29] = 0;
         line[o] = { "  ", text };
         break;
@@ -89,16 +89,16 @@ void CPUDebugger::updateDisassembly() {
   }
 
   string output;
-  for(auto &n : line) {
+  for(auto& n : line) {
     if(n.empty()) output.append("  ...\n");
     else output.append(n, "\n");
   }
-  output.rtrim<1>("\n");
+  output.rtrim("\n");
 
   disassembly.setText(output);
   registers.setText({
-     "A:", hex<4>(SuperFamicom::cpu.regs.a), " X:", hex<4>(SuperFamicom::cpu.regs.x), " Y:", hex<4>(SuperFamicom::cpu.regs.y),
-    " S:", hex<4>(SuperFamicom::cpu.regs.s), " D:", hex<4>(SuperFamicom::cpu.regs.d), " DB:", hex<2>(SuperFamicom::cpu.regs.db), " ",
+     "A:", hex(SuperFamicom::cpu.regs.a, 4L), " X:", hex(SuperFamicom::cpu.regs.x, 4L), " Y:", hex(SuperFamicom::cpu.regs.y, 4L),
+    " S:", hex(SuperFamicom::cpu.regs.s, 4L), " D:", hex(SuperFamicom::cpu.regs.d, 4L), " DB:", hex(SuperFamicom::cpu.regs.db, 2L), " ",
     SuperFamicom::cpu.regs.p.n ? "N" : "n", SuperFamicom::cpu.regs.p.v ? "V" : "v",
     SuperFamicom::cpu.regs.e ? (SuperFamicom::cpu.regs.p.m ? "1" : "0") : (SuperFamicom::cpu.regs.p.m ? "M" : "m"),
     SuperFamicom::cpu.regs.e ? (SuperFamicom::cpu.regs.p.x ? "B" : "b") : (SuperFamicom::cpu.regs.p.x ? "X" : "x"),

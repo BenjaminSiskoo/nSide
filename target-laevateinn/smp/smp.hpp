@@ -47,5 +47,5 @@ struct SMPRegisterEditor : Window {
   SMPRegisterEditor();
 };
 
-extern SMPDebugger *smpDebugger;
-extern SMPRegisterEditor *smpRegisterEditor;
+extern SMPDebugger* smpDebugger;
+extern SMPRegisterEditor* smpRegisterEditor;

@@ -54,15 +54,15 @@ SMPRegisterEditor::SMPRegisterEditor() {
     setVisible(false);
   };
 
-  setGeometry({{128, 128}, layout.minimumGeometry().size()});
+  setGeometry({{128, 128}, layout.minimumSize()});
   windowManager->append(this, "SMPRegisterEditor");
 }
 
 void SMPRegisterEditor::loadRegisters() {
-  regAValue.setText(hex<2>(SuperFamicom::smp.regs.a));
-  regXValue.setText(hex<2>(SuperFamicom::smp.regs.x));
-  regYValue.setText(hex<2>(SuperFamicom::smp.regs.y));
-  regSValue.setText(hex<2>(SuperFamicom::smp.regs.s));
+  regAValue.setText(hex(SuperFamicom::smp.regs.a, 2L));
+  regXValue.setText(hex(SuperFamicom::smp.regs.x, 2L));
+  regYValue.setText(hex(SuperFamicom::smp.regs.y, 2L));
+  regSValue.setText(hex(SuperFamicom::smp.regs.s, 2L));
   flagN.setChecked(SuperFamicom::smp.regs.p.n);
   flagV.setChecked(SuperFamicom::smp.regs.p.v);
   flagP.setChecked(SuperFamicom::smp.regs.p.p);

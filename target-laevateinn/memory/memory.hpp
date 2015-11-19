@@ -18,4 +18,4 @@ struct MemoryEditor : Window {
   MemoryEditor();
 };
 
-extern MemoryEditor *memoryEditor;
+extern MemoryEditor* memoryEditor;

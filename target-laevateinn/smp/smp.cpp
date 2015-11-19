@@ -23,16 +23,16 @@ unsigned SMPDebugger::opcodeLength(uint16 addr) {
 void SMPDebugger::updateDisassembly() {
   string line[15];
 
-  line[7] = { "> ", SuperFamicom::smp.disassemble_opcode(opcodePC) };
-  line[7][31] = 0;
+  line[7] = { "> ", SuperFamicom::smp.disassemble_opcode(opcodePC, SuperFamicom::smp.regs.p.p) };
+  //line[7][31] = 0;
 
   signed addr = opcodePC;
   for(signed o = 6; o >= 0; o--) {
     for(signed b = 1; b <= 3; b++) {
       if(addr - b >= 0 && (debugger->apuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        line[o] = { "  ", SuperFamicom::smp.disassemble_opcode(addr) };
-        line[o][31] = 0;
+        line[o] = { "  ", SuperFamicom::smp.disassemble_opcode(addr, SuperFamicom::smp.regs.p.p) };
+        //line[o][31] = 0;
         break;
       }
     }
@@ -43,25 +43,25 @@ void SMPDebugger::updateDisassembly() {
     for(signed b = 1; b <= 3; b++) {
       if(addr - b <= 0xffff && (debugger->apuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        line[o] = { "  ", SuperFamicom::smp.disassemble_opcode(addr) };
-        line[o][31] = 0;
+        line[o] = { "  ", SuperFamicom::smp.disassemble_opcode(addr, SuperFamicom::smp.regs.p.p) };
+        //line[o][31] = 0;
         break;
       }
     }
   }
 
   string output;
-  for(auto &n : line) {
+  for(auto& n : line) {
     if(n.empty()) output.append("  ...\n");
     else output.append(n, "\n");
   }
-  output.rtrim<1>("\n");
+  output.rtrim("\n");
 
   disassembly.setText(output);
   registers.setText({
-    "YA:", hex<2>(SuperFamicom::smp.regs.y), hex<2>(SuperFamicom::smp.regs.a),
-    " A:", hex<2>(SuperFamicom::smp.regs.a), " X:", hex<2>(SuperFamicom::smp.regs.x),
-    " Y:", hex<2>(SuperFamicom::smp.regs.y), " S:01", hex<2>(SuperFamicom::smp.regs.s), " ",
+    "YA:", hex(SuperFamicom::smp.regs.y, 2L), hex(SuperFamicom::smp.regs.a, 2L),
+    " A:", hex(SuperFamicom::smp.regs.a, 2L), " X:", hex(SuperFamicom::smp.regs.x, 2L),
+    " Y:", hex(SuperFamicom::smp.regs.y, 2L), " S:01", hex(SuperFamicom::smp.regs.s, 2L), " ",
     SuperFamicom::smp.regs.p.n ? "N" : "n", SuperFamicom::smp.regs.p.v ? "V" : "v",
     SuperFamicom::smp.regs.p.p ? "P" : "p", SuperFamicom::smp.regs.p.b ? "B" : "b",
     SuperFamicom::smp.regs.p.h ? "H" : "h", SuperFamicom::smp.regs.p.i ? "I" : "i",

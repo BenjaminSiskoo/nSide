@@ -9,7 +9,9 @@ VRAMViewer::VRAMViewer() {
 
   layout.setMargin(5);
   modeLabel.setText("Mode:");
-  modeSelection.append("2bpp", "4bpp", "8bpp");
+  modeSelection.append("2bpp");
+  modeSelection.append("4bpp");
+  modeSelection.append("8bpp");
   autoUpdate.setText("Auto");
   update.setText("Update");
   canvas.setSize({512, 512});
@@ -36,11 +38,11 @@ VRAMViewer::VRAMViewer() {
     if(mode == 0) tile = y * 64 + x;
     if(mode == 1) tile = y * 64 + x;
     if(mode == 2) tile = y * 32 + x;
-    output.append("Tile: 0x", hex<4>(tile), ", Address: 0x", hex<4>(tile * (16 << mode)));
+    output.append("Tile: 0x", hex(tile, 4L), ", Address: 0x", hex(tile * (16 << mode), 4L));
     setStatusText(output);
   };
 
-  setGeometry({{128, 128}, layout.minimumGeometry().size()});
+  setGeometry({{128, 128}, layout.minimumSize()});
   windowManager->append(this, "VRAMViewer");
 }
 
@@ -123,5 +125,5 @@ void VRAMViewer::updateTiles() {
     }
   }
 
-  canvas.update();
+  canvas.setData();
 }

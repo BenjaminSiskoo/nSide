@@ -8,7 +8,11 @@ MemoryEditor::MemoryEditor() {
 
   gotoLabel.setText("Goto:");
   gotoAddress.setFont(Font::monospace(8));
-  source.append("CPU-Bus", "APU-Bus", "VRAM", "OAM", "CGRAM");
+  source.append("CPU-Bus");
+  source.append("APU-Bus");
+  source.append("VRAM");
+  source.append("OAM");
+  source.append("CGRAM");
   exportMemory.setText("Export");
   autoUpdate.setText("Auto");
   update.setText("Update");

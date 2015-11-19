@@ -22,11 +22,9 @@ AboutWindow::AboutWindow() {
   layout.append(website, {0, 0});
   append(layout);
 
-  image logo(0, 32, 255u << 24, 255u << 16, 255u << 8, 255u << 0);
-  logo.loadPNG(laevateinnLogo, sizeof laevateinnLogo);
+  image logo(laevateinnLogo, sizeof laevateinnLogo);
   logo.alphaBlend(backgroundColor().rgb());
   canvas.setImage(logo);
-  canvas.update();
 
   setGeometry({128, 128, layout.minimumSize().width, layout.minimumSize().height});
   windowManager->append(this, "AboutWindow");

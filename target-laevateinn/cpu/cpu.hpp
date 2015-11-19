@@ -55,5 +55,5 @@ struct CPURegisterEditor : Window {
   CPURegisterEditor();
 };
 
-extern CPUDebugger *cpuDebugger;
-extern CPURegisterEditor *cpuRegisterEditor;
+extern CPUDebugger* cpuDebugger;
+extern CPURegisterEditor* cpuRegisterEditor;

@@ -39,14 +39,14 @@ void PropertiesViewer::updateProperties() {
 
   output.append("$2101  OBSEL\n"
     "  Base Size = ", SuperFamicom::ppu.sprite.regs.base_size, "\n",
-    "  Name Select = $", hex<4>(SuperFamicom::ppu.sprite.regs.nameselect << 13), "\n",
-    "  Tiledata Address = $", hex<4>(SuperFamicom::ppu.sprite.regs.tiledata_addr), "\n",
+    "  Name Select = $", hex(SuperFamicom::ppu.sprite.regs.nameselect << 13, 4L), "\n",
+    "  Tiledata Address = $", hex(SuperFamicom::ppu.sprite.regs.tiledata_addr, 4L), "\n",
     "\n"
   );
 
   output.append("$2102  OAMADDL\n"
                 "$2103  OAMADDH\n"
-    "  Base Address = $", hex<4>(SuperFamicom::ppu.regs.oam_baseaddr), "\n",
+    "  Base Address = $", hex(SuperFamicom::ppu.regs.oam_baseaddr, 4L), "\n",
     "  Priority = ", SuperFamicom::ppu.regs.oam_priority, "\n",
     "\n"
   );
@@ -69,41 +69,41 @@ void PropertiesViewer::updateProperties() {
     "\n"
   );
 
-  lstring screenSizes = { "32x32", "32x64", "64x32", "64x64" };
+  lstring screenSizes = { "32x×32y", "64x×32y", "32x×64y", "64x×64y" };
 
   output.append("$2107  BG1SC\n"
-    "  BG1 Screen Address = $", hex<4>(SuperFamicom::ppu.bg1.regs.screen_addr), "\n",
+    "  BG1 Screen Address = $", hex(SuperFamicom::ppu.bg1.regs.screen_addr, 4L), "\n",
     "  BG1 Screen Size = ", screenSizes[SuperFamicom::ppu.bg1.regs.screen_size], "\n",
     "\n"
   );
 
   output.append("$2108  BG2SC\n"
-    "  BG2 Screen Address = $", hex<4>(SuperFamicom::ppu.bg2.regs.screen_addr), "\n",
+    "  BG2 Screen Address = $", hex(SuperFamicom::ppu.bg2.regs.screen_addr, 4L), "\n",
     "  BG2 Screen Size = ", screenSizes[SuperFamicom::ppu.bg2.regs.screen_size], "\n",
     "\n"
   );
 
   output.append("$2109  BG3SC\n"
-    "  BG3 Screen Address = $", hex<4>(SuperFamicom::ppu.bg3.regs.screen_addr), "\n",
+    "  BG3 Screen Address = $", hex(SuperFamicom::ppu.bg3.regs.screen_addr, 4L), "\n",
     "  BG3 Screen Size = ", screenSizes[SuperFamicom::ppu.bg3.regs.screen_size], "\n",
     "\n"
   );
 
   output.append("$210a  BG4SC\n"
-    "  BG4 Screen Address = $", hex<4>(SuperFamicom::ppu.bg4.regs.screen_addr), "\n",
+    "  BG4 Screen Address = $", hex(SuperFamicom::ppu.bg4.regs.screen_addr, 4L), "\n",
     "  BG4 Screen Size = ", screenSizes[SuperFamicom::ppu.bg4.regs.screen_size], "\n",
     "\n"
   );
 
   output.append("$210b  BG12NBA\n"
-    "  BG1 Tiledata Address = $", hex<4>(SuperFamicom::ppu.bg1.regs.tiledata_addr), "\n",
-    "  BG2 Tiledata Address = $", hex<4>(SuperFamicom::ppu.bg2.regs.tiledata_addr), "\n",
+    "  BG1 Tiledata Address = $", hex(SuperFamicom::ppu.bg1.regs.tiledata_addr, 4L), "\n",
+    "  BG2 Tiledata Address = $", hex(SuperFamicom::ppu.bg2.regs.tiledata_addr, 4L), "\n",
     "\n"
   );
 
   output.append("$210c  BG34NBA\n"
-    "  BG3 Tiledata Address = $", hex<4>(SuperFamicom::ppu.bg3.regs.tiledata_addr), "\n",
-    "  BG4 Tiledata Address = $", hex<4>(SuperFamicom::ppu.bg4.regs.tiledata_addr), "\n",
+    "  BG3 Tiledata Address = $", hex(SuperFamicom::ppu.bg3.regs.tiledata_addr, 4L), "\n",
+    "  BG4 Tiledata Address = $", hex(SuperFamicom::ppu.bg4.regs.tiledata_addr, 4L), "\n",
     "\n"
   );
 
