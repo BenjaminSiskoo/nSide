@@ -14,7 +14,7 @@ endif
 
 ifeq ($(target),loki)
   options += debugger
-else ifeq ($(target),laevateinn)
+else ifeq ($(target),star-rod)
   options += debugger
 endif
 # arch := x86
