@@ -1,5 +1,5 @@
 #include "../base.hpp"
-Interface *interface = nullptr;
+Interface* interface = nullptr;
 
 bool Interface::loadCartridge(const string &foldername) {
   auto memory = file::read({foldername, "program.rom"});
@@ -110,7 +110,7 @@ void Interface::videoRefresh(const uint32_t *data, unsigned pitch, unsigned widt
 
 void Interface::audioSample(int16_t lsample, int16_t rsample) {
   if(consoleWindow->menuEmulationMuteAudio.checked()) lsample = rsample = 0;
-  audio.sample(lsample, rsample);
+  audio->sample(lsample, rsample);
 }
 
 int16_t Interface::inputPoll(unsigned port, unsigned device, unsigned index) {
@@ -148,6 +148,7 @@ void Interface::message(const string &text) {
 }
 
 Interface::Interface() {
+  interface = this;
   instance = new SuperFamicom::Interface;
   instance->bind = this;
 

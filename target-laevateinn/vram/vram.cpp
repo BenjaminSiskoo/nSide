@@ -1,7 +1,8 @@
 #include "../base.hpp"
-VRAMViewer *vramViewer = nullptr;
+VRAMViewer* vramViewer = nullptr;
 
 VRAMViewer::VRAMViewer() {
+  vramViewer = this;
   setTitle("VRAM Viewer");
   setStatusFont(program->proportionalFontBold);
   setStatusVisible();

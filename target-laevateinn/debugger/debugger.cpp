@@ -1,5 +1,5 @@
 #include "../base.hpp"
-Debugger *debugger = nullptr;
+Debugger* debugger = nullptr;
 
 #include "hook.cpp"
 #include "usage.cpp"
@@ -40,6 +40,7 @@ void Debugger::suspend() {
 }
 
 Debugger::Debugger() {
+  debugger = this;
   paused = true;
 
   flags.step = false;

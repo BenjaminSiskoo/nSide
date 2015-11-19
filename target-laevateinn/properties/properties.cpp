@@ -1,7 +1,8 @@
 #include "../base.hpp"
-PropertiesViewer *propertiesViewer = nullptr;
+PropertiesViewer* propertiesViewer = nullptr;
 
 PropertiesViewer::PropertiesViewer() {
+  propertiesViewer = this;
   setTitle("Properties Viewer");
   setGeometry({128, 128, 300, 400});
 

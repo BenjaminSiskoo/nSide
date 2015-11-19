@@ -1,5 +1,5 @@
 #include "../base.hpp"
-SMPDebugger *smpDebugger = nullptr;
+SMPDebugger* smpDebugger = nullptr;
 
 #include "registers.cpp"
 
@@ -70,6 +70,7 @@ void SMPDebugger::updateDisassembly() {
 }
 
 SMPDebugger::SMPDebugger() {
+  smpDebugger = this;
   opcodePC = 0xffc0;
 
   setTitle("SMP Debugger");

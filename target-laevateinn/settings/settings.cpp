@@ -1,15 +1,29 @@
 #include "../base.hpp"
-Settings *settings = nullptr;
+Settings* settings = nullptr;
 
-void Settings::load() {
-  config.append(folderpath, "folderpath");
-  config.append(synchronizeAudio = true, "synchronizeAudio");
-  config.append(muteAudio = false, "muteAudio");
+Settings::Settings() {
+  settings = this;
 
-  config.load({ program->userpath, "settings.cfg" });
-  config.save({ program->userpath, "settings.cfg" });
+  video.append(video.driver = ruby::Video::safestDriver(), "Driver");
+  video.append(video.synchronize = false, "Synchronize");
+  append(video, "Video");
+
+  audio.append(audio.driver = ruby::Audio::safestDriver(), "Driver");
+  audio.append(audio.synchronize = true, "Synchronize");
+  audio.append(audio.mute = false, "Mute");
+  append(audio, "Audio");
+
+  input.append(input.driver = ruby::Input::safestDriver(), "Driver");
+  append(input, "Input");
+
+  load();
 }
 
-void Settings::save() {
-  config.save({ program->userpath, "settings.cfg" });
+void Settings::load() {
+  Configuration::Document::load(program->path("laevateinn-settings.bml"));
+  Configuration::Document::save(program->path("laevateinn-settings.bml"));
+}
+
+void Settings::unload() {
+  Configuration::Document::save(program->path("laevateinn-settings.bml"));
 }

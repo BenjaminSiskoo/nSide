@@ -1,6 +1,10 @@
 #include "base.hpp"
 
 Program *Program = nullptr;
+Video* video = nullptr;
+Audio* audio = nullptr;
+Input* input = nullptr;
+DSP dspaudio;
 
 Program::Program(int argc, char **argv) {
   program = this;
@@ -45,33 +49,60 @@ Program::Program(int argc, char **argv) {
   settings->folderpath.rtrim<1>("/");
   settings->folderpath = dir(settings->folderpath);
 
-  interface = new Interface;
-  debugger = new Debugger;
-  tracer = new Tracer;
-  windowManager = new WindowManager;
-  consoleWindow = new ConsoleWindow;
-  aboutWindow = new AboutWindow;
-  videoWindow = new VideoWindow;
-  cpuDebugger = new CPUDebugger;
-  cpuRegisterEditor = new CPURegisterEditor;
-  smpDebugger = new SMPDebugger;
-  smpRegisterEditor = new SMPRegisterEditor;
-  memoryEditor = new MemoryEditor;
-  breakpointEditor = new BreakpointEditor;
-  propertiesViewer = new PropertiesViewer;
-  vramViewer = new VRAMViewer;
+  new Interface;
+  new Debugger;
+  new Tracer;
+  new WindowManager;
+  new ConsoleWindow;
+  new AboutWindow;
+  new VideoWindow;
+  new CPUDebugger;
+  new CPURegisterEditor;
+  new SMPDebugger;
+  new SMPRegisterEditor;
+  new MemoryEditor;
+  new BreakpointEditor;
+  new PropertiesViewer;
+  new VRAMViewer;
 
   windowManager->loadGeometry();
   consoleWindow->setVisible();
   videoWindow->setVisible();
   consoleWindow->setFocused();
 
-  if(audio.init() == false) {
-    audio.driver("None");
-    audio.init();
+  video = Video::create(settings->video.driver);
+  video->set(Video::Handle, videoWindow->viewport.handle());
+  if(!video->init()) {
+    delete video;
+    video = Video::create("None");
+    video->init();
   }
-  audio.set(Audio::Synchronize, settings->synchronizeAudio);
-  audio.set(Audio::Frequency, 32000u);
+  video->set(Video::Synchronize, settings->video.synchronize);
+  video->set(Video::Filter, Video::FilterNearest);
+
+  audio = Audio::create(settings->audio.driver);
+  audio->set(Audio::Handle, videoWindow->viewport.handle());
+  audio->set(Audio::Synchronize, settings->audio.synchronize);
+  audio->set(Audio::Frequency, 48000u);
+  if(audio->init() == false) {
+    delete audio;
+    audio = Audio::create("None");
+    audio->init();
+  }
+
+  input = Input::create(settings->input.driver);
+  input->set(Input::Handle, videoWindow->viewport.handle());
+  if(!input->init()) {
+    delete input;
+    input = Input::create("None");
+    input->init();
+  }
+
+  dspaudio.setPrecision(16);
+  dspaudio.setBalance(0.0);
+  dspaudio.setFrequency(32000);
+  dspaudio.setResampler(DSP::ResampleEngine::Hermite);
+  dspaudio.setResamplerFrequency(48000);
 
   if(interface->loadCartridge(foldername) == false) return;
   cpuDebugger->updateDisassembly();
@@ -87,26 +118,7 @@ Program::Program(int argc, char **argv) {
 
   interface->saveMemory();
   windowManager->saveGeometry();
-  settings->save();
-}
-
-Program::~Program() {
-  delete vramViewer;
-  delete propertiesViewer;
-  delete breakpointEditor;
-  delete memoryEditor;
-  delete smpRegisterEditor;
-  delete smpDebugger;
-  delete cpuRegisterEditor;
-  delete cpuDebugger;
-  delete videoWindow;
-  delete aboutWindow;
-  delete consoleWindow;
-  delete windowManager;
-  delete tracer;
-  delete debugger;
-  delete interface;
-  delete settings;
+  settings->unload();
 }
 
 int main(int argc, char **argv) {

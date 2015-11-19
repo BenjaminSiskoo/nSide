@@ -48,7 +48,6 @@ struct Program {
   string monospaceFont;
 
   Program(int argc, char **argv);
-  ~Program();
 };
 
 extern Program *Program;

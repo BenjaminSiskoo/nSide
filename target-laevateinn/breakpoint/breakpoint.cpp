@@ -1,5 +1,5 @@
 #include "../base.hpp"
-BreakpointEditor *breakpointEditor = nullptr;
+BreakpointEditor* breakpointEditor = nullptr;
 
 BreakpointEntry::BreakpointEntry() {
   static unsigned id = 1;
@@ -26,6 +26,7 @@ BreakpointEntry::BreakpointEntry() {
 }
 
 BreakpointEditor::BreakpointEditor() {
+  breakpointEditor = this;
   setTitle("Breakpoint Editor");
 
   layout.setMargin(5);

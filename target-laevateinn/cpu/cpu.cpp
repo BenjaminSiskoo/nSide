@@ -1,5 +1,5 @@
 #include "../base.hpp"
-CPUDebugger *cpuDebugger = nullptr;
+CPUDebugger* cpuDebugger = nullptr;
 
 #include "registers.cpp"
 
@@ -108,6 +108,7 @@ void CPUDebugger::updateDisassembly() {
 }
 
 CPUDebugger::CPUDebugger() {
+  cpuDebugger = this;
   opcodePC = 0x008000;
 
   setTitle("CPU Debugger");

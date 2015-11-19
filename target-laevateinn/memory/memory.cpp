@@ -1,7 +1,8 @@
 #include "../base.hpp"
-MemoryEditor *memoryEditor = nullptr;
+MemoryEditor* memoryEditor = nullptr;
 
 MemoryEditor::MemoryEditor() {
+  memoryEditor = this;
   setTitle("Memory Editor");
   setGeometry({128, 128, 485, 255});
 

@@ -1,6 +1,7 @@
-CPURegisterEditor *cpuRegisterEditor = nullptr;
+CPURegisterEditor* cpuRegisterEditor = nullptr;
 
 CPURegisterEditor::CPURegisterEditor() {
+  cpuRegisterEditor = this;
   setTitle("CPU Register Editor");
 
   layout.setMargin(5);

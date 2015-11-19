@@ -1,7 +1,8 @@
 #include <data/laevateinn.hpp>
-AboutWindow *aboutWindow = nullptr;
+AboutWindow* aboutWindow = nullptr;
 
 AboutWindow::AboutWindow() {
+  aboutWindow = this;
   setTitle("About Laevateinn");
 //setResizable(false);
 

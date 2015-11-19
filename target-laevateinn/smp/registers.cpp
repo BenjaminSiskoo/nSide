@@ -1,6 +1,7 @@
-SMPRegisterEditor *smpRegisterEditor = nullptr;
+SMPRegisterEditor* smpRegisterEditor = nullptr;
 
 SMPRegisterEditor::SMPRegisterEditor() {
+  smpRegisterEditor = this;
   setTitle("SMP Register Editor");
 
   layout.setMargin(5);

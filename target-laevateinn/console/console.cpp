@@ -1,9 +1,10 @@
 #include "../base.hpp"
-ConsoleWindow *consoleWindow = nullptr;
+ConsoleWindow* consoleWindow = nullptr;
 
 #include "about.cpp"
 
 ConsoleWindow::ConsoleWindow() {
+  consoleWindow = this;
   setTitle({"Console - Laevateinn v", Emulator::Version});
   setGeometry({64, 640, 640, 400});
   setMenuVisible();
@@ -100,7 +101,7 @@ ConsoleWindow::ConsoleWindow() {
   };
 
   menuEmulationSynchronizeAudio.onToggle = [&] {
-    audio.set(Audio::Synchronize, settings->synchronizeAudio = menuEmulationSynchronizeAudio.checked());
+    audio->set(Audio::Synchronize, settings->audio.synchronize = menuEmulationSynchronizeAudio.checked());
   };
 
   menuEmulationMuteAudio.onToggle = [&] {

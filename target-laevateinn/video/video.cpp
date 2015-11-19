@@ -1,7 +1,8 @@
 #include "../base.hpp"
-VideoWindow *videoWindow = nullptr;
+VideoWindow* videoWindow = nullptr;
 
 VideoWindow::VideoWindow() {
+  videoWindow = this;
   setTitle("Video");
 //setResizable(false);
   setGeometry({64, 64, 512, 480});

@@ -1,5 +1,5 @@
 #include "../base.hpp"
-Tracer *tracer = nullptr;
+Tracer* tracer = nullptr;
 
 void Tracer::resetMask() {
   memset(cpuMask, 0, 0x200000);
@@ -44,6 +44,7 @@ void Tracer::enable(bool state) {
 }
 
 Tracer::Tracer() {
+  tracer = this;
   mask = false;
   cpuMask = new uint8_t[0x200000]();
   smpMask = new uint8_t[0x2000]();
