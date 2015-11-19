@@ -51,7 +51,7 @@ struct ConsoleWindow : Window {
       Button clearButton;
     TextEdit console;
 
-  void print(const string &text);
+  void print(const string& text);
 
   ConsoleWindow();
 };

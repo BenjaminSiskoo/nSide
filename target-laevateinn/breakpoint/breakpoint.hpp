@@ -57,4 +57,4 @@ struct BreakpointEditor : Window {
   BreakpointEditor();
 };
 
-extern BreakpointEditor *breakpointEditor;
+extern BreakpointEditor* breakpointEditor;

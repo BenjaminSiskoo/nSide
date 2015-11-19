@@ -6,8 +6,14 @@ BreakpointEntry::BreakpointEntry() {
   enable.setText({ "#", id++ });
   addr.setFont(Font::monospace(8));
   data.setFont(Font::monospace(8));
-  type.append("Read", "Write", "Exec");
-  source.append("CPU", "SMP", "VRAM", "OAM", "CGRAM");
+  type.append("Read");
+  type.append("Write");
+  type.append("Exec");
+  source.append("CPU");
+  source.append("SMP");
+  source.append("VRAM");
+  source.append("OAM");
+  source.append("CGRAM");
 
   append(enable, {0, 0}, 5);
   append(addr, {50, 0}, 5);
@@ -33,7 +39,7 @@ BreakpointEditor::BreakpointEditor() {
   for(auto &bp : breakpointEntry) layout.append(bp, {0, 0}, 5);
   append(layout);
 
-  setGeometry({128, 128, layout.minimumGeometry().width, layout.minimumGeometry().height - 5});
+  setGeometry({128, 128, layout.minimumSize().width, layout.minimumSize().height - 5});
   synchronize();
 
   windowManager->append(this, "BreakpointEditor");

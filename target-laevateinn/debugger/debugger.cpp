@@ -10,7 +10,7 @@ void Debugger::run() {
     return;
   }
 
-  SuperFamicom::system.run();
+  emulator->run();
   if(cpuDebugger->autoUpdate.checked()) cpuDebugger->updateDisassembly();
   if(smpDebugger->autoUpdate.checked()) smpDebugger->updateDisassembly();
   if(memoryEditor->autoUpdate.checked()) memoryEditor->updateView();
@@ -18,7 +18,7 @@ void Debugger::run() {
   if(vramViewer->autoUpdate.checked()) vramViewer->updateTiles();
 }
 
-void Debugger::echo(const string &text) {
+void Debugger::echo(const string& text) {
   consoleWindow->print(text);
 }
 

@@ -1,19 +1,19 @@
-#include <data/laevateinn.hpp>
+//#include "../base.hpp"
 AboutWindow* aboutWindow = nullptr;
 
 AboutWindow::AboutWindow() {
   aboutWindow = this;
   setTitle("About Laevateinn");
-//setResizable(false);
+  setResizable(false);
 
   layout.setMargin(10);
   layout.setAlignment(0.5);
   canvas.setSize({288, 360});
-  title.setFont("Sans, 16, Bold");
+  title.setFont(Font::sans(16, "Bold"));
   title.setText("Laevateinn");
-  version.setFont("Sans, 8, Bold");
+  version.setFont(Font::sans(8, "Bold"));
   version.setText({"bsnes/debugger v", Emulator::Version});
-  website.setFont("Sans, 8, Bold");
+  website.setFont(Font::sans(8, "Bold"));
   website.setText("http://byuu.org/");
 
   layout.append(canvas, {288, 360});
@@ -28,6 +28,6 @@ AboutWindow::AboutWindow() {
   canvas.setImage(logo);
   canvas.update();
 
-  setGeometry({128, 128, layout.minimumGeometry().width, layout.minimumGeometry().height});
+  setGeometry({128, 128, layout.minimumSize().width, layout.minimumSize().height});
   windowManager->append(this, "AboutWindow");
 }

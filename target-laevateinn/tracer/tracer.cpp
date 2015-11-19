@@ -35,10 +35,10 @@ void Tracer::enable(bool state) {
   //if all files exist, use 000, even if it overwrites another log.
   unsigned n = 1;
   do {
-    if(file::exists({ interface->pathName, "debug/trace-", decimal<3, '0'>(n), ".log" }) == false) break;
+    if(file::exists({ interface->pathName, "debug/trace-", decimal(n, 3L), ".log" }) == false) break;
   } while(++n <= 999);
 
-  string filename = { interface->pathName, "debug/trace-", decimal<3, '0'>(n), ".log" };
+  string filename = { interface->pathName, "debug/trace-", decimal(n, 3L), ".log" };
   if(fp.open(filename, file::mode::write) == false) return;
   debugger->print("Tracing to ", filename, "\n");
 }

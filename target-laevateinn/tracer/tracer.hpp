@@ -1,8 +1,8 @@
 struct Tracer {
   file fp;
   bool mask;
-  uint8_t *cpuMask;
-  uint8_t *smpMask;
+  uint8_t* cpuMask;
+  uint8_t* smpMask;
 
   void resetMask();
   bool maskCPU(uint24 addr);
@@ -19,4 +19,4 @@ struct Tracer {
   }
 };
 
-extern Tracer *tracer;
+extern Tracer* tracer;

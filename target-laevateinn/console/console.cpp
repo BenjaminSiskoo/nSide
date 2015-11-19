@@ -14,11 +14,15 @@ ConsoleWindow::ConsoleWindow() {
     menuEmulationPowerCycle.setText("Power Cycle");
     menuEmulationReset.setText("Reset");
     menuEmulationSynchronizeAudio.setText("Synchronize Audio");
-    menuEmulationSynchronizeAudio.setChecked(settings->synchronizeAudio);
+    menuEmulationSynchronizeAudio.setChecked(settings->audio.synchronize);
     menuEmulationMuteAudio.setText("Mute Audio");
-    menuEmulationMuteAudio.setChecked(settings->muteAudio);
-    menuEmulation.append(menuEmulationReloadCartridge, menuEmulationPowerCycle, menuEmulationReset,
-      menuEmulationSeparator, menuEmulationSynchronizeAudio, menuEmulationMuteAudio);
+    menuEmulationMuteAudio.setChecked(settings->audio.mute);
+    menuEmulation.append(menuEmulationReloadCartridge);
+    menuEmulation.append(menuEmulationPowerCycle);
+    menuEmulation.append(menuEmulationReset);
+    menuEmulation.append(menuEmulationSeparator);
+    menuEmulation.append(menuEmulationSynchronizeAudio);
+    menuEmulation.append(menuEmulationMuteAudio);
   append(menuEmulation);
 
   menuDebug.setText("&Debug");
@@ -26,7 +30,8 @@ ConsoleWindow::ConsoleWindow() {
     menuDebugCPU.setChecked(debugger->debug.cpu);
     menuDebugSMP.setText("SMP");
     menuDebugSMP.setChecked(debugger->debug.smp);
-    menuDebug.append(menuDebugCPU, menuDebugSMP);
+    menuDebug.append(menuDebugCPU);
+    menuDebug.append(menuDebugSMP);
   append(menuDebug);
 
   menuTracer.setText("&Tracer");
@@ -34,7 +39,9 @@ ConsoleWindow::ConsoleWindow() {
     menuTracerMask.setChecked(tracer->mask);
     menuTracerMask.setText("Mask");
     menuTracerMaskReset.setText("Reset Mask");
-    menuTracer.append(menuTracerEnable, menuTracerMask, menuTracerMaskReset);
+    menuTracer.append(menuTracerEnable);
+    menuTracer.append(menuTracerMask);
+    menuTracer.append(menuTracerMaskReset);
   append(menuTracer);
 
   menuWindows.setText("&Windows");
@@ -45,9 +52,15 @@ ConsoleWindow::ConsoleWindow() {
     menuWindowsBreakpointEditor.setText("Breakpoint Editor");
     menuWindowsPropertiesViewer.setText("Properties Viewer");
     menuWindowsVRAMViewer.setText("VRAM Viewer");
-    menuWindows.append(menuWindowsVideoWindow, menuWindowsSeparator1, menuWindowsCPUDebugger,
-      menuWindowsSMPDebugger, menuWindowsSeparator2, menuWindowsMemoryEditor, menuWindowsBreakpointEditor,
-      menuWindowsPropertiesViewer, menuWindowsVRAMViewer);
+    menuWindows.append(menuWindowsVideoWindow);
+    menuWindows.append(menuWindowsSeparator1);
+    menuWindows.append(menuWindowsCPUDebugger);
+    menuWindows.append(menuWindowsSMPDebugger);
+    menuWindows.append(menuWindowsSeparator2);
+    menuWindows.append(menuWindowsMemoryEditor);
+    menuWindows.append(menuWindowsBreakpointEditor);
+    menuWindows.append(menuWindowsPropertiesViewer);
+    menuWindows.append(menuWindowsVRAMViewer);
   append(menuWindows);
 
   menuState.setText("&State");
@@ -61,8 +74,17 @@ ConsoleWindow::ConsoleWindow() {
     menuStateLoad3.setText("Load - Slot 3");
     menuStateLoad4.setText("Load - Slot 4");
     menuStateLoad5.setText("Load - Slot 5");
-  menuState.append(menuStateSave1, menuStateSave2, menuStateSave3, menuStateSave4, menuStateSave5,
-    menuStateSeparator, menuStateLoad1, menuStateLoad2, menuStateLoad3, menuStateLoad4, menuStateLoad5);
+  menuState.append(menuStateSave1);
+  menuState.append(menuStateSave2);
+  menuState.append(menuStateSave3);
+  menuState.append(menuStateSave4);
+  menuState.append(menuStateSave5);
+  menuState.append(menuStateSeparator);
+  menuState.append(menuStateLoad1);
+  menuState.append(menuStateLoad2);
+  menuState.append(menuStateLoad3);
+  menuState.append(menuStateLoad4);
+  menuState.append(menuStateLoad5);
   append(menuState);
 
   menuHelp.setText("&Help");
@@ -98,12 +120,12 @@ ConsoleWindow::ConsoleWindow() {
   };
 
   menuEmulationPowerCycle.onActivate = [&] {
-    SuperFamicom::system.power();
+    emulator->power();
     print("System power cycled\n");
   };
 
   menuEmulationReset.onActivate = [&] {
-    SuperFamicom::system.reset();
+    emulator->reset();
     print("System reset\n");
   };
 
@@ -112,7 +134,7 @@ ConsoleWindow::ConsoleWindow() {
   };
 
   menuEmulationMuteAudio.onToggle = [&] {
-    settings->muteAudio = menuEmulationMuteAudio.checked();
+    settings->audio.mute = menuEmulationMuteAudio.checked();
   };
 
   menuDebugCPU.onToggle = [&] { debugger->debug.cpu = menuDebugCPU.checked(); };
@@ -196,7 +218,7 @@ ConsoleWindow::ConsoleWindow() {
   windowManager->append(this, "ConsoleWindow");
 }
 
-void ConsoleWindow::print(const string &text) {
+void ConsoleWindow::print(const string& text) {
   string output = console.text();
   output.append(text);
   console.setText(output);
