@@ -11,7 +11,7 @@ PropertiesViewer::PropertiesViewer() {
   sourceSelection.setEnabled(false);
   autoUpdate.setText("Auto");
   update.setText("Update");
-  properties.setFont(application->monospaceFont);
+  properties.setFont(program->monospaceFont);
 
   layout.append(controlLayout, {~0, 0}, 5);
     controlLayout.append(sourceLabel, {0, 0}, 5);

@@ -4,8 +4,8 @@ BreakpointEditor *breakpointEditor = nullptr;
 BreakpointEntry::BreakpointEntry() {
   static unsigned id = 1;
   enable.setText({ "#", id++ });
-  addr.setFont(application->monospaceFont);
-  data.setFont(application->monospaceFont);
+  addr.setFont(program->monospaceFont);
+  data.setFont(program->monospaceFont);
   type.append("Read", "Write", "Exec");
   source.append("CPU", "SMP", "VRAM", "OAM", "CGRAM");
 

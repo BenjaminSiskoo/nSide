@@ -73,7 +73,7 @@ ConsoleWindow::ConsoleWindow() {
   runButton.setText("Run");
   stepButton.setText("Step");
   clearButton.setText("Clear");
-  console.setFont(application->monospaceFont);
+  console.setFont(program->monospaceFont);
 
   layout.append(commandLayout, {~0, 0}, 5);
     commandLayout.append(runButton, {80, ~0}, 5);
@@ -83,7 +83,7 @@ ConsoleWindow::ConsoleWindow() {
   layout.append(console, {~0, ~0});
   append(layout);
 
-  onClose = [] { application->quit = true; };
+  onClose = [] { program->quit = true; };
 
   menuEmulationReloadCartridge.onActivate = [&] {
     interface->loadCartridge(interface->pathName);

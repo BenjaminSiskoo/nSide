@@ -6,12 +6,12 @@ MemoryEditor::MemoryEditor() {
   setGeometry({128, 128, 485, 255});
 
   gotoLabel.setText("Goto:");
-  gotoAddress.setFont(application->monospaceFont);
+  gotoAddress.setFont(program->monospaceFont);
   source.append("CPU-Bus", "APU-Bus", "VRAM", "OAM", "CGRAM");
   exportMemory.setText("Export");
   autoUpdate.setText("Auto");
   update.setText("Update");
-  editor.setFont(application->monospaceFont);
+  editor.setFont(program->monospaceFont);
   editor.setColumns(16);
   editor.setRows(16);
 

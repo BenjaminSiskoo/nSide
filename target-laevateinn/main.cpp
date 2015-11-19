@@ -1,9 +1,9 @@
 #include "base.hpp"
 
-Application *application = nullptr;
+Program *Program = nullptr;
 
-Application::Application(int argc, char **argv) {
-  application = this;
+Program::Program(int argc, char **argv) {
+  program = this;
   quit = false;
 
   {
@@ -90,7 +90,7 @@ Application::Application(int argc, char **argv) {
   settings->save();
 }
 
-Application::~Application() {
+Program::~Program() {
   delete vramViewer;
   delete propertiesViewer;
   delete breakpointEditor;
@@ -110,7 +110,7 @@ Application::~Application() {
 }
 
 int main(int argc, char **argv) {
-  new Application(argc, argv);
-  delete application;
+  new Program(argc, argv);
+  delete program;
   return 0;
 }

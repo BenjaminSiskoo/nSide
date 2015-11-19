@@ -6,10 +6,10 @@ void Settings::load() {
   config.append(synchronizeAudio = true, "synchronizeAudio");
   config.append(muteAudio = false, "muteAudio");
 
-  config.load({ application->userpath, "settings.cfg" });
-  config.save({ application->userpath, "settings.cfg" });
+  config.load({ program->userpath, "settings.cfg" });
+  config.save({ program->userpath, "settings.cfg" });
 }
 
 void Settings::save() {
-  config.save({ application->userpath, "settings.cfg" });
+  config.save({ program->userpath, "settings.cfg" });
 }

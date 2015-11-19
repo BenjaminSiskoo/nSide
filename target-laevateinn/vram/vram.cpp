@@ -3,7 +3,7 @@ VRAMViewer *vramViewer = nullptr;
 
 VRAMViewer::VRAMViewer() {
   setTitle("VRAM Viewer");
-  setStatusFont(application->proportionalFontBold);
+  setStatusFont(program->proportionalFontBold);
   setStatusVisible();
 
   layout.setMargin(5);

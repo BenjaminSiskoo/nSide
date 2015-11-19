@@ -13,16 +13,16 @@ struct Interface : Emulator::Interface::Bind {
   void videoRefresh(const uint32_t *data, unsigned pitch, unsigned width, unsigned height);
   void audioSample(int16_t lsample, int16_t rsample);
   int16_t inputPoll(unsigned port, unsigned device, unsigned index);
-  unsigned dipSettings(const XML::Node &node) { return 0u; }
+  unsigned dipSettings(const Markup::Node &node) { return 0u; }
   string path(unsigned group) { return ""; }
 
-  string path(SFC::Cartridge::Slot slot, const string &hint);
+  string path(SuperFamicom::Cartridge::Slot slot, const string &hint);
   void message(const string &text);
 
   Interface();
 
 private:
-  SFC::Interface *instance;
+  SuperFamicom::Interface *instance;
 };
 
 extern Interface *interface;

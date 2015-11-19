@@ -5,17 +5,17 @@ CPURegisterEditor::CPURegisterEditor() {
 
   layout.setMargin(5);
   regALabel.setText("A:");
-  regAValue.setFont(application->monospaceFont);
+  regAValue.setFont(program->monospaceFont);
   regXLabel.setText("X:");
-  regXValue.setFont(application->monospaceFont);
+  regXValue.setFont(program->monospaceFont);
   regYLabel.setText("Y:");
-  regYValue.setFont(application->monospaceFont);
+  regYValue.setFont(program->monospaceFont);
   regSLabel.setText("S:");
-  regSValue.setFont(application->monospaceFont);
+  regSValue.setFont(program->monospaceFont);
   regDLabel.setText("D:");
-  regDValue.setFont(application->monospaceFont);
+  regDValue.setFont(program->monospaceFont);
   regDBLabel.setText("DB:");
-  regDBValue.setFont(application->monospaceFont);
+  regDBValue.setFont(program->monospaceFont);
   flagN.setText("N");
   flagV.setText("V");
   flagM.setText("M");

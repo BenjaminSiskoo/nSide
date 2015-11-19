@@ -37,7 +37,7 @@ extern Input* input;
 #include "vram/vram.hpp"
 extern uint8_t laevateinnLogo[121905];
 
-struct Application {
+struct Program {
   bool quit;
 
   string basepath;
@@ -47,8 +47,8 @@ struct Application {
   string proportionalFontBold;
   string monospaceFont;
 
-  Application(int argc, char **argv);
-  ~Application();
+  Program(int argc, char **argv);
+  ~Program();
 };
 
-extern Application *application;
+extern Program *Program;

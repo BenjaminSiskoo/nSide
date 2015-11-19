@@ -154,6 +154,6 @@ Interface::Interface() {
   SuperFamicom::video.generate_palette();
   SuperFamicom::system.init();
 
-  filestream fs{{application->userpath, "Super Famicom.sys/spc700.rom"}};
+  filestream fs{{program->userpath, "Super Famicom.sys/spc700.rom"}};
   fs.read(SuperFamicom::smp.iplrom, min(64u, fs.size()));
 }
