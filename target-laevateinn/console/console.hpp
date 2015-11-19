@@ -66,5 +66,5 @@ struct AboutWindow : Window {
   AboutWindow();
 };
 
-extern ConsoleWindow *consoleWindow;
-extern AboutWindow *aboutWindow;
+extern ConsoleWindow* consoleWindow;
+extern AboutWindow* aboutWindow;

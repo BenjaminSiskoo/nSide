@@ -84,7 +84,14 @@ ConsoleWindow::ConsoleWindow() {
   layout.append(console, {~0, ~0});
   append(layout);
 
-  onClose = [] { program->quit = true; };
+  onClose = [&] {
+    setVisible(false);
+    if(Intrinsics::platform() == Intrinsics::Platform::MacOSX) {
+      interface->unload();
+    } else {
+      Application::quit();
+    }
+  };
 
   menuEmulationReloadCartridge.onActivate = [&] {
     interface->loadCartridge(interface->pathName);

@@ -1,14 +1,17 @@
 #include "base.hpp"
 
-Program *Program = nullptr;
+Program* program = nullptr;
 Video* video = nullptr;
 Audio* audio = nullptr;
 Input* input = nullptr;
 DSP dspaudio;
 
-Program::Program(int argc, char **argv) {
+void Program::main() {
+  debugger->run();
+}
+
+Program::Program(string pathname) {
   program = this;
-  quit = false;
 
   {
     char path[PATH_MAX];
@@ -38,16 +41,10 @@ Program::Program(int argc, char **argv) {
   settings->load();
 
   string foldername;
-  if(argc >= 2) foldername = argv[1];
-//if(!directory::exists(foldername)) foldername = "/media/sdb1/root/cartridges/The Legend of Zelda - A Link to the Past (US).sfc/";
-  if(!directory::exists(foldername)) foldername = DialogWindow::folderSelect(Window::None, settings->folderpath);
-  if(!foldername.endswith(".sfc/")) return;
+  if(pathname) foldername = pathname.transform("\\", "/").rtrim("/").append("/");
+  if(!directory::exists(foldername)) foldername = BrowserWindow().setPath(path).directory();
+  if(!foldername.endsWith(".sfc/")) return;
   if(!directory::exists(foldername)) return;
-
-  //save path for later; remove cartridge name from path
-  settings->folderpath = foldername;
-  settings->folderpath.rtrim<1>("/");
-  settings->folderpath = dir(settings->folderpath);
 
   new Interface;
   new Debugger;
@@ -111,10 +108,8 @@ Program::Program(int argc, char **argv) {
   propertiesViewer->updateProperties();
   vramViewer->updateTiles();
 
-  while(quit == false) {
-    OS::processEvents();
-    debugger->run();
-  }
+  Application::main = {&Program::main, this};
+  Application::run();
 
   interface->saveMemory();
   windowManager->saveGeometry();
@@ -122,7 +117,12 @@ Program::Program(int argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
-  new Program(argc, argv);
+  #if defined(PLATFORM_WINDOWS)
+  utf8_args(argc, argv);
+  #endif
+
+  Application::setName("Laevateinn");
+  new Program(argv[1]);
   delete program;
   return 0;
 }

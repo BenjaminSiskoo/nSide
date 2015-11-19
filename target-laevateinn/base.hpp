@@ -38,8 +38,6 @@ extern Input* input;
 extern uint8_t laevateinnLogo[121905];
 
 struct Program {
-  bool quit;
-
   string basepath;
   string userpath;
 
@@ -47,7 +45,9 @@ struct Program {
   string proportionalFontBold;
   string monospaceFont;
 
-  Program(int argc, char **argv);
+  void main();
+  Program(string pathname);
 };
 
-extern Program *Program;
+extern Program* program;
+extern DSP dspaudio;
