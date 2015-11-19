@@ -235,4 +235,41 @@ release
       rom name=program.rom size=0x8000
       ram name=character.rom size=0x4000
 
+release
+  cartridge
+    vs
+      ppu revision=RP2C04-0001
+      controller port=2 device=joypad
+      controller port=1 device=joypad
+      chip type=108
+      prg
+        rom name=program.rom size=0x8000
+      chr
+        rom name=character.rom size=0x8000
+      setting name="Difficulty"
+        option value=0x01 name="Normal"
+        option value=0x00 name="Easy"
+        option value=0x02 name="Hard"
+        option value=0x03 name="Very Hard"
+      setting name="Lives"
+        option value=0x04 name="3"
+        option value=0x00 name="2"
+      setting name="Price"
+        option value=0x00 name="1 Coin - 1 Credit"
+        option value=0x08 name="1 Coin - 2 Credits"
+        option value=0x10 name="2 Coins - 1 Credit"
+        option value=0x18 name="3 Coins - 1 Credit"
+      setting name="Palette"
+        option value=0x00 name="RP2C04-0001"
+        option value=0x40 name="RP2C04-0002"
+        option value=0x80 name="RP2C04-0003"
+        option value=0xc0 name="RP2C04-0004"
+        option value=0x20 name="Rx2C03"
+  information
+    title:    Super SkyKid
+    name:     Super SkyKid
+    region:   NA
+    revision: 1.0
+    sha256:   269a3cd6bdbf79ee9baed9b8835ec66136f10f515f68d6ffbb1681fa30ad0717
+
 )";

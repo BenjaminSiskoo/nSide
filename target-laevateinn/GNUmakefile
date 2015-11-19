@@ -57,7 +57,7 @@ obj/laevateinn-breakpoint.o: $(ui)/breakpoint/breakpoint.cpp $(call rwildcard,$(
 obj/laevateinn-properties.o: $(ui)/properties/properties.cpp $(call rwildcard,$(ui)/)
 obj/laevateinn-vram.o: $(ui)/vram/vram.cpp $(call rwildcard,$(ui)/)
 
-obj/laevateinn-resource.o: $(ui)/resource.rc
+obj/laevateinn-resource.o:
 ifeq ($(arch),x86)
 	windres --target=pe-i386 data/resource.rc obj/laevateinn-resource.o
 else

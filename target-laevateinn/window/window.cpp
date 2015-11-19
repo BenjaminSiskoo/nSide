@@ -15,13 +15,13 @@ void WindowManager::loadGeometry() {
   }
   config.load({program->userpath, "laevateinn-geometry.bml"});
   config.save({program->userpath, "laevateinn-geometry.bml"});
-  for(auto &window : windowList) {
+  for(auto& window : windowList) {
     window.window->setGeometry(window.geometry);
   }
 }
 
 void WindowManager::saveGeometry() {
-  for(auto &window : windowList) {
+  for(auto& window : windowList) {
     window.geometry = window.window->geometry().text();
     window.window->setVisible(false);
   }

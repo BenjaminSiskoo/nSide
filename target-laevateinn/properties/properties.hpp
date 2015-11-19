@@ -12,4 +12,4 @@ struct PropertiesViewer : Window {
   PropertiesViewer();
 };
 
-extern PropertiesViewer *propertiesViewer;
+extern PropertiesViewer* propertiesViewer;
