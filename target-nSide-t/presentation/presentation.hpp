@@ -1,10 +1,10 @@
 struct Presentation : Window {
   Presentation();
   auto updateEmulator() -> void;
-  auto loadShaders() -> void;
   auto resizeViewport() -> void;
   auto toggleFullScreen() -> void;
   auto drawSplashScreen() -> void;
+  auto loadShaders() -> void;
 
   MenuBar menuBar{this};
     Menu libraryMenu{&menuBar};
@@ -28,14 +28,16 @@ struct Presentation : Window {
           Group videoScales{&videoScaleTiny, &videoScaleSmall, &videoScaleMedium, &videoScaleLarge};
         MenuSeparator videoScaleSeparator{&videoScaleMenu};
         MenuCheckItem aspectCorrection{&videoScaleMenu};
+      Menu videoFilterMenu{&settingsMenu};
+        MenuRadioItem videoFilterNone{&videoFilterMenu};
+        MenuRadioItem videoFilterBlur{&videoFilterMenu};
+          Group videoFilters{&videoFilterNone, &videoFilterBlur};
+        MenuSeparator videoFilterSeparator{&videoFilterMenu};
+        MenuCheckItem colorEmulation{&videoFilterMenu};
+        MenuCheckItem maskOverscan{&videoFilterMenu};
       Menu videoShaderMenu{&settingsMenu};
         MenuRadioItem videoShaderNone{&videoShaderMenu};
-        MenuRadioItem videoShaderBlur{&videoShaderMenu};
-        MenuRadioItem videoShaderEmulation{&videoShaderMenu};
-          Group videoShaders{&videoShaderNone, &videoShaderBlur, &videoShaderEmulation};
-        MenuSeparator videoShaderSeparator{&videoShaderMenu};
-        MenuCheckItem colorEmulation{&videoShaderMenu};
-        MenuCheckItem maskOverscan{&videoShaderMenu};
+        Group videoShaders{&videoShaderNone};
       MenuSeparator settingsMenuSeparator1{&settingsMenu};
       MenuCheckItem synchronizeVideo{&settingsMenu};
       MenuCheckItem synchronizeAudio{&settingsMenu};
@@ -59,6 +61,7 @@ struct Presentation : Window {
       MenuSeparator toolsMenuSeparator{&toolsMenu};
       MenuItem cheatEditor{&toolsMenu};
       MenuItem stateManager{&toolsMenu};
+      MenuItem manifestViewer{&toolsMenu};
 
   FixedLayout layout{this};
     Viewport viewport{&layout, Geometry{0, 0, 1, 1}};

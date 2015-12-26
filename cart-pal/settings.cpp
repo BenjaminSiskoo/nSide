@@ -1,31 +1,24 @@
-struct Settings : Configuration::Document {
+struct Settings : Markup::Node {
   Settings();
   ~Settings();
-
-  Configuration::Node root;
-  string activePath;
-  string libraryPath;
-  bool createManifests = false;
-  bool useDatabase = true;
-  bool useHeuristics = true;
 };
 
 Settings::Settings() {
-  root.append(activePath, "ActivePath");
-  root.append(libraryPath, "LibraryPath");
-  root.append(createManifests, "CreateManifests");
-  root.append(useDatabase, "UseDatabase");
-  root.append(useHeuristics, "UseHeuristics");
-  append(root, "Settings");
+  Markup::Node::operator=(BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "settings.bml"))));
 
-  directory::create({configpath(), "cart-pal/"});
-  load({configpath(), "cart-pal/settings.bml"});
-  save({configpath(), "cart-pal/settings.bml"});
+  auto set = [&](const string& name, const string& value) {
+    //create node and set to default value only if it does not already exist
+    if(!operator[](name)) operator()(name).setValue(value);
+  };
 
-  if(!activePath) activePath = userpath();
-  if(!libraryPath) libraryPath = {userpath(), "Emulation/"};
+  set("Library/Location", {userpath(), "Emulation/"});
+
+  set("cart-pal/Path", userpath());
+  set("cart-pal/CreateManifests", false);
+  set("cart-pal/UseDatabase", true);
+  set("cart-pal/UseHeuristics", true);
 }
 
 Settings::~Settings() {
-  save({configpath(), "cart-pal/settings.bml"});
+  file::write(locate({configpath(), "cart-pal/"}, "settings.bml"), BML::serialize(*this));
 }

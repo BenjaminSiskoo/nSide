@@ -18,6 +18,7 @@ struct Registers {
     varuint source;
     varuint target;
     varuint length;
+    uint32 data;
     DMAControl control;
 
     //internal
@@ -182,6 +183,6 @@ struct Registers {
   } memory;
 
   uint1 postboot;
-  enum class Mode : unsigned { Normal, Halt, Stop } mode;
-  unsigned clock;
+  enum class Mode : uint { Normal, Halt, Stop } mode;
+  uint clock;
 } regs;

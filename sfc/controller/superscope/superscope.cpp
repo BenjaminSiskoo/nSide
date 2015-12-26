@@ -1,5 +1,3 @@
-#ifdef CONTROLLER_CPP
-
 //The Super Scope is a light-gun: it detects the CRT beam cannon position,
 //and latches the counters by toggling iobit. This only works on controller
 //port 2, as iobit there is connected to the PPU H/V counter latch.
@@ -12,7 +10,27 @@
 //require manual polling of PIO ($4201.d6) to determine when iobit was written.
 //Note that no commercial game ever utilizes a Super Scope in port 1.
 
-void SuperScope::enter() {
+SuperScope::SuperScope(bool port) : Controller(port) {
+  create(Controller::Enter, 21477272);
+  latched = 0;
+  counter = 0;
+
+  //center cursor onscreen
+  x = 256 / 2;
+  y = 240 / 2;
+
+  trigger   = false;
+  cursor    = false;
+  turbo     = false;
+  pause     = false;
+  offscreen = false;
+
+  turbolock   = false;
+  triggerlock = false;
+  pauselock   = false;
+}
+
+auto SuperScope::enter() -> void {
   unsigned prev = 0;
   while(true) {
     unsigned next = cpu.vcounter() * 1364 + cpu.hcounter();
@@ -28,8 +46,8 @@ void SuperScope::enter() {
 
     if(next < prev) {
       //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
-      int nx = interface->inputPoll(port, (unsigned)Input::Device::SuperScope, (unsigned)Input::SuperScopeID::X);
-      int ny = interface->inputPoll(port, (unsigned)Input::Device::SuperScope, (unsigned)Input::SuperScopeID::Y);
+      int nx = interface->inputPoll(port, (unsigned)Device::ID::SuperScope, X);
+      int ny = interface->inputPoll(port, (unsigned)Device::ID::SuperScope, Y);
       nx += x;
       ny += y;
       x = max(-16, min(256 + 16, nx));
@@ -42,12 +60,12 @@ void SuperScope::enter() {
   }
 }
 
-uint2 SuperScope::data() {
+auto SuperScope::data() -> uint2 {
   if(counter >= 8) return 1;
 
   if(counter == 0) {
     //turbo is a switch; toggle is edge sensitive
-    bool newturbo = interface->inputPoll(port, (unsigned)Input::Device::SuperScope, (unsigned)Input::SuperScopeID::Turbo);
+    bool newturbo = interface->inputPoll(port, (unsigned)Device::ID::SuperScope, Turbo);
     if(newturbo && !turbo) {
       turbo = !turbo;  //toggle state
       turbolock = true;
@@ -58,7 +76,7 @@ uint2 SuperScope::data() {
     //trigger is a button
     //if turbo is active, trigger is level sensitive; otherwise, it is edge sensitive
     trigger = false;
-    bool newtrigger = interface->inputPoll(port, (unsigned)Input::Device::SuperScope, (unsigned)Input::SuperScopeID::Trigger);
+    bool newtrigger = interface->inputPoll(port, (unsigned)Device::ID::SuperScope, Trigger);
     if(newtrigger && (turbo || !triggerlock)) {
       trigger = true;
       triggerlock = true;
@@ -67,11 +85,11 @@ uint2 SuperScope::data() {
     }
 
     //cursor is a button; it is always level sensitive
-    cursor = interface->inputPoll(port, (unsigned)Input::Device::SuperScope, (unsigned)Input::SuperScopeID::Cursor);
+    cursor = interface->inputPoll(port, (unsigned)Device::ID::SuperScope, Cursor);
 
     //pause is a button; it is always edge sensitive
     pause = false;
-    bool newpause = interface->inputPoll(port, (unsigned)Input::Device::SuperScope, (unsigned)Input::SuperScopeID::Pause);
+    bool newpause = interface->inputPoll(port, (unsigned)Device::ID::SuperScope, Pause);
     if(newpause && !pauselock) {
       pause = true;
       pauselock = true;
@@ -94,30 +112,8 @@ uint2 SuperScope::data() {
   }
 }
 
-void SuperScope::latch(bool data) {
+auto SuperScope::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
   counter = 0;
 }
-
-SuperScope::SuperScope(bool port) : Controller(port) {
-  create(Controller::Enter, 21477272);
-  latched = 0;
-  counter = 0;
-
-  //center cursor onscreen
-  x = 256 / 2;
-  y = 240 / 2;
-
-  trigger   = false;
-  cursor    = false;
-  turbo     = false;
-  pause     = false;
-  offscreen = false;
-
-  turbolock   = false;
-  triggerlock = false;
-  pauselock   = false;
-}
-
-#endif

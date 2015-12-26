@@ -20,8 +20,8 @@ auto CPU::dma_run() -> void {
 }
 
 auto CPU::dma_exec(Registers::DMA& dma) -> void {
-  unsigned seek = dma.control.size ? 4 : 2;
-  unsigned mode = dma.control.size ? Word : Half;
+  uint seek = dma.control.size ? 4 : 2;
+  uint mode = dma.control.size ? Word : Half;
   mode |= dma.run.length == dma.length ? Nonsequential : Sequential;
 
   if(mode & Nonsequential) {
@@ -33,8 +33,23 @@ auto CPU::dma_exec(Registers::DMA& dma) -> void {
     }
   }
 
-  uint32 word = bus_read(mode, dma.run.source);
-  bus_write(mode, dma.run.target, word);
+  if(dma.run.source < 0x0200'0000) {
+    idle();  //cannot access BIOS
+  } else {
+    uint32 addr = dma.run.source;
+    if(mode & Word) addr &= ~3;
+    if(mode & Half) addr &= ~1;
+    dma.data = bus_read(mode, addr);
+  }
+
+  if(dma.run.target < 0x0200'0000) {
+    idle();  //cannot access BIOS
+  } else {
+    uint32 addr = dma.run.target;
+    if(mode & Word) addr &= ~3;
+    if(mode & Half) addr &= ~1;
+    bus_write(mode, addr, dma.data);
+  }
 
   switch(dma.control.sourcemode) {
   case 0: dma.run.source += seek; break;

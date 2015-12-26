@@ -3,12 +3,12 @@ namespace SuperFamicom {
 #endif
 
 struct ID {
-  enum : unsigned {
+  enum : uint {
     //cartridges (folders)
     System,
     SuperFamicom,
-    SuperGameBoy,
-    Satellaview,
+    GameBoy,
+    BSMemory,
     SufamiTurboSlotA,
     SufamiTurboSlotB,
 
@@ -66,14 +66,13 @@ struct ID {
 
     MCCROM,
     MCCRAM,
-    MCCPSRAM,
 
-    SuperGameBoyManifest,
-    SuperGameBoyROM,
-    SuperGameBoyRAM,
+    GameBoyManifest,
+    GameBoyROM,
+    GameBoyRAM,
 
-    SatellaviewManifest,
-    SatellaviewROM,
+    BSMemoryManifest,
+    BSMemoryROM,
 
     SufamiTurboSlotAManifest,
     SufamiTurboSlotAROM,
@@ -83,29 +82,31 @@ struct ID {
     SufamiTurboSlotBROM,
     SufamiTurboSlotBRAM,
 
-    //controller ports
-    Port1 = 1,
-    Port2 = 2,
+    //device ports (bitmask)
+    ControllerPort1 = 1,
+    ControllerPort2 = 2,
+    ExpansionPort   = 4,
   };
 };
 
 struct Interface : Emulator::Interface {
   Interface();
 
+  auto manifest() -> string;
   auto title() -> string;
   auto videoFrequency() -> double;
   auto audioFrequency() -> double;
 
   auto loaded() -> bool;
   auto sha256() -> string;
-  auto group(unsigned id) -> unsigned;
-  auto load(unsigned id) -> void;
+  auto group(uint id) -> uint;
+  auto load(uint id) -> void;
   auto save() -> void;
-  auto load(unsigned id, const stream& stream) -> void;
-  auto save(unsigned id, const stream& stream) -> void;
+  auto load(uint id, const stream& stream) -> void;
+  auto save(uint id, const stream& stream) -> void;
   auto unload() -> void;
 
-  auto connect(unsigned port, unsigned device) -> void;
+  auto connect(uint port, uint device) -> void;
   auto power() -> void;
   auto reset() -> void;
   auto run() -> void;

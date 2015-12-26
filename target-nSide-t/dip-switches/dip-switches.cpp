@@ -25,7 +25,7 @@ DipSwitches::DipSwitches() {
   });
 }
 
-auto DipSwitches::run(const Markup::Node& node) -> unsigned {
+auto DipSwitches::run(const Markup::Node& node) -> uint {
   for(DipSwitch& dipItem : dip) {
     dipItem.name.setEnabled(false);
     dipItem.name.setText("(empty)");
@@ -34,7 +34,7 @@ auto DipSwitches::run(const Markup::Node& node) -> unsigned {
     dipItem.values.reset();
   }
 
-  unsigned index = 0;
+  uint index = 0;
   for(auto& setting : node.find("setting")) {
     dip[index].name.setEnabled();
     dip[index].name.setText(setting["name"].text());
@@ -57,7 +57,7 @@ auto DipSwitches::run(const Markup::Node& node) -> unsigned {
   audio->clear();
   setModal();
 
-  unsigned result = 0;
+  uint result = 0;
   for(auto& dipItem : dip) {
     if(dipItem.value.enabled() == false) continue;
     result |= dipItem.values[dipItem.value.selected().offset()];

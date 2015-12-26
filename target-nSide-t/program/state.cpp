@@ -1,12 +1,12 @@
-auto Program::stateName(unsigned slot, bool manager) -> string {
+auto Program::stateName(uint slot, bool manager) -> string {
   return {
     folderPaths[0], "nSide/states/",
     manager ? "managed/" : "quick/",
-    "slot-", decimal(slot, 2L), ".bst"
+    "slot-", natural(slot, 2L), ".bst"
   };
 }
 
-auto Program::loadState(unsigned slot, bool manager) -> bool {
+auto Program::loadState(uint slot, bool manager) -> bool {
   if(!emulator) return false;
   auto location = stateName(slot, manager);
   auto memory = file::read(location);
@@ -16,7 +16,7 @@ auto Program::loadState(unsigned slot, bool manager) -> bool {
   return showMessage({"Loaded from slot ", slot}), true;
 }
 
-auto Program::saveState(unsigned slot, bool manager) -> bool {
+auto Program::saveState(uint slot, bool manager) -> bool {
   if(!emulator) return false;
   auto location = stateName(slot, manager);
   serializer s = emulator->serialize();

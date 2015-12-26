@@ -1,18 +1,18 @@
 struct Cheat {
-  enum : unsigned { Unused = ~0u };
+  enum : uint { Unused = ~0u };
 
   alwaysinline auto enable() const -> bool { return codes.size() > 0; }
 
   auto reset() -> void;
-  auto append(unsigned addr, unsigned data, unsigned mode) -> void;
-  auto append(unsigned addr, unsigned comp, unsigned data, unsigned mode) -> void;
-  auto find(unsigned addr, unsigned comp, unsigned mode) -> maybe<unsigned>;
+  auto append(uint addr, uint data, uint mode) -> void;
+  auto append(uint addr, uint comp, uint data, uint mode) -> void;
+  auto find(uint addr, uint comp, uint mode) -> maybe<uint>;
 
   struct Code {
-    unsigned addr;
-    unsigned comp;
-    unsigned data;
-    unsigned mode;
+    uint addr;
+    uint comp;
+    uint data;
+    uint mode;
   };
   vector<Code> codes;
 };

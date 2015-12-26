@@ -13,9 +13,21 @@ struct ManagedNode {
   ManagedNode(const string& name, const string& value) : _name(name), _value(value) {}
 
   auto clone() const -> SharedNode {
-    SharedNode clone(new ManagedNode(_name, _value));
-    for(auto& child : _children) clone->_children.append(child->clone());
+    SharedNode clone{new ManagedNode(_name, _value)};
+    for(auto& child : _children) {
+      clone->_children.append(child->clone());
+    }
     return clone;
+  }
+
+  auto copy(SharedNode source) -> void {
+    _name = source->_name;
+    _value = source->_value;
+    _metadata = source->_metadata;
+    _children.reset();
+    for(auto child : source->_children) {
+      _children.append(child->clone());
+    }
   }
 
 protected:
@@ -40,6 +52,7 @@ struct Node {
 
   auto unique() const -> bool { return shared.unique(); }
   auto clone() const -> Node { return shared->clone(); }
+  auto copy(Node source) -> void { return shared->copy(source.shared); }
 
   explicit operator bool() const { return shared->_name || shared->_children; }
   auto name() const -> string { return shared->_name; }
@@ -47,14 +60,15 @@ struct Node {
 
   auto text() const -> string { return value().strip(); }
   auto boolean() const -> bool { return text() == "true"; }
-  auto integer() const -> intmax_t { return text().integer(); }
-  auto decimal() const -> uintmax_t { return text().decimal(); }
+  auto integer() const -> intmax { return text().integer(); }
+  auto natural() const -> uintmax { return text().natural(); }
+  auto real() const -> double { return text().real(); }
 
-  auto setName(const string& name = "") -> void { shared->_name = name; }
-  auto setValue(const string& value = "") -> void { shared->_value = value; }
+  auto setName(const string& name = "") -> Node& { shared->_name = name; return *this; }
+  auto setValue(const string& value = "") -> Node& { shared->_value = value; return *this; }
 
   auto reset() -> void { shared->_children.reset(); }
-  auto size() const -> unsigned { return shared->_children.size(); }
+  auto size() const -> uint { return shared->_children.size(); }
 
   auto prepend(const Node& node) -> void { shared->_children.prepend(node.shared); }
   auto append(const Node& node) -> void { shared->_children.append(node.shared); }
@@ -67,39 +81,47 @@ struct Node {
     return false;
   }
 
-  auto at(unsigned position) const -> Node {
-    if(position >= size()) return {};
-    return shared->_children[position];
-  }
-
-  auto swap(unsigned x, unsigned y) -> bool {
-    if(x >= size() || y >= size()) return false;
-    return std::swap(shared->_children[x], shared->_children[y]), true;
-  }
-
-  auto insert(unsigned position, const Node& node) -> bool {
+  auto insert(uint position, const Node& node) -> bool {
     if(position > size()) return false;  //used > instead of >= to allow indexed-equivalent of append()
     return shared->_children.insert(position, node.shared), true;
   }
 
-  auto remove(unsigned position) -> bool {
+  auto remove(uint position) -> bool {
     if(position >= size()) return false;
     return shared->_children.remove(position), true;
   }
 
-  auto operator()(const string& path) -> Node { return shared->_create(path); }
+  auto swap(uint x, uint y) -> bool {
+    if(x >= size() || y >= size()) return false;
+    return std::swap(shared->_children[x], shared->_children[y]), true;
+  }
+
+  auto sort(function<bool (Node, Node)> comparator = [](auto x, auto y) {
+    return string::compare(x.shared->_name, y.shared->_name) < 0;
+  }) -> void {
+    nall::sort(shared->_children.data(), shared->_children.size(), [&](auto x, auto y) {
+      return comparator(x, y);  //this call converts SharedNode objects to Node objects
+    });
+  }
+
+  auto operator[](int position) -> Node {
+    if(position >= size()) return {};
+    return shared->_children[position];
+  }
+
   auto operator[](const string& path) const -> Node { return shared->_lookup(path); }
+  auto operator()(const string& path) -> Node { return shared->_create(path); }
   auto find(const string& query) const -> vector<Node> { return shared->_find(query); }
 
   struct iterator {
     auto operator*() -> Node { return {source.shared->_children[position]}; }
     auto operator!=(const iterator& source) const -> bool { return position != source.position; }
     auto operator++() -> iterator& { return position++, *this; }
-    iterator(const Node& source, unsigned position) : source(source), position(position) {}
+    iterator(const Node& source, uint position) : source(source), position(position) {}
 
   private:
     const Node& source;
-    unsigned position;
+    uint position;
   };
 
   auto begin() const -> iterator { return iterator(*this, 0); }
@@ -115,7 +137,7 @@ protected:
 namespace nall {
 
 inline range_t range(const Markup::Node& node) {
-  return range_t{0, (signed)node.size(), 1};
+  return range_t{0, (int)node.size(), 1};
 }
 
 }

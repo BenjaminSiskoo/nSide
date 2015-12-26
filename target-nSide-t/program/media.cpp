@@ -16,13 +16,13 @@ auto Program::loadMedia(string location) -> void {
 auto Program::loadMedia(Emulator::Interface& emulator_, Emulator::Interface::Media& media, const string& location) -> void {
   unloadMedia();
 
-  mediaPaths(0) = locate({config->library.location, "System/"}, {media.name, ".sys/"});
+  mediaPaths(0) = locate({settings["Library/Location"].text(), "System/"}, {media.name, ".sys/"});
   mediaPaths(media.id) = location;
   folderPaths.append(location);
 
   emulator = &emulator_;
   emulator->load(media.id);
-  updateVideoShader();
+  updateVideoPalette();
   dsp.setFrequency(emulator->audioFrequency());
   emulator->power();
 
@@ -33,6 +33,7 @@ auto Program::loadMedia(Emulator::Interface& emulator_, Emulator::Interface::Med
   presentation->updateEmulator();
   toolsManager->cheatEditor.loadCheats();
   toolsManager->stateManager.doRefresh();
+  toolsManager->manifestViewer.doRefresh();
 }
 
 auto Program::unloadMedia() -> void {

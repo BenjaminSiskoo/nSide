@@ -6,13 +6,13 @@ auto CPU::prefetch_sync(uint32 addr) -> void {
   prefetch.wait = bus_wait(Half | Nonsequential, prefetch.load);
 }
 
-auto CPU::prefetch_step(unsigned clocks) -> void {
+auto CPU::prefetch_step(uint clocks) -> void {
   step(clocks);
   if(!regs.wait.control.prefetch || active.dma) return;
 
   while(!prefetch.full() && clocks--) {
     if(--prefetch.wait) continue;
-    prefetch.slot[prefetch.load >> 1 & 7] = cartridge.rom_read(Half, prefetch.load);
+    prefetch.slot[prefetch.load >> 1 & 7] = cartridge.read(Half, prefetch.load);
     prefetch.load += 2;
     prefetch.wait = bus_wait(Half | Sequential, prefetch.load);
   }

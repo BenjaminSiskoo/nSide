@@ -7,7 +7,7 @@
 namespace GameBoy {
   namespace Info {
     static const string Name = "nSide-gb";
-    static const unsigned SerializerVersion = 4;
+    static const uint SerializerVersion = 4;
   }
 }
 
@@ -28,7 +28,7 @@ namespace GameBoy {
       if(thread) co_delete(thread);
     }
 
-    auto create(void (*entrypoint)(), unsigned frequency) -> void {
+    auto create(auto (*entrypoint)() -> void, uint frequency) -> void {
       if(thread) co_delete(thread);
       thread = co_create(65536 * sizeof(void*), entrypoint);
       this->frequency = frequency;
@@ -41,8 +41,8 @@ namespace GameBoy {
     }
 
     cothread_t thread = nullptr;
-    unsigned frequency = 0;
-    int64_t clock = 0;
+    uint frequency = 0;
+    int64 clock = 0;
   };
 
   #include <gb/memory/memory.hpp>

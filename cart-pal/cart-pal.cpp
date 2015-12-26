@@ -4,31 +4,38 @@ using namespace nall;
 #include <hiro/hiro.hpp>
 using namespace hiro;
 
+//if file already exists in the same path as the binary; use it (portable mode)
+//if not, use default requested path (*nix/user mode)
+auto locate(string pathname, string filename) -> string {
+  string location{programpath(), filename};
+  if(file_system_object::exists(location)) return location;
+  return {pathname, filename};
+}
+
 #include "settings.cpp"
 Settings settings;
 
-#include "heuristics/famicom.hpp"
+//#include "heuristics/famicom.hpp"
 #include "heuristics/super-famicom.hpp"
 #include "heuristics/game-boy.hpp"
 #include "heuristics/game-boy-advance.hpp"
-#include "heuristics/bsx-satellaview.hpp"
+#include "heuristics/bs-memory.hpp"
 #include "heuristics/sufami-turbo.hpp"
 
 #include "core/core.hpp"
 #include "core/core.cpp"
-#include "core/famicom.cpp"
-#include "core/vs-system.cpp"
-#include "core/playchoice-10.cpp"
+//#include "core/famicom.cpp"
 #include "core/super-famicom.cpp"
 #include "core/game-boy.cpp"
 #include "core/game-boy-color.cpp"
 #include "core/game-boy-advance.cpp"
-#include "core/bsx-satellaview.cpp"
+#include "core/bs-memory.cpp"
 #include "core/sufami-turbo.cpp"
 CartPal cart_pal;
 
 #include "ui/ui.hpp"
 #include "ui/scan-dialog.cpp"
+#include "ui/settings-dialog.cpp"
 #include "ui/import-dialog.cpp"
 #include "ui/error-dialog.cpp"
 
@@ -40,6 +47,7 @@ auto nall::main(lstring args) -> void {
   }
 
   new ScanDialog;
+  new SettingsDialog;
   new ImportDialog;
   new ErrorDialog;
   scanDialog->show();

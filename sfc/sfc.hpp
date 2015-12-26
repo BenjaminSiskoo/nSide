@@ -12,7 +12,7 @@
 namespace SuperFamicom {
   namespace Info {
     static const string Name = "nSide-sfc";
-    static const unsigned SerializerVersion = 28;
+    static const uint SerializerVersion = 29;
   }
 }
 
@@ -55,13 +55,17 @@ namespace SuperFamicom {
 #include <libco/libco.h>
 #include <gb/gb.hpp>
 
+#if defined(PROFILE_PERFORMANCE)
+  #include <nall/priority-queue.hpp>
+#endif
+
 namespace SuperFamicom {
   struct Thread {
     ~Thread() {
       if(thread) co_delete(thread);
     }
 
-    auto create(void (*entrypoint)(), unsigned frequency) -> void {
+    auto create(auto (*entrypoint)() -> void, uint frequency) -> void {
       if(thread) co_delete(thread);
       thread = co_create(65536 * sizeof(void*), entrypoint);
       this->frequency = frequency;
@@ -74,7 +78,7 @@ namespace SuperFamicom {
     }
 
     cothread_t thread = nullptr;
-    unsigned frequency = 0;
+    uint frequency = 0;
     int64 clock = 0;
   };
 
@@ -91,8 +95,8 @@ namespace SuperFamicom {
 
   #include <sfc/controller/controller.hpp>
   #include <sfc/system/system.hpp>
-  #include <sfc/base/base.hpp>
-  #include <sfc/chip/chip.hpp>
+  #include <sfc/expansion/expansion.hpp>
+  #include <sfc/coprocessor/coprocessor.hpp>
   #include <sfc/slot/slot.hpp>
   #include <sfc/cartridge/cartridge.hpp>
   #include <sfc/cheat/cheat.hpp>

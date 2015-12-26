@@ -1,6 +1,5 @@
 #include <sfc/sfc.hpp>
 
-#define CONTROLLER_CPP
 namespace SuperFamicom {
 
 #include "gamepad/gamepad.cpp"
@@ -15,8 +14,8 @@ Controller::Controller(bool port) : port(port) {
 }
 
 auto Controller::Enter() -> void {
-  if(co_active() == input.port1->thread) input.port1->enter();
-  if(co_active() == input.port2->thread) input.port2->enter();
+  if(co_active() == device.controllerPort1->thread) device.controllerPort1->enter();
+  if(co_active() == device.controllerPort2->thread) device.controllerPort2->enter();
 }
 
 auto Controller::enter() -> void {
@@ -25,10 +24,10 @@ auto Controller::enter() -> void {
 
 auto Controller::step(unsigned clocks) -> void {
   clock += clocks * (uint64)cpu.frequency;
-  synchronize_cpu();
+  synchronizeCPU();
 }
 
-auto Controller::synchronize_cpu() -> void {
+auto Controller::synchronizeCPU() -> void {
   if(CPU::Threaded == true) {
     if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
   } else {

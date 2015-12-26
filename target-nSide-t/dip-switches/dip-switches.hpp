@@ -4,11 +4,11 @@ struct DipSwitch : HorizontalLayout {
   Label name{this, Size{100, 0}, 5};
   ComboButton value{this, Size{~0, 0}};
 
-  vector<unsigned> values;
+  vector<uint> values;
 };
 
 struct DipSwitches : Window {
-  enum : unsigned { Slots = 8 };
+  enum : uint { Slots = 8 };
 
   VerticalLayout layout{this};
     DipSwitch dip[Slots] = {
@@ -25,7 +25,7 @@ struct DipSwitches : Window {
       Widget spacer{&controlLayout, Size{~0, 0}};
       Button accept{&controlLayout, Size{80, 0}};
 
-  auto run(const Markup::Node& node) -> unsigned;
+  auto run(const Markup::Node& node) -> uint;
   DipSwitches();
 };
 

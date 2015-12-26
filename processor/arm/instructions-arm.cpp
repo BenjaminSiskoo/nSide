@@ -235,8 +235,7 @@ auto ARM::arm_op_load_register() {
   uint32 rd = r(d);
 
   if(pre == 1) rn = up ? rn + rm : rn - rm;
-  uint32 word = load((half ? Half : Byte) | Nonsequential, rn);
-  rd = half ? (int16)word : (int8)word;
+  rd = load((half ? Half : Byte) | Nonsequential | Signed, rn);
   if(pre == 0) rn = up ? rn + rm : rn - rm;
 
   if(pre == 0 || writeback == 1) r(n) = rn;
@@ -270,8 +269,7 @@ auto ARM::arm_op_load_immediate() {
   uint8 immediate = (ih << 4) + (il << 0);
 
   if(pre == 1) rn = up ? rn + immediate : rn - immediate;
-  uint32 word = load((half ? Half : Byte) | Nonsequential, rn);
-  rd = half ? (int16)word : (int8)word;
+  rd = load((half ? Half : Byte) | Nonsequential | Signed, rn);
   if(pre == 0) rn = up ? rn + immediate : rn - immediate;
 
   if(pre == 0 || writeback == 1) r(n) = rn;
@@ -383,10 +381,8 @@ auto ARM::arm_op_data_register_shift() {
   uint2 mode = instruction() >> 5;
   uint4 m = instruction();
 
-  uint8 rs = r(s);
-  if(s == 15) rs += 4;
-  uint32 rm = r(m);
-  if(m == 15) rm += 4;
+  uint8 rs = r(s) + (s == 15 ? 4 : 0);
+  uint32 rm = r(m) + (m == 15 ? 4 : 0);
   carryout() = cpsr().c;
 
   if(mode == 0      ) rm = lsl(rm, rs < 33 ? rs : 33);

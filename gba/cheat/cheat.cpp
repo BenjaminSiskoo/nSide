@@ -9,15 +9,15 @@ auto Cheat::reset() -> void {
   codes.reset();
 }
 
-auto Cheat::append(unsigned addr, unsigned data, unsigned mode) -> void {
+auto Cheat::append(uint addr, uint data, uint mode) -> void {
   codes.append({addr, Unused, data, mode});
 }
 
-auto Cheat::append(unsigned addr, unsigned comp, unsigned data, unsigned mode) -> void {
+auto Cheat::append(uint addr, uint comp, uint data, uint mode) -> void {
   codes.append({addr, comp, data, mode});
 }
 
-auto Cheat::find(unsigned addr, unsigned comp, unsigned mode) -> maybe<unsigned> {
+auto Cheat::find(uint addr, uint comp, uint mode) -> maybe<uint> {
   for(auto& code : codes) {
     if(code.addr == addr && (code.comp == Unused || code.comp == comp) && (code.mode & mode)) {
       return code.data;

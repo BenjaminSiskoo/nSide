@@ -5,7 +5,7 @@ ScanDialog::ScanDialog() {
   layout.setMargin(5);
   pathEdit.onActivate([&] { refresh(); });
   refreshButton.setImage(Icon::Action::Refresh).setBordered(false).onActivate([&] {
-    pathEdit.setText(settings.activePath);
+    pathEdit.setText(settings["cart-pal/Path"].text());
     refresh();
   });
   homeButton.setImage(Icon::Go::Home).setBordered(false).onActivate([&] {
@@ -13,7 +13,7 @@ ScanDialog::ScanDialog() {
     refresh();
   });
   upButton.setImage(Icon::Go::Up).setBordered(false).onActivate([&] {
-    pathEdit.setText(dirname(settings.activePath));
+    pathEdit.setText(dirname(settings["cart-pal/Path"].text()));
     refresh();
   });
   scanList.onActivate([&] { activate(); });
@@ -27,8 +27,10 @@ ScanDialog::ScanDialog() {
       if(item.cell(0).checkable()) item.cell(0).setChecked(false);
     }
   });
-  createManifestsLabel.setChecked(settings.createManifests).setText("Create Manifests").onToggle([&] {
-    settings.createManifests = createManifestsLabel.checked();
+  settingsButton.setText("Settings ...").onActivate([&] {
+    settingsDialog->setCentered(*this);
+    settingsDialog->setVisible();
+    settingsDialog->setFocused();
   });
   importButton.setText("Import ...").onActivate([&] { import(); });
 
@@ -39,7 +41,7 @@ ScanDialog::ScanDialog() {
 
 auto ScanDialog::show() -> void {
   setVisible();
-  pathEdit.setText(settings.activePath);
+  pathEdit.setText(settings["cart-pal/Path"].text());
   refresh();
 }
 
@@ -50,7 +52,8 @@ auto ScanDialog::refresh() -> void {
   auto pathname = pathEdit.text().transform("\\", "/").rtrim("/").append("/");
   if(!directory::exists(pathname)) return;
 
-  pathEdit.setText(settings.activePath = pathname);
+  settings["cart-pal/Path"].setValue(pathname);
+  pathEdit.setText(pathname);
   auto contents = directory::icontents(pathname);
 
   for(auto& name : contents) {
@@ -72,7 +75,7 @@ auto ScanDialog::refresh() -> void {
 
 auto ScanDialog::activate() -> void {
   if(auto item = scanList.selected()) {
-    string location{settings.activePath, item.cell(0).text()};
+    string location{settings["cart-pal/Path"].text(), item.cell(0).text()};
     if(directory::exists(location) && !gamePakType(suffixname(location))) {
       pathEdit.setText(location);
       refresh();
@@ -84,7 +87,7 @@ auto ScanDialog::import() -> void {
   lstring filenames;
   for(auto& item : scanList.items()) {
     if(item.cell(0).checked()) {
-      filenames.append(string{settings.activePath, item.cell(0).text()});
+      filenames.append(string{settings["cart-pal/Path"].text(), item.cell(0).text()});
     }
   }
 
@@ -100,8 +103,6 @@ auto ScanDialog::import() -> void {
 auto ScanDialog::gamePakType(const string& type) -> bool {
   return type == ".sys"
   || type == ".fc"
-  || type == ".vs"
-  || type == ".pc10"
   || type == ".sfc"
   || type == ".gb"
   || type == ".gbc"
@@ -113,8 +114,6 @@ auto ScanDialog::gamePakType(const string& type) -> bool {
 auto ScanDialog::gameRomType(const string& type) -> bool {
   return type == ".zip"
   || type == ".fc" || type == ".nes"
-  || type == ".vs"
-  || type == ".pc10"
   || type == ".sfc" || type == ".smc"
   || type == ".gb"
   || type == ".gbc"

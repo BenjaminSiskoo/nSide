@@ -3,39 +3,41 @@ namespace GameBoyAdvance {
 #endif
 
 struct ID {
-  enum : unsigned {
+  enum : uint {
     System,
     GameBoyAdvance,
   };
 
-  enum : unsigned {
+  enum : uint {
     SystemManifest,
     BIOS,
 
     Manifest,
-    ROM,
-    RAM,
+    MROM,
+    SRAM,
     EEPROM,
-    FlashROM,
+    FLASH,
   };
 
-  enum : unsigned {
+  enum : uint {
     Device = 1,
   };
 };
 
 struct Interface : Emulator::Interface {
+  Interface();
+
+  auto manifest() -> string;
   auto title() -> string;
   auto videoFrequency() -> double;
   auto audioFrequency() -> double;
 
   auto loaded() -> bool;
-  auto sha256() -> string;
-  auto group(unsigned id) -> unsigned;
-  auto load(unsigned id) -> void;
+  auto group(uint id) -> uint;
+  auto load(uint id) -> void;
   auto save() -> void;
-  auto load(unsigned id, const stream& stream) -> void;
-  auto save(unsigned id, const stream& stream) -> void;
+  auto load(uint id, const stream& stream) -> void;
+  auto save(uint id, const stream& stream) -> void;
   auto unload() -> void;
 
   auto power() -> void;
@@ -51,8 +53,6 @@ struct Interface : Emulator::Interface {
 
   //debugger functions
   auto exportMemory() -> void;
-
-  Interface();
 
 private:
   vector<Device> device;

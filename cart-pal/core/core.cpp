@@ -1,19 +1,11 @@
-namespace Database {
-  #include "../database/famicom.hpp"
-  #include "../database/vs-system.hpp"
-  #include "../database/playchoice-10.hpp"
-  #include "../database/super-famicom.hpp"
-  #include "../database/bsx-satellaview.hpp"
-  #include "../database/sufami-turbo.hpp"
-}
-
 CartPal::CartPal() {
-  database.famicom = BML::unserialize(Database::Famicom);
-  database.vsSystem = BML::unserialize(Database::VSSystem);
-  database.playchoice10 = BML::unserialize(Database::PlayChoice10);
-  database.superFamicom = BML::unserialize(Database::SuperFamicom);
-  database.bsxSatellaview = BML::unserialize(Database::BsxSatellaview);
-  database.sufamiTurbo = BML::unserialize(Database::SufamiTurbo);
+  //database.famicom = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Famicom.bml")));
+  database.superFamicom = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Super Famicom.bml")));
+  database.gameBoy = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Game Boy.bml")));
+  database.gameBoyColor = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Game Boy Color.bml")));
+  database.gameBoyAdvance = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Game Boy Advance.bml")));
+  database.bsMemory = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/BS Memory.bml")));
+  database.sufamiTurbo = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Sufami Turbo.bml")));
 }
 
 auto CartPal::error() const -> string {
@@ -25,7 +17,7 @@ auto CartPal::success() -> bool {
   return true;
 }
 
-auto CartPal::failure(const string& message) -> bool {
+auto CartPal::failure(string message) -> bool {
   errorMessage = message;
   return false;
 }
@@ -35,14 +27,12 @@ auto CartPal::manifest(string location) -> string {
   if(!directory::exists(location)) return "";
 
   auto type = suffixname(location).downcase();
-  if(type == ".fc") return famicomManifest(location);
-  if(type == ".vs") return vsSystemManifest(location);
-  if(type == ".pc10") return playchoice10Manifest(location);
+  //if(type == ".fc") return famicomManifest(location);
   if(type == ".sfc") return superFamicomManifest(location);
   if(type == ".gb") return gameBoyManifest(location);
   if(type == ".gbc") return gameBoyColorManifest(location);
   if(type == ".gba") return gameBoyAdvanceManifest(location);
-  if(type == ".bs") return bsxSatellaviewManifest(location);
+  if(type == ".bs") return bsMemoryManifest(location);
   if(type == ".st") return sufamiTurboManifest(location);
 
   return "";
@@ -70,20 +60,18 @@ auto CartPal::import(string location) -> bool {
     buffer = zip.extract(zip.file[0]);
   }
 
-  if(type == ".fc" || type == ".nes") return famicomImport(buffer, location);
-  if(type == ".vs") return vsSystemImport(buffer, location);
-  if(type == ".pc10") return playchoice10Import(buffer, location);
+  //if(type == ".fc" || type == ".nes") return famicomImport(buffer, location);
   if(type == ".sfc" || type == ".smc") return superFamicomImport(buffer, location);
   if(type == ".gb") return gameBoyImport(buffer, location);
   if(type == ".gbc") return gameBoyColorImport(buffer, location);
   if(type == ".gba") return gameBoyAdvanceImport(buffer, location);
-  if(type == ".bs") return bsxSatellaviewImport(buffer, location);
+  if(type == ".bs") return bsMemoryImport(buffer, location);
   if(type == ".st") return sufamiTurboImport(buffer, location);
 
   return failure("unrecognized file extension");
 }
 
-auto CartPal::concatenate(vector<uint8_t>& output, const string& location) -> void {
+auto CartPal::concatenate(vector<uint8>& output, string location) -> void {
   if(auto input = file::read(location)) {
     auto size = output.size();
     output.resize(size + input.size());

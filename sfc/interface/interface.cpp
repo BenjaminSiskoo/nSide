@@ -17,12 +17,16 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::SuperFamicom, "Super Famicom",    "sfc", true });
-  media.append({ID::SuperFamicom, "Game Boy",         "gb",  false});
-  media.append({ID::SuperFamicom, "BS-X Satellaview", "bs",  false});
-  media.append({ID::SuperFamicom, "Sufami Turbo",     "st",  false});
+  media.append({ID::SuperFamicom, "Super Famicom", "sfc", true });
+  media.append({ID::SuperFamicom, "Game Boy",      "gb",  false});
+  media.append({ID::SuperFamicom, "BS Memory",     "bs",  false});
+  media.append({ID::SuperFamicom, "Sufami Turbo",  "st",  false});
 
-  { Device device{0, ID::Port1 | ID::Port2, "Controller"};
+  { Device device{0, ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort, "None"};
+    this->device.append(device);
+  }
+
+  { Device device{1, ID::ControllerPort1 | ID::ControllerPort2, "Gamepad"};
     device.input.append({ 0, 0, "B"     });
     device.input.append({ 1, 0, "Y"     });
     device.input.append({ 2, 0, "Select"});
@@ -39,8 +43,8 @@ Interface::Interface() {
     this->device.append(device);
   }
 
-  { Device device{1, ID::Port1 | ID::Port2, "Multitap"};
-    for(unsigned p = 1, n = 0; p <= 4; p++, n += 12) {
+  { Device device{2, ID::ControllerPort1 | ID::ControllerPort2, "Multitap"};
+    for(uint p = 1, n = 0; p <= 4; p++, n += 12) {
       device.input.append({n +  0, 0, {"Port ", p, " - ", "B"     }});
       device.input.append({n +  1, 0, {"Port ", p, " - ", "Y"     }});
       device.input.append({n +  2, 0, {"Port ", p, " - ", "Select"}});
@@ -59,7 +63,7 @@ Interface::Interface() {
     this->device.append(device);
   }
 
-  { Device device{2, ID::Port1 | ID::Port2, "Mouse"};
+  { Device device{3, ID::ControllerPort1 | ID::ControllerPort2, "Mouse"};
     device.input.append({0, 1, "X-axis"});
     device.input.append({1, 1, "Y-axis"});
     device.input.append({2, 0, "Left"  });
@@ -68,7 +72,7 @@ Interface::Interface() {
     this->device.append(device);
   }
 
-  { Device device{3, ID::Port2, "Super Scope"};
+  { Device device{4, ID::ControllerPort2, "Super Scope"};
     device.input.append({0, 1, "X-axis" });
     device.input.append({1, 1, "Y-axis" });
     device.input.append({2, 0, "Trigger"});
@@ -79,7 +83,7 @@ Interface::Interface() {
     this->device.append(device);
   }
 
-  { Device device{4, ID::Port2, "Justifier"};
+  { Device device{5, ID::ControllerPort2, "Justifier"};
     device.input.append({0, 1, "X-axis" });
     device.input.append({1, 1, "Y-axis" });
     device.input.append({2, 0, "Trigger"});
@@ -88,7 +92,7 @@ Interface::Interface() {
     this->device.append(device);
   }
 
-  { Device device{5, ID::Port2, "Justifiers"};
+  { Device device{6, ID::ControllerPort2, "Justifiers"};
     device.input.append({0, 1, "Port 1 - X-axis" });
     device.input.append({1, 1, "Port 1 - Y-axis" });
     device.input.append({2, 0, "Port 1 - Trigger"});
@@ -102,16 +106,21 @@ Interface::Interface() {
     this->device.append(device);
   }
 
-  { Device device{6, ID::Port1, "Serial USART"};
+  { Device device{7, ID::ControllerPort1, "Serial USART"};
     this->device.append(device);
   }
 
-  { Device device{7, ID::Port1 | ID::Port2, "None"};
+  { Device device{8, ID::ExpansionPort, "Satellaview"};
     this->device.append(device);
   }
 
-  port.append({0, "Port 1"});
-  port.append({1, "Port 2"});
+  { Device device{9, ID::ExpansionPort, "eBoot"};
+    this->device.append(device);
+  }
+
+  port.append({0, "Controller Port 1"});
+  port.append({1, "Controller Port 2"});
+  port.append({2, "Expansion Port"});
 
   for(auto& device : this->device) {
     for(auto& port : this->port) {
@@ -122,19 +131,23 @@ Interface::Interface() {
   }
 }
 
+auto Interface::manifest() -> string {
+  return cartridge.manifest();
+}
+
 auto Interface::title() -> string {
   return cartridge.title();
 }
 
 auto Interface::videoFrequency() -> double {
   switch(system.region()) { default:
-  case System::Region::NTSC: return system.cpu_frequency() / (262.0 * 1364.0 - 4.0);
-  case System::Region::PAL:  return system.cpu_frequency() / (312.0 * 1364.0);
+  case System::Region::NTSC: return system.cpuFrequency() / (262.0 * 1364.0 - 4.0);
+  case System::Region::PAL:  return system.cpuFrequency() / (312.0 * 1364.0);
   }
 }
 
 auto Interface::audioFrequency() -> double {
-  return system.apu_frequency() / 768.0;
+  return system.apuFrequency() / 768.0;
 }
 
 auto Interface::loaded() -> bool {
@@ -145,7 +158,7 @@ auto Interface::sha256() -> string {
   return cartridge.sha256();
 }
 
-auto Interface::group(unsigned id) -> unsigned {
+auto Interface::group(uint id) -> uint {
   switch(id) {
   case ID::SystemManifest:
   case ID::IPLROM:
@@ -187,16 +200,15 @@ auto Interface::group(unsigned id) -> unsigned {
   case ID::SuperGameBoyBootROM:
   case ID::MCCROM:
   case ID::MCCRAM:
-  case ID::MCCPSRAM:
     return 1;
-  case ID::SuperGameBoy:
-  case ID::SuperGameBoyManifest:
-  case ID::SuperGameBoyROM:
-  case ID::SuperGameBoyRAM:
+  case ID::GameBoy:
+  case ID::GameBoyManifest:
+  case ID::GameBoyROM:
+  case ID::GameBoyRAM:
     return 2;
-  case ID::Satellaview:
-  case ID::SatellaviewManifest:
-  case ID::SatellaviewROM:
+  case ID::BSMemory:
+  case ID::BSMemoryManifest:
+  case ID::BSMemoryROM:
     return 3;
   case ID::SufamiTurboSlotA:
   case ID::SufamiTurboSlotAManifest:
@@ -213,10 +225,10 @@ auto Interface::group(unsigned id) -> unsigned {
   throw;
 }
 
-auto Interface::load(unsigned id) -> void {
+auto Interface::load(uint id) -> void {
   if(id == ID::SuperFamicom) cartridge.load();
-  if(id == ID::SuperGameBoy) cartridge.loadSuperGameBoy();
-  if(id == ID::Satellaview) cartridge.loadSatellaview();
+  if(id == ID::GameBoy) cartridge.loadGameBoy();
+  if(id == ID::BSMemory) cartridge.loadBSMemory();
   if(id == ID::SufamiTurboSlotA) cartridge.loadSufamiTurboA();
   if(id == ID::SufamiTurboSlotB) cartridge.loadSufamiTurboB();
 }
@@ -227,7 +239,7 @@ auto Interface::save() -> void {
   }
 }
 
-auto Interface::load(unsigned id, const stream& stream) -> void {
+auto Interface::load(uint id, const stream& stream) -> void {
   if(id == ID::SystemManifest) {
     system.information.manifest = stream.text();
   }
@@ -254,41 +266,41 @@ auto Interface::load(unsigned id, const stream& stream) -> void {
   if(id == ID::SuperFXRAM) superfx.ram.read(stream);
 
   if(id == ID::ArmDSPPROM) {
-    for(unsigned n = 0; n < 128 * 1024; n++) armdsp.programROM[n] = stream.read();
+    for(auto n : range(128 * 1024)) armdsp.programROM[n] = stream.read();
   }
   if(id == ID::ArmDSPDROM) {
-    for(unsigned n = 0; n <  32 * 1024; n++) armdsp.dataROM[n] = stream.read();
+    for(auto n : range( 32 * 1024)) armdsp.dataROM[n] = stream.read();
   }
   if(id == ID::ArmDSPRAM) {
-    for(unsigned n = 0; n <  16 * 1024; n++) armdsp.programRAM[n] = stream.read();
+    for(auto n : range( 16 * 1024)) armdsp.programRAM[n] = stream.read();
   }
 
   if(id == ID::HitachiDSPROM) hitachidsp.rom.read(stream);
   if(id == ID::HitachiDSPRAM) hitachidsp.ram.read(stream);
   if(id == ID::HitachiDSPDROM) {
-    for(unsigned n = 0; n < 1024; n++) hitachidsp.dataROM[n] = stream.readl(3);
+    for(auto n : range(1024)) hitachidsp.dataROM[n] = stream.readl(3);
   }
   if(id == ID::HitachiDSPDRAM) {
-    for(unsigned n = 0; n < 3072; n++) hitachidsp.dataRAM[n] = stream.readl(1);
+    for(auto n : range(3072)) hitachidsp.dataRAM[n] = stream.readl(1);
   }
 
   if(id == ID::Nec7725DSPPROM) {
-    for(unsigned n = 0; n <  2048; n++) necdsp.programROM[n] = stream.readl(3);
+    for(auto n : range( 2048)) necdsp.programROM[n] = stream.readl(3);
   }
   if(id == ID::Nec7725DSPDROM) {
-    for(unsigned n = 0; n <  1024; n++) necdsp.dataROM[n]    = stream.readl(2);
+    for(auto n : range( 1024)) necdsp.dataROM[n]    = stream.readl(2);
   }
   if(id == ID::Nec7725DSPRAM) {
-    for(unsigned n = 0; n <   256; n++) necdsp.dataRAM[n]    = stream.readl(2);
+    for(auto n : range(  256)) necdsp.dataRAM[n]    = stream.readl(2);
   }
   if(id == ID::Nec96050DSPPROM) {
-    for(unsigned n = 0; n < 16384; n++) necdsp.programROM[n] = stream.readl(3);
+    for(auto n : range(16384)) necdsp.programROM[n] = stream.readl(3);
   }
   if(id == ID::Nec96050DSPDROM) {
-    for(unsigned n = 0; n <  2048; n++) necdsp.dataROM[n]    = stream.readl(2);
+    for(auto n : range( 2048)) necdsp.dataROM[n]    = stream.readl(2);
   }
   if(id == ID::Nec96050DSPRAM) {
-    for(unsigned n = 0; n <  2048; n++) necdsp.dataRAM[n]    = stream.readl(2);
+    for(auto n : range( 2048)) necdsp.dataRAM[n]    = stream.readl(2);
   }
 
   if(id == ID::EpsonRTC) {
@@ -318,20 +330,19 @@ auto Interface::load(unsigned id, const stream& stream) -> void {
 
   if(id == ID::MCCROM) mcc.rom.read(stream);
   if(id == ID::MCCRAM) mcc.ram.read(stream);
-  if(id == ID::MCCPSRAM) mcc.psram.read(stream);
 
-  if(id == ID::SuperGameBoyManifest) cartridge.information.markup.gameBoy = stream.text();
+  if(id == ID::GameBoyManifest) cartridge.information.markup.gameBoy = stream.text();
 
-  if(id == ID::SuperGameBoyROM) {
+  if(id == ID::GameBoyROM) {
     stream.read(GameBoy::cartridge.romdata, min(GameBoy::cartridge.romsize, stream.size()));
   }
 
-  if(id == ID::SuperGameBoyRAM) {
+  if(id == ID::GameBoyRAM) {
     stream.read(GameBoy::cartridge.ramdata, min(GameBoy::cartridge.ramsize, stream.size()));
   }
 
-  if(id == ID::SatellaviewManifest) cartridge.information.markup.satellaview = stream.text();
-  if(id == ID::SatellaviewROM) satellaviewcartridge.memory.read(stream);
+  if(id == ID::BSMemoryManifest) cartridge.information.markup.bsMemory = stream.text();
+  if(id == ID::BSMemoryROM) bsmemory.memory.read(stream);
 
   if(id == ID::SufamiTurboSlotAManifest) cartridge.information.markup.sufamiTurboA = stream.text();
   if(id == ID::SufamiTurboSlotAROM) sufamiturboA.rom.read(stream);
@@ -342,7 +353,7 @@ auto Interface::load(unsigned id, const stream& stream) -> void {
   if(id == ID::SufamiTurboSlotBRAM) sufamiturboB.ram.read(stream);
 }
 
-auto Interface::save(unsigned id, const stream& stream) -> void {
+auto Interface::save(uint id, const stream& stream) -> void {
   if(id == ID::RAM) stream.write(cartridge.ram.data(), cartridge.ram.size());
   if(id == ID::EventRAM) stream.write(event.ram.data(), event.ram.size());
   if(id == ID::SA1IRAM) stream.write(sa1.iram.data(), sa1.iram.size());
@@ -350,19 +361,19 @@ auto Interface::save(unsigned id, const stream& stream) -> void {
   if(id == ID::SuperFXRAM) stream.write(superfx.ram.data(), superfx.ram.size());
 
   if(id == ID::ArmDSPRAM) {
-    for(unsigned n = 0; n < 16 * 1024; n++) stream.write(armdsp.programRAM[n]);
+    for(auto n : range(16 * 1024)) stream.write(armdsp.programRAM[n]);
   }
 
   if(id == ID::HitachiDSPRAM) stream.write(hitachidsp.ram.data(), hitachidsp.ram.size());
   if(id == ID::HitachiDSPDRAM) {
-    for(unsigned n = 0; n < 3072; n++) stream.writel(hitachidsp.dataRAM[n], 1);
+    for(auto n : range(3072)) stream.writel(hitachidsp.dataRAM[n], 1);
   }
 
   if(id == ID::Nec7725DSPRAM) {
-    for(unsigned n = 0; n <  256; n++) stream.writel(necdsp.dataRAM[n], 2);
+    for(auto n : range( 256)) stream.writel(necdsp.dataRAM[n], 2);
   }
   if(id == ID::Nec96050DSPRAM) {
-    for(unsigned n = 0; n < 2048; n++) stream.writel(necdsp.dataRAM[n], 2);
+    for(auto n : range(2048)) stream.writel(necdsp.dataRAM[n], 2);
   }
 
   if(id == ID::EpsonRTC) {
@@ -381,10 +392,9 @@ auto Interface::save(unsigned id, const stream& stream) -> void {
   if(id == ID::SDD1RAM) stream.write(sdd1.ram.data(), sdd1.ram.size());
   if(id == ID::OBC1RAM) stream.write(obc1.ram.data(), obc1.ram.size());
 
-  if(id == ID::SuperGameBoyRAM) stream.write(GameBoy::cartridge.ramdata, GameBoy::cartridge.ramsize);
+  if(id == ID::GameBoyRAM) stream.write(GameBoy::cartridge.ramdata, GameBoy::cartridge.ramsize);
 
   if(id == ID::MCCRAM) stream.write(mcc.ram.data(), mcc.ram.size());
-  if(id == ID::MCCPSRAM) stream.write(mcc.psram.data(), mcc.psram.size());
 
   if(id == ID::SufamiTurboSlotARAM) stream.write(sufamiturboA.ram.data(), sufamiturboA.ram.size());
   if(id == ID::SufamiTurboSlotBRAM) stream.write(sufamiturboB.ram.data(), sufamiturboB.ram.size());
@@ -395,8 +405,8 @@ auto Interface::unload() -> void {
   cartridge.unload();
 }
 
-auto Interface::connect(unsigned port, unsigned device) -> void {
-  input.connect(port, (Input::Device)device);
+auto Interface::connect(uint port, uint device) -> void {
+  SuperFamicom::device.connect(port, (SuperFamicom::Device::ID)device);
 }
 
 auto Interface::power() -> void {
@@ -423,7 +433,7 @@ auto Interface::rtcsync() -> void {
 }
 
 auto Interface::serialize() -> serializer {
-  system.runtosave();
+  system.runToSave();
   return system.serialize();
 }
 
@@ -501,10 +511,9 @@ auto Interface::exportMemory() -> void {
   if(cartridge.hasOBC1()) saveRequest(ID::OBC1RAM, "debug/obc1.ram");
   if(cartridge.hasMCC()) {
     saveRequest(ID::MCCRAM, "debug/mcc.save.ram");
-    saveRequest(ID::MCCPSRAM, "debug/mcc.download.ram");
   }
   if(cartridge.hasICD2() && GameBoy::cartridge.ramsize) {
-    saveRequest(ID::SuperGameBoyRAM, "debug/gameboy.save.ram");
+    saveRequest(ID::GameBoyRAM, "debug/gameboy.save.ram");
   }
   if(cartridge.hasSufamiTurboSlots()) {
     saveRequest(ID::SufamiTurboSlotARAM, "debug/sufamiturbo.slota.ram");

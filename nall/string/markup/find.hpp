@@ -7,7 +7,7 @@ auto ManagedNode::_evaluate(string query) const -> bool {
   if(!query) return true;
 
   for(auto& rule : query.replace(" ", "").split(",")) {
-    enum class Comparator : unsigned { ID, EQ, NE, LT, LE, GT, GE };
+    enum class Comparator : uint { ID, EQ, NE, LT, LE, GT, GE };
     auto comparator = Comparator::ID;
          if(rule.match("*!=*")) comparator = Comparator::NE;
     else if(rule.match("*<=*")) comparator = Comparator::LE;
@@ -41,10 +41,10 @@ auto ManagedNode::_evaluate(string query) const -> bool {
     switch(comparator) {
     case Comparator::EQ: if(data.match(side(1)) ==  true)      continue; break;
     case Comparator::NE: if(data.match(side(1)) == false)      continue; break;
-    case Comparator::LT: if(data.decimal()  < side(1).decimal()) continue; break;
-    case Comparator::LE: if(data.decimal() <= side(1).decimal()) continue; break;
-    case Comparator::GT: if(data.decimal()  > side(1).decimal()) continue; break;
-    case Comparator::GE: if(data.decimal() >= side(1).decimal()) continue; break;
+    case Comparator::LT: if(data.natural()  < side(1).natural()) continue; break;
+    case Comparator::LE: if(data.natural() <= side(1).natural()) continue; break;
+    case Comparator::GT: if(data.natural()  > side(1).natural()) continue; break;
+    case Comparator::GE: if(data.natural() >= side(1).natural()) continue; break;
     }
 
     return false;
@@ -58,17 +58,17 @@ auto ManagedNode::_find(const string& query) const -> vector<Node> {
 
   lstring path = query.split("/");
   string name = path.take(0), rule;
-  unsigned lo = 0u, hi = ~0u;
+  uint lo = 0u, hi = ~0u;
 
   if(name.match("*[*]")) {
     auto p = name.rtrim("]", 1L).split("[", 1L);
     name = p(0);
     if(p(1).find("-")) {
       p = p(1).split("-", 1L);
-      lo = p(0).empty() ?  0u : p(0).decimal();
-      hi = p(1).empty() ? ~0u : p(1).decimal();
+      lo = p(0).empty() ?  0u : p(0).natural();
+      hi = p(1).empty() ? ~0u : p(1).natural();
     } else {
-      lo = hi = p(1).decimal();
+      lo = hi = p(1).natural();
     }
   }
 
@@ -78,7 +78,7 @@ auto ManagedNode::_find(const string& query) const -> vector<Node> {
     rule = p(1);
   }
 
-  unsigned position = 0;
+  uint position = 0;
   for(auto& node : _children) {
     if(!node->_name.match(name)) continue;
     if(!node->_evaluate(rule)) continue;

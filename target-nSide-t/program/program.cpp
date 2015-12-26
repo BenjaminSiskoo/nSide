@@ -1,5 +1,4 @@
 #include "../tomoko.hpp"
-#include <fc/interface/interface.hpp>
 #include <sfc/interface/interface.hpp>
 #include <gb/interface/interface.hpp>
 #include <gba/interface/interface.hpp>
@@ -16,13 +15,11 @@ Program::Program(lstring args) {
   Application::onMain({&Program::main, this});
   Application::Windows::onModalChange([](bool modal) { if(modal && audio) audio->clear(); });
 
-  emulators.append(new Famicom::Interface);
   emulators.append(new SuperFamicom::Interface);
   emulators.append(new GameBoy::Interface);
   emulators.append(new GameBoyAdvance::Interface);
   for(auto& emulator : emulators) emulator->bind = this;
 
-  new ConfigurationManager;
   new InputManager;
   new SettingsManager;
   new CheatDatabase;
@@ -32,18 +29,18 @@ Program::Program(lstring args) {
 
   presentation->setVisible();
 
-  video = Video::create(config->video.driver);
+  video = Video::create(settings["Video/Driver"].text());
   video->set(Video::Handle, presentation->viewport.handle());
-  video->set(Video::Synchronize, config->video.synchronize);
+  video->set(Video::Synchronize, settings["Video/Synchronize"].boolean());
   if(!video->init()) {
     delete video;
     video = Video::create("None");
   }
 
-  audio = Audio::create(config->audio.driver);
-  audio->set(Audio::Device, config->audio.device);
+  audio = Audio::create(settings["Audio/Driver"].text());
+  audio->set(Audio::Device, settings["Audio/Device"].text());
   audio->set(Audio::Handle, presentation->viewport.handle());
-  audio->set(Audio::Synchronize, config->audio.synchronize);
+  audio->set(Audio::Synchronize, settings["Audio/Synchronize"].boolean());
   audio->set(Audio::Frequency, 96000u);
   audio->set(Audio::Latency, 80u);
   if(!audio->init()) {
@@ -51,7 +48,7 @@ Program::Program(lstring args) {
     audio = Audio::create("None");
   }
 
-  input = Input::create(config->input.driver);
+  input = Input::create(settings["Input/Driver"].text());
   input->set(Input::Handle, presentation->viewport.handle());
   input->onChange({&InputManager::onChange, inputManager});
   if(!input->init()) {
@@ -61,14 +58,14 @@ Program::Program(lstring args) {
 
   dsp.setPrecision(16);
   dsp.setBalance(0.0);
-  dsp.setVolume(config->audio.mute ? 0.0 : 1.0);
   dsp.setFrequency(32040);
   dsp.setResampler(DSP::ResampleEngine::Sinc);
   dsp.setResamplerFrequency(96000);
 
   presentation->drawSplashScreen();
 
-  //updateVideoShader();
+  updateVideoFilter();
+  updateAudioVolume();
 
   args.takeFirst();  //ignore program location in argument parsing
   for(auto& argument : args) {
@@ -97,7 +94,7 @@ auto Program::main() -> void {
 
 auto Program::quit() -> void {
   unloadMedia();
-  config->quit();
+  settings.quit();
   inputManager->quit();
   delete video;
   delete audio;

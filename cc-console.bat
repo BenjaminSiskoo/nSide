@@ -1,5 +1,5 @@
-rem For use with Windows
 @echo off
+rem For use with Windows
 mkdir "obj"
 
 rem Accuracy profile

@@ -4,18 +4,11 @@ InputManager* inputManager = nullptr;
 
 auto InputMapping::bind() -> void {
   auto token = assignment.split("/");
-  if(token.size() < 3 && token(1, "0") != "Rumble") return unbind();
-  uint64_t id = token[0].decimal();
-  unsigned group = 0;
-  unsigned input = 0;
-  string qualifier;
-  if(token[1] != "Rumble") {
-    group = token[1].decimal();
-    input = token[2].decimal();
-    qualifier = token(3, "None");
-  } else {
-    qualifier = "Rumble";
-  }
+  if(token.size() < 3) return unbind();
+  uint64 id = token[0].natural();
+  uint group = token[1].natural();
+  uint input = token[2].natural();
+  string qualifier = token(3, "None");
 
   for(auto& device : inputManager->devices) {
     if(id != device->id()) continue;
@@ -29,9 +22,11 @@ auto InputMapping::bind() -> void {
     if(qualifier == "Rumble") this->qualifier = Qualifier::Rumble;
     break;
   }
+
+  settings[path].setValue(assignment);
 }
 
-auto InputMapping::bind(shared_pointer<HID::Device> device, unsigned group, unsigned input, int16 oldValue, int16 newValue) -> bool {
+auto InputMapping::bind(shared_pointer<HID::Device> device, uint group, uint input, int16 oldValue, int16 newValue) -> bool {
   if(device->isNull() || (device->isKeyboard() && device->group(group).input(input).name() == "Escape")) {
     return unbind(), true;
   }
@@ -77,7 +72,7 @@ auto InputMapping::bind(shared_pointer<HID::Device> device, unsigned group, unsi
   if(isRumble()) {
     if(device->isJoypad() && group == HID::Joypad::GroupID::Button) {
       if(newValue) {
-        this->assignment = {"0x", hex(device->id()), "/Rumble"};
+        this->assignment = {encoding, "/Rumble"};
         return bind(), true;
       }
     }
@@ -117,23 +112,22 @@ auto InputMapping::rumble(bool enable) -> void {
 }
 
 auto InputMapping::unbind() -> void {
-  this->assignment = "None";
-  this->device = nullptr;
-  this->group = 0;
-  this->input = 0;
-  this->qualifier = Qualifier::None;
+  assignment = "None";
+  device = nullptr;
+  group = 0;
+  input = 0;
+  qualifier = Qualifier::None;
+  settings[path].setValue(assignment);
 }
 
 auto InputMapping::assignmentName() -> string {
   if(!device) return "None";
   string path;
   path.append(device->name());
-  if(qualifier != Qualifier::Rumble) {
-    path.append(".", device->group(group).name());
-    path.append(".", device->group(group).input(input).name());
-    if(qualifier == Qualifier::Lo) path.append(".Lo");
-    if(qualifier == Qualifier::Hi) path.append(".Hi");
-  }
+  path.append(".", device->group(group).name());
+  path.append(".", device->group(group).input(input).name());
+  if(qualifier == Qualifier::Lo) path.append(".Lo");
+  if(qualifier == Qualifier::Hi) path.append(".Hi");
   if(qualifier == Qualifier::Rumble) path.append(".Rumble");
   return path;
 }
@@ -149,21 +143,15 @@ InputManager::InputManager() {
   inputManager = this;
 
   for(auto& emulator : program->emulators) {
-    Configuration::Node nodeEmulator;
-
     emulators.append(InputEmulator());
     auto& inputEmulator = emulators.last();
     inputEmulator.name = emulator->information.name;
 
     for(auto& port : emulator->port) {
-      Configuration::Node nodePort;
-
       inputEmulator.ports.append(InputPort());
       auto& inputPort = inputEmulator.ports.last();
       inputPort.name = port.name;
       for(auto& device : port.device) {
-        Configuration::Node nodeDevice;
-
         inputPort.devices.append(InputDevice());
         auto& inputDevice = inputPort.devices.last();
         inputDevice.name = device.name;
@@ -173,23 +161,17 @@ InputManager::InputManager() {
           auto& inputMapping = inputDevice.mappings.last();
           inputMapping->name = input.name;
           inputMapping->link = &input;
-          input.guid = (uintptr_t)inputMapping;
+          input.guid = (uintptr)inputMapping;
 
-          nodeDevice.append(inputMapping->assignment, string{inputMapping->name}.replace(" ", ""));
+          inputMapping->path = string{inputEmulator.name, "/", inputPort.name, "/", inputDevice.name, "/", inputMapping->name}.replace(" ", "");
+          inputMapping->assignment = settings(inputMapping->path).text();
+          inputMapping->bind();
         }
-
-        nodePort.append(nodeDevice, string{inputDevice.name}.replace(" ", ""));
       }
-
-      nodeEmulator.append(nodePort, string{inputPort.name}.replace(" ", ""));
     }
-
-    config.append(nodeEmulator, string{inputEmulator.name}.replace(" ", ""));
   }
 
   appendHotkeys();
-  config.load(locate({configpath(), "nSide-t/"}, "input.bml"));
-  config.save(locate({configpath(), "nSide-t/"}, "input.bml"));
 }
 
 auto InputManager::bind() -> void {
@@ -225,7 +207,7 @@ auto InputManager::poll() -> void {
   if(presentation && presentation->focused()) pollHotkeys();
 }
 
-auto InputManager::onChange(shared_pointer<HID::Device> device, unsigned group, unsigned input, int16 oldValue, int16 newValue) -> void {
+auto InputManager::onChange(shared_pointer<HID::Device> device, uint group, uint input, int16 oldValue, int16 newValue) -> void {
   if(settingsManager->focused()) {
     settingsManager->input.inputEvent(device, group, input, oldValue, newValue);
     settingsManager->hotkeys.inputEvent(device, group, input, oldValue, newValue);
@@ -233,7 +215,6 @@ auto InputManager::onChange(shared_pointer<HID::Device> device, unsigned group, 
 }
 
 auto InputManager::quit() -> void {
-  config.save(locate({configpath(), "nSide-t/"}, "input.bml"));
   emulators.reset();
   hotkeys.reset();
 }

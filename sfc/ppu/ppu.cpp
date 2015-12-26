@@ -1,6 +1,5 @@
 #include <sfc/sfc.hpp>
 
-#define PPU_CPP
 namespace SuperFamicom {
 
 PPU ppu;
@@ -12,11 +11,27 @@ PPU ppu;
 #include "window/window.cpp"
 #include "serialization.cpp"
 
-void PPU::step(unsigned clocks) {
+PPU::PPU() :
+bg1(*this, Background::ID::BG1),
+bg2(*this, Background::ID::BG2),
+bg3(*this, Background::ID::BG3),
+bg4(*this, Background::ID::BG4),
+sprite(*this),
+window(*this),
+screen(*this) {
+  surface = new uint32[512 * 512];
+  output = surface + 16 * 512;
+}
+
+PPU::~PPU() {
+  delete[] surface;
+}
+
+auto PPU::step(uint clocks) -> void {
   clock += clocks;
 }
 
-void PPU::synchronize_cpu() {
+auto PPU::synchronizeCPU() -> void {
   if(CPU::Threaded == true) {
     if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
   } else {
@@ -24,9 +39,9 @@ void PPU::synchronize_cpu() {
   }
 }
 
-void PPU::Enter() { ppu.enter(); }
+auto PPU::Enter() -> void { ppu.enter(); }
 
-void PPU::enter() {
+auto PPU::enter() -> void {
   while(true) {
     if(scheduler.sync == Scheduler::SynchronizeMode::All) {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
@@ -69,33 +84,33 @@ void PPU::enter() {
   }
 }
 
-void PPU::add_clocks(unsigned clocks) {
+auto PPU::add_clocks(uint clocks) -> void {
   clocks >>= 1;
   while(clocks--) {
     tick(2);
     step(2);
-    synchronize_cpu();
+    synchronizeCPU();
   }
 }
 
-void PPU::enable() {
-  function<uint8 (unsigned)> reader = {&PPU::mmio_read, (PPU*)&ppu};
-  function<void (unsigned, uint8)> writer = {&PPU::mmio_write, (PPU*)&ppu};
+auto PPU::enable() -> void {
+  function<auto (uint, uint8) -> uint8> reader{&PPU::mmio_read, (PPU*)&ppu};
+  function<auto (uint, uint8) -> void> writer{&PPU::mmio_write, (PPU*)&ppu};
 
   bus.map(reader, writer, 0x00, 0x3f, 0x2100, 0x213f);
   bus.map(reader, writer, 0x80, 0xbf, 0x2100, 0x213f);
 }
 
-void PPU::power() {
+auto PPU::power() -> void {
   for(auto& n : vram) n = random(0x00);
   for(auto& n : oam) n = random(0x00);
   for(auto& n : cgram) n = random(0x00);
 }
 
-void PPU::reset() {
-  create(Enter, system.cpu_frequency());
+auto PPU::reset() -> void {
+  create(Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memset(surface, 0, 512 * 512 * sizeof(uint32));
+  memory::fill(surface, 512 * 512 * sizeof(uint32));
 
   mmio_reset();
   bg1.reset();
@@ -109,37 +124,7 @@ void PPU::reset() {
   frame();
 }
 
-void PPU::exportRegisters(string &markup) {
-  markup.append("ppu\n");
-  // 2105
-  markup.append("  bgmode:       ", regs.bgmode,       "\n");
-  markup.append("  bg3-priority: ", regs.bg3_priority, "\n");
-  // 2133
-  markup.append("  pseudo-hires: ", regs.pseudo_hires, "\n");
-  markup.append("  overscan:     ", regs.overscan,     "\n");
-  // individual backgrounds
-  auto bg = &bg1;
-  for(unsigned bg_id = 1; bg_id <= 4; bg_id++) {
-    switch(bg_id) {
-      case 1: bg = &bg1; break;
-      case 2: bg = &bg2; break;
-      case 3: bg = &bg3; break;
-      case 4: bg = &bg4; break;
-    }
-    markup.append("  bg\n");
-    markup.append("    tile-size:     ",   bg->regs.tile_size,              "\n");
-    markup.append("    mosaic:        ",   bg->regs.mosaic,                 "\n");
-    markup.append("    screen-addr:   0x", hex(bg->regs.screen_addr, 4L),   "\n");
-    markup.append("    screen-size:   ",   bg->regs.screen_size,            "\n");
-    markup.append("    tiledata-addr: 0x", hex(bg->regs.tiledata_addr, 4L), "\n");
-    markup.append("    hoffset:       0x", hex(bg->regs.hoffset, 3L),       "\n");
-    markup.append("    voffset:       0x", hex(bg->regs.voffset, 3L),       "\n");
-    markup.append("    main-enable:   ",   bg->regs.main_enable,            "\n");
-    markup.append("    sub-enable:    ",   bg->regs.sub_enable,             "\n");
-  }
-}
-
-void PPU::scanline() {
+auto PPU::scanline() -> void {
   if(vcounter() == 0) {
     frame();
     bg1.frame();
@@ -157,7 +142,7 @@ void PPU::scanline() {
   screen.scanline();
 }
 
-void PPU::frame() {
+auto PPU::frame() -> void {
   system.frame();
   sprite.frame();
 
@@ -165,20 +150,34 @@ void PPU::frame() {
   display.overscan = regs.overscan;
 }
 
-PPU::PPU() :
-bg1(*this, Background::ID::BG1),
-bg2(*this, Background::ID::BG2),
-bg3(*this, Background::ID::BG3),
-bg4(*this, Background::ID::BG4),
-sprite(*this),
-window(*this),
-screen(*this) {
-  surface = new uint32[512 * 512];
-  output = surface + 16 * 512;
-}
-
-PPU::~PPU() {
-  delete[] surface;
+auto PPU::exportRegisters(string &markup) -> void {
+  markup.append("ppu\n");
+  // 2105
+  markup.append("  bgmode:       ", regs.bgmode,       "\n");
+  markup.append("  bg3-priority: ", regs.bg3_priority, "\n");
+  // 2133
+  markup.append("  pseudo-hires: ", regs.pseudo_hires, "\n");
+  markup.append("  overscan:     ", regs.overscan,     "\n");
+  // individual backgrounds
+  auto bg = &bg1;
+  for(uint bg_id = 1; bg_id <= 4; bg_id++) {
+    switch(bg_id) {
+      case 1: bg = &bg1; break;
+      case 2: bg = &bg2; break;
+      case 3: bg = &bg3; break;
+      case 4: bg = &bg4; break;
+    }
+    markup.append("  bg\n");
+    markup.append("    tile-size:     ",   bg->regs.tile_size,              "\n");
+    markup.append("    mosaic:        ",   bg->regs.mosaic,                 "\n");
+    markup.append("    screen-addr:   0x", hex(bg->regs.screen_addr, 4L),   "\n");
+    markup.append("    screen-size:   ",   bg->regs.screen_size,            "\n");
+    markup.append("    tiledata-addr: 0x", hex(bg->regs.tiledata_addr, 4L), "\n");
+    markup.append("    hoffset:       0x", hex(bg->regs.hoffset, 3L),       "\n");
+    markup.append("    voffset:       0x", hex(bg->regs.voffset, 3L),       "\n");
+    markup.append("    main-enable:   ",   bg->regs.main_enable,            "\n");
+    markup.append("    sub-enable:    ",   bg->regs.sub_enable,             "\n");
+  }
 }
 
 }

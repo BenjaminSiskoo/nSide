@@ -4,6 +4,43 @@ namespace GameBoyAdvance {
 
 Interface* interface = nullptr;
 
+Interface::Interface() {
+  interface = this;
+
+  information.name        = "Game Boy Advance";
+  information.width       = 240;
+  information.height      = 160;
+  information.overscan    = false;
+  information.aspectRatio = 1.0;
+  information.resettable  = false;
+  information.capability.states = true;
+  information.capability.cheats = false;
+
+  media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", true});
+
+  { Device device{0, ID::Device, "Controller"};
+    device.input.append({ 0, 0, "A"     });
+    device.input.append({ 1, 0, "B"     });
+    device.input.append({ 2, 0, "Select"});
+    device.input.append({ 3, 0, "Start" });
+    device.input.append({ 4, 0, "Right" });
+    device.input.append({ 5, 0, "Left"  });
+    device.input.append({ 6, 0, "Up"    });
+    device.input.append({ 7, 0, "Down"  });
+    device.input.append({ 8, 0, "R"     });
+    device.input.append({ 9, 0, "L"     });
+    device.input.append({10, 2, "Rumble"});
+    device.order = {6, 7, 5, 4, 1, 0, 9, 8, 2, 3, 10};
+    this->device.append(device);
+  }
+
+  port.append({0, "Device", {device[0]}});
+}
+
+auto Interface::manifest() -> string {
+  return cartridge.manifest();
+}
+
 auto Interface::title() -> string {
   return cartridge.title();
 }
@@ -20,27 +57,23 @@ auto Interface::loaded() -> bool {
   return cartridge.loaded();
 }
 
-auto Interface::sha256() -> string {
-  return cartridge.sha256();
-}
-
-auto Interface::group(unsigned id) -> unsigned {
+auto Interface::group(uint id) -> uint {
   switch(id) {
   case ID::SystemManifest:
   case ID::BIOS:
     return ID::System;
   case ID::Manifest:
-  case ID::ROM:
-  case ID::RAM:
+  case ID::MROM:
+  case ID::SRAM:
   case ID::EEPROM:
-  case ID::FlashROM:
+  case ID::FLASH:
     return ID::GameBoyAdvance;
   }
 
   throw;
 }
 
-auto Interface::load(unsigned id) -> void {
+auto Interface::load(uint id) -> void {
   cartridge.load();
 }
 
@@ -50,7 +83,7 @@ auto Interface::save() -> void {
   }
 }
 
-auto Interface::load(unsigned id, const stream& stream) -> void {
+auto Interface::load(uint id, const stream& stream) -> void {
   if(id == ID::SystemManifest) {
     system.information.manifest = stream.text();
   }
@@ -63,34 +96,34 @@ auto Interface::load(unsigned id, const stream& stream) -> void {
     cartridge.information.markup = stream.text();
   }
 
-  if(id == ID::ROM) {
-    stream.read(cartridge.rom.data, min(cartridge.rom.size, stream.size()));
+  if(id == ID::MROM) {
+    stream.read(cartridge.mrom.data, min(cartridge.mrom.size, stream.size()));
   }
 
-  if(id == ID::RAM) {
-    stream.read(cartridge.ram.data, min(cartridge.ram.size, stream.size()));
+  if(id == ID::SRAM) {
+    stream.read(cartridge.sram.data, min(cartridge.sram.size, stream.size()));
   }
 
   if(id == ID::EEPROM) {
     stream.read(cartridge.eeprom.data, min(cartridge.eeprom.size, stream.size()));
   }
 
-  if(id == ID::FlashROM) {
-    stream.read(cartridge.flashrom.data, min(cartridge.flashrom.size, stream.size()));
+  if(id == ID::FLASH) {
+    stream.read(cartridge.flash.data, min(cartridge.flash.size, stream.size()));
   }
 }
 
-auto Interface::save(unsigned id, const stream& stream) -> void {
-  if(id == ID::RAM) {
-    stream.write(cartridge.ram.data, cartridge.ram.size);
+auto Interface::save(uint id, const stream& stream) -> void {
+  if(id == ID::SRAM) {
+    stream.write(cartridge.sram.data, cartridge.sram.size);
   }
 
   if(id == ID::EEPROM) {
     stream.write(cartridge.eeprom.data, cartridge.eeprom.size);
   }
 
-  if(id == ID::FlashROM) {
-    stream.write(cartridge.flashrom.data, cartridge.flashrom.size);
+  if(id == ID::FLASH) {
+    stream.write(cartridge.flash.data, cartridge.flash.size);
   }
 }
 
@@ -126,7 +159,7 @@ auto Interface::cheatSet(const lstring& list) -> void {
     lstring codes = codeset.split("+");
     for(auto& code : codes) {
       lstring part = code.split("/");
-      unsigned mode;
+      uint mode;
       if(part.size() == 2) {
         if(part[1].size() == 2) mode = Byte;
         if(part[1].size() == 4) mode = Half;
@@ -145,63 +178,29 @@ auto Interface::cheatSet(const lstring& list) -> void {
 }
 
 auto Interface::paletteUpdate(PaletteMode mode) -> void {
-  video.generate_palette(mode);
+  video.generatePalette(mode);
 }
 
 auto Interface::exportMemory() -> void {
-  string pathname = {path(group(ID::ROM)), "debug/"};
+  string pathname = {path(group(ID::MROM)), "debug/"};
   directory::create(pathname);
 
   file::write({pathname, "i-work.ram"}, cpu.iwram, 32 * 1024);
   file::write({pathname, "e-work.ram"}, cpu.ewram, 256 * 1024);
   file::write({pathname, "video.ram"}, ppu.vram, 96 * 1024);
   uint8 obj_data[128 * 8];
-  for(unsigned addr = 0; addr < 128 * 8; addr++) {
+  for(uint addr = 0; addr < 128 * 8; addr++) {
     obj_data[addr] = ppu.oam_read(Byte, addr | 0x0700'0000);
   }
   file::write({pathname, "sprite.ram"}, obj_data, 128 * 8);
   uint8 pal_data[256 * 2 * 2];
-  for(unsigned addr = 0; addr < 256 * 2 * 2; addr++) {
+  for(uint addr = 0; addr < 256 * 2 * 2; addr++) {
     pal_data[addr] = ppu.pram_read(Byte, addr | 0x0500'0000);
   }
   file::write({pathname, "palette.ram"}, pal_data, 256 * 2 * 2);
-  if(cartridge.has_sram()) saveRequest(ID::RAM, "debug/save-static.ram");
-  if(cartridge.has_eeprom()) saveRequest(ID::EEPROM, "debug/save-eeprom.ram");
-  if(cartridge.has_flashrom()) saveRequest(ID::FlashROM, "debug/save-flashrom.ram");
-}
-
-Interface::Interface() {
-  interface = this;
-
-  information.name        = "Game Boy Advance";
-  information.width       = 240;
-  information.height      = 160;
-  information.overscan    = false;
-  information.aspectRatio = 1.0;
-  information.resettable  = false;
-  information.capability.states = true;
-  information.capability.cheats = true;
-
-  media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", true});
-
-  {
-    Device device{0, ID::Device, "Controller"};
-    device.input.append({ 0, 0, "A"     });
-    device.input.append({ 1, 0, "B"     });
-    device.input.append({ 2, 0, "Select"});
-    device.input.append({ 3, 0, "Start" });
-    device.input.append({ 4, 0, "Right" });
-    device.input.append({ 5, 0, "Left"  });
-    device.input.append({ 6, 0, "Up"    });
-    device.input.append({ 7, 0, "Down"  });
-    device.input.append({ 8, 0, "R"     });
-    device.input.append({ 9, 0, "L"     });
-    device.input.append({10, 2, "Rumble"});
-    device.order = {6, 7, 5, 4, 1, 0, 9, 8, 2, 3, 10};
-    this->device.append(device);
-  }
-
-  port.append({0, "Device", {device[0]}});
+  if(cartridge.sram.size) saveRequest(ID::SRAM, "debug/save-static.ram");
+  if(cartridge.eeprom.size) saveRequest(ID::EEPROM, "debug/save-eeprom.ram");
+  if(cartridge.flash.size) saveRequest(ID::FLASH, "debug/save-flash.ram");
 }
 
 }

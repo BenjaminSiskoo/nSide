@@ -15,7 +15,7 @@ struct CheatDatabase : Window {
 };
 
 struct CheatEditor : TabFrameItem {
-  enum : unsigned { Slots = 128 };
+  enum : uint { Slots = 128 };
 
   CheatEditor(TabFrame*);
   auto doChangeSelected() -> void;
@@ -51,7 +51,7 @@ struct CheatEditor : TabFrameItem {
 };
 
 struct StateManager : TabFrameItem {
-  enum : unsigned { Slots = 32 };
+  enum : uint { Slots = 32 };
 
   StateManager(TabFrame*);
   auto doChangeSelected() -> void;
@@ -76,14 +76,23 @@ struct StateManager : TabFrameItem {
       Button eraseButton{&controlLayout, Size{80, 0}};
 };
 
+struct ManifestViewer : TabFrameItem {
+  ManifestViewer(TabFrame*);
+  auto doRefresh() -> void;
+
+  VerticalLayout layout{this};
+    TextEdit manifestView{&layout, Size{~0, ~0}};
+};
+
 struct ToolsManager : Window {
   ToolsManager();
-  auto show(unsigned tool) -> void;
+  auto show(uint tool) -> void;
 
   VerticalLayout layout{this};
     TabFrame panel{&layout, Size{~0, ~0}};
       CheatEditor cheatEditor{&panel};
       StateManager stateManager{&panel};
+      ManifestViewer manifestViewer{&panel};
 };
 
 extern CheatDatabase* cheatDatabase;

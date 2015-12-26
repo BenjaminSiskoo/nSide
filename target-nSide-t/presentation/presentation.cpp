@@ -10,10 +10,10 @@ Presentation::Presentation() {
       if(!media.bootable) continue;
       auto item = new MenuItem{&libraryMenu};
       item->setText({media.name, " ..."}).onActivate([=] {
-        directory::create({config->library.location, media.name});
+        directory::create({settings["Library/Location"].text(), media.name});
         auto location = BrowserDialog()
         .setTitle({"Load ", media.name})
-        .setPath({config->library.location, media.name})
+        .setPath({settings["Library/Location"].text(), media.name})
         .setFilters(string{media.name, "|*.", media.type})
         .openFolder();
         if(directory::exists(location)) {
@@ -31,76 +31,64 @@ Presentation::Presentation() {
 
   settingsMenu.setText("Settings");
   videoScaleMenu.setText("Video Scale");
-  if(config->video.scale == "Tiny") videoScaleTiny.setChecked();
-  if(config->video.scale == "Small") videoScaleSmall.setChecked();
-  if(config->video.scale == "Medium") videoScaleMedium.setChecked();
-  if(config->video.scale == "Large") videoScaleLarge.setChecked();
+  if(settings["Video/Scale"].text() == "Tiny") videoScaleTiny.setChecked();
+  if(settings["Video/Scale"].text() == "Small") videoScaleSmall.setChecked();
+  if(settings["Video/Scale"].text() == "Medium") videoScaleMedium.setChecked();
+  if(settings["Video/Scale"].text() == "Large") videoScaleLarge.setChecked();
   videoScaleTiny.setText("Tiny").onActivate([&] {
-    config->video.scale = "Tiny";
+    settings["Video/Scale"].setValue("Tiny");
     resizeViewport();
   });
   videoScaleSmall.setText("Small").onActivate([&] {
-    config->video.scale = "Small";
+    settings["Video/Scale"].setValue("Small");
     resizeViewport();
   });
   videoScaleMedium.setText("Medium").onActivate([&] {
-    config->video.scale = "Medium";
+    settings["Video/Scale"].setValue("Medium");
     resizeViewport();
   });
   videoScaleLarge.setText("Large").onActivate([&] {
-    config->video.scale = "Large";
+    settings["Video/Scale"].setValue("Large");
     resizeViewport();
   });
-  aspectCorrection.setText("Aspect Correction").setChecked(config->video.aspectCorrection).onToggle([&] {
-    config->video.aspectCorrection = aspectCorrection.checked();
+  aspectCorrection.setText("Aspect Correction").setChecked(settings["Video/AspectCorrection"].boolean()).onToggle([&] {
+    settings["Video/AspectCorrection"].setValue(aspectCorrection.checked());
     resizeViewport();
   });
-  videoShaderMenu.setText("Video Shader");
-  videoShaderNone.setText("None").onActivate([&] {
-    config->video.shader = "None";
-    program->updateVideoShader();
+  videoFilterMenu.setText("Video Filter");
+  if(settings["Video/Filter"].text() == "None") videoFilterNone.setChecked();
+  if(settings["Video/Filter"].text() == "Blur") videoFilterBlur.setChecked();
+  videoFilterNone.setText("None").onActivate([&] {
+    settings["Video/Filter"].setValue("None");
+    program->updateVideoFilter();
   });
-  videoShaderBlur.setText("Blur").onActivate([&] {
-    config->video.shader = "Blur";
-    program->updateVideoShader();
+  videoFilterBlur.setText("Blur").onActivate([&] {
+    settings["Video/Filter"].setValue("Blur");
+    program->updateVideoFilter();
   });
-  videoShaderEmulation.setText("Display Emulation").onActivate([&] {
-    config->video.shader = "Display Emulation";
-    program->updateVideoShader();
-  });
-  loadShaders();
-  // videoShaders.objects() returns a vector of hiro::Object objects, which
-  // cannot be cast into hiro::MenuRadioItem.
-  // This means having to dig into hiro's internals just to get a vector of
-  // hiro::mMenuRadioItem objects (note the "m" at the beginning), which may be
-  // dangerously vulnerable to changes in hiro.
-  for(auto& object : videoShaders.objects()) {
-    if(auto shader = dynamic_cast<mMenuRadioItem*>(object.data())) {
-      if(config->video.shader == shader->text()) shader->setChecked();
-    }
-  }
-  colorEmulation.setText("Color Emulation").setChecked(config->video.colorEmulation).onToggle([&] {
-    config->video.colorEmulation = colorEmulation.checked();
+  colorEmulation.setText("Color Emulation").setChecked(settings["Video/ColorEmulation"].boolean()).onToggle([&] {
+    settings["Video/ColorEmulation"].setValue(colorEmulation.checked());
     program->updateVideoPalette();
   });
-  maskOverscan.setText("Mask Overscan").setChecked(config->video.overscan.mask).onToggle([&] {
-    config->video.overscan.mask = maskOverscan.checked();
+  maskOverscan.setText("Mask Overscan").setChecked(settings["Video/Overscan/Mask"].boolean()).onToggle([&] {
+    settings["Video/Overscan/Mask"].setValue(maskOverscan.checked());
   });
-  synchronizeVideo.setText("Synchronize Video").setChecked(config->video.synchronize).onToggle([&] {
-    config->video.synchronize = synchronizeVideo.checked();
-    video->set(Video::Synchronize, config->video.synchronize);
+  loadShaders();
+  synchronizeVideo.setText("Synchronize Video").setChecked(settings["Video/Synchronize"].boolean()).onToggle([&] {
+    settings["Video/Synchronize"].setValue(synchronizeVideo.checked());
+    video->set(Video::Synchronize, synchronizeVideo.checked());
   });
-  synchronizeAudio.setText("Synchronize Audio").setChecked(config->audio.synchronize).onToggle([&] {
-    config->audio.synchronize = synchronizeAudio.checked();
-    audio->set(Audio::Synchronize, config->audio.synchronize);
+  synchronizeAudio.setText("Synchronize Audio").setChecked(settings["Audio/Synchronize"].boolean()).onToggle([&] {
+    settings["Audio/Synchronize"].setValue(synchronizeAudio.checked());
+    audio->set(Audio::Synchronize, synchronizeAudio.checked());
   });
-  muteAudio.setText("Mute Audio").setChecked(config->audio.mute).onToggle([&] {
-    config->audio.mute = muteAudio.checked();
-    program->dsp.setVolume(config->audio.mute ? 0.0 : 1.0);
+  muteAudio.setText("Mute Audio").setChecked(settings["Audio/Mute"].boolean()).onToggle([&] {
+    settings["Audio/Mute"].setValue(muteAudio.checked());
+    program->updateAudioVolume();
   });
-  showStatusBar.setText("Show Status Bar").setChecked(config->userInterface.showStatusBar).onToggle([&] {
-    config->userInterface.showStatusBar = showStatusBar.checked();
-    statusBar.setVisible(config->userInterface.showStatusBar);
+  showStatusBar.setText("Show Status Bar").setChecked(settings["UserInterface/ShowStatusBar"].boolean()).onToggle([&] {
+    settings["UserInterface/ShowStatusBar"].setValue(showStatusBar.checked());
+    statusBar.setVisible(showStatusBar.checked());
     if(visible()) resizeViewport();
   });
   showConfiguration.setText("Configuration ...").onActivate([&] { settingsManager->show(2); });
@@ -120,9 +108,10 @@ Presentation::Presentation() {
   loadSlot5.setText("Slot 5").onActivate([&] { program->loadState(5); });
   cheatEditor.setText("Cheat Editor").onActivate([&] { toolsManager->show(0); });
   stateManager.setText("State Manager").onActivate([&] { toolsManager->show(1); });
+  manifestViewer.setText("Manifest Viewer").onActivate([&] { toolsManager->show(2); });
 
   statusBar.setFont(Font().setBold());
-  statusBar.setVisible(config->userInterface.showStatusBar);
+  statusBar.setVisible(settings["UserInterface/ShowStatusBar"].boolean());
 
   onClose([&] { program->quit(); });
 
@@ -156,87 +145,57 @@ auto Presentation::updateEmulator() -> void {
     for(auto& device : port.device) {
       MenuRadioItem item{&menu};
       item.setText(device.name).onActivate([=] {
+        auto path = string{emulator->information.name, "/", port.name}.replace(" ", "");
+        settings[path].setValue(device.name);
         emulator->connect(port.id, device.id);
       });
       devices.append(item);
     }
-    if(devices.objectCount() > 1) menu.setVisible();
-  }
-
-  systemMenuSeparatorPorts.setVisible(inputPort1.visible() || inputPort2.visible());
-}
-
-auto Presentation::loadShaders() -> void {
-  //only the OpenGL driver has video shader support
-  if(config->video.driver == "OpenGL") {
-    string pathname = locate({configpath(), "nSide-t/"}, "Video Shaders/");
-    lstring shaders = directory::folders(pathname, "*.shader");
-    for(auto& name : shaders) {
-      MenuRadioItem shader{&videoShaderMenu};
-      shader.setText(name.rtrim(".shader/"));
-      shader.onActivate([=] {
-        config->video.shader = name;
-        program->updateVideoShader();
-      });
-      videoShaders.append(shader);
+    if(devices.objectCount() > 1) {
+      auto path = string{emulator->information.name, "/", port.name}.replace(" ", "");
+      auto device = settings(path).text();
+      for(auto object : devices.objects()) {
+        if(auto item = object.cast<MenuRadioItem>()) {
+          if(item.text() == device) item.setChecked().doActivate();
+        }
+      }
+      menu.setVisible();
     }
   }
 
-  videoShaderMenu.remove(videoShaderSeparator).append(videoShaderSeparator);
-  videoShaderMenu.remove(colorEmulation).append(colorEmulation);
-  videoShaderMenu.remove(maskOverscan).append(maskOverscan);
+  systemMenuSeparatorPorts.setVisible(inputPort1.visible() || inputPort2.visible() || inputPort3.visible());
 }
 
 auto Presentation::resizeViewport() -> void {
-  signed scale = 1;
-  if(config->video.scale == "Small" ) scale = 2;
-  if(config->video.scale == "Medium") scale = 3;
-  if(config->video.scale == "Large" ) scale = 4;
-
-  signed width  = 256;
-  signed height = 240;
-  if(emulator) {
-    width  = emulator->information.width;
-    height = emulator->information.height;
+  int width   = emulator ? emulator->information.width  : 256;
+  int height  = emulator ? emulator->information.height : 240;
+  double stretch = emulator ? emulator->information.aspectRatio : 1.0;
+  if(stretch != 1.0) {
+    //aspect correction is always enabled in fullscreen mode
+    if(!fullScreen() && !settings["Video/AspectCorrection"].boolean()) stretch = 1.0;
   }
 
-  bool arc = config->video.aspectCorrection;
+  int scale = 2;
+  if(settings["Video/Scale"].text() == "Tiny"  ) scale = 1;
+  if(settings["Video/Scale"].text() == "Small" ) scale = 2;
+  if(settings["Video/Scale"].text() == "Medium") scale = 3;
+  if(settings["Video/Scale"].text() == "Large" ) scale = 4;
 
-  if(fullScreen() == false) {
-    signed windowWidth  = 256 * scale;
-    signed windowHeight = 240 * scale;
-    if(arc) windowWidth = windowWidth * (emulator ? emulator->information.aspectRatio : 1.0);
-
-    double stretch = (arc && emulator) ? emulator->information.aspectRatio : 1.0;
-    signed multiplier = min(windowWidth / (signed)(width * stretch), windowHeight / height);
-    width = width * multiplier * stretch;
-    height = height * multiplier;
-
-    setSize({windowWidth, windowHeight});
-    viewport.setGeometry({(windowWidth - width) / 2, (windowHeight - height) / 2, width, height});
+  int windowWidth = 0, windowHeight = 0;
+  if(!fullScreen()) {
+    windowWidth  = 256 * scale * (settings["Video/AspectCorrection"].boolean() ? 8.0 / 7.0 : 1.0);
+    windowHeight = 240 * scale;
   } else {
-    signed windowWidth  = geometry().width();
-    signed windowHeight = geometry().height();
-
-    //aspect ratio correction is always enabled in fullscreen mode
-    //note that below algorithm yields 7:6 ratio on 2560x(1440,1600) monitors
-    //this is extremely close to the optimum 8:7 ratio
-    //it is used so that linear interpolation isn't required
-    //todo: we should handle other resolutions nicely as well
-    unsigned multiplier = windowHeight / height;
-    width *= (arc && emulator->information.aspectRatio != 1.0 ? 1 : 0) + multiplier;
-    height *= multiplier;
-
-    signed x = (windowWidth - width) / 2;
-    signed y = (windowHeight - height) / 2;
-
-    if(x < 0) x = 0;
-    if(y < 0) y = 0;
-    if(width > windowWidth) width = windowWidth;
-    if(height > windowHeight) height = windowHeight;
-
-    viewport.setGeometry({x, y, width, height});
+    windowWidth  = geometry().width();
+    windowHeight = geometry().height();
   }
+
+  int multiplier = min(windowWidth / (int)(width * stretch), windowHeight / height);
+  width = width * multiplier * stretch;
+  height = height * multiplier;
+
+  if(!fullScreen()) setSize({windowWidth, windowHeight});
+  viewport.setGeometry({(windowWidth - width) / 2, (windowHeight - height) / 2, width, height});
 
   if(!emulator) drawSplashScreen();
 }
@@ -253,7 +212,7 @@ auto Presentation::toggleFullScreen() -> void {
     setFullScreen(false);
     setResizable(false);
     menuBar.setVisible(true);
-    statusBar.setVisible(config->userInterface.showStatusBar);
+    statusBar.setVisible(settings["UserInterface/ShowStatusBar"].boolean());
   }
 
   Application::processEvents();
@@ -263,7 +222,7 @@ auto Presentation::toggleFullScreen() -> void {
 auto Presentation::drawSplashScreen() -> void {
   if(!video) return;
   uint32* output;
-  unsigned length;
+  uint length;
   if(video->lock(output, length, 256, 240)) {
     for(auto y : range(240)) {
       uint32* dp = output + y * (length >> 2);
@@ -271,5 +230,36 @@ auto Presentation::drawSplashScreen() -> void {
     }
     video->unlock();
     video->refresh();
+  }
+}
+
+auto Presentation::loadShaders() -> void {
+  if(settings["Video/Driver"].text() != "OpenGL") {
+    videoShaderMenu.setVisible(false);
+    return;
+  }
+
+  auto pathname = locate({localpath(), "nSide-t/"}, "Video Shaders/");
+  for(auto shader : directory::folders(pathname, "*.shader")) {
+    MenuRadioItem item{&videoShaderMenu};
+    item.setText(string{shader}.rtrim(".shader/", 1L)).onActivate([=] {
+      settings["Video/Shader"].setValue({pathname, shader});
+      program->updateVideoFilter();
+    });
+    videoShaders.append(item);
+  }
+
+  videoShaderMenu.setText("Video Shaders");
+  videoShaderNone.setChecked().setText("None").onActivate([=] {
+    settings["Video/Shader"].setValue("None");
+    program->updateVideoFilter();
+  });
+
+  for(auto object : videoShaders.objects()) {
+    if(auto radioItem = dynamic_cast<mMenuRadioItem*>(object.data())) {
+      if(settings["Video/Shader"].text() == string{pathname, radioItem->text(), ".shader/"}) {
+        radioItem->setChecked();
+      }
+    }
   }
 }
