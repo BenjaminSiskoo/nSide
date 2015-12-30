@@ -1,6 +1,4 @@
-#ifdef PC10_ARCADE_BOARD_CPP
-
-void PC10ArcadeBoard::serialize(serializer& s) {
+auto PC10ArcadeBoard::serialize(serializer& s) -> void {
   s.array(wram);
   s.array(sram);
   s.array(vram);
@@ -20,5 +18,3 @@ void PC10ArcadeBoard::serialize(serializer& s) {
   s.integer(channel);
   s.integer(sram_bank);
 }
-
-#endif

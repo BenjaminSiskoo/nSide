@@ -1,22 +1,26 @@
 struct BeamGun : Controller {
-  void enter();
-  uint5 data();
-  uint2 data1();
-  uint5 data2();
-  bool read_light();
-  void latch(bool data);
-  BeamGun(unsigned port);
+  enum : uint {
+    X, Y, Trigger,
+  };
+
+  BeamGun(uint port);
+
+  auto enter() -> void;
+  auto data() -> uint5;
+  auto data1() -> uint2;
+  auto data2() -> uint5;
+  auto read_light() -> bool;
+  auto latch(bool data) -> void;
 
 //private:
   bool latched;
-  unsigned counter; // VS. System
+  uint counter; // VS. System
 
-  signed x, y;
+  int x, y;
   bool light;
   bool trigger;
-  unsigned lighttime;
-  unsigned triggertime;
-
+  uint lighttime;
+  uint triggertime;
   bool offscreen;
 
   bool triggerlock;

@@ -1,57 +1,55 @@
 struct NES_QJ : Board {
-
-MMC3 mmc3;
-bool bank;
-
-void enter() {
-  mmc3.enter();
-}
-
-uint8 prg_read(unsigned addr) {
-  if(addr & 0x8000) {
-    addr = (mmc3.prg_addr(addr) & 0x1ffff) | (bank << 17);
-    return read(prgrom, addr);
+  NES_QJ(Markup::Node& board_node) : Board(board_node), mmc3(*this, board_node) {
   }
-  return cpu.mdr();
-}
 
-void prg_write(unsigned addr, uint8 data) {
-  if((addr & 0xe000) == 0x6000 && mmc3.ram_enable && !mmc3.ram_write_protect) {
-    bank = data & 0x01;
+  auto enter() -> void {
+    mmc3.enter();
   }
-  if(addr & 0x8000) return mmc3.reg_write(addr, data);
-}
 
-uint8 chr_read(unsigned addr) {
-  if(addr & 0x2000) return ppu.ciram_read(mmc3.ciram_addr(addr));
-  return Board::chr_read((mmc3.chr_addr(addr) & 0x1ffff) | (bank << 17));
-}
+  auto prg_read(uint addr) -> uint8 {
+    if(addr & 0x8000) {
+      addr = (mmc3.prg_addr(addr) & 0x1ffff) | (bank << 17);
+      return read(prgrom, addr);
+    }
+    return cpu.mdr();
+  }
 
-void chr_write(unsigned addr, uint8 data) {
-  if(addr & 0x2000) return ppu.ciram_write(mmc3.ciram_addr(addr), data);
-  return Board::chr_write((mmc3.chr_addr(addr) & 0x1ffff) | (bank << 17), data);
-}
+  auto prg_write(uint addr, uint8 data) -> void {
+    if((addr & 0xe000) == 0x6000 && mmc3.ram_enable && !mmc3.ram_write_protect) {
+      bank = data & 0x01;
+    }
+    if(addr & 0x8000) return mmc3.reg_write(addr, data);
+  }
 
-unsigned ciram_addr(unsigned addr) {
-  return mmc3.ciram_addr(addr);
-}
+  auto chr_read(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciram_read(mmc3.ciram_addr(addr));
+    return Board::chr_read((mmc3.chr_addr(addr) & 0x1ffff) | (bank << 17));
+  }
 
-void power() {
-  mmc3.power();
-}
+  auto chr_write(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciram_write(mmc3.ciram_addr(addr), data);
+    return Board::chr_write((mmc3.chr_addr(addr) & 0x1ffff) | (bank << 17), data);
+  }
 
-void reset() {
-  mmc3.reset();
-  bank = 0;
-}
+  auto ciram_addr(uint addr) -> uint {
+    return mmc3.ciram_addr(addr);
+  }
 
-void serialize(serializer& s) {
-  Board::serialize(s);
-  mmc3.serialize(s);
-  s.integer(bank);
-}
+  auto power() -> void {
+    mmc3.power();
+  }
 
-NES_QJ(Markup::Node& cartridge) : Board(cartridge), mmc3(*this, cartridge) {
-}
+  auto reset() -> void {
+    mmc3.reset();
+    bank = 0;
+  }
 
+  auto serialize(serializer& s) -> void {
+    Board::serialize(s);
+    mmc3.serialize(s);
+    s.integer(bank);
+  }
+
+  MMC3 mmc3;
+  bool bank;
 };

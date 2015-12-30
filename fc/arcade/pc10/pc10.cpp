@@ -1,6 +1,5 @@
 #include <fc/fc.hpp>
 
-#define PC10_ARCADE_BOARD_CPP
 namespace Famicom {
 
 PC10ArcadeBoard pc10arcadeboard;
@@ -8,17 +7,17 @@ PC10ArcadeBoard pc10arcadeboard;
 #include "video-circuit.cpp"
 #include "serialization.cpp"
 
-void PC10ArcadeBoard::init() {
+auto PC10ArcadeBoard::init() -> void {
   dip = 0;
 }
 
-void PC10ArcadeBoard::load() {
+auto PC10ArcadeBoard::load() -> void {
 }
 
-void PC10ArcadeBoard::unload() {
+auto PC10ArcadeBoard::unload() -> void {
 }
 
-void PC10ArcadeBoard::power() {
+auto PC10ArcadeBoard::power() -> void {
   vram_access = 1; // 0: Z80,                  1: video circuit
   controls    = 1; // 0: disable START/SELECT, 1: enable START/SELECT
   ppu_output  = 1; // 0: disable,              1: enable
@@ -35,14 +34,14 @@ void PC10ArcadeBoard::power() {
   update_video();
 }
 
-void PC10ArcadeBoard::reset() {
+auto PC10ArcadeBoard::reset() -> void {
 }
 
-void PC10ArcadeBoard::set_dip(uint16 dip) {
+auto PC10ArcadeBoard::set_dip(uint16 dip) -> void {
   this->dip = dip;
 }
 
-uint8 PC10ArcadeBoard::read(uint16 addr) {
+auto PC10ArcadeBoard::read(uint16 addr) -> uint8 {
   if(addr <= 0x7fff) return bios[addr & 0x3fff];
   if(addr <= 0x87ff) return wram[addr & 0x07ff];
   if(addr <= 0x8bff) return sram[addr & 0x03ff];
@@ -61,7 +60,7 @@ uint8 PC10ArcadeBoard::read(uint16 addr) {
   };
 }
 
-void PC10ArcadeBoard::write(uint16 addr, uint8 data) {
+auto PC10ArcadeBoard::write(uint16 addr, uint8 data) -> void {
        if(addr <= 0x7fff) return;
   else if(addr <= 0x87ff) wram[addr & 0x07ff] = data;
   else if(addr <= 0x8bff) sram[addr & 0x03ff] = data;
@@ -78,7 +77,7 @@ void PC10ArcadeBoard::write(uint16 addr, uint8 data) {
   }
 }
 
-uint8 PC10ArcadeBoard::io_read(uint16 addr) {
+auto PC10ArcadeBoard::io_read(uint16 addr) -> uint8 {
   uint8 data = 0x00;
   bool channel_select = false;
   bool enter          = false;
@@ -104,7 +103,7 @@ uint8 PC10ArcadeBoard::io_read(uint16 addr) {
   return data;
 }
 
-void PC10ArcadeBoard::io_write(uint16 addr, uint8 data) {
+auto PC10ArcadeBoard::io_write(uint16 addr, uint8 data) -> void {
   data &= 0x01;
   switch(addr & 0x001f) {
   case 0x0000: vram_access = data; break;

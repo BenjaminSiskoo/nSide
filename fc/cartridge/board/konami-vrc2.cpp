@@ -1,61 +1,59 @@
 struct KonamiVRC2 : Board {
+  KonamiVRC2(Markup::Node& board_node) : Board(board_node), vrc2(*this) {
+    settings.pinout.a0 = 1 << board_node["chip/pinout/a0"].natural();
+    settings.pinout.a1 = 1 << board_node["chip/pinout/a1"].natural();
+    settings.pinout.chr_shift = board_node["chip/pinout/chr-shift"].natural();
+  }
 
-struct Settings {
-  struct Pinout {
-    unsigned a0;
-    unsigned a1;
-    unsigned chr_shift;
-  } pinout;
-} settings;
+  auto prg_read(uint addr) -> uint8 {
+    if(addr < 0x6000) return cpu.mdr();
+    if(addr < 0x8000) return vrc2.ram_read(addr);
+    return read(prgrom, vrc2.prg_addr(addr));
+  }
 
-VRC2 vrc2;
+  auto prg_write(uint addr, uint8 data) -> void {
+    if(addr < 0x6000) return;
+    if(addr < 0x8000) return vrc2.ram_write(addr, data);
 
-uint8 prg_read(unsigned addr) {
-  if(addr < 0x6000) return cpu.mdr();
-  if(addr < 0x8000) return vrc2.ram_read(addr);
-  return read(prgrom, vrc2.prg_addr(addr));
-}
+    bool a0 = (addr & settings.pinout.a0);
+    bool a1 = (addr & settings.pinout.a1);
+    addr &= 0xfff0;
+    addr |= (a0 << 0) | (a1 << 1);
+    return vrc2.reg_write(addr, data);
+  }
 
-void prg_write(unsigned addr, uint8 data) {
-  if(addr < 0x6000) return;
-  if(addr < 0x8000) return vrc2.ram_write(addr, data);
+  auto chr_read(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciram_read(vrc2.ciram_addr(addr));
+    addr = vrc2.chr_addr(addr);
+    addr = ((addr >> settings.pinout.chr_shift) & ~0x3ff) | (addr & 0x3ff);
+    return Board::chr_read(addr);
+  }
 
-  bool a0 = (addr & settings.pinout.a0);
-  bool a1 = (addr & settings.pinout.a1);
-  addr &= 0xfff0;
-  addr |= (a0 << 0) | (a1 << 1);
-  return vrc2.reg_write(addr, data);
-}
+  auto chr_write(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciram_write(vrc2.ciram_addr(addr), data);
+    return Board::chr_write(vrc2.chr_addr(addr), data);
+  }
 
-uint8 chr_read(unsigned addr) {
-  if(addr & 0x2000) return ppu.ciram_read(vrc2.ciram_addr(addr));
-  addr = vrc2.chr_addr(addr);
-  addr = ((addr >> settings.pinout.chr_shift) & ~0x3ff) | (addr & 0x3ff);
-  return Board::chr_read(addr);
-}
+  auto power() -> void {
+    vrc2.power();
+  }
 
-void chr_write(unsigned addr, uint8 data) {
-  if(addr & 0x2000) return ppu.ciram_write(vrc2.ciram_addr(addr), data);
-  return Board::chr_write(vrc2.chr_addr(addr), data);
-}
+  auto reset() -> void {
+    vrc2.reset();
+  }
 
-void power() {
-  vrc2.power();
-}
+  auto serialize(serializer& s) -> void {
+    Board::serialize(s);
+    vrc2.serialize(s);
+  }
 
-void reset() {
-  vrc2.reset();
-}
+  struct Settings {
+    struct Pinout {
+      uint a0;
+      uint a1;
+      uint chr_shift;
+    } pinout;
+  } settings;
 
-void serialize(serializer& s) {
-  Board::serialize(s);
-  vrc2.serialize(s);
-}
-
-KonamiVRC2(Markup::Node& cartridge) : Board(cartridge), vrc2(*this) {
-  settings.pinout.a0 = 1 << decimal(cartridge["chip/pinout/a0"].text());
-  settings.pinout.a1 = 1 << decimal(cartridge["chip/pinout/a1"].text());
-  settings.pinout.chr_shift = decimal(cartridge["chip/pinout/chr-shift"].text());
-}
-
+  VRC2 vrc2;
 };

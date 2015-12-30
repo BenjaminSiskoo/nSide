@@ -12,7 +12,7 @@ namespace Famicom {
     // nSide-fc simultaneously.
     // This is required to avoid errors in case a save state created in one
     // higan fork is loaded into another.
-    static const unsigned SerializerVersion = 0;
+    static const uint SerializerVersion = 0;
   }
 }
 
@@ -26,6 +26,7 @@ namespace Famicom {
 */
 
 #include <libco/libco.h>
+#include <nall/priority-queue.hpp>
 
 namespace Famicom {
   struct Thread {
@@ -33,7 +34,7 @@ namespace Famicom {
       if(thread) co_delete(thread);
     }
 
-    auto create(void (*entrypoint)(), unsigned frequency) -> void {
+    auto create(void (*entrypoint)(), uint frequency) -> void {
       if(thread) co_delete(thread);
       thread = co_create(65536 * sizeof(void*), entrypoint);
       this->frequency = frequency;
@@ -46,8 +47,8 @@ namespace Famicom {
     }
 
     cothread_t thread = nullptr;
-    unsigned frequency = 0;
-    int64_t clock = 0;
+    uint frequency = 0;
+    int64 clock = 0;
   };
 
   #include <fc/memory/memory.hpp>

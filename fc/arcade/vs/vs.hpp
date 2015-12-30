@@ -4,24 +4,24 @@ struct VSArcadeBoard {
   bool swap_controllers;
   uint16 dip; // 16-bit for DualSystem games
 
-  void init();
-  void load();
-  void unload();
-  void power();
-  void reset();
+  auto init() -> void;
+  auto load() -> void;
+  auto unload() -> void;
+  auto power() -> void;
+  auto reset() -> void;
 
-  void set_dip(uint16 dip);
-  uint8 read(uint16 addr);
-  void write(uint16 addr, uint8 data);
+  auto set_dip(uint16 dip) -> void;
+  auto read(uint16 addr) -> uint8;
+  auto write(uint16 addr, uint8 data) -> void;
 
-  void serialize(serializer& s);
+  auto serialize(serializer& s) -> void;
 
 private:
-  uint8 r4016();
-  uint8 r4017();
-  uint8 r4020();
-  void w4016(uint8 data);
-  void w4020(uint8 data);
+  auto r4016() -> uint8;
+  auto r4017() -> uint8;
+  auto r4020() -> uint8;
+  auto w4016(uint8 data) -> void;
+  auto w4020(uint8 data) -> void;
 };
 
 extern VSArcadeBoard vsarcadeboard;

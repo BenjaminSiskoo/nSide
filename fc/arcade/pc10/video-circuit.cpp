@@ -1,6 +1,4 @@
-#ifdef PC10_ARCADE_BOARD_CPP
-
-void PC10ArcadeBoard::video_power() {
+auto PC10ArcadeBoard::video_power() -> void {
   uint8 default_vram[0x0800] = {
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
@@ -152,28 +150,28 @@ void PC10ArcadeBoard::video_power() {
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
   };
-  for(unsigned addr = 0x9040; addr <= 0x97bf; addr++) {
+  for(uint addr = 0x9040; addr <= 0x97bf; addr++) {
     vram[addr & 0x07ff] = default_vram[(addr & 0x07ff) - 0x40];
   }
 }
 
-void PC10ArcadeBoard::update_video() {
+auto PC10ArcadeBoard::update_video() -> void {
   uint16 addr;
-  unsigned tile_id;
+  uint tile_id;
   uint8 y;
   uint8 x;
   uint8 byte;
-  unsigned color;
-  for(unsigned tile_y = 1; tile_y < 31; tile_y++) {
-    for(unsigned tile_x = 0; tile_x < 32; tile_x++) {
+  uint color;
+  for(uint tile_y = 1; tile_y < 31; tile_y++) {
+    for(uint tile_x = 0; tile_x < 32; tile_x++) {
       addr = tile_y * 64 + tile_x * 2;
       tile_id = ((vram[addr + 0] & 0xff) << 0) + ((vram[addr + 1] & 0x07) << 8);
-      for(unsigned pixel_y = 0; pixel_y < 8; pixel_y++) {
+      for(uint pixel_y = 0; pixel_y < 8; pixel_y++) {
         y = ((tile_y - 1) << 3) + pixel_y;
-        for(unsigned pixel_x = 0; pixel_x < 8; pixel_x++) {
+        for(uint pixel_x = 0; pixel_x < 8; pixel_x++) {
           x = (tile_x << 3) + pixel_x;
           color = vram[tile_y * 64 + tile_x * 2 + 1] & 0xf8;
-          for(unsigned plane = 0; plane < 3; plane++) {
+          for(uint plane = 0; plane < 3; plane++) {
             byte = chrrom[(plane << 13) + (tile_id << 3) + pixel_y];
             color += ((byte >> (7 - pixel_x)) & 1) << plane;
           }
@@ -183,5 +181,3 @@ void PC10ArcadeBoard::update_video() {
     }
   }
 }
-
-#endif

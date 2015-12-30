@@ -25,14 +25,24 @@ Interface::Interface() {
   port.append({1, "Port 2"});
   port.append({2, "Expansion Port"});
 
-  for(unsigned i = 0; i <= (unsigned)Input::Device::None; i++) {
+  // C++ prohibits counting the number of items in an enum. Take care
+  // and update this value whenever a device is added or removed.
+  for(uint i = 0; i < 9; i++) {
     device_ref.append(DeviceRef{i, 0, 0, 0});
   }
 
   { Device device{
-      (unsigned)Input::Device::Joypad,
-      ID::Port1 | ID::Port2 | ID::ExpansionPort,
-      "Controller"
+      (uint)Famicom::Device::ID::None,
+      ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort,
+      "None"
+    };
+    addDevice(device);
+  }
+
+  { Device device{
+      (uint)Famicom::Device::ID::Gamepad,
+      ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort,
+      "Gamepad"
     };
     device.input.append({0, 0, "A"     });
     device.input.append({1, 0, "B"     });
@@ -47,11 +57,11 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::FourPlayers,
+      (uint)Famicom::Device::ID::FourPlayers,
       ID::ExpansionPort,
       "4-Players Adaptor"
     };
-    for(unsigned p = 3, n = 0; p <= 4; p += 1, n += 8) {
+    for(uint p = 3, n = 0; p <= 4; p += 1, n += 8) {
       device.input.append({n + 0, 0, {"Port ", p, " - ", "A"     }});
       device.input.append({n + 1, 0, {"Port ", p, " - ", "B"     }});
       device.input.append({n + 2, 0, {"Port ", p, " - ", "Select"}});
@@ -67,11 +77,11 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::FourScore,
-      ID::Port1,
+      (uint)Famicom::Device::ID::FourScore,
+      ID::ControllerPort1,
       "Four Score"
     };
-    for(unsigned p = 1, n = 0; p <= 4; p += 2, n += 8) {
+    for(uint p = 1, n = 0; p <= 4; p += 2, n += 8) {
       device.input.append({n + 0, 0, {"Port ", p, " - ", "A"     }});
       device.input.append({n + 1, 0, {"Port ", p, " - ", "B"     }});
       device.input.append({n + 2, 0, {"Port ", p, " - ", "Select"}});
@@ -87,11 +97,11 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::FourScore,
-      ID::Port2,
+      (uint)Famicom::Device::ID::FourScore,
+      ID::ControllerPort2,
       "Four Score"
     };
-    for(unsigned p = 2, n = 0; p <= 4; p += 2, n += 8) {
+    for(uint p = 2, n = 0; p <= 4; p += 2, n += 8) {
       device.input.append({n + 0, 0, {"Port ", p, " - ", "A"     }});
       device.input.append({n + 1, 0, {"Port ", p, " - ", "B"     }});
       device.input.append({n + 2, 0, {"Port ", p, " - ", "Select"}});
@@ -107,7 +117,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::BeamGun,
+      (uint)Famicom::Device::ID::BeamGun,
       ID::ExpansionPort,
       "Beam Gun"
     };
@@ -119,8 +129,8 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::BeamGun,
-      ID::Port2,
+      (uint)Famicom::Device::ID::BeamGun,
+      ID::ControllerPort2,
       "Zapper"
     };
     device.input.append({0, 1, "X-axis" });
@@ -131,11 +141,11 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::FamilyTrainer,
+      (uint)Famicom::Device::ID::FamilyTrainer,
       ID::ExpansionPort,
       "Family Trainer"
     };
-    for(unsigned n = 0; n <= 11; n++) {
+    for(uint n = 0; n <= 11; n++) {
       device.input.append({n, 0, {"Button ", n + 1}});
     }
     device.order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
@@ -143,11 +153,11 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::FamilyTrainer,
-      ID::Port2,
+      (uint)Famicom::Device::ID::FamilyTrainer,
+      ID::ControllerPort2,
       "Power Pad"
     };
-    for(unsigned n = 0; n <= 11; n++) {
+    for(uint n = 0; n <= 11; n++) {
       device.input.append({n, 0, {"Button ", n + 1}});
     }
     device.order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
@@ -155,9 +165,9 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::SFCJoypad,
-      ID::Port1 | ID::Port2,
-      "SFC Controller"
+      (uint)Famicom::Device::ID::SFCGamepad,
+      ID::ControllerPort1 | ID::ControllerPort2,
+      "SFC Gamepad"
     };
     device.input.append({ 0, 0, "B"     });
     device.input.append({ 1, 0, "Y"     });
@@ -176,8 +186,8 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::Mouse,
-      ID::Port1 | ID::Port2 | ID::ExpansionPort,
+      (uint)Famicom::Device::ID::Mouse,
+      ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort,
       "Mouse"
     };
     device.input.append({0, 1, "X-axis"});
@@ -189,7 +199,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (unsigned)Input::Device::VSPanel,
+      (uint)Famicom::Device::ID::VSPanel,
       ID::ExpansionPort,
       "VS. Panel"
     };
@@ -203,14 +213,10 @@ Interface::Interface() {
     device.order = {0, 1, 2, 3, 4, 5, 6};
     addDevice(device);
   }
+}
 
-  { Device device{
-      (unsigned)Input::Device::None,
-      ID::Port1 | ID::Port2 | ID::ExpansionPort,
-      "None"
-    };
-    addDevice(device);
-  }
+auto Interface::manifest() -> string {
+  return cartridge.manifest();
 }
 
 auto Interface::title() -> string {
@@ -219,15 +225,15 @@ auto Interface::title() -> string {
 
 auto Interface::videoFrequency() -> double {
   switch(system.region()) { default:
-  case System::Region::NTSC: return system.cpu_frequency() / (262.0 * 1364.0 - 4.0);
-  case System::Region::PAL:  return system.cpu_frequency() / (312.0 * 1705.0);
+  case System::Region::NTSC: return system.cpuFrequency() / (262.0 * 1364.0 - 4.0);
+  case System::Region::PAL:  return system.cpuFrequency() / (312.0 * 1705.0);
   }
 }
 
 auto Interface::audioFrequency() -> double {
   switch(system.region()) { default:
-  case System::Region::NTSC: return system.cpu_frequency() / 12.0;
-  case System::Region::PAL:  return system.cpu_frequency() / 16.0;
+  case System::Region::NTSC: return system.cpuFrequency() / 12.0;
+  case System::Region::PAL:  return system.cpuFrequency() / 16.0;
   }
 }
 
@@ -239,7 +245,7 @@ auto Interface::sha256() -> string {
   return cartridge.sha256();
 }
 
-auto Interface::group(unsigned id) -> unsigned {
+auto Interface::group(uint id) -> uint {
   switch(id) {
   case ID::SystemManifest:
   case ID::PC10BIOS:
@@ -265,14 +271,12 @@ auto Interface::group(unsigned id) -> unsigned {
   throw;
 }
 
-auto Interface::load(unsigned id) -> void {
+auto Interface::load(uint id) -> void {
   information.width  = 256;
   information.height = 240;
-  switch(id) {
-  case ID::Famicom:      cartridge.load(System::Revision::Famicom);      break;
-  case ID::VSSystem:     cartridge.load(System::Revision::VSSystem);     break;
-  case ID::PlayChoice10: cartridge.load(System::Revision::PlayChoice10); break;
-  }
+  if(id == ID::Famicom) cartridge.load(System::Revision::Famicom);
+  if(id == ID::VSSystem) cartridge.load(System::Revision::VSSystem); 
+  if(id == ID::PlayChoice10) cartridge.load(System::Revision::PlayChoice10);
 }
 
 auto Interface::save() -> void {
@@ -281,7 +285,7 @@ auto Interface::save() -> void {
   }
 }
 
-auto Interface::load(unsigned id, const stream& stream) -> void {
+auto Interface::load(uint id, const stream& stream) -> void {
   switch(id) {
   case ID::SystemManifest:
     system.information.manifest = stream.text();
@@ -308,7 +312,7 @@ auto Interface::load(unsigned id, const stream& stream) -> void {
   if(id == ID::KeyROM) cartridge.board->keyrom.read(stream);
 }
 
-auto Interface::save(unsigned id, const stream& stream) -> void {
+auto Interface::save(uint id, const stream& stream) -> void {
   if(id == ID::ProgramRAM) {
     stream.write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
   }
@@ -327,12 +331,11 @@ auto Interface::unload() -> void {
   cartridge.unload();
 }
 
-auto Interface::connect(unsigned port, unsigned device) -> void {
+auto Interface::connect(uint port, uint device) -> void {
   if(!system.vs()) {
     // Don't allow switching to VS. Panel
-    if(device == (unsigned)Input::Device::VSPanel)
-      device = (unsigned)Input::Device::None;
-    input.connect(port, (Input::Device)device);
+    if(device == (uint)Famicom::Device::ID::VSPanel) device = (uint)Famicom::Device::ID::None;
+    Famicom::device.connect(port, (Famicom::Device::ID)device);
   }
 }
 
@@ -349,7 +352,7 @@ auto Interface::run() -> void {
 }
 
 auto Interface::serialize() -> serializer {
-  system.runtosave();
+  system.runToSave();
   return system.serialize();
 }
 
@@ -377,7 +380,7 @@ auto Interface::paletteUpdate(PaletteMode mode) -> void {
 auto Interface::addDevice(Device device) -> void {
   for(auto& port : this->port) {
     if(device.portmask & (1 << port.id)) {
-      device_ref[device.id].port[port.id] = (unsigned)port.device.size();
+      device_ref[device.id].port[port.id] = (uint)port.device.size();
       port.device.append(device);
     }
   }
@@ -389,13 +392,7 @@ auto Interface::exportMemory() -> void {
 
   // Registers
   string markup = "";
-  markup.append("ppu\n");
-  markup.append("  vaddr:       0x", hex(ppu.status.vaddr, 4L), "\n");
-  markup.append("  taddr:       0x", hex(ppu.status.taddr, 4L), "\n");
-  markup.append("  xaddr:       0x", hex(ppu.status.xaddr, 1L), "\n");
-  markup.append("  sprite-size: ",   ppu.status.sprite_size ? "8x16" : "8x8", "\n");
-  markup.append("  bg-addr:     0x", hex(ppu.status.bg_addr, 4L), "\n");
-  markup.append("  sprite-addr: 0x", hex(ppu.status.sprite_addr, 4L), "\n");
+  ppu.exportRegisters(markup);
   file::write({pathname, "registers.bml"}, markup);
 
   file::write({pathname, "work.ram"}, cpu.ram, 0x0800);

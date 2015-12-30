@@ -1,6 +1,5 @@
 #include <fc/fc.hpp>
 
-#define MEMORY_CPP
 namespace Famicom {
 
 Bus bus;
@@ -16,28 +15,28 @@ Bus::~Bus() {
 }
 
 auto Bus::reset() -> void {
-  function<uint8 (unsigned)> reader = [](unsigned) { return cpu.mdr(); };
-  function<void (unsigned, uint8)> writer = [](unsigned, uint8) {};
+  function<auto (uint) -> uint8> reader = [](uint) { return cpu.mdr(); };
+  function<auto (uint, uint8) -> void> writer = [](uint, uint8) {};
 
   idcount = 0;
   map(reader, writer, 0x0000, 0xffff);
 }
 
 auto Bus::map(
-  const function<uint8 (unsigned)>& reader,
-  const function<void (unsigned, uint8)>& writer,
-  unsigned addrlo, unsigned addrhi,
-  unsigned size, unsigned base, unsigned mask
+  const function<uint8 (uint)>& reader,
+  const function<void (uint, uint8)>& writer,
+  uint addrlo, uint addrhi,
+  uint size, uint base, uint mask
 ) -> void {
   assert(addrlo <= addrhi && addrlo <= 0xffff);
   assert(idcount < 255);
 
-  unsigned id = idcount++;
+  uint id = idcount++;
   this->reader[id] = reader;
   this->writer[id] = writer;
 
-  for(unsigned addr = addrlo; addr <= addrhi; addr++) {
-    unsigned offset = reduce(addr, mask);
+  for(uint addr = addrlo; addr <= addrhi; addr++) {
+    uint offset = reduce(addr, mask);
     if(size) offset = base + mirror(offset, size - base);
     lookup[addr] = id;
     target[addr] = offset;

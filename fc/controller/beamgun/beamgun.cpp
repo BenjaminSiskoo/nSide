@@ -1,8 +1,24 @@
-#ifdef CONTROLLER_CPP
+BeamGun::BeamGun(uint port) : Controller(port, (uint)Device::ID::BeamGun) {
+  create(Controller::Enter, system.cpuFrequency());
+  latched = 0;
+  counter = 0;
 
-void BeamGun::enter() {
-  unsigned prev = 0;
-  unsigned next;
+  //center cursor onscreen
+  x = 256 / 2;
+  y = 240 / 2;
+
+  light       = false;
+  trigger     = false;
+  lighttime   = 0;
+  triggertime = 0;
+  offscreen   = false;
+
+  triggerlock = false;
+}
+
+auto BeamGun::enter() -> void {
+  uint prev = 0;
+  uint next;
   while(true) {
     next = ppu.vcounter() * 341 + ppu.hcounter();
 
@@ -11,7 +27,7 @@ void BeamGun::enter() {
     }
 
     if(!offscreen) {
-      unsigned target = y * 341 + x + (!system.vs() ? 8 : 8);
+      uint target = y * 341 + x + (!system.vs() ? 8 : 8);
       if(next >= target && prev < target) {
         //CRT raster detected
         //light remains in the gun for 10-25 scanlines
@@ -22,8 +38,8 @@ void BeamGun::enter() {
     if(next < prev) {
       if(triggertime > 0) triggertime -= 1;
       //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
-      int nx = poll((unsigned)Input::BeamGunID::X);
-      int ny = poll((unsigned)Input::BeamGunID::Y);
+      int nx = poll(X);
+      int ny = poll(Y);
       nx += x;
       ny += y;
       x = max(-16, min(256 + 16, nx));
@@ -36,7 +52,7 @@ void BeamGun::enter() {
   }
 }
 
-uint5 BeamGun::data() {
+auto BeamGun::data() -> uint5 {
   if(!system.vs()) return data2();
   if(counter >= 8) return 1;
   if(latched == 1) return 0;
@@ -58,7 +74,7 @@ uint2 BeamGun::data1() {
 }
 
 uint5 BeamGun::data2() {
-  bool newtrigger = poll((unsigned)Input::BeamGunID::Trigger);
+  bool newtrigger = poll(Trigger);
   if(newtrigger && !triggerlock) {
     triggertime = 2;
     triggerlock = true;
@@ -74,7 +90,7 @@ uint5 BeamGun::data2() {
 bool BeamGun::read_light() {
   if(offscreen) return false;
   uint32 palette_index = ppu.output[y * 256 + x];
-  unsigned color;
+  uint color;
   switch(ppu.revision) {
   default:
     return ((palette_index & 0x20) && ((palette_index & 0x0F) < 0x0D));
@@ -102,20 +118,7 @@ void BeamGun::latch(bool data) {
   latched = data;
   if(system.vs() && latched == 0) {
     counter = 0;
-    trigger = poll((unsigned)Input::BeamGunID::Trigger);
+    trigger = poll(Trigger);
     light = lighttime > 0;
   }
 }
-
-BeamGun::BeamGun(unsigned port):
-Controller(port, (unsigned)Input::Device::BeamGun) {
-  create(Controller::Enter, system.cpu_frequency());
-  latched = 0;
-  counter = 0;
-
-  //center cursor onscreen
-  x = 256 / 2;
-  y = 240 / 2;
-}
-
-#endif

@@ -1,6 +1,6 @@
 include nall/GNUmakefile
 
-#fc  := fc
+fc  := fc
 sfc := sfc
 gb  := gb
 gba := gba

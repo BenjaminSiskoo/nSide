@@ -37,24 +37,24 @@ struct PC10ArcadeBoard {
 
   uint32 video_output[256 * 240];
 
-  void init();
-  void load();
-  void unload();
-  void power();
-  void reset();
+  auto init() -> void;
+  auto load() -> void;
+  auto unload() -> void;
+  auto power() -> void;
+  auto reset() -> void;
 
-  void set_dip(uint16 dip);
-  uint8 read(uint16 addr);
-  void write(uint16 addr, uint8 data);
+  auto set_dip(uint16 dip) -> void;
+  auto read(uint16 addr) -> uint8;
+  auto write(uint16 addr, uint8 data) -> void;
 
-  uint8 io_read(uint16 addr);
-  void io_write(uint16 addr, uint8 data);
+  auto io_read(uint16 addr) -> uint8;
+  auto io_write(uint16 addr, uint8 data) -> void;
 
-  void serialize(serializer& s);
+  auto serialize(serializer& s) -> void;
 
 private:
-  void video_power();
-  void update_video();
+  auto video_power() -> void;
+  auto update_video() -> void;
 };
 
 extern PC10ArcadeBoard pc10arcadeboard;

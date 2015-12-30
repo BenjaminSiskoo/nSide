@@ -1,67 +1,69 @@
 struct Interface;
 
+#include "video.hpp"
+#include "device.hpp"
+
 struct System : property<System> {
-  enum class Region : unsigned { NTSC = 0, PAL = 1, Autodetect = 2 };
-  enum class Revision : unsigned {
+  enum class Region : uint { NTSC = 0, PAL = 1, Autodetect = 2 };
+
+  enum class Revision : uint {
     Famicom,
     PlayChoice10,
     VSSystem,
   } revision;
 
-  inline bool fc()   const { return revision == Revision::Famicom; }
-  inline bool vs()   const { return revision == Revision::VSSystem; }
-  inline bool pc10() const { return revision == Revision::PlayChoice10; }
+  System();
 
-  void run();
-  void runtosave();
+  auto run() -> void;
+  auto runToSave() -> void;
 
-  void init();
-  void term();
-  void load(Revision);
-  void unload();
-  void power();
-  void reset();
+  auto init() -> void;
+  auto term() -> void;
+  auto load(Revision) -> void;
+  auto unload() -> void;
+  auto power() -> void;
+  auto reset() -> void;
 
   void frame();
   void scanline();
 
+  inline bool fc()   const { return revision == Revision::Famicom; }
+  inline bool vs()   const { return revision == Revision::VSSystem; }
+  inline bool pc10() const { return revision == Revision::PlayChoice10; }
+
   //return *active* system information (settings are cached upon power-on)
   readonly<Region> region;
-  readonly<unsigned> cpu_frequency;
-  readonly<unsigned> serialize_size;
+
+  readonly<uint> cpuFrequency;
+  readonly<uint> serializeSize;
 
   serializer serialize();
   bool unserialize(serializer&);
-
-  System();
 
   struct Information {
     string manifest;
   } information;
 
 private:
-  void runthreadtosave();
+  void runThreadToSave();
 
   void serialize(serializer&);
-  void serialize_all(serializer&);
-  void serialize_init();
+  void serializeAll(serializer&);
+  void serializeInit();
 
   friend class Cartridge;
   friend class Video;
-  friend class Input;
+  friend class Device;
 };
 
 extern System system;
 
-#include "video.hpp"
-#include "input.hpp"
-
 #include <fc/scheduler/scheduler.hpp>
 
 struct Configuration {
-  Input::Device controller_port1 = Input::Device::Joypad;
-  Input::Device controller_port2 = Input::Device::Joypad;
-  Input::Device expansion_port = Input::Device::Joypad;
+  Device::ID controllerPort1 = Device::ID::None;
+  Device::ID controllerPort2 = Device::ID::None;
+  Device::ID expansionPort = Device::ID::None;
   System::Region region = System::Region::Autodetect;
   bool random = true;
 };

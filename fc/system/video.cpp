@@ -1,13 +1,20 @@
-#ifdef SYSTEM_CPP
-
 Video video;
 
-void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
-  unsigned emphasis;
-  unsigned luma;
-  unsigned chroma;
+Video::Video() {
+  // * 2 for second VS. System PPU (of which 256 colors are used for PlayChoice-10)
+  palette = new uint32[(1 << 9) * 2]();
+}
+
+Video::~Video() {
+  delete[] palette;
+}
+
+auto Video::generate_palette(Emulator::Interface::PaletteMode mode) -> void {
+  uint emphasis;
+  uint luma;
+  uint chroma;
   bool rgb;
-  const uint9_t* ppu_pal = nullptr;
+  const uint9* ppu_pal = nullptr;
   switch(ppu.revision) {
   case PPU::Revision::RP2C02C:
   case PPU::Revision::RP2C02G:
@@ -43,7 +50,7 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
     ppu_pal = PPU::RP2C04_0004;
     break;
   }
-  for(unsigned color = 0; color < (1 << 9); color++) {
+  for(uint color = 0; color < (1 << 9); color++) {
     if(mode == Emulator::Interface::PaletteMode::Literal) {
       palette[color] = color;
       continue;
@@ -60,9 +67,9 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
         palette[color] = generate_color(color, 2.0, 0.0, 1.0, 1.0, 1.8);
       }
     } else {
-      unsigned r = (ppu_pal[color & 0x3f] >> 6) & 7;
-      unsigned g = (ppu_pal[color & 0x3f] >> 3) & 7;
-      unsigned b = (ppu_pal[color & 0x3f] >> 0) & 7;
+      uint r = (ppu_pal[color & 0x3f] >> 6) & 7;
+      uint g = (ppu_pal[color & 0x3f] >> 3) & 7;
+      uint b = (ppu_pal[color & 0x3f] >> 0) & 7;
       if(mode == Emulator::Interface::PaletteMode::Standard) {
         palette[color] = interface->videoColor(color, 0,
           image::normalize((color & 0x040) ? 7 : r, 3, 16),
@@ -90,7 +97,7 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
   }
   if(system.pc10()) {
     if(mode == Emulator::Interface::PaletteMode::Standard) {
-      for(unsigned color = 0; color < 256; color++) {
+      for(uint color = 0; color < 256; color++) {
         palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color, 0,
           image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 16),
           image::normalize(15 - pc10arcadeboard.cgrom[color + 0x100], 4, 16),
@@ -98,7 +105,7 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
         );
       }
     } else if(mode == Emulator::Interface::PaletteMode::Channel) {
-      for(unsigned color = 0; color < 256; color++) {
+      for(uint color = 0; color < 256; color++) {
         palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color,
           65535, // distinguish from the game screen
           image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 16),
@@ -107,7 +114,7 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
         );
       }
     } else if(mode == Emulator::Interface::PaletteMode::Emulation) {
-      for(unsigned color = 0; color < 256; color++) {
+      for(uint color = 0; color < 256; color++) {
         palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color, 0,
           image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 16),
           image::normalize(15 - pc10arcadeboard.cgrom[color + 0x100], 4, 16),
@@ -118,30 +125,21 @@ void Video::generate_palette(Emulator::Interface::PaletteMode mode) {
   }
 }
 
-Video::Video() {
-  // * 2 for second VS. System PPU (of which 256 colors are used for PlayChoice-10)
-  palette = new uint32_t[(1 << 9) * 2]();
-}
-
-Video::~Video() {
-  delete[] palette;
-}
-
 //internal
 
 // for RGB PPUs
-const uint8_t Video::gamma_ramp[8] = {
+const uint8 Video::gamma_ramp[8] = {
   0x00, 0x0a,
   0x2d, 0x5b,
   0x98, 0xb8,
   0xe0, 0xff,
 };
 
-uint32_t Video::generate_color(
-  unsigned n, double saturation, double hue,
+auto Video::generate_color(
+  uint n, double saturation, double hue,
   double contrast, double brightness, double gamma
-) {
-  signed color = (n & 0x0f), level = color < 0xe ? (n >> 4) & 3 : 1;
+) -> uint32 {
+  int color = (n & 0x0f), level = color < 0xe ? (n >> 4) & 3 : 1;
 
   static const double black = 0.518, white = 1.962, attenuation = 0.746;
   static const double levels[8] = {
@@ -155,8 +153,8 @@ uint32_t Video::generate_color(
   };
 
   double y = 0.0, i = 0.0, q = 0.0;
-  auto wave = [](signed p, signed color) { return (color + p + 8) % 12 < 6; };
-  for(signed p = 0; p < 12; p++) {
+  auto wave = [](int p, int color) { return (color + p + 8) % 12 < 6; };
+  for(int p = 0; p < 12; p++) {
     double spot = lo_and_hi[wave(p, color)];
 
     if(((n & 0x040) && wave(p, 12))
@@ -178,14 +176,14 @@ uint32_t Video::generate_color(
   q *= saturation;
 
   auto gammaAdjust = [=](double f) { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
-  unsigned r = 65535.0 * gammaAdjust(y +  0.946882 * i +  0.623557 * q);
-  unsigned g = 65535.0 * gammaAdjust(y + -0.274788 * i + -0.635691 * q);
-  unsigned b = 65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q);
+  uint r = 65535.0 * gammaAdjust(y +  0.946882 * i +  0.623557 * q);
+  uint g = 65535.0 * gammaAdjust(y + -0.274788 * i + -0.635691 * q);
+  uint b = 65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q);
 
   return interface->videoColor(n, 0, uclamp<16>(r), uclamp<16>(g), uclamp<16>(b));
 }
 
-const uint8_t Video::cursor[15 * 15] = {
+const uint8 Video::cursor[15 * 15] = {
   0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
   0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
   0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
@@ -203,8 +201,8 @@ const uint8_t Video::cursor[15 * 15] = {
   0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
 };
 
-void Video::draw_cursor(uint16_t color, int x, int y) {
-  uint32_t* data = (uint32_t*)ppu.output;
+auto Video::draw_cursor(uint16 color, int x, int y) -> void {
+  uint32* data = (uint32*)ppu.output;
 
   for(int cy = 0; cy < 15; cy++) {
     int vy = y + cy - 7;
@@ -213,36 +211,40 @@ void Video::draw_cursor(uint16_t color, int x, int y) {
     for(int cx = 0; cx < 15; cx++) {
       int vx = x + cx - 7;
       if(vx < 0 || vx >= 256) continue;  //do not draw offscreen
-      uint8_t pixel = cursor[cy * 15 + cx];
+      uint8 pixel = cursor[cy * 15 + cx];
       if(pixel == 0) continue;
-      uint32_t pixelcolor = (pixel == 1) ? 0x0f : color;
+      uint32 pixelcolor = (pixel == 1) ? 0x0f : color;
 
-      *((uint32_t*)data + vy * 256 + vx) = pixelcolor;
+      *((uint32*)data + vy * 256 + vx) = pixelcolor;
     }
   }
 }
 
-void Video::update() {
-  if(configuration.controller_port2 == Input::Device::BeamGun) {
-    BeamGun &device = (BeamGun&)*input.port2;
-    draw_cursor(0x27, device.x, device.y);
+auto Video::update() -> void {
+  if(configuration.controllerPort2 == Famicom::Device::ID::BeamGun) {
+    if(dynamic_cast<BeamGun*>(device.controllerPort2)) {
+      auto& controller = (BeamGun&)*device.controllerPort2;
+      draw_cursor(0x27, controller.x, controller.y);
+    }
   }
-  if(configuration.expansion_port == Input::Device::BeamGun) {
-    BeamGun &device = (BeamGun&)*input.expansion;
-    draw_cursor(0x2d, device.x, device.y);
+  if(configuration.expansionPort == Famicom::Device::ID::BeamGun) {
+    if(dynamic_cast<BeamGun*>(device.expansionPort)) {
+      auto& controller = (BeamGun&)*device.expansionPort;
+      draw_cursor(0x2d, controller.x, controller.y);
+    }
   }
   if(system.vs()) return update_vs();
   if(system.pc10()) return update_pc10();
   interface->videoRefresh(video.palette, ppu.output, 4 * 256, 256, 240);
 }
 
-void Video::update_vs() {
+auto Video::update_vs() -> void {
   if(interface->information.width == 256) {
     interface->videoRefresh(video.palette, ppu.output, 4 * 256, 256, 240);
   } else if(interface->information.width == 512) {
     uint32 buffer[512 * 240];
-    for(unsigned y = 0; y < 240; y++) {
-      for(unsigned x = 0; x < 256; x++) {
+    for(uint y = 0; y < 240; y++) {
+      for(uint x = 0; x < 256; x++) {
         buffer[y * 512 + x] = ppu.output[y * 256 + x];
         buffer[y * 512 + x + 256] = 0;
       }
@@ -251,7 +253,7 @@ void Video::update_vs() {
   }
 }
 
-void Video::update_pc10() {
+auto Video::update_pc10() -> void {
   if(interface->information.height == 240) {
     switch(pc10arcadeboard.display) {
     case 0: // Z80
@@ -263,8 +265,8 @@ void Video::update_pc10() {
     }
   } else if(interface->information.height == 480) {
     uint32 buffer[256 * 480];
-    for(unsigned y = 0; y < 240; y++) {
-      for(unsigned x = 0; x < 256; x++) {
+    for(uint y = 0; y < 240; y++) {
+      for(uint x = 0; x < 256; x++) {
         buffer[(y + 240) * 256 + x] = ppu.output[y * 256 + x];
         buffer[(y +   0) * 256 + x] = (1 << 9) + pc10arcadeboard.video_output[y * 256 + x];
       }
@@ -273,12 +275,10 @@ void Video::update_pc10() {
   }
 }
 
-void Video::scanline() {
-  unsigned y = ppu.vcounter();
+auto Video::scanline() -> void {
+  uint y = ppu.vcounter();
   if(y >= 240) return;
 }
 
 void Video::init() {
 }
-
-#endif

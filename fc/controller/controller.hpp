@@ -37,25 +37,27 @@
 // 15:    +5v
 
 struct Controller : Thread {
-  enum : unsigned { Port1 = 0, Port2 = 1, ExpansionPort = 2 };
-  Controller(unsigned port, unsigned device);
-  Controller(unsigned port);
+  enum : uint { Port1 = 0, Port2 = 1, ExpansionPort = 2 };
+
+  Controller(uint port, uint device_id);
+  Controller(uint port);
+
   static auto Enter() -> void;
   virtual auto enter() -> void;
 
-  auto step(unsigned clocks) -> void;
-  auto synchronize_cpu() -> void;
+  auto step(uint clocks) -> void;
+  auto synchronizeCPU() -> void;
 
   virtual auto data() -> uint5 { return 0; }
   virtual auto data1() -> uint2 { return 0; }
   virtual auto data2() -> uint5 { return 0; }
   virtual auto latch(bool data) -> void {}
 
-  const unsigned port;
-  const unsigned device;
+  const uint port;
+  const uint device_id;
 
 protected:
-  auto poll(unsigned input) -> int16_t;
+  auto poll(uint input) -> int16;
 };
 
 #include "gamepad/gamepad.hpp"

@@ -3,6 +3,6 @@ struct Board;
 struct Chip {
   Board& board;
   MappedRAM ram;
-  void tick();
+  auto tick() -> void;
   Chip(Board& board);
 };

@@ -15,7 +15,7 @@ auto locate(string pathname, string filename) -> string {
 #include "settings.cpp"
 Settings settings;
 
-//#include "heuristics/famicom.hpp"
+#include "heuristics/famicom.hpp"
 #include "heuristics/super-famicom.hpp"
 #include "heuristics/game-boy.hpp"
 #include "heuristics/game-boy-advance.hpp"
@@ -24,7 +24,9 @@ Settings settings;
 
 #include "core/core.hpp"
 #include "core/core.cpp"
-//#include "core/famicom.cpp"
+#include "core/famicom.cpp"
+#include "core/vs-system.cpp"
+#include "core/playchoice-10.cpp"
 #include "core/super-famicom.cpp"
 #include "core/game-boy.cpp"
 #include "core/game-boy-color.cpp"

@@ -1,44 +1,42 @@
 struct TaitoTC : Board {
+  TaitoTC(Markup::Node& board_node) : Board(board_node), tc(*this, board_node) {
+  }
 
-TC tc;
+  auto enter() -> void {
+    tc.enter();
+  }
 
-void enter() {
-  tc.enter();
-}
+  auto prg_read(uint addr) -> uint8 {
+    if(addr & 0x8000) return read(prgrom, tc.prg_addr(addr));
+    return cpu.mdr();
+  }
 
-uint8 prg_read(unsigned addr) {
-  if(addr & 0x8000) return read(prgrom, tc.prg_addr(addr));
-  return cpu.mdr();
-}
+  auto prg_write(uint addr, uint8 data) -> void {
+    if(addr & 0x8000) return tc.reg_write(addr, data);
+  }
 
-void prg_write(unsigned addr, uint8 data) {
-  if(addr & 0x8000) return tc.reg_write(addr, data);
-}
+  auto chr_read(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciram_read(tc.ciram_addr(addr));
+    return Board::chr_read(tc.chr_addr(addr));
+  }
 
-uint8 chr_read(unsigned addr) {
-  if(addr & 0x2000) return ppu.ciram_read(tc.ciram_addr(addr));
-  return Board::chr_read(tc.chr_addr(addr));
-}
+  auto chr_write(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciram_write(tc.ciram_addr(addr), data);
+    return Board::chr_write(tc.chr_addr(addr), data);
+  }
 
-void chr_write(unsigned addr, uint8 data) {
-  if(addr & 0x2000) return ppu.ciram_write(tc.ciram_addr(addr), data);
-  return Board::chr_write(tc.chr_addr(addr), data);
-}
+  auto power() -> void {
+    tc.power();
+  }
 
-void power() {
-  tc.power();
-}
+  auto reset() -> void {
+    tc.reset();
+  }
 
-void reset() {
-  tc.reset();
-}
+  auto serialize(serializer& s) -> void {
+    Board::serialize(s);
+    tc.serialize(s);
+  }
 
-void serialize(serializer& s) {
-  Board::serialize(s);
-  tc.serialize(s);
-}
-
-TaitoTC(Markup::Node& cartridge) : Board(cartridge), tc(*this, cartridge) {
-}
-
+  TC tc;
 };

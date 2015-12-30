@@ -12,9 +12,22 @@ struct CartPal {
   auto concatenate(vector<uint8>& output, string location) -> void;
 
   //famicom.cpp
-  //auto famicomManifest(string location) -> string;
-  //auto famicomManifest(vector<uint8>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
-  //auto famicomImport(vector<uint8>& buffer, string location) -> bool;
+  auto famicomManifest(string location) -> string;
+  auto famicomManifest(vector<uint8>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
+  auto famicomImport(vector<uint8>& buffer, string location) -> bool;
+  auto famicomImportScanManifest(vector<Markup::Node>& roms, Markup::Node node) -> void;
+
+  //vs-system.cpp
+  auto vsSystemManifest(string location) -> string;
+  auto vsSystemManifest(vector<uint8>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
+  auto vsSystemImport(vector<uint8>& buffer, string location) -> bool;
+  auto vsSystemImportScanManifest(vector<Markup::Node>& roms, Markup::Node node) -> void;
+
+  //playchoice-10.cpp
+  auto playchoice10Manifest(string location) -> string;
+  auto playchoice10Manifest(vector<uint8>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr, uint* instrom = nullptr, uint* keyrom = nullptr) -> string;
+  auto playchoice10Import(vector<uint8>& buffer, string location) -> bool;
+  auto playchoice10ImportScanManifest(vector<Markup::Node>& roms, Markup::Node node) -> void;
 
   //super-famicom.cpp
   auto superFamicomManifest(string location) -> string;
@@ -51,7 +64,9 @@ private:
   string errorMessage;
 
   struct {
-    //Markup::Node famicom;
+    Markup::Node famicom;
+    Markup::Node vsSystem;
+    Markup::Node playchoice10;
     Markup::Node superFamicom;
     Markup::Node gameBoy;
     Markup::Node gameBoyColor;

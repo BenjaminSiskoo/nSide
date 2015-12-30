@@ -1,18 +1,16 @@
-#ifdef APU_CPP
-
-void APU::Noise::clock_length() {
+auto APU::Noise::clock_length() -> void {
   if(envelope.loop_mode == 0) {
     if(length_counter > 0) length_counter--;
   }
 }
 
-uint8 APU::Noise::clock() {
+auto APU::Noise::clock() -> uint8 {
   if(length_counter == 0) return 0;
 
   uint8 result = (lfsr & 1) ? envelope.volume() : 0;
 
   if(--period_counter == 0) {
-    unsigned feedback;
+    uint feedback;
 
     if(short_mode) {
       feedback = ((lfsr >> 0) & 1) ^ ((lfsr >> 6) & 1);
@@ -30,10 +28,10 @@ uint8 APU::Noise::clock() {
   return result;
 }
 
-void APU::Noise::power() {
+auto APU::Noise::power() -> void {
 }
 
-void APU::Noise::reset() {
+auto APU::Noise::reset() -> void {
   length_counter = 0;
 
   envelope.speed = 0;
@@ -49,7 +47,7 @@ void APU::Noise::reset() {
   lfsr = 1;
 }
 
-void APU::Noise::serialize(serializer& s) {
+auto APU::Noise::serialize(serializer& s) -> void {
   s.integer(length_counter);
 
   envelope.serialize(s);
@@ -60,5 +58,3 @@ void APU::Noise::serialize(serializer& s) {
   s.integer(short_mode);
   s.integer(lfsr);
 }
-
-#endif

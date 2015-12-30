@@ -1,4 +1,5 @@
 #include "../tomoko.hpp"
+#include <fc/interface/interface.hpp>
 #include <sfc/interface/interface.hpp>
 #include <gb/interface/interface.hpp>
 #include <gba/interface/interface.hpp>
@@ -15,6 +16,7 @@ Program::Program(lstring args) {
   Application::onMain({&Program::main, this});
   Application::Windows::onModalChange([](bool modal) { if(modal && audio) audio->clear(); });
 
+  emulators.append(new Famicom::Interface);
   emulators.append(new SuperFamicom::Interface);
   emulators.append(new GameBoy::Interface);
   emulators.append(new GameBoyAdvance::Interface);

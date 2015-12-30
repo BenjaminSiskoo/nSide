@@ -1,6 +1,5 @@
 #include <fc/fc.hpp>
 
-#define CPU_CPP
 namespace Famicom {
 
 CPU cpu;
@@ -8,7 +7,10 @@ CPU cpu;
 #include "serialization.cpp"
 #include "timing/timing.cpp"
 
-void CPU::step(unsigned clocks) {
+CPU::CPU() {
+}
+
+auto CPU::step(uint clocks) -> void {
   apu.clock -= clocks;
   if(apu.clock < 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(apu.thread);
 
@@ -18,33 +20,33 @@ void CPU::step(unsigned clocks) {
   cartridge.clock -= clocks;
   if(cartridge.clock < 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cartridge.thread);
 
-  input.port1->clock -= clocks * (uint64)input.port1->frequency;
-  input.port2->clock -= clocks * (uint64)input.port2->frequency;
-  input.expansion->clock -= clocks * (uint64)input.expansion->frequency;
-  synchronize_controllers();
+  device.controllerPort1->clock -= clocks * (uint64)device.controllerPort1->frequency;
+  device.controllerPort2->clock -= clocks * (uint64)device.controllerPort2->frequency;
+  device.expansionPort->clock -= clocks * (uint64)device.expansionPort->frequency;
+  synchronizeDevices();
 }
 
-void CPU::synchronize_apu() {
+auto CPU::synchronizeAPU() -> void {
   if(apu.clock < 0) co_switch(apu.thread);
 }
 
-void CPU::synchronize_ppu() {
+auto CPU::synchronizePPU() -> void {
   if(ppu.clock < 0) co_switch(ppu.thread);
 }
 
-void CPU::synchronize_cartridge() {
+auto CPU::synchronizeCartridge() -> void {
   if(cartridge.clock < 0) co_switch(cartridge.thread);
 }
 
-void CPU::synchronize_controllers() {
-  if(input.port1->clock < 0) co_switch(input.port1->thread);
-  if(input.port2->clock < 0) co_switch(input.port2->thread);
-  if(input.expansion->clock < 0) co_switch(input.expansion->thread);
+auto CPU::synchronizeDevices() -> void {
+  if(device.controllerPort1->clock < 0) co_switch(device.controllerPort1->thread);
+  if(device.controllerPort2->clock < 0) co_switch(device.controllerPort2->thread);
+  if(device.expansionPort->clock < 0) co_switch(device.expansionPort->thread);
 }
 
-void CPU::Enter() { cpu.enter(); }
+auto CPU::Enter() -> void { cpu.enter(); }
 
-void CPU::enter() {
+auto CPU::enter() -> void {
   while(true) {
     if(scheduler.sync == Scheduler::SynchronizeMode::All) {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
@@ -66,7 +68,7 @@ void CPU::main() {
 void CPU::power() {
   R6502::power();
 
-  for(unsigned addr = 0; addr < 0x0800; addr++) ram[addr] = 0xff;
+  for(uint addr = 0; addr < 0x0800; addr++) ram[addr] = 0xff;
   ram[0x0008] = 0xf7;
   ram[0x0009] = 0xef;
   ram[0x000a] = 0xdf;
@@ -75,7 +77,7 @@ void CPU::power() {
 
 void CPU::reset() {
   R6502::reset();
-  create(CPU::Enter, system.cpu_frequency());
+  create(CPU::Enter, system.cpuFrequency());
 
   regs.pc  = bus.read(0xfffc) << 0;
   regs.pc |= bus.read(0xfffd) << 8;
@@ -109,11 +111,11 @@ void CPU::ram_write(uint16 addr, uint8 data) {
 uint8 CPU::read(uint16 addr) {
   if(system.revision != System::Revision::VSSystem) {
     if(addr == 0x4016) {
-      return (mdr() & 0xe0) | input.port1->data() | input.expansion->data1();
+      return (mdr() & 0xe0) | device.controllerPort1->data() | device.expansionPort->data1();
     }
 
     if(addr == 0x4017) {
-      return (mdr() & 0xe0) | input.port2->data() | input.expansion->data2();
+      return (mdr() & 0xe0) | device.controllerPort2->data() | device.expansionPort->data2();
     }
   } else { // if using VS. System
     if(addr >= 0x4016 && addr <= 0x5fff) return vsarcadeboard.read(addr);
@@ -130,9 +132,9 @@ void CPU::write(uint16 addr, uint8 data) {
 
   if(system.revision != System::Revision::VSSystem) {
     if(addr == 0x4016) {
-      input.port1->latch(data & 1);
-      input.port2->latch(data & 1);
-      input.expansion->latch(data & 1);
+      device.controllerPort1->latch(data & 1);
+      device.controllerPort2->latch(data & 1);
+      device.expansionPort->latch(data & 1);
     }
   } else { // if using VS. System
     if(addr >= 0x4016 && addr <= 0x5fff) vsarcadeboard.write(addr, data);

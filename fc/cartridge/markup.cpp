@@ -1,41 +1,43 @@
-#ifdef CARTRIDGE_CPP
-
-void Cartridge::parseMarkup(const char* markup) {
+auto Cartridge::parseMarkup(const char* markup) -> void {
   auto document = BML::unserialize(markup);
-  information.title.cartridge = document["information/title"].text();
+  auto information = document["information"];
+  auto board_node = document["board"];
 
-  auto cartridge = document["cartridge"];
-  _region = cartridge["region"].text() != "PAL" ? Region::NTSC : Region::PAL;
+  this->information.title.cartridge = information["title"].text();
+       if(information["region"].text() == "JP") _region = Region::NTSC;
+  else if(information["region"].text() == "NA") _region = Region::NTSC;
+  else if(information["region"].text() == "QC") _region = Region::NTSC;
+  else                                          _region = Region::PAL;
 
   if(system.revision == System::Revision::VSSystem) {
-    unsigned ppus = 0;
-    auto vs = document["cartridge"].find("vs");
-    if(vs(0)["ppu"]) {
-      cartridge = vs(0);
+    uint ppus = 0;
+    auto side = document.find("side");
+    if(side(0)["ppu"]) {
+      board_node = side(0);
       ppus++;
     }
-    if(vs(1)["ppu"]) {
-      if(ppus == 0) cartridge = vs(1);
+    if(side(1)["ppu"]) {
+      if(ppus == 0) board_node = side(1);
       ppus++;
     }
-    auto controller = cartridge.find("controller");
+    auto controller = board_node.find("controller");
     vsarcadeboard.swap_controllers = controller(0)["port"].integer() == 2;
-    string device1 = cartridge["controller(port=1)/device"].text();
-    string device2 = cartridge["controller(port=2)/device"].text();
-    if(device1 == "joypad") {
-      input.connect(0, Input::Device::Joypad);
+    string device1 = board_node.find("controller(port=1)/device")(0).text();
+    string device2 = board_node.find("controller(port=2)/device")(0).text();
+    if(device1 == "gamepad") {
+      device.connect(0, Famicom::Device::ID::Gamepad);
     } else if(device1 == "none") {
-      input.connect(0, Input::Device::None);
+      device.connect(0, Famicom::Device::ID::None);
     }
-    if(device2 == "joypad") {
-      input.connect(1, Input::Device::Joypad);
+    if(device2 == "gamepad") {
+      device.connect(1, Famicom::Device::ID::Gamepad);
     } else if(device2 == "beamgun") {
-      input.connect(1, Input::Device::BeamGun);
+      device.connect(1, Famicom::Device::ID::BeamGun);
     } else if(device2 == "none") {
-      input.connect(1, Input::Device::None);
+      device.connect(1, Famicom::Device::ID::None);
     }
-    vsarcadeboard.set_dip(interface->dipSettings(cartridge));
-    string ppu_revision = cartridge["ppu/revision"].text();
+    vsarcadeboard.set_dip(interface->dipSettings(board_node));
+    string ppu_revision = board_node["ppu/revision"].text();
     if(ppu_revision == "RP2C02C")     ppu.revision = PPU::Revision::RP2C02C;
     if(ppu_revision == "RP2C02G")     ppu.revision = PPU::Revision::RP2C02G;
     if(ppu_revision == "RP2C03B")     ppu.revision = PPU::Revision::RP2C03B;
@@ -54,34 +56,28 @@ void Cartridge::parseMarkup(const char* markup) {
 
     if(ppus == 2) interface->information.width = 512;
   }
-  Board::load(document["cartridge"]);  //this call will set Cartridge::board if successful
-  parseMarkupCartridge(cartridge);
-}
 
-//
-
-void Cartridge::parseMarkupMemory(MappedRAM& ram, Markup::Node node, unsigned id, bool writable) {
-  string name = node["name"].text();
-  unsigned size = node["size"].decimal();
-  ram.map(allocate<uint8>(size, 0xff), size);
-  if(name.empty() == false) {
-    interface->loadRequest(id, name, !writable);
-    if(writable) memory.append({id, name});
-  }
-}
-
-//
-
-void Cartridge::parseMarkupCartridge(Markup::Node root) {
-  parseMarkupMemory(board->prgrom, root["prg/rom"], ID::ProgramROM, false);
-  parseMarkupMemory(board->prgram, root["prg/ram"], ID::ProgramRAM, true);
-  parseMarkupMemory(board->chrrom, root["chr/rom"], ID::CharacterROM, false);
-  parseMarkupMemory(board->chrram, root["chr/ram"], ID::CharacterRAM, true);
+  Board::load(board_node);  //this call will set Cartridge::board if successful
+  parseMarkupMemory(board->prgrom, board_node["prg/rom"], ID::ProgramROM, false);
+  parseMarkupMemory(board->prgram, board_node["prg/ram"], ID::ProgramRAM, true);
+  parseMarkupMemory(board->chrrom, board_node["chr/rom"], ID::CharacterROM, false);
+  parseMarkupMemory(board->chrram, board_node["chr/ram"], ID::CharacterRAM, true);
   if(system.pc10()) {
-    auto rom = root["pc10"].find("rom");
+    auto rom = board_node["pc10"].find("rom");
     parseMarkupMemory(board->instrom, rom(0), ID::InstructionROM, false);
     parseMarkupMemory(board->keyrom, rom(1), ID::KeyROM, false);
   }
 }
 
-#endif
+//
+
+auto Cartridge::parseMarkupMemory(MappedRAM& ram, Markup::Node node, uint id, bool writable) -> void {
+  string name = node["name"].text();
+  uint size = node["size"].natural();
+  bool save = !(bool)node["volatile"];
+  ram.map(allocate<uint8>(size, 0xff), size);
+  if(name) {
+    interface->loadRequest(id, name, !writable);
+    if(writable && save) memory.append({id, name});
+  }
+}

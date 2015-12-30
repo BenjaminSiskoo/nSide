@@ -1,18 +1,21 @@
 #include <fc/fc.hpp>
 
-#define SYSTEM_CPP
 namespace Famicom {
 
 System system;
 Configuration configuration;
 
 #include "video.cpp"
-#include "input.cpp"
+#include "device.cpp"
 #include "serialization.cpp"
 
 #include <fc/scheduler/scheduler.cpp>
 
-void System::run() {
+System::System() {
+  region = Region::Autodetect;
+}
+
+auto System::run() -> void {
   scheduler.sync = Scheduler::SynchronizeMode::None;
 
   scheduler.enter();
@@ -21,26 +24,26 @@ void System::run() {
   }
 }
 
-void System::runtosave() {
+auto System::runToSave() -> void {
   scheduler.sync = Scheduler::SynchronizeMode::PPU;
-  runthreadtosave();
+  runThreadToSave();
 
   scheduler.sync = Scheduler::SynchronizeMode::All;
   scheduler.thread = cpu.thread;
-  runthreadtosave();
+  runThreadToSave();
 
   scheduler.sync = Scheduler::SynchronizeMode::All;
   scheduler.thread = apu.thread;
-  runthreadtosave();
+  runThreadToSave();
 
   scheduler.sync = Scheduler::SynchronizeMode::All;
   scheduler.thread = cartridge.thread;
-  runthreadtosave();
+  runThreadToSave();
 
   scheduler.sync = Scheduler::SynchronizeMode::None;
 }
 
-void System::runthreadtosave() {
+auto System::runThreadToSave() -> void {
   while(true) {
     scheduler.enter();
     if(scheduler.exit_reason == Scheduler::ExitReason::SynchronizeEvent) break;
@@ -50,7 +53,7 @@ void System::runthreadtosave() {
   }
 }
 
-void System::init() {
+auto System::init() -> void {
   assert(interface != nullptr);
 
   vsarcadeboard.init();
@@ -58,15 +61,15 @@ void System::init() {
 
   video.init();
 
-  input.connect(0, configuration.controller_port1);
-  input.connect(1, configuration.controller_port2);
-  input.connect(2, configuration.expansion_port);
+  device.connect(0, configuration.controllerPort1);
+  device.connect(1, configuration.controllerPort2);
+  device.connect(2, configuration.expansionPort);
 }
 
-void System::term() {
+auto System::term() -> void {
 }
 
-void System::load(Revision revision) {
+auto System::load(Revision revision) -> void {
   this->revision = revision;
   interface->loadRequest(ID::SystemManifest, "manifest.bml", true);
   auto document = BML::unserialize(information.manifest);
@@ -98,11 +101,11 @@ void System::load(Revision revision) {
     region = (cartridge.region() == Cartridge::Region::NTSC ? Region::NTSC : Region::PAL);
   }
 
-  cpu_frequency = region() == Region::NTSC ? 21477272 : 26601712;
+  cpuFrequency = region() == Region::NTSC ? 21477272 : 26601712;
 
   if(!vs()) { // VS. System PPU is set within cartridge.load().
     auto game_manifest = BML::unserialize(cartridge.information.markup.cartridge);
-    if(!game_manifest["cartridge/pc10"]) {
+    if(!game_manifest["board/pc10"]) {
       // most Famicoms use a PPU with open bus OAMDATA (read).
       // For now, we use an NES PPU where OAMDATA (read) is defined.
       if(region == Region::NTSC) ppu.revision = PPU::Revision::RP2C02G;
@@ -117,7 +120,7 @@ void System::load(Revision revision) {
     break;
   case Revision::VSSystem:
     vsarcadeboard.load();
-    input.connect(2, Input::Device::VSPanel);
+    device.connect(2, Device::ID::VSPanel);
     break;
   case Revision::PlayChoice10:
     interface->information.height = min(max(document["system/pc10/screen/mode"].integer(), 1), 2) * 240;
@@ -125,17 +128,17 @@ void System::load(Revision revision) {
     break;
   }
 
-  serialize_init();
+  serializeInit();
 }
 
-void System::unload() {
+auto System::unload() -> void {
   switch(revision) {
   case Revision::VSSystem: vsarcadeboard.unload(); break;
   case Revision::PlayChoice10: pc10arcadeboard.unload(); break;
   }
 }
 
-void System::power() {
+auto System::power() -> void {
   cartridge.power();
   cpu.power();
   apu.power();
@@ -150,7 +153,7 @@ void System::power() {
   reset();
 }
 
-void System::reset() {
+auto System::reset() -> void {
   cartridge.reset();
   cpu.reset();
   apu.reset();
@@ -164,21 +167,17 @@ void System::reset() {
   }
 
   scheduler.init();
-  input.connect(0, configuration.controller_port1);
-  input.connect(1, configuration.controller_port2);
-  input.connect(2, configuration.expansion_port);
+  device.connect(0, configuration.controllerPort1);
+  device.connect(1, configuration.controllerPort2);
+  device.connect(2, configuration.expansionPort);
 }
 
-void System::scanline() {
+auto System::scanline() -> void {
   video.scanline();
   if(ppu.vcounter() == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
 }
 
-void System::frame() {
-}
-
-System::System() {
-  region = Region::Autodetect;
+auto System::frame() -> void {
 }
 
 }

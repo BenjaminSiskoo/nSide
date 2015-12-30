@@ -1,6 +1,17 @@
-#ifdef CONTROLLER_CPP
+Mouse::Mouse(uint port) : Controller(port, (uint)Device::ID::Mouse) {
+  latched = 0;
+  counter = 0;
 
-uint5 Mouse::data() {
+  speed = 0;
+  x = 0;
+  y = 0;
+  dx = 0;
+  dy = 0;
+  l = 0;
+  r = 0;
+}
+
+auto Mouse::data() -> uint5 {
   if(latched == 1) {
     speed = (speed + 1) % 3;
     return 0;
@@ -48,23 +59,23 @@ uint5 Mouse::data() {
   }
 }
 
-uint2 Mouse::data1() {
+auto Mouse::data1() -> uint2 {
   return data() << 1;
 }
 
-uint5 Mouse::data2() {
+auto Mouse::data2() -> uint5 {
   return 0;
 }
 
-void Mouse::latch(bool data) {
+auto Mouse::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
   counter = 0;
 
-  x = poll(0);  //-n = left, 0 = center, +n = right
-  y = poll(1);  //-n = up,   0 = center, +n = down
-  l = poll(2);
-  r = poll(3);
+  x = poll(X);  //-n = left, 0 = center, +n = right
+  y = poll(Y);  //-n = up,   0 = center, +n = down
+  l = poll(Left);
+  r = poll(Right);
 
   dx = x < 0;  //0 = right, 1 = left
   dy = y < 0;  //0 = down,  1 = up
@@ -81,19 +92,3 @@ void Mouse::latch(bool data) {
   x = min(127, x);
   y = min(127, y);
 }
-
-Mouse::Mouse(unsigned port):
-Controller(port, (unsigned)Input::Device::Mouse) {
-  latched = 0;
-  counter = 0;
-
-  speed = 0;
-  x = 0;
-  y = 0;
-  dx = 0;
-  dy = 0;
-  l = 0;
-  r = 0;
-}
-
-#endif

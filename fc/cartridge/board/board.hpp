@@ -1,27 +1,28 @@
 struct Board {
-  static uint8 read(MappedRAM& memory, unsigned addr);
-  static void write(MappedRAM& memory, unsigned addr, uint8 byte);
-  static unsigned mirror(unsigned addr, unsigned size);
-
-  virtual void enter();
-  virtual void tick();
-
-  virtual uint8 prg_read(unsigned addr) = 0;
-  virtual void prg_write(unsigned addr, uint8 data) = 0;
-
-  virtual uint8 chr_read(unsigned addr);
-  virtual void chr_write(unsigned addr, uint8 data);
-
-  virtual inline void scanline(unsigned y) {}
-
-  virtual void power();
-  virtual void reset();
-
-  virtual void serialize(serializer&);
-  Board(Markup::Node& cartridge);
+  Board(Markup::Node& board_node);
   virtual ~Board();
 
-  static Board* load(Markup::Node cartridge);
+  static auto read(MappedRAM& memory, uint addr) -> uint8;
+  static auto write(MappedRAM& memory, uint addr, uint8 byte) -> void;
+  static auto mirror(uint addr, uint size) -> uint;
+
+  virtual auto enter() -> void;
+  virtual auto tick() -> void;
+
+  virtual uint8 prg_read(uint addr) = 0;
+  virtual void prg_write(uint addr, uint8 data) = 0;
+
+  virtual auto chr_read(uint addr) -> uint8;
+  virtual auto chr_write(uint addr, uint8 data) -> void;
+
+  virtual inline auto scanline(uint y) -> void {}
+
+  virtual auto power() -> void;
+  virtual auto reset() -> void;
+
+  virtual auto serialize(serializer&) -> void;
+
+  static Board* load(Markup::Node board_node);
 
   Chip* chip = nullptr;
 

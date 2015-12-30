@@ -1,6 +1,13 @@
-#ifdef CONTROLLER_CPP
+SFCGamepad::SFCGamepad(uint port) : Controller(port, (uint)Device::ID::SFCGamepad) {
+  latched = 0;
+  counter = 0;
 
-uint5 SFCGamepad::data() {
+  b = y = select = start = 0;
+  up = down = left = right = 0;
+  a = x = l = r = 0;
+}
+
+auto SFCGamepad::data() -> uint5 {
   if(counter >= 16) return 1;
   if(latched == 1) return poll(0);
 
@@ -23,43 +30,31 @@ uint5 SFCGamepad::data() {
   return 0;  //12-15: signature
 }
 
-uint2 SFCGamepad::data1() {
+auto SFCGamepad::data1() -> uint2 {
   return ((data() << 1) & 0x02);
 }
 
-uint5 SFCGamepad::data2() {
+auto SFCGamepad::data2() -> uint5 {
   return 0;
 }
 
-void SFCGamepad::latch(bool data) {
+auto SFCGamepad::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
   counter = 0;
 
   if(latched == 0) {
-    b      = poll( 0);
-    y      = poll( 1);
-    select = poll( 2);
-    start  = poll( 3);
-    up     = poll( 4);
-    down   = poll( 5);
-    left   = poll( 6);
-    right  = poll( 7);
-    a      = poll( 8);
-    x      = poll( 9);
-    l      = poll(10);
-    r      = poll(11);
+    b      = poll(B);
+    y      = poll(Y);
+    select = poll(Select);
+    start  = poll(Start);
+    up     = poll(Up);
+    down   = poll(Down);
+    left   = poll(Left);
+    right  = poll(Right);
+    a      = poll(A);
+    x      = poll(X);
+    l      = poll(L);
+    r      = poll(R);
   }
 }
-
-SFCGamepad::SFCGamepad(unsigned port):
-Controller(port, (unsigned)Input::Device::SFCJoypad) {
-  latched = 0;
-  counter = 0;
-
-  b = y = select = start = 0;
-  up = down = left = right = 0;
-  a = x = l = r = 0;
-}
-
-#endif

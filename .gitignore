@@ -1,5 +1,3 @@
-auto_purify/obj/*
-auto_purify/auto_purify.dll
 cart-pal/obj/*
 cart-pal/cart-pal.exe
 obj/*

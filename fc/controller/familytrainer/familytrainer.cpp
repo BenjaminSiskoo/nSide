@@ -1,6 +1,21 @@
-#ifdef CONTROLLER_CPP
+FamilyTrainer::FamilyTrainer(uint port) : Controller(port, (uint)Device::ID::FamilyTrainer) {
+  latched = 0;
+  counter = 0;
 
-uint5 FamilyTrainer::data() {
+  b1 = b2 = b3 = b4 = 0;
+  b5 = b6 = b7 = b8 = 0;
+  b9 = b10 = b11 = b12 = 0;
+}
+
+auto FamilyTrainer::data() -> uint5 {
+  return data2();
+}
+
+auto FamilyTrainer::data1() -> uint2 {
+  return 0;
+}
+
+auto FamilyTrainer::data2() -> uint5 {
   if(counter >= 8) return 0x18;
   if(latched == 1) return (b2 << 3) | (b4 << 4);
 
@@ -16,15 +31,7 @@ uint5 FamilyTrainer::data() {
   }
 }
 
-uint2 FamilyTrainer::data1() {
-  return 0;
-}
-
-uint5 FamilyTrainer::data2() {
-  return data();
-}
-
-void FamilyTrainer::latch(bool data) {
+auto FamilyTrainer::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
   counter = 0;
@@ -44,15 +51,3 @@ void FamilyTrainer::latch(bool data) {
     b12 = poll(11);
   }
 }
-
-FamilyTrainer::FamilyTrainer(unsigned port):
-Controller(port, (unsigned)Input::Device::FamilyTrainer) {
-  latched = 0;
-  counter = 0;
-
-  b1 = b2 = b3 = b4 = 0;
-  b5 = b6 = b7 = b8 = 0;
-  b9 = b10 = b11 = b12 = 0;
-}
-
-#endif

@@ -1,10 +1,6 @@
-#ifdef VS_ARCADE_BOARD_CPP
-
-void VSArcadeBoard::serialize(serializer& s) {
+auto VSArcadeBoard::serialize(serializer& s) -> void {
   s.array(ram);
 
   s.integer(swap_controllers);
   s.integer(dip);
 }
-
-#endif

@@ -1,6 +1,5 @@
 #include <fc/fc.hpp>
 
-#define CARTRIDGE_CPP
 namespace Famicom {
 
 #include "markup.cpp"
@@ -8,23 +7,36 @@ namespace Famicom {
 #include "board/board.cpp"
 Cartridge cartridge;
 
-string Cartridge::title() {
-  //if(information.title.famicomDiskSystem.empty() == false) {
-  //  return {information.title.cartridge, " + ", information.title.famicomDiskSystem};
+auto Cartridge::manifest() -> string {
+  string manifest = information.markup.cartridge;
+
+  //if(information.markup.famicomDiskSystem) {
+  //  manifest.append("\n[[Famicom Disk System]]\n\n");
+  //  manifest.append(information.markup.famicomDiskSystem);
   //}
 
-  return information.title.cartridge;
+  return manifest;
 }
 
-void Cartridge::Enter() {
+auto Cartridge::title() -> string {
+  string title = information.title.cartridge;
+
+  //if(information.title.famicomDiskSystem) {
+  //  title.append(" + ", information.title.famicomDiskSystem);
+  //}
+
+  return title;
+}
+
+auto Cartridge::Enter() -> void {
   cartridge.enter();
 }
 
-void Cartridge::enter() {
+auto Cartridge::enter() -> void {
   board->enter();
 }
 
-void Cartridge::load(System::Revision revision) {
+auto Cartridge::load(System::Revision revision) -> void {
   _region = Region::NTSC;
   system.revision = revision;
 
@@ -50,7 +62,7 @@ void Cartridge::load(System::Revision revision) {
   _loaded = true;
 }
 
-void Cartridge::unload() {
+auto Cartridge::unload() -> void {
   if(_loaded) {
     system.unload();
 
@@ -59,36 +71,36 @@ void Cartridge::unload() {
   }
 }
 
-void Cartridge::power() {
+auto Cartridge::power() -> void {
   board->power();
 }
 
-void Cartridge::reset() {
-  create(Cartridge::Enter, system.cpu_frequency());
+auto Cartridge::reset() -> void {
+  create(Cartridge::Enter, system.cpuFrequency());
   board->reset();
 }
 
-uint8 Cartridge::prg_read(unsigned addr) {
+auto Cartridge::prg_read(uint addr) -> uint8 {
   return board->prg_read(addr);
 }
 
-void Cartridge::prg_write(unsigned addr, uint8 data) {
+auto Cartridge::prg_write(uint addr, uint8 data) -> void {
   return board->prg_write(addr, data);
 }
 
-uint8 Cartridge::chr_read(unsigned addr) {
+auto Cartridge::chr_read(uint addr) -> uint8 {
   return board->chr_read(addr);
 }
 
-void Cartridge::chr_write(unsigned addr, uint8 data) {
+auto Cartridge::chr_write(uint addr, uint8 data) -> void {
   return board->chr_write(addr, data);
 }
 
-void Cartridge::scanline(unsigned y) {
+auto Cartridge::scanline(uint y) -> void {
   return board->scanline(y);
 }
 
-void Cartridge::serialize(serializer& s) {
+auto Cartridge::serialize(serializer& s) -> void {
   Thread::serialize(s);
   return board->serialize(s);
 }

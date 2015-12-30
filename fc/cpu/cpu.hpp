@@ -1,26 +1,28 @@
 struct CPU : Processor::R6502, Thread {
+  CPU();
+
+  alwaysinline auto step(uint clocks) -> void;
+  alwaysinline auto synchronizeAPU() -> void;
+  auto synchronizePPU() -> void;
+  auto synchronizeCartridge() -> void;
+  auto synchronizeDevices() -> void;
+
+  auto debugger_read(uint16 addr) -> uint8;
+
+  auto ram_read(uint16 addr) -> uint8;
+  auto ram_write(uint16 addr, uint8 data) -> void;
+
+  auto read(uint16 addr) -> uint8;
+  auto write(uint16 addr, uint8 data) -> void;
+
+  auto enter() -> void;
+  auto main() -> void;
+  auto power() -> void;
+  auto reset() -> void;
+
+  auto serialize(serializer&) -> void;
+
   uint8 ram[0x0800];
-
-  alwaysinline void step(unsigned clocks);
-  alwaysinline void synchronize_apu();
-  void synchronize_ppu();
-  void synchronize_cartridge();
-  void synchronize_controllers();
-
-  void enter();
-  void main();
-  void power();
-  void reset();
-
-  uint8 debugger_read(uint16 addr);
-
-  uint8 ram_read(uint16 addr);
-  void ram_write(uint16 addr, uint8 data);
-
-  uint8 read(uint16 addr);
-  void write(uint16 addr, uint8 data);
-
-  void serialize(serializer&);
 
 //privileged:
   #include "timing/timing.hpp"
@@ -38,10 +40,6 @@ struct CPU : Processor::R6502, Thread {
 
     bool oam_dma_pending;
     uint8 oam_dma_page;
-
-    //bool controller_latch;
-    //unsigned controller_port0;
-    //unsigned controller_port1;
   } status;
 
   static void Enter();

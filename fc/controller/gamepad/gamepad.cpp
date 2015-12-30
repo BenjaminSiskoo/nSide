@@ -1,8 +1,14 @@
-#ifdef CONTROLLER_CPP
+Gamepad::Gamepad(uint port) : Controller(port, (uint)Device::ID::Gamepad) {
+  latched = 0;
+  counter = 0;
 
-uint5 Gamepad::data() {
+  a = b = select = start = 0;
+  up = down = left = right = 0;
+}
+
+auto Gamepad::data() -> uint5 {
   if(counter >= 8) return 1;
-  if(latched == 1) return poll((unsigned)Input::JoypadID::A);
+  if(latched == 1) return poll(A);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -17,43 +23,32 @@ uint5 Gamepad::data() {
   }
 }
 
-uint2 Gamepad::data1() {
+auto Gamepad::data1() -> uint2 {
   return ((data() << 1) & 0x02);
 }
 
-uint5 Gamepad::data2() {
+auto Gamepad::data2() -> uint5 {
   return 0;
 }
 
-void Gamepad::latch(bool data) {
+auto Gamepad::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
   counter = 0;
 
   if(latched == 0) {
-    a      = poll(0);
-    b      = poll(1);
+    a      = poll(A);
+    b      = poll(B);
     if(!system.vs()) {
-      select = poll(2);
-      start  = poll(3);
+      select = poll(Select);
+      start  = poll(Start);
     } else {
       select = 0;
       start  = 0;
     }
-    up     = poll(4);
-    down   = poll(5);
-    left   = poll(6);
-    right  = poll(7);
+    up     = poll(Up);
+    down   = poll(Down);
+    left   = poll(Left);
+    right  = poll(Right);
   }
 }
-
-Gamepad::Gamepad(unsigned port):
-Controller(port, (unsigned)Input::Device::Joypad) {
-  latched = 0;
-  counter = 0;
-
-  a = b = select = start = 0;
-  up = down = left = right = 0;
-}
-
-#endif

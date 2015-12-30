@@ -1,61 +1,59 @@
-//JALECO-JF-16
+  //JALECO-JF-16
 
 struct JalecoJF16 : Board {
-
-uint3 prg_bank;
-uint4 chr_bank;
-bool nametable;
-
-uint8 prg_read(unsigned addr) {
-  switch(addr & 0xc000) {
-  case 0x8000: return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
-  case 0xc000: return read(prgrom, (    0x07 << 14) | (addr & 0x3fff));
+  JalecoJF16(Markup::Node& board_node) : Board(board_node) {
   }
-}
 
-void prg_write(unsigned addr, uint8 data) {
-  if(addr & 0x8000) {
-    // Bus conflicts
-    data &= prg_read(addr);
-    prg_bank = (data & 0x07) >> 0;
-    nametable = data & 0x08;
-    chr_bank = (data & 0xf0) >> 4;
+  auto prg_read(uint addr) -> uint8 {
+    switch(addr & 0xc000) {
+    case 0x8000: return read(prgrom, (prg_bank << 14) | (addr & 0x3fff));
+    case 0xc000: return read(prgrom, (    0x07 << 14) | (addr & 0x3fff));
+    }
   }
-}
 
-uint8 chr_read(unsigned addr) {
-  if(addr & 0x2000) {
-    addr = (nametable << 10) | (addr & 0x03ff);
-    return ppu.ciram_read(addr);
+  auto prg_write(uint addr, uint8 data) -> void {
+    if(addr & 0x8000) {
+      // Bus conflicts
+      data &= prg_read(addr);
+      prg_bank = (data & 0x07) >> 0;
+      nametable = data & 0x08;
+      chr_bank = (data & 0xf0) >> 4;
+    }
   }
-  return Board::chr_read((chr_bank * 0x2000) + (addr & 0x1fff));
-}
 
-void chr_write(unsigned addr, uint8 data) {
-  if(addr & 0x2000) {
-    addr = (nametable << 10) | (addr & 0x03ff);
-    return ppu.ciram_write(addr, data);
+  auto chr_read(uint addr) -> uint8 {
+    if(addr & 0x2000) {
+      addr = (nametable << 10) | (addr & 0x03ff);
+      return ppu.ciram_read(addr);
+    }
+    return Board::chr_read((chr_bank * 0x2000) + (addr & 0x1fff));
   }
-  Board::chr_write((chr_bank * 0x2000) + (addr & 0x1fff), data);
-}
 
-void power() {
-}
+  auto chr_write(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) {
+      addr = (nametable << 10) | (addr & 0x03ff);
+      return ppu.ciram_write(addr, data);
+    }
+    Board::chr_write((chr_bank * 0x2000) + (addr & 0x1fff), data);
+  }
 
-void reset() {
-  prg_bank = 0;
-  chr_bank = 0;
-  nametable = 0;
-}
+  auto power() -> void {
+  }
 
-void serialize(serializer& s) {
-  Board::serialize(s);
-  s.integer(prg_bank);
-  s.integer(chr_bank);
-  s.integer(nametable);
-}
+  auto reset() -> void {
+    prg_bank = 0;
+    chr_bank = 0;
+    nametable = 0;
+  }
 
-JalecoJF16(Markup::Node& cartridge) : Board(cartridge) {
-}
+  auto serialize(serializer& s) -> void {
+    Board::serialize(s);
+    s.integer(prg_bank);
+    s.integer(chr_bank);
+    s.integer(nametable);
+  }
 
+  uint3 prg_bank;
+  uint4 chr_bank;
+  bool nametable;
 };

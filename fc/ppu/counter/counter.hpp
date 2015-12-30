@@ -1,19 +1,19 @@
 class PPUcounter {
 public:
-  alwaysinline void tick(unsigned clocks);
+  alwaysinline auto tick(uint clocks) -> void;
 
-  alwaysinline bool   field   () const;
-  alwaysinline uint16 vcounter() const;
-  alwaysinline uint16 hcounter() const;
-  alwaysinline bool   skip    () const;
-  inline uint16 lineclocks() const;
+  alwaysinline auto field   () const -> bool;
+  alwaysinline auto vcounter() const -> uint16;
+  alwaysinline auto hcounter() const -> uint16;
+  alwaysinline auto skip    () const -> bool;
+  inline auto lineclocks() const -> uint16;
 
-  inline void reset();
-  function<void ()> scanline;
-  void serialize(serializer&);
+  inline auto reset() -> void;
+  function<auto () -> void> scanline;
+  auto serialize(serializer&) -> void;
 
 //private:
-  inline void vcounter_tick();
+  inline auto vcounter_tick() -> void;
 
   struct {
     bool field;

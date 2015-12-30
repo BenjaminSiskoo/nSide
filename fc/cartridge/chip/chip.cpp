@@ -16,7 +16,7 @@
 #include "vrc6.cpp"
 #include "vrc7.cpp"
 
-void Chip::tick() {
+auto Chip::tick() -> void {
   board.tick();
 }
 

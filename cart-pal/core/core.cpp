@@ -1,5 +1,7 @@
 CartPal::CartPal() {
-  //database.famicom = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Famicom.bml")));
+  database.famicom = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Famicom.bml")));
+  database.vsSystem = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/VS. System.bml")));
+  database.playchoice10 = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/PlayChoice-10.bml")));
   database.superFamicom = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Super Famicom.bml")));
   database.gameBoy = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Game Boy.bml")));
   database.gameBoyColor = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Game Boy Color.bml")));
@@ -27,7 +29,9 @@ auto CartPal::manifest(string location) -> string {
   if(!directory::exists(location)) return "";
 
   auto type = suffixname(location).downcase();
-  //if(type == ".fc") return famicomManifest(location);
+  if(type == ".fc") return famicomManifest(location);
+  if(type == ".vs") return vsSystemManifest(location);
+  if(type == ".pc10") return playchoice10Manifest(location);
   if(type == ".sfc") return superFamicomManifest(location);
   if(type == ".gb") return gameBoyManifest(location);
   if(type == ".gbc") return gameBoyColorManifest(location);
@@ -60,7 +64,9 @@ auto CartPal::import(string location) -> bool {
     buffer = zip.extract(zip.file[0]);
   }
 
-  //if(type == ".fc" || type == ".nes") return famicomImport(buffer, location);
+  if(type == ".fc" || type == ".nes") return famicomImport(buffer, location);
+  if(type == ".vs") return vsSystemImport(buffer, location);
+  if(type == ".pc10") return playchoice10Import(buffer, location);
   if(type == ".sfc" || type == ".smc") return superFamicomImport(buffer, location);
   if(type == ".gb") return gameBoyImport(buffer, location);
   if(type == ".gbc") return gameBoyColorImport(buffer, location);

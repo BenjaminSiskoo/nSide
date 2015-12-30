@@ -1,110 +1,108 @@
 struct NES_Event : Board {
+  NES_Event(Markup::Node& board_node) : Board(board_node), mmc1(*this, board_node) {
+    dip = interface->dipSettings(BML::unserialize({
+      "setting name=Time\n",
+      "  option value=4 name=6:14.96\n",
+      "  option value=0 name=4:59.97\n",
+      "  option value=1 name=5:18.71\n",
+      "  option value=2 name=5:37.46\n",
+      "  option value=3 name=5:56.21\n",
+      "  option value=5 name=6:33.71\n",
+      "  option value=6 name=6:52.45\n",
+      "  option value=7 name=7:11.20\n",
+      "  option value=8 name=7:29.95\n",
+      "  option value=9 name=7:48.70\n",
+      "  option value=10 name=8:07.44\n",
+      "  option value=11 name=8:26.19\n",
+      "  option value=12 name=8:44.94\n",
+      "  option value=13 name=9:03.69\n",
+      "  option value=14 name=9:22.44\n",
+      "  option value=15 name=9:41.18\n",
+    }));
+  }
 
-MMC1 mmc1;
-uint2 prg_lock;
-uint30 irq_counter;
-uint4 dip;
-
-void enter() {
-  while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-    }
-
-    if(mmc1.writedelay) mmc1.writedelay--;
-    switch(prg_lock) {
-    case 0: if((mmc1.chr_bank[0] & 0x10) == 0x10) prg_lock++; break;
-    case 1: if((mmc1.chr_bank[0] & 0x10) == 0x00) prg_lock++; break;
-    case 2:
-      if((mmc1.chr_bank[0] & 0x10) == 0x00) irq_counter++;
-      if((mmc1.chr_bank[0] & 0x10) == 0x10) {
-        irq_counter = 0x00000000;
-        cpu.set_irq_line(0);
+  auto enter() -> void {
+    while(true) {
+      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
+        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
       }
-      break;
+
+      if(mmc1.writedelay) mmc1.writedelay--;
+      switch(prg_lock) {
+      case 0: if((mmc1.chr_bank[0] & 0x10) == 0x10) prg_lock++; break;
+      case 1: if((mmc1.chr_bank[0] & 0x10) == 0x00) prg_lock++; break;
+      case 2:
+        if((mmc1.chr_bank[0] & 0x10) == 0x00) irq_counter++;
+        if((mmc1.chr_bank[0] & 0x10) == 0x10) {
+          irq_counter = 0x00000000;
+          cpu.set_irq_line(0);
+        }
+        break;
+      }
+      if(irq_counter == (0x20000000 | (dip << 25))) cpu.set_irq_line(1);
+      tick();
     }
-    if(irq_counter == (0x20000000 | (dip << 25))) cpu.set_irq_line(1);
-    tick();
-  }
-}
-
-unsigned prg_addr(unsigned addr) {
-  if(prg_lock < 2) return addr & 0x7fff;
-  switch(mmc1.chr_bank[0] & 0x08) {
-  case 0: return ((mmc1.chr_bank[0] & 0x06) << 14) | (addr & 0x7fff);
-  case 8: return mmc1.prg_addr(addr) | 0x20000;
-  }
-}
-
-uint8 prg_read(unsigned addr) {
-  if((addr & 0xe000) == 0x6000) {
-    if(mmc1.ram_disable) return 0x00;
-    if(prgram.size() > 0) return read(prgram, addr);
   }
 
-  if(addr & 0x8000) {
-    return read(prgrom, prg_addr(addr));
+  auto prg_addr(uint addr) -> uint {
+    if(prg_lock < 2) return addr & 0x7fff;
+    switch(mmc1.chr_bank[0] & 0x08) {
+    case 0: return ((mmc1.chr_bank[0] & 0x06) << 14) | (addr & 0x7fff);
+    case 8: return mmc1.prg_addr(addr) | 0x20000;
+    }
   }
 
-  return cpu.mdr();
-}
+  auto prg_read(uint addr) -> uint8 {
+    if((addr & 0xe000) == 0x6000) {
+      if(mmc1.ram_disable) return 0x00;
+      if(prgram.size() > 0) return read(prgram, addr);
+    }
 
-void prg_write(unsigned addr, uint8 data) {
-  if((addr & 0xe000) == 0x6000) {
-    if(mmc1.ram_disable) return;
-    if(prgram.size() > 0) return write(prgram, addr, data);
+    if(addr & 0x8000) {
+      return read(prgrom, prg_addr(addr));
+    }
+
+    return cpu.mdr();
   }
 
-  if(addr & 0x8000) return mmc1.mmio_write(addr, data);
-}
+  auto prg_write(uint addr, uint8 data) -> void {
+    if((addr & 0xe000) == 0x6000) {
+      if(mmc1.ram_disable) return;
+      if(prgram.size() > 0) return write(prgram, addr, data);
+    }
 
-uint8 chr_read(unsigned addr) {
-  if(addr & 0x2000) return ppu.ciram_read(mmc1.ciram_addr(addr));
-  return Board::chr_read(addr);
-}
+    if(addr & 0x8000) return mmc1.mmio_write(addr, data);
+  }
 
-void chr_write(unsigned addr, uint8 data) {
-  if(addr & 0x2000) return ppu.ciram_write(mmc1.ciram_addr(addr), data);
-  return Board::chr_write(addr, data);
-}
+  auto chr_read(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciram_read(mmc1.ciram_addr(addr));
+    return Board::chr_read(addr);
+  }
 
-void power() {
-  mmc1.power();
-}
+  auto chr_write(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciram_write(mmc1.ciram_addr(addr), data);
+    return Board::chr_write(addr, data);
+  }
 
-void reset() {
-  mmc1.reset();
-  prg_lock = 0;
-  irq_counter = 0x00000000;
-}
+  auto power() -> void {
+    mmc1.power();
+  }
 
-void serialize(serializer& s) {
-  Board::serialize(s);
-  mmc1.serialize(s);
-  s.integer(prg_lock);
-  s.integer(irq_counter);
-}
+  auto reset() -> void {
+    mmc1.reset();
+    prg_lock = 0;
+    irq_counter = 0x00000000;
+  }
 
-NES_Event(Markup::Node& cartridge) : Board(cartridge), mmc1(*this, cartridge) {
-  dip = interface->dipSettings(BML::unserialize({
-    "setting name=Time\n",
-    "  option value=4 name=6:14.96\n",
-    "  option value=0 name=4:59.97\n",
-    "  option value=1 name=5:18.71\n",
-    "  option value=2 name=5:37.46\n",
-    "  option value=3 name=5:56.21\n",
-    "  option value=5 name=6:33.71\n",
-    "  option value=6 name=6:52.45\n",
-    "  option value=7 name=7:11.20\n",
-    "  option value=8 name=7:29.95\n",
-    "  option value=9 name=7:48.70\n",
-    "  option value=10 name=8:07.44\n",
-    "  option value=11 name=8:26.19\n",
-    "  option value=12 name=8:44.94\n",
-    "  option value=13 name=9:03.69\n",
-    "  option value=14 name=9:22.44\n",
-    "  option value=15 name=9:41.18\n",
-  }));
-}
+  auto serialize(serializer& s) -> void {
+    Board::serialize(s);
+    mmc1.serialize(s);
+    s.integer(prg_lock);
+    s.integer(irq_counter);
+  }
 
+  MMC1 mmc1;
+  uint2 prg_lock;
+  uint30 irq_counter;
+  uint4 dip;
 };
