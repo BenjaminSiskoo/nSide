@@ -212,6 +212,45 @@ vs sha256:90087521b810c3d90af8aed726d19804d82cc5af4f1a52b34dcd551332d284bd
   :  name:     Ice Climber
   :  title:    VS. Ice Climber
 
+vs sha256:38bb20d530fbcafecac41222b47b5eec5929e2d43a6fe69daf384085dd506c4c
+  :side
+  :  ppu revision=RP2C04-0004
+  :  controller port=2 device=gamepad
+  :  controller port=1 device=gamepad
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x4000
+  :  setting name:Price
+  :    option value=0x00 name:1 Coin - 1 Credit
+  :    option value=0x01 name:2 Coins - 1 Credit
+  :    option value=0x05 name:3 Coins - 1 Credit
+  :    option value=0x03 name:4 Coins - 1 Credit
+  :    option value=0x04 name:1 Coin - 2 Credits
+  :    option value=0x02 name:1 Coin - 3 Credits
+  :    option value=0x06 name:1 Coin - 4 Credits
+  :    option value=0x07 name:Free Play
+  :  setting name:Lives
+  :    option value=0x00 name:3
+  :    option value=0x10 name:4
+  :    option value=0x08 name:5
+  :    option value=0x18 name:7
+  :  setting name:Icicles
+  :    option value=0x00 name:Less (Easy)
+  :    option value=0x20 name:More (Hard)
+  :  setting name:Time before Polar Bear
+  :    option value=0x00 name:Long (Easy)
+  :    option value=0x40 name:Short (Hard)
+  :
+  :information
+  :  serial:   MDS-IC
+  :  region:   NA
+  :  revision: 1.1
+  :  name:     Ice Climber
+  :  title:    VS. Ice Climber
+  :  //Requires holding Button 3 on the VS. Panel at startup.
+  :  //Bypass cheat code: b5fc/fe
+
 vs sha256:b920ad68b56c6fdbcd74659ac3d8340f2378a4c117bd6f15d653d23f2e633555
   :side
   :  ppu revision=RP2C04-0002
@@ -289,8 +328,8 @@ vs sha256:74ad66ebe7c931569db0a615f2225cf45ef11da1c9b5c956ecfe11c3991ea6ee
 vs sha256:eb774ce9f0c5da8ccaca2c6d680c96709beada8b7f74067eb4781b64e29de5bd
   :side
   :  ppu revision=RP2C03B
-  :  controller port=1 device=gamepad
   :  controller port=2 device=gamepad
+  :  controller port=1 device=gamepad
   :  prg
   :    rom name=program.rom size=0x8000
   :  chr
@@ -325,6 +364,7 @@ vs sha256:eb774ce9f0c5da8ccaca2c6d680c96709beada8b7f74067eb4781b64e29de5bd
   :  revision: 1.0
   :  name:     Pinball
   :  title:    VS.ピンボール
+  :  //Controlled using both controllers' A Buttons.
 
 vs sha256:963e0135121a522ad2ff1d7e4b018282eaad6531fc67a5774b5f462995a0653f
   :side
@@ -396,10 +436,48 @@ vs sha256:be2136bed65347c7f3c0e33ea5caf7a83c29113bcabb07a6a152cdb76a2a07c4
   :  revision: 1.0
   :  name:     Raid on Bungeling Bay
   :  title:    VS. Raid on Bungeling Bay
+  :  //Requires holding Buttons 3 and 4 on the VS. Panel at startup.
+  :  //Bypass cheat code: 96e0/e2
+
+vs sha256:9b95dc322fc25599bb7027463ea8ed83b792be004fe57767200a63f428c14232
+  :side
+  :  ppu revision=RC2C03B
+  :  controller port=1 device=gamepad
+  :  controller port=2 device=gamepad
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x4000
+  :  setting name:Price
+  :    option value=0x00 name:1 Coin - 1 Credit
+  :    option value=0x01 name:2 Coins - 1 Credit
+  :    option value=0x03 name:3 Coins - 1 Credit
+  :    option value=0x02 name:1 Coin - 2 Credits
+  :  setting name:0x04
+  :    option value=0x00 name:0x00
+  :    option value=0x04 name:0x04
+  :  setting name:0x08
+  :    option value=0x00 name:0x00
+  :    option value=0x08 name:0x08
+  :  setting name:0x10
+  :    option value=0x00 name:0x00
+  :    option value=0x10 name:0x10
+  :  setting name:PPU
+  :    option value=0x00 name:Rx2C03
+  :    option value=0x20 name:RP2C04-0001
+  :    option value=0x60 name:RP2C04-0002
+  :    option value=0xa0 name:RP2C04-0003
+  :    option value=0xe0 name:RP2C04-0004
+  :
+  :information
+  :  region:   NA
+  :  revision: 1.0
+  :  name:     Star Luster
+  :  title:    Star Luster
 
 vs sha256:c7ae61f4e850a8363c1546402334757727f3641acf41f28a2b7406145e7561f3
   :side
-    cpu revision=RP2A04
+  :  cpu revision=RP2A04
   :side
   :  ppu revision=RP2C04-0004
   :  controller port=1 device=gamepad
@@ -516,4 +594,44 @@ vs sha256:269a3cd6bdbf79ee9baed9b8835ec66136f10f515f68d6ffbb1681fa30ad0717
   :  revision: 1.0
   :  name:     Super SkyKid
   :  title:    Super SkyKid
+
+vs sha256:c19cabbc7b187b6190ee88192dc610a2f51021f6b22bf67aebbc5342f148ac1c
+  :side
+  :  ppu revision=RP2C04-0002
+  :  controller port=2 device=gamepad
+  :  controller port=1 device=gamepad
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x4000
+  :  setting name:Price
+  :    option value=0x01 name:1 Coin - 1 Credit
+  :    option value=0x05 name:2 Coins - 1 Credit
+  :    option value=0x03 name:3 Coins - 1 Credit
+  :    option value=0x07 name:4 Coins - 1 Credit
+  :    option value=0x06 name:1 Coin - 2 Credits
+  :    option value=0x02 name:1 Coin - 3 Credits
+  :    option value=0x04 name:1 Coin - 4 Credits
+  :    option value=0x00 name:Free Play
+  :  setting name:Hole Size
+  :    option value=0x00 name:Large
+  :    option value=0x08 name:Small
+  :  setting name:Scoring
+  :    option value=0x00 name:Par & up: Normal+1, Bogey: 0
+  :    option value=0x10 name:Par & up: Normal, Bogey: Normal
+  :  setting name:Starting Points
+  :    option value=0x00 name:10
+  :    option value=0x40 name:13
+  :    option value=0x20 name:16
+  :    option value=0x60 name:20
+  :  setting name:CPU Difficulty
+  :    option value=0x00 name:Easy
+  :    option value=0x80 name:Hard
+  :
+  :information
+  :  serial:   MDS-GF
+  :  region:   NA
+  :  revision: UniSystem
+  :  name:     Stroke & Match Golf
+  :  title:    Stroke & Match Golf
 
