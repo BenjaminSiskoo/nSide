@@ -13,7 +13,7 @@ struct SMPDebugger : Window {
   uint8 read(uint16 addr);
   void write(uint16 addr, uint8 data);
 
-  unsigned opcodeLength(uint16 addr);
+  uint opcodeLength(uint16 addr);
   void updateDisassembly();
   SMPDebugger();
 };

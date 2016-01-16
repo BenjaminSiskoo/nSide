@@ -33,12 +33,12 @@ void Tracer::enable(bool state) {
 
   //try not to overwrite existing traces: scan from 001-999.
   //if all files exist, use 000, even if it overwrites another log.
-  unsigned n = 1;
+  uint n = 1;
   do {
-    if(file::exists({ interface->pathName, "debug/trace-", decimal(n, 3L), ".log" }) == false) break;
+    if(file::exists({ interface->pathName, "debug/trace-", natural(n, 3L), ".log" }) == false) break;
   } while(++n <= 999);
 
-  string filename = { interface->pathName, "debug/trace-", decimal(n, 3L), ".log" };
+  string filename = { interface->pathName, "debug/trace-", natural(n, 3L), ".log" };
   if(fp.open(filename, file::mode::write) == false) return;
   debugger->print("Tracing to ", filename, "\n");
 }
@@ -46,8 +46,8 @@ void Tracer::enable(bool state) {
 Tracer::Tracer() {
   tracer = this;
   mask = false;
-  cpuMask = new uint8_t[0x200000]();
-  smpMask = new uint8_t[0x2000]();
+  cpuMask = new uint8[0x200000]();
+  smpMask = new uint8[0x2000]();
 }
 
 Tracer::~Tracer() {

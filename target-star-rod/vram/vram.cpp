@@ -34,13 +34,13 @@ VRAMViewer::VRAMViewer() {
 
   canvas.onMouseLeave = [&] { setStatusText(""); };
   canvas.onMouseMove = [&](Position position) {
-    unsigned x = position.x, y = position.y, mode = modeSelection.selection();
+    uint x = position.x, y = position.y, mode = modeSelection.selection();
     if(x >= 256 && mode >= 1) return setStatusText("");
     if(y >= 256 && mode >= 2) return setStatusText("");
     if(x >= 128 && mode >= 3) return setStatusText("");
     string output = { x, ", ", y, ", " };
     x /= 8, y /= 8;
-    unsigned tile = 0;
+    uint tile = 0;
     if(mode == 0) tile = y * 64 + x;
     if(mode == 1) tile = y * 32 + x;
     if(mode == 2) tile = y * 32 + x;
@@ -59,17 +59,17 @@ void VRAMViewer::modeChanged() {
   paletteSelection.reset();
   switch(modeSelection.selection()) {
   case 0: // 2BPP
-    for(unsigned bg = 0; bg < 4; bg++) {
-      for(unsigned palette = 0; palette < 8; palette++) {
+    for(uint bg = 0; bg < 4; bg++) {
+      for(uint palette = 0; palette < 8; palette++) {
         paletteSelection.append({"BG", bg, " ", palette});
       }
     }
     break;
   case 1: // 4BPP
-    for(unsigned palette = 0; palette < 8; palette++) {
+    for(uint palette = 0; palette < 8; palette++) {
       paletteSelection.append({"BG ", palette});
     }
-    for(unsigned palette = 0; palette < 8; palette++) {
+    for(uint palette = 0; palette < 8; palette++) {
       paletteSelection.append({"SP ", palette});
     }
     break;
@@ -86,23 +86,23 @@ void VRAMViewer::paletteChanged() {
 }
 
 void VRAMViewer::updateTiles() {
-  uint32_t* dp = canvas.data();
-  for(unsigned y = 0; y < 512; y++) {
-    for(unsigned x = 0; x < 512; x++) {
+  uint32* dp = canvas.data();
+  for(uint y = 0; y < 512; y++) {
+    for(uint x = 0; x < 512; x++) {
       *dp++ = 0xff800000;
     }
   }
   dp = canvas.data();
-  const uint8_t* sp = SuperFamicom::ppu.vram;
+  const uint8* sp = SuperFamicom::ppu.vram;
 
   switch(modeSelection.selection()) {
   case 0: // 2BPP
-    for(unsigned tileY = 0; tileY < 64; tileY++) {
-      for(unsigned tileX = 0; tileX < 64; tileX++) {
-        for(unsigned y = 0; y < 8; y++) {
-          uint8_t d[] = { sp[0], sp[1] };
-          for(unsigned x = 0; x < 8; x++) {
-            unsigned color = 0;
+    for(uint tileY = 0; tileY < 64; tileY++) {
+      for(uint tileX = 0; tileX < 64; tileX++) {
+        for(uint y = 0; y < 8; y++) {
+          uint8 d[] = { sp[0], sp[1] };
+          for(uint x = 0; x < 8; x++) {
+            uint color = 0;
             color += d[0] & 0x80 ? 1 : 0;
             color += d[1] & 0x80 ? 2 : 0;
             for(auto& b : d) b <<= 1;
@@ -120,12 +120,12 @@ void VRAMViewer::updateTiles() {
     break;
 
   case 1: // 4BPP
-    for(unsigned tileY = 0; tileY < 64; tileY++) {
-      for(unsigned tileX = 0; tileX < 32; tileX++) {
-        for(unsigned y = 0; y < 8; y++) {
-          uint8_t d[] = { sp[0], sp[1], sp[16], sp[17] };
-          for(unsigned x = 0; x < 8; x++) {
-            unsigned color = 0;
+    for(uint tileY = 0; tileY < 64; tileY++) {
+      for(uint tileX = 0; tileX < 32; tileX++) {
+        for(uint y = 0; y < 8; y++) {
+          uint8 d[] = { sp[0], sp[1], sp[16], sp[17] };
+          for(uint x = 0; x < 8; x++) {
+            uint color = 0;
             color += d[0] & 0x80 ? 1 : 0;
             color += d[1] & 0x80 ? 2 : 0;
             color += d[2] & 0x80 ? 4 : 0;
@@ -146,12 +146,12 @@ void VRAMViewer::updateTiles() {
     break;
 
   case 2: // 8BPP
-    for(unsigned tileY = 0; tileY < 32; tileY++) {
-      for(unsigned tileX = 0; tileX < 32; tileX++) {
-        for(unsigned y = 0; y < 8; y++) {
-          uint8_t d[] = { sp[0], sp[1], sp[16], sp[17], sp[32], sp[33], sp[48], sp[49] };
-          for(unsigned x = 0; x < 8; x++) {
-            unsigned color = 0;
+    for(uint tileY = 0; tileY < 32; tileY++) {
+      for(uint tileX = 0; tileX < 32; tileX++) {
+        for(uint y = 0; y < 8; y++) {
+          uint8 d[] = { sp[0], sp[1], sp[16], sp[17], sp[32], sp[33], sp[48], sp[49] };
+          for(uint x = 0; x < 8; x++) {
+            uint color = 0;
             color += d[0] & 0x80 ?   1 : 0;
             color += d[1] & 0x80 ?   2 : 0;
             color += d[2] & 0x80 ?   4 : 0;
@@ -174,11 +174,11 @@ void VRAMViewer::updateTiles() {
     break;
 
   case 3: // Mode 7
-    for(unsigned tileY = 0; tileY < 32; tileY++) {
-      for(unsigned tileX = 0; tileX < 16; tileX++) {
-        for(unsigned y = 0; y < 8; y++) {
-          for(unsigned x = 0; x < 8; x++) {
-            unsigned color = 0;
+    for(uint tileY = 0; tileY < 32; tileY++) {
+      for(uint tileX = 0; tileX < 16; tileX++) {
+        for(uint y = 0; y < 8; y++) {
+          for(uint x = 0; x < 8; x++) {
+            uint color = 0;
             color += sp[x << 1 | 1];
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;

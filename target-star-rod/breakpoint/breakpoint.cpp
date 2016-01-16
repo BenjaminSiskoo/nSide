@@ -2,7 +2,7 @@
 BreakpointEditor* breakpointEditor = nullptr;
 
 BreakpointEntry::BreakpointEntry() {
-  static unsigned id = 1;
+  static uint id = 1;
   enable.setText({ "#", id++ });
   addr.setFont(Font::monospace(8));
   data.setFont(Font::monospace(8));
@@ -49,7 +49,7 @@ BreakpointEditor::BreakpointEditor() {
 //cache settings to decrease testing overhead whilst debugging
 void BreakpointEditor::synchronize() {
   breakpoint.reset();
-  unsigned id = 0;
+  uint id = 0;
   for(auto &entry : breakpointEntry) {
     id++;
     if(entry.enable.checked() == false) continue;

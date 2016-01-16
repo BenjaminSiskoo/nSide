@@ -13,14 +13,14 @@ struct BreakpointEditor : Window {
   BreakpointEntry breakpointEntry[8];
 
   struct Breakpoint {
-    enum : unsigned { Read, Write, Exec };
-    enum : unsigned { CPU, SMP, VRAM, OAM, CGRAM };
-    unsigned id;
+    enum : uint { Read, Write, Exec };
+    enum : uint { CPU, SMP, VRAM, OAM, CGRAM };
+    uint id;
     bool compare;
-    unsigned addr;
-    unsigned data;
-    unsigned type;
-    unsigned source;
+    uint addr;
+    uint data;
+    uint type;
+    uint source;
   };
   vector<Breakpoint> breakpoint;
   vector<Breakpoint> breakpointReadCPU;

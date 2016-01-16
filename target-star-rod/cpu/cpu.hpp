@@ -13,10 +13,10 @@ struct CPUDebugger : Window {
     Button registers;
 
   uint24 mirror(uint24 addr);
-  uint8_t read(uint24 addr);
+  uint8 read(uint24 addr);
   void write(uint24 addr, uint8 data);
 
-  unsigned opcodeLength(uint24 addr);
+  uint opcodeLength(uint24 addr);
   void updateDisassembly();
   CPUDebugger();
 };

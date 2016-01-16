@@ -108,8 +108,8 @@ Geometry::Geometry(const string& text) {
   lstring part = text.split(",");
   x = integer(part(0, "256"));
   y = integer(part(1, "256"));
-  width = decimal(part(2, "256"));
-  height = decimal(part(3, "256"));
+  width = natural(part(2, "256"));
+  height = natural(part(3, "256"));
 }
 
 //Font

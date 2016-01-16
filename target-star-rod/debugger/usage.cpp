@@ -1,7 +1,7 @@
-void Usage::allocate(unsigned size_) {
+void Usage::allocate(uint size_) {
   if(data) delete[] data;
   size = size_;
-  data = new uint8_t[size]();
+  data = new uint8[size]();
 }
 
 Usage::Usage() {

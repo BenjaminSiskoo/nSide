@@ -22,6 +22,7 @@ bool Interface::loadCartridge(const string& foldername) {
 
   emulator->load(SuperFamicom::ID::SuperFamicom);
   emulator->power();
+  emulator->connect(SuperFamicom::ID::ControllerPort1, (uint)SuperFamicom::Device::ID::Gamepad);
 
   string name = pathName;
   name = basename(name);
@@ -35,7 +36,7 @@ bool Interface::loadCartridge(const string& foldername) {
 }
 
 //request from emulation core to load non-volatile media file
-void Interface::loadRequest(unsigned id, string path, bool required) {
+void Interface::loadRequest(uint id, string path, bool required) {
   string pathname = {this->path(emulator->group(id)), path};
   if(file::exists(pathname) == false && required) {
     debugger->print(
@@ -50,7 +51,7 @@ void Interface::loadRequest(unsigned id, string path, bool required) {
 }
 
 //request from emulation core to save non-volatile media file
-void Interface::saveRequest(unsigned id, string path, bool required) {
+void Interface::saveRequest(uint id, string path, bool required) {
   string pathname = {this->path(emulator->group(id)), path};
   filestream stream(pathname, file::mode::write);
   debugger->print("Saved ", pathname, "\n");
@@ -62,7 +63,7 @@ void Interface::unload() {
   lpath.reset();
 }
 
-bool Interface::loadState(unsigned slot) {
+bool Interface::loadState(uint slot) {
   string filename = {pathName, "state-", slot, ".bst"};
   auto memory = file::read(filename);
   if(memory.empty()) return false;
@@ -72,8 +73,8 @@ bool Interface::loadState(unsigned slot) {
   return result;
 }
 
-bool Interface::saveState(unsigned slot) {
-  SuperFamicom::system.runtosave();
+bool Interface::saveState(uint slot) {
+  SuperFamicom::system.runToSave();
   serializer s = SuperFamicom::system.serialize();
   string filename = {pathName, "state-", slot, ".bst"};
   bool result = file::write(filename, s.data(), s.size());
@@ -81,24 +82,24 @@ bool Interface::saveState(unsigned slot) {
   return result;
 }
 
-uint32_t Interface::videoColor(unsigned source, uint16_t a, uint16_t r, uint16_t g, uint16_t b) {
+uint32 Interface::videoColor(uint source, uint16 a, uint16 r, uint16 g, uint16 b) {
   a >>= 8, r >>= 8, g >>= 8, b >>= 8;
   return 255u << 24 | r << 16 | g << 8 | b << 0;
 }
 
 //hires is always true for accuracy core
 //overscan is ignored for the debugger port
-void Interface::videoRefresh(const uint32_t* palette, const uint32_t* data, unsigned pitch, unsigned width, unsigned height) {
-  uint32_t* output;
-  unsigned outputPitch;
+void Interface::videoRefresh(const uint32* palette, const uint32* data, uint pitch, uint width, uint height) {
+  uint32* output;
+  uint outputPitch;
 
   if(video->lock(output, outputPitch, width, height)) {
     pitch >>= 2, outputPitch >>= 2;
 
-    for(unsigned y = 0; y < height; y++) {
-      const uint32_t* sp = data + y * pitch;
-      uint32_t* dp = output + y * outputPitch;
-      for(unsigned x = 0; x < width; x++) {
+    for(uint y = 0; y < height; y++) {
+      const uint32* sp = data + y * pitch;
+      uint32* dp = output + y * outputPitch;
+      for(uint x = 0; x < width; x++) {
         *dp++ = palette[*sp++];
       }
     }
@@ -108,24 +109,24 @@ void Interface::videoRefresh(const uint32_t* palette, const uint32_t* data, unsi
   }
 
   /*
-  uint32_t* output = presentation->canvas.data();
+  uint32* output = presentation->canvas.data();
   pitch >>= 2;
 
   bool interlace = pitch == 512;
   if(interlace == false) {
-    for(unsigned y = 0; y < height; y++) {
-      const uint32_t *sp = data + y * pitch;
-      uint32_t* dp0 = output + y * pitch, *dp1 = dp0 + (pitch >> 1);
-      for(unsigned x = 0; x < width; x++) {
+    for(uint y = 0; y < height; y++) {
+      const uint32 *sp = data + y * pitch;
+      uint32* dp0 = output + y * pitch, *dp1 = dp0 + (pitch >> 1);
+      for(uint x = 0; x < width; x++) {
         *dp0++ = palette[*sp];
         *dp1++ = palette[*sp++];
       }
     }
   } else {
-    for(unsigned y = 0; y < height; y++) {
-      const uint32_t* sp = data + y * pitch;
-      uint32_t* dp = output + y * 512; // outputPitch
-      for(unsigned x = 0; x < width; x++) {
+    for(uint y = 0; y < height; y++) {
+      const uint32* sp = data + y * pitch;
+      uint32* dp = output + y * 512; // outputPitch
+      for(uint x = 0; x < width; x++) {
         *dp++ = palette[*sp++];
       }
     }
@@ -135,9 +136,9 @@ void Interface::videoRefresh(const uint32_t* palette, const uint32_t* data, unsi
   */
 }
 
-void Interface::audioSample(int16_t lsample, int16_t rsample) {
+void Interface::audioSample(int16 lsample, int16 rsample) {
   if(settings->audio.mute) lsample = 0, rsample = 0;
-  signed samples[] = {lsample, rsample};
+  int samples[] = {lsample, rsample};
   dspaudio.sample(samples);
   while(dspaudio.pending()) {
     dspaudio.read(samples);
@@ -145,25 +146,25 @@ void Interface::audioSample(int16_t lsample, int16_t rsample) {
   }
 }
 
-int16_t Interface::inputPoll(unsigned port, unsigned device, unsigned input) {
+int16 Interface::inputPoll(uint port, uint device, uint input) {
   if(presentation->focused() == false) return 0;
   auto keyboardState = phoenix::Keyboard::state();
 
-  if(port == 0) {
-    if(device == (unsigned)SuperFamicom::Input::Device::Joypad) {
-      switch((SuperFamicom::Input::JoypadID)input) {
-      case SuperFamicom::Input::JoypadID::B:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Z];
-      case SuperFamicom::Input::JoypadID::Y:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::A];
-      case SuperFamicom::Input::JoypadID::Select: return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Apostrophe];
-      case SuperFamicom::Input::JoypadID::Start:  return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Return];
-      case SuperFamicom::Input::JoypadID::Up:     return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Up];
-      case SuperFamicom::Input::JoypadID::Down:   return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Down];
-      case SuperFamicom::Input::JoypadID::Left:   return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Left];
-      case SuperFamicom::Input::JoypadID::Right:  return keyboardState[(unsigned)phoenix::Keyboard::Scancode::Right];
-      case SuperFamicom::Input::JoypadID::A:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::X];
-      case SuperFamicom::Input::JoypadID::X:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::S];
-      case SuperFamicom::Input::JoypadID::L:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::D];
-      case SuperFamicom::Input::JoypadID::R:      return keyboardState[(unsigned)phoenix::Keyboard::Scancode::C];
+  if(port == SuperFamicom::ID::ControllerPort1) {
+    if(device == (uint)SuperFamicom::Device::ID::Gamepad) {
+      switch(input) {
+      case SuperFamicom::Gamepad::B:      return keyboardState[(uint)phoenix::Keyboard::Scancode::Z];
+      case SuperFamicom::Gamepad::Y:      return keyboardState[(uint)phoenix::Keyboard::Scancode::A];
+      case SuperFamicom::Gamepad::Select: return keyboardState[(uint)phoenix::Keyboard::Scancode::Apostrophe];
+      case SuperFamicom::Gamepad::Start:  return keyboardState[(uint)phoenix::Keyboard::Scancode::Return];
+      case SuperFamicom::Gamepad::Up:     return keyboardState[(uint)phoenix::Keyboard::Scancode::Up];
+      case SuperFamicom::Gamepad::Down:   return keyboardState[(uint)phoenix::Keyboard::Scancode::Down];
+      case SuperFamicom::Gamepad::Left:   return keyboardState[(uint)phoenix::Keyboard::Scancode::Left];
+      case SuperFamicom::Gamepad::Right:  return keyboardState[(uint)phoenix::Keyboard::Scancode::Right];
+      case SuperFamicom::Gamepad::A:      return keyboardState[(uint)phoenix::Keyboard::Scancode::X];
+      case SuperFamicom::Gamepad::X:      return keyboardState[(uint)phoenix::Keyboard::Scancode::S];
+      case SuperFamicom::Gamepad::L:      return keyboardState[(uint)phoenix::Keyboard::Scancode::D];
+      case SuperFamicom::Gamepad::R:      return keyboardState[(uint)phoenix::Keyboard::Scancode::C];
       }
     }
   }
@@ -171,7 +172,7 @@ int16_t Interface::inputPoll(unsigned port, unsigned device, unsigned input) {
   return 0;
 }
 
-string Interface::path(unsigned group) {
+string Interface::path(uint group) {
   return lpath(group);
 }
 

@@ -11,7 +11,7 @@ uint24 CPUDebugger::mirror(uint24 addr) {
 uint8 CPUDebugger::read(uint24 addr) {
   if((addr & 0x40e000) == 0x2000) return ~0;  //$00-3f|80-bf:2000-3fff  MMIO
   if((addr & 0x40e000) == 0x4000) return ~0;  //$00-3f|80-bf:4000-5fff  MMIO
-  return SuperFamicom::bus.read(mirror(addr));
+  return SuperFamicom::bus.read(mirror(addr), SuperFamicom::cpu.regs.mdr);
 }
 
 void CPUDebugger::write(uint24 addr, uint8 data) {
@@ -21,10 +21,10 @@ void CPUDebugger::write(uint24 addr, uint8 data) {
   return SuperFamicom::bus.write(mirror(addr), data);
 }
 
-unsigned CPUDebugger::opcodeLength(uint24 addr) {
+uint CPUDebugger::opcodeLength(uint24 addr) {
   #define M 5
   #define X 6
-  static unsigned lengthTable[256] = {
+  static uint lengthTable[256] = {
     2, 2, 2, 2,  2, 2, 2, 2,  1, M, 1, 1,  3, 3, 3, 4,
     2, 2, 2, 2,  2, 2, 2, 2,  1, 3, 1, 1,  3, 3, 3, 4,
     3, 2, 4, 2,  2, 2, 2, 2,  1, M, 1, 1,  3, 3, 3, 4,
@@ -46,7 +46,7 @@ unsigned CPUDebugger::opcodeLength(uint24 addr) {
     2, 2, 2, 2,  3, 2, 2, 2,  1, 3, 1, 1,  3, 3, 3, 4,
   };
 
-  unsigned length = lengthTable[SuperFamicom::bus.read(addr)];
+  uint length = lengthTable[SuperFamicom::bus.read(addr, SuperFamicom::cpu.regs.mdr)];
   if(length == M) return 3 - (SuperFamicom::cpu.regs.e | SuperFamicom::cpu.regs.p.m);
   if(length == X) return 3 - (SuperFamicom::cpu.regs.e | SuperFamicom::cpu.regs.p.x);
   return length;
@@ -62,9 +62,9 @@ void CPUDebugger::updateDisassembly() {
   text[29] = 0;
   line[7] = { "> ", text };
 
-  signed addr = opcodePC;
-  for(signed o = 6; o >= 0; o--) {
-    for(signed b = 1; b <= 4; b++) {
+  int addr = opcodePC;
+  for(int o = 6; o >= 0; o--) {
+    for(int b = 1; b <= 4; b++) {
       if(addr - b >= 0 && (debugger->cpuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
         SuperFamicom::cpu.disassemble_opcode(text, addr + b, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
@@ -76,8 +76,8 @@ void CPUDebugger::updateDisassembly() {
   }
 
   addr = opcodePC;
-  for(signed o = 8; o <= 14; o++) {
-    for(signed b = 1; b <= 4; b++) {
+  for(int o = 8; o <= 14; o++) {
+    for(int b = 1; b <= 4; b++) {
       if(addr + b <= 0xffffff && (debugger->cpuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
         SuperFamicom::cpu.disassemble_opcode(text, addr - b, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);

@@ -1,9 +1,9 @@
 struct Usage {
-  enum : unsigned { Read = 4, Write = 2, Exec = 1 };
-  uint8_t* data;
-  unsigned size;
+  enum : uint { Read = 4, Write = 2, Exec = 1 };
+  uint8* data;
+  uint size;
 
-  void allocate(unsigned size);
+  void allocate(uint size);
   void reset();
   Usage();
   ~Usage();

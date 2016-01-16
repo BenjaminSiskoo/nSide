@@ -85,7 +85,7 @@ void Debugger::smp_op_exec(uint16 addr) {
   || flags.smp.stepInto
   || breakpointHit
   ) {
-    string text = SuperFamicom::smp.disassemble_opcode(addr, SuperFamicom::smp.regs.p.p);
+    string text = SuperFamicom::smp.disassemble(addr, SuperFamicom::smp.regs.p.p);
 
     if(debug.smp && tracer->enabled()) tracer->print(text, "\n");
     if((debug.smp && flags.step) || flags.smp.stepInto || breakpointHit) {
@@ -108,7 +108,7 @@ void Debugger::smp_op_read(uint16 addr, uint8 data) {
   bool breakpointHit = breakpointEditor->testReadSMP(addr);
 
   if(breakpointHit) {
-    print(SuperFamicom::smp.disassemble_opcode(smpDebugger->opcodePC, SuperFamicom::smp.regs.p.p), "\n");
+    print(SuperFamicom::smp.disassemble(smpDebugger->opcodePC, SuperFamicom::smp.regs.p.p), "\n");
     suspend();
     SuperFamicom::scheduler.debug();
   }
@@ -119,7 +119,7 @@ void Debugger::smp_op_write(uint16 addr, uint8 data) {
   bool breakpointHit = breakpointEditor->testWriteSMP(addr, data);
 
   if(breakpointHit) {
-    print(SuperFamicom::smp.disassemble_opcode(smpDebugger->opcodePC, SuperFamicom::smp.regs.p.p), "\n");
+    print(SuperFamicom::smp.disassemble(smpDebugger->opcodePC, SuperFamicom::smp.regs.p.p), "\n");
     suspend();
     SuperFamicom::scheduler.debug();
   }

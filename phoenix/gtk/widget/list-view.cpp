@@ -2,7 +2,7 @@ namespace phoenix {
 
 static void ListView_activate(GtkTreeView* treeView, GtkTreePath* path, GtkTreeViewColumn* column, ListView* self) {
   char* pathname = gtk_tree_path_to_string(path);
-  unsigned selection = decimal(pathname);
+  unsigned selection = natural(pathname);
   g_free(pathname);
   self->state.selection = selection;
   if(self->onActivate) self->onActivate();
@@ -12,7 +12,7 @@ static void ListView_change(GtkTreeView* treeView, ListView* self) {
   GtkTreeIter iter;
   if(!gtk_tree_selection_get_selected(gtk_tree_view_get_selection(treeView), 0, &iter)) return;  //should not be possible
   char* path = gtk_tree_model_get_string_from_iter(gtk_tree_view_get_model(treeView), &iter);
-  unsigned selection = decimal(path);
+  unsigned selection = natural(path);
   g_free(path);
 
   if(!self->state.selected || self->state.selection != selection) {
@@ -23,7 +23,7 @@ static void ListView_change(GtkTreeView* treeView, ListView* self) {
 }
 
 static void ListView_toggle(GtkCellRendererToggle* cell, gchar* path, ListView* self) {
-  unsigned selection = decimal(path);
+  unsigned selection = natural(path);
   self->setChecked(selection, !self->checked(selection));
   if(self->onToggle) self->onToggle(selection);
 }

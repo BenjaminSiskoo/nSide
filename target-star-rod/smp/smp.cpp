@@ -5,33 +5,33 @@ SMPDebugger* smpDebugger = nullptr;
 
 uint8 SMPDebugger::read(uint16 addr) {
   if((addr & 0xfff0) == 0x00f0) return ~0;  //$00f0-00ff  MMIO
-  return SuperFamicom::smp.op_busread(addr);
+  return SuperFamicom::smp.busRead(addr);
 }
 
 void SMPDebugger::write(uint16 addr, uint8 data) {
   if((addr & 0xfff0) == 0x00f0) return;  //$00f0-00ff  MMIO
-  return SuperFamicom::smp.op_buswrite(addr, data);
+  return SuperFamicom::smp.busWrite(addr, data);
 }
 
-unsigned SMPDebugger::opcodeLength(uint16 addr) {
-  static unsigned lengthTable[256] = {
+uint SMPDebugger::opcodeLength(uint16 addr) {
+  static uint lengthTable[256] = {
     0
   };
-  return lengthTable[SuperFamicom::smp.op_busread(addr)];
+  return lengthTable[SuperFamicom::smp.busRead(addr)];
 }
 
 void SMPDebugger::updateDisassembly() {
   string line[15];
 
-  line[7] = { "> ", SuperFamicom::smp.disassemble_opcode(opcodePC, SuperFamicom::smp.regs.p.p) };
+  line[7] = { "> ", SuperFamicom::smp.disassemble(opcodePC, SuperFamicom::smp.regs.p.p) };
   //line[7][31] = 0;
 
-  signed addr = opcodePC;
-  for(signed o = 6; o >= 0; o--) {
-    for(signed b = 1; b <= 3; b++) {
+  int addr = opcodePC;
+  for(int o = 6; o >= 0; o--) {
+    for(int b = 1; b <= 3; b++) {
       if(addr - b >= 0 && (debugger->apuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        line[o] = { "  ", SuperFamicom::smp.disassemble_opcode(addr, SuperFamicom::smp.regs.p.p) };
+        line[o] = { "  ", SuperFamicom::smp.disassemble(addr, SuperFamicom::smp.regs.p.p) };
         //line[o][31] = 0;
         break;
       }
@@ -39,11 +39,11 @@ void SMPDebugger::updateDisassembly() {
   }
 
   addr = opcodePC;
-  for(signed o = 8; o <= 14; o++) {
-    for(signed b = 1; b <= 3; b++) {
+  for(int o = 8; o <= 14; o++) {
+    for(int b = 1; b <= 3; b++) {
       if(addr - b <= 0xffff && (debugger->apuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        line[o] = { "  ", SuperFamicom::smp.disassemble_opcode(addr, SuperFamicom::smp.regs.p.p) };
+        line[o] = { "  ", SuperFamicom::smp.disassemble(addr, SuperFamicom::smp.regs.p.p) };
         //line[o][31] = 0;
         break;
       }

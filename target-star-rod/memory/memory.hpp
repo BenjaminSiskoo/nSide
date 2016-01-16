@@ -10,8 +10,8 @@ struct MemoryEditor : Window {
       Button update;
     HexEdit editor;
 
-  uint8_t read(unsigned addr);
-  void write(unsigned addr, uint8_t data);
+  uint8 read(uint addr);
+  void write(uint addr, uint8 data);
   void selectSource();
   void exportMemoryToDisk();
   void updateView();

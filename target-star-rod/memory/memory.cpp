@@ -47,7 +47,7 @@ MemoryEditor::MemoryEditor() {
   windowManager->append(this, "MemoryEditor");
 }
 
-uint8_t MemoryEditor::read(unsigned addr) {
+uint8 MemoryEditor::read(uint addr) {
   if(SuperFamicom::cartridge.loaded() == false) return 0x00;
   switch(source.selection()) {
   case 0: return cpuDebugger->read(addr);
@@ -59,7 +59,7 @@ uint8_t MemoryEditor::read(unsigned addr) {
   return ~0;
 }
 
-void MemoryEditor::write(unsigned addr, uint8_t data) {
+void MemoryEditor::write(uint addr, uint8 data) {
   if(SuperFamicom::cartridge.loaded() == false) return;
   switch(source.selection()) {
   case 0:
@@ -107,11 +107,11 @@ void MemoryEditor::exportMemoryToDisk() {
   file fp;
   if(fp.open(filename, file::mode::write) == false) return;
   switch(source.selection()) {
-  case 0: for(unsigned addr = 0; addr <= 0xffffff; addr++) fp.write(cpuDebugger->read(addr)); break;
-  case 1: for(unsigned addr = 0; addr <= 0xffff; addr++) fp.write(smpDebugger->read(addr)); break;
-  case 2: for(unsigned addr = 0; addr <= 0xffff; addr++) fp.write(SuperFamicom::ppu.vram[addr]); break;
-  case 3: for(unsigned addr = 0; addr <= 0x021f; addr++) fp.write(SuperFamicom::ppu.oam[addr]); break;
-  case 4: for(unsigned addr = 0; addr <= 0x01ff; addr++) fp.write(SuperFamicom::ppu.cgram[addr]); break;
+  case 0: for(uint addr = 0; addr <= 0xffffff; addr++) fp.write(cpuDebugger->read(addr)); break;
+  case 1: for(uint addr = 0; addr <= 0xffff; addr++) fp.write(smpDebugger->read(addr)); break;
+  case 2: for(uint addr = 0; addr <= 0xffff; addr++) fp.write(SuperFamicom::ppu.vram[addr]); break;
+  case 3: for(uint addr = 0; addr <= 0x021f; addr++) fp.write(SuperFamicom::ppu.oam[addr]); break;
+  case 4: for(uint addr = 0; addr <= 0x01ff; addr++) fp.write(SuperFamicom::ppu.cgram[addr]); break;
   }
   debugger->print("Exported memory to ", filename, "\n");
 }

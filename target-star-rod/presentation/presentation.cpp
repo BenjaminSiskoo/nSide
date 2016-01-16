@@ -26,11 +26,11 @@ Presentation::Presentation() {
 }
 
 void Presentation::showSplash() {
-  uint32_t* data;
-  unsigned pitch;
+  uint32* data;
+  uint pitch;
   if(video->lock(data, pitch, 512, 480)) {
-    for(unsigned y = 0; y < 480; y++) {
-      memcpy((uint8_t*)data + y * pitch, splash.data() + y * splash.pitch(), 512 * sizeof(uint32_t));
+    for(uint y = 0; y < 480; y++) {
+      memcpy((uint8*)data + y * pitch, splash.data() + y * splash.pitch(), 512 * sizeof(uint32));
     }
     video->unlock();
     video->refresh();
