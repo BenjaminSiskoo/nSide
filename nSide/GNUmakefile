@@ -1,4 +1,4 @@
-include nall/GNUmakefile
+include ../nall/GNUmakefile
 
 fc  := fc
 sfc := sfc
@@ -20,7 +20,7 @@ endif
 # console := true
 
 # compiler
-flags += -I. -O3
+flags += -I. -I.. -O3
 objects := libco
 
 # profile-guided optimization mode
@@ -77,7 +77,7 @@ compile = \
 
 all: build;
 
-obj/libco.o: libco/libco.c libco/*
+obj/libco.o: ../libco/libco.c ../libco/*
 
 include $(ui)/GNUmakefile
 flags := $(flags) $(foreach o,$(call strupper,$(options)),-D$o)

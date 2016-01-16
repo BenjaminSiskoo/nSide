@@ -27,19 +27,19 @@ else ifeq ($(platform),bsd)
   ruby := video.glx audio.openal input.x
 endif
 
-include ruby/GNUmakefile
+include ../ruby/GNUmakefile
 link += $(rubylink)
 
-include phoenix/GNUmakefile
+include ../phoenix/GNUmakefile
 link += $(phoenixlink)
 
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
-obj/ruby.o: ruby/ruby.cpp $(call rwildcard,ruby/)
+obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,ruby/)
 	$(compiler) $(rubyflags) -c $< -o $@
 
-obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/)
+obj/phoenix.o: ../phoenix/phoenix.cpp $(call rwildcard,phoenix/)
 	$(compiler) $(phoenixflags) -c $< -o $@
 
 obj/star-rod-laevateinn.o: $(ui)/laevateinn.cpp $(call rwildcard,$(ui)/)

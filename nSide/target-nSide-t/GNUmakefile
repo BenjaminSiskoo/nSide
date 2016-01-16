@@ -35,21 +35,21 @@ else ifeq ($(platform),bsd)
 endif
 
 # ruby
-include ruby/GNUmakefile
+include ../ruby/GNUmakefile
 link += $(rubylink)
 
 # hiro
-include hiro/GNUmakefile
+include ../hiro/GNUmakefile
 link += $(hirolink)
 
 # rules
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
-obj/ruby.o: ruby/ruby.cpp $(call rwildcard,ruby/)
+obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,ruby/)
 	$(compiler) $(rubyflags) -c $< -o $@
 
-obj/hiro.o: hiro/hiro.cpp $(call rwildcard,hiro/)
+obj/hiro.o: ../hiro/hiro.cpp $(call rwildcard,hiro/)
 	$(compiler) $(hiroflags) -c $< -o $@
 
 obj/ui-tomoko.o: $(ui)/tomoko.cpp $(call rwildcard,$(ui)/)
