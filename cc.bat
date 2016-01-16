@@ -1,5 +1,7 @@
 @echo off
 rem For use with Windows
+cd "nSide"
+
 mkdir "obj"
 
 rem Accuracy profile
@@ -19,5 +21,14 @@ mingw32-make -j4 profile=balanced name=nSide-t-balanced
 move "obj\sfc-*.o" "obj\balanced"
 move "obj\ui-settings.o" "obj\balanced"
 if not exist "out\nSide-t-balanced.exe" (pause)
+
+move "out\*.exe" ".."
+
+cd ".."
+cd "cart-pal"
+
+mingw32-make -j4
+if not exist "cart-pal.exe" (pause)
+move "*.exe" ".."
 
 @echo on
