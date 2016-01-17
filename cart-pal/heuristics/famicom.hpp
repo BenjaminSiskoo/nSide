@@ -5,6 +5,11 @@ struct FamicomCartridge {
   string markup;
 
 //private:
+  enum class Region : uint {
+    NTSC = 0,
+    PAL = 1,
+  };
+
   uint mapper;
   uint mirror;
   uint prgrom;
@@ -54,9 +59,9 @@ FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
     submapper |= data[8] >> 4;
     prgrom += (data[9] & 0x0f) * 0x400000;
     chrrom += (data[9] >> 4) * 0x200000;
-    prgram = (data[10] & 0x0f == 0 ? 0 : 64) << (data[10] & 0x0f); // no battery
+    prgram = ((data[10] & 0x0f) == 0 ? 0 : 64) << (data[10] & 0x0f); // no battery
     prgram += (data[10] >> 4 == 0 ? 0 : 64) << (data[10] >> 4); // battery
-    chrram = (data[11] & 0x0f == 0 ? 0 : 64) << (data[11] & 0x0f); // no battery
+    chrram = ((data[11] & 0x0f) == 0 ? 0 : 64) << (data[11] & 0x0f); // no battery
     chrram += (data[11] >> 4 == 0 ? 0 : 64) << (data[11] >> 4); // battery
     region = data[12] & 0x01;
     ppu = data[13] & 0x0f;
@@ -64,7 +69,7 @@ FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
 
   if(vs) { vsSystemHeuristic(data, size); return; }
 
-  markup.append("board region=", region == 0 ? "NTSC" : "PAL");
+  markup.append("board region=", region == (uint)Region::PAL ? "pal" : "ntsc", " ");
 
   switch(mapper) {
   default:

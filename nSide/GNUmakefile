@@ -19,7 +19,6 @@ else ifeq ($(target),star-rod)
 endif
 # console := true
 
-# compiler
 flags += -I. -I.. -O3
 objects := libco
 
@@ -46,23 +45,15 @@ ifeq ($(platform),windows)
   link += -Wl,-enable-runtime-pseudo-reloc
 else ifeq ($(platform),macosx)
   flags += -march=native
-else ifeq ($(platform),linux)
-  flags += -march=native -fopenmp
-  link += -fopenmp
-  link += -Wl,-export-dynamic
-  link += -lX11 -lXext
-else ifeq ($(platform),bsd)
+else ifneq ($(filter $(platform),linux bsd),)
   flags += -march=native -fopenmp
   link += -fopenmp
   link += -Wl,-export-dynamic
   link += -lX11 -lXext
 else
-  $(error unsupported platform.)
+  $(error "unsupported platform")
 endif
 
-ui := target-$(target)
-
-# implicit rules
 compile = \
   $(strip \
     $(if $(filter %.c,$<), \
@@ -77,39 +68,9 @@ compile = \
 
 all: build;
 
-obj/libco.o: ../libco/libco.c ../libco/*
-
+ui := target-$(target)
 include $(ui)/GNUmakefile
-flags := $(flags) $(foreach o,$(call strupper,$(options)),-D$o)
 
-# targets
 clean:
 	-@$(call delete,out/*)
-	-@$(call delete,obj/*.o)
-	-@$(call delete,obj/*.a)
-	-@$(call delete,obj/*.so)
-	-@$(call delete,obj/*.dylib)
-	-@$(call delete,obj/*.dll)
-
-archive:
-	if [ -f nSide.tar.xz ]; then rm nSide.tar.xz; fi
-	tar -cJf nSide.tar.xz `ls`
-
-sync:
-ifeq ($(shell id -un),byuu)
-	if [ -d ./libco ]; then rm -r ./libco; fi
-	if [ -d ./nall ]; then rm -r ./nall; fi
-	if [ -d ./ruby ]; then rm -r ./ruby; fi
-	if [ -d ./hiro ]; then rm -r ./hiro; fi
-	cp -r ../libco ./libco
-	cp -r ../nall ./nall
-	cp -r ../ruby ./ruby
-	cp -r ../hiro ./hiro
-	rm -r libco/doc
-	rm -r libco/-test
-	rm -r nall/-test
-	rm -r ruby/-test
-	rm -r hiro/-test
-endif
-
-help:;
+	-@$(call delete,obj/*)

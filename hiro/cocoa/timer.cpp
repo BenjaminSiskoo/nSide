@@ -1,6 +1,8 @@
+#if defined(Hiro_Timer)
+
 @implementation CocoaTimer : NSObject
 
--(id) initWith:(phoenix::Timer&)timerReference {
+-(id) initWith:(hiro::mTimer&)timerReference {
   if(self = [super init]) {
     timer = &timerReference;
     instance = nil;
@@ -17,44 +19,49 @@
     [instance invalidate];
     instance = nil;
   }
-  if(timer->state.enabled == false) return;
-  instance = [NSTimer
-    scheduledTimerWithTimeInterval:timer->state.interval / 1000.0
-    target:self selector:@selector(run:) userInfo:nil repeats:YES
-  ];
+  if(timer->enabled()) {
+    instance = [NSTimer
+      scheduledTimerWithTimeInterval:timer->state.interval / 1000.0
+      target:self selector:@selector(run:) userInfo:nil repeats:YES
+    ];
+  }
 }
 
 -(void) run:(NSTimer*)instance {
-  if(timer->onActivate) timer->onActivate();
+  if(timer->enabled()) {
+    timer->doActivate();
+  }
 }
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
-void pTimer::setEnabled(bool enabled) {
+auto pTimer::construct() -> void {
   @autoreleasepool {
-    [cocoaTimer update];
+    cocoaTimer = [[CocoaTimer alloc] initWith:self()];
   }
 }
 
-void pTimer::setInterval(unsigned interval) {
-  @autoreleasepool {
-    [cocoaTimer update];
-  }
-}
-
-void pTimer::constructor() {
-  @autoreleasepool {
-    cocoaTimer = [[CocoaTimer alloc] initWith:timer];
-  }
-}
-
-void pTimer::destructor() {
+auto pTimer::destruct() -> void {
   @autoreleasepool {
     if([cocoaTimer instance]) [[cocoaTimer instance] invalidate];
     [cocoaTimer release];
   }
 }
 
+auto pTimer::setEnabled(bool enabled) -> void {
+  @autoreleasepool {
+    [cocoaTimer update];
+  }
 }
+
+auto pTimer::setInterval(uint interval) -> void {
+  @autoreleasepool {
+    [cocoaTimer update];
+  }
+}
+
+}
+
+#endif

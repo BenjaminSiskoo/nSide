@@ -70,8 +70,7 @@ struct PPU : Thread, public PPUcounter {
   //debugger functions
   auto exportRegisters(string &markup) -> void;
 
-  uint32* surface;
-  uint32* output;
+  uint32* output = nullptr;
 
   struct Status {
     uint14 chr_abus;

@@ -14,7 +14,7 @@ auto Cartridge::parseMarkup(const string& markup) -> void {
   auto board = document["board"];
 
   this->information.title.cartridge = information["title"].text();
-  _region = board["cic"].text() == "413" ? Region::PAL : Region::NTSC;
+  _region = board["region"].text() == "pal" ? Region::PAL : Region::NTSC;
 
   mapping.reset();
   if(auto node = board["rom"]) parseMarkupROM(node);

@@ -10,7 +10,6 @@ struct PPU : Thread, public PPUcounter {
   auto latch_counters() -> void;
   auto interlace() const -> bool;
   auto overscan() const -> bool;
-  auto hires() const -> bool;
 
   auto enter() -> void;
   auto enable() -> void;
@@ -32,7 +31,6 @@ struct PPU : Thread, public PPUcounter {
   auto exportRegisters(string &markup) -> void;
 
 private:
-  uint32* surface;
   uint32* output;
 
   #include "mmio/mmio.hpp"

@@ -1,5 +1,4 @@
-#ifndef EMULATOR_HPP
-#define EMULATOR_HPP
+#pragma once
 
 #include <nall/nall.hpp>
 #include <nall/dsp.hpp>
@@ -8,10 +7,11 @@ using namespace nall;
 namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
-  static const string Version = "009.06";
-  static const string FromVersion = "096";
-  static const string Author = "byuu";
-  static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, hex_usr, and more...";
+  static const string Version = "009.07";
+  static const string FromVersion = "097";
+  static const string Author = "hex_usr";
+  static const string OriginalAuthor = "byuu";
+  static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, gekkio, and more...";
   static const string License = "GPLv3";
   static const string Website = "http://byuu.org/";
 
@@ -58,5 +58,3 @@ template<typename R, typename... P> struct hook<auto (P...) -> R> {
 #endif
 
 using varuint = varuint_t<uint>;
-
-#endif

@@ -1,6 +1,4 @@
-#ifndef FC_HPP
 namespace Famicom {
-#endif
 
 struct ID {
   enum : uint {
@@ -60,7 +58,9 @@ struct Interface : Emulator::Interface {
 
   auto cheatSet(const lstring&) -> void;
 
-  auto paletteUpdate(PaletteMode mode) -> void;
+  auto cap(const string& name) -> bool override;
+  auto get(const string& name) -> any override;
+  auto set(const string& name, const any& value) -> bool override;
 
   //debugger functions
   auto exportMemory() -> void;
@@ -75,8 +75,12 @@ private:
   auto addDevice(Device device) -> void;
 };
 
-extern Interface* interface;
+struct Settings {
+  bool colorEmulation = true;
+  bool scanlineEmulation = true;
+};
 
-#ifndef FC_HPP
+extern Interface* interface;
+extern Settings settings;
+
 }
-#endif

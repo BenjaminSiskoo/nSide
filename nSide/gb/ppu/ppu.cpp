@@ -24,55 +24,76 @@ auto PPU::main() -> void {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
+    status.lx = 0;
     interface->lcdScanline();  //Super Game Boy notification
 
-    if(status.display_enable && status.ly < 144) {
-      if(status.interrupt_oam) cpu.interrupt_raise(CPU::Interrupt::Stat);
-      add_clocks(92);
-      for(auto n : range(160)) {
-        system.cgb() ? cgb_run() : dmg_run();
-        add_clocks(1);
+    if(status.display_enable) {
+      //LYC of zero triggers on LY==153
+      if((status.lyc && status.ly == status.lyc) || (!status.lyc && status.ly == 153)) {
+        if(status.interrupt_lyc) cpu.interrupt_raise(CPU::Interrupt::Stat);
       }
-      if(status.interrupt_hblank) cpu.interrupt_raise(CPU::Interrupt::Stat);
-      cpu.hblank();
-      add_clocks(204);
-    } else {
-      add_clocks(456);
+
+      if(status.ly <= 143) {
+        scanline();
+        if(status.interrupt_oam) cpu.interrupt_raise(CPU::Interrupt::Stat);
+      }
+
+      if(status.ly == 144) {
+        if(status.interrupt_vblank) cpu.interrupt_raise(CPU::Interrupt::Stat);
+        else if(status.interrupt_oam) cpu.interrupt_raise(CPU::Interrupt::Stat);  //hardware quirk
+        cpu.interrupt_raise(CPU::Interrupt::Vblank);
+      }
     }
 
-    scanline();
+    add_clocks(92);
+
+    if(status.ly <= 143) {
+      for(auto n : range(160)) {
+        if(status.display_enable) run();
+        add_clocks(1);
+      }
+
+      if(status.display_enable) {
+        if(status.interrupt_hblank) cpu.interrupt_raise(CPU::Interrupt::Stat);
+        cpu.hblank();
+      }
+    } else {
+      add_clocks(160);
+    }
+
+    add_clocks(204);
+
+    if(++status.ly == 154) {
+      status.ly = 0;
+      scheduler.exit(Scheduler::ExitReason::FrameEvent);
+    }
   }
 }
 
 auto PPU::add_clocks(uint clocks) -> void {
-  status.lx += clocks;
-  clock += clocks * cpu.frequency;
-  if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) {
-    co_switch(scheduler.active_thread = cpu.thread);
+  while(clocks--) {
+    if(status.dma_active) {
+      uint hi = status.dma_clock++;
+      uint lo = hi & (cpu.status.speed_double ? 1 : 3);
+      hi >>= cpu.status.speed_double ? 1 : 2;
+      if(lo == 0) {
+        if(hi == 0) {
+          //warm-up
+        } else if(hi == 161) {
+          //cool-down; disable
+          status.dma_active = false;
+        } else {
+          oam[hi - 1] = bus.read(status.dma_bank << 8 | hi - 1);
+        }
+      }
+    }
+
+    status.lx++;
+    clock += cpu.frequency;
+    if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) {
+      co_switch(scheduler.active_thread = cpu.thread);
+    }
   }
-}
-
-auto PPU::scanline() -> void {
-  status.lx = 0;
-  if(++status.ly == 154) frame();
-
-  if(status.ly < 144) {
-    system.cgb() ? cgb_scanline() : dmg_scanline();
-  }
-
-  if(status.display_enable && status.interrupt_lyc == true) {
-    if(status.ly == status.lyc) cpu.interrupt_raise(CPU::Interrupt::Stat);
-  }
-
-  if(status.display_enable && status.ly == 144) {
-    cpu.interrupt_raise(CPU::Interrupt::Vblank);
-    if(status.interrupt_vblank) cpu.interrupt_raise(CPU::Interrupt::Stat);
-  }
-}
-
-auto PPU::frame() -> void {
-  status.ly = 0;
-  scheduler.exit(Scheduler::ExitReason::FrameEvent);
 }
 
 auto PPU::hflip(uint data) const -> uint {
@@ -85,6 +106,14 @@ auto PPU::hflip(uint data) const -> uint {
 auto PPU::power() -> void {
   create(Main, 4 * 1024 * 1024);
 
+  if(system.cgb()) {
+    scanline = {&PPU::cgb_scanline, this};
+    run = {&PPU::cgb_run, this};
+  } else {
+    scanline = {&PPU::dmg_scanline, this};
+    run = {&PPU::dmg_run, this};
+  }
+
   for(uint n = 0x8000; n <= 0x9fff; n++) bus.mmio[n] = this;  //VRAM
   for(uint n = 0xfe00; n <= 0xfe9f; n++) bus.mmio[n] = this;  //OAM
 
@@ -94,6 +123,7 @@ auto PPU::power() -> void {
   bus.mmio[0xff43] = this;  //SCX
   bus.mmio[0xff44] = this;  //LY
   bus.mmio[0xff45] = this;  //LYC
+  bus.mmio[0xff46] = this;  //DMA
   bus.mmio[0xff47] = this;  //BGP
   bus.mmio[0xff48] = this;  //OBP0
   bus.mmio[0xff49] = this;  //OBP1
@@ -136,6 +166,11 @@ auto PPU::power() -> void {
   status.scx = 0;
   status.ly = 0;
   status.lyc = 0;
+
+  status.dma_active = false;
+  status.dma_clock = 0;
+  status.dma_bank = 0;
+
   status.wy = 0;
   status.wx = 0;
 
@@ -147,7 +182,7 @@ auto PPU::power() -> void {
   status.obpi_increment = 0;
   status.obpi = 0;
 
-  for(auto& n : screen) n = 0x0000;
+  for(auto& n : screen) n = 0;
 
   bg.color = 0;
   bg.palette = 0;

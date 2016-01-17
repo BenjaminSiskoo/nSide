@@ -10,7 +10,6 @@ struct PPU : Thread, public PPUcounter {
   auto latch_counters() -> void;
   auto interlace() const -> bool;
   auto overscan() const -> bool;
-  auto hires() const -> bool;
 
   auto enter() -> void;
   auto enable() -> void;
@@ -30,7 +29,6 @@ privileged:
   uint ppu1_version = 1;  //allowed: 1
   uint ppu2_version = 3;  //allowed: 1, 2, 3
 
-  uint32* surface = nullptr;
   uint32* output = nullptr;
 
   struct {

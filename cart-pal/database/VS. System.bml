@@ -1,4 +1,4 @@
-database revision=2015-09-30 owner=hex_usr
+database owner=hex_usr
   :Custom mappings designed only to get the games to work.
   :Games without extra hardware such as the 74xx32 (UxROM) are split into
   :ROMs inserted into slots. A missing ROM causes open bus instead of mirroring.

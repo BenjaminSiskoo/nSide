@@ -20,5 +20,6 @@ Settings::Settings() {
 }
 
 Settings::~Settings() {
+  directory::create({configpath(), "cart-pal/"});
   file::write(locate({configpath(), "cart-pal/"}, "settings.bml"), BML::serialize(*this));
 }

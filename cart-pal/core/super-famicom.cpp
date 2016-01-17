@@ -45,7 +45,7 @@ auto CartPal::superFamicomManifestScan(vector<Markup::Node>& roms, Markup::Node 
   for(auto leaf : node) superFamicomManifestScan(roms, leaf);
 }
 
-auto CartPal::superFamicomImport(vector<uint8>& buffer, string location) -> bool {
+auto CartPal::superFamicomImport(vector<uint8>& buffer, string location) -> string {
   auto name = prefixname(location);
   auto source = pathname(location);
   string target{settings["Library/Location"].text(), "Super Famicom/", name, ".sfc/"};
@@ -81,5 +81,5 @@ auto CartPal::superFamicomImport(vector<uint8>& buffer, string location) -> bool
       file::write({target, name}, firmware);
     }
   }
-  return success();
+  return success(target);
 }

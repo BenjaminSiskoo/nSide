@@ -1,5 +1,4 @@
-#ifndef GB_HPP
-#define GB_HPP
+#pragma once
 
 #include <emulator/emulator.hpp>
 #include <processor/lr35902/lr35902.hpp>
@@ -56,4 +55,4 @@ namespace GameBoy {
   #include <gb/video/video.hpp>
 };
 
-#endif
+#include <gb/interface/interface.hpp>

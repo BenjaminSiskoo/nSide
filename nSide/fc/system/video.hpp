@@ -1,21 +1,28 @@
 struct Video {
   Video();
   ~Video();
-  auto generate_palette(Emulator::Interface::PaletteMode mode) -> void;
 
-  uint32_t* palette = nullptr;
+  auto reset() -> void;
+  auto refresh() -> void;
+
+  uint32* output = nullptr;
+  uint32* paletteStandard = nullptr;
+  uint32* paletteEmulation = nullptr;
 
 private:
-  auto update() -> void;
-  auto update_vs() -> void;
-  auto update_pc10() -> void;
-  auto scanline() -> void;
-  auto init() -> void;
+  auto refreshMain() -> void;
+  auto refreshVSDualSystem() -> void;
+  auto refreshPC10DualScreen() -> void;
+  auto refreshPC10Menu() -> void;
 
-  auto generate_color(uint, double, double, double, double, double) -> uint32;
-  static const uint8 gamma_ramp[8];
+  auto generateColor(uint, double, double, double, double, double) -> uint32;
+  auto generatePalettes(const uint9* ppu_pal) -> void;
+
+  auto drawCursor(uint16 color, int x, int y) -> void;
+  auto drawCursors() -> void;
+
+  static const uint8 gammaRamp[8];
   static const uint8 cursor[15 * 15];
-  auto draw_cursor(uint16 color, int x, int y) -> void;
 
   friend class System;
 };

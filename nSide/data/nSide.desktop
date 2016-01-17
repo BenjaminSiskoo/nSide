@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=nSide
-Comment=NES, SNES, Game Boy, Game Boy Advance emulator
+Comment=Famicom, VS. UniSystem emulator
 Exec=nSide
 Icon=nSide
 Terminal=false

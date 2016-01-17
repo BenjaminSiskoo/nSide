@@ -1,22 +1,29 @@
-NSImage* NSMakeImage(nall::image image, unsigned width = 0, unsigned height = 0) {
-  if(image.empty()) return nil;
-  if(width && height) image.scale(width, height, Interpolation::Linear);
-  image.transform(0, 32, 255u << 24, 255u << 0, 255u << 8, 255u << 16);
-  NSImage* cocoaImage = [[[NSImage alloc] initWithSize:NSMakeSize(image.width, image.height)] autorelease];
+auto NSMakeColor(const hiro::Color& color) -> NSColor* {
+  return [NSColor colorWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)];
+}
+
+auto NSMakeImage(image icon, uint scaleWidth = 0, uint scaleHeight = 0) -> NSImage* {
+  if(!icon) return nil;
+
+  if(scaleWidth && scaleHeight) icon.scale(scaleWidth, scaleHeight);
+  icon.transform(0, 32, 255u << 24, 255u << 0, 255u << 8, 255u << 16);  //Cocoa stores images in ABGR format
+
+  //create NSImage from memory
+  NSImage* cocoaImage = [[[NSImage alloc] initWithSize:NSMakeSize(icon.width(), icon.height())] autorelease];
   NSBitmapImageRep* bitmap = [[[NSBitmapImageRep alloc]
     initWithBitmapDataPlanes:nil
-    pixelsWide:image.width pixelsHigh:image.height
+    pixelsWide:icon.width() pixelsHigh:icon.height()
     bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES
     isPlanar:NO colorSpaceName:NSCalibratedRGBColorSpace
     bitmapFormat:NSAlphaNonpremultipliedBitmapFormat
-    bytesPerRow:image.pitch bitsPerPixel:32
+    bytesPerRow:(4 * icon.width()) bitsPerPixel:32
   ] autorelease];
-  memcpy([bitmap bitmapData], image.data, image.height * image.pitch);
+  memory::copy([bitmap bitmapData], icon.data(), 4 * icon.width() * icon.height());
   [cocoaImage addRepresentation:bitmap];
   return cocoaImage;
 }
 
-NSDragOperation DropPathsOperation(id<NSDraggingInfo> sender) {
+auto DropPathsOperation(id<NSDraggingInfo> sender) -> NSDragOperation {
   NSPasteboard* pboard = [sender draggingPasteboard];
   if([[pboard types] containsObject:NSFilenamesPboardType]) {
     if([sender draggingSourceOperationMask] & NSDragOperationGeneric) {
@@ -26,12 +33,12 @@ NSDragOperation DropPathsOperation(id<NSDraggingInfo> sender) {
   return NSDragOperationNone;
 }
 
-lstring DropPaths(id<NSDraggingInfo> sender) {
+auto DropPaths(id<NSDraggingInfo> sender) -> lstring {
   lstring paths;
   NSPasteboard* pboard = [sender draggingPasteboard];
   if([[pboard types] containsObject:NSFilenamesPboardType]) {
     NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
-    for(unsigned n = 0; n < [files count]; n++) {
+    for(uint n = 0; n < [files count]; n++) {
       string path = [[files objectAtIndex:n] UTF8String];
       if(directory::exists(path) && !path.endsWith("/")) path.append("/");
       paths.append(path);

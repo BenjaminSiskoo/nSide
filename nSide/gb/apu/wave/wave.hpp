@@ -1,23 +1,26 @@
 struct Wave {
+  auto getPattern(uint5 offset) const -> uint4;
+
   auto run() -> void;
-  auto clock_length() -> void;
-  auto write(uint r, uint8 data) -> void;
-  auto write_pattern(uint p, uint8 data) -> void;
-  auto power() -> void;
+  auto clockLength() -> void;
+  auto read(uint16 addr) -> uint8;
+  auto write(uint16 addr, uint8 data) -> void;
+  auto power(bool initializeLength = true) -> void;
 
   auto serialize(serializer&) -> void;
 
   bool enable;
 
-  bool dac_enable;
-  uint volume_shift;
+  bool dacEnable;
+  uint2 volume;
   uint11 frequency;
   bool counter;
-  uint8 pattern[32];
+  uint8 pattern[16];
 
   int16 output;
-  uint8 length;
+  uint length;
   uint period;
-  uint5 pattern_offset;
-  uint4 pattern_sample;
+  uint5 patternOffset;
+  uint4 patternSample;
+  uint patternHold;
 };

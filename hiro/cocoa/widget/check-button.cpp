@@ -1,6 +1,8 @@
+#if defined(Hiro_CheckButton)
+
 @implementation CocoaCheckButton : NSButton
 
--(id) initWith:(phoenix::CheckButton&)checkButtonReference {
+-(id) initWith:(hiro::mCheckButton&)checkButtonReference {
   if(self = [super initWithFrame:NSMakeRect(0, 0, 0, 0)]) {
     checkButton = &checkButtonReference;
 
@@ -14,72 +16,84 @@
 
 -(IBAction) activate:(id)sender {
   checkButton->state.checked = [self state] != NSOffState;
-  if(checkButton->onToggle) checkButton->onToggle();
+  checkButton->doToggle();
 }
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
-Size pCheckButton::minimumSize() {
-  Size size = Font::size(checkButton.font(), checkButton.state.text);
+auto pCheckButton::construct() -> void {
+  @autoreleasepool {
+    cocoaView = cocoaCheckButton = [[CocoaCheckButton alloc] initWith:self()];
+    pWidget::construct();
 
-  if(checkButton.state.orientation == Orientation::Horizontal) {
-    size.width += checkButton.state.image.width;
-    size.height = max(checkButton.state.image.height, size.height);
+    setBordered(state().bordered);
+    setChecked(state().checked);
+    setIcon(state().icon);
+    setOrientation(state().orientation);
+    setText(state().text);
   }
-
-  if(checkButton.state.orientation == Orientation::Vertical) {
-    size.width = max(checkButton.state.image.width, size.width);
-    size.height += checkButton.state.image.height;
-  }
-
-  return {size.width + 20, size.height + 4};
 }
 
-void pCheckButton::setChecked(bool checked) {
+auto pCheckButton::destruct() -> void {
+  @autoreleasepool {
+    [cocoaView removeFromSuperview];
+    [cocoaView release];
+  }
+}
+
+auto pCheckButton::minimumSize() const -> Size {
+  Size size = pFont::size(self().font(true), state().text);
+
+  if(state().orientation == Orientation::Horizontal) {
+    size.setWidth(size.width() + state().icon.width());
+    size.setHeight(max(size.height(), state().icon.height()));
+  }
+
+  if(state().orientation == Orientation::Vertical) {
+    size.setWidth(max(size.width(), state().icon.width()));
+    size.setHeight(size.height() + state().icon.height());
+  }
+
+  return {size.width() + (state().text ? 20 : 8), size.height() + 8};
+}
+
+auto pCheckButton::setBordered(bool bordered) -> void {
+}
+
+auto pCheckButton::setChecked(bool checked) -> void {
   @autoreleasepool {
     [cocoaView setState:checked ? NSOnState : NSOffState];
   }
 }
 
-void pCheckButton::setGeometry(Geometry geometry) {
+auto pCheckButton::setGeometry(Geometry geometry) -> void {
   pWidget::setGeometry({
-    geometry.x - 2, geometry.y - 2,
-    geometry.width + 4, geometry.height + 4
+    geometry.x() - 2, geometry.y() - 2,
+    geometry.width() + 4, geometry.height() + 4
   });
 }
 
-void pCheckButton::setImage(const image& image, Orientation orientation) {
+auto pCheckButton::setIcon(const image& icon) -> void {
   @autoreleasepool {
-    if(image.empty()) {
-      [cocoaView setImage:nil];
-      return;
-    }
+    [cocoaView setImage:NSMakeImage(icon)];
+  }
+}
 
-    [cocoaView setImage:NSMakeImage(image)];
-
+auto pCheckButton::setOrientation(Orientation orientation) -> void {
+  @autoreleasepool {
     if(orientation == Orientation::Horizontal) [cocoaView setImagePosition:NSImageLeft];
     if(orientation == Orientation::Vertical  ) [cocoaView setImagePosition:NSImageAbove];
   }
 }
 
-void pCheckButton::setText(string text) {
+auto pCheckButton::setText(const string& text) -> void {
   @autoreleasepool {
     [cocoaView setTitle:[NSString stringWithUTF8String:text]];
   }
 }
 
-void pCheckButton::constructor() {
-  @autoreleasepool {
-    cocoaView = cocoaCheckButton = [[CocoaCheckButton alloc] initWith:checkButton];
-  }
 }
 
-void pCheckButton::destructor() {
-  @autoreleasepool {
-    [cocoaView release];
-  }
-}
-
-}
+#endif

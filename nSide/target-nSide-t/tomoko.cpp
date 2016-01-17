@@ -11,10 +11,16 @@ auto locate(string pathname, string filename) -> string {
   if(file_system_object::exists(location)) return location;
   return {pathname, filename};
 }
+auto locate(string pathname1, string pathname2, string filename) -> string {
+  string location{programpath(), filename};
+  if(file_system_object::exists(location)) return location;
+  if(file_system_object::exists({pathname1, filename})) return {pathname1, filename};
+  return {pathname2, filename};
+}
 
 #include <nall/main.hpp>
 auto nall::main(lstring args) -> void {
-  Application::setName("nSide-t");
+  Application::setName("nSide");
   new Program(args);
   Application::run();
 }

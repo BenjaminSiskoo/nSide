@@ -11,10 +11,9 @@ Program* program = nullptr;
 
 Program::Program(lstring args) {
   program = this;
-  directory::create({configpath(), "tomoko/"});
-  directory::create({configpath(), "nSide-t/"});
+  directory::create({localpath(), "higan/"});
+  directory::create({localpath(), "nSide/"});
   Application::onMain({&Program::main, this});
-  Application::Windows::onModalChange([](bool modal) { if(modal && audio) audio->clear(); });
 
   emulators.append(new Famicom::Interface);
   emulators.append(new SuperFamicom::Interface);
@@ -66,7 +65,7 @@ Program::Program(lstring args) {
 
   presentation->drawSplashScreen();
 
-  updateVideoFilter();
+  updateVideoShader();
   updateAudioVolume();
 
   args.takeFirst();  //ignore program location in argument parsing
@@ -74,9 +73,27 @@ Program::Program(lstring args) {
     if(argument == "--fullscreen") {
       presentation->toggleFullScreen();
     } else {
-      auto location = argument;
-      if(file::exists(location)) location = dirname(location);
-      if(directory::exists(location)) loadMedia(location);
+      load(argument);
+    }
+  }
+}
+
+auto Program::load(string location) -> void {
+  if(directory::exists(location)) {
+    loadMedia(location);
+  } else if(file::exists(location)) {
+    //special handling to allow importing the Game Boy Advance BIOS
+    if(file::size(location) == 16384 && file::sha256(location).beginsWith("fd2547724b505f48")) {
+      auto target = locate({localpath(), "nSide/"}, "Game Boy Advance.sys/");
+      if(file::copy(location, {target, "bios.rom"})) {
+        MessageDialog().setTitle(Emulator::Name).setText("Game Boy Advance BIOS imported successfully!").information();
+      }
+      return;
+    }
+
+    //ask cart-pal to import the game; and play it upon success
+    if(auto result = execute("cart-pal", "--import", location)) {
+      loadMedia(result.strip());
     }
   }
 }
@@ -85,7 +102,7 @@ auto Program::main() -> void {
   updateStatusText();
   inputManager->poll();
 
-  if(!emulator || !emulator->loaded() || pause) {
+  if(!emulator || !emulator->loaded() || pause || (!presentation->focused() && settings["Input/FocusLoss/Pause"].boolean())) {
     audio->clear();
     usleep(20 * 1000);
     return;

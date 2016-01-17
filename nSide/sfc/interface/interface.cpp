@@ -3,6 +3,7 @@
 namespace SuperFamicom {
 
 Interface* interface = nullptr;
+Settings settings;
 
 Interface::Interface() {
   interface = this;
@@ -469,8 +470,25 @@ auto Interface::cheatSet(const lstring& list) -> void {
   }
 }
 
-auto Interface::paletteUpdate(PaletteMode mode) -> void {
-  video.generate_palette(mode);
+auto Interface::cap(const string& name) -> bool {
+  if(name == "Blur Emulation") return true;
+  if(name == "Color Emulation") return true;
+  if(name == "Scanline Emulation") return true;
+  return false;
+}
+
+auto Interface::get(const string& name) -> any {
+  if(name == "Blur Emulation") return settings.blurEmulation;
+  if(name == "Color Emulation") return settings.colorEmulation;
+  if(name == "Scanline Emulation") return settings.scanlineEmulation;
+  return {};
+}
+
+auto Interface::set(const string& name, const any& value) -> bool {
+  if(name == "Blur Emulation" && value.is<bool>()) return settings.blurEmulation = value.get<bool>(), true;
+  if(name == "Color Emulation" && value.is<bool>()) return settings.colorEmulation = value.get<bool>(), true;
+  if(name == "Scanline Emulation" && value.is<bool>()) return settings.scanlineEmulation = value.get<bool>(), true;
+  return false;
 }
 
 auto Interface::exportMemory() -> void {
@@ -491,7 +509,7 @@ auto Interface::exportMemory() -> void {
   if(cartridge.hasEvent()) saveRequest(ID::EventRAM, "debug/event.ram");
   if(cartridge.hasSA1()) {
     saveRequest(ID::SA1IRAM, "debug/sa1.internal.ram");
-    saveRequest(ID::SA1BWRAM, "debug/sa1.backup-work.ram");
+    saveRequest(ID::SA1BWRAM, "debug/sa1.bitmap-work.ram");
   }
   if(cartridge.hasSuperFX()) saveRequest(ID::SuperFXRAM, "debug/superfx.ram");
   if(cartridge.hasARMDSP()) saveRequest(ID::ArmDSPRAM, "debug/st018.program.ram");
@@ -502,7 +520,7 @@ auto Interface::exportMemory() -> void {
   if(cartridge.hasNECDSP()) {
     if(necdsp.revision == NECDSP::Revision::uPD7725) {
       saveRequest(ID::Nec7725DSPRAM, "debug/dsp.data.ram");
-    } else { // NECDSP::Revision::uPD96050
+    } else if(necdsp.revision == NECDSP::Revision::uPD96050) {
       saveRequest(ID::Nec96050DSPRAM, "debug/dsp.data.ram");
     }
   }

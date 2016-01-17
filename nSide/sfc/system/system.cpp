@@ -23,7 +23,7 @@ auto System::run() -> void {
 
   scheduler.enter();
   if(scheduler.exit_reason == Scheduler::ExitReason::FrameEvent) {
-    video.update();
+    video.refresh();
   }
 }
 
@@ -60,7 +60,7 @@ auto System::runThreadToSave() -> void {
     scheduler.enter();
     if(scheduler.exit_reason == Scheduler::ExitReason::SynchronizeEvent) break;
     if(scheduler.exit_reason == Scheduler::ExitReason::FrameEvent) {
-      video.update();
+      video.refresh();
     }
   }
 }
@@ -88,9 +88,6 @@ auto System::init() -> void {
   msu1.init();
 
   bsmemory.init();
-
-  video.init();
-  audio.init();
 
   device.connect(0, configuration.controllerPort1);
   device.connect(1, configuration.controllerPort2);
@@ -243,17 +240,10 @@ auto System::reset() -> void {
   if(cartridge.hasSPC7110()) cpu.coprocessors.append(&spc7110);
   if(cartridge.hasMSU1()) cpu.coprocessors.append(&msu1);
 
+  video.reset();
   scheduler.init();
   device.connect(0, configuration.controllerPort1);
   device.connect(1, configuration.controllerPort2);
-}
-
-auto System::scanline() -> void {
-  video.scanline();
-  if(cpu.vcounter() == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
-}
-
-auto System::frame() -> void {
 }
 
 }

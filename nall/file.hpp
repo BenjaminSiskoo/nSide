@@ -1,5 +1,4 @@
-#ifndef NALL_FILE_HPP
-#define NALL_FILE_HPP
+#pragma once
 
 #include <nall/platform.hpp>
 #include <nall/file-system-object.hpp>
@@ -17,6 +16,7 @@ struct file : file_system_object, varint {
   enum class index : uint { absolute, relative };
 
   static auto copy(const string& sourcename, const string& targetname) -> bool {
+    if(sourcename == targetname) return true;
     file rd, wr;
     if(rd.open(sourcename, mode::read) == false) return false;
     if(wr.open(targetname, mode::write) == false) return false;
@@ -27,6 +27,7 @@ struct file : file_system_object, varint {
   //attempt to rename file first
   //this will fail if paths point to different file systems; fall back to copy+remove in this case
   static auto move(const string& sourcename, const string& targetname) -> bool {
+    if(sourcename == targetname) return true;
     if(rename(sourcename, targetname)) return true;
     if(!writable(sourcename)) return false;
     if(copy(sourcename, targetname)) {
@@ -330,5 +331,3 @@ private:
 };
 
 }
-
-#endif

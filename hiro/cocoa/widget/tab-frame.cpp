@@ -1,6 +1,8 @@
+#if defined(Hiro_TabFrame)
+
 @implementation CocoaTabFrame : NSTabView
 
--(id) initWith:(phoenix::TabFrame&)tabFrameReference {
+-(id) initWith:(hiro::mTabFrame&)tabFrameReference {
   if(self = [super initWithFrame:NSMakeRect(0, 0, 0, 0)]) {
     tabFrame = &tabFrameReference;
 
@@ -10,136 +12,155 @@
 }
 
 -(void) tabView:(NSTabView*)tabView didSelectTabViewItem:(NSTabViewItem*)tabViewItem {
-  tabFrame->state.selection = [tabView indexOfTabViewItem:tabViewItem];
-  tabFrame->p.synchronizeLayout();
-  if(tabFrame->onChange) tabFrame->onChange();
+  tabFrame->self()->_synchronizeLayout();
+  tabFrame->doChange();
 }
 
 @end
 
 @implementation CocoaTabFrameItem : NSTabViewItem
 
--(id) initWith:(phoenix::TabFrame&)tabFrameReference {
+-(id) initWith:(hiro::mTabFrame&)tabFrameReference {
   if(self = [super initWithIdentifier:nil]) {
     tabFrame = &tabFrameReference;
-    cocoaTabFrame = tabFrame->p.cocoaTabFrame;
+    cocoaTabFrame = tabFrame->self()->cocoaTabFrame;
   }
   return self;
 }
 
 -(NSSize) sizeOfLabel:(BOOL)shouldTruncateLabel {
   NSSize sizeOfLabel = [super sizeOfLabel:shouldTruncateLabel];
-  signed selection = [cocoaTabFrame indexOfTabViewItem:self];
-  if(selection < 0) return sizeOfLabel;  //should never happen
-  if(tabFrame->state.image[selection].empty() == false) {
-    unsigned iconSize = phoenix::Font::size(tabFrame->font(), " ").height;
-    sizeOfLabel.width += iconSize + 2;
+  int selection = [cocoaTabFrame indexOfTabViewItem:self];
+  if(selection >= 0) {
+    if(auto item = tabFrame->item(selection)) {
+      if(item->state.icon) {
+        uint iconSize = hiro::pFont::size(tabFrame->font(true), " ").height();
+        sizeOfLabel.width += iconSize + 2;
+      }
+    }
   }
   return sizeOfLabel;
 }
 
 -(void) drawLabel:(BOOL)shouldTruncateLabel inRect:(NSRect)tabRect {
-  signed selection = [cocoaTabFrame indexOfTabViewItem:self];
-  if(selection >= 0 && tabFrame->state.image[selection].empty() == false) {
-    unsigned iconSize = phoenix::Font::size(tabFrame->font(), " ").height;
-    NSImage* image = NSMakeImage(tabFrame->state.image[selection]);
+  int selection = [cocoaTabFrame indexOfTabViewItem:self];
+  if(selection >= 0) {
+    if(auto item = tabFrame->item(selection)) {
+      if(item->state.icon) {
+        uint iconSize = hiro::pFont::size(tabFrame->font(true), " ").height();
+        NSImage* image = NSMakeImage(item->state.icon);
 
-    [[NSGraphicsContext currentContext] saveGraphicsState];
-    NSRect targetRect = NSMakeRect(tabRect.origin.x, tabRect.origin.y + 2, iconSize, iconSize);
-    [image drawInRect:targetRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
-    [[NSGraphicsContext currentContext] restoreGraphicsState];
+        [[NSGraphicsContext currentContext] saveGraphicsState];
+        NSRect targetRect = NSMakeRect(tabRect.origin.x, tabRect.origin.y + 2, iconSize, iconSize);
+        [image drawInRect:targetRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
+        [[NSGraphicsContext currentContext] restoreGraphicsState];
 
-    tabRect.origin.x += iconSize + 2;
-    tabRect.size.width -= iconSize + 2;
+        tabRect.origin.x += iconSize + 2;
+        tabRect.size.width -= iconSize + 2;
+      }
+    }
   }
   [super drawLabel:shouldTruncateLabel inRect:tabRect];
 }
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
-void pTabFrame::append(string text, const image& image) {
+auto pTabFrame::construct() -> void {
   @autoreleasepool {
-    CocoaTabFrameItem* item = [[CocoaTabFrameItem alloc] initWith:tabFrame];
-    [item setLabel:[NSString stringWithUTF8String:text]];
-    [cocoaView addTabViewItem:item];
-    tabs.append(item);
+    cocoaView = cocoaTabFrame = [[CocoaTabFrame alloc] initWith:self()];
+    pWidget::construct();
+
+    setNavigation(state().navigation);
   }
 }
 
-void pTabFrame::remove(unsigned selection) {
+auto pTabFrame::destruct() -> void {
   @autoreleasepool {
-    CocoaTabFrameItem* item = tabs[selection];
-    [cocoaView removeTabViewItem:item];
-    tabs.remove(selection);
-  }
-}
-
-void pTabFrame::setEnabled(bool enabled) {
-  for(auto& layout : tabFrame.state.layout) {
-    if(layout) layout->setEnabled(layout->enabled());
-  }
-  pWidget::setEnabled(enabled);
-}
-
-void pTabFrame::setGeometry(Geometry geometry) {
-  pWidget::setGeometry({
-    geometry.x - 7, geometry.y - 5,
-    geometry.width + 14, geometry.height + 6
-  });
-  geometry.x += 1, geometry.width -= 2;
-  geometry.y += 22, geometry.height -= 32;
-  for(auto& layout : tabFrame.state.layout) {
-    if(layout == nullptr) continue;
-    layout->setGeometry(geometry);
-  }
-  synchronizeLayout();
-}
-
-void pTabFrame::setImage(unsigned selection, const image& image) {
-}
-
-void pTabFrame::setSelection(unsigned selection) {
-  @autoreleasepool {
-    CocoaTabFrameItem* item = tabs[selection];
-    [cocoaView selectTabViewItem:item];
-  }
-  synchronizeLayout();
-}
-
-void pTabFrame::setText(unsigned selection, string text) {
-  @autoreleasepool {
-    CocoaTabFrameItem* item = tabs[selection];
-    [item setLabel:[NSString stringWithUTF8String:text]];
-  }
-}
-
-void pTabFrame::setVisible(bool visible) {
-  for(auto& layout : tabFrame.state.layout) {
-    if(layout) layout->setVisible(layout->visible());
-  }
-  pWidget::setVisible(visible);
-}
-
-void pTabFrame::constructor() {
-  @autoreleasepool {
-    cocoaView = cocoaTabFrame = [[CocoaTabFrame alloc] initWith:tabFrame];
-  }
-}
-
-void pTabFrame::destructor() {
-  @autoreleasepool {
+    [cocoaView removeFromSuperview];
     [cocoaView release];
   }
 }
 
-void pTabFrame::synchronizeLayout() {
-  unsigned selection = 0;
-  for(auto& layout : tabFrame.state.layout) {
-    if(layout) layout->setVisible(selection == tabFrame.state.selection);
-    selection++;
+auto pTabFrame::append(sTabFrameItem item) -> void {
+  @autoreleasepool {
+    if(auto p = item->self()) {
+      p->cocoaTabFrameItem = [[CocoaTabFrameItem alloc] initWith:self()];
+      [p->cocoaTabFrameItem setLabel:[NSString stringWithUTF8String:item->state.text]];
+      [cocoaView addTabViewItem:p->cocoaTabFrameItem];
+    }
+  }
+}
+
+auto pTabFrame::remove(sTabFrameItem item) -> void {
+  @autoreleasepool {
+    if(auto p = item->self()) {
+      [cocoaView removeTabViewItem:p->cocoaTabFrameItem];
+    }
+  }
+}
+
+auto pTabFrame::setEnabled(bool enabled) -> void {
+  pWidget::setEnabled(enabled);
+  for(auto& item : state().items) {
+    if(auto& layout = item->state.layout) {
+      if(auto self = layout->self()) self->setEnabled(layout->enabled(true));
+    }
+  }
+}
+
+auto pTabFrame::setFont(const Font& font) -> void {
+  pWidget::setFont(font);
+  for(auto& item : state().items) {
+    if(auto& layout = item->state.layout) {
+      if(auto self = layout->self()) self->setFont(layout->font(true));
+    }
+  }
+}
+
+auto pTabFrame::setGeometry(Geometry geometry) -> void {
+  pWidget::setGeometry({
+    geometry.x() - 7, geometry.y() - 5,
+    geometry.width() + 14, geometry.height() + 6
+  });
+  geometry.setGeometry({
+    geometry.x() + 1, geometry.y() + 22,
+    geometry.width() - 2, geometry.height() - 32
+  });
+  for(auto& item : state().items) {
+    if(auto& layout = item->state.layout) {
+      layout->setGeometry(geometry);
+    }
+  }
+  _synchronizeLayout();
+}
+
+auto pTabFrame::setNavigation(Navigation navigation) -> void {
+}
+
+auto pTabFrame::setVisible(bool visible) -> void {
+  pWidget::setVisible(visible);
+  for(auto& item : state().items) {
+    if(auto& layout = item->state.layout) {
+      if(auto self = layout->self()) self->setVisible(layout->visible(true));
+    }
+  }
+}
+
+auto pTabFrame::_synchronizeLayout() -> void {
+  @autoreleasepool {
+    NSTabViewItem* tabViewItem = [cocoaView selectedTabViewItem];
+    int selected = tabViewItem ? [cocoaView indexOfTabViewItem:tabViewItem] : -1;
+    for(auto& item : state().items) {
+      item->state.selected = item->offset() == selected;
+      if(auto& layout = item->state.layout) {
+        if(auto self = layout->self()) self->setVisible(layout->visible(true) && item->selected());
+      }
+    }
   }
 }
 
 }
+
+#endif

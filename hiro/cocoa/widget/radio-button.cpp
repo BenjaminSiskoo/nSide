@@ -1,6 +1,8 @@
+#if defined(Hiro_RadioButton)
+
 @implementation CocoaRadioButton : NSButton
 
--(id) initWith:(phoenix::RadioButton&)radioButtonReference {
+-(id) initWith:(hiro::mRadioButton&)radioButtonReference {
   if(self = [super initWithFrame:NSMakeRect(0, 0, 0, 0)]) {
     radioButton = &radioButtonReference;
 
@@ -15,80 +17,98 @@
 -(IBAction) activate:(id)sender {
   bool wasChecked = radioButton->state.checked;
   radioButton->setChecked();
-  if(wasChecked == false) {
-    if(radioButton->onActivate) radioButton->onActivate();
-  }
+  if(!wasChecked) radioButton->doActivate();
 }
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
-Size pRadioButton::minimumSize() {
-  Size size = Font::size(radioButton.font(), radioButton.state.text);
+auto pRadioButton::construct() -> void {
+  @autoreleasepool {
+    cocoaView = cocoaRadioButton = [[CocoaRadioButton alloc] initWith:self()];
+    pWidget::construct();
 
-  if(radioButton.state.orientation == Orientation::Horizontal) {
-    size.width += radioButton.state.image.width;
-    size.height = max(radioButton.state.image.height, size.height);
+    setBordered(state().bordered);
+    if(state().checked) setChecked();
+    setIcon(state().icon);
+    setOrientation(state().orientation);
+    setText(state().text);
   }
-
-  if(radioButton.state.orientation == Orientation::Vertical) {
-    size.width = max(radioButton.state.image.width, size.width);
-    size.height += radioButton.state.image.height;
-  }
-
-  return {size.width + 20, size.height + 4};
 }
 
-void pRadioButton::setChecked() {
+auto pRadioButton::destruct() -> void {
   @autoreleasepool {
-    for(auto& button : radioButton.state.group) {
-      auto state = (&button == &radioButton) ? NSOnState : NSOffState;
-      [button.p.cocoaView setState:state];
+    [cocoaView removeFromSuperview];
+    [cocoaView release];
+  }
+}
+
+auto pRadioButton::minimumSize() const -> Size {
+  Size size = pFont::size(self().font(true), state().text);
+
+  if(state().orientation == Orientation::Horizontal) {
+    size.setWidth(size.width() + state().icon.width());
+    size.setHeight(max(size.height(), state().icon.height()));
+  }
+
+  if(state().orientation == Orientation::Vertical) {
+    size.setWidth(max(size.width(), state().icon.width()));
+    size.setHeight(size.height() + state().icon.height());
+  }
+
+  return {size.width() + (state().text ? 20 : 8), size.height() + 8};
+}
+
+auto pRadioButton::setBordered(bool bordered) -> void {
+}
+
+auto pRadioButton::setChecked() -> void {
+  @autoreleasepool {
+    if(auto group = state().group) {
+      for(auto& weak : group->state.objects) {
+        if(auto object = weak.acquire()) {
+          if(auto self = object->self()) {
+            if(auto p = dynamic_cast<pRadioButton*>(self)) {
+              auto state = this == p ? NSOnState : NSOffState;
+              [p->cocoaView setState:state];
+            }
+          }
+        }
+      }
     }
   }
 }
 
-void pRadioButton::setGeometry(Geometry geometry) {
+auto pRadioButton::setGeometry(Geometry geometry) -> void {
   pWidget::setGeometry({
-    geometry.x - 2, geometry.y - 2,
-    geometry.width + 4, geometry.height + 4
+    geometry.x() - 2, geometry.y() - 2,
+    geometry.width() + 4, geometry.height() + 4
   });
 }
 
-void pRadioButton::setGroup(const group<RadioButton>& group) {
+auto pRadioButton::setGroup(sGroup group) -> void {
 }
 
-void pRadioButton::setImage(const image& image, Orientation orientation) {
+auto pRadioButton::setIcon(const image& icon) -> void {
   @autoreleasepool {
-    if(image.empty()) {
-      [cocoaView setImage:nil];
-      return;
-    }
+    [cocoaView setImage:NSMakeImage(icon)];
+  }
+}
 
-    [cocoaView setImage:NSMakeImage(image)];
-
+auto pRadioButton::setOrientation(Orientation orientation) -> void {
+  @autoreleasepool {
     if(orientation == Orientation::Horizontal) [cocoaView setImagePosition:NSImageLeft];
     if(orientation == Orientation::Vertical  ) [cocoaView setImagePosition:NSImageAbove];
   }
 }
 
-void pRadioButton::setText(string text) {
+auto pRadioButton::setText(const string& text) -> void {
   @autoreleasepool {
     [cocoaView setTitle:[NSString stringWithUTF8String:text]];
   }
 }
 
-void pRadioButton::constructor() {
-  @autoreleasepool {
-    cocoaView = cocoaRadioButton = [[CocoaRadioButton alloc] initWith:radioButton];
-  }
 }
 
-void pRadioButton::destructor() {
-  @autoreleasepool {
-    [cocoaView release];
-  }
-}
-
-}
+#endif

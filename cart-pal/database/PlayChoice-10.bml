@@ -1,5 +1,41 @@
-database revision=2015-09-30 owner=hex_usr
+database owner=hex_usr
   :Custom mappings designed only to get the games to work.
+
+cartridge sha256:37b1bd6a638d0044e68f9b5e01fc7e6ebfb3490c0f4d2c4695710c4e8f830a07
+  :board id:NES-NROM-128
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :  pc10
+  :    rom name=instructions.rom size=0x2000
+  :    rom name=key.rom size=0x9
+  :
+  :information
+  :  board:    PCH1-01-ROM
+  :  region:   USA
+  :  revision: 1.0
+  :  name:     Duck Hunt
+  :  title:    Duck Hunt
+
+cartridge sha256:4ffca45697e5cd91699b0071966a89bd8d32a3f14ae87ceb355aeadf61fca218
+  :board id:NES-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :  pc10
+  :    rom name=instructions.rom size=0x2000
+  :    rom name=key.rom size=0x9
+  :
+  :information
+  :  board:    PCH1-01-ROM
+  :  region:   USA
+  :  revision: 1.0
+  :  name:     Golf
+  :  title:    Golf
 
 cartridge sha256:967620e98d157d70c6cd4b72d88877d2aba49bc2e2d9008482b940ffd48f6b25
   :board id:JALECO-JF-09
@@ -13,7 +49,8 @@ cartridge sha256:967620e98d157d70c6cd4b72d88877d2aba49bc2e2d9008482b940ffd48f6b2
   :    rom name=key.rom size=0x9
   :
   :information
-  :  region:   NA
+  :  board:    PCH1-01-ROM-C
+  :  region:   USA
   :  revision: 1.0
   :  name:     Goonies, The
   :  title:    The Goonies
@@ -30,10 +67,30 @@ cartridge sha256:613da8bfaaa0be4b8308292acc5973d409f54ed143e14f082e1ef95442520ac
   :    rom name=key.rom size=0x9
   :
   :information
-  :  region:   NA
+  :  board:    PCH1-02-ROM
+  :  region:   USA
   :  revision: 1.0
   :  name:     Super Mario Bros.
   :  title:    Super Mario Bros.
+
+cartridge sha256:3333a9dd6ef1e99150406413d7080f7007a6da9b9419bca936be70232a4ae304
+  :board id:NES-TLROM
+  :  chip type=MMC3B
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :    ram name=work.ram size=0x2000 volatile
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :  pc10
+  :    rom name=instructions.rom size=0x2000
+  :    rom name=key.rom size=0x9
+  :
+  :information
+  :  board:    PCH1-01-ROM-G
+  :  region:   USA
+  :  revision: 1.0
+  :  name:     Super Mario Bros. 2
+  :  title:    Super Mario Bros. 2
 
 cartridge sha256:01d456bcd2389a33cb536a86a9fcd524db52b6dbb30628e6d78297cdec4e3e29
   :board id:NES-TSROM
@@ -48,7 +105,8 @@ cartridge sha256:01d456bcd2389a33cb536a86a9fcd524db52b6dbb30628e6d78297cdec4e3e2
   :    rom name=key.rom size=0x9
   :
   :information
-  :  region:   NA
+  :  board:    PCH1-01-ROM-G
+  :  region:   USA
   :  revision: 1.0
   :  name:     Super Mario Bros. 3
   :  title:    Super Mario Bros. 3

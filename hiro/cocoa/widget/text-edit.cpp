@@ -1,6 +1,8 @@
+#if defined(Hiro_TextEdit)
+
 @implementation CocoaTextEdit : NSScrollView
 
--(id) initWith:(phoenix::TextEdit&)textEditReference {
+-(id) initWith:(hiro::mTextEdit&)textEditReference {
   if(self = [super initWithFrame:NSMakeRect(0, 0, 0, 0)]) {
     textEdit = &textEditReference;
 
@@ -36,72 +38,82 @@
 
 -(void) textDidChange:(NSNotification*)notification {
   textEdit->state.text = [[content string] UTF8String];
-  if(textEdit->onChange) textEdit->onChange();
+  textEdit->doChange();
 }
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
-void pTextEdit::setBackgroundColor(Color color) {
+auto pTextEdit::construct() -> void {
+  @autoreleasepool {
+    cocoaView = cocoaTextEdit = [[CocoaTextEdit alloc] initWith:self()];
+    pWidget::construct();
+
+    setEditable(state().editable);
+    setWordWrap(state().wordWrap);
+    setText(state().text);
+    setCursor(state().cursor);
+  }
 }
 
-void pTextEdit::setCursorPosition(unsigned position) {
+auto pTextEdit::destruct() -> void {
   @autoreleasepool {
+    [cocoaView removeFromSuperview];
+    [cocoaView release];
+  }
+}
+
+auto pTextEdit::setBackgroundColor(Color color) -> void {
+}
+
+auto pTextEdit::setCursor(Cursor cursor) -> void {
+  @autoreleasepool {
+    //todo: handle text selection (cursor.length())
     string text = [[[cocoaView content] string] UTF8String];
-    position = min(position, text.length());
-    [[cocoaView content] setSelectedRange:NSMakeRange(position, 0)];
+    auto offset = min(cursor.offset(), text.length());
+    [[cocoaView content] setSelectedRange:NSMakeRange(offset, 0)];
   }
 }
 
-void pTextEdit::setEditable(bool editable) {
+auto pTextEdit::setEditable(bool editable) -> void {
   @autoreleasepool {
-    [[cocoaView content] setEditable:editable];
+    [[cocoaView content] setEditable:(editable && self().enabled(true))];
   }
 }
 
-void pTextEdit::setFont(string font) {
+auto pTextEdit::setEnabled(bool enabled) -> void {
+  pWidget::setEnabled(enabled);
+  setEditable(state().editable);  //Cocoa lacks NSTextView::setEnabled; simulate via setEnabled()
+}
+
+auto pTextEdit::setFont(const Font& font) -> void {
   @autoreleasepool {
-    [[cocoaView content] setFont:pFont::cocoaFont(font)];
+    [[cocoaView content] setFont:pFont::create(font)];
   }
 }
 
-void pTextEdit::setForegroundColor(Color color) {
+auto pTextEdit::setForegroundColor(Color color) -> void {
 }
 
-void pTextEdit::setText(string text) {
+auto pTextEdit::setText(const string& text) -> void {
   @autoreleasepool {
     [[cocoaView content] setString:[NSString stringWithUTF8String:text]];
   }
 }
 
-void pTextEdit::setWordWrap(bool wordWrap) {
+auto pTextEdit::setWordWrap(bool wordWrap) -> void {
   @autoreleasepool {
     [cocoaView configure];
   }
 }
 
-string pTextEdit::text() {
+auto pTextEdit::text() const -> string {
   @autoreleasepool {
     return [[[cocoaView content] string] UTF8String];
   }
 }
 
-void pTextEdit::constructor() {
-  @autoreleasepool {
-    cocoaView = cocoaTextEdit = [[CocoaTextEdit alloc] initWith:textEdit];
-    setEditable(textEdit.state.editable);
-    setWordWrap(textEdit.state.wordWrap);
-    setFont(textEdit.font());
-    setText(textEdit.state.text);
-    setCursorPosition(textEdit.state.cursorPosition);
-  }
 }
 
-void pTextEdit::destructor() {
-  @autoreleasepool {
-    [cocoaView release];
-  }
-}
-
-}
+#endif

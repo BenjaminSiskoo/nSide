@@ -141,7 +141,7 @@ auto ARM::disassemble_arm_instruction(uint32 pc) -> string {
   //load_register()
   //ldr{condition}s(h,b) rd,[rn,rm]{!}
   //ldr{condition}s(h,b) rd,[rn],rm
-  if((instruction & 0x0e5000d0) == 0x001000b0) {
+  if((instruction & 0x0e5000d0) == 0x001000d0) {
     uint4 condition = instruction >> 28;
     uint1 pre = instruction >> 24;
     uint1 up = instruction >> 23;

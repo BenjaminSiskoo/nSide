@@ -31,7 +31,7 @@ auto CartPal::gameBoyManifest(vector<uint8>& buffer, string location) -> string 
   return markup;
 }
 
-auto CartPal::gameBoyImport(vector<uint8>& buffer, string location) -> bool {
+auto CartPal::gameBoyImport(vector<uint8>& buffer, string location) -> string {
   auto name = prefixname(location);
   auto source = pathname(location);
   string target{settings["Library/Location"].text(), "Game Boy/", name, ".gb/"};
@@ -43,5 +43,5 @@ auto CartPal::gameBoyImport(vector<uint8>& buffer, string location) -> bool {
 
   if(settings["cart-pal/CreateManifests"].boolean()) file::write({target, "manifest.bml"}, markup);
   file::write({target, "program.rom"}, buffer);
-  return success();
+  return success(target);
 }

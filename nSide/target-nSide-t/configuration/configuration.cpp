@@ -2,7 +2,7 @@
 Settings settings;
 
 Settings::Settings() {
-  Markup::Node::operator=(BML::unserialize(string::read(locate({configpath(), "nSide-t/"}, "settings.bml"))));
+  Markup::Node::operator=(BML::unserialize(string::read(locate({localpath(), "nSide/"}, "settings.bml"))));
 
   auto set = [&](const string& name, const string& value) {
     //create node and set to default value only if it does not already exist
@@ -18,9 +18,10 @@ Settings::Settings() {
   set("Video/Synchronize", false);
   set("Video/Scale", "Small");
   set("Video/AspectCorrection", true);
-  set("Video/Filter", "Blur");
   set("Video/Shader", "None");
+  set("Video/BlurEmulation", true);
   set("Video/ColorEmulation", true);
+  set("Video/ScanlineEmulation", false);
   set("Video/Saturation", 100);
   set("Video/Gamma", 100);
   set("Video/Luminance", 100);
@@ -39,11 +40,13 @@ Settings::Settings() {
   set("Audio/Resampler", "Sinc");
 
   set("Input/Driver", ruby::Input::optimalDriver());
+  set("Input/FocusLoss/Pause", false);
+  set("Input/FocusLoss/AllowInput", false);
 
   set("Timing/Video", 60.0);
   set("Timing/Audio", 48000.0);
 }
 
 auto Settings::quit() -> void {
-  file::write(locate({configpath(), "nSide-t/"}, "settings.bml"), BML::serialize(*this));
+  file::write(locate({localpath(), "nSide/"}, "settings.bml"), BML::serialize(*this));
 }

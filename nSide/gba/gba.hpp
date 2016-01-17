@@ -1,5 +1,4 @@
-#ifndef GBA_HPP
-#define GBA_HPP
+#pragma once
 
 #include <emulator/emulator.hpp>
 #include <processor/arm/arm.hpp>
@@ -58,7 +57,6 @@ namespace GameBoyAdvance {
   };
 
   #include <gba/memory/memory.hpp>
-  #include <gba/interface/interface.hpp>
   #include <gba/scheduler/scheduler.hpp>
   #include <gba/system/system.hpp>
   #include <gba/cartridge/cartridge.hpp>
@@ -70,4 +68,4 @@ namespace GameBoyAdvance {
   #include <gba/video/video.hpp>
 }
 
-#endif
+#include <gba/interface/interface.hpp>

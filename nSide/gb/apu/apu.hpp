@@ -13,17 +13,16 @@ struct APU : Thread, MMIO {
   #include "square2/square2.hpp"
   #include "wave/wave.hpp"
   #include "noise/noise.hpp"
-  #include "master/master.hpp"
-
-  uint8 mmio_data[48];
-  uint12 sequencer_base;
-  uint3 sequencer_step;
+  #include "sequencer/sequencer.hpp"
 
   Square1 square1;
   Square2 square2;
   Wave wave;
   Noise noise;
-  Master master;
+  Sequencer sequencer;
+
+  uint3 phase;   //high 3-bits of clock counter
+  uint12 cycle;  //low 12-bits of clock counter
 };
 
 extern APU apu;

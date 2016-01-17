@@ -1,6 +1,8 @@
+#if defined(Hiro_Button)
+
 @implementation CocoaButton : NSButton
 
--(id) initWith:(phoenix::Button&)buttonReference {
+-(id) initWith:(hiro::mButton&)buttonReference {
   if(self = [super initWithFrame:NSMakeRect(0, 0, 0, 0)]) {
     button = &buttonReference;
     [self setTarget:self];
@@ -12,69 +14,77 @@
 }
 
 -(IBAction) activate:(id)sender {
-  if(button->onActivate) button->onActivate();
+  button->doActivate();
 }
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
-Size pButton::minimumSize() {
-  Size size = Font::size(button.font(), button.state.text);
+auto pButton::construct() -> void {
+  @autoreleasepool {
+    cocoaView = cocoaButton = [[CocoaButton alloc] initWith:self()];
+    pWidget::construct();
 
-  if(button.state.orientation == Orientation::Horizontal) {
-    size.width += button.state.image.width;
-    size.height = max(button.state.image.height, size.height);
+    setBordered(state().bordered);
+    setIcon(state().icon);
+    setOrientation(state().orientation);
+    setText(state().text);
   }
-
-  if(button.state.orientation == Orientation::Vertical) {
-    size.width = max(button.state.image.width, size.width);
-    size.height += button.state.image.height;
-  }
-
-  return {size.width + (button.state.text ? 20 : 4), size.height + 4};
 }
 
-void pButton::setBordered(bool bordered) {
+auto pButton::destruct() -> void {
+  @autoreleasepool {
+    [cocoaView removeFromSuperview];
+    [cocoaView release];
+  }
 }
 
-void pButton::setGeometry(Geometry geometry) {
+auto pButton::minimumSize() const -> Size {
+  Size size = pFont::size(self().font(true), state().text);
+
+  if(state().orientation == Orientation::Horizontal) {
+    size.setWidth(size.width() + state().icon.width());
+    size.setHeight(max(size.height(), state().icon.height()));
+  }
+
+  if(state().orientation == Orientation::Vertical) {
+    size.setWidth(max(size.width(), state().icon.width()));
+    size.setHeight(size.height() + state().icon.height());
+  }
+
+  return {size.width() + (state().text ? 20 : 8), size.height() + 8};
+}
+
+auto pButton::setBordered(bool bordered) -> void {
+}
+
+auto pButton::setGeometry(Geometry geometry) -> void {
   pWidget::setGeometry({
-    geometry.x - 2, geometry.y - 2,
-    geometry.width + 4, geometry.height + 4
+    geometry.x() - 2, geometry.y() - 2,
+    geometry.width() + 4, geometry.height() + 4
   });
 }
 
-void pButton::setImage(const image& image, Orientation orientation) {
+auto pButton::setIcon(const image& icon) -> void {
   @autoreleasepool {
-    if(image.empty()) {
-      [cocoaView setImage:nil];
-      return;
-    }
+    [cocoaView setImage:NSMakeImage(icon)];
+  }
+}
 
-    [cocoaView setImage:NSMakeImage(image)];
-
+auto pButton::setOrientation(Orientation orientation) -> void {
+  @autoreleasepool {
     if(orientation == Orientation::Horizontal) [cocoaView setImagePosition:NSImageLeft];
     if(orientation == Orientation::Vertical  ) [cocoaView setImagePosition:NSImageAbove];
   }
 }
 
-void pButton::setText(string text) {
+auto pButton::setText(const string& text) -> void {
   @autoreleasepool {
     [cocoaView setTitle:[NSString stringWithUTF8String:text]];
   }
 }
 
-void pButton::constructor() {
-  @autoreleasepool {
-    cocoaView = cocoaButton = [[CocoaButton alloc] initWith:button];
-  }
 }
 
-void pButton::destructor() {
-  @autoreleasepool {
-    [cocoaView release];
-  }
-}
-
-}
+#endif

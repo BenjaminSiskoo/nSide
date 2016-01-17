@@ -4,10 +4,7 @@ auto Cartridge::parseMarkup(const char* markup) -> void {
   auto board_node = document["board"];
 
   this->information.title.cartridge = information["title"].text();
-       if(information["region"].text() == "JP") _region = Region::NTSC;
-  else if(information["region"].text() == "NA") _region = Region::NTSC;
-  else if(information["region"].text() == "QC") _region = Region::NTSC;
-  else                                          _region = Region::PAL;
+  _region = board_node["region"].text() == "pal" ? Region::PAL : Region::NTSC;
 
   if(system.revision == System::Revision::VSSystem) {
     uint ppus = 0;

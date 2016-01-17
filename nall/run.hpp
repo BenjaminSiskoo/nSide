@@ -1,5 +1,4 @@
-#ifndef NALL_RUN_HPP
-#define NALL_RUN_HPP
+#pragma once
 
 //auto execute(const string& name, const string& args...) -> string;
 //[[synchronous]]
@@ -17,7 +16,7 @@
 
 namespace nall {
 
-#if defined(PLATFORM_LINUX) || defined(PLATFORM_BSD)
+#if defined(PLATFORM_MACOSX) || defined(PLATFORM_LINUX) || defined(PLATFORM_BSD)
 
 template<typename... P> inline auto execute(const string& name, P&&... p) -> string {
   int fd[2];
@@ -33,6 +32,7 @@ template<typename... P> inline auto execute(const string& name, P&&... p) -> str
     *argp++ = nullptr;
 
     dup2(fd[1], STDOUT_FILENO);
+    dup2(fd[1], STDERR_FILENO);
     close(fd[0]);
     close(fd[1]);
     execvp(name, (char* const*)argv);
@@ -117,8 +117,8 @@ template<typename... P> inline auto execute(const string& name, P&&... p) -> str
   while(true) {
     DWORD exitCode;
     GetExitCodeProcess(pi.hProcess, &exitCode);
-    if(exitCode != STILL_ACTIVE) break;
     Sleep(1);
+    if(exitCode != STILL_ACTIVE) break;
   }
 
   string result;
@@ -158,5 +158,3 @@ template<typename... P> inline auto invoke(const string& name, P&&... p) -> void
 #endif
 
 }
-
-#endif

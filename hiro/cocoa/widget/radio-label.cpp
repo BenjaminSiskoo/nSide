@@ -1,6 +1,8 @@
+#if defined(Hiro_RadioLabel)
+
 @implementation CocoaRadioLabel : NSButton
 
--(id) initWith:(phoenix::RadioLabel&)radioLabelReference {
+-(id) initWith:(hiro::mRadioLabel&)radioLabelReference {
   if(self = [super initWithFrame:NSMakeRect(0, 0, 0, 0)]) {
     radioLabel = &radioLabelReference;
 
@@ -13,53 +15,68 @@
 
 -(IBAction) activate:(id)sender {
   radioLabel->setChecked();
-  if(radioLabel->onActivate) radioLabel->onActivate();
+  radioLabel->doActivate();
 }
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
-Size pRadioLabel::minimumSize() {
-  Size size = Font::size(radioLabel.font(), radioLabel.state.text);
-  return {size.width + 22, size.height};
+auto pRadioLabel::construct() -> void {
+  @autoreleasepool {
+    cocoaView = cocoaRadioLabel = [[CocoaRadioLabel alloc] initWith:self()];
+    pWidget::construct();
+
+    if(state().checked) setChecked();
+    setText(state().text);
+  }
 }
 
-void pRadioLabel::setChecked() {
+auto pRadioLabel::destruct() -> void {
   @autoreleasepool {
-    for(auto& item : radioLabel.state.group) {
-      auto state = (&item == &radioLabel) ? NSOnState : NSOffState;
-      [item.p.cocoaView setState:state];
+    [cocoaView removeFromSuperview];
+    [cocoaView release];
+  }
+}
+
+auto pRadioLabel::minimumSize() const -> Size {
+  Size size = pFont::size(self().font(true), state().text);
+  return {size.width() + 22, size.height()};
+}
+
+auto pRadioLabel::setChecked() -> void {
+  @autoreleasepool {
+    if(auto group = state().group) {
+      for(auto& weak : group->state.objects) {
+        if(auto object = weak.acquire()) {
+          if(auto self = object->self()) {
+            if(auto p = dynamic_cast<pRadioLabel*>(self)) {
+              auto state = this == p ? NSOnState : NSOffState;
+              [p->cocoaView setState:state];
+            }
+          }
+        }
+      }
     }
   }
 }
 
-void pRadioLabel::setGeometry(Geometry geometry) {
+auto pRadioLabel::setGeometry(Geometry geometry) -> void {
   pWidget::setGeometry({
-    geometry.x - 1, geometry.y,
-    geometry.width + 2, geometry.height
+    geometry.x() - 1, geometry.y(),
+    geometry.width() + 2, geometry.height()
   });
 }
 
-void pRadioLabel::setGroup(const group<RadioLabel>& group) {
+auto pRadioLabel::setGroup(sGroup group) -> void {
 }
 
-void pRadioLabel::setText(string text) {
+auto pRadioLabel::setText(const string& text) -> void {
   @autoreleasepool {
     [cocoaView setTitle:[NSString stringWithUTF8String:text]];
   }
 }
 
-void pRadioLabel::constructor() {
-  @autoreleasepool {
-    cocoaView = cocoaRadioLabel = [[CocoaRadioLabel alloc] initWith:radioLabel];
-  }
 }
 
-void pRadioLabel::destructor() {
-  @autoreleasepool {
-    [cocoaView release];
-  }
-}
-
-}
+#endif

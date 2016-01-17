@@ -20,7 +20,7 @@ auto System::run() -> void {
 
   scheduler.enter();
   if(scheduler.exit_reason == Scheduler::ExitReason::FrameEvent) {
-    video.update();
+    video.refresh();
   }
 }
 
@@ -48,7 +48,7 @@ auto System::runThreadToSave() -> void {
     scheduler.enter();
     if(scheduler.exit_reason == Scheduler::ExitReason::SynchronizeEvent) break;
     if(scheduler.exit_reason == Scheduler::ExitReason::FrameEvent) {
-      video.update();
+      video.refresh();
     }
   }
 }
@@ -58,8 +58,6 @@ auto System::init() -> void {
 
   vsarcadeboard.init();
   pc10arcadeboard.init();
-
-  video.init();
 
   device.connect(0, configuration.controllerPort1);
   device.connect(1, configuration.controllerPort2);
@@ -166,18 +164,11 @@ auto System::reset() -> void {
   case Revision::PlayChoice10: pc10arcadeboard.reset(); break;
   }
 
+  video.reset();
   scheduler.init();
   device.connect(0, configuration.controllerPort1);
   device.connect(1, configuration.controllerPort2);
   device.connect(2, configuration.expansionPort);
-}
-
-auto System::scanline() -> void {
-  video.scanline();
-  if(ppu.vcounter() == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
-}
-
-auto System::frame() -> void {
 }
 
 }

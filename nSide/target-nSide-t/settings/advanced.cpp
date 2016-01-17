@@ -1,5 +1,5 @@
 AdvancedSettings::AdvancedSettings(TabFrame* parent) : TabFrameItem(parent) {
-  setImage(Icon::Action::Settings);
+  setIcon(Icon::Action::Settings);
   setText("Advanced");
 
   layout.setMargin(5);
@@ -42,18 +42,5 @@ AdvancedSettings::AdvancedSettings(TabFrame* parent) : TabFrameItem(parent) {
 
   ignoreManifests.setText("Ignore Manifests").setChecked(settings["Library/IgnoreManifests"].boolean()).onToggle([&] {
     settings["Library/IgnoreManifests"].setValue(ignoreManifests.checked());
-  });
-
-  infoLabel.setFont(Font().setBold());
-  infoLabel.setText({
-    "nSide-t v", Emulator::Version, "\n",
-    "Based on ", Emulator::OriginalName, " v", Emulator::FromVersion, "\n",
-    #if defined(PROFILE_ACCURACY) or defined(PROFILE_BALANCED) or defined(PROFILE_PERFORMANCE)
-    "  ", Emulator::Profile, " Profile\n",
-    #endif
-    "  Original Author: ", Emulator::Author, "\n",
-    "  Contributors: ", Emulator::Contributors, "\n",
-    "  License: ", Emulator::License, "\n",
-    "  Website of ", Emulator::OriginalName, ": ", Emulator::Website
   });
 }

@@ -1,6 +1,4 @@
-#ifndef GB_HPP
 namespace GameBoy {
-#endif
 
 struct ID {
   enum : uint {
@@ -52,7 +50,9 @@ struct Interface : Emulator::Interface {
 
   auto cheatSet(const lstring&) -> void;
 
-  auto paletteUpdate(PaletteMode mode) -> void;
+  auto cap(const string& name) -> bool override;
+  auto get(const string& name) -> any override;
+  auto set(const string& name, const any& value) -> bool override;
 
   //Super Game Boy bindings
   struct Hook {
@@ -73,8 +73,12 @@ private:
   vector<Device> device;
 };
 
-extern Interface* interface;
+struct Settings {
+  bool blurEmulation = true;
+  bool colorEmulation = true;
+};
 
-#ifndef GB_HPP
+extern Interface* interface;
+extern Settings settings;
+
 }
-#endif

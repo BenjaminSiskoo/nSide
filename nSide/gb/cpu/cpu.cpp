@@ -81,13 +81,13 @@ auto CPU::interrupt_test() -> void {
 }
 
 auto CPU::interrupt_exec(uint16 pc) -> void {
+  op_io();
+  op_io();
+  op_io();
   r.ime = 0;
   op_write(--r[SP], r[PC] >> 8);
   op_write(--r[SP], r[PC] >> 0);
   r[PC] = pc;
-  op_io();
-  op_io();
-  op_io();
 }
 
 auto CPU::stop() -> bool {
@@ -117,7 +117,6 @@ auto CPU::power() -> void {
   bus.mmio[0xff06] = this;  //TMA
   bus.mmio[0xff07] = this;  //TAC
   bus.mmio[0xff0f] = this;  //IF
-  bus.mmio[0xff46] = this;  //DMA
   bus.mmio[0xffff] = this;  //IE
 
   if(system.cgb()) {
@@ -199,10 +198,6 @@ auto CPU::power() -> void {
   status.interrupt_enable_timer = 0;
   status.interrupt_enable_stat = 0;
   status.interrupt_enable_vblank = 0;
-
-  oamdma.active = false;
-  oamdma.bank = 0;
-  oamdma.offset = 0;
 }
 
 }

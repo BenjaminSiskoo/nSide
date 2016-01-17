@@ -36,7 +36,7 @@ struct CPU : Processor::LR35902, Thread, MMIO {
   auto hblank() -> void;
 
   struct Status {
-    uint clock;
+    uint22 clock;
 
     //$ff00  JOYP
     bool p15;
@@ -53,7 +53,7 @@ struct CPU : Processor::LR35902, Thread, MMIO {
     bool serial_clock;
 
     //$ff04  DIV
-    uint8 div;
+    uint16 div;
 
     //$ff05  TIMA
     uint8 tima;
@@ -106,12 +106,6 @@ struct CPU : Processor::LR35902, Thread, MMIO {
     bool interrupt_enable_stat;
     bool interrupt_enable_vblank;
   } status;
-
-  struct OAMDMA {
-    bool active;
-    uint8 bank;
-    uint8 offset;
-  } oamdma;
 
   uint8 wram[32768];  //GB=8192, GBC=32768
   uint8 hram[128];

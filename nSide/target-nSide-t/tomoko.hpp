@@ -20,3 +20,4 @@ extern Emulator::Interface* emulator;
 #include "dip-switches/dip-switches.hpp"
 
 auto locate(string pathname, string filename) -> string;
+auto locate(string pathname1, string pathname2, string filename) -> string;

@@ -1,6 +1,8 @@
+#if defined(Hiro_VerticalSlider)
+
 @implementation CocoaVerticalSlider : NSSlider
 
--(id) initWith:(phoenix::VerticalSlider&)verticalSliderReference {
+-(id) initWith:(hiro::mVerticalSlider&)verticalSliderReference {
   if(self = [super initWithFrame:NSMakeRect(0, 0, 0, 1)]) {
     verticalSlider = &verticalSliderReference;
 
@@ -13,49 +15,53 @@
 
 -(IBAction) activate:(id)sender {
   verticalSlider->state.position = [self doubleValue];
-  if(verticalSlider->onChange) verticalSlider->onChange();
+  verticalSlider->doChange();
 }
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
-Size pVerticalSlider::minimumSize() {
+auto pVerticalSlider::construct() -> void {
+  @autoreleasepool {
+    cocoaView = cocoaVerticalSlider = [[CocoaVerticalSlider alloc] initWith:self()];
+    pWidget::construct();
+
+    setLength(state().length);
+    setPosition(state().position);
+  }
+}
+
+auto pVerticalSlider::destruct() -> void {
+  @autoreleasepool {
+    [cocoaView removeFromSuperview];
+    [cocoaView release];
+  }
+}
+
+auto pVerticalSlider::minimumSize() const -> Size {
   return {20, 48};
 }
 
-void pVerticalSlider::setGeometry(Geometry geometry) {
+auto pVerticalSlider::setGeometry(Geometry geometry) -> void {
   pWidget::setGeometry({
-    geometry.x, geometry.y - 2,
-    geometry.width, geometry.height + 4
+    geometry.x(), geometry.y() - 2,
+    geometry.width(), geometry.height() + 4
   });
 }
 
-void pVerticalSlider::setLength(unsigned length) {
+auto pVerticalSlider::setLength(uint length) -> void {
   @autoreleasepool {
     [cocoaView setMaxValue:length];
   }
 }
 
-void pVerticalSlider::setPosition(unsigned position) {
+auto pVerticalSlider::setPosition(uint position) -> void {
   @autoreleasepool {
     [cocoaView setDoubleValue:position];
   }
 }
 
-void pVerticalSlider::constructor() {
-  @autoreleasepool {
-    cocoaView = cocoaVerticalSlider = [[CocoaVerticalSlider alloc] initWith:verticalSlider];
-
-    setLength(verticalSlider.state.length);
-    setPosition(verticalSlider.state.position);
-  }
 }
 
-void pVerticalSlider::destructor() {
-  @autoreleasepool {
-    [cocoaView release];
-  }
-}
-
-}
+#endif

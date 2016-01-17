@@ -1,5 +1,4 @@
-#ifndef FC_HPP
-#define FC_HPP
+#pragma once
 
 #include <emulator/emulator.hpp>
 #include <processor/r6502/r6502.hpp>
@@ -63,10 +62,9 @@ namespace Famicom {
   #include <fc/arcade/arcade.hpp>
   #include <fc/cartridge/cartridge.hpp>
   #include <fc/cheat/cheat.hpp>
-  #include <fc/interface/interface.hpp>
 
   #include <fc/memory/memory-inline.hpp>
   #include <fc/ppu/counter/counter-inline.hpp>
 }
 
-#endif
+#include <fc/interface/interface.hpp>

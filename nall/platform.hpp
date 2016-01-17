@@ -1,5 +1,4 @@
-#ifndef NALL_PLATFORM_HPP
-#define NALL_PLATFORM_HPP
+#pragma once
 
 #include <nall/intrinsics.hpp>
 
@@ -98,10 +97,17 @@ namespace Math {
   #define dllexport
 #endif
 
+#if defined(PLATFORM_MACOSX)
+  #define MSG_NOSIGNAL 0
+#endif
+
 #if defined(COMPILER_CLANG) || defined(COMPILER_GCC)
   #define neverinline   __attribute__((noinline))
   #define alwaysinline  inline __attribute__((always_inline))
+  #if !defined(PLATFORM_MACOSX)
+  //todo: we want this prefix; but it causes compilation errors
   #define deprecated    __attribute__((deprecated))
+  #endif
 #elif defined(COMPILER_VISUALCPP)
   #define neverinline   __declspec(noinline)
   #define alwaysinline  inline __forceinline
@@ -124,6 +130,4 @@ namespace Math {
   //auto function() override -> return_type;  //this is the syntax that GCC 4.7.x requires
   //in order to compile code correctly with both compilers, we disable the override keyword for GCC
   #define override
-#endif
-
 #endif

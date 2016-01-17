@@ -7,12 +7,11 @@ PPU ppu;
 #include "serialization.cpp"
 
 PPU::PPU() {
-  surface = new uint32[256 * 312];
-  output = surface + 0 * 256;
+  output = new uint32[256 * 312];
 }
 
 PPU::~PPU() {
-  delete[] surface;
+  delete[] output;
 }
 
 auto PPU::step(uint clocks) -> void {
@@ -74,7 +73,6 @@ auto PPU::scanline() -> void {
 }
 
 auto PPU::frame() -> void {
-  system.frame();
   scheduler.exit(Scheduler::ExitReason::FrameEvent);
 }
 
@@ -93,7 +91,7 @@ auto PPU::power() -> void {
 auto PPU::reset() -> void {
   create(PPU::Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memset(surface, 0, 256 * 312 * sizeof(uint32));
+  memset(output, 0, 256 * 312 * sizeof(uint32));
 
   status.mdr = 0x00;
   status.bus_data = 0x00;

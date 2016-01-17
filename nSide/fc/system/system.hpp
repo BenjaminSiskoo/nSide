@@ -24,9 +24,6 @@ struct System : property<System> {
   auto power() -> void;
   auto reset() -> void;
 
-  void frame();
-  void scanline();
-
   inline bool fc()   const { return revision == Revision::Famicom; }
   inline bool vs()   const { return revision == Revision::VSSystem; }
   inline bool pc10() const { return revision == Revision::PlayChoice10; }

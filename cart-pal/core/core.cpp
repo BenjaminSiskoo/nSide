@@ -14,14 +14,14 @@ auto CartPal::error() const -> string {
   return errorMessage;
 }
 
-auto CartPal::success() -> bool {
+auto CartPal::success(string location) -> string {
   errorMessage = "";
-  return true;
+  return location;
 }
 
-auto CartPal::failure(string message) -> bool {
+auto CartPal::failure(string message) -> string {
   errorMessage = message;
-  return false;
+  return {};
 }
 
 auto CartPal::manifest(string location) -> string {
@@ -42,7 +42,7 @@ auto CartPal::manifest(string location) -> string {
   return "";
 }
 
-auto CartPal::import(string location) -> bool {
+auto CartPal::import(string location) -> string {
   location.transform("\\", "/").rtrim("/");
   if(!file::exists(location)) return failure("file does not exist");
   if(!file::readable(location)) return failure("file is unreadable");

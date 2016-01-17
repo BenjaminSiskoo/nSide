@@ -5,8 +5,8 @@ namespace hiro {
 struct pTimer : pObject {
   Declare(Timer, Object)
 
-  auto setEnabled(bool enabled) -> void;
-  auto setInterval(unsigned interval) -> void;
+  auto setEnabled(bool enabled) -> void override;
+  auto setInterval(uint interval) -> void;
 };
 
 }

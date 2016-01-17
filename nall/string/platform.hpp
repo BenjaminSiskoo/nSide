@@ -1,4 +1,4 @@
-#ifdef NALL_STRING_INTERNAL_HPP
+#pragma once
 
 namespace nall {
 
@@ -25,16 +25,15 @@ auto realpath(rstring name) -> string {
 auto programpath() -> string {
   #if defined(PLATFORM_WINDOWS)
   wchar_t path[PATH_MAX] = L"";
-  GetModuleFileName(NULL, path, PATH_MAX);
+  GetModuleFileName(nullptr, path, PATH_MAX);
   string result = (const char*)utf8_t(path);
   result.transform("\\", "/");
-  result = realpath(result);
+  return realpath(result);
   #else
   Dl_info info;
   dladdr((void*)&programpath, &info);
-  string result = realpath(info.dli_fname);
+  return realpath(info.dli_fname);
   #endif
-  return result;
 }
 
 // /home/username/
@@ -127,5 +126,3 @@ auto temppath() -> string {
 }
 
 }
-
-#endif

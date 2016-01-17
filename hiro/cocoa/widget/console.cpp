@@ -1,3 +1,5 @@
+#if defined(Hiro_Console)
+
 @implementation CocoaConsole : NSScrollView
 
 -(id) initWith:(phoenix::Console&)consoleReference {
@@ -9,7 +11,7 @@
 
 @end
 
-namespace phoenix {
+namespace hiro {
 
 void pConsole::print(string text) {
 }
@@ -34,8 +36,11 @@ void pConsole::constructor() {
 
 void pConsole::destructor() {
   @autoreleasepool {
+    [cocoaView removeFromSuperview];
     [cocoaView release];
   }
 }
 
 }
+
+#endif

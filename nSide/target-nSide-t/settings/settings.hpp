@@ -2,19 +2,6 @@ struct VideoSettings : TabFrameItem {
   VideoSettings(TabFrame*);
 
   VerticalLayout layout{this};
-    Label colorAdjustmentLabel{&layout, Size{~0, 0}};
-    HorizontalLayout saturationLayout{&layout, Size{~0, 0}};
-      Label saturationLabel{&saturationLayout, Size{80, 0}};
-      Label saturationValue{&saturationLayout, Size{80, 0}};
-      HorizontalSlider saturationSlider{&saturationLayout, Size{~0, 0}};
-    HorizontalLayout gammaLayout{&layout, Size{~0, 0}};
-      Label gammaLabel{&gammaLayout, Size{80, 0}};
-      Label gammaValue{&gammaLayout, Size{80, 0}};
-      HorizontalSlider gammaSlider{&gammaLayout, Size{~0, 0}};
-    HorizontalLayout luminanceLayout{&layout, Size{~0, 0}};
-      Label luminanceLabel{&luminanceLayout, Size{80, 0}};
-      Label luminanceValue{&luminanceLayout, Size{80, 0}};
-      HorizontalSlider luminanceSlider{&luminanceLayout, Size{~0, 0}};
     Label overscanMaskLabel{&layout, Size{~0, 0}};
     HorizontalLayout horizontalMaskLayout{&layout, Size{~0, 0}};
       Label horizontalMaskLabel{&horizontalMaskLayout, Size{80, 0}};
@@ -63,8 +50,13 @@ struct InputSettings : TabFrameItem {
   auto inputEvent(shared_pointer<HID::Device> device, uint group, uint input, int16 oldValue, int16 newValue, bool allowMouseInput = false) -> void;
 
   InputMapping* activeMapping = nullptr;
+  Timer timer;
 
   VerticalLayout layout{this};
+    HorizontalLayout focusLayout{&layout, Size{~0, 0}};
+      Label focusLabel{&focusLayout, Size{0, 0}};
+      CheckLabel pauseEmulation{&focusLayout, Size{0, 0}};
+      CheckLabel allowInput{&focusLayout, Size{0, 0}};
     HorizontalLayout selectionLayout{&layout, Size{~0, 0}};
       ComboButton emulatorList{&selectionLayout, Size{~0, 0}};
       ComboButton portList{&selectionLayout, Size{~0, 0}};
@@ -87,6 +79,7 @@ struct HotkeySettings : TabFrameItem {
   auto inputEvent(shared_pointer<HID::Device> device, uint group, uint input, int16 oldValue, int16 newValue) -> void;
 
   InputMapping* activeMapping = nullptr;
+  Timer timer;
 
   VerticalLayout layout{this};
     ListView mappingList{&layout, Size{~0, ~0}};
@@ -130,8 +123,6 @@ struct AdvancedSettings : TabFrameItem {
       LineEdit libraryLocation{&libraryLayout, Size{~0, 0}};
       Button libraryChange{&libraryLayout, Size{0, 0}};
     CheckLabel ignoreManifests{&layout, Size{~0, 0}};
-    Widget spacer{&layout, Size{~0, ~0}};
-    Label infoLabel{&layout, Size{~0, 0}};
 };
 
 struct SettingsManager : Window {

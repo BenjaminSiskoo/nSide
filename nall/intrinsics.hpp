@@ -1,5 +1,4 @@
-#ifndef NALL_INTRINSICS_HPP
-#define NALL_INTRINSICS_HPP
+#pragma once
 
 namespace nall {
   struct Intrinsics {
@@ -34,6 +33,11 @@ namespace nall {
   #pragma clang diagnostic ignored "-Wswitch"
   #pragma clang diagnostic ignored "-Wswitch-bool"
   #pragma clang diagnostic ignored "-Wtautological-compare"
+  #pragma clang diagnostic ignored "-Wabsolute-value"
+
+  //temporary
+  #pragma clang diagnostic ignored "-Winconsistent-missing-override"
+  #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #elif defined(__GNUC__)
   #define COMPILER_GCC
   auto Intrinsics::compiler() -> Compiler { return Compiler::GCC; }
@@ -150,5 +154,3 @@ namespace nall {
 #endif
 
 }
-
-#endif

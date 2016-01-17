@@ -1,5 +1,5 @@
 HotkeySettings::HotkeySettings(TabFrame* parent) : TabFrameItem(parent) {
-  setImage(Icon::Device::Keyboard);
+  setIcon(Icon::Device::Keyboard);
   setText("Hotkeys");
 
   layout.setMargin(5);
@@ -29,7 +29,7 @@ auto HotkeySettings::reloadMappings() -> void {
   mappingList.append(ListViewHeader().setVisible()
     .append(ListViewColumn().setText("Name"))
     .append(ListViewColumn().setText("Mapping").setExpandable())
-    .append(ListViewColumn().setText("Device"))
+    .append(ListViewColumn().setText("Device").setAlignment(1.0).setForegroundColor({0, 128, 0}))
   );
   for(auto& hotkey : inputManager->hotkeys) {
     mappingList.append(ListViewItem()
@@ -67,8 +67,12 @@ auto HotkeySettings::inputEvent(shared_pointer<HID::Device> device, uint group, 
 
   if(activeMapping->bind(device, group, input, oldValue, newValue)) {
     activeMapping = nullptr;
-    settingsManager->statusBar.setText("");
-    settingsManager->layout.setEnabled(true);
+    settingsManager->statusBar.setText("Mapping assigned.");
     refreshMappings();
+    timer.onActivate([&] {
+      timer.setEnabled(false);
+      settingsManager->statusBar.setText();
+      settingsManager->layout.setEnabled();
+    }).setInterval(200).setEnabled();
   }
 }

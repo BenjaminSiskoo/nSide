@@ -1,5 +1,5 @@
 ifndef name
-  name := nSide-t
+  name := nSide
 endif
 
 processors := arm gsu hg51b lr35902 r6502 r65816 spc700 upd96050
@@ -23,7 +23,7 @@ ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
   ruby += video.cgl
   ruby += audio.openal
-  ruby += input.carbon
+  ruby += input.quartz input.carbon
 else ifeq ($(platform),linux)
   ruby += video.glx video.xv video.xshm video.sdl
   ruby += audio.alsa audio.openal audio.oss audio.pulseaudio audio.pulseaudiosimple audio.ao
@@ -46,10 +46,12 @@ link += $(hirolink)
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
-obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,ruby/)
+obj/libco.o: ../libco/libco.c $(call rwildcard,../libco/)
+
+obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,../ruby/)
 	$(compiler) $(rubyflags) -c $< -o $@
 
-obj/hiro.o: ../hiro/hiro.cpp $(call rwildcard,hiro/)
+obj/hiro.o: ../hiro/hiro.cpp $(call rwildcard,../hiro/)
 	$(compiler) $(hiroflags) -c $< -o $@
 
 obj/ui-tomoko.o: $(ui)/tomoko.cpp $(call rwildcard,$(ui)/)
@@ -68,21 +70,34 @@ obj/ui-resource.o:
 # targets
 build: $(objects)
 	$(strip $(compiler) -o out/$(name) $(objects) $(link))
+ifeq ($(platform),macosx)
+	@if [ -d out/$(name).app ]; then rm -r out/$(name).app; fi
+	mkdir -p out/$(name).app/Contents/MacOS/
+	mkdir -p out/$(name).app/Contents/Resources/
+	mv out/$(name) out/$(name).app/Contents/MacOS/$(name)
+	cp data/$(name).plist out/$(name).app/Contents/Info.plist
+	sips -s format icns data/$(name).png --out out/$(name).app/Contents/Resources/$(name).icns
+endif
 
 install:
 ifeq ($(shell id -un),root)
 	$(error "make install should not be run as root")
 else ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
-else
+	mkdir -p ~/Library/Application\ Support/$(name)/
+	mkdir -p ~/Emulation/System/
+	cp -R out/$(name).app /Applications/$(name).app
+	cp data/cheats.bml ~/Library/Application\ Support/$(name)/
+	cp -R profile/* ~/Library/Application\ Support/$(name)/
+else ifneq ($(filter $(platform),linux bsd),)
 	mkdir -p $(prefix)/bin/
 	mkdir -p $(prefix)/share/icons/
 	mkdir -p $(prefix)/$(name)/
 	mkdir -p ~/Emulation/System/
 	cp out/$(name) $(prefix)/bin/$(name)
-	cp data/higan.png $(prefix)/share/icons/$(name).png
+	cp data/$(name).png $(prefix)/share/icons/$(name).png
 	cp data/cheats.bml $(prefix)/$(name)/cheats.bml
-	cp -R profile/* ~/Emulation/System/
+	cp -R profile/* $(prefix)/$(name)/
 endif
 
 uninstall:
@@ -90,7 +105,8 @@ ifeq ($(shell id -un),root)
 	$(error "make uninstall should not be run as root")
 else ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
-else
+	if [ -d /Applications/$(name).app ]; then rm -r /Applications/$(name).app; fi
+else ifneq ($(filter $(platform),linux bsd),)
 	if [ -f $(prefix)/bin/$(name) ]; then rm $(prefix)/bin/$(name); fi
 	if [ -f $(prefix)/share/icons/$(name).png ]; then rm $(prefix)/share/icons/$(name).png; fi
 endif
