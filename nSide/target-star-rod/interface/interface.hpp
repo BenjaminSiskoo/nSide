@@ -13,8 +13,7 @@ struct Interface : Emulator::Interface::Bind {
 
   void unload();
 
-  uint32 videoColor(uint source, uint16, uint16, uint16, uint16);
-  void videoRefresh(const uint32* palette, const uint32* data, uint pitch, uint width, uint height);
+  void videoRefresh(const uint32* data, uint pitch, uint width, uint height);
   void audioSample(int16 lsample, int16 rsample);
   int16 inputPoll(uint port, uint device, uint index);
   uint dipSettings(const Markup::Node& node) { return 0u; }

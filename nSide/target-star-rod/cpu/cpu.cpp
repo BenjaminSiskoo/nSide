@@ -67,7 +67,7 @@ void CPUDebugger::updateDisassembly() {
     for(int b = 1; b <= 4; b++) {
       if(addr - b >= 0 && (debugger->cpuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        SuperFamicom::cpu.disassemble_opcode(text, addr + b, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
+        SuperFamicom::cpu.disassemble_opcode(text, addr, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
         text[29] = 0;
         line[o] = { "  ", text };
         break;
@@ -80,7 +80,7 @@ void CPUDebugger::updateDisassembly() {
     for(int b = 1; b <= 4; b++) {
       if(addr + b <= 0xffffff && (debugger->cpuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        SuperFamicom::cpu.disassemble_opcode(text, addr - b, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
+        SuperFamicom::cpu.disassemble_opcode(text, addr, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
         text[29] = 0;
         line[o] = { "  ", text };
         break;
@@ -112,7 +112,7 @@ CPUDebugger::CPUDebugger() {
   opcodePC = 0x008000;
 
   setTitle("CPU Debugger");
-  setGeometry({128, 128, 350, 255});
+  setGeometry({128, 128, 520, 255});
 
   layout.setMargin(5);
   stepInto.setText("Step Into");

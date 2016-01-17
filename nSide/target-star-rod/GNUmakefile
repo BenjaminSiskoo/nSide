@@ -2,6 +2,8 @@ ifndef name
   name := star-rod
 endif
 
+flags += -DDEBUGGER
+
 processors := arm gsu hg51b lr35902 r65816 spc700 upd96050
 include processor/GNUmakefile
 
@@ -24,7 +26,7 @@ else ifeq ($(platform),macosx)
 else ifeq ($(platform),linux)
   ruby := video.glx audio.alsa input.udev
 else ifeq ($(platform),bsd)
-  ruby := video.glx audio.openal input.x
+  ruby := video.glx audio.openal input.xlib
 endif
 
 include ../ruby/GNUmakefile
@@ -36,10 +38,12 @@ link += $(phoenixlink)
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
-obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,ruby/)
+obj/libco.o: ../libco/libco.c $(call rwildcard,../libco/)
+
+obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,../ruby/)
 	$(compiler) $(rubyflags) -c $< -o $@
 
-obj/phoenix.o: ../phoenix/phoenix.cpp $(call rwildcard,phoenix/)
+obj/phoenix.o: ../phoenix/phoenix.cpp $(call rwildcard,../phoenix/)
 	$(compiler) $(phoenixflags) -c $< -o $@
 
 obj/star-rod-laevateinn.o: $(ui)/laevateinn.cpp $(call rwildcard,$(ui)/)
@@ -58,22 +62,20 @@ obj/star-rod-properties.o: $(ui)/properties/properties.cpp $(call rwildcard,$(ui
 obj/star-rod-vram.o: $(ui)/vram/vram.cpp $(call rwildcard,$(ui)/)
 
 obj/star-rod-resource.o:
-ifeq ($(arch),x86)
-	windres --target=pe-i386 data/resource.rc obj/star-rod-resource.o
-else
 	windres data/resource.rc obj/star-rod-resource.o
-endif
 
 # targets
 build: $(objects)
-ifeq ($(shell id -un),root)
-	$(error "make install should not be run as root")
-else ifeq ($(platform),windows)
+ifeq ($(platform),windows)
 	$(strip $(compiler) -shared -o out/phoenix.dll obj/phoenix.o $(phoenixlink))
 	$(strip $(compiler) -o out/$(name) $(subst obj/phoenix.o,,$(objects)) $(link) -Lout -lphoenix)
 else ifeq ($(platform),macosx)
-	test -d ../$(name).app || mkdir -p ../$(name).app/Contents/MacOS
-	$(strip $(compiler) -o ../$(name).app/Contents/MacOS/$(name) $(objects) $(link))
+	@if [ -d out/$(name).app ]; then rm -r out/$(name).app; fi
+	mkdir -p out/$(name).app/Contents/MacOS/
+	mkdir -p out/$(name).app/Contents/Resources/
+	mv out/$(name) out/$(name).app/Contents/MacOS/$(name)
+	cp data/$(name).plist out/$(name).app/Contents/Info.plist
+	sips -s format icns data/$(name).png --out out/$(name).app/Contents/Resources/$(name).icns
 else
 	$(strip $(compiler) -o out/$(name) $(objects) $(link))
 endif
@@ -83,17 +85,18 @@ ifeq ($(shell id -un),root)
 	$(error "make install should not be run as root")
 else ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
-	sudo mkdir -p /Library/Application\ Support/$(name)
-	sudo cp -R profile/* /Library/Application\ Support/$(name)
-	sudo cp data/cheats.bml /Library/Application\ Support/$(name)/cheats.bml
-	sudo chmod -R 777 /Library/Application\ Support/$(name)
-else
-	sudo install -D -m 755 out/$(name) $(DESTDIR)$(prefix)/bin/$(name)
-
-	sudo mkdir -p /usr/share/$(name)
-	sudo cp -R profile/* /usr/share/$(name)
-	sudo cp data/cheats.bml /usr/share/$(name)/cheats.bml
-	sudo chmod -R 777 /usr/share/$(name)
+	mkdir -p ~/Library/Application\ Support/$(name)/
+	mkdir -p ~/Emulation/System/
+	cp -R out/$(name).app /Applications/$(name).app
+	cp -R profile/* ~/Library/Application\ Support/$(name)/
+else ifneq ($(filter $(platform),linux bsd),)
+	mkdir -p $(prefix)/bin/
+	mkdir -p $(prefix)/share/icons/
+	mkdir -p $(prefix)/$(name)/
+	mkdir -p ~/Emulation/System/
+	cp out/$(name) $(prefix)/bin/$(name)
+	cp data/$(name).png $(prefix)/share/icons/$(name).png
+	cp -R profile/* $(prefix)/$(name)/
 endif
 
 uninstall:
@@ -101,6 +104,8 @@ ifeq ($(shell id -un),root)
 	$(error "make uninstall should not be run as root")
 else ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
-else
-	sudo rm $(DESTDIR)$(prefix)/bin/$(name)
+	if [ -d /Applications/$(name).app ]; then rm -r /Applications/$(name).app; fi
+else ifneq ($(filter $(platform),linux bsd),)
+	if [ -f $(prefix)/bin/$(name) ]; then rm $(prefix)/bin/$(name); fi
+	if [ -f $(prefix)/share/icons/$(name).png ]; then rm $(prefix)/share/icons/$(name).png; fi
 endif

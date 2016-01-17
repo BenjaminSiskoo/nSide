@@ -9,7 +9,11 @@ Interface::Interface() {
 }
 
 bool Interface::loadCartridge(const string& foldername) {
-  lpath(0) = program->path("Super Famicom.sys/");
+  lpath(0) = locate(
+    {program->higan_settings["Library/Location"].text(), "System/"},
+    {localpath(), "nSide/"},
+    {"Super Famicom.sys/"}
+  );
   lpath(1) = foldername;
 
   if(SuperFamicom::cartridge.loaded()) {
@@ -23,13 +27,15 @@ bool Interface::loadCartridge(const string& foldername) {
   emulator->load(SuperFamicom::ID::SuperFamicom);
   emulator->power();
   emulator->connect(SuperFamicom::ID::ControllerPort1, (uint)SuperFamicom::Device::ID::Gamepad);
+  emulator->set("Blur Emulation", false);
+  emulator->set("Color Emulation", false);
+  emulator->set("Scanline Emulation", false);
 
   string name = pathName;
   name = basename(name);
   name.rtrim("/");
 
   presentation->setTitle(name);
-  emulator->paletteUpdate(Emulator::Interface::PaletteMode::Standard);
   debugger->print(SuperFamicom::cartridge.information.markup.cartridge, "\n");
   debugger->suspend();
   return true;
@@ -82,26 +88,17 @@ bool Interface::saveState(uint slot) {
   return result;
 }
 
-uint32 Interface::videoColor(uint source, uint16 a, uint16 r, uint16 g, uint16 b) {
-  a >>= 8, r >>= 8, g >>= 8, b >>= 8;
-  return 255u << 24 | r << 16 | g << 8 | b << 0;
-}
-
 //hires is always true for accuracy core
 //overscan is ignored for the debugger port
-void Interface::videoRefresh(const uint32* palette, const uint32* data, uint pitch, uint width, uint height) {
+void Interface::videoRefresh(const uint32* data, uint pitch, uint width, uint height) {
   uint32* output;
-  uint outputPitch;
+  uint length;
 
-  if(video->lock(output, outputPitch, width, height)) {
-    pitch >>= 2, outputPitch >>= 2;
+  if(video->lock(output, length, width, height)) {
+    pitch >>= 2, length >>= 2;
 
-    for(uint y = 0; y < height; y++) {
-      const uint32* sp = data + y * pitch;
-      uint32* dp = output + y * outputPitch;
-      for(uint x = 0; x < width; x++) {
-        *dp++ = palette[*sp++];
-      }
+    for(auto y : range(height)) {
+      memory::copy(output + y * length, data + y * pitch, width * sizeof(uint32));
     }
 
     video->unlock();

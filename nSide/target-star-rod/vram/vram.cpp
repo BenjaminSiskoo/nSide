@@ -110,7 +110,10 @@ void VRAMViewer::updateTiles() {
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color += paletteSelection.selection() << 2;
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
-            color = (255u << 24) | SuperFamicom::video.palette[(15u << 15) | color];
+            color = (255u << 24) |
+              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
           }
           sp += 2;
@@ -135,7 +138,10 @@ void VRAMViewer::updateTiles() {
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color += paletteSelection.selection() << 4;
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
-            color = (255u << 24) | SuperFamicom::video.palette[(15u << 15) | color];
+            color = (255u << 24) |
+              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
           }
           sp += 2;
@@ -163,7 +169,10 @@ void VRAMViewer::updateTiles() {
             for(auto& b : d) b <<= 1;
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
-            color = (255u << 24) | SuperFamicom::video.palette[(15u << 15) | color];
+            color = (255u << 24) |
+              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
           }
           sp += 2;
@@ -182,7 +191,10 @@ void VRAMViewer::updateTiles() {
             color += sp[x << 1 | 1];
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
-            color = (255u << 24) | SuperFamicom::video.palette[(15u << 15) | color];
+            color = (255u << 24) |
+              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
           }
           sp += 16;

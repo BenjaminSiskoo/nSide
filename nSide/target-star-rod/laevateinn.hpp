@@ -40,14 +40,14 @@ extern Input* input;
 struct Program {
   Emulator::Interface* active = nullptr;
 
-  string basepath;
-  string userpath;
-  string sharedpath;
+  Markup::Node higan_settings;
 
-  string path(string name);
-  void main();
+  auto main() -> void;
   Program(string pathname);
 };
 
 extern Program* program;
 extern DSP dspaudio;
+
+auto locate(string pathname, string filename) -> string;
+auto locate(string pathname1, string pathname2, string filename) -> string;

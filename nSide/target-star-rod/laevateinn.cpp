@@ -7,27 +7,33 @@ Audio* audio = nullptr;
 Input* input = nullptr;
 DSP dspaudio;
 
-string Program::path(string name) {
-  string path = {basepath, name};
-  if(file::exists(path) || directory::exists(path)) return path;
-  path = {userpath, name};
-  if(file::exists(path) || directory::exists(path)) return path;
-  path = {sharedpath, name};
-  if(file::exists(path) || directory::exists(path)) return path;
-  return {userpath, name};
+//if file already exists in the same path as the binary; use it (portable mode)
+//if not, use default requested path (*nix/user mode)
+auto locate(string pathname, string filename) -> string {
+  string location{programpath(), filename};
+  if(file_system_object::exists(location)) return location;
+  return {pathname, filename};
+}
+auto locate(string pathname1, string pathname2, string filename) -> string {
+  string location{programpath(), filename};
+  if(file_system_object::exists(location)) return location;
+  if(file_system_object::exists({pathname1, filename})) return {pathname1, filename};
+  return {pathname2, filename};
 }
 
-void Program::main() {
+auto Program::main() -> void {
   debugger->run();
 }
 
 Program::Program(string pathname) {
   program = this;
 
-  basepath = nall::programpath();
-  userpath = {nall::configpath(), "star-rod/"};
-  sharedpath = {nall::sharedpath(), "higan/"};
-  directory::create(userpath);
+  if(file::exists(locate({nall::localpath(), "nSide/"}, "settings.bml"))) {
+    higan_settings = BML::unserialize(string::read(locate({nall::localpath(), "nSide/"}, "settings.bml")));
+  } else {
+    higan_settings = BML::unserialize(string::read(locate({nall::localpath(), "higan/"}, "settings.bml")));
+  }
+  directory::create({localpath(), "star-rod/"});
 
   new Settings;
   new Interface;
@@ -50,7 +56,7 @@ Program::Program(string pathname) {
 
   settings->load();
 
-  string path = string::read({nall::configpath(), "higan/library.bml"}).strip().ltrim("Path: ").transform("\\", "/");
+  string path = higan_settings["Library/Location"].text().transform("\\", "/");
   if(path.empty()) path = {nall::userpath(), "Emulation/"};
   if(path.endsWith("/") == false) path.append("/");
   path.append("Super Famicom/");
@@ -117,7 +123,7 @@ Program::Program(string pathname) {
   settings->unload();
 }
 
-int main(int argc, char** argv) {
+auto main(int argc, char** argv) -> int {
   #if defined(PLATFORM_WINDOWS)
   utf8_args(argc, argv);
   #endif
