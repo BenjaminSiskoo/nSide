@@ -4,16 +4,16 @@ BreakpointEditor* breakpointEditor = nullptr;
 BreakpointEntry::BreakpointEntry() {
   static uint id = 1;
   enable.setText({ "#", id++ });
-  addr.setFont(Font::monospace(8));
-  data.setFont(Font::monospace(8));
-  type.append("Read");
-  type.append("Write");
-  type.append("Exec");
-  source.append("CPU");
-  source.append("SMP");
-  source.append("VRAM");
-  source.append("OAM");
-  source.append("CGRAM");
+  addr.setFont(Font().setFamily(Font::Mono));
+  data.setFont(Font().setFamily(Font::Mono));
+  type.append(ComboButtonItem().setText("Read"));
+  type.append(ComboButtonItem().setText("Write"));
+  type.append(ComboButtonItem().setText("Exec"));
+  source.append(ComboButtonItem().setText("CPU"));
+  source.append(ComboButtonItem().setText("SMP"));
+  source.append(ComboButtonItem().setText("VRAM"));
+  source.append(ComboButtonItem().setText("OAM"));
+  source.append(ComboButtonItem().setText("CGRAM"));
 
   append(enable, {0, 0}, 5);
   append(addr, {50, 0}, 5);
@@ -21,14 +21,14 @@ BreakpointEntry::BreakpointEntry() {
   append(type, {0, 0}, 5);
   append(source, {0, 0});
 
-  enable.onToggle = [&] {
+  enable.onToggle([&] {
     bool flag = !enable.checked();
     addr.setEnabled(flag);
     data.setEnabled(flag);
     type.setEnabled(flag);
     source.setEnabled(flag);
     breakpointEditor->synchronize();
-  };
+  });
 }
 
 BreakpointEditor::BreakpointEditor() {
@@ -37,9 +37,8 @@ BreakpointEditor::BreakpointEditor() {
 
   layout.setMargin(5);
   for(auto &bp : breakpointEntry) layout.append(bp, {0, 0}, 5);
-  append(layout);
 
-  setGeometry({128, 128, layout.minimumSize().width, layout.minimumSize().height - 5});
+  setGeometry({128, 128, layout.minimumSize().width(), layout.minimumSize().height() - 5});
   synchronize();
 
   windowManager->append(this, "BreakpointEditor");
@@ -58,8 +57,8 @@ void BreakpointEditor::synchronize() {
     bp.compare = !entry.data.text().empty();
     bp.addr = hex(entry.addr.text());
     bp.data = hex(entry.data.text());
-    bp.type = entry.type.selection();
-    bp.source = entry.source.selection();
+    bp.type = entry.type.selected().offset();
+    bp.source = entry.source.selected().offset();
     breakpoint.append(bp);
   }
 

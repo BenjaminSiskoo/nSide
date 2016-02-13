@@ -6,17 +6,17 @@ CPURegisterEditor::CPURegisterEditor() {
 
   layout.setMargin(5);
   regALabel.setText("A:");
-  regAValue.setFont(Font::monospace(8));
+  regAValue.setFont(Font().setFamily(Font::Mono));
   regXLabel.setText("X:");
-  regXValue.setFont(Font::monospace(8));
+  regXValue.setFont(Font().setFamily(Font::Mono));
   regYLabel.setText("Y:");
-  regYValue.setFont(Font::monospace(8));
+  regYValue.setFont(Font().setFamily(Font::Mono));
   regSLabel.setText("S:");
-  regSValue.setFont(Font::monospace(8));
+  regSValue.setFont(Font().setFamily(Font::Mono));
   regDLabel.setText("D:");
-  regDValue.setFont(Font::monospace(8));
+  regDValue.setFont(Font().setFamily(Font::Mono));
   regDBLabel.setText("DB:");
-  regDBValue.setFont(Font::monospace(8));
+  regDBValue.setFont(Font().setFamily(Font::Mono));
   flagN.setText("N");
   flagV.setText("V");
   flagM.setText("M");
@@ -58,11 +58,11 @@ CPURegisterEditor::CPURegisterEditor() {
     tertiaryLayout.append(update, {80, 0});
   append(layout);
 
-  update.onActivate = [&] {
+  update.onActivate([&] {
     saveRegisters();
     cpuDebugger->updateDisassembly();
     setVisible(false);
-  };
+  });
 
   setGeometry({{128, 128}, layout.minimumSize()});
   windowManager->append(this, "CPURegisterEditor");

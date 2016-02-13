@@ -4,40 +4,30 @@ VRAMViewer* vramViewer = nullptr;
 VRAMViewer::VRAMViewer() {
   vramViewer = this;
   setTitle("VRAM Viewer");
-  setStatusFont(Font::sans(8, "Bold"));
-  setStatusVisible();
+  statusBar.setFont(Font().setBold());
+  statusBar.setVisible();
 
   layout.setMargin(5);
   modeLabel.setText("Mode:");
-  modeSelection.append("2bpp");
-  modeSelection.append("4bpp");
-  modeSelection.append("8bpp");
-  modeSelection.append("Mode 7");
+  modeSelection.append(ComboButtonItem().setText("2bpp"));
+  modeSelection.append(ComboButtonItem().setText("4bpp"));
+  modeSelection.append(ComboButtonItem().setText("8bpp"));
+  modeSelection.append(ComboButtonItem().setText("Mode 7"));
   paletteLabel.setText("Palette:");
   autoUpdate.setText("Auto");
   update.setText("Update");
   canvas.setSize({512, 512});
 
-  layout.append(controlLayout, {~0, 0}, 5);
-    controlLayout.append(modeLabel, {0, 0}, 5);
-    controlLayout.append(modeSelection, {~0, 0}, 5);
-    controlLayout.append(paletteLabel, {0, 0}, 5);
-    controlLayout.append(paletteSelection, {~0, 0}, 5);
-    controlLayout.append(spacer, {~0, 0});
-    controlLayout.append(autoUpdate, {0, 0}, 5);
-    controlLayout.append(update, {80, 0});
-  layout.append(canvas, {512, 512});
-  append(layout);
+  modeSelection.onChange({ &VRAMViewer::modeChanged, this });
+  paletteSelection.onChange({ &VRAMViewer::paletteChanged, this });
+  update.onActivate({ &VRAMViewer::updateTiles, this });
 
-  modeSelection.onChange = update.onActivate = { &VRAMViewer::modeChanged, this };
-  paletteSelection.onChange = update.onActivate = { &VRAMViewer::paletteChanged, this };
-
-  canvas.onMouseLeave = [&] { setStatusText(""); };
-  canvas.onMouseMove = [&](Position position) {
-    uint x = position.x, y = position.y, mode = modeSelection.selection();
-    if(x >= 256 && mode >= 1) return setStatusText("");
-    if(y >= 256 && mode >= 2) return setStatusText("");
-    if(x >= 128 && mode >= 3) return setStatusText("");
+  canvas.onMouseLeave([&] { statusBar.setText(""); });
+  canvas.onMouseMove([&](Position position) {
+    uint x = position.x(), y = position.y(), mode = modeSelection.selected().offset();
+    if((x >= 256 && mode >= 1)) { statusBar.setText(""); return; }
+    if((y >= 256 && mode >= 2)) { statusBar.setText(""); return; }
+    if((x >= 128 && mode >= 3)) { statusBar.setText(""); return; }
     string output = { x, ", ", y, ", " };
     x /= 8, y /= 8;
     uint tile = 0;
@@ -46,8 +36,8 @@ VRAMViewer::VRAMViewer() {
     if(mode == 2) tile = y * 32 + x;
     if(mode == 3) tile = y * 16 + x;
     output.append("Tile: 0x", hex(tile, 4L), ", Address: 0x", hex(tile * (16 << mode), 4L));
-    setStatusText(output);
-  };
+    statusBar.setText(output);
+  });
 
   modeChanged();
 
@@ -57,25 +47,25 @@ VRAMViewer::VRAMViewer() {
 
 void VRAMViewer::modeChanged() {
   paletteSelection.reset();
-  switch(modeSelection.selection()) {
+  switch(modeSelection.selected().offset()) {
   case 0: // 2BPP
     for(uint bg = 0; bg < 4; bg++) {
       for(uint palette = 0; palette < 8; palette++) {
-        paletteSelection.append({"BG", bg, " ", palette});
+        paletteSelection.append(ComboButtonItem().setText({"BG", bg, " ", palette}));
       }
     }
     break;
   case 1: // 4BPP
     for(uint palette = 0; palette < 8; palette++) {
-      paletteSelection.append({"BG ", palette});
+      paletteSelection.append(ComboButtonItem().setText({"BG ", palette}));
     }
     for(uint palette = 0; palette < 8; palette++) {
-      paletteSelection.append({"SP ", palette});
+      paletteSelection.append(ComboButtonItem().setText({"SP ", palette}));
     }
     break;
   case 2: // 8BPP
   case 3: // Mode 7
-    paletteSelection.append("BG");
+    paletteSelection.append(ComboButtonItem().setText("BG"));
     break;
   }
   paletteChanged();
@@ -95,7 +85,7 @@ void VRAMViewer::updateTiles() {
   dp = canvas.data();
   const uint8* sp = SuperFamicom::ppu.vram;
 
-  switch(modeSelection.selection()) {
+  switch(modeSelection.selected().offset()) {
   case 0: // 2BPP
     for(uint tileY = 0; tileY < 64; tileY++) {
       for(uint tileX = 0; tileX < 64; tileX++) {
@@ -108,7 +98,7 @@ void VRAMViewer::updateTiles() {
             for(auto& b : d) b <<= 1;
             //color *= 0x55;
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
-            color += paletteSelection.selection() << 2;
+            color += paletteSelection.selected().offset() << 2;
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
@@ -136,7 +126,7 @@ void VRAMViewer::updateTiles() {
             for(auto& b : d) b <<= 1;
             //color *= 0x11;
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
-            color += paletteSelection.selection() << 4;
+            color += paletteSelection.selected().offset() << 4;
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
@@ -204,5 +194,5 @@ void VRAMViewer::updateTiles() {
     break;
   }
 
-  canvas.setData();
+  canvas.update();
 }

@@ -11,12 +11,6 @@ endif
 ifndef target
   target := nSide-t
 endif
-
-ifeq ($(target),loki)
-  options += debugger
-else ifeq ($(target),star-rod)
-  options += debugger
-endif
 # console := true
 
 flags += -I. -I.. -O3

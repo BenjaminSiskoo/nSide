@@ -6,13 +6,13 @@ SMPRegisterEditor::SMPRegisterEditor() {
 
   layout.setMargin(5);
   regALabel.setText("A:");
-  regAValue.setFont(Font::monospace(8));
+  regAValue.setFont(Font().setFamily(Font::Mono));
   regXLabel.setText("X:");
-  regXValue.setFont(Font::monospace(8));
+  regXValue.setFont(Font().setFamily(Font::Mono));
   regYLabel.setText("Y:");
-  regYValue.setFont(Font::monospace(8));
+  regYValue.setFont(Font().setFamily(Font::Mono));
   regSLabel.setText("S:01");
-  regSValue.setFont(Font::monospace(8));
+  regSValue.setFont(Font().setFamily(Font::Mono));
   flagN.setText("N");
   flagV.setText("V");
   flagP.setText("P");
@@ -48,11 +48,11 @@ SMPRegisterEditor::SMPRegisterEditor() {
     tertiaryLayout.append(update, {80, 0});
   append(layout);
 
-  update.onActivate = [&] {
+  update.onActivate([&] {
     saveRegisters();
     smpDebugger->updateDisassembly();
     setVisible(false);
-  };
+  });
 
   setGeometry({{128, 128}, layout.minimumSize()});
   windowManager->append(this, "SMPRegisterEditor");

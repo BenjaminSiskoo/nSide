@@ -12,10 +12,10 @@
 #include <nall/stream/mmap.hpp>
 #include <nall/stream/vector.hpp>
 #include <ruby/ruby.hpp>
-#include <phoenix/phoenix.hpp>
+#include <hiro/hiro.hpp>
 using namespace nall;
 using namespace ruby;
-using namespace phoenix;
+using namespace hiro;
 extern Video* video;
 extern Audio* audio;
 extern Input* input;
@@ -42,8 +42,9 @@ struct Program {
 
   Markup::Node higan_settings;
 
+  Program(lstring args);
   auto main() -> void;
-  Program(string pathname);
+  auto quit() -> void;
 };
 
 extern Program* program;

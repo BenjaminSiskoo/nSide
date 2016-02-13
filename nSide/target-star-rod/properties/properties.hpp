@@ -1,12 +1,12 @@
 struct PropertiesViewer : Window {
-  VerticalLayout layout;
-    HorizontalLayout controlLayout;
-      Label sourceLabel;
-      ComboButton sourceSelection;
-      Widget spacer;
-      CheckLabel autoUpdate;
-      Button update;
-    TextEdit properties;
+  VerticalLayout layout{this};
+    HorizontalLayout controlLayout{&layout, Size{~0, 0}, 5};
+      Label sourceLabel{&controlLayout, Size{0, 0}, 5};
+      ComboButton sourceSelection{&controlLayout, Size{0, 0}, 5};
+      Widget spacer{&controlLayout, Size{~0, 0}};
+      CheckLabel autoUpdate{&controlLayout, Size{0, 0}, 5};
+      Button update{&controlLayout, Size{0, 0}};
+    TextEdit properties{&layout, Size{~0, ~0}};
 
   void updateProperties();
   PropertiesViewer();

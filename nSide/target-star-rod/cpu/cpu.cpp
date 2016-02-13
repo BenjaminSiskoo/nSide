@@ -120,42 +120,31 @@ CPUDebugger::CPUDebugger() {
   stepIRQ.setText("IRQ");
   autoUpdate.setText("Auto");
   update.setText("Update");
-  disassembly.setFont(Font::monospace(8));
-  registers.setFont(Font::monospace(8));
+  disassembly.setFont(Font().setFamily(Font::Mono));
+  registers.setFont(Font().setFamily(Font::Mono));
   registers.setText(" ");
 
-  layout.append(controlLayout, {~0, 0}, 5);
-    controlLayout.append(stepInto, {80, 0}, 5);
-    controlLayout.append(stepNMI, {40, 0}, 5);
-    controlLayout.append(stepIRQ, {40, 0}, 5);
-    controlLayout.append(spacer, {~0, 0});
-    controlLayout.append(autoUpdate, {0, 0}, 5);
-    controlLayout.append(update, {80, 0});
-  layout.append(disassembly, {~0, ~0}, 5);
-  layout.append(registers, {~0, 0});
-  append(layout);
-
-  stepInto.onActivate = [&] {
+  stepInto.onActivate([&] {
     debugger->flags.cpu.stepInto = true;
     debugger->resume();
-  };
+  });
 
-  stepNMI.onActivate = [&] {
+  stepNMI.onActivate([&] {
     debugger->flags.cpu.nmi = true;
     debugger->resume();
-  };
+  });
 
-  stepIRQ.onActivate = [&] {
+  stepIRQ.onActivate([&] {
     debugger->flags.cpu.irq = true;
     debugger->resume();
-  };
+  });
 
-  update.onActivate = { &CPUDebugger::updateDisassembly, this };
+  update.onActivate({ &CPUDebugger::updateDisassembly, this });
 
-  registers.onActivate = [&] {
+  registers.onActivate([&] {
     cpuRegisterEditor->loadRegisters();
     cpuRegisterEditor->setVisible();
-  };
+  });
 
   windowManager->append(this, "CPUDebugger");
 }

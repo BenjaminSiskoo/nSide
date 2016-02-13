@@ -7,49 +7,43 @@ MemoryEditor::MemoryEditor() {
   setGeometry({128, 128, 485, 255});
 
   gotoLabel.setText("Goto:");
-  gotoAddress.setFont(Font::monospace(8));
-  source.append("CPU-Bus");
-  source.append("APU-Bus");
-  source.append("VRAM");
-  source.append("OAM");
-  source.append("CGRAM");
+  gotoAddress.setFont(Font().setFamily(Font::Mono));
+  source.append(ComboButtonItem().setText("CPU-Bus"));
+  source.append(ComboButtonItem().setText("APU-Bus"));
+  source.append(ComboButtonItem().setText("VRAM"));
+  source.append(ComboButtonItem().setText("OAM"));
+  source.append(ComboButtonItem().setText("CGRAM"));
   exportMemory.setText("Export");
   autoUpdate.setText("Auto");
   update.setText("Update");
-  editor.setFont(Font::monospace(8));
+  editor.setFont(Font().setFamily(Font::Mono));
   editor.setColumns(16);
   editor.setRows(16);
 
   layout.setMargin(5);
-  layout.append(controlLayout, {~0, 0}, 5);
-    controlLayout.append(gotoLabel, {0, 0}, 5);
-    controlLayout.append(gotoAddress, {50, 0}, 5);
-    controlLayout.append(source, {0, 0}, 5);
-    controlLayout.append(exportMemory, {80, 0}, 5);
-    controlLayout.append(spacer, {~0, 0});
-    controlLayout.append(autoUpdate, {0, 0}, 5);
-    controlLayout.append(update, {80, 0});
-  layout.append(editor, {~0, ~0});
-  append(layout);
 
-  gotoAddress.onChange = gotoAddress.onActivate = [&] {
-    editor.setOffset(hex(gotoAddress.text()));
+  gotoAddress.onChange([&] {
+    editor.setAddress(hex(gotoAddress.text()));
     editor.update();
-  };
+  });
 
-  update.onActivate = { &MemoryEditor::updateView, this };
+  gotoAddress.onActivate([&] {
+    gotoAddress.doChange();
+  });
 
-  source.onChange = { &MemoryEditor::selectSource, this };
-  exportMemory.onActivate = { &MemoryEditor::exportMemoryToDisk, this };
-  editor.onRead = { &MemoryEditor::read, this };
-  editor.onWrite = { &MemoryEditor::write, this };
+  update.onActivate({ &MemoryEditor::updateView, this });
+
+  source.onChange({ &MemoryEditor::selectSource, this });
+  exportMemory.onActivate({ &MemoryEditor::exportMemoryToDisk, this });
+  editor.onRead({ &MemoryEditor::read, this });
+  editor.onWrite({ &MemoryEditor::write, this });
 
   windowManager->append(this, "MemoryEditor");
 }
 
 uint8 MemoryEditor::read(uint addr) {
   if(SuperFamicom::cartridge.loaded() == false) return 0x00;
-  switch(source.selection()) {
+  switch(source.selected().offset()) {
   case 0: return cpuDebugger->read(addr);
   case 1: return smpDebugger->read(addr);
   case 2: return SuperFamicom::ppu.vram[addr & 0xffff];
@@ -61,7 +55,7 @@ uint8 MemoryEditor::read(uint addr) {
 
 void MemoryEditor::write(uint addr, uint8 data) {
   if(SuperFamicom::cartridge.loaded() == false) return;
-  switch(source.selection()) {
+  switch(source.selected().offset()) {
   case 0:
     SuperFamicom::cartridge.rom.write_protect(false);
     cpuDebugger->write(addr, data);
@@ -84,8 +78,8 @@ void MemoryEditor::write(uint addr, uint8 data) {
 }
 
 void MemoryEditor::selectSource() {
-  editor.setOffset(0);
-  switch(source.selection()) {
+  editor.setAddress(0);
+  switch(source.selected().offset()) {
   case 0: editor.setLength(16 * 1024 * 1024); break;
   case 1: editor.setLength(64 * 1024); break;
   case 2: editor.setLength(64 * 1024); break;
@@ -97,7 +91,7 @@ void MemoryEditor::selectSource() {
 
 void MemoryEditor::exportMemoryToDisk() {
   string filename = { interface->pathName, "debug/memory-" };
-  switch(source.selection()) {
+  switch(source.selected().offset()) {
   case 0: filename.append("cpu.bin"); break;
   case 1: filename.append("apu.bin"); break;
   case 2: filename.append("vram.bin"); break;
@@ -106,7 +100,7 @@ void MemoryEditor::exportMemoryToDisk() {
   }
   file fp;
   if(fp.open(filename, file::mode::write) == false) return;
-  switch(source.selection()) {
+  switch(source.selected().offset()) {
   case 0: for(uint addr = 0; addr <= 0xffffff; addr++) fp.write(cpuDebugger->read(addr)); break;
   case 1: for(uint addr = 0; addr <= 0xffff; addr++) fp.write(smpDebugger->read(addr)); break;
   case 2: for(uint addr = 0; addr <= 0xffff; addr++) fp.write(SuperFamicom::ppu.vram[addr]); break;

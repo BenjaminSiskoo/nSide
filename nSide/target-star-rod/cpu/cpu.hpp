@@ -1,16 +1,16 @@
 struct CPUDebugger : Window {
   uint24 opcodePC;
 
-  VerticalLayout layout;
-    HorizontalLayout controlLayout;
-      Button stepInto;
-      Button stepNMI;
-      Button stepIRQ;
-      Widget spacer;
-      CheckLabel autoUpdate;
-      Button update;
-    TextEdit disassembly;
-    Button registers;
+  VerticalLayout layout{this};
+    HorizontalLayout controlLayout{&layout, Size{~0, 0}, 5};
+      Button stepInto{&controlLayout, Size{80, 0}, 5};
+      Button stepNMI{&controlLayout, Size{40, 0}, 5};
+      Button stepIRQ{&controlLayout, Size{40, 0}, 5};
+      Widget spacer{&controlLayout, Size{~0, 0}};
+      CheckLabel autoUpdate{&controlLayout, Size{0, 0}, 5};
+      Button update{&controlLayout, Size{80, 0}};
+    TextEdit disassembly{&layout, Size{~0, ~0}, 5};
+    Button registers{&layout, Size{~0, 0}};
 
   uint24 mirror(uint24 addr);
   uint8 read(uint24 addr);

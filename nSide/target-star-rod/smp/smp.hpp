@@ -1,14 +1,14 @@
 struct SMPDebugger : Window {
   uint16 opcodePC;
 
-  VerticalLayout layout;
-    HorizontalLayout controlLayout;
-      Button stepInto;
-      Widget spacer;
-      CheckLabel autoUpdate;
-      Button update;
-    TextEdit disassembly;
-    Button registers;
+  VerticalLayout layout{this};
+    HorizontalLayout controlLayout{&layout, Size{~0, 0}, 5};
+      Button stepInto{&controlLayout, Size{80, 0}, 5};
+      Widget spacer{&controlLayout, Size{~0, 0}};
+      CheckLabel autoUpdate{&controlLayout, Size{0, 0}, 5};
+      Button update{&controlLayout, Size{80, 0}};
+    TextEdit disassembly{&layout, Size{~0, ~0}, 5};
+    Button registers{&layout, Size{~0, 0}};
 
   uint8 read(uint16 addr);
   void write(uint16 addr, uint8 data);

@@ -21,11 +21,7 @@ auto locate(string pathname1, string pathname2, string filename) -> string {
   return {pathname2, filename};
 }
 
-auto Program::main() -> void {
-  debugger->run();
-}
-
-Program::Program(string pathname) {
+Program::Program(lstring args) {
   program = this;
 
   if(file::exists(locate({nall::localpath(), "nSide/"}, "settings.bml"))) {
@@ -34,6 +30,8 @@ Program::Program(string pathname) {
     higan_settings = BML::unserialize(string::read(locate({nall::localpath(), "higan/"}, "settings.bml")));
   }
   directory::create({localpath(), "star-rod/"});
+
+  Application::onMain({&Program::main, this});
 
   new Settings;
   new Interface;
@@ -62,7 +60,10 @@ Program::Program(string pathname) {
   path.append("Super Famicom/");
 
   string foldername;
-  if(pathname) foldername = pathname.transform("\\", "/").rtrim("/").append("/");
+  args.takeFirst();  //ignore program location in argument parsing
+  for(auto& argument : args) {
+    foldername = argument.transform("\\", "/").rtrim("/").append("/");
+  }
   if(!directory::exists(foldername)) foldername = BrowserWindow().setPath(path).directory();
   if(!foldername.endsWith(".sfc/")) return;
   if(!directory::exists(foldername)) return;
@@ -114,22 +115,22 @@ Program::Program(string pathname) {
   memoryEditor->selectSource();
   propertiesViewer->updateProperties();
   vramViewer->updateTiles();
+}
 
-  Application::main = {&Program::main, this};
-  Application::run();
+auto Program::main() -> void {
+  debugger->run();
+}
 
+auto Program::quit() -> void {
   interface->unload();
   windowManager->saveGeometry();
   settings->unload();
+  Application::quit();
 }
 
-auto main(int argc, char** argv) -> int {
-  #if defined(PLATFORM_WINDOWS)
-  utf8_args(argc, argv);
-  #endif
-
+#include <nall/main.hpp>
+auto nall::main(lstring args) -> void {
   Application::setName("star-rod");
-  new Program(argv[1]);
-  delete program;
-  return 0;
+  new Program(args);
+  Application::run();
 }

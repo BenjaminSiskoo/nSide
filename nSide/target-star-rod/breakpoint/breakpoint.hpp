@@ -9,7 +9,7 @@ struct BreakpointEntry : HorizontalLayout {
 };
 
 struct BreakpointEditor : Window {
-  VerticalLayout layout;
+  VerticalLayout layout{this};
   BreakpointEntry breakpointEntry[8];
 
   struct Breakpoint {

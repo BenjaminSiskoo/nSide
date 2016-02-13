@@ -263,6 +263,38 @@ cartridge sha256:950ebe68e7f74219b9e5e104200b03165d59c24264f02e32c12be967fd311ac
   :  name:     Donkey Kong Jr.
   :  title:    ドンキーコングJr
 
+cartridge sha256:8e9c7a7953161db3633dc39b097e5f731a6bdcdf871d352e33db67a7acaeca92
+  :board region=ntsc id:HVC-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-SL
+  :  board:    9011-01
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Donkey Kong Jr. + Jr. Sansuu Lesson
+  :  title:    ドンキーコングJR./JR.算数レッスン
+
+cartridge sha256:7bd2caf4a42f7d5c391433d2bec37bb2130e3a39dce55ee597ec14703cefc769
+  :board region=ntsc id:HVC-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   EFC-DR
+  :  board:    9011-06
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Door Door
+  :  title:    ドアドア
+
 cartridge sha256:b1a7377282123b3b18107e0d929666af8831bebde78ceaf7fe410c2132cd61ce
   :board region=ntsc id:NAMCOT-3425
   :  chip type=118
@@ -309,7 +341,7 @@ cartridge sha256:99c18490ed9002d9c6d999b9d8d15be5c051bdfa7cc7e73318053c9a994b017
   :  region:   JPN
   :  revision: 1.0
   :  name:     Famicom Disk System
-  :  title:    Famicom Disk System
+  :  title:    ファミリーコンピュータディスクシステム
 
 cartridge sha256:dd031b72924e1d080f8758412c73224a274ae5e5a50d90310d578975df74101f
   :board region=ntsc id:BANDAI-JUMP2
@@ -819,6 +851,23 @@ cartridge sha256:ece3f1fefbcc9c4a6da801d931a5bda85241975d96b5b4931bcd635bc3e0f1a
   :  name:     Paaman Part 2 - Himitsu Kessha Madoodan o Taose!
   :  title:    パーマン2 秘密結社マドー団をたおせ!
 
+cartridge sha256:910ba4505b46a99b3779d84fd22ba8b18f3a649b0c1a11706c4609d06ce0bc18
+  :board region=ntsc id:HVC-STROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-PN-USA
+  :  serial:   NES-PN-CAN
+  :  board:    HVC-STROM-06
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Pinball
+  :  title:    ピンボール
+
 cartridge sha256:67123fe28cf5fbadeafc77400a0812f0135ab36706ec7d1267f84931d044e71d
   :board region=ntsc id:NAMCOT-3416
   :  chip type=118
@@ -1065,6 +1114,22 @@ cartridge sha256:c457644ccfb93f8978326e728931800283821e531edc409fca9c0167495319c
   :  name:     3-D Battles of WorldRunner, The
   :  title:    The 3-D Battles of WorldRunner
 
+cartridge sha256:9f54aafa367247b99c344ba9a0c58ad8fa8aceeeae1c304b8fefc9985c3c118c
+  :board region=ntsc id:NES-UNROM
+  :  chip type=74HC32
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-43-USA
+  :  board:    NES-UN-ROM-07
+  :  revision: 1.0
+  :  name:     1943 - The Battle of Midway
+  :  title:    1943: The Battle of Midway
+
 cartridge sha256:c4d4ff0bd283656c63d9a30dfc7dc6d2956744730a3641ba2c8f9f8e7204d9a1
   :board region=ntsc id:NES-SLROM
   :  chip type=MMC1B2
@@ -1310,6 +1375,21 @@ cartridge sha256:aa408f5a6b97c0d738e7e8b489a5617ad4a9ecdee2b05c4ee504210ce31b282
   :  name:     Donkey Kong
   :  title:    Donkey Kong
 
+cartridge sha256:b15b298dc37692d0bed2cbf922727ea48ed38bbd6cf3acdd28be6d2b9be344d3
+  :board region=ntsc id:NES-NROM-128
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-DT-USA
+  :  board     NES-NROM-128-03
+  :  revision: 1.0
+  :  name:     Donkey Kong 3
+  :  title:    Donkey Kong 3
+
 cartridge sha256:950ebe68e7f74219b9e5e104200b03165d59c24264f02e32c12be967fd311ac2
   :board region=ntsc id:NES-NROM-128
   :  mirror mode=vertical
@@ -1324,6 +1404,21 @@ cartridge sha256:950ebe68e7f74219b9e5e104200b03165d59c24264f02e32c12be967fd311ac
   :  revision: 1.0
   :  name:     Donkey Kong Jr.
   :  title:    Donkey Kong Jr.
+
+cartridge sha256:07dd16464d769429c651bd203ac2e74c7aa5852824482ca8877959d643bc8689
+  :board region=ntsc id:NES-NROM-128
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-CA-USA
+  :  board:    NES-NROM-128-02
+  :  revision: 1.0
+  :  name:     Donkey Kong Jr. Math
+  :  title:    Donkey Kong Jr. Math
 
 cartridge sha256:abc5bcb459316a7d245065149ea72b5a8317f62fa6ed578569e15b670d3c0022
   :board region=ntsc id:NES-SAROM
@@ -1444,7 +1539,7 @@ cartridge sha256:54c70628739c9cfab40b8d79555e9076adae34127ef369988ca91635b4a688b
   :  prg
   :    rom name=program.rom size=0x20000
   :  chr
-  :    ram name=character.ram size=0x2000
+  :    ram name=character.ram size=0x2000 volatile
   :
   :information
   :  serial:   NES-DL-USA
@@ -1475,7 +1570,7 @@ cartridge sha256:fa456d852372173ea31b192459ba1a2026f779df67793327ba6e132476c1d03
   :    rom name=program.rom size=0x40000
   :    ram name=save.ram size=0x2000
   :  chr
-  :    ram name=character.ram size=0x2000
+  :    ram name=character.ram size=0x2000 volatile
   :
   :information
   :  serial:   NES-FF-USA
@@ -1796,6 +1891,36 @@ cartridge sha256:5b85c1ff632c6ac34742ac87b9c8ddee9a13827caf1212ecfa1d11f1f9dece5
   :  name:     Mega Man 3
   :  title:    Mega Man 3
 
+cartridge sha256:649db8035018f2512ccea70aca6606c3b3a6988cd9ed43953b38dc5103dec7bb
+  :board region=ntsc id:NES-SNROM
+  :  chip type=MMC1B3
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :    ram name=work.ram size=0x2000 volatile
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-MT-USA
+  :  board:    NES-SNROM-05
+  :  revision: 1.0
+  :  name:     Metroid
+  :  title:    Metroid
+
+cartridge sha256:58be6a811ee3370882160115253b610581e8b4af7228669eb3fbd56e7a13117c
+  :board region=ntsc id:NES-AMROM
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-ES-USA
+  :  board:    NES-AMROM-01
+  :  revision: 1.0
+  :  name:     Nightmare on Elm Street, A
+  :  title:    A Nightmare on Elm Street
+
 cartridge sha256:cf4670ae9dd91bd178c80ab7391c8a059f9eecb86d744bd51b9258e21825fd3c
   :board region=ntsc id:NES-EVENT
   :  chip type=MMC1B2
@@ -1865,7 +1990,7 @@ cartridge sha256:e3a7e0b559b18e8e2fd6f2bf0fdadbf9094be63a01bac50e5505413e1d7697a
   :  prg
   :    rom name=program.rom size=0x20000
   :  chr
-  :    ram size=0x2000
+  :    ram name=character.ram size=0x2000 volatile
   :
   :information
   :  serial:   NES-RY-USA
@@ -1881,7 +2006,7 @@ cartridge sha256:9bef1813dbcfa003b3b1978a66a8da3ff59c93dd74f1332801515aa4b633c51
   :  prg
   :    rom name=program.rom size=0x20000
   :  chr
-  :    ram size=0x2000
+  :    ram name=character.ram size=0x2000 volatile
   :
   :information
   :  serial:   NES-RY-USA
@@ -1889,6 +2014,21 @@ cartridge sha256:9bef1813dbcfa003b3b1978a66a8da3ff59c93dd74f1332801515aa4b633c51
   :  revision: 1.1
   :  name:     Rygar
   :  title:    Rygar
+
+cartridge sha256:51958d12a19e7c573fab26b85fe81d57330ff6668d630c6bc95c7c563c441e93
+  :board region=ntsc id:NES-SHROM
+  :  chip type=MMC1
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-SY-USA
+  :  board:    NES-SHROM-02
+  :  revision: 1.0
+  :  name:     SkyKid
+  :  title:    SkyKid
 
 cartridge sha256:69de2c7552fa81ca5921da0e457abf1be35f18ffbad159788a76141be59c9f6b
   :board region=ntsc id:NES-HKROM
@@ -2199,6 +2339,22 @@ cartridge sha256:ac766a8d99bfd8e95c02b9a9c68279c72ba5b3307b78edc67b52781ed185fa8
   :  revision: 1.1
   :  name:     World Class Track Meet
   :  title:    World Class Track Meet
+
+cartridge sha256:f1eb29dd1c7b2b29f4932df853f32a7560bbfe64997281aa79f61ba9f131fb17
+  :board region=ntsc id:NES-NROM-256
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-WR-USA
+  :  serial:   NES-WR-CAN
+  :  board:    NES-NROM-256-05
+  :  revision: 1.0
+  :  name:     Wrecking Crew
+  :  title:    Wrecking Crew
 
 cartridge sha256:a0354fb9c1c29e25b8bd2bd45735e8af2263cde66b56cc2e61eb5d9295a42de1
   :board region=ntsc id:NES-TLROM

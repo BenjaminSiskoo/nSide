@@ -145,23 +145,22 @@ void Interface::audioSample(int16 lsample, int16 rsample) {
 
 int16 Interface::inputPoll(uint port, uint device, uint input) {
   if(presentation->focused() == false) return 0;
-  auto keyboardState = phoenix::Keyboard::state();
 
   if(port == SuperFamicom::ID::ControllerPort1) {
     if(device == (uint)SuperFamicom::Device::ID::Gamepad) {
       switch(input) {
-      case SuperFamicom::Gamepad::B:      return keyboardState[(uint)phoenix::Keyboard::Scancode::Z];
-      case SuperFamicom::Gamepad::Y:      return keyboardState[(uint)phoenix::Keyboard::Scancode::A];
-      case SuperFamicom::Gamepad::Select: return keyboardState[(uint)phoenix::Keyboard::Scancode::Apostrophe];
-      case SuperFamicom::Gamepad::Start:  return keyboardState[(uint)phoenix::Keyboard::Scancode::Return];
-      case SuperFamicom::Gamepad::Up:     return keyboardState[(uint)phoenix::Keyboard::Scancode::Up];
-      case SuperFamicom::Gamepad::Down:   return keyboardState[(uint)phoenix::Keyboard::Scancode::Down];
-      case SuperFamicom::Gamepad::Left:   return keyboardState[(uint)phoenix::Keyboard::Scancode::Left];
-      case SuperFamicom::Gamepad::Right:  return keyboardState[(uint)phoenix::Keyboard::Scancode::Right];
-      case SuperFamicom::Gamepad::A:      return keyboardState[(uint)phoenix::Keyboard::Scancode::X];
-      case SuperFamicom::Gamepad::X:      return keyboardState[(uint)phoenix::Keyboard::Scancode::S];
-      case SuperFamicom::Gamepad::L:      return keyboardState[(uint)phoenix::Keyboard::Scancode::D];
-      case SuperFamicom::Gamepad::R:      return keyboardState[(uint)phoenix::Keyboard::Scancode::C];
+      case SuperFamicom::Gamepad::B:      return hiro::Keyboard::pressed("Z");
+      case SuperFamicom::Gamepad::Y:      return hiro::Keyboard::pressed("A");
+      case SuperFamicom::Gamepad::Select: return hiro::Keyboard::pressed("Apostrophe");
+      case SuperFamicom::Gamepad::Start:  return hiro::Keyboard::pressed("Enter");
+      case SuperFamicom::Gamepad::Up:     return hiro::Keyboard::pressed("Up");
+      case SuperFamicom::Gamepad::Down:   return hiro::Keyboard::pressed("Down");
+      case SuperFamicom::Gamepad::Left:   return hiro::Keyboard::pressed("Left");
+      case SuperFamicom::Gamepad::Right:  return hiro::Keyboard::pressed("Right");
+      case SuperFamicom::Gamepad::A:      return hiro::Keyboard::pressed("X");
+      case SuperFamicom::Gamepad::X:      return hiro::Keyboard::pressed("S");
+      case SuperFamicom::Gamepad::L:      return hiro::Keyboard::pressed("D");
+      case SuperFamicom::Gamepad::R:      return hiro::Keyboard::pressed("C");
       }
     }
   }

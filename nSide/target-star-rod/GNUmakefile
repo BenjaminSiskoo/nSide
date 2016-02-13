@@ -16,7 +16,7 @@ ui_objects += star-rod-window
 ui_objects += star-rod-console star-rod-presentation
 ui_objects += star-rod-cpu star-rod-smp star-rod-memory
 ui_objects += star-rod-breakpoint star-rod-properties star-rod-vram
-ui_objects += phoenix ruby
+ui_objects += ruby hiro
 ui_objects += $(if $(call streq,$(platform),windows),star-rod-resource)
 
 ifeq ($(platform),windows)
@@ -32,8 +32,8 @@ endif
 include ../ruby/GNUmakefile
 link += $(rubylink)
 
-include ../phoenix/GNUmakefile
-link += $(phoenixlink)
+include ../hiro/GNUmakefile
+link += $(hirolink)
 
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
@@ -43,8 +43,8 @@ obj/libco.o: ../libco/libco.c $(call rwildcard,../libco/)
 obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,../ruby/)
 	$(compiler) $(rubyflags) -c $< -o $@
 
-obj/phoenix.o: ../phoenix/phoenix.cpp $(call rwildcard,../phoenix/)
-	$(compiler) $(phoenixflags) -c $< -o $@
+obj/hiro.o: ../hiro/hiro.cpp $(call rwildcard,../hiro/)
+	$(compiler) $(hiroflags) -c $< -o $@
 
 obj/star-rod-laevateinn.o: $(ui)/laevateinn.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
@@ -66,18 +66,14 @@ obj/star-rod-resource.o:
 
 # targets
 build: $(objects)
-ifeq ($(platform),windows)
-	$(strip $(compiler) -shared -o out/phoenix.dll obj/phoenix.o $(phoenixlink))
-	$(strip $(compiler) -o out/$(name) $(subst obj/phoenix.o,,$(objects)) $(link) -Lout -lphoenix)
-else ifeq ($(platform),macosx)
+	$(strip $(compiler) -o out/$(name) $(objects) $(link))
+ifeq ($(platform),macosx)
 	@if [ -d out/$(name).app ]; then rm -r out/$(name).app; fi
 	mkdir -p out/$(name).app/Contents/MacOS/
 	mkdir -p out/$(name).app/Contents/Resources/
 	mv out/$(name) out/$(name).app/Contents/MacOS/$(name)
 	cp data/$(name).plist out/$(name).app/Contents/Info.plist
 	sips -s format icns data/$(name).png --out out/$(name).app/Contents/Resources/$(name).icns
-else
-	$(strip $(compiler) -o out/$(name) $(objects) $(link))
 endif
 
 install:

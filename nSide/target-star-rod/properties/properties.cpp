@@ -8,22 +8,15 @@ PropertiesViewer::PropertiesViewer() {
 
   layout.setMargin(5);
   sourceLabel.setText("Source:");
-  sourceSelection.append("PPU");
+  sourceSelection.append(ComboButtonItem().setText("PPU"));
   sourceSelection.setEnabled(false);
   autoUpdate.setText("Auto");
   update.setText("Update");
-  properties.setFont(Font::monospace(8));
+  properties.setFont(Font().setFamily(Font::Mono));
 
-  layout.append(controlLayout, {~0, 0}, 5);
-    controlLayout.append(sourceLabel, {0, 0}, 5);
-    controlLayout.append(sourceSelection, {0, 0}, 5);
-    controlLayout.append(spacer, {~0, 0});
-    controlLayout.append(autoUpdate, {0, 0}, 5);
-    controlLayout.append(update, {0, 0});
-  layout.append(properties, {~0, ~0});
-  append(layout);
-
-  update.onActivate = { &PropertiesViewer::updateProperties, this };
+  update.onActivate([&] {
+    updateProperties();
+  });
 
   windowManager->append(this, "PropertiesViewer");
 }
