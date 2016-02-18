@@ -1161,6 +1161,21 @@ cartridge sha256:df2609c80e818bb95983b30a3ac1435ea2332ac83e29fde469f397e1d5a2db9
   :  name:     Advanced Dungeons & Dragons - Heroes of the Lance
   :  title:    Advanced Dungeons & Dragons: Heroes of the Lance
 
+cartridge sha256:c5e47c0479f500b86995fc8d09e132f5ba3f54cfd9a2a601ea3848bb60871a20
+  :board region=ntsc id:NES-SEROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   NES-AV-USA
+  :  board:    NES-SEROM-02
+  :  revision: 1.0
+  :  name:     Adventures of Lolo
+  :  title:    Adventures of Lolo
+
 cartridge sha256:7328b2eb1c9fe06b98e0cba5c9058bf026e06a94900d490f79436d714eb48d6b
   :board region=ntsc id:NES-NROM-128
   :  mirror mode=horizontal
@@ -1329,6 +1344,21 @@ cartridge sha256:ad1e14d08657d99c8b70f779931f62524b4beb529090b82b368925d8b642e40
   :  name:     Cybernoid - The Fighting Machine
   :  title:    Cybernoid: The Fighting Machine
 
+cartridge sha256:   f97f05a4f8747d81dc8adaf07df70d1f87366632ae3e93103d387043ef5ec508
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-DZ-USA
+  :  board:    NES-SLROM-06
+  :  revision: 1.0
+  :  name:     Darkwing Duck
+  :  title:    Disney's Darkwing Duck
+
 cartridge sha256:0115356b0791cc8ddcb7d3163d6ef7aa664f3ff4e68dba561ffffb79eefcbca9
   :board region=ntsc id:NES-BNROM
   :  mirror mode=horizontal
@@ -1419,6 +1449,36 @@ cartridge sha256:07dd16464d769429c651bd203ac2e74c7aa5852824482ca8877959d643bc868
   :  revision: 1.0
   :  name:     Donkey Kong Jr. Math
   :  title:    Donkey Kong Jr. Math
+
+cartridge sha256:01d303a8c0ed6f374586d3a2562065b77f627e8dbf071bd919877e3b48dbdb57
+  :board region=ntsc id:NES-SEROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   NES-VU-USA
+  :  board:    NES-SEROM-04
+  :  revision: 1.0
+  :  name:     Dr. Mario
+  :  title:    Dr. Mario
+
+cartridge sha256:d2fbe8b10f762099d320016ddfd4d2961a591fe6dfaaab2efbeb77282264d06a
+  :board region=ntsc id:NES-SEROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   NES-VU-USA
+  :  board:    NES-SEROM-04
+  :  revision: 1.1
+  :  name:     Dr. Mario
+  :  title:    Dr. Mario
 
 cartridge sha256:abc5bcb459316a7d245065149ea72b5a8317f62fa6ed578569e15b670d3c0022
   :board region=ntsc id:NES-SAROM
@@ -2172,6 +2232,21 @@ cartridge sha256:8951dccb6640b48c857f321ef01c06110c5b8870f5d901dcc538ab1b8db7e2a
   :  name:     Super Spike V'Ball + Nintendo World Cup
   :  title:    Super Spike V'Ball / Nintendo World Cup
 
+cartridge sha256:6d10e95fcbf4cd1179293106d526373ea43a0c2b8531e694288b147310d617c6
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-68-USA
+  :  board:    NES-SLROM-06
+  :  revision: 1.0
+  :  name:     TaleSpin
+  :  title:    Disney's TaleSpin
+
 cartridge sha256:892468d05a1097769d14e0ed4822267760d85dbfc79d83a0235878109f839dd1
   :board region=ntsc id:KONAMI-SLROM
   :  chip type=MMC1B2
@@ -2279,6 +2354,20 @@ cartridge sha256:c12771e8155b030eff0081bfabd98e57a162d6592899f29dd16f141f0e6e08a
   :  revision: 1.0
   :  name:     Wario's Woods
   :  title:    Wario's Woods
+
+cartridge sha256:700ebc3c2dd27420bbdcccb987ba60d3f0680469101353de15a1b2bd565ac701
+  :board region=ntsc id:NES-ANROM
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-WL-USA
+  :  board:    NES-ANROM-03
+  :  revision: 1.0
+  :  name:     Who Framed Roger Rabbit
+  :  title:    Who Framed Roger Rabbit
 
 cartridge sha256:62aec65696ecf24a487b7cdd19bad5cbd19f4229a89a7888634d468c67da378a
   :board region=ntsc id:NES-NROM-128

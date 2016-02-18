@@ -71,7 +71,11 @@ struct file_system_object {
   //returns false if 'name' is a directory that is not empty
   static auto remove(const string& name) -> bool {
     if(name.endsWith("/")) return rmdir(name) == 0;
+    #if defined(API_WINDOWS)
+    return _wunlink(utf16_t(name)) == 0;
+    #else
     return unlink(name) == 0;
+    #endif
   }
 };
 

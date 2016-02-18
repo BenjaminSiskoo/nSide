@@ -19,7 +19,7 @@ auto filename(rstring self) -> string {
   for(signed offset = self.size() - 1; offset >= 0; offset--, p--) {
     if(*p == '/') return slice(self, offset + 1);
   }
-  return "";
+  return self.data();
 }
 
 // (/parent/)child.type/
@@ -30,7 +30,7 @@ auto dirname(rstring self) -> string {
     if(*p == '/' && p == last) continue;
     if(*p == '/') return slice(self, 0, offset + 1);
   }
-  return self.data();  //this is the root directory
+  return "";
 }
 
 // /parent/(child.type/)
@@ -41,7 +41,7 @@ auto basename(rstring self) -> string {
     if(*p == '/' && p == last) continue;
     if(*p == '/') return slice(self, offset + 1);
   }
-  return "";
+  return self.data();
 }
 
 // /parent/(child).type/
