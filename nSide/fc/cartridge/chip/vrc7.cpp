@@ -43,21 +43,21 @@ struct VRC7 : Chip {
   auto reg_write(uint addr, uint8 data) -> void {
     switch(addr) {
     case 0x8000: prg_bank[0] = data; break;
-    case 0x8010: prg_bank[1] = data; break;
+    case 0x8001: prg_bank[1] = data; break;
     case 0x9000: prg_bank[2] = data; break;
-    case 0x9010: break;  //APU addr port
-    case 0x9030: break;  //APU data port
+    case 0x9001: break;  //APU addr port
+    case 0x9003: break;  //APU data port
     case 0xa000: chr_bank[0] = data; break;
-    case 0xa010: chr_bank[1] = data; break;
+    case 0xa001: chr_bank[1] = data; break;
     case 0xb000: chr_bank[2] = data; break;
-    case 0xb010: chr_bank[3] = data; break;
+    case 0xb001: chr_bank[3] = data; break;
     case 0xc000: chr_bank[4] = data; break;
-    case 0xc010: chr_bank[5] = data; break;
+    case 0xc001: chr_bank[5] = data; break;
     case 0xd000: chr_bank[6] = data; break;
-    case 0xd010: chr_bank[7] = data; break;
+    case 0xd001: chr_bank[7] = data; break;
     case 0xe000: mirror = data & 0x03; break;
 
-    case 0xe010:
+    case 0xe001:
       irq_latch = data;
       break;
 
@@ -72,7 +72,7 @@ struct VRC7 : Chip {
       irq_line = 0;
       break;
 
-    case 0xf010:
+    case 0xf001:
       irq_enable = irq_acknowledge;
       irq_line = 0;
       break;

@@ -1,9 +1,9 @@
 struct KonamiVRC7 : Board {
   KonamiVRC7(Markup::Node& board_node) : Board(board_node), vrc7(*this) {
-  }
-
-  auto enter() -> void {
-    return vrc7.enter();
+    settings.pinout.a0 = 1 << board_node["chip/pinout/a0"].natural();
+    settings.pinout.a1 = 1 << board_node["chip/pinout/a1"].natural();
+    print("0x", hex(settings.pinout.a0), "\n");
+    print("0x", hex(settings.pinout.a1), "\n");
   }
 
   auto prg_read(uint addr) -> uint8 {
@@ -15,6 +15,11 @@ struct KonamiVRC7 : Board {
   auto prg_write(uint addr, uint8 data) -> void {
     if(addr < 0x6000) return;
     if(addr < 0x8000) return write(prgram, addr, data);
+
+    bool a0 = (addr & settings.pinout.a0);
+    bool a1 = (addr & settings.pinout.a1);
+    addr &= 0xf000;
+    addr |= (a1 << 1) | (a0 << 0);
     return vrc7.reg_write(addr, data);
   }
 
@@ -28,18 +33,21 @@ struct KonamiVRC7 : Board {
     return Board::chr_write(vrc7.chr_addr(addr), data);
   }
 
-  auto power() -> void {
-    vrc7.power();
-  }
-
-  auto reset() -> void {
-    vrc7.reset();
-  }
-
   auto serialize(serializer& s) -> void {
     Board::serialize(s);
     vrc7.serialize(s);
   }
+
+  auto enter() -> void { vrc7.enter(); }
+  auto power() -> void { vrc7.power(); }
+  auto reset() -> void { vrc7.reset(); }
+
+  struct Settings {
+    struct Pinout {
+      uint a0;
+      uint a1;
+    } pinout;
+  } settings;
 
   VRC7 vrc7;
 };
