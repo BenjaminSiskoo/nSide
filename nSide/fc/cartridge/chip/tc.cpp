@@ -1,10 +1,11 @@
 struct TC : Chip {
   TC(Board& board, Markup::Node& board_node) : Chip(board) {
-    string type = board_node["chip[0]/type"].text();
+    auto chip = board_node.find("chip");
+    string type = chip(0)["type"].text();
     if(type == "TC0190FMC") revision = Revision::TC0190FMC;
     if(type == "TC0350FMR") revision = Revision::TC0350FMR;
     if(type == "TC0690FMR") revision = Revision::TC0690FMR;
-    settings.pal16r4 = (bool)board_node["chip(type=PAL16R4)"];
+    settings.pal16r4 = chip(1)["type"].text() == "PAL16R4";
   }
 
   auto enter() -> void {

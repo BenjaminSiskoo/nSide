@@ -2,8 +2,6 @@ struct KonamiVRC7 : Board {
   KonamiVRC7(Markup::Node& board_node) : Board(board_node), vrc7(*this) {
     settings.pinout.a0 = 1 << board_node["chip/pinout/a0"].natural();
     settings.pinout.a1 = 1 << board_node["chip/pinout/a1"].natural();
-    print("0x", hex(settings.pinout.a0), "\n");
-    print("0x", hex(settings.pinout.a1), "\n");
   }
 
   auto prg_read(uint addr) -> uint8 {
