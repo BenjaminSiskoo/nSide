@@ -1,17 +1,6 @@
 struct HVC_ExROM : Board {
   HVC_ExROM(Markup::Node& board_node) : Board(board_node), mmc5(*this, board_node) {
     chip = &mmc5;
-    if(board_node["chip/ram"]) {
-      string name = board_node["chip/ram/name"].text();
-      uint size = board_node["chip/ram/size"].natural();
-      mmc5.ram.map(allocate<uint8>(size, 0xff), size);
-      if(!name.empty()) {
-        interface->loadRequest(ID::ChipRAM, name, false);
-        cartridge.memory.append({ID::ChipRAM, name});
-      }
-    } else {
-      mmc5.ram.map(allocate<uint8>(1024, 0xff), 1024);
-    }
     string type = board_node["id"].text();
     if(type.match("*EKROM*")) revision = Revision::EKROM;
     if(type.match("*ELROM*")) revision = Revision::ELROM;

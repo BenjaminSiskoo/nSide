@@ -1,13 +1,6 @@
 struct Namco163 : Board {
   Namco163(Markup::Node& board_node) : Board(board_node), n163(*this, board_node) {
     chip = &n163;
-    string name = board_node["chip/ram/name"].text();
-    uint size = board_node["chip/ram/size"].natural();
-    n163.ram.map(allocate<uint8>(size, 0xff), size);
-    if(!name.empty()) {
-      interface->loadRequest(ID::ChipRAM, name, false);
-      cartridge.memory.append({ID::ChipRAM, name});
-    }
   }
 
   auto enter() -> void {

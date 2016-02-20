@@ -59,6 +59,9 @@ auto Cartridge::parseMarkup(const char* markup) -> void {
   parseMarkupMemory(board->prgram, board_node["prg/ram"], ID::ProgramRAM, true);
   parseMarkupMemory(board->chrrom, board_node["chr/rom"], ID::CharacterROM, false);
   parseMarkupMemory(board->chrram, board_node["chr/ram"], ID::CharacterRAM, true);
+  if(board->chip) {
+    parseMarkupMemory(board->chip->ram, board_node["chip/ram"], ID::ChipRAM, true);
+  }
   if(system.pc10()) {
     auto rom = board_node["pc10"].find("rom");
     parseMarkupMemory(board->instrom, rom(0), ID::InstructionROM, false);

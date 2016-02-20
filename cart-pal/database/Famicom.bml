@@ -1497,6 +1497,21 @@ cartridge sha256:7eba1637cd2fdbc4f0732eb5249e32d827dbdadbd7e165f961440af4310880d
   :  name:     Castlevania
   :  title:    Castlevania
 
+cartridge sha256:9575ec31c1c658fd6b77ae1d69e4861ecada8570e4eebf51409941486e4b4ef4
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-QU-USA
+  :  board:    NES-SLROM-04
+  :  revision: 1.0
+  :  name:     Castlevania II - Simon's Quest
+  :  title:    Castlevania II: Simon's Quest
+
 cartridge sha256:6e8d289635ac39479ff1d36733aa3f8b9650593ab972cedb8e2cdbfc03aaa739
   :board region=ntsc id:NES-ELROM
   :  chip type=MMC5
@@ -1510,8 +1525,8 @@ cartridge sha256:6e8d289635ac39479ff1d36733aa3f8b9650593ab972cedb8e2cdbfc03aaa73
   :  serial:   NES-VN-USA
   :  board:    NES-ELROM-01
   :  revision: 1.0
-  :  name:     Castlevania 3 - Dracula's Curse
-  :  title:    Castlevania 3: Dracula's Curse
+  :  name:     Castlevania III - Dracula's Curse
+  :  title:    Castlevania III: Dracula's Curse
 
 cartridge sha256:cf226f0d9486103bbaa19ee124b673d47aa2b3766334b6b7587d704c03e6649e
   :board region=ntsc id:NES-SLROM
@@ -2459,6 +2474,36 @@ cartridge sha256:5dde385041aa7364c78205f2ba49615f416c701b6025e38aa1d7b9c4f99a62d
   :  revision: 1.0
   :  name:     Super Mario Bros. + Duck Hunt
   :  title:    Super Mario Bros. / Duck Hunt
+
+cartridge sha256:968cf4ae63fddf6a0d379bb12add5563f468e57ddddb69e00e1379a839234f95
+  :board region=ntsc id:NES-SFROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x10000
+  :
+  :information
+  :  serial:   NES-WH-USA
+  :  board:    NES-SFROM-01
+  :  revision: 1.0
+  :  name:     Super Mario Bros. + Duck Hunt + World Class Track Meet
+  :  title:    Super Mario Bros. / Duck Hunt / World Class Track Meet
+
+cartridge sha256:26977a6c51a6f1e1af895b8863e8e7d57c5321621f29cf58ebfbf85163a999dd
+  :board region=ntsc id:NES-SFROM
+  :  chip type=MMC1
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x10000
+  :
+  :information
+  :  serial:   NES-WH-USA
+  :  board:    NES-WH
+  :  revision: 1.1
+  :  name:     Super Mario Bros. + Duck Hunt + World Class Track Meet
+  :  title:    Super Mario Bros. / Duck Hunt / World Class Track Meet
 
 cartridge sha256:cba920f9394733c82253685d7783f26a3033ba58a94623e9abf7892329b969b9
   :board region=ntsc id:NES-TSROM
