@@ -114,7 +114,7 @@ FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
   case 185:
     markup.append("id:NES-CNROM\n");
     if(mapper == 185) {
-      markup.append("    security pass=0x", hex(submapper & 3), "\n");
+      markup.append("  security pass=0x", hex(submapper & 3), "\n");
     }
     markup.append("  mirror mode=", mirror == 0 ? "horizontal" : "vertical", "\n");
     break;
@@ -151,6 +151,7 @@ FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
     else if(prgram == 0x8000) markup.append("id:NES-EWROM\n");
     else if(prgram == 0x4000) markup.append("id:NES-ETROM\n");
     markup.append("  chip type=MMC5\n");
+    markup.append("    ram name=internal.ram size=0x400 volatile\n");
     if(!nes2 && !prgram) prgram = 32768;
     break;
 
@@ -328,6 +329,7 @@ FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
   case  85:
     markup.append("id:KONAMI-VRC-7\n");
     markup.append("  chip type=VRC7\n");
+    markup.append("    pinout a0=4 a1=5\n");
     if(!nes2 && !prgram) prgram = 0x2000;
     break;
 

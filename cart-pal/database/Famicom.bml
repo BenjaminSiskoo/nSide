@@ -101,7 +101,7 @@ cartridge sha256:a0fe077a6f0babf27b691e42db79cb4fc580a2f358f679b996fb17c2b0a68f5
 
 cartridge sha256:2b4ac20082e2f45a8f8fd4922a0e995829719a523e118a9eec891c3206adf25b
   :board region=ntsc id:HVC-CNROM
-  :    security pass=0x3
+  :  security pass=0x3
   :  mirror mode=horizontal
   :  prg
   :    rom name=program.rom size=0x8000
@@ -118,7 +118,7 @@ cartridge sha256:2b4ac20082e2f45a8f8fd4922a0e995829719a523e118a9eec891c3206adf25
 
 cartridge sha256:acf054b0886a2ca74a0280fc36bc1d55e9845acc29759f1893c1da4c1389f9c2
   :board region=ntsc id:HVC-CNROM
-  :    security pass=0x3
+  :  security pass=0x3
   :  mirror mode=vertical
   :  prg
   :    rom name=program.rom size=0x4000
@@ -1376,6 +1376,21 @@ cartridge sha256:df2609c80e818bb95983b30a3ac1435ea2332ac83e29fde469f397e1d5a2db9
   :  name:     Advanced Dungeons & Dragons - Heroes of the Lance
   :  title:    Advanced Dungeons & Dragons: Heroes of the Lance
 
+cartridge sha256:0e862077f390348b8e109caa8189ff5ecdf3fac53eefc204369fae880e077d19
+  :board region=ntsc id:KONAMI-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-MU-USA
+  :  board:    351908
+  :  revision: 1.0
+  :  name:     Adventures of Bayou Billy, The
+  :  title:    The Adventures of Bayou Billy
+
 cartridge sha256:c5e47c0479f500b86995fc8d09e132f5ba3f54cfd9a2a601ea3848bb60871a20
   :board region=ntsc id:NES-SEROM
   :  chip type=MMC1A
@@ -1918,6 +1933,21 @@ cartridge sha256:fd2a8520314fb183e15fd62f48df97f92eb9c81140da4e6ab9ff0386e479707
   :  name:     Gauntlet
   :  title:    Gauntlet
 
+cartridge sha256:9f559f83b9b5179137069bae0ca4b8eacf84378892b598044b88ef50681b58bb
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-G3-USA
+  :  board:    NES-SLROM-04
+  :  revision: 1.0
+  :  name:     Golgo 13 - Top Secret Episode
+  :  title:    Golgo 13: Top Secret Episode
+
 cartridge sha256:4628f32db9b826d19fe5dd8e2c45a9f70e1041f15b7b44b06dee2f01731566e8
   :board region=ntsc id:NES-GNROM
   :  mirror mode=vertical
@@ -1944,7 +1974,6 @@ cartridge sha256:0d895a031dd38f2661ba2af4a1b3c7b9753632b1530ea28eec936cf3fda8bf5
   :information
   :  serial:   NES-GY-USA
   :  board:    3A
-  :  region:   USA
   :  revision: 1.0
   :  name:     Gyromite
   :  title:    Gyromite
@@ -2167,6 +2196,21 @@ cartridge sha256:944105c6dcc57314968d53a2e0dcdfc0e2b60678a53839ba25925416a7ac0e8
   :  name:     Mach Rider
   :  title:    Mach Rider
 
+cartridge sha256:c9348c4e30ef0bc62c4fd119b5e38d85af493a1eb436c6c229b7a6a52af42681
+  :board region=ntsc id:NES-TLROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-TM-USA
+  :  board:    NES-TLROM-03
+  :  revision: 1.0
+  :  name:     Mario's Time Machine!
+  :  title:    Mario's Time Machine!
+
 cartridge sha256:0cc334007d3eae698cdcd034d12ec9bab2b5266e85bc703cf24ccb4e2d63b654
   :board region=ntsc id:NES-NROM-128
   :  mirror mode=horizontal
@@ -2182,6 +2226,21 @@ cartridge sha256:0cc334007d3eae698cdcd034d12ec9bab2b5266e85bc703cf24ccb4e2d63b65
   :  revision: 1.0
   :  name:     Mario Bros.
   :  title:    Mario Bros.
+
+cartridge sha256:9babea1d40007f936e3d4e1450ec7e7bfe5aff71162ffdf7ede3acae8d811962
+  :board region=ntsc id:NES-TLROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-MQ-USA
+  :  board:    NES-TLROM-03
+  :  revision: 1.0
+  :  name:     Mario is Missing!
+  :  title:    Mario is Missing!
 
 cartridge sha256:5314ad0c406161195b6bb100ee11304bab8af121bba85992be896d5cb26b109e
   :board region=ntsc id:NES-UNROM
@@ -2320,6 +2379,22 @@ cartridge sha256:f4ddb0f1a02f823ebed30b55547344de3c8fb9d87254ff993584373ecadd914
   :  revision: 1.0
   :  name:     Pin-Bot
   :  title:    Pin-Bot
+
+cartridge sha256:910ba4505b46a99b3779d84fd22ba8b18f3a649b0c1a11706c4609d06ce0bc18
+  :board region=ntsc id:HVC-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-PN-USA
+  :  serial:   NES-PN-CAN
+  :  board:    2
+  :  revision: 1.0
+  :  name:     Pinball
+  :  title:    Pinball
 
 cartridge sha256:635271fe654636ec37c882f76c5f8cd39b7b3a476c9aa75cefb548d82de8f896
   :board region=ntsc id:NES-PNROM
