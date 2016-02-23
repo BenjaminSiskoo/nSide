@@ -39,6 +39,7 @@ private:
   #include "background/background.hpp"
   #include "sprite/sprite.hpp"
   #include "screen/screen.hpp"
+  #include "../../ppu/video.hpp"
 
   Cache cache;
   Background bg1;
@@ -47,6 +48,7 @@ private:
   Background bg4;
   Sprite sprite;
   Screen screen;
+  Video video;
 
   struct Display {
     bool interlace;
@@ -65,7 +67,6 @@ private:
   friend class PPU::Background;
   friend class PPU::Sprite;
   friend class PPU::Screen;
-  friend class Video;
 };
 
 extern PPU ppu;

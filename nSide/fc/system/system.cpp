@@ -3,25 +3,18 @@
 namespace Famicom {
 
 System system;
-Configuration configuration;
 
-#include "video.cpp"
 #include "device.cpp"
 #include "serialization.cpp"
 
 #include <fc/scheduler/scheduler.cpp>
 
-System::System() {
-  region = Region::Autodetect;
-}
+auto System::region() const -> Region { return _region; }
+auto System::cpuFrequency() const -> uint { return _cpuFrequency; }
 
 auto System::run() -> void {
   scheduler.sync = Scheduler::SynchronizeMode::None;
-
   scheduler.enter();
-  if(scheduler.exit_reason == Scheduler::ExitReason::FrameEvent) {
-    video.refresh();
-  }
 }
 
 auto System::runToSave() -> void {
@@ -47,9 +40,6 @@ auto System::runThreadToSave() -> void {
   while(true) {
     scheduler.enter();
     if(scheduler.exit_reason == Scheduler::ExitReason::SynchronizeEvent) break;
-    if(scheduler.exit_reason == Scheduler::ExitReason::FrameEvent) {
-      video.refresh();
-    }
   }
 }
 
@@ -59,9 +49,9 @@ auto System::init() -> void {
   vsarcadeboard.init();
   pc10arcadeboard.init();
 
-  device.connect(0, configuration.controllerPort1);
-  device.connect(1, configuration.controllerPort2);
-  device.connect(2, configuration.expansionPort);
+  device.connect(0, (Device::ID)settings.controllerPort1);
+  device.connect(1, (Device::ID)settings.controllerPort2);
+  device.connect(2, (Device::ID)settings.expansionPort);
 }
 
 auto System::term() -> void {
@@ -94,20 +84,16 @@ auto System::load(Revision revision) -> void {
     }
   }
 
-  region = configuration.region;
-  if(region == Region::Autodetect) {
-    region = (cartridge.region() == Cartridge::Region::NTSC ? Region::NTSC : Region::PAL);
-  }
-
-  cpuFrequency = region() == Region::NTSC ? 21477272 : 26601712;
+  _region = cartridge.region() == Cartridge::Region::NTSC ? Region::NTSC : Region::PAL;
+  _cpuFrequency = region() == Region::NTSC ? 21477272 : 26601712;
 
   if(!vs()) { // VS. System PPU is set within cartridge.load().
     auto game_manifest = BML::unserialize(cartridge.information.markup.cartridge);
     if(!game_manifest["board/pc10"]) {
       // most Famicoms use a PPU with open bus OAMDATA (read).
       // For now, we use an NES PPU where OAMDATA (read) is defined.
-      if(region == Region::NTSC) ppu.revision = PPU::Revision::RP2C02G;
-      if(region == Region::PAL)  ppu.revision = PPU::Revision::RP2C07;
+      if(region() == Region::NTSC) ppu.revision = PPU::Revision::RP2C02G;
+      if(region() == Region::PAL)  ppu.revision = PPU::Revision::RP2C07;
     } else {
       ppu.revision = PPU::Revision::RP2C03B;
     }
@@ -164,11 +150,10 @@ auto System::reset() -> void {
   case Revision::PlayChoice10: pc10arcadeboard.reset(); break;
   }
 
-  video.reset();
   scheduler.init();
-  device.connect(0, configuration.controllerPort1);
-  device.connect(1, configuration.controllerPort2);
-  device.connect(2, configuration.expansionPort);
+  device.connect(0, (Device::ID)settings.controllerPort1);
+  device.connect(1, (Device::ID)settings.controllerPort2);
+  device.connect(2, (Device::ID)settings.expansionPort);
 }
 
 }

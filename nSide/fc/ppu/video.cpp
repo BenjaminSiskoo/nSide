@@ -1,21 +1,23 @@
-Video video;
-
-Video::Video() {
+PPU::Video::Video() {
   // * 2 for scanline emulation, * 2 again for VS. System and PlayChoice-10 extra screens
   output = new uint32[256 * 240 * 2 * 2]();
+
   // * 2 for second VS. System PPU (of which 256 colors are used for PlayChoice-10)
+  paletteLiteral = new uint32[(1 << 9) * 2];
   paletteStandard = new uint32[(1 << 9) * 2];
   paletteEmulation = new uint32[(1 << 9) * 2];
 }
 
-Video::~Video() {
+PPU::Video::~Video() {
   delete[] output;
+
+  delete[] paletteLiteral;
   delete[] paletteStandard;
   delete[] paletteEmulation;
 }
 
-auto Video::reset() -> void {
-  memory::fill(output, 256 * 240 * 2 * 2);
+auto PPU::Video::reset() -> void {
+  memory::fill(output, 256 * 240 * 2 * 2 * sizeof(uint32));
 
   bool rgb;
   const uint9* ppu_pal = nullptr;
@@ -57,6 +59,7 @@ auto Video::reset() -> void {
 
   if(!rgb) {
     for(auto color : range((1 << 9) * 2)) {
+      paletteLiteral[color] = color;
       paletteStandard[color] = generateColor(color, 2.0, 0.0, 1.0, 1.0, 2.2);
       paletteEmulation[color] = generateColor(color, 2.0, 0.0, 1.0, 1.0, 1.8);
     }
@@ -65,16 +68,24 @@ auto Video::reset() -> void {
   }
 }
 
-auto Video::refresh() -> void {
-  if(system.vs() && interface->information.width == 512) return refreshVSDualSystem();
-  if(system.pc10()) {
-    if(interface->information.height == 480) return refreshPC10DualScreen();
-    else if(pc10arcadeboard.display == 0) return refreshPC10Menu();
+auto PPU::Video::refresh() -> void {
+  if(system.vs() && interface->information.width == 512) {
+    refreshVSDualSystem();
+  } else if(system.pc10()) {
+    if(interface->information.height == 480) {
+      refreshPC10DualScreen();
+    } else if(pc10arcadeboard.display == 0) {
+      refreshPC10Menu();
+    } else {
+      refreshMain();
+    }
+  } else {
+    refreshMain();
   }
-  return refreshMain();
+  scheduler.exit(Scheduler::ExitReason::FrameEvent);
 }
 
-auto Video::refreshMain() -> void {
+auto PPU::Video::refreshMain() -> void {
   auto palette = settings.colorEmulation ? paletteEmulation : paletteStandard;
 
   if(settings.scanlineEmulation) {
@@ -99,11 +110,10 @@ auto Video::refreshMain() -> void {
   }
 
   drawCursors();
-
   interface->videoRefresh(output, 256 * sizeof(uint32), 256, settings.scanlineEmulation ? 480 : 240);
 }
 
-auto Video::refreshVSDualSystem() -> void {
+auto PPU::Video::refreshVSDualSystem() -> void {
   auto palette = settings.colorEmulation ? paletteEmulation : paletteStandard;
 
   if(settings.scanlineEmulation) {
@@ -137,11 +147,10 @@ auto Video::refreshVSDualSystem() -> void {
   }
 
   drawCursors();
-
   interface->videoRefresh(output, 512 * sizeof(uint32), 512, settings.scanlineEmulation ? 480 : 240);
 }
 
-auto Video::refreshPC10DualScreen() -> void {
+auto PPU::Video::refreshPC10DualScreen() -> void {
   auto palette = settings.colorEmulation ? paletteEmulation : paletteStandard;
 
   if(settings.scanlineEmulation) {
@@ -175,11 +184,10 @@ auto Video::refreshPC10DualScreen() -> void {
   }
 
   drawCursors();
-
   interface->videoRefresh(output, 256 * sizeof(uint32), 256, settings.scanlineEmulation ? 960 : 480);
 }
 
-auto Video::refreshPC10Menu() -> void {
+auto PPU::Video::refreshPC10Menu() -> void {
   auto palette = settings.colorEmulation ? paletteEmulation : paletteStandard;
 
   if(settings.scanlineEmulation) {
@@ -206,7 +214,7 @@ auto Video::refreshPC10Menu() -> void {
   interface->videoRefresh(output, 256 * sizeof(uint32), 256, settings.scanlineEmulation ? 480 : 240);
 }
 
-auto Video::generateColor(
+auto PPU::Video::generateColor(
   uint n, double saturation, double hue,
   double contrast, double brightness, double gamma
 ) -> uint32 {
@@ -251,10 +259,10 @@ auto Video::generateColor(
   uint g = uclamp<16>(65535.0 * gammaAdjust(y + -0.274788 * i + -0.635691 * q));
   uint b = uclamp<16>(65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q));
 
-  return (255 << 24) | ((r >> 8) << 16) | ((g >> 8) << 8) | ((b >> 8) << 0);
+  return interface->videoColor(r, g, b);
 }
 
-auto Video::generatePalettes(const uint9* ppu_pal) -> void {
+auto PPU::Video::generatePalettes(const uint9* ppu_pal) -> void {
   for(uint color = 0; color < (1 << 9); color++) {
     //if(mode == Emulator::Interface::PaletteMode::Literal) {
     //  palette[color] = color;
@@ -263,30 +271,50 @@ auto Video::generatePalettes(const uint9* ppu_pal) -> void {
     uint r = (color & 0x040) ? 7 : ((ppu_pal[color & 0x3f] >> 6) & 7);
     uint g = (color & 0x080) ? 7 : ((ppu_pal[color & 0x3f] >> 3) & 7);
     uint b = (color & 0x100) ? 7 : ((ppu_pal[color & 0x3f] >> 0) & 7);
-    // mode == Emulator::Interface::PaletteMode::Standard
-    paletteStandard[color] = (255 << 24) |
-      (image::normalize(r, 3, 8) << 16) |
-      (image::normalize(g, 3, 8) <<  8) |
-      (image::normalize(b, 3, 8) <<  0);
-    // mode == Emulator::Interface::PaletteMode::Emulation) {
+
+    { paletteLiteral[color] = color;
+    }
+
+    { uint R = image::normalize(r, 3, 16);
+      uint G = image::normalize(g, 3, 16);
+      uint B = image::normalize(b, 3, 16);
+      paletteStandard[color] = interface->videoColor(R, G, B);
+    }
+
     //TODO: check how arcade displays alter the signal
-    paletteEmulation[color] = (255 << 24) |
-      (image::normalize(gammaRamp[r], 8, 8) << 16) |
-      (image::normalize(gammaRamp[g], 8, 8) <<  8) |
-      (image::normalize(gammaRamp[b], 8, 8) <<  0);
+    { static const uint8 gammaRamp[8] = {
+        0x00, 0x0a,
+        0x2d, 0x5b,
+        0x98, 0xb8,
+        0xe0, 0xff,
+      };
+
+      uint R = gammaRamp[r] * 0x0101;
+      uint G = gammaRamp[g] * 0x0101;
+      uint B = gammaRamp[b] * 0x0101;
+      paletteEmulation[color] = interface->videoColor(R, G, B);
+    }
   }
   if(system.pc10()) {
     for(uint color = 0; color < 256; color++) {
-      // mode == Emulator::Interface::PaletteMode::Standard) {
-      paletteStandard[(1 << 9) + color] = (256 << 24) |
-        (image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 8) << 16) |
-        (image::normalize(15 - pc10arcadeboard.cgrom[color + 0x100], 4, 8) <<  8) |
-        (image::normalize(15 - pc10arcadeboard.cgrom[color + 0x200], 4, 8) <<  0);
-      // mode == Emulator::Interface::PaletteMode::Emulation) {
-      paletteEmulation[(1 << 9) + color] = (256 << 24) |
-        (image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 8) << 16) |
-        (image::normalize(15 - pc10arcadeboard.cgrom[color + 0x100], 4, 8) <<  8) |
-        (image::normalize(15 - pc10arcadeboard.cgrom[color + 0x200], 4, 8) <<  0);
+      uint r = 15 - pc10arcadeboard.cgrom[color + 0x000];
+      uint g = 15 - pc10arcadeboard.cgrom[color + 0x100];
+      uint b = 15 - pc10arcadeboard.cgrom[color + 0x200];
+
+      { uint R = image::normalize(r, 4, 16);
+        uint G = image::normalize(g, 4, 16);
+        uint B = image::normalize(b, 4, 16);
+
+        paletteStandard[(1 << 9) + color] = interface->videoColor(R, G, B);
+      }
+      
+      //TODO: check the menu monitor's gamma ramp
+      { uint R = image::normalize(r, 4, 16);
+        uint G = image::normalize(g, 4, 16);
+        uint B = image::normalize(b, 4, 16);
+
+        paletteEmulation[(1 << 9) + color] = interface->videoColor(R, G, B);
+      }
     }
     /*
     } else if(mode == Emulator::Interface::PaletteMode::Channel) {
@@ -303,7 +331,25 @@ auto Video::generatePalettes(const uint9* ppu_pal) -> void {
   }
 }
 
-auto Video::drawCursor(uint16 color, int x, int y) -> void {
+auto PPU::Video::drawCursor(uint16 color, int x, int y) -> void {
+  static const uint8 cursor[15 * 15] = {
+    0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
+    0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
+    0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
+    0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
+    0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
+    0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
+    1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
+    1,2,2,1,1,2,2,2,2,2,1,1,2,2,1,
+    1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
+    0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
+    0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
+    0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
+    0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
+    0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
+    0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
+  };
+
   auto data = (uint32*)output;
 
   for(int cy = 0; cy < 15; cy++) {
@@ -322,43 +368,17 @@ auto Video::drawCursor(uint16 color, int x, int y) -> void {
   }
 }
 
-auto Video::drawCursors() -> void {
-  if(configuration.controllerPort2 == Famicom::Device::ID::BeamGun) {
+auto PPU::Video::drawCursors() -> void {
+  if((Device::ID)settings.controllerPort2 == Famicom::Device::ID::BeamGun) {
     if(dynamic_cast<BeamGun*>(device.controllerPort2)) {
       auto& controller = (BeamGun&)*device.controllerPort2;
       drawCursor(0x27, controller.x, controller.y);
     }
   }
-  if(configuration.expansionPort == Famicom::Device::ID::BeamGun) {
+  if((Device::ID)settings.expansionPort == Famicom::Device::ID::BeamGun) {
     if(dynamic_cast<BeamGun*>(device.expansionPort)) {
       auto& controller = (BeamGun&)*device.expansionPort;
       drawCursor(0x2d, controller.x, controller.y);
     }
   }
 }
-
-// for RGB PPUs
-const uint8 Video::gammaRamp[8] = {
-  0x00, 0x0a,
-  0x2d, 0x5b,
-  0x98, 0xb8,
-  0xe0, 0xff,
-};
-
-const uint8 Video::cursor[15 * 15] = {
-  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
-  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
-  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
-  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
-  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
-  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
-  1,2,2,1,1,2,2,2,2,2,1,1,2,2,1,
-  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
-  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
-  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
-  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
-  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
-  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
-  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-};

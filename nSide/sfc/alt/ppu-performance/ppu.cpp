@@ -11,6 +11,7 @@ PPU ppu;
 #include "sprite/sprite.cpp"
 #include "screen/screen.cpp"
 #include "serialization.cpp"
+#include "../../ppu/video.cpp"
 
 PPU::PPU() :
 cache(*this),
@@ -93,7 +94,7 @@ auto PPU::scanline() -> void {
   if(vcounter() == display.height && regs.display_disable == false) sprite.address_reset();
 
   if(vcounter() == 241) {
-    scheduler.exit(Scheduler::ExitReason::FrameEvent);
+    video.refresh();
   }
 }
 
@@ -126,6 +127,7 @@ auto PPU::reset() -> void {
   mmio_reset();
   display.interlace = false;
   display.overscan = false;
+  video.reset();
 }
 
 auto PPU::layer_enable(uint layer, uint priority, bool enable) -> void {

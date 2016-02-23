@@ -30,21 +30,21 @@ auto R6502::opf_bit() {
 }
 
 auto R6502::opf_cmp() {
-  signed r = regs.a - rd;
+  int r = regs.a - rd;
   regs.p.n = (r & 0x80);
   regs.p.z = (uint8)(r == 0);
   regs.p.c = (r >= 0);
 }
 
 auto R6502::opf_cpx() {
-  signed r = regs.x - rd;
+  int r = regs.x - rd;
   regs.p.n = (r & 0x80);
   regs.p.z = (uint8)(r == 0);
   regs.p.c = (r >= 0);
 }
 
 auto R6502::opf_cpy() {
-  signed r = regs.y - rd;
+  int r = regs.y - rd;
   regs.p.n = (r & 0x80);
   regs.p.z = (uint8)(r == 0);
   regs.p.c = (r >= 0);
@@ -100,7 +100,7 @@ auto R6502::opf_ora() {
 }
 
 auto R6502::opf_rla() {
-  unsigned carry = (unsigned)regs.p.c;
+  uint carry = (uint)regs.p.c;
   regs.p.c = regs.a & 0x80;
   regs.a = (regs.a << 1) | carry;
   regs.p.n = (regs.a & 0x80);
@@ -108,7 +108,7 @@ auto R6502::opf_rla() {
 }
 
 auto R6502::opf_rol() {
-  unsigned carry = (unsigned)regs.p.c;
+  uint carry = (uint)regs.p.c;
   regs.p.c = rd & 0x80;
   rd = (rd << 1) | carry;
   regs.p.n = (rd & 0x80);
@@ -116,7 +116,7 @@ auto R6502::opf_rol() {
 }
 
 auto R6502::opf_ror() {
-  unsigned carry = (unsigned)regs.p.c << 7;
+  uint carry = (uint)regs.p.c << 7;
   regs.p.c = rd & 0x01;
   rd = carry | (rd >> 1);
   regs.p.n = (rd & 0x80);
@@ -124,7 +124,7 @@ auto R6502::opf_ror() {
 }
 
 auto R6502::opf_rra() {
-  unsigned carry = (unsigned)regs.p.c << 7;
+  uint carry = (uint)regs.p.c << 7;
   regs.p.c = regs.a & 0x01;
   regs.a = carry | (regs.a >> 1);
   regs.p.n = (regs.a & 0x80);
@@ -581,7 +581,7 @@ L rd = op_readpci();
 
 auto R6502::opill_axs_immediate() {
 L rd = op_readpci();
-  signed r = (regs.a & regs.x) - rd;
+  int r = (regs.a & regs.x) - rd;
   regs.p.n = (r & 0x80);
   regs.p.z = ((uint8)r == 0);
   regs.p.c = (r >= 0);

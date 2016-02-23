@@ -141,7 +141,7 @@ struct R6502 {
   auto opill_xaa_immediate();
 
   //disassembler.cpp
-  string disassemble();
+  auto disassemble() -> string;
 
   #include "registers.hpp"
 };

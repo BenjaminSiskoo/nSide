@@ -10,6 +10,7 @@ struct PPU : Thread, public PPUcounter {
   #include "memory/memory.hpp"
   #include "mmio/mmio.hpp"
   #include "render/render.hpp"
+  #include "../../ppu/video.hpp"
 
   static auto Enter() -> void;
   auto add_clocks(uint clocks) -> void;
@@ -74,6 +75,9 @@ struct PPU : Thread, public PPUcounter {
 
   //debugger functions
   auto exportRegisters(string &markup) -> void;
+
+privileged:
+  Video video;
 };
 
 extern PPU ppu;

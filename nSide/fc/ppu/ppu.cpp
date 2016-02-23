@@ -5,6 +5,7 @@ namespace Famicom {
 PPU ppu;
 
 #include "serialization.cpp"
+#include "video.cpp"
 
 PPU::PPU() {
   output = new uint32[256 * 312];
@@ -73,7 +74,7 @@ auto PPU::scanline() -> void {
 }
 
 auto PPU::frame() -> void {
-  scheduler.exit(Scheduler::ExitReason::FrameEvent);
+  video.refresh();
 }
 
 auto PPU::power() -> void {
@@ -122,6 +123,8 @@ auto PPU::reset() -> void {
 
   for(auto& n : cgram  ) n = 0;
   for(auto& n : oam    ) n = 0;
+
+  video.reset();
 }
 
 auto PPU::read(uint16 addr) -> uint8 {

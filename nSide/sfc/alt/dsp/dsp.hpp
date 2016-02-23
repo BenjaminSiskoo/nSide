@@ -20,6 +20,9 @@ struct DSP : Thread {
 
   auto serialize(serializer&) -> void;
 
+  #include "../../dsp/audio.hpp"
+  Audio audio;
+
 private:
   SPC_DSP spc_dsp;
   int16 samplebuffer[8192];

@@ -8,6 +8,7 @@ PPU ppu;
 #include "mmio/mmio.cpp"
 #include "render/render.cpp"
 #include "serialization.cpp"
+#include "../../ppu/video.cpp"
 
 PPU::PPU() {
   output = new uint32[512 * 512]();
@@ -131,7 +132,7 @@ auto PPU::scanline() -> void {
   }
 
   if(line == 241) {
-    scheduler.exit(Scheduler::ExitReason::FrameEvent);
+    video.refresh();
   }
 }
 
@@ -379,6 +380,7 @@ auto PPU::reset() -> void {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
   memory::fill(output, 512 * 480 * sizeof(uint32));
+  video.reset();
 
   frame();
 

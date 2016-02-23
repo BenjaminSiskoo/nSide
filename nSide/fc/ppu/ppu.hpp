@@ -134,6 +134,10 @@ struct PPU : Thread, public PPUcounter {
   } raster;
 
 privileged:
+  #include "video.hpp"
+
+  Video video;
+
   static auto Enter() -> void;
   alwaysinline auto add_clocks(uint) -> void;
 

@@ -41,6 +41,7 @@ privileged:
   #include "screen/screen.hpp"
   #include "sprite/sprite.hpp"
   #include "window/window.hpp"
+  #include "video.hpp"
 
   Background bg1;
   Background bg2;
@@ -49,6 +50,7 @@ privileged:
   Sprite sprite;
   Window window;
   Screen screen;
+  Video video;
 
   static auto Enter() -> void;
   alwaysinline auto add_clocks(uint) -> void;
@@ -60,7 +62,6 @@ privileged:
   friend class PPU::Sprite;
   friend class PPU::Window;
   friend class PPU::Screen;
-  friend class Video;
 
   struct Debugger {
     hook<void (uint16, uint8)> vram_read;

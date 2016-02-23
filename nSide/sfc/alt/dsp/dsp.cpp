@@ -4,11 +4,14 @@ namespace SuperFamicom {
 
 DSP dsp;
 
-#include "serialization.cpp"
 #include "SPC_DSP.cpp"
+#include "serialization.cpp"
+#include "../../dsp/audio.cpp"
 
 DSP::DSP() {
   for(auto i : range(8)) channel_enabled[i] = true;
+
+  audio.coprocessorEnable(false);
 }
 
 auto DSP::step(uint clocks) -> void {

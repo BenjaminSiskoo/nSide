@@ -1,10 +1,9 @@
 struct Interface;
 
-#include "video.hpp"
 #include "device.hpp"
 
-struct System : property<System> {
-  enum class Region : uint { NTSC = 0, PAL = 1, Autodetect = 2 };
+struct System {
+  enum class Region : uint { NTSC = 0, PAL = 1, Dendy = 2 };
 
   enum class Revision : uint {
     Famicom,
@@ -12,7 +11,8 @@ struct System : property<System> {
     VSSystem,
   } revision;
 
-  System();
+  auto region() const -> Region;
+  auto cpuFrequency() const -> uint;
 
   auto run() -> void;
   auto runToSave() -> void;
@@ -28,12 +28,6 @@ struct System : property<System> {
   inline bool vs()   const { return revision == Revision::VSSystem; }
   inline bool pc10() const { return revision == Revision::PlayChoice10; }
 
-  //return *active* system information (settings are cached upon power-on)
-  readonly<Region> region;
-
-  readonly<uint> cpuFrequency;
-  readonly<uint> serializeSize;
-
   serializer serialize();
   bool unserialize(serializer&);
 
@@ -48,21 +42,14 @@ private:
   void serializeAll(serializer&);
   void serializeInit();
 
+  Region _region = Region::NTSC;
+  uint _cpuFrequency = 0;
+  uint _serializeSize = 0;
+
   friend class Cartridge;
-  friend class Video;
   friend class Device;
 };
 
 extern System system;
 
 #include <fc/scheduler/scheduler.hpp>
-
-struct Configuration {
-  Device::ID controllerPort1 = Device::ID::None;
-  Device::ID controllerPort2 = Device::ID::None;
-  Device::ID expansionPort = Device::ID::None;
-  System::Region region = System::Region::Autodetect;
-  bool random = true;
-};
-
-extern Configuration configuration;
