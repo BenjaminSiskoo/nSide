@@ -93,12 +93,12 @@ else ifeq ($(platform),macosx)
 else ifneq ($(filter $(platform),linux bsd),)
 	mkdir -p $(prefix)/bin/
 	mkdir -p $(prefix)/share/icons/
-	mkdir -p $(prefix)/$(name)/
-	mkdir -p ~/Emulation/System/
+	mkdir -p $(prefix)/share/$(name)/
 	cp out/$(name) $(prefix)/bin/$(name)
+	cp data/$(name).desktop $(prefix)/share/applications/$(name).desktop
 	cp data/$(name).png $(prefix)/share/icons/$(name).png
-	cp data/cheats.bml $(prefix)/$(name)/cheats.bml
-	cp -R profile/* $(prefix)/$(name)/
+	cp data/cheats.bml $(prefix)/share/$(name)/cheats.bml
+	cp -R profile/* $(prefix)/share/$(name)/
 endif
 
 uninstall:
@@ -109,5 +109,6 @@ else ifeq ($(platform),macosx)
 	if [ -d /Applications/$(name).app ]; then rm -r /Applications/$(name).app; fi
 else ifneq ($(filter $(platform),linux bsd),)
 	if [ -f $(prefix)/bin/$(name) ]; then rm $(prefix)/bin/$(name); fi
+	if [ -f $(prefix)/share/applications/$(name).desktop ]; then rm $(prefix)/share/applications/$(name).desktop; fi
 	if [ -f $(prefix)/share/icons/$(name).png ]; then rm $(prefix)/share/icons/$(name).png; fi
 endif

@@ -239,7 +239,7 @@ auto Interface::audioFrequency() -> double {
 }
 
 auto Interface::loaded() -> bool {
-  return cartridge.loaded();
+  return system.loaded();
 }
 
 auto Interface::sha256() -> string {
@@ -259,7 +259,7 @@ auto Interface::group(uint id) -> uint {
   case ID::CharacterROM:
   case ID::CharacterRAM:
   case ID::ChipRAM:
-    switch(system.revision) {
+    switch(system.revision()) {
     case System::Revision::Famicom:      return ID::Famicom;
     case System::Revision::VSSystem:     return ID::VSSystem;
     case System::Revision::PlayChoice10: return ID::PlayChoice10;
@@ -275,9 +275,9 @@ auto Interface::group(uint id) -> uint {
 auto Interface::load(uint id) -> void {
   information.width  = 256;
   information.height = 240;
-  if(id == ID::Famicom) cartridge.load(System::Revision::Famicom);
-  if(id == ID::VSSystem) cartridge.load(System::Revision::VSSystem); 
-  if(id == ID::PlayChoice10) cartridge.load(System::Revision::PlayChoice10);
+  if(id == ID::Famicom) system.load(System::Revision::Famicom);
+  if(id == ID::VSSystem) system.load(System::Revision::VSSystem); 
+  if(id == ID::PlayChoice10) system.load(System::Revision::PlayChoice10);
 }
 
 auto Interface::save() -> void {
@@ -329,7 +329,7 @@ auto Interface::save(uint id, const stream& stream) -> void {
 
 auto Interface::unload() -> void {
   save();
-  cartridge.unload();
+  system.unload();
 }
 
 auto Interface::connect(uint port, uint device) -> void {

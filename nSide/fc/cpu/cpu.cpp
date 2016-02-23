@@ -109,7 +109,7 @@ void CPU::ram_write(uint16 addr, uint8 data) {
 }
 
 uint8 CPU::read(uint16 addr) {
-  if(system.revision != System::Revision::VSSystem) {
+  if(system.revision() != System::Revision::VSSystem) {
     if(addr == 0x4016) {
       return (mdr() & 0xe0) | device.controllerPort1->data() | device.expansionPort->data1();
     }
@@ -130,7 +130,7 @@ void CPU::write(uint16 addr, uint8 data) {
     status.oam_dma_pending = true;
   }
 
-  if(system.revision != System::Revision::VSSystem) {
+  if(system.revision() != System::Revision::VSSystem) {
     if(addr == 0x4016) {
       device.controllerPort1->latch(data & 1);
       device.controllerPort2->latch(data & 1);

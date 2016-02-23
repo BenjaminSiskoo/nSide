@@ -9,6 +9,8 @@ System system;
 
 #include <fc/scheduler/scheduler.cpp>
 
+auto System::loaded() const -> bool { return _loaded; }
+auto System::revision() const -> Revision { return _revision; }
 auto System::region() const -> Region { return _region; }
 auto System::cpuFrequency() const -> uint { return _cpuFrequency; }
 
@@ -58,7 +60,7 @@ auto System::term() -> void {
 }
 
 auto System::load(Revision revision) -> void {
-  this->revision = revision;
+  _revision = revision;
   interface->loadRequest(ID::SystemManifest, "manifest.bml", true);
   auto document = BML::unserialize(information.manifest);
 
@@ -84,6 +86,7 @@ auto System::load(Revision revision) -> void {
     }
   }
 
+  cartridge.load();
   _region = cartridge.region() == Cartridge::Region::NTSC ? Region::NTSC : Region::PAL;
   _cpuFrequency = region() == Region::NTSC ? 21477272 : 26601712;
 
@@ -113,13 +116,18 @@ auto System::load(Revision revision) -> void {
   }
 
   serializeInit();
+  _loaded = true;
 }
 
 auto System::unload() -> void {
-  switch(revision) {
+  if(!loaded()) return;
+  switch(revision()) {
   case Revision::VSSystem: vsarcadeboard.unload(); break;
   case Revision::PlayChoice10: pc10arcadeboard.unload(); break;
   }
+
+  cartridge.unload();
+  _loaded = false;
 }
 
 auto System::power() -> void {
@@ -128,7 +136,7 @@ auto System::power() -> void {
   apu.power();
   ppu.power();
 
-  switch(revision) {
+  switch(revision()) {
   case Revision::VSSystem: vsarcadeboard.power(); break;
   case Revision::PlayChoice10: pc10arcadeboard.power(); break;
   }
@@ -145,7 +153,7 @@ auto System::reset() -> void {
   // top-loader's PPU will not.
   //ppu.reset();
 
-  switch(revision) {
+  switch(revision()) {
   case Revision::VSSystem: vsarcadeboard.reset(); break;
   case Revision::PlayChoice10: pc10arcadeboard.reset(); break;
   }

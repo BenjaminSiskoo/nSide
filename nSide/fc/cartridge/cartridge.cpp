@@ -36,9 +36,8 @@ auto Cartridge::enter() -> void {
   board->enter();
 }
 
-auto Cartridge::load(System::Revision revision) -> void {
+auto Cartridge::load() -> void {
   _region = Region::NTSC;
-  system.revision = revision;
 
   information.markup.cartridge         = "";
   //information.markup.famicomDiskSystem = "";
@@ -57,18 +56,14 @@ auto Cartridge::load(System::Revision revision) -> void {
   sha.data(board->instrom.data(), board->instrom.size());
   sha.data(board->keyrom.data(), board->keyrom.size());
   _sha256 = sha.digest();
-
-  system.load(system.revision);
-  _loaded = true;
 }
 
 auto Cartridge::unload() -> void {
-  if(_loaded) {
-    system.unload();
-
-    _loaded = false;
-    memory.reset();
-  }
+  board->prgrom.reset();
+  board->chrrom.reset();
+  board->instrom.reset();
+  board->keyrom.reset();
+  memory.reset();
 }
 
 auto Cartridge::power() -> void {

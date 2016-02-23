@@ -6,7 +6,7 @@ auto Cartridge::parseMarkup(const char* markup) -> void {
   this->information.title.cartridge = information["title"].text();
   _region = board_node["region"].text() == "pal" ? Region::PAL : Region::NTSC;
 
-  if(system.revision == System::Revision::VSSystem) {
+  if(system.revision() == System::Revision::VSSystem) {
     uint ppus = 0;
     auto side = document.find("side");
     if(side(0)["ppu"]) {

@@ -4,13 +4,9 @@
 struct Cartridge : Thread, property<Cartridge> {
   enum class Region : uint { NTSC, PAL, Dendy };
 
-  Cartridge() = default;
-  ~Cartridge() { unload(); }
-
   static void Enter();
   void enter();
 
-  auto loaded() const -> bool { return _loaded; }
   auto sha256() const -> string { return _sha256; }
   auto region() const -> Region { return _region; }
 
@@ -20,7 +16,7 @@ struct Cartridge : Thread, property<Cartridge> {
   auto manifest() -> string;
   auto title() -> string;
 
-  auto load(System::Revision) -> void;
+  auto load() -> void;
   auto unload() -> void;
 
   auto serialize(serializer&) -> void;
@@ -65,7 +61,6 @@ private:
 
   auto parseMarkupCartridge(Markup::Node) -> void;
 
-  bool _loaded = false;
   string _sha256;
   Region _region = Region::NTSC;
 };

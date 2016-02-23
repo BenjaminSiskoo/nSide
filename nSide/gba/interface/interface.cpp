@@ -55,7 +55,7 @@ auto Interface::audioFrequency() -> double {
 }
 
 auto Interface::loaded() -> bool {
-  return cartridge.loaded();
+  return system.loaded();
 }
 
 auto Interface::group(uint id) -> uint {
@@ -75,7 +75,7 @@ auto Interface::group(uint id) -> uint {
 }
 
 auto Interface::load(uint id) -> void {
-  cartridge.load();
+  system.load();
 }
 
 auto Interface::save() -> void {
@@ -130,7 +130,7 @@ auto Interface::save(uint id, const stream& stream) -> void {
 
 auto Interface::unload() -> void {
   save();
-  cartridge.unload();
+  system.unload();
 }
 
 auto Interface::power() -> void {
@@ -146,7 +146,7 @@ auto Interface::run() -> void {
 }
 
 auto Interface::serialize() -> serializer {
-  system.runtosave();
+  system.runToSave();
   return system.serialize();
 }
 

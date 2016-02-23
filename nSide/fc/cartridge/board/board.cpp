@@ -117,7 +117,7 @@ auto Board::serialize(serializer& s) -> void {
 }
 
 Board* Board::load(Markup::Node board_node) {
-  if(system.revision == System::Revision::VSSystem) return new VS(board_node);
+  if(system.revision() == System::Revision::VSSystem) return new VS(board_node);
 
   string type = board_node["id"].text();
 

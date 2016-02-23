@@ -9,10 +9,16 @@ struct System {
     Famicom,
     PlayChoice10,
     VSSystem,
-  } revision;
+  };
 
+  auto loaded() const -> bool;
+  auto revision() const -> Revision;
   auto region() const -> Region;
   auto cpuFrequency() const -> uint;
+
+  inline auto fc()   const { return _revision == Revision::Famicom; }
+  inline auto vs()   const { return _revision == Revision::VSSystem; }
+  inline auto pc10() const { return _revision == Revision::PlayChoice10; }
 
   auto run() -> void;
   auto runToSave() -> void;
@@ -23,10 +29,6 @@ struct System {
   auto unload() -> void;
   auto power() -> void;
   auto reset() -> void;
-
-  inline bool fc()   const { return revision == Revision::Famicom; }
-  inline bool vs()   const { return revision == Revision::VSSystem; }
-  inline bool pc10() const { return revision == Revision::PlayChoice10; }
 
   serializer serialize();
   bool unserialize(serializer&);
@@ -42,6 +44,8 @@ private:
   void serializeAll(serializer&);
   void serializeInit();
 
+  bool _loaded = false;
+  Revision _revision = Revision::Famicom;
   Region _region = Region::NTSC;
   uint _cpuFrequency = 0;
   uint _serializeSize = 0;
