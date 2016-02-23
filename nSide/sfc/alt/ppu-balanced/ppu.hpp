@@ -1,3 +1,5 @@
+#include "../../ppu/video.hpp"
+
 struct PPU : Thread, public PPUcounter {
   enum : bool { Threaded = true };
 
@@ -10,7 +12,6 @@ struct PPU : Thread, public PPUcounter {
   #include "memory/memory.hpp"
   #include "mmio/mmio.hpp"
   #include "render/render.hpp"
-  #include "../../ppu/video.hpp"
 
   static auto Enter() -> void;
   auto add_clocks(uint clocks) -> void;
@@ -73,11 +74,10 @@ struct PPU : Thread, public PPUcounter {
   uint frameskip;
   uint framecounter;
 
+  friend class Video;
+
   //debugger functions
   auto exportRegisters(string &markup) -> void;
-
-privileged:
-  Video video;
 };
 
 extern PPU ppu;

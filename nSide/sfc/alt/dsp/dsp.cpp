@@ -3,15 +3,13 @@
 namespace SuperFamicom {
 
 DSP dsp;
+#include "../../dsp/audio.cpp"
 
 #include "SPC_DSP.cpp"
 #include "serialization.cpp"
-#include "../../dsp/audio.cpp"
 
 DSP::DSP() {
   for(auto i : range(8)) channel_enabled[i] = true;
-
-  audio.coprocessorEnable(false);
 }
 
 auto DSP::step(uint clocks) -> void {
@@ -53,6 +51,8 @@ auto DSP::power() -> void {
   spc_dsp.init(smp.apuram);
   spc_dsp.reset();
   spc_dsp.set_output(samplebuffer, 8192);
+
+  audio.coprocessorEnable(false);
 }
 
 auto DSP::reset() -> void {

@@ -1,6 +1,5 @@
 struct Video {
   Video();
-  ~Video();
 
   auto reset() -> void;
   auto refresh() -> void;
@@ -17,8 +16,10 @@ private:
   auto drawCursor(uint16 color, int x, int y) -> void;
   auto drawCursors() -> void;
 
-  uint32* output = nullptr;
-  uint32* paletteLiteral = nullptr;
-  uint32* paletteStandard = nullptr;
-  uint32* paletteEmulation = nullptr;
+  unique_pointer<uint32[]> output;
+  unique_pointer<uint32[]> paletteLiteral;
+  unique_pointer<uint32[]> paletteStandard;
+  unique_pointer<uint32[]> paletteEmulation;
 };
+
+extern Video video;

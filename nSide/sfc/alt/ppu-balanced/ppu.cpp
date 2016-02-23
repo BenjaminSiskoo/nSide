@@ -3,12 +3,12 @@
 namespace SuperFamicom {
 
 PPU ppu;
+#include "../../ppu/video.cpp"
 
 #include "memory/memory.cpp"
 #include "mmio/mmio.cpp"
 #include "render/render.cpp"
 #include "serialization.cpp"
-#include "../../ppu/video.cpp"
 
 PPU::PPU() {
   output = new uint32[512 * 512]();

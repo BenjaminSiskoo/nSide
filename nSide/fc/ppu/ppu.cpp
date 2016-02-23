@@ -3,9 +3,9 @@
 namespace Famicom {
 
 PPU ppu;
+#include "video.cpp"
 
 #include "serialization.cpp"
-#include "video.cpp"
 
 PPU::PPU() {
   output = new uint32[256 * 312];

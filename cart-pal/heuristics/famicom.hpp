@@ -33,7 +33,7 @@ FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
   if(data[2] != 'S') return;
   if(data[3] !=  26) return;
 
-  mapper = (data[7] & 0x80) | (data[6] >> 4);
+  mapper = ((data[7] >> 4) << 4) | (data[6] >> 4);
   mirror = ((data[6] & 0x08) >> 2) | (data[6] & 0x01);
   prgrom = data[4] * 0x4000;
   chrrom = data[5] * 0x2000;

@@ -3,6 +3,7 @@
 namespace SuperFamicom {
 
 PPU ppu;
+#include "../../ppu/video.cpp"
 
 #include "mmio/mmio.cpp"
 #include "window/window.cpp"
@@ -11,7 +12,6 @@ PPU ppu;
 #include "sprite/sprite.cpp"
 #include "screen/screen.cpp"
 #include "serialization.cpp"
-#include "../../ppu/video.cpp"
 
 PPU::PPU() :
 cache(*this),

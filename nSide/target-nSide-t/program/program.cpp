@@ -7,12 +7,10 @@
 #include "media.cpp"
 #include "state.cpp"
 #include "utility.cpp"
-Program* program = nullptr;
+unique_pointer<Program> program;
 
 Program::Program(lstring args) {
   program = this;
-  directory::create({localpath(), "higan/"});
-  directory::create({localpath(), "nSide/"});
   Application::onMain({&Program::main, this});
 
   emulators.append(new Famicom::Interface);
@@ -33,10 +31,7 @@ Program::Program(lstring args) {
   video = Video::create(settings["Video/Driver"].text());
   video->set(Video::Handle, presentation->viewport.handle());
   video->set(Video::Synchronize, settings["Video/Synchronize"].boolean());
-  if(!video->init()) {
-    delete video;
-    video = Video::create("None");
-  }
+  if(!video->init()) video = Video::create("None");
 
   audio = Audio::create(settings["Audio/Driver"].text());
   audio->set(Audio::Device, settings["Audio/Device"].text());
@@ -44,18 +39,12 @@ Program::Program(lstring args) {
   audio->set(Audio::Synchronize, settings["Audio/Synchronize"].boolean());
   audio->set(Audio::Frequency, 96000u);
   audio->set(Audio::Latency, 80u);
-  if(!audio->init()) {
-    delete audio;
-    audio = Audio::create("None");
-  }
+  if(!audio->init()) audio = Audio::create("None");
 
   input = Input::create(settings["Input/Driver"].text());
   input->set(Input::Handle, presentation->viewport.handle());
-  input->onChange({&InputManager::onChange, inputManager});
-  if(!input->init()) {
-    delete input;
-    input = Input::create("None");
-  }
+  input->onChange({&InputManager::onChange, &inputManager()});
+  if(!input->init()) input = Input::create("None");
 
   dsp.setPrecision(16);
   dsp.setBalance(0.0);
@@ -84,7 +73,7 @@ auto Program::load(string location) -> void {
   } else if(file::exists(location)) {
     //special handling to allow importing the Game Boy Advance BIOS
     if(file::size(location) == 16384 && file::sha256(location).beginsWith("fd2547724b505f48")) {
-      auto target = locate({localpath(), "nSide/"}, "Game Boy Advance.sys/");
+      auto target = locateSystem("Game Boy Advance.sys/");
       if(file::copy(location, {target, "bios.rom"})) {
         MessageDialog().setTitle(Emulator::Name).setText("Game Boy Advance BIOS imported successfully!").information();
       }
@@ -115,8 +104,5 @@ auto Program::quit() -> void {
   unloadMedia();
   settings.quit();
   inputManager->quit();
-  delete video;
-  delete audio;
-  delete input;
   Application::quit();
 }

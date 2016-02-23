@@ -1,21 +1,34 @@
 #include "tomoko.hpp"
-Video* video = nullptr;
-Audio* audio = nullptr;
-Input* input = nullptr;
+unique_pointer<Video> video;
+unique_pointer<Audio> audio;
+unique_pointer<Input> input;
 Emulator::Interface* emulator = nullptr;
 
-//if file already exists in the same path as the binary; use it (portable mode)
-//if not, use default requested path (*nix/user mode)
-auto locate(string pathname, string filename) -> string {
-  string location{programpath(), filename};
+auto locate(string name) -> string {
+  string location = {programpath(), name};
   if(file_system_object::exists(location)) return location;
-  return {pathname, filename};
+
+  location = {configpath(), "nSide/", name};
+  if(file_system_object::exists(location)) return location;
+
+  location = {localpath(), "nSide/", name};
+  if(file_system_object::exists(location)) return location;
+
+  location = {configpath(), "higan/", name};
+  if(file_system_object::exists(location)) return location;
+
+  location = {localpath(), "higan/", name};
+  if(file_system_object::exists(location)) return location;
+
+  directory::create({localpath(), "nSide/"});
+  return {localpath(), "nSide/", name};
 }
-auto locate(string pathname1, string pathname2, string filename) -> string {
-  string location{programpath(), filename};
+
+auto locateSystem(string name) -> string {
+  string location = {settings["Library/Location"].text(), "System/", name};
   if(file_system_object::exists(location)) return location;
-  if(file_system_object::exists({pathname1, filename})) return {pathname1, filename};
-  return {pathname2, filename};
+
+  return locate(name);
 }
 
 #include <nall/main.hpp>

@@ -1,3 +1,4 @@
+#include "../../dsp/audio.hpp"
 #include "SPC_DSP.h"
 
 struct DSP : Thread {
@@ -19,9 +20,6 @@ struct DSP : Thread {
   auto channel_enable(uint channel, bool enable) -> void;
 
   auto serialize(serializer&) -> void;
-
-  #include "../../dsp/audio.hpp"
-  Audio audio;
 
 private:
   SPC_DSP spc_dsp;
