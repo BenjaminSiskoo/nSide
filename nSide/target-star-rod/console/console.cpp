@@ -62,14 +62,14 @@ ConsoleWindow::ConsoleWindow() {
   onClose([&] {
     setVisible(false);
     if(Intrinsics::platform() == Intrinsics::Platform::MacOSX) {
-      interface->unload();
+      program->unloadMedia();
     } else {
       Application::quit();
     }
   });
 
   menuEmulationReloadCartridge.onActivate([&] {
-    interface->loadCartridge(interface->pathName);
+    program->loadMedia(program->folderPaths(0));
   });
 
   menuEmulationPowerCycle.onActivate([&] {
@@ -136,17 +136,17 @@ ConsoleWindow::ConsoleWindow() {
     vramViewer->setFocused();
   });
 
-  menuStateSave1.onActivate([&] { interface->saveState(1); });
-  menuStateSave2.onActivate([&] { interface->saveState(2); });
-  menuStateSave3.onActivate([&] { interface->saveState(3); });
-  menuStateSave4.onActivate([&] { interface->saveState(4); });
-  menuStateSave5.onActivate([&] { interface->saveState(5); });
+  menuStateSave1.onActivate([&] { program->saveState(1); });
+  menuStateSave2.onActivate([&] { program->saveState(2); });
+  menuStateSave3.onActivate([&] { program->saveState(3); });
+  menuStateSave4.onActivate([&] { program->saveState(4); });
+  menuStateSave5.onActivate([&] { program->saveState(5); });
 
-  menuStateLoad1.onActivate([&] { interface->loadState(1); });
-  menuStateLoad2.onActivate([&] { interface->loadState(2); });
-  menuStateLoad3.onActivate([&] { interface->loadState(3); });
-  menuStateLoad4.onActivate([&] { interface->loadState(4); });
-  menuStateLoad5.onActivate([&] { interface->loadState(5); });
+  menuStateLoad1.onActivate([&] { program->loadState(1); });
+  menuStateLoad2.onActivate([&] { program->loadState(2); });
+  menuStateLoad3.onActivate([&] { program->loadState(3); });
+  menuStateLoad4.onActivate([&] { program->loadState(4); });
+  menuStateLoad5.onActivate([&] { program->loadState(5); });
 
   menuHelpAbout.onActivate([&] { aboutWindow->setVisible(); });
 

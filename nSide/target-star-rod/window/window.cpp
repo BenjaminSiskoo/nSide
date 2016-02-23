@@ -18,8 +18,8 @@ void WindowManager::loadGeometry() {
   for(auto& window : windowList) {
     config.append(window.geometry, window.name);
   }
-  config.load(locate({localpath(), "star-rod/"}, "star-rod-geometry.bml"));
-  config.save(locate({localpath(), "star-rod/"}, "star-rod-geometry.bml"));
+  config.load(locate("geometry.bml"));
+  config.save(locate("geometry.bml"));
   for(auto& window : windowList) {
     lstring parts = window.geometry.split(",");
     int x = integer(parts[0]);
@@ -40,5 +40,5 @@ void WindowManager::saveGeometry() {
     };
     window.window->setVisible(false);
   }
-  config.save(locate({localpath(), "star-rod/"}, "star-rod-geometry.bml"));
+  config.save(locate("geometry.bml"));
 }

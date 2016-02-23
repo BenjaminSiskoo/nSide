@@ -7,11 +7,12 @@ flags += -DDEBUGGER
 processors := arm gsu hg51b lr35902 r65816 spc700 upd96050
 include processor/GNUmakefile
 
+include emulator/GNUmakefile
 include sfc/GNUmakefile
 include gb/GNUmakefile
 
-ui_objects := star-rod-laevateinn star-rod-settings
-ui_objects += star-rod-interface star-rod-debugger star-rod-tracer
+ui_objects := star-rod-laevateinn star-rod-program star-rod-settings
+ui_objects += star-rod-debugger star-rod-tracer
 ui_objects += star-rod-window
 ui_objects += star-rod-console star-rod-presentation
 ui_objects += star-rod-cpu star-rod-smp star-rod-memory
@@ -47,8 +48,8 @@ obj/hiro.o: ../hiro/hiro.cpp $(call rwildcard,../hiro/)
 	$(compiler) $(hiroflags) -c $< -o $@
 
 obj/star-rod-laevateinn.o: $(ui)/laevateinn.cpp $(call rwildcard,$(ui)/)
+obj/star-rod-program.o: $(ui)/program/program.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
-obj/star-rod-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-debugger.o: $(ui)/debugger/debugger.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-tracer.o: $(ui)/tracer/tracer.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-window.o: $(ui)/window/window.cpp $(call rwildcard,$(ui)/)

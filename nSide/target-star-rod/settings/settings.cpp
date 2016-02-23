@@ -20,10 +20,10 @@ Settings::Settings() {
 }
 
 void Settings::load() {
-  Configuration::Document::load(locate({localpath(), "star-rod/"}, "star-rod-settings.bml"));
-  Configuration::Document::save(locate({localpath(), "star-rod/"}, "star-rod-settings.bml"));
+  Configuration::Document::load(locate("settings.bml"));
+  Configuration::Document::save(locate("settings.bml"));
 }
 
 void Settings::unload() {
-  Configuration::Document::save(locate({localpath(), "star-rod/"}, "star-rod-settings.bml"));
+  Configuration::Document::save(locate("settings.bml"));
 }

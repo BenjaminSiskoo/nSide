@@ -16,14 +16,16 @@
 using namespace nall;
 using namespace ruby;
 using namespace hiro;
-extern Video* video;
-extern Audio* audio;
-extern Input* input;
+extern unique_pointer<Video> video;
+extern unique_pointer<Audio> audio;
+extern unique_pointer<Input> input;
 
+#include <emulator/emulator.hpp>
 #include <sfc/sfc.hpp>
+extern Emulator::Interface* emulator;
 
+#include "program/program.hpp"
 #include "settings/settings.hpp"
-#include "interface/interface.hpp"
 #include "debugger/debugger.hpp"
 #include "tracer/tracer.hpp"
 #include "window/window.hpp"
@@ -37,18 +39,6 @@ extern Input* input;
 #include "vram/vram.hpp"
 #include "resource/resource.hpp"
 
-struct Program {
-  Emulator::Interface* active = nullptr;
-
-  Markup::Node higan_settings;
-
-  Program(lstring args);
-  auto main() -> void;
-  auto quit() -> void;
-};
-
-extern Program* program;
-extern DSP dspaudio;
-
-auto locate(string pathname, string filename) -> string;
-auto locate(string pathname1, string pathname2, string filename) -> string;
+auto locate(string name) -> string;
+auto locateHigan(string name) -> string;
+auto locateSystem(string name) -> string;

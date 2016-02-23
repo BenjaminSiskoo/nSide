@@ -90,7 +90,7 @@ void MemoryEditor::selectSource() {
 }
 
 void MemoryEditor::exportMemoryToDisk() {
-  string filename = { interface->pathName, "debug/memory-" };
+  string filename = {program->folderPaths(0), "debug/memory-"};
   switch(source.selected().offset()) {
   case 0: filename.append("cpu.bin"); break;
   case 1: filename.append("apu.bin"); break;
