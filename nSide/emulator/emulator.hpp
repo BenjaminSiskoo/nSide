@@ -8,7 +8,7 @@ namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.07";
-  static const string FromVersion = "097.16";
+  static const string FromVersion = "097.17";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, gekkio, and more...";
@@ -21,8 +21,6 @@ namespace Emulator {
   static const string Profile = "Balanced";
   #elif defined(PROFILE_PERFORMANCE)
   static const string Profile = "Performance";
-  #else
-  static const string Profile = "Accuracy";
   #endif
 }
 

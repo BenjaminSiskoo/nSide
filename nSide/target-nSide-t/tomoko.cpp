@@ -6,19 +6,19 @@ Emulator::Interface* emulator = nullptr;
 
 auto locate(string name) -> string {
   string location = {programpath(), name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   location = {configpath(), "nSide/", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   location = {localpath(), "nSide/", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   location = {configpath(), "higan/", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   location = {localpath(), "higan/", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   directory::create({localpath(), "nSide/"});
   return {localpath(), "nSide/", name};
@@ -26,7 +26,7 @@ auto locate(string name) -> string {
 
 auto locateSystem(string name) -> string {
   string location = {settings["Library/Location"].text(), "System/", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   return locate(name);
 }
