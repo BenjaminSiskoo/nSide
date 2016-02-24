@@ -6,7 +6,7 @@ struct Board {
   static auto write(MappedRAM& memory, uint addr, uint8 byte) -> void;
   static auto mirror(uint addr, uint size) -> uint;
 
-  virtual auto enter() -> void;
+  virtual auto main() -> void;
   virtual auto tick() -> void;
 
   virtual uint8 prg_read(uint addr) = 0;

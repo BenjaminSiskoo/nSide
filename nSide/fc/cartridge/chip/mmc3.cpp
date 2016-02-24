@@ -8,17 +8,11 @@ struct MMC3 : Chip {
     if(type == "MC-ACC") revision = Revision::MC_ACC;
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      if(irq_delay) irq_delay--;
-      irq_test(ppu.status.chr_abus);
-      cpu.set_irq_line(irq_line);
-      tick();
-    }
+  auto main() -> void {
+    if(irq_delay) irq_delay--;
+    irq_test(ppu.status.chr_abus);
+    cpu.set_irq_line(irq_line);
+    tick();
   }
 
   auto irq_test(uint addr) -> void {

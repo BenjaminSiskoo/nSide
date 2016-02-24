@@ -14,42 +14,40 @@ BeamGun::BeamGun(uint port) : Controller(port, (uint)Device::ID::BeamGun) {
   offscreen   = false;
 
   triggerlock = false;
+
+  prev = 0;
 }
 
-auto BeamGun::enter() -> void {
-  uint prev = 0;
-  uint next;
-  while(true) {
-    next = ppu.vcounter() * 341 + ppu.hcounter();
+auto BeamGun::main() -> void {
+  uint next = ppu.vcounter() * 341 + ppu.hcounter();
 
-    if(lighttime > 0) {
-      lighttime -= 1;
-    }
-
-    if(!offscreen) {
-      uint target = y * 341 + x + (!system.vs() ? 8 : 8);
-      if(next >= target && prev < target) {
-        //CRT raster detected
-        //light remains in the gun for 10-25 scanlines
-        if(read_light()) lighttime = (!system.vs() ? 341 * 16 : 341 * 262);
-      }
-    }
-
-    if(next < prev) {
-      if(triggertime > 0) triggertime -= 1;
-      //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
-      int nx = poll(X);
-      int ny = poll(Y);
-      nx += x;
-      ny += y;
-      x = max(-16, min(256 + 16, nx));
-      y = max(-16, min(240 + 16, ny));
-      offscreen = (x < 0 || y < 0 || x >= 256 || y >= 240);
-    }
-
-    prev = next;
-    step(3);
+  if(lighttime > 0) {
+    lighttime -= 1;
   }
+
+  if(!offscreen) {
+    uint target = y * 341 + x + (!system.vs() ? 8 : 8);
+    if(next >= target && prev < target) {
+      //CRT raster detected
+      //light remains in the gun for 10-25 scanlines
+      if(read_light()) lighttime = (!system.vs() ? 341 * 16 : 341 * 262);
+    }
+  }
+
+  if(next < prev) {
+    if(triggertime > 0) triggertime -= 1;
+    //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
+    int nx = poll(X);
+    int ny = poll(Y);
+    nx += x;
+    ny += y;
+    x = max(-16, min(256 + 16, nx));
+    y = max(-16, min(240 + 16, ny));
+    offscreen = (x < 0 || y < 0 || x >= 256 || y >= 240);
+  }
+
+  prev = next;
+  step(3);
 }
 
 auto BeamGun::data() -> uint5 {

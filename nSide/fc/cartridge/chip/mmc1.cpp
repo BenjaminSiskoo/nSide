@@ -10,15 +10,9 @@ struct MMC1 : Chip {
     if(type == "MMC1C" ) revision = Revision::MMC1C;
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      if(writedelay) writedelay--;
-      tick();
-    }
+  auto main() -> void {
+    if(writedelay) writedelay--;
+    tick();
   }
 
   auto prg_addr(uint addr) -> uint {

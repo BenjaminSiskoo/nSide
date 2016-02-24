@@ -14,15 +14,9 @@ struct VS : Board {
     if(type.match("119"   )) chip_type = ChipType::N108;
   }
 
-  auto enter() -> void {
-    if(chip_type == ChipType::MMC1) return mmc1.enter();
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      tick();
-    }
+  auto main() -> void {
+    if(chip_type == ChipType::MMC1) return mmc1.main();
+    tick();
   }
 
   auto prg_read(uint addr) -> uint8 {

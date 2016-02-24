@@ -8,20 +8,13 @@ struct N163 : Chip {
     if(type == "340") revision = Revision::N340;
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(irq_enable && irq_counter != 0x7fff) {
-        irq_counter++;
-        if(irq_counter == 0x7fff) cpu.set_irq_line(1);
+  auto main() -> void {
+    if(!audio_disable) {
+      if(++audio_channel_timer == 15) {
+        audio_channel_timer = 0;
       }
-
-      if(!audio_disable) {
-        if(++audio_channel_timer == 15) {
-          audio_channel_timer = 0;
-        }
-      }
-      tick();
     }
+    tick();
   }
 
   auto prg_read(uint addr) -> uint8 {

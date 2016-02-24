@@ -26,7 +26,7 @@ struct PPU : Thread, public PPUcounter {
   alwaysinline auto step(uint clocks) -> void;
   alwaysinline auto synchronizeCPU() -> void;
 
-  auto enter() -> void;
+  auto main() -> void;
   auto power() -> void;
   auto reset() -> void;
 

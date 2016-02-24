@@ -2,8 +2,8 @@ struct NES_QJ : Board {
   NES_QJ(Markup::Node& board_node) : Board(board_node), mmc3(*this, board_node) {
   }
 
-  auto enter() -> void {
-    mmc3.enter();
+  auto main() -> void {
+    mmc3.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

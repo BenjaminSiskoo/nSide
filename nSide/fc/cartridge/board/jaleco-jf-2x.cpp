@@ -13,8 +13,8 @@ struct JalecoJF2x : Board {
     if(type.match("*JF-40")) revision = Revision::JF_40;
   }
 
-  auto enter() -> void {
-    ss88006.enter();
+  auto main() -> void {
+    ss88006.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

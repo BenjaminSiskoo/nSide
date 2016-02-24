@@ -28,8 +28,8 @@ struct HVC_SxROM : Board {
     if(type.match("*SXROM"   )) revision = Revision::SXROM;
   }
 
-  auto enter() -> void {
-    mmc1.enter();
+  auto main() -> void {
+    mmc1.main();
   }
 
   auto ram_addr(uint addr) -> uint {

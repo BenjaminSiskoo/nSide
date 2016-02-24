@@ -2,17 +2,11 @@ struct IFH3001 : Chip {
   IFH3001(Board& board, Markup::Node& board_node) : Chip(board) {
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      if(irq_enable && irq_counter) {
-        if(--irq_counter == 0) cpu.set_irq_line(1);
-      }
-      tick();
+  auto main() -> void {
+    if(irq_enable && irq_counter) {
+      if(--irq_counter == 0) cpu.set_irq_line(1);
     }
+    tick();
   }
 
   auto prg_addr(uint addr) const -> uint {

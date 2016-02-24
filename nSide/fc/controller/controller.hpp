@@ -43,7 +43,7 @@ struct Controller : Thread {
   Controller(uint port);
 
   static auto Enter() -> void;
-  virtual auto enter() -> void;
+  virtual auto main() -> void;
 
   auto step(uint clocks) -> void;
   auto synchronizeCPU() -> void;

@@ -20,13 +20,15 @@ Controller::Controller(uint port) : port(port), device_id((uint)Device::ID::None
 }
 
 auto Controller::Enter() -> void {
-  if(co_active() == device.controllerPort1->thread) device.controllerPort1->enter();
-  if(co_active() == device.controllerPort2->thread) device.controllerPort2->enter();
-  if(co_active() == device.expansionPort->thread) device.expansionPort->enter();
+  while(true) {
+    if(co_active() == device.controllerPort1->thread) device.controllerPort1->main();
+    if(co_active() == device.controllerPort2->thread) device.controllerPort2->main();
+    if(co_active() == device.expansionPort->thread) device.expansionPort->main();
+  }
 }
 
-auto Controller::enter() -> void {
-  while(true) step(1);
+auto Controller::main() -> void {
+  step(1);
 }
 
 auto Controller::step(uint clocks) -> void {
@@ -35,7 +37,7 @@ auto Controller::step(uint clocks) -> void {
 }
 
 auto Controller::synchronizeCPU() -> void {
-  if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
+  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
 }
 
 auto Controller::poll(uint input) -> int16 {

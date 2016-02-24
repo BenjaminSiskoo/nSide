@@ -38,8 +38,6 @@ struct System {
   } information;
 
 private:
-  void runThreadToSave();
-
   void serialize(serializer&);
   void serializeAll(serializer&);
   void serializeInit();
@@ -55,5 +53,3 @@ private:
 };
 
 extern System system;
-
-#include <fc/scheduler/scheduler.hpp>

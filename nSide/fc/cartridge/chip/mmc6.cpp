@@ -2,16 +2,10 @@ struct MMC6 : Chip {
   MMC6(Board& board) : Chip(board) {
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      if(irq_delay) irq_delay--;
-      cpu.set_irq_line(irq_line);
-      tick();
-    }
+  auto main() -> void {
+    if(irq_delay) irq_delay--;
+    cpu.set_irq_line(irq_line);
+    tick();
   }
 
   auto irq_test(uint addr) -> void {

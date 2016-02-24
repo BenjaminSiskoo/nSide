@@ -7,42 +7,20 @@ System system;
 #include "device.cpp"
 #include "serialization.cpp"
 
-#include <fc/scheduler/scheduler.cpp>
-
 auto System::loaded() const -> bool { return _loaded; }
 auto System::revision() const -> Revision { return _revision; }
 auto System::region() const -> Region { return _region; }
 auto System::cpuFrequency() const -> uint { return _cpuFrequency; }
 
 auto System::run() -> void {
-  scheduler.sync = Scheduler::SynchronizeMode::None;
   scheduler.enter();
 }
 
 auto System::runToSave() -> void {
-  scheduler.sync = Scheduler::SynchronizeMode::PPU;
-  runThreadToSave();
-
-  scheduler.sync = Scheduler::SynchronizeMode::All;
-  scheduler.thread = cpu.thread;
-  runThreadToSave();
-
-  scheduler.sync = Scheduler::SynchronizeMode::All;
-  scheduler.thread = apu.thread;
-  runThreadToSave();
-
-  scheduler.sync = Scheduler::SynchronizeMode::All;
-  scheduler.thread = cartridge.thread;
-  runThreadToSave();
-
-  scheduler.sync = Scheduler::SynchronizeMode::None;
-}
-
-auto System::runThreadToSave() -> void {
-  while(true) {
-    scheduler.enter();
-    if(scheduler.exit_reason == Scheduler::ExitReason::SynchronizeEvent) break;
-  }
+  scheduler.synchronize(ppu.thread);
+  scheduler.synchronize(cpu.thread);
+  scheduler.synchronize(apu.thread);
+  scheduler.synchronize(cartridge.thread);
 }
 
 auto System::init() -> void {
@@ -88,7 +66,7 @@ auto System::load(Revision revision) -> void {
 
   cartridge.load();
   _region = cartridge.region() == Cartridge::Region::NTSC ? Region::NTSC : Region::PAL;
-  _cpuFrequency = region() == Region::NTSC ? 21477272 : 26601712;
+  _cpuFrequency = region() == Region::NTSC ? 21'477'272 : 26'601'712;
 
   if(!vs()) { // VS. System PPU is set within cartridge.load().
     auto game_manifest = BML::unserialize(cartridge.information.markup.cartridge);
@@ -158,7 +136,7 @@ auto System::reset() -> void {
   case Revision::PlayChoice10: pc10arcadeboard.reset(); break;
   }
 
-  scheduler.init();
+  scheduler.reset();
   device.connect(0, (Device::ID)settings.controllerPort1);
   device.connect(1, (Device::ID)settings.controllerPort2);
   device.connect(2, (Device::ID)settings.expansionPort);

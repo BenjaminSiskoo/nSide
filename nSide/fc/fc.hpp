@@ -59,6 +59,7 @@ namespace Famicom {
 
   #include <fc/controller/controller.hpp>
   #include <fc/system/system.hpp>
+  #include <fc/scheduler/scheduler.hpp>
   #include <fc/arcade/arcade.hpp>
   #include <fc/cartridge/cartridge.hpp>
   #include <fc/cheat/cheat.hpp>

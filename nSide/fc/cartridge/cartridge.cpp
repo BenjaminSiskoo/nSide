@@ -29,11 +29,11 @@ auto Cartridge::title() -> string {
 }
 
 auto Cartridge::Enter() -> void {
-  cartridge.enter();
+  while(true) scheduler.synchronize(), cartridge.main();
 }
 
-auto Cartridge::enter() -> void {
-  board->enter();
+auto Cartridge::main() -> void {
+  board->main();
 }
 
 auto Cartridge::load() -> void {

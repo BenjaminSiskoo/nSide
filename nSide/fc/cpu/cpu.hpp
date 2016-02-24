@@ -15,7 +15,6 @@ struct CPU : Processor::R6502, Thread {
   auto read(uint16 addr) -> uint8;
   auto write(uint16 addr, uint8 data) -> void;
 
-  auto enter() -> void;
   auto main() -> void;
   auto power() -> void;
   auto reset() -> void;
@@ -42,7 +41,7 @@ struct CPU : Processor::R6502, Thread {
     uint8 oam_dma_page;
   } status;
 
-  static void Enter();
+  static auto Enter() -> void;
 };
 
 extern CPU cpu;

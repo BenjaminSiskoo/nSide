@@ -14,8 +14,8 @@ struct BandaiFCG : Board {
     if(type.match("*LZ93D50*")) revision = Revision::LZ93D50;
   }
 
-  auto enter() -> void {
-    fcg.enter();
+  auto main() -> void {
+    fcg.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

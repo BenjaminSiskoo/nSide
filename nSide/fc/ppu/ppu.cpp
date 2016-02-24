@@ -20,19 +20,15 @@ auto PPU::step(uint clocks) -> void {
 }
 
 auto PPU::synchronizeCPU() -> void {
-  if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
+  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
 }
 
-auto PPU::Enter() -> void { ppu.enter(); }
+auto PPU::Enter() -> void {
+  while(true) scheduler.synchronize(), ppu.main();
+}
 
-auto PPU::enter() -> void {
-  while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::PPU) {
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-    }
-
-    raster_scanline();
-  }
+auto PPU::main() -> void {
+  raster_scanline();
 }
 
 auto PPU::add_clocks(uint clocks) -> void {
@@ -75,6 +71,7 @@ auto PPU::scanline() -> void {
 
 auto PPU::frame() -> void {
   video.refresh();
+  scheduler.exit(Scheduler::Event::Frame);
 }
 
 auto PPU::power() -> void {

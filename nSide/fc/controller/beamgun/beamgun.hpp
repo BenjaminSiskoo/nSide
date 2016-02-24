@@ -5,7 +5,7 @@ struct BeamGun : Controller {
 
   BeamGun(uint port);
 
-  auto enter() -> void;
+  auto main() -> void;
   auto data() -> uint5;
   auto data1() -> uint2;
   auto data2() -> uint5;
@@ -24,4 +24,6 @@ struct BeamGun : Controller {
   bool offscreen;
 
   bool triggerlock;
+
+  uint prev;
 };

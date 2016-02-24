@@ -6,18 +6,12 @@ struct MMC5 : Chip {
     if(type == "MMC5B") revision = Revision::MMC5B;
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
+  auto main() -> void {
+    //scanline() resets this; if no scanlines detected, enter video blanking period
+    if(++cpu_cycle_counter >= 200) blank();  //113-114 normal; ~2500 across Vblank period
 
-      //scanline() resets this; if no scanlines detected, enter video blanking period
-      if(++cpu_cycle_counter >= 200) blank();  //113-114 normal; ~2500 across Vblank period
-
-      cpu.set_irq_line(irq_enable && irq_pending);
-      tick();
-    }
+    cpu.set_irq_line(irq_enable && irq_pending);
+    tick();
   }
 
   auto scanline(uint y) -> void {

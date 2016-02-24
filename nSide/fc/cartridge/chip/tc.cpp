@@ -8,19 +8,13 @@ struct TC : Chip {
     settings.pal16r4 = chip(1)["type"].text() == "PAL16R4";
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      if(revision != Revision::TC0190FMC) {
-        if(irq_delay) irq_delay--;
-        irq_test(ppu.status.chr_abus);
-        cpu.set_irq_line(irq_line);
-      }
-      tick();
+  auto main() -> void {
+    if(revision != Revision::TC0190FMC) {
+      if(irq_delay) irq_delay--;
+      irq_test(ppu.status.chr_abus);
+      cpu.set_irq_line(irq_line);
     }
+    tick();
   }
 
   auto irq_test(uint addr) -> void {

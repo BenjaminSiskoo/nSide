@@ -2,22 +2,16 @@ struct FDS : Board {
   FDS(Markup::Node& board_node) : Board(board_node) {
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      if(irq_enable && irq_counter > 0 && --irq_counter == 0) {
-        cpu.set_irq_line(1);
-        if(irq_repeat) irq_counter = irq_latch;
-        else           irq_enable = false;
-        irq_latch = 0; // for Kaettekita Mario Bros.?
-      } else {
-        //TODO: Drive timer emulation
-      }
-      tick();
+  auto main() -> void {
+    if(irq_enable && irq_counter > 0 && --irq_counter == 0) {
+      cpu.set_irq_line(1);
+      if(irq_repeat) irq_counter = irq_latch;
+      else           irq_enable = false;
+      irq_latch = 0; // for Kaettekita Mario Bros.?
+    } else {
+      //TODO: Drive timer emulation
     }
+    tick();
   }
 
   auto prg_read(uint addr) -> uint8 {

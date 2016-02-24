@@ -20,8 +20,8 @@ struct HVC_TxROM : Board {
     if(type.match("*MC-ACC" )) revision = Revision::MCACC;
   }
 
-  auto enter() -> void {
-    mmc3.enter();
+  auto main() -> void {
+    mmc3.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

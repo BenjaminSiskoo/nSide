@@ -3,8 +3,8 @@ struct KonamiVRC3 : Board {
     settings.mirror = board_node["mirror/mode"].text() == "vertical" ? 1 : 0;
   }
 
-  auto enter() -> void {
-    vrc3.enter();
+  auto main() -> void {
+    vrc3.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

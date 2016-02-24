@@ -5,7 +5,7 @@ struct Cartridge : Thread, property<Cartridge> {
   enum class Region : uint { NTSC, PAL, Dendy };
 
   static void Enter();
-  void enter();
+  void main();
 
   auto sha256() const -> string { return _sha256; }
   auto region() const -> Region { return _region; }

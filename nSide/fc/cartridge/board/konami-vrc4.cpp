@@ -4,8 +4,8 @@ struct KonamiVRC4 : Board {
     settings.pinout.a1 = 1 << board_node["chip/pinout/a1"].natural();
   }
 
-  auto enter() -> void {
-    return vrc4.enter();
+  auto main() -> void {
+    return vrc4.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

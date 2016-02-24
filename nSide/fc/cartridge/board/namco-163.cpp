@@ -3,8 +3,8 @@ struct Namco163 : Board {
     chip = &n163;
   }
 
-  auto enter() -> void {
-    n163.enter();
+  auto main() -> void {
+    n163.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

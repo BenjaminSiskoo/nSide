@@ -8,8 +8,8 @@ struct HVC_ExROM : Board {
     if(type.match("*EWROM*")) revision = Revision::EWROM;
   }
 
-  auto enter() -> void {
-    mmc5.enter();
+  auto main() -> void {
+    mmc5.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

@@ -36,7 +36,7 @@ struct KonamiVRC6 : Board {
     vrc6.serialize(s);
   }
 
-  auto enter() -> void { vrc6.enter(); }
+  auto main() -> void { vrc6.main(); }
   auto power() -> void { vrc6.power(); }
   auto reset() -> void { vrc6.reset(); }
 

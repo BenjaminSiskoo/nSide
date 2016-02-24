@@ -2,7 +2,7 @@ struct APU : Thread {
   APU();
 
   static auto Enter() -> void;
-  auto enter() -> void;
+  auto main() -> void;
   auto tick() -> void;
   auto set_irq_line() -> void;
   auto set_sample(int16 sample) -> void;

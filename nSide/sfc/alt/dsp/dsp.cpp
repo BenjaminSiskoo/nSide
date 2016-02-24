@@ -17,14 +17,14 @@ auto DSP::step(uint clocks) -> void {
 }
 
 auto DSP::synchronizeSMP() -> void {
-  if(SMP::Threaded == true) {
-    if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(smp.thread);
+  if(SMP::Threaded) {
+    if(clock >= 0 && !scheduler.synchronizing()) co_switch(smp.thread);
   } else {
-    while(clock >= 0) smp.enter();
+    while(clock >= 0) smp.main();
   }
 }
 
-auto DSP::enter() -> void {
+auto DSP::main() -> void {
   spc_dsp.run(1);
   step(24);
 

@@ -2,8 +2,8 @@ struct NES_HKROM : Board {
   NES_HKROM(Markup::Node& board_node) : Board(board_node), mmc6(*this) {
   }
 
-  auto enter() -> void {
-    mmc6.enter();
+  auto main() -> void {
+    mmc6.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

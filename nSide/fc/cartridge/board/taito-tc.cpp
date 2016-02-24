@@ -2,8 +2,8 @@ struct TaitoTC : Board {
   TaitoTC(Markup::Node& board_node) : Board(board_node), tc(*this, board_node) {
   }
 
-  auto enter() -> void {
-    tc.enter();
+  auto main() -> void {
+    tc.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

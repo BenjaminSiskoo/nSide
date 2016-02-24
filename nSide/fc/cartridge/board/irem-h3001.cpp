@@ -2,8 +2,8 @@ struct IremH3001 : Board {
   IremH3001(Markup::Node& board_node) : Board(board_node), ifh3001(*this, board_node) {
   }
 
-  auto enter() -> void {
-    ifh3001.enter();
+  auto main() -> void {
+    ifh3001.main();
   }
 
   auto prg_read(uint addr) -> uint8 {

@@ -21,27 +21,20 @@ struct NES_Event : Board {
     }));
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+  auto main() -> void {
+    switch(prg_lock) {
+    case 0: if((mmc1.chr_bank[0] & 0x10) == 0x10) prg_lock++; break;
+    case 1: if((mmc1.chr_bank[0] & 0x10) == 0x00) prg_lock++; break;
+    case 2:
+      if((mmc1.chr_bank[0] & 0x10) == 0x00) irq_counter++;
+      if((mmc1.chr_bank[0] & 0x10) == 0x10) {
+        irq_counter = 0x00000000;
+        cpu.set_irq_line(0);
       }
-
-      if(mmc1.writedelay) mmc1.writedelay--;
-      switch(prg_lock) {
-      case 0: if((mmc1.chr_bank[0] & 0x10) == 0x10) prg_lock++; break;
-      case 1: if((mmc1.chr_bank[0] & 0x10) == 0x00) prg_lock++; break;
-      case 2:
-        if((mmc1.chr_bank[0] & 0x10) == 0x00) irq_counter++;
-        if((mmc1.chr_bank[0] & 0x10) == 0x10) {
-          irq_counter = 0x00000000;
-          cpu.set_irq_line(0);
-        }
-        break;
-      }
-      if(irq_counter == (0x20000000 | (dip << 25))) cpu.set_irq_line(1);
-      tick();
+      break;
     }
+    if(irq_counter == (0x20000000 | (dip << 25))) cpu.set_irq_line(1);
+    mmc1.main();
   }
 
   auto prg_addr(uint addr) -> uint {

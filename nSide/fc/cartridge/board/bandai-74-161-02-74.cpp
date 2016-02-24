@@ -4,15 +4,9 @@ struct Bandai74_161_02_74 : Board {
   Bandai74_161_02_74(Markup::Node& board_node) : Board(board_node) {
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      chr_abus_test(ppu.status.chr_abus);
-      tick();
-    }
+  auto main() -> void {
+    chr_abus_test(ppu.status.chr_abus);
+    tick();
   }
 
   auto prg_read(uint addr) -> uint8 {

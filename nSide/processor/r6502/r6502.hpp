@@ -2,8 +2,7 @@
 //* Ricoh 2A03
 //* Ricoh 2A07
 
-#ifndef PROCESSOR_R6502_HPP
-#define PROCESSOR_R6502_HPP
+#pragma once
 
 namespace Processor {
 
@@ -147,5 +146,3 @@ struct R6502 {
 };
 
 }
-
-#endif

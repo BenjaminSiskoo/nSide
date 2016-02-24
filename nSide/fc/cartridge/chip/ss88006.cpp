@@ -2,18 +2,12 @@ struct SS88006 : Chip {
   SS88006(Board& board, Markup::Node& board_node) : Chip(board) {
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-      }
-
-      if(irq_enable) {
-        irq_counter = (irq_counter & ~irq_mask) | ((irq_counter - 1) & irq_mask);
-        if((irq_counter & irq_mask) == irq_mask) cpu.set_irq_line(1);
-      }
-      tick();
+  auto main() -> void {
+    if(irq_enable) {
+      irq_counter = (irq_counter & ~irq_mask) | ((irq_counter - 1) & irq_mask);
+      if((irq_counter & irq_mask) == irq_mask) cpu.set_irq_line(1);
     }
+    tick();
   }
 
   auto prg_addr(uint addr) const -> uint {

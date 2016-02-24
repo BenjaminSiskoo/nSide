@@ -11,21 +11,15 @@ struct FCG : Chip {
     if(type == "24C02") eeprom = EEPROM::_24C02;
   }
 
-  auto enter() -> void {
-    while(true) {
-      if(scheduler.sync == Scheduler::SynchronizeMode::All) {
-        scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+  auto main() -> void {
+    if(irq_counter_enable) {
+      if(--irq_counter == 0xffff) {
+        cpu.set_irq_line(1);
+        irq_counter_enable = false;
       }
-
-      if(irq_counter_enable) {
-        if(--irq_counter == 0xffff) {
-          cpu.set_irq_line(1);
-          irq_counter_enable = false;
-        }
-      }
-
-      tick();
     }
+
+    tick();
   }
 
   auto prg_addr(uint addr) const -> uint {

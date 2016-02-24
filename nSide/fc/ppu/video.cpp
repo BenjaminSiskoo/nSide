@@ -76,7 +76,6 @@ auto Video::refresh() -> void {
   } else {
     refreshMain();
   }
-  scheduler.exit(Scheduler::ExitReason::FrameEvent);
 }
 
 auto Video::refreshMain() -> void {
