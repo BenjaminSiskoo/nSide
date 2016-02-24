@@ -21,7 +21,7 @@ bg3(*this, Background::ID::BG3),
 bg4(*this, Background::ID::BG4),
 sprite(*this),
 screen(*this) {
-  output = new uint32[512 * 512]();
+  output = new uint32_t[512 * 512]();
   output += 16 * 512;  //overscan offset
   display.width = 256;
   display.height = 224;
@@ -34,7 +34,7 @@ PPU::~PPU() {
   delete[] output;
 }
 
-auto PPU::step(uint clocks) -> void {
+auto PPU::step(uint_t clocks) -> void {
   clock += clocks;
 }
 
@@ -61,7 +61,7 @@ auto PPU::main() -> void {
   }
 }
 
-auto PPU::add_clocks(uint clocks) -> void {
+auto PPU::add_clocks(uint_t clocks) -> void {
   tick(clocks);
   step(clocks);
   synchronizeCPU();
@@ -103,8 +103,8 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::enable() -> void {
-  function<auto (uint, uint8) -> uint8> reader{&PPU::mmio_read, (PPU*)&ppu};
-  function<auto (uint, uint8) -> void> writer{&PPU::mmio_write, (PPU*)&ppu};
+  function<auto (uint_t, uint8_t) -> uint8_t> reader{&PPU::mmio_read, (PPU*)&ppu};
+  function<auto (uint_t, uint8_t) -> void> writer{&PPU::mmio_write, (PPU*)&ppu};
 
   bus.map(reader, writer, 0x00, 0x3f, 0x2100, 0x213f);
   bus.map(reader, writer, 0x80, 0xbf, 0x2100, 0x213f);
@@ -120,14 +120,14 @@ auto PPU::power() -> void {
 auto PPU::reset() -> void {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memset(output, 0, 512 * 480 * sizeof(uint32));
+  memset(output, 0, 512 * 480 * sizeof(uint32_t));
   mmio_reset();
   display.interlace = false;
   display.overscan = false;
   video.reset();
 }
 
-auto PPU::layer_enable(uint layer, uint priority, bool enable) -> void {
+auto PPU::layer_enable(uint_t layer, uint_t priority, bool enable) -> void {
   switch(layer * 4 + priority) {
   case  0: bg1.priority0_enable = enable; break;
   case  1: bg1.priority1_enable = enable; break;
@@ -144,7 +144,7 @@ auto PPU::layer_enable(uint layer, uint priority, bool enable) -> void {
   }
 }
 
-auto PPU::set_frameskip(uint frameskip) -> void {
+auto PPU::set_frameskip(uint_t frameskip) -> void {
   display.frameskip = frameskip;
   display.framecounter = 0;
 }

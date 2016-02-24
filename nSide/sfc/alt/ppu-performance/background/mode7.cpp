@@ -1,23 +1,23 @@
 #define Clip(x) (((x) & 0x2000) ? ((x) | ~0x03ff) : ((x) & 0x03ff))
 
 auto PPU::Background::render_mode7() -> void {
-  int px, py;
-  int tx, ty, tile, palette;
+  int_t px, py;
+  int_t tx, ty, tile, palette;
 
-  int a = sclip<16>(self.regs.m7a);
-  int b = sclip<16>(self.regs.m7b);
-  int c = sclip<16>(self.regs.m7c);
-  int d = sclip<16>(self.regs.m7d);
+  int_t a = sclip<16>(self.regs.m7a);
+  int_t b = sclip<16>(self.regs.m7b);
+  int_t c = sclip<16>(self.regs.m7c);
+  int_t d = sclip<16>(self.regs.m7d);
 
-  int cx = sclip<13>(self.regs.m7x);
-  int cy = sclip<13>(self.regs.m7y);
-  int hofs = sclip<13>(self.regs.mode7_hoffset);
-  int vofs = sclip<13>(self.regs.mode7_voffset);
+  int_t cx = sclip<13>(self.regs.m7x);
+  int_t cy = sclip<13>(self.regs.m7y);
+  int_t hofs = sclip<13>(self.regs.mode7_hoffset);
+  int_t vofs = sclip<13>(self.regs.mode7_voffset);
 
-  int y = (self.regs.mode7_vflip == false ? self.vcounter() : 255 - self.vcounter());
+  int_t y = (self.regs.mode7_vflip == false ? self.vcounter() : 255 - self.vcounter());
 
-  uint16* mosaic_x;
-  uint16* mosaic_y;
+  uint16_t* mosaic_x;
+  uint16_t* mosaic_y;
   if(id == ID::BG1) {
     mosaic_x = mosaic_table[self.bg1.regs.mosaic];
     mosaic_y = mosaic_table[self.bg1.regs.mosaic];
@@ -26,13 +26,13 @@ auto PPU::Background::render_mode7() -> void {
     mosaic_y = mosaic_table[self.bg1.regs.mosaic];
   }
 
-  uint priority0 = (priority0_enable ? regs.priority0 : 0);
-  uint priority1 = (priority1_enable ? regs.priority1 : 0);
+  uint_t priority0 = (priority0_enable ? regs.priority0 : 0);
+  uint_t priority1 = (priority1_enable ? regs.priority1 : 0);
   if(priority0 + priority1 == 0) return;
 
-  int psx = ((a * Clip(hofs - cx)) & ~63) + ((b * Clip(vofs - cy)) & ~63) + ((b * mosaic_y[y]) & ~63) + (cx << 8);
-  int psy = ((c * Clip(hofs - cx)) & ~63) + ((d * Clip(vofs - cy)) & ~63) + ((d * mosaic_y[y]) & ~63) + (cy << 8);
-  for(int x = 0; x < 256; x++) {
+  int_t psx = ((a * Clip(hofs - cx)) & ~63) + ((b * Clip(vofs - cy)) & ~63) + ((b * mosaic_y[y]) & ~63) + (cx << 8);
+  int_t psy = ((c * Clip(hofs - cx)) & ~63) + ((d * Clip(vofs - cy)) & ~63) + ((d * mosaic_y[y]) & ~63) + (cy << 8);
+  for(int_t x = 0; x < 256; x++) {
     px = (psx + (a * mosaic_x[x])) >> 8;
     py = (psy + (c * mosaic_x[x])) >> 8;
 
@@ -76,7 +76,7 @@ auto PPU::Background::render_mode7() -> void {
     }
     }
 
-    uint priority;
+    uint_t priority;
     if(id == ID::BG1) {
       priority = priority0;
     } else {
@@ -85,9 +85,9 @@ auto PPU::Background::render_mode7() -> void {
     }
 
     if(palette == 0) continue;
-    uint plot_x = (self.regs.mode7_hflip == false ? x : 255 - x);
+    uint_t plot_x = (self.regs.mode7_hflip == false ? x : 255 - x);
 
-    uint color;
+    uint_t color;
     if(self.screen.regs.direct_color && id == ID::BG1) {
       color = self.screen.get_direct_color(0, palette);
     } else {

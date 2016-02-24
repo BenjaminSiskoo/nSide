@@ -77,7 +77,7 @@ auto CartPal::import(string location) -> string {
   return failure("unrecognized file extension");
 }
 
-auto CartPal::concatenate(vector<uint8>& output, string location) -> void {
+auto CartPal::concatenate(vector<uint8_t>& output, string location) -> void {
   if(auto input = file::read(location)) {
     auto size = output.size();
     output.resize(size + input.size());

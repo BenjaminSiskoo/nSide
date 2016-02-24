@@ -1,5 +1,5 @@
 auto CartPal::playchoice10Manifest(string location) -> string {
-  vector<uint8> buffer;
+  vector<uint8_t> buffer;
   concatenate(buffer, {location, "ines.rom"});
   concatenate(buffer, {location, "program.rom"});
   concatenate(buffer, {location, "character.rom"});
@@ -8,7 +8,7 @@ auto CartPal::playchoice10Manifest(string location) -> string {
   return playchoice10Manifest(buffer, location);
 }
 
-auto CartPal::playchoice10Manifest(vector<uint8>& buffer, string location,
+auto CartPal::playchoice10Manifest(vector<uint8_t>& buffer, string location,
   uint* prgrom, uint* chrrom,
   uint* instrom, uint* keyrom
 ) -> string {
@@ -60,7 +60,7 @@ auto CartPal::playchoice10ImportManifestScan(vector<Markup::Node>& roms, Markup:
   for(auto leaf : node) playchoice10ImportManifestScan(roms, leaf);
 }
 
-auto CartPal::playchoice10Import(vector<uint8>& buffer, string location) -> string {
+auto CartPal::playchoice10Import(vector<uint8_t>& buffer, string location) -> string {
   bool has_ines_header = true;
   if(buffer.data()[0] != 'N'
   || buffer.data()[1] != 'E'

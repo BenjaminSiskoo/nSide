@@ -1,4 +1,4 @@
-template<uint cycle_frequency>
+template<uint_t cycle_frequency>
 auto SMP::Timer<cycle_frequency>::tick() -> void {
   if(++stage1_ticks < cycle_frequency) return;
 
@@ -11,8 +11,8 @@ auto SMP::Timer<cycle_frequency>::tick() -> void {
   stage3_ticks = (stage3_ticks + 1) & 15;
 }
 
-template<uint cycle_frequency>
-auto SMP::Timer<cycle_frequency>::tick(uint clocks) -> void {
+template<uint_t cycle_frequency>
+auto SMP::Timer<cycle_frequency>::tick(uint_t clocks) -> void {
   stage1_ticks += clocks;
   if(stage1_ticks < cycle_frequency) return;
 

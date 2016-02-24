@@ -21,12 +21,12 @@
   col += !!(d7 & mask) << 7; \
   *dest++ = col
 
-template<uint color_depth>
-auto PPU::render_bg_tile(uint16 tile_num) -> void {
-  uint8 col, d0, d1, d2, d3, d4, d5, d6, d7;
+template<uint_t color_depth>
+auto PPU::render_bg_tile(uint16_t tile_num) -> void {
+  uint8_t col, d0, d1, d2, d3, d4, d5, d6, d7;
 
   if(color_depth == COLORDEPTH_4) {
-    uint8* dest = (uint8*)bg_tiledata[TILE_2BIT] + tile_num * 64;
+    uint8_t* dest = (uint8_t*)bg_tiledata[TILE_2BIT] + tile_num * 64;
     unsigned pos = tile_num * 16;
     unsigned y = 8;
     while(y--) {
@@ -46,7 +46,7 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
   }
 
   if(color_depth == COLORDEPTH_16) {
-    uint8* dest = (uint8*)bg_tiledata[TILE_4BIT] + tile_num * 64;
+    uint8_t* dest = (uint8_t*)bg_tiledata[TILE_4BIT] + tile_num * 64;
     unsigned pos = tile_num * 32;
     unsigned y = 8;
     while(y--) {
@@ -68,7 +68,7 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
   }
 
   if(color_depth == COLORDEPTH_256) {
-    uint8* dest = (uint8*)bg_tiledata[TILE_8BIT] + tile_num * 64;
+    uint8_t* dest = (uint8_t*)bg_tiledata[TILE_8BIT] + tile_num * 64;
     unsigned pos = tile_num * 64;
     unsigned y = 8;
     while(y--) {
@@ -99,8 +99,8 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
 #undef render_bg_tile_line_8bpp
 
 auto PPU::flush_pixel_cache() -> void {
-  uint16 main = get_palette(0);
-  uint16 sub  = (regs.pseudo_hires || regs.bg_mode == 5 || regs.bg_mode == 6)
+  uint16_t main = get_palette(0);
+  uint16_t sub  = (regs.pseudo_hires || regs.bg_mode == 5 || regs.bg_mode == 6)
               ? main
               : regs.color_rgb;
 

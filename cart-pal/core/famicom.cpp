@@ -1,12 +1,12 @@
 auto CartPal::famicomManifest(string location) -> string {
-  vector<uint8> buffer;
+  vector<uint8_t> buffer;
   concatenate(buffer, {location, "ines.rom"});
   concatenate(buffer, {location, "program.rom"});
   concatenate(buffer, {location, "character.rom"});
   return famicomManifest(buffer, location);
 }
 
-auto CartPal::famicomManifest(vector<uint8>& buffer, string location, uint* prgrom, uint* chrrom) -> string {
+auto CartPal::famicomManifest(vector<uint8_t>& buffer, string location, uint* prgrom, uint* chrrom) -> string {
   string markup;
   unsigned offset = (buffer.size() & 0x1fff) == 0 ? 0 : 16;
   if(buffer.data()[0] != 'N'

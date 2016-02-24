@@ -1,5 +1,5 @@
 auto CartPal::vsSystemManifest(string location) -> string {
-  vector<uint8> buffer;
+  vector<uint8_t> buffer;
   concatenate(buffer, {location, "ines.rom"});
   concatenate(buffer, {location, "program.rom"});
   concatenate(buffer, {location, "character.rom"});
@@ -51,7 +51,7 @@ auto CartPal::vsSystemImportManifestScan(vector<Markup::Node>& roms, Markup::Nod
   for(auto leaf : node) vsSystemImportManifestScan(roms, leaf);
 }
 
-auto CartPal::vsSystemImport(vector<uint8>& buffer, string location) -> string {
+auto CartPal::vsSystemImport(vector<uint8_t>& buffer, string location) -> string {
   bool has_ines_header = true;
   if(buffer.data()[0] != 'N'
   || buffer.data()[1] != 'E'

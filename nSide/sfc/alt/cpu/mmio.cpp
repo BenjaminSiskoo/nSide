@@ -1,4 +1,4 @@
-auto CPU::mmio_read(uint addr, uint8 data) -> uint8 {
+auto CPU::mmio_read(uint_t addr, uint8_t data) -> uint8_t {
   if((addr & 0xffc0) == 0x2140) {
     synchronizeSMP();
     return smp.port_read(addr & 3);
@@ -6,25 +6,25 @@ auto CPU::mmio_read(uint addr, uint8 data) -> uint8 {
 
   switch(addr & 0xffff) {
     case 0x2180: {
-      uint8 result = bus.read(0x7e0000 | status.wram_addr, regs.mdr);
+      uint8_t result = bus.read(0x7e0000 | status.wram_addr, regs.mdr);
       status.wram_addr = (status.wram_addr + 1) & 0x01ffff;
       return result;
     }
 
     case 0x4016: {
-      uint8 result = regs.mdr & 0xfc;
+      uint8_t result = regs.mdr & 0xfc;
       result |= device.controllerPort1->data() & 3;
       return result;
     }
 
     case 0x4017: {
-      uint8 result = (regs.mdr & 0xe0) | 0x1c;
+      uint8_t result = (regs.mdr & 0xe0) | 0x1c;
       result |= device.controllerPort2->data() & 3;
       return result;
     }
 
     case 0x4210: {
-      uint8 result = (regs.mdr & 0x70);
+      uint8_t result = (regs.mdr & 0x70);
       result |= status.nmi_line << 7;
       result |= 0x02;  //CPU revision
       status.nmi_line = false;
@@ -32,14 +32,14 @@ auto CPU::mmio_read(uint addr, uint8 data) -> uint8 {
     }
 
     case 0x4211: {
-      uint8 result = (regs.mdr & 0x7f);
+      uint8_t result = (regs.mdr & 0x7f);
       result |= status.irq_line << 7;
       status.irq_line = false;
       return result;
     }
 
     case 0x4212: {
-      uint8 result = (regs.mdr & 0x3e);
+      uint8_t result = (regs.mdr & 0x3e);
       unsigned vbstart = ppu.overscan() == false ? 225 : 240;
 
       if(vcounter() >= vbstart && vcounter() <= vbstart + 2) result |= 0x01;
@@ -95,7 +95,7 @@ auto CPU::mmio_read(uint addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto CPU::mmio_write(uint addr, uint8 data) -> void {
+auto CPU::mmio_write(uint_t addr, uint8_t data) -> void {
   if((addr & 0xffc0) == 0x2140) {
     synchronizeSMP();
     port_write(addr & 3, data);
@@ -228,7 +228,7 @@ auto CPU::mmio_write(uint addr, uint8 data) -> void {
   }
 
   if((addr & 0xff80) == 0x4300) {
-    uint i = (addr >> 4) & 7;
+    uint_t i = (addr >> 4) & 7;
     switch(addr & 0xff8f) {
       case 0x4300: {
         channel[i].direction = data & 0x80;

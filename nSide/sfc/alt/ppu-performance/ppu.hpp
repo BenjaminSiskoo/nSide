@@ -6,7 +6,7 @@ struct PPU : Thread, public PPUcounter {
   PPU();
   ~PPU();
 
-  alwaysinline auto step(uint clocks) -> void;
+  alwaysinline auto step(uint_t clocks) -> void;
   alwaysinline auto synchronizeCPU() -> void;
 
   auto latch_counters() -> void;
@@ -20,20 +20,20 @@ struct PPU : Thread, public PPUcounter {
   auto scanline() -> void;
   auto frame() -> void;
 
-  auto layer_enable(uint layer, uint priority, bool enable) -> void;
-  auto set_frameskip(uint frameskip) -> void;
+  auto layer_enable(uint_t layer, uint_t priority, bool enable) -> void;
+  auto set_frameskip(uint_t frameskip) -> void;
 
   auto serialize(serializer&) -> void;
 
-  uint8 vram[64 * 1024];
-  uint8 oam[544];
-  uint8 cgram[512];
+  uint8_t vram[64 * 1024];
+  uint8_t oam[544];
+  uint8_t cgram[512];
 
   //debugger functions
   auto exportRegisters(string &markup) -> void;
 
 private:
-  uint32* output;
+  uint32_t* output;
 
   #include "mmio/mmio.hpp"
   #include "window/window.hpp"
@@ -53,14 +53,14 @@ private:
   struct Display {
     bool interlace;
     bool overscan;
-    uint width;
-    uint height;
-    uint frameskip;
-    uint framecounter;
+    uint_t width;
+    uint_t height;
+    uint_t frameskip;
+    uint_t framecounter;
   } display;
 
   static auto Enter() -> void;
-  auto add_clocks(uint clocks) -> void;
+  auto add_clocks(uint_t clocks) -> void;
   auto render_scanline() -> void;
 
   friend class PPU::Cache;

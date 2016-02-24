@@ -1,18 +1,18 @@
-auto SMP::disassemble_read(uint16 addr) -> uint8 {
+auto SMP::disassemble_read(uint16_t addr) -> uint8_t {
   if(addr >= 0xffc0) return smp.iplrom[addr & 0x3f];
   return smp.apuram[addr];
 }
 
-auto SMP::relb(int8 offset, int op_len) -> uint16 {
-  uint16 pc = regs.pc + op_len;
+auto SMP::relb(int8_t offset, int_t op_len) -> uint16_t {
+  uint16_t pc = regs.pc + op_len;
   return pc + offset;
 }
 
-auto SMP::disassemble_opcode(char* output, uint16 addr) -> void {
+auto SMP::disassemble_opcode(char* output, uint16_t addr) -> void {
   char* s;
   char t[512];
-  uint8 op, op0, op1;
-  uint16 opw, opdp0, opdp1;
+  uint8_t op, op0, op1;
+  uint16_t opw, opdp0, opdp1;
   s = output;
 
   sprintf(s, "..%.4x ", addr);
@@ -289,7 +289,7 @@ auto SMP::disassemble_opcode(char* output, uint16 addr) -> void {
   strcat(s, t);
 
   sprintf(t, "A:%.2x X:%.2x Y:%.2x SP:01%.2x YA:%.4x ",
-    regs.a, regs.x, regs.y, regs.sp, (uint16)regs.ya);
+    regs.a, regs.x, regs.y, regs.sp, (uint16_t)regs.ya);
   strcat(s, t);
 
   sprintf(t, "%c%c%c%c%c%c%c%c",

@@ -9,7 +9,7 @@ case 0x2f: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -27,7 +27,7 @@ case 0xf0: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -45,7 +45,7 @@ case 0xd0: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -63,7 +63,7 @@ case 0xb0: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -81,7 +81,7 @@ case 0x90: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -99,7 +99,7 @@ case 0x70: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -117,7 +117,7 @@ case 0x50: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -135,7 +135,7 @@ case 0x30: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -153,7 +153,7 @@ case 0x10: {
     break;
   case 3:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -180,7 +180,7 @@ case 0x03: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -207,7 +207,7 @@ case 0x13: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -234,7 +234,7 @@ case 0x23: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -261,7 +261,7 @@ case 0x33: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -288,7 +288,7 @@ case 0x43: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -315,7 +315,7 @@ case 0x53: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -342,7 +342,7 @@ case 0x63: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -369,7 +369,7 @@ case 0x73: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -396,7 +396,7 @@ case 0x83: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -423,7 +423,7 @@ case 0x93: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -450,7 +450,7 @@ case 0xa3: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -477,7 +477,7 @@ case 0xb3: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -504,7 +504,7 @@ case 0xc3: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -531,7 +531,7 @@ case 0xd3: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -558,7 +558,7 @@ case 0xe3: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -585,7 +585,7 @@ case 0xf3: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -612,7 +612,7 @@ case 0x2e: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -642,7 +642,7 @@ case 0xde: {
     break;
   case 7:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -669,7 +669,7 @@ case 0x6e: {
     break;
   case 6:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }
@@ -694,7 +694,7 @@ case 0xfe: {
     break;
   case 5:
     op_io();
-    regs.pc += (int8)rd;
+    regs.pc += (int8_t)rd;
     opcode_cycle = 0;
     break;
   }

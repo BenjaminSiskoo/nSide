@@ -1,6 +1,6 @@
 struct FamicomCartridge {
-  FamicomCartridge(const uint8* data, uint size);
-  auto vsSystemHeuristic(const uint8* data, uint size) -> void;
+  FamicomCartridge(const uint8_t* data, uint size);
+  auto vsSystemHeuristic(const uint8_t* data, uint size) -> void;
 
   string markup;
 
@@ -26,7 +26,7 @@ struct FamicomCartridge {
   uint ppu;
 };
 
-FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
+FamicomCartridge::FamicomCartridge(const uint8_t* data, uint size) {
   if(size < 16) return;
   if(data[0] != 'N') return;
   if(data[1] != 'E') return;

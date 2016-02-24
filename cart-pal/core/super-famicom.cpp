@@ -1,5 +1,5 @@
 auto CartPal::superFamicomManifest(string location) -> string {
-  vector<uint8> buffer;
+  vector<uint8_t> buffer;
   auto files = directory::files(location, "*.rom");
   concatenate(buffer, {location, "program.rom"});
   concatenate(buffer, {location, "data.rom"   });
@@ -10,7 +10,7 @@ auto CartPal::superFamicomManifest(string location) -> string {
   return superFamicomManifest(buffer, location);
 }
 
-auto CartPal::superFamicomManifest(vector<uint8>& buffer, string location, bool* firmwareAppended) -> string {
+auto CartPal::superFamicomManifest(vector<uint8_t>& buffer, string location, bool* firmwareAppended) -> string {
   string markup;
   string digest = Hash::SHA256(buffer.data(), buffer.size()).digest();
 
@@ -45,7 +45,7 @@ auto CartPal::superFamicomManifestScan(vector<Markup::Node>& roms, Markup::Node 
   for(auto leaf : node) superFamicomManifestScan(roms, leaf);
 }
 
-auto CartPal::superFamicomImport(vector<uint8>& buffer, string location) -> string {
+auto CartPal::superFamicomImport(vector<uint8_t>& buffer, string location) -> string {
   auto name = prefixname(location);
   auto source = pathname(location);
   string target{settings["Library/Location"].text(), "Super Famicom/", name, ".sfc/"};

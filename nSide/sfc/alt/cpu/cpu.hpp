@@ -3,23 +3,23 @@ struct CPU : Processor::R65816, Thread, public PPUcounter {
 
   CPU();
 
-  alwaysinline auto step(uint clocks) -> void;
+  alwaysinline auto step(uint_t clocks) -> void;
   alwaysinline auto synchronizeSMP() -> void;
   auto synchronizePPU() -> void;
   auto synchronizeCoprocessors() -> void;
   auto synchronizeDevices() -> void;
 
-  auto pio() -> uint8;
+  auto pio() -> uint8_t;
   auto joylatch() -> bool;
   auto interrupt_pending() -> bool;
-  auto port_read(uint8 port) -> uint8;
-  auto port_write(uint8 port, uint8 data) -> void;
-  auto mmio_read(uint addr, uint8 data) -> uint8;
-  auto mmio_write(uint addr, uint8 data) -> void;
+  auto port_read(uint8_t port) -> uint8_t;
+  auto port_write(uint8_t port, uint8_t data) -> void;
+  auto mmio_read(uint_t addr, uint8_t data) -> uint8_t;
+  auto mmio_write(uint_t addr, uint8_t data) -> void;
 
   auto op_io() -> void;
-  auto op_read(uint addr) -> uint8;
-  auto op_write(uint addr, uint8 data) -> void;
+  auto op_read(uint_t addr) -> uint8_t;
+  auto op_write(uint_t addr, uint8_t data) -> void;
 
   auto main() -> void;
   auto enable() -> void;
@@ -28,7 +28,7 @@ struct CPU : Processor::R65816, Thread, public PPUcounter {
 
   auto serialize(serializer&) -> void;
 
-  uint8 wram[128 * 1024];
+  uint8_t wram[128 * 1024];
   vector<Thread*> coprocessors;
 
 private:
@@ -36,42 +36,42 @@ private:
   static auto Enter() -> void;
 
   //timing
-  auto queue_event(uint id) -> void;
+  auto queue_event(uint_t id) -> void;
   auto last_cycle() -> void;
-  auto add_clocks(uint clocks) -> void;
+  auto add_clocks(uint_t clocks) -> void;
   auto scanline() -> void;
   auto run_auto_joypad_poll() -> void;
 
   struct QueueEvent {
-    enum : uint {
+    enum : uint_t {
       DramRefresh,
       HdmaRun,
     };
   };
-  nall::priority_queue<uint> queue;
+  nall::priority_queue<uint_t> queue;
 
   //memory
-  auto speed(uint addr) const -> uint;
+  auto speed(uint_t addr) const -> uint_t;
 
   //dma
-  auto dma_transfer_valid(uint8 bbus, uint abus) -> bool;
-  auto dma_addr_valid(uint abus) -> bool;
-  auto dma_read(uint abus) -> uint8;
-  auto dma_write(bool valid, uint addr, uint8 data) -> void;
-  auto dma_transfer(bool direction, uint8 bbus, uint abus) -> void;
-  auto dma_bbus(uint i, uint index) -> uint8;
-  auto dma_addr(uint i) -> uint;
-  auto hdma_addr(uint i) -> uint;
-  auto hdma_iaddr(uint i) -> uint;
+  auto dma_transfer_valid(uint8_t bbus, uint_t abus) -> bool;
+  auto dma_addr_valid(uint_t abus) -> bool;
+  auto dma_read(uint_t abus) -> uint8_t;
+  auto dma_write(bool valid, uint_t addr, uint8_t data) -> void;
+  auto dma_transfer(bool direction, uint8_t bbus, uint_t abus) -> void;
+  auto dma_bbus(uint_t i, uint_t index) -> uint8_t;
+  auto dma_addr(uint_t i) -> uint_t;
+  auto hdma_addr(uint_t i) -> uint_t;
+  auto hdma_iaddr(uint_t i) -> uint_t;
   auto dma_run() -> void;
-  auto hdma_active_after(uint i) -> bool;
-  auto hdma_update(uint i) -> void;
+  auto hdma_active_after(uint_t i) -> bool;
+  auto hdma_update(uint_t i) -> void;
   auto hdma_run() -> void;
   auto hdma_init() -> void;
   auto dma_reset() -> void;
 
   //registers
-  uint8 port_data[4];
+  uint8_t port_data[4];
 
   struct Channel {
     bool dma_enabled;
@@ -82,21 +82,21 @@ private:
     bool unused;
     bool reverse_transfer;
     bool fixed_transfer;
-    uint8 transfer_mode;
+    uint8_t transfer_mode;
 
-    uint8 dest_addr;
-    uint16 source_addr;
-    uint8 source_bank;
+    uint8_t dest_addr;
+    uint16_t source_addr;
+    uint8_t source_bank;
 
     union {
-      uint16 transfer_size;
-      uint16 indirect_addr;
+      uint16_t transfer_size;
+      uint16_t indirect_addr;
     };
 
-    uint8 indirect_bank;
-    uint16 hdma_addr;
-    uint8 line_counter;
-    uint8 unknown;
+    uint8_t indirect_bank;
+    uint16_t hdma_addr;
+    uint8_t line_counter;
+    uint8_t unknown;
 
     bool hdma_completed;
     bool hdma_do_transfer;
@@ -116,7 +116,7 @@ private:
     bool irq_lock;
     bool hdma_pending;
 
-    uint wram_addr;
+    uint_t wram_addr;
 
     bool joypad_strobe_latch;
 
@@ -125,25 +125,25 @@ private:
     bool hirq_enabled;
     bool auto_joypad_poll_enabled;
 
-    uint8 pio;
+    uint8_t pio;
 
-    uint8 wrmpya;
-    uint8 wrmpyb;
-    uint16 wrdiva;
-    uint8 wrdivb;
+    uint8_t wrmpya;
+    uint8_t wrmpyb;
+    uint16_t wrdiva;
+    uint8_t wrdivb;
 
-    uint16 htime;
-    uint16 vtime;
+    uint16_t htime;
+    uint16_t vtime;
 
-    uint rom_speed;
+    uint_t rom_speed;
 
-    uint16 rddiv;
-    uint16 rdmpy;
+    uint16_t rddiv;
+    uint16_t rdmpy;
 
-    uint8 joy1l, joy1h;
-    uint8 joy2l, joy2h;
-    uint8 joy3l, joy3h;
-    uint8 joy4l, joy4h;
+    uint8_t joy1l, joy1h;
+    uint8_t joy2l, joy2h;
+    uint8_t joy3l, joy3h;
+    uint8_t joy4l, joy4h;
   } status;
 };
 

@@ -1,10 +1,10 @@
 auto CartPal::sufamiTurboManifest(string location) -> string {
-  vector<uint8> buffer;
+  vector<uint8_t> buffer;
   concatenate(buffer, {location, "program.rom"});
   return sufamiTurboManifest(buffer, location);
 }
 
-auto CartPal::sufamiTurboManifest(vector<uint8>& buffer, string location) -> string {
+auto CartPal::sufamiTurboManifest(vector<uint8_t>& buffer, string location) -> string {
   string markup;
   string digest = Hash::SHA256(buffer.data(), buffer.size()).digest();
 
@@ -31,7 +31,7 @@ auto CartPal::sufamiTurboManifest(vector<uint8>& buffer, string location) -> str
   return markup;
 }
 
-auto CartPal::sufamiTurboImport(vector<uint8>& buffer, string location) -> string {
+auto CartPal::sufamiTurboImport(vector<uint8_t>& buffer, string location) -> string {
   auto name = prefixname(location);
   auto source = pathname(location);
   string target{settings["Library/Location"].text(), "Sufami Turbo/", name, ".st/"};

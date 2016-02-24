@@ -1,19 +1,19 @@
 PPU::Cache::Cache(PPU& self) : self(self) {
-  tiledata[0] = new uint8[262144]();
-  tiledata[1] = new uint8[131072]();
-  tiledata[2] = new uint8[ 65536]();
-  tilevalid[0] = new uint8[ 4096]();
-  tilevalid[1] = new uint8[ 2048]();
-  tilevalid[2] = new uint8[ 1024]();
+  tiledata[0] = new uint8_t[262144]();
+  tiledata[1] = new uint8_t[131072]();
+  tiledata[2] = new uint8_t[ 65536]();
+  tilevalid[0] = new uint8_t[ 4096]();
+  tilevalid[1] = new uint8_t[ 2048]();
+  tilevalid[2] = new uint8_t[ 1024]();
 }
 
-auto PPU::Cache::tile_2bpp(uint tile) -> uint8* {
+auto PPU::Cache::tile_2bpp(uint_t tile) -> uint8_t* {
   if(tilevalid[0][tile] == 0) {
     tilevalid[0][tile] = 1;
-    uint8* output = (uint8*)tiledata[0] + (tile << 6);
-    uint offset = tile << 4;
-    uint y = 8;
-    uint color, d0, d1;
+    uint8_t* output = (uint8_t*)tiledata[0] + (tile << 6);
+    uint_t offset = tile << 4;
+    uint_t y = 8;
+    uint_t color, d0, d1;
     while(y--) {
       d0 = ppu.vram[offset +  0];
       d1 = ppu.vram[offset +  1];
@@ -36,13 +36,13 @@ auto PPU::Cache::tile_2bpp(uint tile) -> uint8* {
   return tiledata[0] + (tile << 6);
 }
 
-auto PPU::Cache::tile_4bpp(uint tile) -> uint8* {
+auto PPU::Cache::tile_4bpp(uint_t tile) -> uint8_t* {
   if(tilevalid[1][tile] == 0) {
     tilevalid[1][tile] = 1;
-    uint8* output = (uint8*)tiledata[1] + (tile << 6);
-    uint offset = tile << 5;
-    uint y = 8;
-    uint color, d0, d1, d2, d3;
+    uint8_t* output = (uint8_t*)tiledata[1] + (tile << 6);
+    uint_t offset = tile << 5;
+    uint_t y = 8;
+    uint_t color, d0, d1, d2, d3;
     while(y--) {
       d0 = ppu.vram[offset +  0];
       d1 = ppu.vram[offset +  1];
@@ -69,13 +69,13 @@ auto PPU::Cache::tile_4bpp(uint tile) -> uint8* {
   return tiledata[1] + (tile << 6);
 }
 
-auto PPU::Cache::tile_8bpp(uint tile) -> uint8* {
+auto PPU::Cache::tile_8bpp(uint_t tile) -> uint8_t* {
   if(tilevalid[2][tile] == 0) {
     tilevalid[2][tile] = 1;
-    uint8* output = (uint8*)tiledata[2] + (tile << 6);
-    uint offset = tile << 6;
-    uint y = 8;
-    uint color, d0, d1, d2, d3, d4, d5, d6, d7;
+    uint8_t* output = (uint8_t*)tiledata[2] + (tile << 6);
+    uint_t offset = tile << 6;
+    uint_t y = 8;
+    uint_t color, d0, d1, d2, d3, d4, d5, d6, d7;
     while(y--) {
       d0 = ppu.vram[offset +  0];
       d1 = ppu.vram[offset +  1];
@@ -110,7 +110,7 @@ auto PPU::Cache::tile_8bpp(uint tile) -> uint8* {
   return tiledata[2] + (tile << 6);
 }
 
-auto PPU::Cache::tile(uint bpp, uint tile) -> uint8* {
+auto PPU::Cache::tile(uint_t bpp, uint_t tile) -> uint8_t* {
   switch(bpp) {
   case 0: return tile_2bpp(tile);
   case 1: return tile_4bpp(tile);

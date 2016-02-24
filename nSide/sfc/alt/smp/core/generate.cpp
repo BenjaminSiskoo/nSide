@@ -1,5 +1,5 @@
 #include <nall/file.hpp>
-#include <nall/stdint.hpp>
+#include <nall/stdint_t.hpp>
 #include <nall/string.hpp>
 using namespace nall;
 
@@ -8,7 +8,7 @@ static bool cycle_accurate;
 struct opcode_t {
   string name;
   lstring args;
-  uint opcode;
+  uint_t opcode;
 };
 
 auto generate(const char* sourceFilename, const char* targetFilename) -> void {
@@ -28,7 +28,7 @@ auto generate(const char* sourceFilename, const char* targetFilename) -> void {
 
     linear_vector<opcode_t> array;
 
-    uint sourceStart = 0;
+    uint_t sourceStart = 0;
     foreach(line, lines, currentLine) {
       line.transform("()", "``");
       lstring part;
@@ -52,9 +52,9 @@ auto generate(const char* sourceFilename, const char* targetFilename) -> void {
 
     if(cycle_accurate == false) {
       foreach(opcode, array) {
-        fp.print("case 0x", hex(opcode.opcode, 2L), ": {\n");
+        fp.print_t("case 0x", hex(opcode.opcode, 2L), ": {\n");
 
-        for(uint n = sourceStart; n < lines.size(); n++) {
+        for(uint_t n = sourceStart; n < lines.size(); n++) {
           if(lines[n] == "}") break;
 
           string output;
@@ -77,18 +77,18 @@ auto generate(const char* sourceFilename, const char* targetFilename) -> void {
           output.replace("$8", opcode.args[8]);
           output.replace("end;", "break;");
 
-          fp.print(output, "\n");
+          fp.print_t(output, "\n");
         }
 
-        fp.print("  break;\n");
-        fp.print("}\n\n");
+        fp.print_t("  break;\n");
+        fp.print_t("}\n\n");
       }
     } else {
       foreach(opcode, array) {
-        fp.print("case 0x", hex(opcode.opcode, 2L), ": {\n");
-        fp.print("  switch(opcode_cycle++) {\n");
+        fp.print_t("case 0x", hex(opcode.opcode, 2L), ": {\n");
+        fp.print_t("  switch(opcode_cycle++) {\n");
 
-        for(uint n = sourceStart; n < lines.size(); n++) {
+        for(uint_t n = sourceStart; n < lines.size(); n++) {
           if(lines[n] == "}") break;
 
           bool nextLineEndsCycle = false;
@@ -102,7 +102,7 @@ auto generate(const char* sourceFilename, const char* targetFilename) -> void {
           } else {
             lstring part;
             part.split(":", lines[n], 1L);
-            fp.print("  case ", (unsigned)decimal(part[0]), ":\n");
+            fp.print_t("  case ", (unsigned)decimal(part[0]), ":\n");
             output = { "    ", part[1] };
           }
 
@@ -116,18 +116,18 @@ auto generate(const char* sourceFilename, const char* targetFilename) -> void {
           output.replace("$8", opcode.args[8]);
           output.replace("end;", "{ opcode_cycle = 0; break; }");
 
-          fp.print(output, "\n");
+          fp.print_t(output, "\n");
           if(nextLineEndsCycle) {
             if(lines[n + 1].beginswith("}")) {
-              fp.print("    opcode_cycle = 0;\n");
+              fp.print_t("    opcode_cycle = 0;\n");
             }
-            fp.print("    break;\n");
+            fp.print_t("    break;\n");
           }
         }
 
-        fp.print("  }\n");
-        fp.print("  break;\n");
-        fp.print("}\n\n");
+        fp.print_t("  }\n");
+        fp.print_t("  break;\n");
+        fp.print_t("}\n\n");
       }
     }
   }
@@ -135,7 +135,7 @@ auto generate(const char* sourceFilename, const char* targetFilename) -> void {
   fp.close();
 }
 
-auto main() -> int {
+auto main() -> int_t {
   cycle_accurate = false;
   generate("op_misc.b", "op_misc.cpp");
   generate("op_mov.b",  "op_mov.cpp" );

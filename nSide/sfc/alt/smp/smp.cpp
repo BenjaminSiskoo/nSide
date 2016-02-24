@@ -13,7 +13,7 @@ SMP smp;
 #include "timing.cpp"
 
 SMP::SMP() {
-  apuram = new uint8[64 * 1024];
+  apuram = new uint8_t[64 * 1024];
   for(auto& byte : iplrom) byte = 0;
 }
 
@@ -45,7 +45,7 @@ auto SMP::power() -> void {
   timer1.target = 0;
   timer2.target = 0;
 
-  for(uint n = 0; n < 256; n++) {
+  for(uint_t n = 0; n < 256; n++) {
     cycle_table_dsp[n] = (cycle_count_table[n] * 24);
     cycle_table_cpu[n] = (cycle_count_table[n] * 24) * cpu.frequency;
   }
@@ -56,7 +56,7 @@ auto SMP::power() -> void {
 }
 
 auto SMP::reset() -> void {
-  for(uint n = 0x0000; n <= 0xffff; n++) apuram[n] = 0x00;
+  for(uint_t n = 0x0000; n <= 0xffff; n++) apuram[n] = 0x00;
 
   opcode_number = 0;
   opcode_cycle = 0;

@@ -11,13 +11,13 @@ PPU ppu;
 #include "serialization.cpp"
 
 PPU::PPU() {
-  output = new uint32[512 * 512]();
+  output = new uint32_t[512 * 512]();
   output += 16 * 512;  //overscan offset
 
   alloc_tiledata_cache();
 
-  for(uint l : range(16)) {
-    for(uint i : range(4096)) {
+  for(uint_t l : range(16)) {
+    for(uint_t i : range(4096)) {
       mosaic_table[l][i] = (i / (l + 1)) * (l + 1);
     }
   }
@@ -44,7 +44,7 @@ PPU::~PPU() {
   free_tiledata_cache();
 }
 
-auto PPU::step(uint clocks) -> void {
+auto PPU::step(uint_t clocks) -> void {
   clock += clocks;
 }
 
@@ -96,7 +96,7 @@ auto PPU::main() -> void {
   add_clocks(lineclocks() - 1152);  //seek to start of next scanline
 }
 
-auto PPU::add_clocks(uint clocks) -> void {
+auto PPU::add_clocks(uint_t clocks) -> void {
   tick(clocks);
   step(clocks);
   synchronizeCPU();
@@ -115,11 +115,11 @@ auto PPU::scanline() -> void {
 
   if(line == 1) {
     //mosaic reset
-    for(int bg = BG1; bg <= BG4; bg++) regs.bg_y[bg] = 1;
+    for(int_t bg = BG1; bg <= BG4; bg++) regs.bg_y[bg] = 1;
     regs.mosaic_countdown = regs.mosaic_size + 1;
     regs.mosaic_countdown--;
   } else {
-    for(int bg = BG1; bg <= BG4; bg++) {
+    for(int_t bg = BG1; bg <= BG4; bg++) {
       if(!regs.mosaic_enabled[bg] || !regs.mosaic_countdown) regs.bg_y[bg] = line;
     }
     if(!regs.mosaic_countdown) regs.mosaic_countdown = regs.mosaic_size + 1;
@@ -150,8 +150,8 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::enable() -> void {
-  function<auto (uint, uint8) -> uint8> reader{&PPU::mmio_read, (PPU*)&ppu};
-  function<auto (uint, uint8) -> void> writer{&PPU::mmio_write, (PPU*)&ppu};
+  function<auto (uint_t, uint8_t) -> uint8_t> reader{&PPU::mmio_read, (PPU*)&ppu};
+  function<auto (uint_t, uint8_t) -> void> writer{&PPU::mmio_write, (PPU*)&ppu};
 
   bus.map(reader, writer, 0x00, 0x3f, 0x2100, 0x213f);
   bus.map(reader, writer, 0x80, 0xbf, 0x2100, 0x213f);
@@ -375,7 +375,7 @@ auto PPU::power() -> void {
 auto PPU::reset() -> void {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memory::fill(output, 512 * 480 * sizeof(uint32));
+  memory::fill(output, 512 * 480 * sizeof(uint32_t));
   video.reset();
 
   frame();
@@ -401,7 +401,7 @@ auto PPU::reset() -> void {
   regs.bg_y[3] = 0;
 }
 
-auto PPU::layer_enable(uint layer, uint priority, bool enable) -> void {
+auto PPU::layer_enable(uint_t layer, uint_t priority, bool enable) -> void {
   switch(layer * 4 + priority) {
   case  0: layer_enabled[BG1][0] = enable; break;
   case  1: layer_enabled[BG1][1] = enable; break;
@@ -418,7 +418,7 @@ auto PPU::layer_enable(uint layer, uint priority, bool enable) -> void {
   }
 }
 
-auto PPU::set_frameskip(uint frameskip_) -> void {
+auto PPU::set_frameskip(uint_t frameskip_) -> void {
   frameskip = frameskip_;
   framecounter = 0;
 }
@@ -432,7 +432,7 @@ auto PPU::exportRegisters(string &markup) -> void {
   markup.append("  pseudo-hires: ", regs.pseudo_hires, "\n");
   markup.append("  overscan:     ", regs.overscan,     "\n");
   // individual backgrounds
-  for(uint bg = BG1; bg <= BG4; bg++) {
+  for(uint_t bg = BG1; bg <= BG4; bg++) {
     markup.append("  bg\n");
     markup.append("    tile-size:     ",   regs.bg_tilesize[bg],        "\n");
     markup.append("    mosaic:        ",   regs.mosaic_enabled[bg],     "\n");

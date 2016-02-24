@@ -4,8 +4,8 @@ auto PPU::latch_counters() -> void {
   regs.counters_latched = true;
 }
 
-auto PPU::get_vram_address() -> uint16 {
-  uint16 addr = regs.vram_addr;
+auto PPU::get_vram_address() -> uint16_t {
+  uint16_t addr = regs.vram_addr;
   switch(regs.vram_mapping) {
     case 0: break;  //direct mapping
     case 1: addr = (addr & 0xff00) | ((addr & 0x001f) << 3) | ((addr >> 5) & 7); break;
@@ -20,15 +20,15 @@ auto PPU::get_vram_address() -> uint16 {
 //been validated on hardware, as has the edge case where the S-CPU MDR can be written if the
 //write occurs during the very last clock cycle of vblank.
 
-auto PPU::vram_mmio_read(uint16 addr) -> uint8 {
-  uint8 data;
+auto PPU::vram_mmio_read(uint16_t addr) -> uint8_t {
+  uint8_t data;
 
   if(regs.display_disabled == true) {
     data = vram[addr];
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
-    uint16 ls = ((system.region() == System::Region::NTSC ? 525 : 625) >> 1) - 1;
+    uint16_t v = cpu.vcounter();
+    uint16_t h = cpu.hcounter();
+    uint16_t ls = ((system.region() == System::Region::NTSC ? 525 : 625) >> 1) - 1;
     if(interlace() && !cpu.field()) ls++;
 
     if(v == ls && h == 1362) {
@@ -49,12 +49,12 @@ auto PPU::vram_mmio_read(uint16 addr) -> uint8 {
   return data;
 }
 
-auto PPU::vram_mmio_write(uint16 addr, uint8 data) -> void {
+auto PPU::vram_mmio_write(uint16_t addr, uint8_t data) -> void {
   if(regs.display_disabled == true) {
     vram[addr] = data;
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
+    uint16_t v = cpu.vcounter();
+    uint16_t h = cpu.hcounter();
     if(v == 0) {
       if(h <= 4) {
         vram[addr] = data;
@@ -77,10 +77,10 @@ auto PPU::vram_mmio_write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto PPU::oam_mmio_read(uint16 addr) -> uint8 {
+auto PPU::oam_mmio_read(uint16_t addr) -> uint8_t {
   addr &= 0x03ff;
   if(addr & 0x0200) addr &= 0x021f;
-  uint8 data;
+  uint8_t data;
 
   if(regs.display_disabled == true) {
     data = oam[addr];
@@ -95,7 +95,7 @@ auto PPU::oam_mmio_read(uint16 addr) -> uint8 {
   return data;
 }
 
-auto PPU::oam_mmio_write(uint16 addr, uint8 data) -> void {
+auto PPU::oam_mmio_write(uint16_t addr, uint8_t data) -> void {
   addr &= 0x03ff;
   if(addr & 0x0200) addr &= 0x021f;
 
@@ -115,15 +115,15 @@ auto PPU::oam_mmio_write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto PPU::cgram_mmio_read(uint16 addr) -> uint8 {
+auto PPU::cgram_mmio_read(uint16_t addr) -> uint8_t {
   addr &= 0x01ff;
-  uint8 data;
+  uint8_t data;
 
   if(1 || regs.display_disabled == true) {
     data = cgram[addr];
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
+    uint16_t v = cpu.vcounter();
+    uint16_t h = cpu.hcounter();
     if(v < (!overscan() ? 225 : 240) && h >= 128 && h < 1096) {
       data = cgram[regs.icgramaddr] & 0x7f;
     } else {
@@ -135,15 +135,15 @@ auto PPU::cgram_mmio_read(uint16 addr) -> uint8 {
   return data;
 }
 
-auto PPU::cgram_mmio_write(uint16 addr, uint8 data) -> void {
+auto PPU::cgram_mmio_write(uint16_t addr, uint8_t data) -> void {
   addr &= 0x01ff;
   if(addr & 1) data &= 0x7f;
 
   if(1 || regs.display_disabled == true) {
     cgram[addr] = data;
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
+    uint16_t v = cpu.vcounter();
+    uint16_t h = cpu.hcounter();
     if(v < (!overscan() ? 225 : 240) && h >= 128 && h < 1096) {
       cgram[regs.icgramaddr] = data & 0x7f;
     } else {

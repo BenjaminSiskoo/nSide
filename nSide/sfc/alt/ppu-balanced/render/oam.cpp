@@ -1,4 +1,4 @@
-auto PPU::update_sprite_list(uint addr, uint8 data) -> void {
+auto PPU::update_sprite_list(uint_t addr, uint8_t data) -> void {
   if(addr < 0x0200) {
     unsigned i = addr >> 2;
     switch(addr & 3) {
@@ -69,7 +69,7 @@ auto PPU::is_sprite_on_scanline() -> bool {
   sprite_item* spr = &sprite_list[active_sprite];
   if(spr->x > 256 && (spr->x + spr->width - 1) < 512) return false;
 
-  int spr_height = (regs.oam_interlace == false) ? (spr->height) : (spr->height >> 1);
+  int_t spr_height = (regs.oam_interlace == false) ? (spr->height) : (spr->height >> 1);
   if(line >= spr->y && line < (spr->y + spr_height)) return true;
   if((spr->y + spr_height) >= 256 && line < ((spr->y + spr_height) & 255)) return true;
   return false;
@@ -77,9 +77,9 @@ auto PPU::is_sprite_on_scanline() -> bool {
 
 auto PPU::load_oam_tiles() -> void {
   sprite_item* spr = &sprite_list[active_sprite];
-  uint16 tile_width = spr->width >> 3;
-  int x = spr->x;
-  int y = (line - spr->y) & 0xff;
+  uint16_t tile_width = spr->width >> 3;
+  int_t x = spr->x;
+  int_t y = (line - spr->y) & 0xff;
   if(regs.oam_interlace == true) {
     y <<= 1;
   }
@@ -99,9 +99,9 @@ auto PPU::load_oam_tiles() -> void {
   x &= 511;
   y &= 255;
 
-  uint16 tdaddr = cache.oam_tdaddr;
-  uint16 chrx   = (spr->character     ) & 15;
-  uint16 chry   = (spr->character >> 4) & 15;
+  uint16_t tdaddr = cache.oam_tdaddr;
+  uint16_t chrx   = (spr->character     ) & 15;
+  uint16_t chry   = (spr->character >> 4) & 15;
   if(spr->use_nameselect == true) {
     tdaddr += (256 * 32) + (cache.oam_nameselect << 13);
   }
@@ -128,17 +128,17 @@ auto PPU::load_oam_tiles() -> void {
   }
 }
 
-auto PPU::render_oam_tile(int tile_num) -> void {
+auto PPU::render_oam_tile(int_t tile_num) -> void {
   oam_tileitem* t     = &oam_tilelist[tile_num];
-  uint8* oam_td       = (uint8*)bg_tiledata[COLORDEPTH_16];
-  uint8* oam_td_state = (uint8*)bg_tiledata_state[COLORDEPTH_16];
+  uint8_t* oam_td       = (uint8_t*)bg_tiledata[COLORDEPTH_16];
+  uint8_t* oam_td_state = (uint8_t*)bg_tiledata_state[COLORDEPTH_16];
 
   if(oam_td_state[t->tile] == 1) {
     render_bg_tile<COLORDEPTH_16>(t->tile);
   }
 
   unsigned sx = t->x;
-  uint8* tile_ptr = (uint8*)oam_td + (t->tile << 6) + ((t->y & 7) << 3);
+  uint8_t* tile_ptr = (uint8_t*)oam_td + (t->tile << 6) + ((t->y & 7) << 3);
   for(unsigned x = 0; x < 8; x++) {
     sx &= 511;
     if(sx < 256) {
@@ -160,9 +160,9 @@ auto PPU::render_line_oam_rto() -> void {
   regs.oam_tilecount = 0;
   memset(oam_line_pri, OAM_PRI_NONE, 256);
   memset(oam_itemlist, 0xff, 32);
-  for(int s = 0; s < 34; s++) oam_tilelist[s].tile = 0xffff;
+  for(int_t s = 0; s < 34; s++) oam_tilelist[s].tile = 0xffff;
 
-  for(int s = 0; s < 128; s++) {
+  for(int_t s = 0; s < 128; s++) {
     active_sprite = (s + regs.oam_firstsprite) & 127;
     if(is_sprite_on_scanline() == false) continue;
     if(regs.oam_itemcount++ >= 32) break;
@@ -173,7 +173,7 @@ auto PPU::render_line_oam_rto() -> void {
     regs.ioamaddr = 0x0200 + (oam_itemlist[regs.oam_itemcount - 1] >> 2);
   }
 
-  for(int s = 31; s >= 0; s--) {
+  for(int_t s = 31; s >= 0; s--) {
     if(oam_itemlist[s] == 0xff) continue;
     active_sprite = oam_itemlist[s];
     load_oam_tiles();
@@ -198,7 +198,7 @@ auto PPU::render_line_oam_rto() -> void {
     pixel_cache[x].ce_sub  = (oam_line_pal[x] < 192); \
   }
 
-auto PPU::render_line_oam(uint8 pri0_pos, uint8 pri1_pos, uint8 pri2_pos, uint8 pri3_pos) -> void {
+auto PPU::render_line_oam(uint8_t pri0_pos, uint8_t pri1_pos, uint8_t pri2_pos, uint8_t pri3_pos) -> void {
   if(layer_enabled[OAM][0] == false) pri0_pos = 0;
   if(layer_enabled[OAM][1] == false) pri1_pos = 0;
   if(layer_enabled[OAM][2] == false) pri2_pos = 0;
@@ -216,11 +216,11 @@ auto PPU::render_line_oam(uint8 pri0_pos, uint8 pri1_pos, uint8 pri2_pos, uint8 
   bool bgsub_enabled = regs.bgsub_enabled[OAM];
 
   build_window_tables(OAM);
-  uint8* wt_main = window[OAM].main;
-  uint8* wt_sub  = window[OAM].sub;
+  uint8_t* wt_main = window[OAM].main;
+  uint8_t* wt_sub  = window[OAM].sub;
 
   unsigned pri_tbl[4] = { pri0_pos, pri1_pos, pri2_pos, pri3_pos };
-  for(int x = 0; x < 256; x++) {
+  for(int_t x = 0; x < 256; x++) {
     if(oam_line_pri[x] == OAM_PRI_NONE) continue;
 
     unsigned pri = pri_tbl[oam_line_pri[x]];

@@ -3,7 +3,7 @@ case 0x2f: {
   if(0)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -12,7 +12,7 @@ case 0xf0: {
   if(!regs.p.z)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -21,7 +21,7 @@ case 0xd0: {
   if(regs.p.z)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -30,7 +30,7 @@ case 0xb0: {
   if(!regs.p.c)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -39,7 +39,7 @@ case 0x90: {
   if(regs.p.c)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -48,7 +48,7 @@ case 0x70: {
   if(!regs.p.v)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -57,7 +57,7 @@ case 0x50: {
   if(regs.p.v)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -66,7 +66,7 @@ case 0x30: {
   if(!regs.p.n)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -75,7 +75,7 @@ case 0x10: {
   if(regs.p.n)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -87,7 +87,7 @@ case 0x03: {
   if((sp & 0x01) != 0x01)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -99,7 +99,7 @@ case 0x13: {
   if((sp & 0x01) == 0x01)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -111,7 +111,7 @@ case 0x23: {
   if((sp & 0x02) != 0x02)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -123,7 +123,7 @@ case 0x33: {
   if((sp & 0x02) == 0x02)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -135,7 +135,7 @@ case 0x43: {
   if((sp & 0x04) != 0x04)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -147,7 +147,7 @@ case 0x53: {
   if((sp & 0x04) == 0x04)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -159,7 +159,7 @@ case 0x63: {
   if((sp & 0x08) != 0x08)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -171,7 +171,7 @@ case 0x73: {
   if((sp & 0x08) == 0x08)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -183,7 +183,7 @@ case 0x83: {
   if((sp & 0x10) != 0x10)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -195,7 +195,7 @@ case 0x93: {
   if((sp & 0x10) == 0x10)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -207,7 +207,7 @@ case 0xa3: {
   if((sp & 0x20) != 0x20)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -219,7 +219,7 @@ case 0xb3: {
   if((sp & 0x20) == 0x20)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -231,7 +231,7 @@ case 0xc3: {
   if((sp & 0x40) != 0x40)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -243,7 +243,7 @@ case 0xd3: {
   if((sp & 0x40) == 0x40)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -255,7 +255,7 @@ case 0xe3: {
   if((sp & 0x80) != 0x80)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -267,7 +267,7 @@ case 0xf3: {
   if((sp & 0x80) == 0x80)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -279,7 +279,7 @@ case 0x2e: {
   if(regs.a == sp)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -292,7 +292,7 @@ case 0xde: {
   if(regs.a == sp)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -304,7 +304,7 @@ case 0x6e: {
   if(wr == 0x00)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
@@ -316,7 +316,7 @@ case 0xfe: {
   if(regs.y == 0x00)break;
   op_io();
   op_io();
-  regs.pc += (int8)rd;
+  regs.pc += (int8_t)rd;
   break;
 }
 
