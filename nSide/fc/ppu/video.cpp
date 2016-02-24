@@ -350,7 +350,7 @@ auto Video::drawCursor(uint16 color, int x, int y) -> void {
       if(vx < 0 || vx >= 256) continue;  //do not draw offscreen
       uint8 pixel = cursor[cy * 15 + cx];
       if(pixel == 0) continue;
-      uint32 pixelcolor = pixel == 1 ? 0x0f : color;
+      uint32 pixelcolor = pixel == 1 ? (uint32)0x0f : (uint32)color;
 
       *(output + vy * 256 + vx) = pixelcolor;
     }

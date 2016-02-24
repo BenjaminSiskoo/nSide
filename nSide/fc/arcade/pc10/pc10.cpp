@@ -54,7 +54,7 @@ auto PC10ArcadeBoard::read(uint16 addr) -> uint8 {
     if(!prom_test || prom_address < 0x40)
       data |= (((cartridge.board->keyrom.read(prom_address >> 3) >> (prom_address & 7)) & 1) << 3) ^ 0x08;
     else
-      data |= (prom_address & 2 ? 0x00 : cartridge.board->keyrom.read(8)) ^ 0x08;
+      data |= (prom_address & 2 ? (uint8)0x00 : cartridge.board->keyrom.read(8)) ^ 0x08;
     data |= ((prom_address & 0x20) >> 1) ^ 0x10;
     return data;
   };

@@ -24,7 +24,7 @@ struct FCG : Chip {
 
   auto prg_addr(uint addr) const -> uint {
     bool region = addr & 0x4000;
-    return ((region == 0 ? prg_bank : 15) << 14) | (addr & 0x3fff);
+    return ((region == 0 ? prg_bank : (uint8)0x0f) << 14) | (addr & 0x3fff);
   }
 
   auto chr_addr(uint addr) const -> uint {

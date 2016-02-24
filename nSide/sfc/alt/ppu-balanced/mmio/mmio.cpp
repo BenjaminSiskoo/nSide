@@ -568,7 +568,7 @@ auto PPU::mmio_r213f() -> uint8_t {
   return regs.ppu2_mdr;
 }
 
-auto PPU::mmio_read(uint_t addr, uint8_t data) -> uint8_t {
+auto PPU::mmio_read(uint addr, uint8 data) -> uint8 {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -607,7 +607,7 @@ auto PPU::mmio_read(uint_t addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto PPU::mmio_write(uint_t addr, uint8_t data) -> void {
+auto PPU::mmio_write(uint addr, uint8 data) -> void {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {

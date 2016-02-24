@@ -1,5 +1,5 @@
 auto PPUcounter::tick(uint clocks) -> void {
-  status.hcounter++;
+  status.hcounter += clocks;
   if(status.hcounter == 337) status.skip = 341 - lineclocks();
   if(status.hcounter == 341 - status.skip) {
     status.hcounter = 0;

@@ -5,7 +5,9 @@
 #define __MSVCRT_VERSION__ WINVER
 #define NOMINMAX
 
+#define boolean WindowsBoolean
 #include <winsock2.h>
+#undef boolean
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>

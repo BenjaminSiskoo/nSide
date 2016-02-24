@@ -15,17 +15,17 @@ Bus::~Bus() {
 }
 
 auto Bus::reset() -> void {
-  function<auto (uint) -> uint8> reader = [](uint) { return cpu.mdr(); };
-  function<auto (uint, uint8) -> void> writer = [](uint, uint8) {};
+  function<auto (uint16) -> uint8> reader = [](uint16) { return cpu.mdr(); };
+  function<auto (uint16, uint8) -> void> writer = [](uint16, uint8) {};
 
   idcount = 0;
   map(reader, writer, 0x0000, 0xffff);
 }
 
 auto Bus::map(
-  const function<uint8 (uint)>& reader,
-  const function<void (uint, uint8)>& writer,
-  uint addrlo, uint addrhi,
+  const function<uint8 (uint16)>& reader,
+  const function<void (uint16, uint8)>& writer,
+  uint16 addrlo, uint16 addrhi,
   uint size, uint base, uint mask
 ) -> void {
   assert(addrlo <= addrhi && addrlo <= 0xffff);

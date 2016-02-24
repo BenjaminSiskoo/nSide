@@ -21,6 +21,8 @@ namespace Emulator {
   static const string Profile = "Balanced";
   #elif defined(PROFILE_PERFORMANCE)
   static const string Profile = "Performance";
+  #else
+  static const string Profile = "Accuracy";
   #endif
 }
 
@@ -56,5 +58,3 @@ template<typename R, typename... P> struct hook<auto (P...) -> R> {
 #else
   #define privileged private
 #endif
-
-using varuint = varuint_t<uint>;

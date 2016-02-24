@@ -292,13 +292,13 @@ auto Interface::load(uint id, const stream& stream) -> void {
     system.information.manifest = stream.text();
     break;
   case ID::PC10BIOS:
-    stream.read(pc10arcadeboard.bios, min(16384u, stream.size()));
+    stream.read((uint8_t*)pc10arcadeboard.bios, min(16384u, stream.size()));
     break;
   case ID::PC10CharacterROM:
-    stream.read(pc10arcadeboard.chrrom, min(24576u, stream.size()));
+    stream.read((uint8_t*)pc10arcadeboard.chrrom, min(24576u, stream.size()));
     break;
   case ID::PC10PaletteROM:
-    stream.read(pc10arcadeboard.cgrom, min(768u, stream.size()));
+    stream.read((uint8_t*)pc10arcadeboard.cgrom, min(768u, stream.size()));
     break;
   }
 
@@ -315,15 +315,15 @@ auto Interface::load(uint id, const stream& stream) -> void {
 
 auto Interface::save(uint id, const stream& stream) -> void {
   if(id == ID::ProgramRAM) {
-    stream.write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
+    stream.write((uint8_t*)cartridge.board->prgram.data(), cartridge.board->prgram.size());
   }
 
   if(id == ID::CharacterRAM) {
-    stream.write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
+    stream.write((uint8_t*)cartridge.board->chrram.data(), cartridge.board->chrram.size());
   }
 
   if(id == ID::ChipRAM) {
-    stream.write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
+    stream.write((uint8_t*)cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
   }
 }
 
@@ -410,10 +410,10 @@ auto Interface::exportMemory() -> void {
   ppu.exportRegisters(markup);
   file::write({pathname, "registers.bml"}, markup);
 
-  file::write({pathname, "work.ram"}, cpu.ram, 0x0800);
-  file::write({pathname, "video.ram"}, ppu.ciram, !system.vs() ? 2048 : 4096);
-  file::write({pathname, "sprite.ram"}, ppu.oam, 256);
-  file::write({pathname, "palette.ram"}, ppu.cgram, 32);
+  file::write({pathname, "work.ram"}, (uint8_t*)cpu.ram, 0x0800);
+  file::write({pathname, "video.ram"}, (uint8_t*)ppu.ciram, !system.vs() ? 2048 : 4096);
+  file::write({pathname, "sprite.ram"}, (uint8_t*)ppu.oam, 256);
+  file::write({pathname, "palette.ram"}, (uint8_t*)ppu.cgram, 32);
   if(cartridge.board->prgram.size()) saveRequest(ID::ProgramRAM, "debug/program.ram");
   if(cartridge.board->chrram.size()) saveRequest(ID::CharacterRAM, "debug/character.ram");
   if(cartridge.board->chip && cartridge.board->chip->ram.size())

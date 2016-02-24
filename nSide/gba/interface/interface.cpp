@@ -90,7 +90,7 @@ auto Interface::load(uint id, const stream& stream) -> void {
   }
 
   if(id == ID::BIOS) {
-    stream.read(bios.data, min(bios.size, stream.size()));
+    stream.read((uint8_t*)bios.data, min(bios.size, stream.size()));
   }
 
   if(id == ID::Manifest) {
@@ -98,33 +98,33 @@ auto Interface::load(uint id, const stream& stream) -> void {
   }
 
   if(id == ID::MROM) {
-    stream.read(cartridge.mrom.data, min(cartridge.mrom.size, stream.size()));
+    stream.read((uint8_t*)cartridge.mrom.data, min(cartridge.mrom.size, stream.size()));
   }
 
   if(id == ID::SRAM) {
-    stream.read(cartridge.sram.data, min(cartridge.sram.size, stream.size()));
+    stream.read((uint8_t*)cartridge.sram.data, min(cartridge.sram.size, stream.size()));
   }
 
   if(id == ID::EEPROM) {
-    stream.read(cartridge.eeprom.data, min(cartridge.eeprom.size, stream.size()));
+    stream.read((uint8_t*)cartridge.eeprom.data, min(cartridge.eeprom.size, stream.size()));
   }
 
   if(id == ID::FLASH) {
-    stream.read(cartridge.flash.data, min(cartridge.flash.size, stream.size()));
+    stream.read((uint8_t*)cartridge.flash.data, min(cartridge.flash.size, stream.size()));
   }
 }
 
 auto Interface::save(uint id, const stream& stream) -> void {
   if(id == ID::SRAM) {
-    stream.write(cartridge.sram.data, cartridge.sram.size);
+    stream.write((uint8_t*)cartridge.sram.data, cartridge.sram.size);
   }
 
   if(id == ID::EEPROM) {
-    stream.write(cartridge.eeprom.data, cartridge.eeprom.size);
+    stream.write((uint8_t*)cartridge.eeprom.data, cartridge.eeprom.size);
   }
 
   if(id == ID::FLASH) {
-    stream.write(cartridge.flash.data, cartridge.flash.size);
+    stream.write((uint8_t*)cartridge.flash.data, cartridge.flash.size);
   }
 }
 
@@ -200,15 +200,15 @@ auto Interface::exportMemory() -> void {
   string pathname = {path(group(ID::MROM)), "debug/"};
   directory::create(pathname);
 
-  file::write({pathname, "i-work.ram"}, cpu.iwram, 32 * 1024);
-  file::write({pathname, "e-work.ram"}, cpu.ewram, 256 * 1024);
-  file::write({pathname, "video.ram"}, ppu.vram, 96 * 1024);
-  uint8 obj_data[128 * 8];
+  file::write({pathname, "i-work.ram"}, (uint8_t*)cpu.iwram, 32 * 1024);
+  file::write({pathname, "e-work.ram"}, (uint8_t*)cpu.ewram, 256 * 1024);
+  file::write({pathname, "video.ram"}, (uint8_t*)ppu.vram, 96 * 1024);
+  uint8_t obj_data[128 * 8];
   for(uint addr = 0; addr < 128 * 8; addr++) {
     obj_data[addr] = ppu.oam_read(Byte, addr | 0x0700'0000);
   }
   file::write({pathname, "sprite.ram"}, obj_data, 128 * 8);
-  uint8 pal_data[256 * 2 * 2];
+  uint8_t pal_data[256 * 2 * 2];
   for(uint addr = 0; addr < 256 * 2 * 2; addr++) {
     pal_data[addr] = ppu.pram_read(Byte, addr | 0x0500'0000);
   }

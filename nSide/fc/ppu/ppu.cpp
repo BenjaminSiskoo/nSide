@@ -417,7 +417,8 @@ auto PPU::raster_sprite() -> void {
   if(raster_enable() == false) return;
 
   uint n = raster.oam_iterator++;
-  int ly = (vcounter() == (system.region() == System::Region::NTSC ? 261 : 311) ? -1 : vcounter());
+  uint lastScanline = system.region() == System::Region::NTSC ? 261 : 311;
+  int ly = (vcounter() == lastScanline ? (int)-1U : (int)vcounter());
   uint y = ly - oam[(n * 4) + 0];
 
   if(y >= sprite_height()) return;

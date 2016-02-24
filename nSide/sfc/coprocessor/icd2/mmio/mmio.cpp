@@ -1,9 +1,9 @@
-auto ICD2::read(uint addr, uint8 data) -> uint8 {
+auto ICD2::read(uint24 addr, uint8 data) -> uint8 {
   addr &= 0x40ffff;
 
   //LY counter
   if(addr == 0x6000) {
-    uint y = min(143u, GameBoy::ppu.status.ly);
+    uint y = min((uint8)143, GameBoy::ppu.status.ly);
     return (y & ~7) | write_bank;
   }
 
@@ -38,7 +38,7 @@ auto ICD2::read(uint addr, uint8 data) -> uint8 {
   return 0x00;
 }
 
-auto ICD2::write(uint addr, uint8 data) -> void {
+auto ICD2::write(uint24 addr, uint8 data) -> void {
   addr &= 0xffff;
 
   //VRAM port

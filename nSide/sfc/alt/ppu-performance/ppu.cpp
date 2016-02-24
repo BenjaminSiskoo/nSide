@@ -103,8 +103,8 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::enable() -> void {
-  function<auto (uint_t, uint8_t) -> uint8_t> reader{&PPU::mmio_read, (PPU*)&ppu};
-  function<auto (uint_t, uint8_t) -> void> writer{&PPU::mmio_write, (PPU*)&ppu};
+  function<auto (uint, uint8) -> uint8> reader{&PPU::mmio_read, (PPU*)&ppu};
+  function<auto (uint, uint8) -> void> writer{&PPU::mmio_write, (PPU*)&ppu};
 
   bus.map(reader, writer, 0x00, 0x3f, 0x2100, 0x213f);
   bus.map(reader, writer, 0x80, 0xbf, 0x2100, 0x213f);

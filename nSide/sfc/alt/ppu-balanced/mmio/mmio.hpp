@@ -196,7 +196,7 @@ auto mmio_r213d() -> uint8_t;  //OPVCT
 auto mmio_r213e() -> uint8_t;  //STAT77
 auto mmio_r213f() -> uint8_t;  //STAT78
 
-auto mmio_read(uint_t addr, uint8_t data) -> uint8_t;
-auto mmio_write(uint_t addr, uint8_t data) -> void;
+auto mmio_read(uint addr, uint8 data) -> uint8;
+auto mmio_write(uint addr, uint8 data) -> void;
 
 auto latch_counters() -> void;
