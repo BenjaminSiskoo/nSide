@@ -12,7 +12,7 @@ struct SMP : Thread {
   auto mmio_read(uint addr) -> uint;
   auto mmio_write(uint addr, uint data) -> void;
 
-  auto enter() -> void;
+  auto main() -> void;
   auto power() -> void;
   auto reset() -> void;
 

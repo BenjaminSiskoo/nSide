@@ -66,6 +66,9 @@ auto CartPal::superFamicomImport(vector<uint8>& buffer, string location) -> stri
   }
 
   if(!directory::create(target)) return failure("library path unwritable");
+  if(file::exists({source, name, ".srm"}) && !file::exists({target, "save.ram"})) {
+    file::copy({source, name, ".srm"}, {target, "save.ram"});
+  }
 
   if(settings["cart-pal/CreateManifests"].boolean()) file::write({target, "manifest.bml"}, markup);
   uint offset = (buffer.size() & 0x7fff) == 512 ? 512 : 0;  //skip header if present

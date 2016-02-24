@@ -1,13 +1,13 @@
 CartPal::CartPal() {
-  database.famicom = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Famicom.bml")));
-  database.vsSystem = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/VS. System.bml")));
-  database.playchoice10 = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/PlayChoice-10.bml")));
-  database.superFamicom = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Super Famicom.bml")));
-  database.gameBoy = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Game Boy.bml")));
-  database.gameBoyColor = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Game Boy Color.bml")));
-  database.gameBoyAdvance = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Game Boy Advance.bml")));
-  database.bsMemory = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/BS Memory.bml")));
-  database.sufamiTurbo = BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "Database/Sufami Turbo.bml")));
+  database.famicom = BML::unserialize(string::read(locate("Database/Famicom.bml")));
+  database.vsSystem = BML::unserialize(string::read(locate("Database/VS. System.bml")));
+  database.playchoice10 = BML::unserialize(string::read(locate("Database/PlayChoice-10.bml")));
+  database.superFamicom = BML::unserialize(string::read(locate("Database/Super Famicom.bml")));
+  database.gameBoy = BML::unserialize(string::read(locate("Database/Game Boy.bml")));
+  database.gameBoyColor = BML::unserialize(string::read(locate("Database/Game Boy Color.bml")));
+  database.gameBoyAdvance = BML::unserialize(string::read(locate("Database/Game Boy Advance.bml")));;
+  database.bsMemory = BML::unserialize(string::read(locate("Database/BS Memory.bml")));
+  database.sufamiTurbo = BML::unserialize(string::read(locate("Database/Sufami Turbo.bml")));
 }
 
 auto CartPal::error() const -> string {

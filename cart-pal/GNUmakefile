@@ -1,6 +1,7 @@
 include ../nall/GNUmakefile
 include ../hiro/GNUmakefile
 
+name := cart-pal
 flags += -I.. -O3
 link +=
 
@@ -13,12 +14,12 @@ objects += obj/cart-pal.o
 objects += $(if $(call streq,$(platform),windows),obj/resource.o)
 
 all: $(objects)
-	$(compiler) -o out/cart-pal $(objects) $(link) $(hirolink)
+	$(call unique,$(compiler) -o out/$(name) $(objects) $(link) $(hirolink))
 ifeq ($(platform),macosx)
-	@if [ -d out/cart-pal.app ]; then rm -r out/cart-pal.app; fi
-	mkdir -p out/cart-pal.app/Contents/MacOS/
-	mv out/cart-pal out/cart-pal.app/Contents/MacOS/
-	cp cart-pal.plist out/cart-pal.app/Contents/Info.plist
+	@if [ -d out/$(name).app ]; then rm -r out/$(name).app; fi
+	mkdir -p out/$(name).app/Contents/MacOS/
+	mv out/$(name) out/$(name).app/Contents/MacOS/
+	cp $(name).plist out/$(name).app/Contents/Info.plist
 endif
 
 obj/hiro.o: ../hiro/hiro.cpp
@@ -32,21 +33,23 @@ obj/resource.o:
 
 clean:
 ifeq ($(platform),macosx)
-	@if [ -d out/cart-pal.app ]; then rm out/cart-pal.app; fi
+	@if [ -d out/$(name).app ]; then rm out/$(name).app; fi
 endif
 	$(call delete,obj/*)
 	$(call delete,out/*)
 
 install:
 ifeq ($(platform),macosx)
-	cp -r out/cart-pal.app /Applications/cart-pal.app
-else
-	if [ -f out/cart-pal ]; then cp out/cart-pal $(prefix)/bin/cart-pal; fi
+	cp -R out/$(name).app /Applications/$(name).app
+else ifneq ($(filter $(platform),linux bsd),)
+	mkdir -p $(prefix)/share/$(name)/Database/
+	if [ -f out/$(name) ]; then cp out/$(name) $(prefix)/bin/$(name); fi
+	cp -R Database/ $(prefix)/share/$(name)/Database/
 endif
 
 uninstall:
 ifeq ($(platform),macosx)
-	if [ -d /Applications/cart-pal.app ]; then rm -r /Applications/cart-pal.app; fi
-else
-	if [ -f $(prefix)/bin/cart-pal ]; then rm $(prefix)/bin/cart-pal; fi
+	if [ -d /Applications/$(name).app ]; then rm -r /Applications/$(name).app; fi
+else ifneq ($(filter $(platform),linux bsd),)
+	if [ -f $(prefix)/bin/$(name) ]; then rm $(prefix)/bin/$(name); fi
 endif

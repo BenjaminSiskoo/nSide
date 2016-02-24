@@ -21,7 +21,7 @@ struct CPU : Processor::R65816, Thread, public PPUcounter {
   auto op_read(uint addr) -> uint8;
   auto op_write(uint addr, uint8 data) -> void;
 
-  auto enter() -> void;
+  auto main() -> void;
   auto enable() -> void;
   auto power() -> void;
   auto reset() -> void;

@@ -4,7 +4,7 @@ struct Settings : Markup::Node {
 };
 
 Settings::Settings() {
-  Markup::Node::operator=(BML::unserialize(string::read(locate({configpath(), "cart-pal/"}, "settings.bml"))));
+  Markup::Node::operator=(BML::unserialize(string::read(locate("settings.bml"))));
 
   auto set = [&](const string& name, const string& value) {
     //create node and set to default value only if it does not already exist
@@ -20,6 +20,5 @@ Settings::Settings() {
 }
 
 Settings::~Settings() {
-  directory::create({configpath(), "cart-pal/"});
-  file::write(locate({configpath(), "cart-pal/"}, "settings.bml"), BML::serialize(*this));
+  file::write(locate("settings.bml"), BML::serialize(*this));
 }

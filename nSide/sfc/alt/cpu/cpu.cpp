@@ -17,9 +17,8 @@ CPU::CPU() : queue(512, {&CPU::queue_event, this}) {
 auto CPU::step(uint clocks) -> void {
   smp.clock -= clocks * (uint64)smp.frequency;
   ppu.clock -= clocks;
-  for(uint i = 0; i < coprocessors.size(); i++) {
-    auto& chip = *coprocessors[i];
-    chip.clock -= clocks * (uint64)chip.frequency;
+  for(auto chip : coprocessors) {
+    chip->clock -= clocks * (uint64)chip->frequency;
   }
   device.controllerPort1->clock -= clocks * (uint64)device.controllerPort1->frequency;
   device.controllerPort2->clock -= clocks * (uint64)device.controllerPort2->frequency;
@@ -27,25 +26,24 @@ auto CPU::step(uint clocks) -> void {
 }
 
 auto CPU::synchronizeSMP() -> void {
-  if(SMP::Threaded == true) {
+  if(SMP::Threaded) {
     if(smp.clock < 0) co_switch(smp.thread);
   } else {
-    while(smp.clock < 0) smp.enter();
+    while(smp.clock < 0) smp.main();
   }
 }
 
 auto CPU::synchronizePPU() -> void {
-  if(PPU::Threaded == true) {
+  if(PPU::Threaded) {
     if(ppu.clock < 0) co_switch(ppu.thread);
   } else {
-    while(ppu.clock < 0) ppu.enter();
+    while(ppu.clock < 0) ppu.main();
   }
 }
 
 auto CPU::synchronizeCoprocessors() -> void {
-  for(uint i = 0; i < coprocessors.size(); i++) {
-    auto& chip = *coprocessors[i];
-    if(chip.clock < 0) co_switch(chip.thread);
+  for(auto chip : coprocessors) {
+    if(chip->clock < 0) co_switch(chip->thread);
   }
 }
 
@@ -54,29 +52,24 @@ auto CPU::synchronizeDevices() -> void {
   if(device.controllerPort2->clock < 0) co_switch(device.controllerPort2->thread);
 }
 
-auto CPU::Enter() -> void { cpu.enter(); }
+auto CPU::Enter() -> void {
+  while(true) scheduler.synchronize(), cpu.main();
+}
 
-auto CPU::enter() -> void {
-  while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::CPU) {
-      scheduler.sync = Scheduler::SynchronizeMode::All;
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
-    }
-
-    if(status.nmi_pending) {
-      status.nmi_pending = false;
-      regs.vector = (regs.e == false ? 0xffea : 0xfffa);
-      op_irq();
-    }
-
-    if(status.irq_pending) {
-      status.irq_pending = false;
-      regs.vector = (regs.e == false ? 0xffee : 0xfffe);
-      op_irq();
-    }
-
-    op_exec();
+auto CPU::main() -> void {
+  if(status.nmi_pending) {
+    status.nmi_pending = false;
+    regs.vector = (regs.e == false ? 0xffea : 0xfffa);
+    op_irq();
   }
+
+  if(status.irq_pending) {
+    status.irq_pending = false;
+    regs.vector = (regs.e == false ? 0xffee : 0xfffe);
+    op_irq();
+  }
+
+  op_exec();
 }
 
 auto CPU::enable() -> void {

@@ -86,6 +86,9 @@ auto CartPal::playchoice10Import(vector<uint8>& buffer, string location) -> stri
   playchoice10ImportManifestScan(roms, document["board"]);
 
   if(!directory::create(target)) return failure("library path unwritable");
+  if(file::exists({source, name, ".sav"}) && !file::exists({target, "save.ram"})) {
+    file::copy({source, name, ".sav"}, {target, "save.ram"});
+  }
 
   if(settings["cart-pal/CreateManifests"].boolean()) file::write({target, "manifest.bml"}, markup);
   for(auto rom : roms) {

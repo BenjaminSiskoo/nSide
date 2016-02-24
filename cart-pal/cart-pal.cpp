@@ -4,23 +4,26 @@ using namespace nall;
 #include <hiro/hiro.hpp>
 using namespace hiro;
 
-//if file already exists in the same path as the binary; use it (portable mode)
-//if not, use default requested path (*nix/user mode)
-auto locate(string pathname, string filename) -> string {
-  string location{programpath(), filename};
+auto locate(string name) -> string {
+  string location = {programpath(), name};
   if(file_system_object::exists(location)) return location;
-  return {pathname, filename};
+
+  location = {configpath(), "cart-pal/", name};
+  if(file_system_object::exists(location)) return location;
+
+  directory::create({localpath(), "cart-pal/"});
+  return {localpath(), "cart-pal/", name};
 }
 
 #include "settings.cpp"
 Settings settings;
 
-#include "heuristics/famicom.hpp"
-#include "heuristics/super-famicom.hpp"
-#include "heuristics/game-boy.hpp"
-#include "heuristics/game-boy-advance.hpp"
-#include "heuristics/bs-memory.hpp"
-#include "heuristics/sufami-turbo.hpp"
+#include "heuristics/famicom.cpp"
+#include "heuristics/super-famicom.cpp"
+#include "heuristics/game-boy.cpp"
+#include "heuristics/game-boy-advance.cpp"
+#include "heuristics/bs-memory.cpp"
+#include "heuristics/sufami-turbo.cpp"
 
 #include "core/core.hpp"
 #include "core/core.cpp"

@@ -18,23 +18,23 @@ SMP::SMP() {
 }
 
 auto SMP::synchronizeCPU() -> void {
-  if(CPU::Threaded == true) {
-  //if(clock >= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
+  if(CPU::Threaded) {
+  //if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
   } else {
-    while(clock >= 0) cpu.enter();
+    while(clock >= 0) cpu.main();
   }
 }
 
 auto SMP::synchronizeDSP() -> void {
-  if(DSP::Threaded == true) {
-  //if(dsp.clock < 0 && scheduler.sync != Scheduler::SynchronizeMode::All) co_switch(dsp.thread);
+  if(DSP::Threaded) {
+  //if(dsp.clock < 0 && !scheduler.synchronizing()) co_switch(dsp.thread);
   } else {
-    while(dsp.clock < 0) dsp.enter();
+    while(dsp.clock < 0) dsp.main();
   }
 }
 
-auto SMP::enter() -> void {
-  while(clock < 0) op_step();
+auto SMP::main() -> void {
+  op_step();
 }
 
 auto SMP::power() -> void {
