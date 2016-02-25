@@ -1,5 +1,5 @@
 #include "../loki.hpp"
-Settings* settings = nullptr;
+unique_pointer<Settings> settings;
 
 Settings::Settings() {
   settings = this;

@@ -17,5 +17,10 @@ namespace SFC = SuperFamicom;
 auto locate(string name) -> string;
 
 #include "program/program.hpp"
+#include "settings/settings.hpp"
+#include "input/input.hpp"
+#include "interface/interface.hpp"
+#include "debugger/debugger.hpp"
 #include "terminal/terminal.hpp"
 #include "presentation/presentation.hpp"
+#include "resource/resource.hpp"

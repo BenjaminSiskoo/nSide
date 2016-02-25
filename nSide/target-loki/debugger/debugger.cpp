@@ -1,5 +1,5 @@
 #include "../loki.hpp"
-Debugger* debugger = nullptr;
+unique_pointer<Debugger> debugger;
 
 Debugger::Debugger() {
   debugger = this;

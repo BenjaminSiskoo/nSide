@@ -22,4 +22,4 @@ struct InputManager : Configuration::Document {
   vector<AbstractInput*> inputMap;
 };
 
-extern InputManager* inputManager;
+extern unique_pointer<InputManager> inputManager;

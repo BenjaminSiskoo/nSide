@@ -89,4 +89,4 @@ struct Debugger {
   bitvector smpTracerMask;
 };
 
-extern Debugger* debugger;
+extern unique_pointer<Debugger> debugger;

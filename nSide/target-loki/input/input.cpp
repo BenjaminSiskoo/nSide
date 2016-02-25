@@ -1,5 +1,5 @@
 #include "../loki.hpp"
-InputManager* inputManager = nullptr;
+unique_pointer<InputManager> inputManager;
 
 void AbstractInput::bind() {
   for(auto device : inputManager->devices) {
