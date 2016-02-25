@@ -13,7 +13,7 @@ private:
   auto generateColor(uint, double, double, double, double, double) -> uint32;
   auto generatePalettes(const uint9* ppu_pal) -> void;
 
-  auto drawCursor(uint16 color, int x, int y) -> void;
+  auto drawCursor(uint32 color, int x, int y) -> void;
   auto drawCursors() -> void;
 
   unique_pointer<uint32[]> output;

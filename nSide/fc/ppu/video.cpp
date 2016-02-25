@@ -321,7 +321,7 @@ auto Video::generatePalettes(const uint9* ppu_pal) -> void {
   }
 }
 
-auto Video::drawCursor(uint16 color, int x, int y) -> void {
+auto Video::drawCursor(uint32 color, int x, int y) -> void {
   static const uint8 cursor[15 * 15] = {
     0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
     0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
@@ -350,7 +350,7 @@ auto Video::drawCursor(uint16 color, int x, int y) -> void {
       if(vx < 0 || vx >= 256) continue;  //do not draw offscreen
       uint8 pixel = cursor[cy * 15 + cx];
       if(pixel == 0) continue;
-      uint32 pixelcolor = pixel == 1 ? (uint32)0x0f : (uint32)color;
+      uint32 pixelcolor = pixel == 1 ? (uint32)(255 << 24) : color;
 
       *(output + vy * 256 + vx) = pixelcolor;
     }
@@ -358,16 +358,16 @@ auto Video::drawCursor(uint16 color, int x, int y) -> void {
 }
 
 auto Video::drawCursors() -> void {
-  if((Device::ID)settings.controllerPort2 == Famicom::Device::ID::BeamGun) {
+  if((Device::ID)settings.controllerPort2 == Famicom::Device::ID::BeamGun) { // Zapper
     if(dynamic_cast<BeamGun*>(device.controllerPort2)) {
       auto& controller = (BeamGun&)*device.controllerPort2;
-      drawCursor(0x27, controller.x, controller.y);
+      drawCursor(0xfffd9b00, controller.x, controller.y);
     }
   }
-  if((Device::ID)settings.expansionPort == Famicom::Device::ID::BeamGun) {
+  if((Device::ID)settings.expansionPort == Famicom::Device::ID::BeamGun) { // Beam Gun
     if(dynamic_cast<BeamGun*>(device.expansionPort)) {
       auto& controller = (BeamGun&)*device.expansionPort;
-      drawCursor(0x2d, controller.x, controller.y);
+      drawCursor(0xff4e4e4e, controller.x, controller.y);
     }
   }
 }
