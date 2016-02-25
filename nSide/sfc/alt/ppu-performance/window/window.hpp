@@ -7,7 +7,7 @@ struct LayerWindow {
   bool two_enable;
   bool two_invert;
 
-  uint_t mask;
+  uint mask;
 
   bool main_enable;
   bool sub_enable;
@@ -25,10 +25,10 @@ struct ColorWindow {
   bool two_enable;
   bool two_invert;
 
-  uint_t mask;
+  uint mask;
 
-  uint_t main_mask;
-  uint_t sub_mask;
+  uint main_mask;
+  uint sub_mask;
 
   uint8_t main[256];
   uint8_t sub[256];

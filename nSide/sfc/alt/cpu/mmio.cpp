@@ -1,4 +1,4 @@
-auto CPU::mmio_read(uint_t addr, uint8_t data) -> uint8_t {
+auto CPU::mmio_read(uint addr, uint8_t data) -> uint8_t {
   if((addr & 0xffc0) == 0x2140) {
     synchronizeSMP();
     return smp.port_read(addr & 3);
@@ -95,7 +95,7 @@ auto CPU::mmio_read(uint_t addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto CPU::mmio_write(uint_t addr, uint8_t data) -> void {
+auto CPU::mmio_write(uint addr, uint8_t data) -> void {
   if((addr & 0xffc0) == 0x2140) {
     synchronizeSMP();
     port_write(addr & 3, data);
@@ -228,7 +228,7 @@ auto CPU::mmio_write(uint_t addr, uint8_t data) -> void {
   }
 
   if((addr & 0xff80) == 0x4300) {
-    uint_t i = (addr >> 4) & 7;
+    uint i = (addr >> 4) & 7;
     switch(addr & 0xff8f) {
       case 0x4300: {
         channel[i].direction = data & 0x80;

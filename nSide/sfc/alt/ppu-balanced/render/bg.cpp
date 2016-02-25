@@ -20,7 +20,7 @@ auto PPU::update_bg_info() -> void {
   }
 }
 
-template<uint_t bg>
+template<uint bg>
 auto PPU::bg_get_tile(uint16_t x, uint16_t y) -> uint16_t {
   x = (x & bg_info[bg].mx) >> bg_info[bg].tw;
   y = (y & bg_info[bg].my) >> bg_info[bg].th;
@@ -49,7 +49,7 @@ auto PPU::bg_get_tile(uint16_t x, uint16_t y) -> uint16_t {
     pixel_cache[x].ce_sub  = false; \
   }
 
-template<uint_t mode, uint_t bg, uint_t color_depth>
+template<uint mode, uint bg, uint color_depth>
 auto PPU::render_line_bg(uint8_t pri0_pos, uint8_t pri1_pos) -> void {
   if(layer_enabled[bg][0] == false) pri0_pos = 0;
   if(layer_enabled[bg][1] == false) pri1_pos = 0;
@@ -190,7 +190,7 @@ auto PPU::render_line_bg(uint8_t pri0_pos, uint8_t pri1_pos) -> void {
         if(bg_enabled    == true && !wt_main[x]) { setpixel_main(x); }
         if(bgsub_enabled == true && !wt_sub[x])  { setpixel_sub(x);  }
       } else {
-        int_t hx = x >> 1;
+        int hx = x >> 1;
         if(x & 1) {
           if(bg_enabled    == true && !wt_main[hx]) { setpixel_main(hx); }
         } else {

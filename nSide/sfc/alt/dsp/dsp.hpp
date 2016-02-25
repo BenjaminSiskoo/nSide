@@ -6,7 +6,7 @@ struct DSP : Thread {
 
   DSP();
 
-  alwaysinline auto step(uint_t clocks) -> void;
+  alwaysinline auto step(uint clocks) -> void;
   alwaysinline auto synchronizeSMP() -> void;
 
   auto mute() -> bool;
@@ -17,7 +17,7 @@ struct DSP : Thread {
   auto power() -> void;
   auto reset() -> void;
 
-  auto channel_enable(uint_t channel, bool enable) -> void;
+  auto channel_enable(uint channel, bool enable) -> void;
 
   auto serialize(serializer&) -> void;
 

@@ -6,11 +6,11 @@ struct SMP : Thread {
   alwaysinline auto synchronizeCPU() -> void;
   alwaysinline auto synchronizeDSP() -> void;
 
-  auto port_read(uint_t port) -> uint_t;
-  auto port_write(uint_t port, unsigned data) -> void;
+  auto port_read(uint port) -> uint;
+  auto port_write(uint port, unsigned data) -> void;
 
-  auto mmio_read(uint_t addr) -> uint_t;
-  auto mmio_write(uint_t addr, uint_t data) -> void;
+  auto mmio_read(uint addr) -> uint;
+  auto mmio_write(uint addr, uint data) -> void;
 
   auto main() -> void;
   auto power() -> void;
@@ -47,20 +47,20 @@ struct SMP : Thread {
   auto op_ror (uint8_t  x) -> uint8_t;
 
   struct Flags {
-    alwaysinline operator uint_t() const {
+    alwaysinline operator uint() const {
       return (n << 7) | (v << 6) | (p << 5) | (b << 4)
            | (h << 3) | (i << 2) | (z << 1) | (c << 0);
     };
 
-    alwaysinline auto operator=(uint_t data) -> uint_t {
+    alwaysinline auto operator=(uint data) -> uint {
       n = data & 0x80; v = data & 0x40; p = data & 0x20; b = data & 0x10;
       h = data & 0x08; i = data & 0x04; z = data & 0x02; c = data & 0x01;
       return data;
     }
 
-    alwaysinline auto operator|=(uint_t data) -> uint_t { return operator=(operator uint_t() | data); }
-    alwaysinline auto operator^=(uint_t data) -> uint_t { return operator=(operator uint_t() ^ data); }
-    alwaysinline auto operator&=(uint_t data) -> uint_t { return operator=(operator uint_t() & data); }
+    alwaysinline auto operator|=(uint data) -> uint { return operator=(operator uint() | data); }
+    alwaysinline auto operator^=(uint data) -> uint { return operator=(operator uint() ^ data); }
+    alwaysinline auto operator&=(uint data) -> uint { return operator=(operator uint() & data); }
 
     bool n, v, p, b, h, i, z, c;
   };
@@ -83,20 +83,20 @@ struct SMP : Thread {
     bool iplrom_enable;
 
     //$00f2
-    uint_t dsp_addr;
+    uint dsp_addr;
 
     //$00f8,$00f9
-    uint_t ram00f8;
-    uint_t ram00f9;
+    uint ram00f8;
+    uint ram00f9;
   } status;
 
-  uint_t opcode_number;
-  uint_t opcode_cycle;
+  uint opcode_number;
+  uint opcode_cycle;
 
-  template<uint_t frequency>
+  template<uint frequency>
   struct Timer {
     auto tick() -> void;
-    auto tick(uint_t clocks) -> void;
+    auto tick(uint clocks) -> void;
 
     bool enable;
     uint8_t target;
@@ -109,9 +109,9 @@ struct SMP : Thread {
   Timer<128> timer1;
   Timer< 16> timer2;
 
-  static const uint_t cycle_count_table[256];
+  static const uint cycle_count_table[256];
   uint64_t cycle_table_cpu[256];
-  uint_t cycle_table_dsp[256];
+  uint cycle_table_dsp[256];
   uint64_t cycle_step_cpu;
 };
 

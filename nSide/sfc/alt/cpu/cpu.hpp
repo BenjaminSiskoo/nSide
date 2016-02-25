@@ -3,7 +3,7 @@ struct CPU : Processor::R65816, Thread, public PPUcounter {
 
   CPU();
 
-  alwaysinline auto step(uint_t clocks) -> void;
+  alwaysinline auto step(uint clocks) -> void;
   alwaysinline auto synchronizeSMP() -> void;
   auto synchronizePPU() -> void;
   auto synchronizeCoprocessors() -> void;
@@ -14,12 +14,12 @@ struct CPU : Processor::R65816, Thread, public PPUcounter {
   auto interrupt_pending() -> bool;
   auto port_read(uint8_t port) -> uint8_t;
   auto port_write(uint8_t port, uint8_t data) -> void;
-  auto mmio_read(uint_t addr, uint8_t data) -> uint8_t;
-  auto mmio_write(uint_t addr, uint8_t data) -> void;
+  auto mmio_read(uint addr, uint8_t data) -> uint8_t;
+  auto mmio_write(uint addr, uint8_t data) -> void;
 
   auto op_io() -> void;
-  auto op_read(uint_t addr) -> uint8_t;
-  auto op_write(uint_t addr, uint8_t data) -> void;
+  auto op_read(uint addr) -> uint8_t;
+  auto op_write(uint addr, uint8_t data) -> void;
 
   auto main() -> void;
   auto enable() -> void;
@@ -36,36 +36,36 @@ private:
   static auto Enter() -> void;
 
   //timing
-  auto queue_event(uint_t id) -> void;
+  auto queue_event(uint id) -> void;
   auto last_cycle() -> void;
-  auto add_clocks(uint_t clocks) -> void;
+  auto add_clocks(uint clocks) -> void;
   auto scanline() -> void;
   auto run_auto_joypad_poll() -> void;
 
   struct QueueEvent {
-    enum : uint_t {
+    enum : uint {
       DramRefresh,
       HdmaRun,
     };
   };
-  nall::priority_queue<uint_t> queue;
+  nall::priority_queue<uint> queue;
 
   //memory
-  auto speed(uint_t addr) const -> uint_t;
+  auto speed(uint addr) const -> uint;
 
   //dma
-  auto dma_transfer_valid(uint8_t bbus, uint_t abus) -> bool;
-  auto dma_addr_valid(uint_t abus) -> bool;
-  auto dma_read(uint_t abus) -> uint8_t;
-  auto dma_write(bool valid, uint_t addr, uint8_t data) -> void;
-  auto dma_transfer(bool direction, uint8_t bbus, uint_t abus) -> void;
-  auto dma_bbus(uint_t i, uint_t index) -> uint8_t;
-  auto dma_addr(uint_t i) -> uint_t;
-  auto hdma_addr(uint_t i) -> uint_t;
-  auto hdma_iaddr(uint_t i) -> uint_t;
+  auto dma_transfer_valid(uint8_t bbus, uint abus) -> bool;
+  auto dma_addr_valid(uint abus) -> bool;
+  auto dma_read(uint abus) -> uint8_t;
+  auto dma_write(bool valid, uint addr, uint8_t data) -> void;
+  auto dma_transfer(bool direction, uint8_t bbus, uint abus) -> void;
+  auto dma_bbus(uint i, uint index) -> uint8_t;
+  auto dma_addr(uint i) -> uint;
+  auto hdma_addr(uint i) -> uint;
+  auto hdma_iaddr(uint i) -> uint;
   auto dma_run() -> void;
-  auto hdma_active_after(uint_t i) -> bool;
-  auto hdma_update(uint_t i) -> void;
+  auto hdma_active_after(uint i) -> bool;
+  auto hdma_update(uint i) -> void;
   auto hdma_run() -> void;
   auto hdma_init() -> void;
   auto dma_reset() -> void;
@@ -116,7 +116,7 @@ private:
     bool irq_lock;
     bool hdma_pending;
 
-    uint_t wram_addr;
+    uint wram_addr;
 
     bool joypad_strobe_latch;
 
@@ -135,7 +135,7 @@ private:
     uint16_t htime;
     uint16_t vtime;
 
-    uint_t rom_speed;
+    uint rom_speed;
 
     uint16_t rddiv;
     uint16_t rdmpy;

@@ -1,12 +1,12 @@
-auto SMP::port_read(uint_t addr) -> uint_t {
+auto SMP::port_read(uint addr) -> uint {
   return apuram[0xf4 + (addr & 3)];
 }
 
-auto SMP::port_write(uint_t addr, uint_t data) -> void {
+auto SMP::port_write(uint addr, uint data) -> void {
   apuram[0xf4 + (addr & 3)] = data;
 }
 
-auto SMP::mmio_read(uint_t addr) -> uint_t {
+auto SMP::mmio_read(uint addr) -> uint {
   switch(addr) {
 
   case 0xf2:
@@ -51,7 +51,7 @@ auto SMP::mmio_read(uint_t addr) -> uint_t {
   return 0x00;
 }
 
-auto SMP::mmio_write(uint_t addr, uint_t data) -> void {
+auto SMP::mmio_write(uint addr, uint data) -> void {
   switch(addr) {
 
   case 0xf1:

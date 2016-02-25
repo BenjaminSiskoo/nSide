@@ -26,9 +26,6 @@
   #include <stdint.h>
 #endif
 
-using int_t = signed int;
-using uint_t = unsigned int;
-
 #if defined(__SIZEOF_INT128__)
   using int128_t = signed __int128;
   using uint128_t = unsigned __int128;

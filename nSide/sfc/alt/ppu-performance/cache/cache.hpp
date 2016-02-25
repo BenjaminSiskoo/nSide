@@ -1,10 +1,10 @@
 struct Cache {
   Cache(PPU& self);
 
-  auto tile_2bpp(uint_t tile) -> uint8_t*;
-  auto tile_4bpp(uint_t tile) -> uint8_t*;
-  auto tile_8bpp(uint_t tile) -> uint8_t*;
-  auto tile(uint_t bpp, uint_t tile) -> uint8_t*;
+  auto tile_2bpp(uint tile) -> uint8_t*;
+  auto tile_4bpp(uint tile) -> uint8_t*;
+  auto tile_8bpp(uint tile) -> uint8_t*;
+  auto tile(uint bpp, uint tile) -> uint8_t*;
 
   auto serialize(serializer&) -> void;
 

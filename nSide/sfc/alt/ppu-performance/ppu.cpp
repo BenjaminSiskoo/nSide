@@ -34,7 +34,7 @@ PPU::~PPU() {
   delete[] output;
 }
 
-auto PPU::step(uint_t clocks) -> void {
+auto PPU::step(uint clocks) -> void {
   clock += clocks;
 }
 
@@ -61,7 +61,7 @@ auto PPU::main() -> void {
   }
 }
 
-auto PPU::add_clocks(uint_t clocks) -> void {
+auto PPU::add_clocks(uint clocks) -> void {
   tick(clocks);
   step(clocks);
   synchronizeCPU();
@@ -127,7 +127,7 @@ auto PPU::reset() -> void {
   video.reset();
 }
 
-auto PPU::layer_enable(uint_t layer, uint_t priority, bool enable) -> void {
+auto PPU::layer_enable(uint layer, uint priority, bool enable) -> void {
   switch(layer * 4 + priority) {
   case  0: bg1.priority0_enable = enable; break;
   case  1: bg1.priority1_enable = enable; break;
@@ -144,7 +144,7 @@ auto PPU::layer_enable(uint_t layer, uint_t priority, bool enable) -> void {
   }
 }
 
-auto PPU::set_frameskip(uint_t frameskip) -> void {
+auto PPU::set_frameskip(uint frameskip) -> void {
   display.frameskip = frameskip;
   display.framecounter = 0;
 }

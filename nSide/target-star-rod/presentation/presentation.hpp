@@ -1,6 +1,6 @@
 struct Presentation : Window {
   Presentation();
-  auto showSplash() -> void;
+  auto drawSplashScreen() -> void;
 
   FixedLayout layout{this};
     Viewport viewport{&layout, Geometry{0, 0, 512, 480}};

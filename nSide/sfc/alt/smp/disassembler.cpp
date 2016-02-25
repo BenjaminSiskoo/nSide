@@ -3,7 +3,7 @@ auto SMP::disassemble_read(uint16_t addr) -> uint8_t {
   return smp.apuram[addr];
 }
 
-auto SMP::relb(int8_t offset, int_t op_len) -> uint16_t {
+auto SMP::relb(int8_t offset, int op_len) -> uint16_t {
   uint16_t pc = regs.pc + op_len;
   return pc + offset;
 }

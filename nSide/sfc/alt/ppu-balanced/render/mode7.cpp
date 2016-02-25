@@ -10,7 +10,7 @@
 //--s---vvvvvvvvvv -> ssssssvvvvvvvvvv
 #define CLIP(x) ( ((x) & 0x2000) ? ( (x) | ~0x03ff) : ((x) & 0x03ff) )
 
-template<uint_t bg>
+template<uint bg>
 auto PPU::render_line_mode7(uint8_t pri0_pos, uint8_t pri1_pos) -> void {
   if(layer_enabled[bg][0] == false) pri0_pos = 0;
   if(layer_enabled[bg][1] == false) pri1_pos = 0;
@@ -31,7 +31,7 @@ auto PPU::render_line_mode7(uint8_t pri0_pos, uint8_t pri1_pos) -> void {
   int32_t hofs = sclip<13>(cache.m7_hofs);
   int32_t vofs = sclip<13>(cache.m7_vofs);
 
-  int_t  _pri, _x;
+  int  _pri, _x;
   bool _bg_enabled    = regs.bg_enabled[bg];
   bool _bgsub_enabled = regs.bgsub_enabled[bg];
 
@@ -59,7 +59,7 @@ auto PPU::render_line_mode7(uint8_t pri0_pos, uint8_t pri1_pos) -> void {
     px = psx + (a * mtable_x[x]);
     py = psy + (c * mtable_x[x]);
 
-    //mask floating-point_t bits (low 8 bits)
+    //mask floating-point bits (low 8 bits)
     px >>= 8;
     py >>= 8;
 

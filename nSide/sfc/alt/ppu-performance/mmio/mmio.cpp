@@ -18,13 +18,13 @@ auto PPU::get_vram_addr() -> uint16_t {
   return (addr << 1);
 }
 
-auto PPU::vram_read(uint_t addr) -> uint8_t {
+auto PPU::vram_read(uint addr) -> uint8_t {
   if(regs.display_disable) return vram[addr];
   if(cpu.vcounter() >= display.height) return vram[addr];
   return 0x00;
 }
 
-auto PPU::vram_write(uint_t addr, uint8_t data) -> void {
+auto PPU::vram_write(uint addr, uint8_t data) -> void {
   if(regs.display_disable || cpu.vcounter() >= display.height) {
     vram[addr] = data;
     cache.tilevalid[0][addr >> 4] = false;
@@ -34,25 +34,25 @@ auto PPU::vram_write(uint_t addr, uint8_t data) -> void {
   }
 }
 
-auto PPU::oam_read(uint_t addr) -> uint8_t {
+auto PPU::oam_read(uint addr) -> uint8_t {
   if(addr & 0x0200) addr &= 0x021f;
   if(regs.display_disable) return oam[addr];
   if(cpu.vcounter() >= display.height) return oam[addr];
   return oam[0x0218];
 }
 
-auto PPU::oam_write(uint_t addr, uint8_t data) -> void {
+auto PPU::oam_write(uint addr, uint8_t data) -> void {
   if(addr & 0x0200) addr &= 0x021f;
   if(!regs.display_disable && cpu.vcounter() < display.height) addr = 0x0218;
   oam[addr] = data;
   sprite.update_list(addr, data);
 }
 
-auto PPU::cgram_read(uint_t addr) -> uint8_t {
+auto PPU::cgram_read(uint addr) -> uint8_t {
   return cgram[addr];
 }
 
-auto PPU::cgram_write(uint_t addr, uint8_t data) -> void {
+auto PPU::cgram_write(uint addr, uint8_t data) -> void {
   cgram[addr] = data;
 }
 
@@ -154,7 +154,7 @@ auto PPU::mmio_update_video_mode() -> void {
   }
 }
 
-auto PPU::mmio_read(uint_t addr, uint8_t data) -> uint8_t {
+auto PPU::mmio_read(uint addr, uint8_t data) -> uint8_t {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -275,7 +275,7 @@ auto PPU::mmio_read(uint_t addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto PPU::mmio_write(uint_t addr, uint8_t data) -> void {
+auto PPU::mmio_write(uint addr, uint8_t data) -> void {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {

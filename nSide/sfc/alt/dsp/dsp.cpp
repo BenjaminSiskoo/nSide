@@ -12,7 +12,7 @@ DSP::DSP() {
   for(auto i : range(8)) channel_enabled[i] = true;
 }
 
-auto DSP::step(uint_t clocks) -> void {
+auto DSP::step(uint clocks) -> void {
   clock += clocks;
 }
 
@@ -28,9 +28,9 @@ auto DSP::main() -> void {
   spc_dsp.run(1);
   step(24);
 
-  int_t count = spc_dsp.sample_count();
+  int count = spc_dsp.sample_count();
   if(count > 0) {
-    for(uint_t n = 0; n < count; n += 2) audio.sample(samplebuffer[n + 0], samplebuffer[n + 1]);
+    for(uint n = 0; n < count; n += 2) audio.sample(samplebuffer[n + 0], samplebuffer[n + 1]);
     spc_dsp.set_output(samplebuffer, 8192);
   }
 }
@@ -61,9 +61,9 @@ auto DSP::reset() -> void {
   spc_dsp.set_output(samplebuffer, 8192);
 }
 
-auto DSP::channel_enable(uint_t channel, bool enable) -> void {
+auto DSP::channel_enable(uint channel, bool enable) -> void {
   channel_enabled[channel & 7] = enable;
-  uint_t mask = 0;
+  uint mask = 0;
   for(auto i : range(8)) {
     if(channel_enabled[i] == false) mask |= 1 << i;
   }

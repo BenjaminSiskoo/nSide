@@ -1,11 +1,9 @@
 struct Presentation : Window {
   Presentation();
-  void showSplash();
+  auto drawSplashScreen() -> void;
 
-  FixedLayout layout;
-  Viewport viewport;
-
-  nall::image splash;
+  VerticalLayout layout{this};
+    Viewport viewport{&layout, Size{~0, ~0}};
 };
 
-extern Presentation* presentation;
+extern unique_pointer<Presentation> presentation;

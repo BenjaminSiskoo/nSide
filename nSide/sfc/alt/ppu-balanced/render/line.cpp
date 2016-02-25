@@ -1,5 +1,5 @@
 inline auto PPU::get_palette(uint8_t index) -> uint16_t {
-  const uint_t addr = index << 1;
+  const uint addr = index << 1;
   return cgram[addr] + (cgram[addr + 1] << 8);
 }
 
@@ -88,13 +88,13 @@ inline auto PPU::render_line_output() -> void {
   auto ptr = (uint32_t*)output + (line * 1024) + ((interlace() && field()) ? 512 : 0);
 
   if(!regs.pseudo_hires && regs.bg_mode != 5 && regs.bg_mode != 6) {
-    for(uint_t x = 0; x < 256; x++) {
-      uint_t color = (regs.display_brightness << 15) | get_pixel_normal(x);
+    for(uint x = 0; x < 256; x++) {
+      uint color = (regs.display_brightness << 15) | get_pixel_normal(x);
       *ptr++ = color;
       *ptr++ = color;
     }
   } else {
-    for(uint_t x = 0; x < 256; x++) {
+    for(uint x = 0; x < 256; x++) {
       *ptr++ = (regs.display_brightness << 15) | get_pixel_swap(x);
       *ptr++ = (regs.display_brightness << 15) | get_pixel_normal(x);
     }

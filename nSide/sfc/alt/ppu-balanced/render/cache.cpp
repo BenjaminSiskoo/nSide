@@ -21,7 +21,7 @@
   col += !!(d7 & mask) << 7; \
   *dest++ = col
 
-template<uint_t color_depth>
+template<uint color_depth>
 auto PPU::render_bg_tile(uint16_t tile_num) -> void {
   uint8_t col, d0, d1, d2, d3, d4, d5, d6, d7;
 

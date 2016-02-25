@@ -4,12 +4,10 @@ endif
 
 flags += -DDEBUGGER
 
-processors := arm gsu hg51b lr35902 r65816 spc700 upd96050
-include processor/GNUmakefile
-
-include emulator/GNUmakefile
 include sfc/GNUmakefile
 include gb/GNUmakefile
+include processor/GNUmakefile
+include emulator/GNUmakefile
 
 ui_objects := star-rod-laevateinn star-rod-program star-rod-settings
 ui_objects += star-rod-debugger star-rod-tracer
@@ -24,11 +22,11 @@ ui_objects += $(if $(call streq,$(platform),windows),star-rod-resource)
 ifeq ($(platform),windows)
   ruby := video.wgl audio.xaudio2 input.windows
 else ifeq ($(platform),macosx)
-  ruby := video.cgl audio.openal input.carbon
+  ruby := video.cgl audio.openal input.quartz
 else ifeq ($(platform),linux)
-  ruby := video.glx audio.alsa input.udev
+  ruby := video.xshm audio.openal input.sdl
 else ifeq ($(platform),bsd)
-  ruby := video.glx audio.openal input.xlib
+  ruby := video.xshm audio.oss input.sdl
 endif
 
 include ../ruby/GNUmakefile
@@ -37,6 +35,7 @@ link += $(rubylink)
 include ../hiro/GNUmakefile
 link += $(hirolink)
 
+# rules
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 

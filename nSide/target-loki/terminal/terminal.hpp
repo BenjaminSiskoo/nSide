@@ -1,31 +1,22 @@
 struct Terminal : Window {
-  struct Alias {
-    string name;
-    string mapping;
-  };
-
-  struct Hotkey {
-    string name;
-    string mapping;
-  };
-
   Terminal();
-  void load();
-  void unload();
+  auto showAboutWindow() -> void;
 
-  void command(string s);
-  void echoAliases();
-  void echoHotkeys();
-  void inputEvent(HID::Device& device, unsigned group, unsigned input, int16_t oldValue, int16_t newValue);
-  void reset();
-  void print(const string& text);
-  void setColors();
+  MenuBar menuBar{this};
+    Menu helpMenu{&menuBar};
+      MenuItem aboutAction{&helpMenu};
 
-  VerticalLayout layout;
-  Console console;
-
-  vector<Alias> aliases;
-  vector<Hotkey> hotkeys;
+  VerticalLayout layout{this};
+    Console console{&layout, Size{~0, ~0}};
 };
 
-extern Terminal* terminal;
+struct AboutWindow : Window {
+  AboutWindow();
+
+  VerticalLayout layout{this};
+    Canvas canvas{&layout, Size{288, 360}, 15};
+    Label information{&layout, Size{~0, 0}};
+};
+
+extern unique_pointer<Terminal> terminal;
+extern unique_pointer<AboutWindow> aboutWindow;

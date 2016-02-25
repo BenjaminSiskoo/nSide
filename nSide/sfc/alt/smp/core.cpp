@@ -55,7 +55,7 @@ auto SMP::op_step() -> void {
 
   #else
 
-  uint_t opcode = op_readpc();
+  uint opcode = op_readpc();
   switch(opcode) {
   #include "core/op_misc.cpp"
   #include "core/op_mov.cpp"
@@ -77,7 +77,7 @@ auto SMP::op_step() -> void {
   #endif
 }
 
-const uint_t SMP::cycle_count_table[256] = {
+const uint SMP::cycle_count_table[256] = {
   #define c 12
 //0 1 2 3   4 5 6 7   8 9 A B   C D E F
   2,8,4,7,  3,4,3,6,  2,6,5,4,  5,4,6,8,  //0

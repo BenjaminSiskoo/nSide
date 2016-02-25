@@ -22,7 +22,7 @@ Presentation::Presentation() {
   windowManager->append(this, "Presentation");
 }
 
-auto Presentation::showSplash() -> void {
+auto Presentation::drawSplashScreen() -> void {
   uint32_t* output;
   uint pitch;
   if(video->lock(output, pitch, 512, 480)) {

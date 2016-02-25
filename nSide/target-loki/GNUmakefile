@@ -2,98 +2,79 @@ ifndef name
   name := loki
 endif
 
-ifndef DESTDIR
-  DESTDIR := /
-endif
-
-processors := arm gsu hg51b lr35902 r65816 spc700 upd96050
-include processor/GNUmakefile
-
 include sfc/GNUmakefile
-include gb/GNUmakefile
+include processor/GNUmakefile
+include emulator/GNUmakefile
 
-ui_objects := ui-loki ui-settings ui-input
+ui_objects := ui-loki ui-program ui-settings ui-input
 ui_objects += ui-interface ui-debugger
-ui_objects += ui-presentation ui-terminal
-ui_objects += ruby phoenix
-ui_objects += $(if $(call streq,$(platform),windows),resource)
+ui_objects += ui-terminal ui-presentation
+ui_objects += ruby hiro
+ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
 
+# platform
 ifeq ($(platform),windows)
-  ruby := video.wgl audio.xaudio2 input.windows
+  ruby += video.gdi audio.directsound input.windows
 else ifeq ($(platform),macosx)
-  ruby := video.cgl audio.openal input.carbon
+  ruby += video.cgl audio.openal input.quartz
 else ifeq ($(platform),linux)
-  ruby := video.glx audio.alsa input.udev
+  ruby += video.xshm audio.openal input.sdl
 else ifeq ($(platform),bsd)
-  ruby := video.glx audio.openal input.x
+  ruby += video.xshm audio.oss input.sdl
 endif
 
-include ruby/GNUmakefile
+# ruby
+include ../ruby/GNUmakefile
 link += $(rubylink)
 
-include phoenix/GNUmakefile
-link += $(phoenixlink)
+# hiro
+include ../hiro/GNUmakefile
+link += $(hirolink)
 
+# rules
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
+obj/libco.o: ../libco/libco.c $(call rwildcard,../libco/)
+
+obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,../ruby/)
+	$(compiler) $(rubyflags) -c $< -o $@
+
+obj/hiro.o: ../hiro/hiro.cpp $(call rwildcard,../hiro/)
+	$(compiler) $(hiroflags) -c $< -o $@
+
 obj/ui-loki.o: $(ui)/loki.cpp $(call rwildcard,$(ui)/)
+obj/ui-program.o: $(ui)/program/program.cpp $(call rwildcard,$(ui)/)
 obj/ui-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
 obj/ui-input.o: $(ui)/input/input.cpp $(call rwildcard,$(ui)/)
 obj/ui-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/)
 obj/ui-debugger.o: $(ui)/debugger/debugger.cpp $(call rwildcard,$(ui)/)
-obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)
 obj/ui-terminal.o: $(ui)/terminal/terminal.cpp $(call rwildcard,$(ui)/)
+obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)
 
-obj/ruby.o: ruby/ruby.cpp $(call rwildcard,ruby/)
-	$(compiler) $(rubyflags) -c $< -o $@
+obj/ui-resource.o:
+	windres data/resource.rc obj/ui-resource.o
 
-obj/phoenix.o: phoenix/phoenix.cpp $(call rwildcard,phoenix/)
-	$(compiler) $(phoenixflags) -c $< -o $@
-
-obj/resource.o: $(ui)/resource.rc
-ifeq ($(arch),x86)
-	windres --target=pe-i386 $(ui)/resource.rc obj/resource.o
-else
-	windres $(ui)/resource.rc obj/resource.o
-endif
-
+# targets
 build: $(objects)
-ifeq ($(platform),windows)
-	$(strip $(compiler) -shared -o out/phoenix.dll obj/phoenix.o $(phoenixlink))
-	$(strip $(compiler) -o out/$(name) $(subst obj/phoenix.o,,$(objects)) $(link) -Lout -lphoenix)
-else ifeq ($(platform),macosx)
-	if [ -d out/$(name).app ]; then rm -r out/$(name).app; fi
-	mkdir out/$(name).app
-	mkdir out/$(name).app/Contents
-	mkdir out/$(name).app/Contents/MacOS
-	mkdir out/$(name).app/Contents/Resources
-	cp data/Info.plist out/$(name).app/Contents/Info.plist
-	$(strip $(compiler) -o out/$(name).app/Contents/MacOS/$(name) $(objects) $(link))
-else
-	$(strip $(compiler) -o out/$(name) $(objects) $(link))
-endif
-
-resource:
-	sourcery $(ui)/resource/resource.bml $(ui)/resource/resource.cpp $(ui)/resource/resource.hpp
+	$(call unique,$(compiler) -o out/$(name) $(objects) $(link))
 
 install:
-ifeq ($(platform),windows)
-else ifeq ($(platform),macosx)
- 	install -d $(DESTDIR)Library/Application\ Support/$(name)
- 	cp -R profile/* $(DESTDIR)Library/Application\ Support/$(name)
- 	chmod -R 777 $(DESTDIR)Library/Application\ Support/$(name)
-else
- 	install -d $(DESTDIR)$(prefix)/bin/
- 	cp out/$(name) $(DESTDIR)$(prefix)/bin/$(name)
- 	install -d $(DESTDIR)usr/share/$(name)
- 	cp -R profile/* $(DESTDIR)usr/share/$(name)
- 	chmod -R 777 $(DESTDIR)usr/share/$(name)
+ifeq ($(shell id -un),root)
+	$(error "make install should not be run as root")
+else ifneq ($(filter $(platform),linux bsd),)
+	mkdir -p $(prefix)/bin/
+	mkdir -p $(prefix)/share/icons/
+	mkdir -p $(prefix)/share/$(name)/
+	cp out/$(name) $(prefix)/bin/$(name)
+	cp data/higan.png $(prefix)/share/icons/$(name).png
+	cp -R profile/* $(prefix)/share/$(name)/
 endif
 
 uninstall:
-ifeq ($(platform),windows)
-else ifeq ($(platform),macosx)
-else
- 	rm $(DESTDIR)$(prefix)/bin/$(name)
+ifeq ($(shell id -un),root)
+	$(error "make uninstall should not be run as root")
+else ifneq ($(filter $(platform),linux bsd),)
+	if [ -f $(prefix)/bin/$(name) ]; then rm $(prefix)/bin/$(name); fi
+	if [ -f $(prefix)/share/icons/$(name).png ]; then rm $(prefix)/share/icons/$(name).png; fi
 endif

@@ -5,15 +5,15 @@
 #define __MSVCRT_VERSION__ WINVER
 #define NOMINMAX
 
-#define boolean WindowsBoolean
+#include <nall/windows/guard.hpp>
 #include <winsock2.h>
-#undef boolean
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
 #include <uxtheme.h>
 #include <io.h>
 #include <shlobj.h>
+#include <nall/windows/guard.hpp>
 #include <nall/windows/registry.hpp>
 #include <nall/windows/utf8.hpp>
 

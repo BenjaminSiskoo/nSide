@@ -1,30 +1,30 @@
 #include "mode7.cpp"
 
-PPU::Background::Background(PPU& self, uint_t id) : self(self), id(id) {
+PPU::Background::Background(PPU& self, uint id) : self(self), id(id) {
   priority0_enable = true;
   priority1_enable = true;
 
   opt_valid_bit = (id == ID::BG1 ? 0x2000 : id == ID::BG2 ? 0x4000 : 0x0000);
 
   mosaic_table = new uint16_t*[16];
-  for(uint_t m = 0; m < 16; m++) {
+  for(uint m = 0; m < 16; m++) {
     mosaic_table[m] = new uint16_t[4096];
-    for(uint_t x = 0; x < 4096; x++) {
+    for(uint x = 0; x < 4096; x++) {
       mosaic_table[m][x] = (x / (m + 1)) * (m + 1);
     }
   }
 }
 
 PPU::Background::~Background() {
-  for(uint_t m = 0; m < 16; m++) delete[] mosaic_table[m];
+  for(uint m = 0; m < 16; m++) delete[] mosaic_table[m];
   delete[] mosaic_table;
 }
 
-auto PPU::Background::get_tile(uint_t hoffset, uint_t voffset) -> uint_t {
-  uint_t tile_x = (hoffset & mask_x) >> tile_width;
-  uint_t tile_y = (voffset & mask_y) >> tile_height;
+auto PPU::Background::get_tile(uint hoffset, uint voffset) -> uint {
+  uint tile_x = (hoffset & mask_x) >> tile_width;
+  uint tile_y = (voffset & mask_y) >> tile_height;
 
-  uint_t tile_pos = ((tile_y & 0x1f) << 5) + (tile_x & 0x1f);
+  uint tile_pos = ((tile_y & 0x1f) << 5) + (tile_x & 0x1f);
   if(tile_y & 0x20) tile_pos += scy;
   if(tile_x & 0x20) tile_pos += scx;
 
@@ -32,8 +32,8 @@ auto PPU::Background::get_tile(uint_t hoffset, uint_t voffset) -> uint_t {
   return (ppu.vram[tiledata_addr + 0] << 0) + (ppu.vram[tiledata_addr + 1] << 8);
 }
 
-auto PPU::Background::offset_per_tile(uint_t x, uint_t y, uint_t& hoffset, uint_t& voffset) -> void {
-  uint_t opt_x = (x + (hscroll & 7)), hval, vval;
+auto PPU::Background::offset_per_tile(uint x, uint y, uint& hoffset, uint& voffset) -> void {
+  uint opt_x = (x + (hscroll & 7)), hval, vval;
   if(opt_x >= 8) {
     hval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
     if(self.regs.bgmode != 4)
@@ -94,38 +94,38 @@ auto PPU::Background::render() -> void {
   if(regs.sub_enable) window.render(1);
   if(regs.mode == Mode::Mode7) return render_mode7();
 
-  uint_t priority0 = (priority0_enable ? regs.priority0 : 0);
-  uint_t priority1 = (priority1_enable ? regs.priority1 : 0);
+  uint priority0 = (priority0_enable ? regs.priority0 : 0);
+  uint priority1 = (priority1_enable ? regs.priority1 : 0);
   if(priority0 + priority1 == 0) return;
 
-  uint_t mosaic_hcounter = 1;
-  uint_t mosaic_palette = 0;
-  uint_t mosaic_priority = 0;
-  uint_t mosaic_color = 0;
+  uint mosaic_hcounter = 1;
+  uint mosaic_palette = 0;
+  uint mosaic_priority = 0;
+  uint mosaic_color = 0;
 
-  const uint_t bgpal_index = (self.regs.bgmode == 0 ? id << 5 : 0);
-  const uint_t pal_size = 2 << regs.mode;
-  const uint_t tile_mask = 0x0fff >> regs.mode;
-  const uint_t tiledata_index = regs.tiledata_addr >> (4 + regs.mode);
+  const uint bgpal_index = (self.regs.bgmode == 0 ? id << 5 : 0);
+  const uint pal_size = 2 << regs.mode;
+  const uint tile_mask = 0x0fff >> regs.mode;
+  const uint tiledata_index = regs.tiledata_addr >> (4 + regs.mode);
 
   hscroll = regs.hoffset;
   vscroll = regs.voffset;
 
-  uint_t y = (regs.mosaic == 0 ? self.vcounter() : mosaic_voffset);
+  uint y = (regs.mosaic == 0 ? self.vcounter() : mosaic_voffset);
   if(hires) {
     hscroll <<= 1;
     if(self.regs.interlace) y = (y << 1) + self.field();
   }
 
-  uint_t tile_pri, tile_num;
-  uint_t pal_index, pal_num;
-  uint_t hoffset, voffset, col;
+  uint tile_pri, tile_num;
+  uint pal_index, pal_num;
+  uint hoffset, voffset, col;
   bool mirror_x, mirror_y;
 
   const bool is_opt_mode = (self.regs.bgmode == 2 || self.regs.bgmode == 4 || self.regs.bgmode == 6);
   const bool is_direct_color_mode = (self.screen.regs.direct_color == true && id == ID::BG1 && (self.regs.bgmode == 3 || self.regs.bgmode == 4));
 
-  int_t x = 0 - (hscroll & 7);
+  int x = 0 - (hscroll & 7);
   while(x < width) {
     hoffset = x + hscroll;
     voffset = y + vscroll;
@@ -145,12 +145,12 @@ auto PPU::Background::render() -> void {
     tile_num = ((tile_num & 0x03ff) + tiledata_index) & tile_mask;
 
     if(mirror_y) voffset ^= 7;
-    uint_t mirror_xmask = !mirror_x ? 0 : 7;
+    uint mirror_xmask = !mirror_x ? 0 : 7;
 
     uint8_t* tiledata = self.cache.tile(regs.mode, tile_num);
     tiledata += ((voffset & 7) * 8);
 
-    for(uint_t n = 0; n < 8; n++, x++) {
+    for(uint n = 0; n < 8; n++, x++) {
       if(x & width) continue;
       if(--mosaic_hcounter == 0) {
         mosaic_hcounter = regs.mosaic + 1;
@@ -168,7 +168,7 @@ auto PPU::Background::render() -> void {
         if(regs.main_enable && !window.main[x]) self.screen.output.plot_main(x, mosaic_color, mosaic_priority, id);
         if(regs.sub_enable && !window.sub[x]) self.screen.output.plot_sub(x, mosaic_color, mosaic_priority, id);
       } else {
-        int_t half_x = x >> 1;
+        int half_x = x >> 1;
         if(x & 1) {
           if(regs.main_enable && !window.main[half_x]) self.screen.output.plot_main(half_x, mosaic_color, mosaic_priority, id);
         } else {

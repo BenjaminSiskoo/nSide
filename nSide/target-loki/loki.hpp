@@ -1,47 +1,21 @@
+#include <nall/nall.hpp>
+#include <ruby/ruby.hpp>
+#include <hiro/hiro.hpp>
+using namespace nall;
+using namespace ruby;
+using namespace hiro;
+extern unique_pointer<Video> video;
+extern unique_pointer<Audio> audio;
+extern unique_pointer<Input> input;
+
 #include <emulator/emulator.hpp>
+extern Emulator::Interface* emulator;
+
 #include <sfc/sfc.hpp>
 namespace SFC = SuperFamicom;
 
-#include <nall/platform.hpp>
-#include <nall/bitvector.hpp>
-#include <nall/config.hpp>
-#include <nall/directory.hpp>
-#include <nall/dsp.hpp>
-#include <nall/invoke.hpp>
-#include <nall/map.hpp>
-#include <nall/stream/file.hpp>
-#include <nall/stream/memory.hpp>
-#include <nall/stream/mmap.hpp>
-#include <nall/stream/vector.hpp>
-using namespace nall;
+auto locate(string name) -> string;
 
-#include <ruby/ruby.hpp>
-using namespace ruby;
-
-#include <phoenix/phoenix.hpp>
-using namespace phoenix;
-
-#include "settings/settings.hpp"
-#include "input/input.hpp"
-#include "interface/interface.hpp"
-#include "debugger/debugger.hpp"
-#include "presentation/presentation.hpp"
+#include "program/program.hpp"
 #include "terminal/terminal.hpp"
-#include "resource/resource.hpp"
-
-struct Program {
-  string basepath;
-  string userpath;
-  string sharedpath;
-
-  string path(string name);
-  void main();
-  Program(string pathname);
-};
-
-template<typename... Args> void echo(Args&&... args) {
-  terminal->print({std::forward<Args>(args)...});
-}
-
-extern Program* program;
-extern DSP dspaudio;
+#include "presentation/presentation.hpp"

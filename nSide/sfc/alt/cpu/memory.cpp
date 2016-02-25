@@ -22,18 +22,18 @@ auto CPU::op_io() -> void {
   add_clocks(6);
 }
 
-auto CPU::op_read(uint_t addr) -> uint8_t {
+auto CPU::op_read(uint addr) -> uint8_t {
   regs.mdr = bus.read(addr, regs.mdr);
   add_clocks(speed(addr));
   return regs.mdr;
 }
 
-auto CPU::op_write(uint_t addr, uint8_t data) -> void {
+auto CPU::op_write(uint addr, uint8_t data) -> void {
   add_clocks(speed(addr));
   bus.write(addr, regs.mdr = data);
 }
 
-auto CPU::speed(uint_t addr) const -> uint_t {
+auto CPU::speed(uint addr) const -> uint {
   if(addr & 0x408000) {
     if(addr & 0x800000) return status.rom_speed;
     return 8;

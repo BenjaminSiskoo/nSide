@@ -9,8 +9,8 @@ inline auto render_line_mode6() -> void;
 inline auto render_line_mode7() -> void;
 
 //cache.cpp
-enum : uint_t { COLORDEPTH_4 = 0, COLORDEPTH_16 = 1, COLORDEPTH_256 = 2 };
-enum : uint_t { TILE_2BIT = 0, TILE_4BIT = 1, TILE_8BIT = 2 };
+enum : uint { COLORDEPTH_4 = 0, COLORDEPTH_16 = 1, COLORDEPTH_256 = 2 };
+enum : uint { TILE_2BIT = 0, TILE_4BIT = 1, TILE_8BIT = 2 };
 
 struct pixel_t {
   //bgr555 color data for main/subscreen pixels: 0x0000 = transparent / use palette color # 0
@@ -28,7 +28,7 @@ struct pixel_t {
 uint8_t* bg_tiledata[3];
 uint8_t* bg_tiledata_state[3];  //0 = valid, 1 = dirty
 
-template<uint_t color_depth> auto render_bg_tile(uint16_t tile_num) -> void;
+template<uint color_depth> auto render_bg_tile(uint16_t tile_num) -> void;
 inline auto flush_pixel_cache() -> void;
 auto alloc_tiledata_cache() -> void;
 auto flush_tiledata_cache() -> void;
@@ -50,8 +50,8 @@ struct {
 } bg_info[4];
 auto update_bg_info() -> void;
 
-template<uint_t bg> auto bg_get_tile(uint16_t x, uint16_t y) -> uint16_t;
-template<uint_t mode, uint_t bg, uint_t color_depth> auto render_line_bg(uint8_t pri0_pos, uint8_t pri1_pos) -> void;
+template<uint bg> auto bg_get_tile(uint16_t x, uint16_t y) -> uint16_t;
+template<uint mode, uint bg, uint color_depth> auto render_line_bg(uint8_t pri0_pos, uint8_t pri1_pos) -> void;
 
 //oam.cpp
 struct sprite_item {
@@ -65,7 +65,7 @@ struct sprite_item {
   bool   size;
 } sprite_list[128];
 bool sprite_list_valid;
-uint_t active_sprite;
+uint active_sprite;
 
 uint8_t oam_itemlist[32];
 struct oam_tileitem {
@@ -73,19 +73,19 @@ struct oam_tileitem {
   bool   hflip;
 } oam_tilelist[34];
 
-enum : uint_t { OAM_PRI_NONE = 4 };
+enum : uint { OAM_PRI_NONE = 4 };
 uint8_t oam_line_pal[256], oam_line_pri[256];
 
 auto update_sprite_list(unsigned addr, uint8_t data) -> void;
 auto build_sprite_list() -> void;
 auto is_sprite_on_scanline() -> bool;
 auto load_oam_tiles() -> void;
-auto render_oam_tile(int_t tile_num) -> void;
+auto render_oam_tile(int tile_num) -> void;
 auto render_line_oam_rto() -> void;
 auto render_line_oam(uint8_t pri0_pos, uint8_t pri1_pos, uint8_t pri2_pos, uint8_t pri3_pos) -> void;
 
 //mode7.cpp
-template<uint_t bg> auto render_line_mode7(uint8_t pri0_pos, uint8_t pri1_pos) -> void;
+template<uint bg> auto render_line_mode7(uint8_t pri0_pos, uint8_t pri1_pos) -> void;
 
 //addsub.cpp
 inline auto addsub(uint32_t x, uint32_t y, bool halve) -> uint16_t;

@@ -77,7 +77,7 @@ Program::Program(lstring args) {
   dspaudio.setResampler(DSP::ResampleEngine::Sinc);
   dspaudio.setResamplerFrequency(48000);
 
-  presentation->showSplash();
+  presentation->drawSplashScreen();
 
   if(loadMedia(location) == false) return;
   cpuDebugger->updateDisassembly();
