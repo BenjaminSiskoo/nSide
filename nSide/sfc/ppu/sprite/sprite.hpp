@@ -60,7 +60,7 @@ struct Sprite {
 
   struct Output {
     struct Pixel {
-      uint2 priority;  //0 = none (transparent)
+      uint priority;  //0 = none (transparent)
       uint8 palette;
     } main, sub;
   } output;
