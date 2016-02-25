@@ -1,10 +1,5 @@
 include ../nall/GNUmakefile
 
-fc  := fc
-sfc := sfc
-gb  := gb
-gba := gba
-
 ifndef profile
   profile := accuracy
 endif

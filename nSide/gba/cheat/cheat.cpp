@@ -1,6 +1,5 @@
 #include <gba/gba.hpp>
 
-#define CHEAT_CPP
 namespace GameBoyAdvance {
 
 Cheat cheat;
