@@ -1,7 +1,7 @@
-void Usage::allocate(uint size_) {
+auto Usage::allocate(uint size_) -> void {
   if(data) delete[] data;
   size = size_;
-  data = new uint8[size]();
+  data = new uint8_t[size]();
 }
 
 Usage::Usage() {
@@ -13,7 +13,7 @@ Usage::~Usage() {
   if(data) delete[] data;
 }
 
-void Debugger::loadUsage() {
+auto Debugger::loadUsage() -> void {
   file fp;
 
   //if cartridge image was modified after the usage files,
@@ -43,7 +43,7 @@ void Debugger::loadUsage() {
   }
 }
 
-void Debugger::saveUsage() {
+auto Debugger::saveUsage() -> void {
   string filename;
   filename = {program->folderPaths(0), "debug/usage.cpu"};
   file::write(filename, cpuUsage.data, cpuUsage.size);
@@ -51,7 +51,7 @@ void Debugger::saveUsage() {
   file::write(filename, apuUsage.data, apuUsage.size);
 }
 
-void Debugger::resetUsage() {
+auto Debugger::resetUsage() -> void {
   if(cpuUsage.data) memset(cpuUsage.data, 0, cpuUsage.size);
   if(apuUsage.data) memset(apuUsage.data, 0, apuUsage.size);
 }

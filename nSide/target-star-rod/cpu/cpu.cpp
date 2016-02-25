@@ -1,27 +1,27 @@
 #include "../laevateinn.hpp"
-CPUDebugger* cpuDebugger = nullptr;
+unique_pointer<CPUDebugger> cpuDebugger;
 
 #include "registers.cpp"
 
-uint24 CPUDebugger::mirror(uint24 addr) {
+auto CPUDebugger::mirror(uint24 addr) -> uint24 {
   if((addr & 0x40e000) == 0x0000) addr = 0x7e0000 | (addr & 0x1fff);  //$00-3f:80-bf:0000-1fff WRAM
   return addr;
 }
 
-uint8 CPUDebugger::read(uint24 addr) {
+auto CPUDebugger::read(uint24 addr) -> uint8 {
   if((addr & 0x40e000) == 0x2000) return ~0;  //$00-3f|80-bf:2000-3fff  MMIO
   if((addr & 0x40e000) == 0x4000) return ~0;  //$00-3f|80-bf:4000-5fff  MMIO
   return SuperFamicom::bus.read(mirror(addr), SuperFamicom::cpu.regs.mdr);
 }
 
-void CPUDebugger::write(uint24 addr, uint8 data) {
+auto CPUDebugger::write(uint24 addr, uint8 data) -> void {
   if((addr & 0x40e000) == 0x2000) return;  //$00-3f|80-bf:2000-3fff  MMIO
   if((addr & 0x40e000) == 0x4000) return;  //$00-3f|80-bf:4000-5fff  MMIO
   if((addr & 0x40e000) == 0x0000) addr = 0x7e0000 | (addr & 0x1fff);  //$00-3f:80-bf:0000-1fff WRAM
   return SuperFamicom::bus.write(mirror(addr), data);
 }
 
-uint CPUDebugger::opcodeLength(uint24 addr) {
+auto CPUDebugger::opcodeLength(uint24 addr) -> uint {
   #define M 5
   #define X 6
   static uint lengthTable[256] = {
@@ -54,7 +54,7 @@ uint CPUDebugger::opcodeLength(uint24 addr) {
   #undef X
 }
 
-void CPUDebugger::updateDisassembly() {
+auto CPUDebugger::updateDisassembly() -> void {
   string line[15];
   char text[512];
 

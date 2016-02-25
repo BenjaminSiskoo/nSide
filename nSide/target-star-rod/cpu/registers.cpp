@@ -1,4 +1,4 @@
-CPURegisterEditor* cpuRegisterEditor = nullptr;
+unique_pointer<CPURegisterEditor> cpuRegisterEditor;
 
 CPURegisterEditor::CPURegisterEditor() {
   cpuRegisterEditor = this;

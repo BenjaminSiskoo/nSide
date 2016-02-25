@@ -1,5 +1,5 @@
 #include "../laevateinn.hpp"
-PropertiesViewer* propertiesViewer = nullptr;
+unique_pointer<PropertiesViewer> propertiesViewer;
 
 PropertiesViewer::PropertiesViewer() {
   propertiesViewer = this;
@@ -21,7 +21,7 @@ PropertiesViewer::PropertiesViewer() {
   windowManager->append(this, "PropertiesViewer");
 }
 
-void PropertiesViewer::updateProperties() {
+auto PropertiesViewer::updateProperties() -> void {
   string output;
 
   output.append("$2100  INIDISP\n"

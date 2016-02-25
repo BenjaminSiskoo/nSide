@@ -1,4 +1,4 @@
-AboutWindow* aboutWindow = nullptr;
+unique_pointer<AboutWindow> aboutWindow;
 
 AboutWindow::AboutWindow() {
   aboutWindow = this;

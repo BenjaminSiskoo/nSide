@@ -1,4 +1,4 @@
-SMPRegisterEditor* smpRegisterEditor = nullptr;
+unique_pointer<SMPRegisterEditor> smpRegisterEditor;
 
 SMPRegisterEditor::SMPRegisterEditor() {
   smpRegisterEditor = this;
@@ -58,7 +58,7 @@ SMPRegisterEditor::SMPRegisterEditor() {
   windowManager->append(this, "SMPRegisterEditor");
 }
 
-void SMPRegisterEditor::loadRegisters() {
+auto SMPRegisterEditor::loadRegisters() -> void {
   regAValue.setText(hex(SuperFamicom::smp.regs.a, 2L));
   regXValue.setText(hex(SuperFamicom::smp.regs.x, 2L));
   regYValue.setText(hex(SuperFamicom::smp.regs.y, 2L));
@@ -73,7 +73,7 @@ void SMPRegisterEditor::loadRegisters() {
   flagC.setChecked(SuperFamicom::smp.regs.p.c);
 }
 
-void SMPRegisterEditor::saveRegisters() {
+auto SMPRegisterEditor::saveRegisters() -> void {
   SuperFamicom::smp.regs.a = hex(regAValue.text());
   SuperFamicom::smp.regs.x = hex(regXValue.text());
   SuperFamicom::smp.regs.y = hex(regYValue.text());

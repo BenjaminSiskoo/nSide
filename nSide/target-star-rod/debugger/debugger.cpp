@@ -1,10 +1,10 @@
 #include "../laevateinn.hpp"
-Debugger* debugger = nullptr;
+unique_pointer<Debugger> debugger;
 
 #include "hook.cpp"
 #include "usage.cpp"
 
-void Debugger::run() {
+auto Debugger::run() -> void {
   if(paused == true) {
     usleep(2000);
     return;
@@ -18,17 +18,17 @@ void Debugger::run() {
   if(vramViewer->autoUpdate.checked()) vramViewer->updateTiles();
 }
 
-void Debugger::echo(const string& text) {
+auto Debugger::echo(const string& text) -> void {
   consoleWindow->print(text);
 }
 
-void Debugger::resume() {
+auto Debugger::resume() -> void {
   if(paused == false) return;
   paused = false;
   consoleWindow->runButton.setText("Stop");
 }
 
-void Debugger::suspend() {
+auto Debugger::suspend() -> void {
   if(paused == true) return;
   paused = true;
   flags.step = false;

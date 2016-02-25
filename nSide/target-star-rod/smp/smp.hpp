@@ -10,11 +10,11 @@ struct SMPDebugger : Window {
     TextEdit disassembly{&layout, Size{~0, ~0}, 5};
     Button registers{&layout, Size{~0, 0}};
 
-  uint8 read(uint16 addr);
-  void write(uint16 addr, uint8 data);
+  auto read(uint16 addr) -> uint8;
+  auto write(uint16 addr, uint8 data) -> void;
 
-  uint opcodeLength(uint16 addr);
-  void updateDisassembly();
+  auto opcodeLength(uint16 addr) -> uint;
+  auto updateDisassembly() -> void;
   SMPDebugger();
 };
 
@@ -42,10 +42,10 @@ struct SMPRegisterEditor : Window {
       Widget spacer;
       Button update;
 
-  void loadRegisters();
-  void saveRegisters();
+  auto loadRegisters() -> void;
+  auto saveRegisters() -> void;
   SMPRegisterEditor();
 };
 
-extern SMPDebugger* smpDebugger;
-extern SMPRegisterEditor* smpRegisterEditor;
+extern unique_pointer<SMPDebugger> smpDebugger;
+extern unique_pointer<SMPRegisterEditor> smpRegisterEditor;

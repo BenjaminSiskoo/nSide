@@ -1,7 +1,7 @@
 //S-CPU
 //=====
 
-void Debugger::cpu_op_exec(uint24 addr) {
+auto Debugger::cpu_op_exec(uint24 addr) -> void {
   cpuUsage.data[addr] |= Usage::Exec;
   cpuDebugger->opcodePC = addr;
   bool breakpointHit = breakpointEditor->testExecCPU(addr);
@@ -25,12 +25,12 @@ void Debugger::cpu_op_exec(uint24 addr) {
         cpuDebugger->updateDisassembly();
       }
       suspend();
-      SuperFamicom::scheduler.debug();
+      SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
     }
   }
 }
 
-void Debugger::cpu_op_read(uint24 addr, uint8 data) {
+auto Debugger::cpu_op_read(uint24 addr, uint8 data) -> void {
   cpuUsage.data[addr] |= Usage::Read;
   bool breakpointHit = breakpointEditor->testReadCPU(addr);
 
@@ -40,11 +40,11 @@ void Debugger::cpu_op_read(uint24 addr, uint8 data) {
     print(text, "\n");
 
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
-void Debugger::cpu_op_write(uint24 addr, uint8 data) {
+auto Debugger::cpu_op_write(uint24 addr, uint8 data) -> void {
   cpuUsage.data[addr] |= Usage::Write;
   bool breakpointHit = breakpointEditor->testWriteCPU(addr, data);
 
@@ -54,18 +54,18 @@ void Debugger::cpu_op_write(uint24 addr, uint8 data) {
     print(text, "\n");
 
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
-void Debugger::cpu_op_nmi() {
+auto Debugger::cpu_op_nmi() -> void {
   if(flags.cpu.nmi) {
     print("CPU NMI\n");  //, text, "\n");
     flags.cpu.stepInto = true;
   }
 }
 
-void Debugger::cpu_op_irq() {
+auto Debugger::cpu_op_irq() -> void {
   if(flags.cpu.irq) {
     print("CPU IRQ\n");
     flags.cpu.stepInto = true;
@@ -75,7 +75,7 @@ void Debugger::cpu_op_irq() {
 //S-SMP
 //=====
 
-void Debugger::smp_op_exec(uint16 addr) {
+auto Debugger::smp_op_exec(uint16 addr) -> void {
   apuUsage.data[addr] |= Usage::Exec;
   smpDebugger->opcodePC = addr;
   bool breakpointHit = breakpointEditor->testExecSMP(addr);
@@ -98,37 +98,37 @@ void Debugger::smp_op_exec(uint16 addr) {
         smpDebugger->updateDisassembly();
       }
       suspend();
-      SuperFamicom::scheduler.debug();
+      SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
     }
   }
 }
 
-void Debugger::smp_op_read(uint16 addr, uint8 data) {
+auto Debugger::smp_op_read(uint16 addr, uint8 data) -> void {
   apuUsage.data[addr] |= Usage::Read;
   bool breakpointHit = breakpointEditor->testReadSMP(addr);
 
   if(breakpointHit) {
     print(SuperFamicom::smp.disassemble(smpDebugger->opcodePC, SuperFamicom::smp.regs.p.p), "\n");
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
-void Debugger::smp_op_write(uint16 addr, uint8 data) {
+auto Debugger::smp_op_write(uint16 addr, uint8 data) -> void {
   apuUsage.data[addr] |= Usage::Write;
   bool breakpointHit = breakpointEditor->testWriteSMP(addr, data);
 
   if(breakpointHit) {
     print(SuperFamicom::smp.disassemble(smpDebugger->opcodePC, SuperFamicom::smp.regs.p.p), "\n");
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
 //S-PPU
 //=====
 
-void Debugger::ppu_vram_read(uint16 addr, uint8 data) {
+auto Debugger::ppu_vram_read(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testReadVRAM(addr);
 
   if(breakpointHit) {
@@ -137,11 +137,11 @@ void Debugger::ppu_vram_read(uint16 addr, uint8 data) {
     print(text, "\n");
 
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
-void Debugger::ppu_vram_write(uint16 addr, uint8 data) {
+auto Debugger::ppu_vram_write(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testWriteVRAM(addr, data);
 
   if(breakpointHit) {
@@ -150,11 +150,11 @@ void Debugger::ppu_vram_write(uint16 addr, uint8 data) {
     print(text, "\n");
 
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
-void Debugger::ppu_oam_read(uint16 addr, uint8 data) {
+auto Debugger::ppu_oam_read(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testReadOAM(addr);
 
   if(breakpointHit) {
@@ -163,11 +163,11 @@ void Debugger::ppu_oam_read(uint16 addr, uint8 data) {
     print(text, "\n");
 
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
-void Debugger::ppu_oam_write(uint16 addr, uint8 data) {
+auto Debugger::ppu_oam_write(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testWriteOAM(addr, data);
 
   if(breakpointHit) {
@@ -176,11 +176,11 @@ void Debugger::ppu_oam_write(uint16 addr, uint8 data) {
     print(text, "\n");
 
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
-void Debugger::ppu_cgram_read(uint16 addr, uint8 data) {
+auto Debugger::ppu_cgram_read(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testReadCGRAM(addr);
 
   if(breakpointHit) {
@@ -189,11 +189,11 @@ void Debugger::ppu_cgram_read(uint16 addr, uint8 data) {
     print(text, "\n");
 
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }
 
-void Debugger::ppu_cgram_write(uint16 addr, uint8 data) {
+auto Debugger::ppu_cgram_write(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testWriteCGRAM(addr, data);
 
   if(breakpointHit) {
@@ -202,6 +202,6 @@ void Debugger::ppu_cgram_write(uint16 addr, uint8 data) {
     print(text, "\n");
 
     suspend();
-    SuperFamicom::scheduler.debug();
+    SuperFamicom::scheduler.exit(SuperFamicom::Scheduler::Event::Debugger);
   }
 }

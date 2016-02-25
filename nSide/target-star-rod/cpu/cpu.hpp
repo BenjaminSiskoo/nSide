@@ -12,12 +12,12 @@ struct CPUDebugger : Window {
     TextEdit disassembly{&layout, Size{~0, ~0}, 5};
     Button registers{&layout, Size{~0, 0}};
 
-  uint24 mirror(uint24 addr);
-  uint8 read(uint24 addr);
-  void write(uint24 addr, uint8 data);
+  auto mirror(uint24 addr) -> uint24;
+  auto read(uint24 addr) -> uint8;
+  auto write(uint24 addr, uint8 data) -> void;
 
-  uint opcodeLength(uint24 addr);
-  void updateDisassembly();
+  auto opcodeLength(uint24 addr) -> uint;
+  auto updateDisassembly() -> void;
   CPUDebugger();
 };
 
@@ -50,10 +50,10 @@ struct CPURegisterEditor : Window {
       Widget spacer;
       Button update;
 
-  void loadRegisters();
-  void saveRegisters();
+  auto loadRegisters() -> void;
+  auto saveRegisters() -> void;
   CPURegisterEditor();
 };
 
-extern CPUDebugger* cpuDebugger;
-extern CPURegisterEditor* cpuRegisterEditor;
+extern unique_pointer<CPUDebugger> cpuDebugger;
+extern unique_pointer<CPURegisterEditor> cpuRegisterEditor;

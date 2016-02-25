@@ -8,8 +8,8 @@ struct PropertiesViewer : Window {
       Button update{&controlLayout, Size{0, 0}};
     TextEdit properties{&layout, Size{~0, ~0}};
 
-  void updateProperties();
+  auto updateProperties() -> void;
   PropertiesViewer();
 };
 
-extern PropertiesViewer* propertiesViewer;
+extern unique_pointer<PropertiesViewer> propertiesViewer;

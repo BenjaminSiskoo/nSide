@@ -17,8 +17,8 @@ struct Settings : Configuration::Document {
   string folderpath;
 
   Settings();
-  void load();
-  void unload();
+  auto load() -> void;
+  auto unload() -> void;
 };
 
-extern Settings* settings;
+extern unique_pointer<Settings> settings;

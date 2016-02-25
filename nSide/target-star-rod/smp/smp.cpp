@@ -1,26 +1,26 @@
 #include "../laevateinn.hpp"
-SMPDebugger* smpDebugger = nullptr;
+unique_pointer<SMPDebugger> smpDebugger;
 
 #include "registers.cpp"
 
-uint8 SMPDebugger::read(uint16 addr) {
+auto SMPDebugger::read(uint16 addr) -> uint8 {
   if((addr & 0xfff0) == 0x00f0) return ~0;  //$00f0-00ff  MMIO
   return SuperFamicom::smp.busRead(addr);
 }
 
-void SMPDebugger::write(uint16 addr, uint8 data) {
+auto SMPDebugger::write(uint16 addr, uint8 data) -> void {
   if((addr & 0xfff0) == 0x00f0) return;  //$00f0-00ff  MMIO
   return SuperFamicom::smp.busWrite(addr, data);
 }
 
-uint SMPDebugger::opcodeLength(uint16 addr) {
+auto SMPDebugger::opcodeLength(uint16 addr) -> uint {
   static uint lengthTable[256] = {
     0
   };
   return lengthTable[SuperFamicom::smp.busRead(addr)];
 }
 
-void SMPDebugger::updateDisassembly() {
+auto SMPDebugger::updateDisassembly() -> void {
   string line[15];
 
   line[7] = { "> ", SuperFamicom::smp.disassemble(opcodePC, SuperFamicom::smp.regs.p.p) };

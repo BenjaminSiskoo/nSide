@@ -1,5 +1,5 @@
 #include "../laevateinn.hpp"
-BreakpointEditor* breakpointEditor = nullptr;
+unique_pointer<BreakpointEditor> breakpointEditor;
 
 BreakpointEntry::BreakpointEntry() {
   static uint id = 1;
@@ -46,7 +46,7 @@ BreakpointEditor::BreakpointEditor() {
 
 //enable checkbox toggled on one of the five BreakpointEntry items:
 //cache settings to decrease testing overhead whilst debugging
-void BreakpointEditor::synchronize() {
+auto BreakpointEditor::synchronize() -> void {
   breakpoint.reset();
   uint id = 0;
   for(auto &entry : breakpointEntry) {
@@ -104,7 +104,7 @@ void BreakpointEditor::synchronize() {
 //S-CPU
 //=====
 
-bool BreakpointEditor::testReadCPU(uint24 addr) {
+auto BreakpointEditor::testReadCPU(uint24 addr) -> bool {
   addr = cpuDebugger->mirror(addr);
   for(auto &bp : breakpointReadCPU) {
     if(bp.addr == addr) {
@@ -116,7 +116,7 @@ bool BreakpointEditor::testReadCPU(uint24 addr) {
   return false;
 }
 
-bool BreakpointEditor::testWriteCPU(uint24 addr, uint8 data) {
+auto BreakpointEditor::testWriteCPU(uint24 addr, uint8 data) -> bool {
   addr = cpuDebugger->mirror(addr);
   for(auto &bp : breakpointWriteCPU) {
     if(bp.addr == addr) {
@@ -128,7 +128,7 @@ bool BreakpointEditor::testWriteCPU(uint24 addr, uint8 data) {
   return false;
 }
 
-bool BreakpointEditor::testExecCPU(uint24 addr) {
+auto BreakpointEditor::testExecCPU(uint24 addr) -> bool {
   addr = cpuDebugger->mirror(addr);
   for(auto &bp : breakpointExecCPU) {
     if(bp.addr == addr) {
@@ -142,7 +142,7 @@ bool BreakpointEditor::testExecCPU(uint24 addr) {
 //S-SMP
 //=====
 
-bool BreakpointEditor::testReadSMP(uint16 addr) {
+auto BreakpointEditor::testReadSMP(uint16 addr) -> bool {
   for(auto &bp : breakpointReadSMP) {
     if(bp.addr == addr) {
       if(bp.compare && bp.data != smpDebugger->read(addr)) continue;
@@ -153,7 +153,7 @@ bool BreakpointEditor::testReadSMP(uint16 addr) {
   return false;
 }
 
-bool BreakpointEditor::testWriteSMP(uint16 addr, uint8 data) {
+auto BreakpointEditor::testWriteSMP(uint16 addr, uint8 data) -> bool {
   for(auto &bp : breakpointWriteSMP) {
     if(bp.addr == addr) {
       if(bp.compare && bp.data != data) continue;
@@ -164,7 +164,7 @@ bool BreakpointEditor::testWriteSMP(uint16 addr, uint8 data) {
   return false;
 }
 
-bool BreakpointEditor::testExecSMP(uint16 addr) {
+auto BreakpointEditor::testExecSMP(uint16 addr) -> bool {
   for(auto &bp : breakpointExecSMP) {
     if(bp.addr == addr) {
       debugger->print("Breapoint #", bp.id, " hit\n");
@@ -177,7 +177,7 @@ bool BreakpointEditor::testExecSMP(uint16 addr) {
 //S-PPU
 //=====
 
-bool BreakpointEditor::testReadVRAM(uint16 addr) {
+auto BreakpointEditor::testReadVRAM(uint16 addr) -> bool {
   for(auto &bp : breakpointReadVRAM) {
     if(bp.addr == addr) {
       if(bp.compare && bp.data != SuperFamicom::ppu.vram[addr]) continue;
@@ -188,7 +188,7 @@ bool BreakpointEditor::testReadVRAM(uint16 addr) {
   return false;
 }
 
-bool BreakpointEditor::testWriteVRAM(uint16 addr, uint8 data) {
+auto BreakpointEditor::testWriteVRAM(uint16 addr, uint8 data) -> bool {
   for(auto &bp : breakpointWriteVRAM) {
     if(bp.addr == addr) {
       if(bp.compare && bp.data != data) continue;
@@ -199,7 +199,7 @@ bool BreakpointEditor::testWriteVRAM(uint16 addr, uint8 data) {
   return false;
 }
 
-bool BreakpointEditor::testReadOAM(uint16 addr) {
+auto BreakpointEditor::testReadOAM(uint16 addr) -> bool {
   for(auto &bp : breakpointReadOAM) {
     if(bp.addr == addr) {
       if(bp.compare && bp.data != SuperFamicom::ppu.oam[addr]) continue;
@@ -210,7 +210,7 @@ bool BreakpointEditor::testReadOAM(uint16 addr) {
   return false;
 }
 
-bool BreakpointEditor::testWriteOAM(uint16 addr, uint8 data) {
+auto BreakpointEditor::testWriteOAM(uint16 addr, uint8 data) -> bool {
   for(auto &bp : breakpointWriteOAM) {
     if(bp.addr == addr) {
       if(bp.compare && bp.data != data) continue;
@@ -221,7 +221,7 @@ bool BreakpointEditor::testWriteOAM(uint16 addr, uint8 data) {
   return false;
 }
 
-bool BreakpointEditor::testReadCGRAM(uint16 addr) {
+auto BreakpointEditor::testReadCGRAM(uint16 addr) -> bool {
   for(auto &bp : breakpointReadCGRAM) {
     if(bp.addr == addr) {
       if(bp.compare && bp.data != SuperFamicom::ppu.cgram[addr]) continue;
@@ -232,7 +232,7 @@ bool BreakpointEditor::testReadCGRAM(uint16 addr) {
   return false;
 }
 
-bool BreakpointEditor::testWriteCGRAM(uint16 addr, uint8 data) {
+auto BreakpointEditor::testWriteCGRAM(uint16 addr, uint8 data) -> bool {
   for(auto &bp : breakpointWriteCGRAM) {
     if(bp.addr == addr) {
       if(bp.compare && bp.data != data) continue;

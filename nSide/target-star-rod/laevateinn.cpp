@@ -7,10 +7,10 @@ Emulator::Interface* emulator = nullptr;
 
 auto locate(string name) -> string {
   string location = {programpath(), "star-rod-", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   location = {configpath(), "star-rod/", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   directory::create({localpath(), "star-rod/"});
   return {localpath(), "star-rod/", name};
@@ -18,17 +18,17 @@ auto locate(string name) -> string {
 
 auto locateHigan(string name) -> string {
   string location = {programpath(), name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   location = {configpath(), "nSide/", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   return {localpath(), "nSide/", name};
 }
 
 auto locateSystem(string name) -> string {
   string location = {program->higan_settings["Library/Location"].text(), "System/", name};
-  if(file_system_object::exists(location)) return location;
+  if(inode::exists(location)) return location;
 
   return locate(name);
 }

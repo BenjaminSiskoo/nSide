@@ -9,9 +9,9 @@ struct WindowManager {
   vector<WindowItem> windowList;
   Configuration::Document config;
 
-  void append(Window* window, const string& name);
-  void loadGeometry();
-  void saveGeometry();
+  auto append(Window* window, const string& name) -> void;
+  auto loadGeometry() -> void;
+  auto saveGeometry() -> void;
 };
 
-extern WindowManager* windowManager;
+extern unique_pointer<WindowManager> windowManager;

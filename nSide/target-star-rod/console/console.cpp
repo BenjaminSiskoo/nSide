@@ -1,5 +1,5 @@
 #include "../laevateinn.hpp"
-ConsoleWindow* consoleWindow = nullptr;
+unique_pointer<ConsoleWindow> consoleWindow;
 
 #include "about.cpp"
 
@@ -171,7 +171,7 @@ ConsoleWindow::ConsoleWindow() {
   windowManager->append(this, "ConsoleWindow");
 }
 
-void ConsoleWindow::print(const string& text) {
+auto ConsoleWindow::print(const string& text) -> void {
   string output = console.text();
   output.append(text);
   console.setText(output);

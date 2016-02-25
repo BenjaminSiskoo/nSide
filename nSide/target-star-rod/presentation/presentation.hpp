@@ -1,6 +1,6 @@
 struct Presentation : Window {
   Presentation();
-  void showSplash();
+  auto showSplash() -> void;
 
   FixedLayout layout{this};
     Viewport viewport{&layout, Geometry{0, 0, 512, 480}};
@@ -10,4 +10,4 @@ struct Presentation : Window {
   nall::image splash;
 };
 
-extern Presentation* presentation;
+extern unique_pointer<Presentation> presentation;

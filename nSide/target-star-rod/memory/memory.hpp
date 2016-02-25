@@ -10,12 +10,12 @@ struct MemoryEditor : Window {
       Button update{&controlLayout, Size{80, 0}};
     HexEdit editor{&layout, Size{~0, ~0}};
 
-  uint8 read(uint addr);
-  void write(uint addr, uint8 data);
-  void selectSource();
-  void exportMemoryToDisk();
-  void updateView();
+  auto read(uint addr) -> uint8_t;
+  auto write(uint addr, uint8_t data) -> void;
+  auto selectSource() -> void;
+  auto exportMemoryToDisk() -> void;
+  auto updateView() -> void;
   MemoryEditor();
 };
 
-extern MemoryEditor* memoryEditor;
+extern unique_pointer<MemoryEditor> memoryEditor;

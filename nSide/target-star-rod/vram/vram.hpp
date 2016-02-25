@@ -12,10 +12,10 @@ struct VRAMViewer : Window {
 
   StatusBar statusBar{this};
 
-  void modeChanged();
-  void paletteChanged();
-  void updateTiles();
+  auto modeChanged() -> void;
+  auto paletteChanged() -> void;
+  auto updateTiles() -> void;
   VRAMViewer();
 };
 
-extern VRAMViewer* vramViewer;
+extern unique_pointer<VRAMViewer> vramViewer;

@@ -1,5 +1,5 @@
 #include "../laevateinn.hpp"
-Presentation* presentation = nullptr;
+unique_pointer<Presentation> presentation;
 
 Presentation::Presentation() {
   presentation = this;
@@ -22,12 +22,12 @@ Presentation::Presentation() {
   windowManager->append(this, "Presentation");
 }
 
-void Presentation::showSplash() {
-  uint32* data;
+auto Presentation::showSplash() -> void {
+  uint32_t* output;
   uint pitch;
-  if(video->lock(data, pitch, 512, 480)) {
+  if(video->lock(output, pitch, 512, 480)) {
     for(uint y = 0; y < 480; y++) {
-      memcpy((uint8*)data + y * pitch, splash.data() + y * splash.pitch(), 512 * sizeof(uint32));
+      memcpy((uint8_t*)output + y * pitch, splash.data() + y * splash.pitch(), 512 * sizeof(uint32_t));
     }
     video->unlock();
     video->refresh();

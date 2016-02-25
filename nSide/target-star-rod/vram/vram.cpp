@@ -1,5 +1,5 @@
 #include "../laevateinn.hpp"
-VRAMViewer* vramViewer = nullptr;
+unique_pointer<VRAMViewer> vramViewer;
 
 VRAMViewer::VRAMViewer() {
   vramViewer = this;
@@ -45,7 +45,7 @@ VRAMViewer::VRAMViewer() {
   windowManager->append(this, "VRAMViewer");
 }
 
-void VRAMViewer::modeChanged() {
+auto VRAMViewer::modeChanged() -> void {
   paletteSelection.reset();
   switch(modeSelection.selected().offset()) {
   case 0: // 2BPP
@@ -71,12 +71,12 @@ void VRAMViewer::modeChanged() {
   paletteChanged();
 }
 
-void VRAMViewer::paletteChanged() {
+auto VRAMViewer::paletteChanged() -> void {
   updateTiles();
 }
 
-void VRAMViewer::updateTiles() {
-  uint32* dp = canvas.data();
+auto VRAMViewer::updateTiles() -> void {
+  uint32_t* dp = canvas.data();
   for(uint y = 0; y < 512; y++) {
     for(uint x = 0; x < 512; x++) {
       *dp++ = 0xff800000;

@@ -4,12 +4,12 @@ struct Tracer {
   uint8* cpuMask;
   uint8* smpMask;
 
-  void resetMask();
-  bool maskCPU(uint24 addr);
-  bool maskSMP(uint16 addr);
+  auto resetMask() -> void;
+  auto maskCPU(uint24 addr) -> bool;
+  auto maskSMP(uint16 addr) -> bool;
 
-  bool enabled();
-  void enable(bool);
+  auto enabled() -> bool;
+  auto enable(bool state) -> void;
 
   Tracer();
   ~Tracer();
@@ -19,4 +19,4 @@ struct Tracer {
   }
 };
 
-extern Tracer* tracer;
+extern unique_pointer<Tracer> tracer;

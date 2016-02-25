@@ -35,26 +35,26 @@ struct BreakpointEditor : Window {
   vector<Breakpoint> breakpointWriteOAM;
   vector<Breakpoint> breakpointReadCGRAM;
   vector<Breakpoint> breakpointWriteCGRAM;
-  void synchronize();
+  auto synchronize() -> void;
 
-  bool testReadCPU(uint24 addr);
-  bool testWriteCPU(uint24 addr, uint8 data);
-  bool testExecCPU(uint24 addr);
+  auto testReadCPU(uint24 addr) -> bool;
+  auto testWriteCPU(uint24 addr, uint8 data) -> bool;
+  auto testExecCPU(uint24 addr) -> bool;
 
-  bool testReadSMP(uint16 addr);
-  bool testWriteSMP(uint16 addr, uint8 data);
-  bool testExecSMP(uint16 addr);
+  auto testReadSMP(uint16 addr) -> bool;
+  auto testWriteSMP(uint16 addr, uint8 data) -> bool;
+  auto testExecSMP(uint16 addr) -> bool;
 
-  bool testReadVRAM(uint16 addr);
-  bool testWriteVRAM(uint16 addr, uint8 data);
+  auto testReadVRAM(uint16 addr) -> bool;
+  auto testWriteVRAM(uint16 addr, uint8 data) -> bool;
 
-  bool testReadOAM(uint16 addr);
-  bool testWriteOAM(uint16 addr, uint8 data);
+  auto testReadOAM(uint16 addr) -> bool;
+  auto testWriteOAM(uint16 addr, uint8 data) -> bool;
 
-  bool testReadCGRAM(uint16 addr);
-  bool testWriteCGRAM(uint16 addr, uint8 data);
+  auto testReadCGRAM(uint16 addr) -> bool;
+  auto testWriteCGRAM(uint16 addr, uint8 data) -> bool;
 
   BreakpointEditor();
 };
 
-extern BreakpointEditor* breakpointEditor;
+extern unique_pointer<BreakpointEditor> breakpointEditor;

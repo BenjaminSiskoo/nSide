@@ -1,5 +1,5 @@
 #include "../laevateinn.hpp"
-MemoryEditor* memoryEditor = nullptr;
+unique_pointer<MemoryEditor> memoryEditor;
 
 MemoryEditor::MemoryEditor() {
   memoryEditor = this;
@@ -41,8 +41,8 @@ MemoryEditor::MemoryEditor() {
   windowManager->append(this, "MemoryEditor");
 }
 
-uint8 MemoryEditor::read(uint addr) {
-  if(SuperFamicom::cartridge.loaded() == false) return 0x00;
+auto MemoryEditor::read(uint addr) -> uint8_t {
+  if(!SuperFamicom::system.loaded()) return 0x00;
   switch(source.selected().offset()) {
   case 0: return cpuDebugger->read(addr);
   case 1: return smpDebugger->read(addr);
@@ -53,8 +53,8 @@ uint8 MemoryEditor::read(uint addr) {
   return ~0;
 }
 
-void MemoryEditor::write(uint addr, uint8 data) {
-  if(SuperFamicom::cartridge.loaded() == false) return;
+auto MemoryEditor::write(uint addr, uint8_t data) -> void {
+  if(!SuperFamicom::system.loaded()) return;
   switch(source.selected().offset()) {
   case 0:
     SuperFamicom::cartridge.rom.write_protect(false);
@@ -77,7 +77,7 @@ void MemoryEditor::write(uint addr, uint8 data) {
   }
 }
 
-void MemoryEditor::selectSource() {
+auto MemoryEditor::selectSource() -> void {
   editor.setAddress(0);
   switch(source.selected().offset()) {
   case 0: editor.setLength(16 * 1024 * 1024); break;
@@ -89,7 +89,7 @@ void MemoryEditor::selectSource() {
   updateView();
 }
 
-void MemoryEditor::exportMemoryToDisk() {
+auto MemoryEditor::exportMemoryToDisk() -> void {
   string filename = {program->folderPaths(0), "debug/memory-"};
   switch(source.selected().offset()) {
   case 0: filename.append("cpu.bin"); break;
@@ -110,6 +110,6 @@ void MemoryEditor::exportMemoryToDisk() {
   debugger->print("Exported memory to ", filename, "\n");
 }
 
-void MemoryEditor::updateView() {
+auto MemoryEditor::updateView() -> void {
   editor.update();
 }

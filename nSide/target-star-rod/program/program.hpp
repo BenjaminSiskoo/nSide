@@ -22,7 +22,7 @@ struct Program : Emulator::Interface::Bind {
   auto saveState(uint slot) -> bool;
 
   //utility.cpp
-  void message(const string& text);
+  auto message(const string& text) -> void;
 
   DSP dspaudio;
 

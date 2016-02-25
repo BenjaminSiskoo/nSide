@@ -1,5 +1,5 @@
 #include "../laevateinn.hpp"
-Settings* settings = nullptr;
+unique_pointer<Settings> settings;
 
 Settings::Settings() {
   settings = this;
@@ -19,11 +19,11 @@ Settings::Settings() {
   load();
 }
 
-void Settings::load() {
+auto Settings::load() -> void {
   Configuration::Document::load(locate("settings.bml"));
   Configuration::Document::save(locate("settings.bml"));
 }
 
-void Settings::unload() {
+auto Settings::unload() -> void {
   Configuration::Document::save(locate("settings.bml"));
 }

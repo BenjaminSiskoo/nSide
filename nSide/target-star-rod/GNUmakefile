@@ -20,6 +20,7 @@ ui_objects += star-rod-breakpoint star-rod-properties star-rod-vram
 ui_objects += ruby hiro
 ui_objects += $(if $(call streq,$(platform),windows),star-rod-resource)
 
+# platform
 ifeq ($(platform),windows)
   ruby := video.wgl audio.xaudio2 input.windows
 else ifeq ($(platform),macosx)
@@ -67,7 +68,7 @@ obj/star-rod-resource.o:
 
 # targets
 build: $(objects)
-	$(strip $(compiler) -o out/$(name) $(objects) $(link))
+	$(call unique,$(compiler) -o out/$(name) $(objects) $(link))
 ifeq ($(platform),macosx)
 	@if [ -d out/$(name).app ]; then rm -r out/$(name).app; fi
 	mkdir -p out/$(name).app/Contents/MacOS/
@@ -89,11 +90,11 @@ else ifeq ($(platform),macosx)
 else ifneq ($(filter $(platform),linux bsd),)
 	mkdir -p $(prefix)/bin/
 	mkdir -p $(prefix)/share/icons/
-	mkdir -p $(prefix)/$(name)/
-	mkdir -p ~/Emulation/System/
+	mkdir -p $(prefix)/share/$(name)/
 	cp out/$(name) $(prefix)/bin/$(name)
+	cp data/$(name).desktop $(prefix)/share/applications/$(name).desktop
 	cp data/$(name).png $(prefix)/share/icons/$(name).png
-	cp -R profile/* $(prefix)/$(name)/
+	cp -R profile/* $(prefix)/share/$(name)/
 endif
 
 uninstall:
@@ -104,5 +105,6 @@ else ifeq ($(platform),macosx)
 	if [ -d /Applications/$(name).app ]; then rm -r /Applications/$(name).app; fi
 else ifneq ($(filter $(platform),linux bsd),)
 	if [ -f $(prefix)/bin/$(name) ]; then rm $(prefix)/bin/$(name); fi
+	if [ -f $(prefix)/share/applications/$(name).desktop ]; then rm $(prefix)/share/applications/$(name).desktop; fi
 	if [ -f $(prefix)/share/icons/$(name).png ]; then rm $(prefix)/share/icons/$(name).png; fi
 endif

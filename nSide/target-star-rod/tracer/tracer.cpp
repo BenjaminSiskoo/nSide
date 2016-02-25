@@ -1,30 +1,30 @@
 #include "../laevateinn.hpp"
-Tracer* tracer = nullptr;
+unique_pointer<Tracer> tracer;
 
-void Tracer::resetMask() {
+auto Tracer::resetMask() -> void {
   memset(cpuMask, 0, 0x200000);
   memset(smpMask, 0, 0x2000);
 }
 
-bool Tracer::maskCPU(uint24 addr) {
+auto Tracer::maskCPU(uint24 addr) -> bool {
   if(mask == false) return false;
   if(cpuMask[addr >> 3] & (1 << (addr & 7))) return true;
   cpuMask[addr >> 3] |= 1 << (addr & 7);
   return false;
 }
 
-bool Tracer::maskSMP(uint16 addr) {
+auto Tracer::maskSMP(uint16 addr) -> bool {
   if(mask == false) return false;
   if(smpMask[addr >> 3] & (1 << (addr & 7))) return true;
   smpMask[addr >> 3] |= 1 << (addr & 7);
   return false;
 }
 
-bool Tracer::enabled() {
+auto Tracer::enabled() -> bool {
   return fp.open();
 }
 
-void Tracer::enable(bool state) {
+auto Tracer::enable(bool state) -> void {
   if(state == false) {
     debugger->print("Tracer disabled\n");
     fp.close();

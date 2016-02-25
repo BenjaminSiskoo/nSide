@@ -52,7 +52,7 @@ struct ConsoleWindow : Window {
       Button clearButton{&commandLayout, Size{80, ~0}};
     TextEdit console{&layout, Size{~0, ~0}};
 
-  void print(const string& text);
+  auto print(const string& text) -> void;
 
   ConsoleWindow();
 };
@@ -67,5 +67,5 @@ struct AboutWindow : Window {
   AboutWindow();
 };
 
-extern ConsoleWindow* consoleWindow;
-extern AboutWindow* aboutWindow;
+extern unique_pointer<ConsoleWindow> consoleWindow;
+extern unique_pointer<AboutWindow> aboutWindow;

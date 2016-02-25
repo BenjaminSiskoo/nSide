@@ -1,11 +1,11 @@
 #include "../laevateinn.hpp"
-WindowManager* windowManager = nullptr;
+unique_pointer<WindowManager> windowManager;
 
 WindowManager::WindowManager() {
   windowManager = this;
 }
 
-void WindowManager::append(Window* window, const string& name) {
+auto WindowManager::append(Window* window, const string& name) -> void {
   windowList.append({window, name, string{
     window->geometry().x(), ",",
     window->geometry().y(), ",",
@@ -14,7 +14,7 @@ void WindowManager::append(Window* window, const string& name) {
   }});
 }
 
-void WindowManager::loadGeometry() {
+auto WindowManager::loadGeometry() -> void {
   for(auto& window : windowList) {
     config.append(window.geometry, window.name);
   }
@@ -30,7 +30,7 @@ void WindowManager::loadGeometry() {
   }
 }
 
-void WindowManager::saveGeometry() {
+auto WindowManager::saveGeometry() -> void {
   for(auto& window : windowList) {
     window.geometry = string{
       window.window->geometry().x(), ",",
