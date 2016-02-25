@@ -25,11 +25,12 @@ Interface::Interface() {
   port.append({0, "Port 1"});
   port.append({1, "Port 2"});
   port.append({2, "Expansion Port"});
+  port.append({3, "Arcade Panel"});
 
   // C++ prohibits counting the number of items in an enum. Take care
   // and update this value whenever a device is added or removed.
   for(uint i = 0; i < 9; i++) {
-    device_ref.append(DeviceRef{i, 0, 0, 0});
+    device_ref.append(DeviceRef{i, 0, 0, 0, 0});
   }
 
   { Device device{
@@ -201,7 +202,7 @@ Interface::Interface() {
 
   { Device device{
       (uint)Famicom::Device::ID::VSPanel,
-      ID::ExpansionPort,
+      ID::ArcadePanel,
       "VS. Panel"
     };
     device.input.append({0, 0, "Button 1"      });
@@ -333,11 +334,8 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  if(!system.vs()) {
-    // Don't allow switching to VS. Panel
-    if(device == (uint)Famicom::Device::ID::VSPanel) device = (uint)Famicom::Device::ID::None;
-    Famicom::device.connect(port, (Famicom::Device::ID)device);
-  }
+  if(system.vs() || port == 3) return;
+  Famicom::device.connect(port, (Famicom::Device::ID)device);
 }
 
 auto Interface::power() -> void {

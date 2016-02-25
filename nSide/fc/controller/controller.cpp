@@ -23,7 +23,8 @@ auto Controller::Enter() -> void {
   while(true) {
     if(co_active() == device.controllerPort1->thread) device.controllerPort1->main();
     if(co_active() == device.controllerPort2->thread) device.controllerPort2->main();
-    if(co_active() == device.expansionPort->thread) device.expansionPort->main();
+    if(co_active() == device.expansionPort->thread)   device.expansionPort->main();
+    if(co_active() == device.arcadePanel->thread)     device.arcadePanel->main();
   }
 }
 

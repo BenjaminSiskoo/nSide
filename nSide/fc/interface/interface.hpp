@@ -28,6 +28,7 @@ struct ID {
     ControllerPort1 = 1,
     ControllerPort2 = 2,
     ExpansionPort = 4,
+    ArcadePanel = 8,
   };
 };
 
@@ -67,7 +68,7 @@ struct Interface : Emulator::Interface {
 
   struct DeviceRef {
     uint id;
-    uint port[3];
+    uint port[4];
   };
   vector<DeviceRef> device_ref;
 

@@ -4,19 +4,22 @@ Device::Device() {
   connect(0, ID::None);
   connect(1, ID::None);
   connect(2, ID::None);
+  connect(3, ID::None);
 }
 
 Device::~Device() {
   if(controllerPort1) delete controllerPort1;
   if(controllerPort2) delete controllerPort2;
   if(expansionPort) delete expansionPort;
+  if(arcadePanel) delete arcadePanel;
 }
 
 auto Device::connect(uint port, Device::ID id) -> void {
   Controller*& controller = (
-    (port == 0 ? controllerPort1 :
-    (port == 1 ? controllerPort2 :
-                 expansionPort))
+    port == 0 ? controllerPort1 :
+    port == 1 ? controllerPort2 :
+    port == 2 ? expansionPort   :
+                arcadePanel
   );
 
   if(controller) {
@@ -39,7 +42,7 @@ auto Device::connect(uint port, Device::ID id) -> void {
   switch(port) {
   case 0: settings.controllerPort1 = (uint)id; break;
   case 1: settings.controllerPort2 = (uint)id; break;
-  case 2: settings.expansionPort = (uint)id; break;
+  case 2: settings.expansionPort   = (uint)id; break;
   }
 
   /*switch(port) {

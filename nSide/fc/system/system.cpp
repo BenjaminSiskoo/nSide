@@ -32,6 +32,7 @@ auto System::init() -> void {
   device.connect(0, (Device::ID)settings.controllerPort1);
   device.connect(1, (Device::ID)settings.controllerPort2);
   device.connect(2, (Device::ID)settings.expansionPort);
+  device.connect(3, Device::ID::None);
 }
 
 auto System::term() -> void {
@@ -85,7 +86,7 @@ auto System::load(Revision revision) -> void {
     break;
   case Revision::VSSystem:
     vsarcadeboard.load();
-    device.connect(2, Device::ID::VSPanel);
+    device.connect(3, Device::ID::VSPanel);
     break;
   case Revision::PlayChoice10:
     interface->information.height = min(max(document["system/pc10/screen/mode"].integer(), 1), 2) * 240;
@@ -140,6 +141,12 @@ auto System::reset() -> void {
   device.connect(0, (Device::ID)settings.controllerPort1);
   device.connect(1, (Device::ID)settings.controllerPort2);
   device.connect(2, (Device::ID)settings.expansionPort);
+
+  switch(revision()) {
+  case Revision::Famicom:      device.connect(3, Device::ID::None);    break;
+  case Revision::VSSystem:     device.connect(3, Device::ID::VSPanel); break;
+  case Revision::PlayChoice10: device.connect(3, Device::ID::None);    break;
+  }
 }
 
 }

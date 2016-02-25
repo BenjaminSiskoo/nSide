@@ -23,6 +23,7 @@ auto CPU::step(uint clocks) -> void {
   device.controllerPort1->clock -= clocks * (uint64)device.controllerPort1->frequency;
   device.controllerPort2->clock -= clocks * (uint64)device.controllerPort2->frequency;
   device.expansionPort->clock -= clocks * (uint64)device.expansionPort->frequency;
+  if(system.vs()) device.arcadePanel->clock -= clocks * (uint64)device.arcadePanel->frequency;
   synchronizeDevices();
 }
 
@@ -42,6 +43,7 @@ auto CPU::synchronizeDevices() -> void {
   if(device.controllerPort1->clock < 0) co_switch(device.controllerPort1->thread);
   if(device.controllerPort2->clock < 0) co_switch(device.controllerPort2->thread);
   if(device.expansionPort->clock < 0) co_switch(device.expansionPort->thread);
+  if(system.vs() && device.arcadePanel->clock < 0) co_switch(device.arcadePanel->thread);
 }
 
 auto CPU::Enter() -> void {
@@ -97,7 +99,7 @@ auto CPU::ram_write(uint16 addr, uint8 data) -> void {
 }
 
 auto CPU::read(uint16 addr) -> uint8 {
-  if(system.revision() != System::Revision::VSSystem) {
+  if(!system.vs()) {
     if(addr == 0x4016) {
       return (mdr() & 0xe0) | device.controllerPort1->data() | device.expansionPort->data1();
     }
@@ -118,7 +120,7 @@ auto CPU::write(uint16 addr, uint8 data) -> void {
     status.oam_dma_pending = true;
   }
 
-  if(system.revision() != System::Revision::VSSystem) {
+  if(!system.vs()) {
     if(addr == 0x4016) {
       device.controllerPort1->latch(data & 1);
       device.controllerPort2->latch(data & 1);

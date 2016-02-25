@@ -24,11 +24,12 @@ struct Device {
   Device();
   ~Device();
 
-  void connect(uint port, Device::ID device);
+  void connect(uint port, Device::ID id);
 
   Controller* controllerPort1 = nullptr;
   Controller* controllerPort2 = nullptr;
   Controller* expansionPort = nullptr;
+  Controller* arcadePanel = nullptr;
 };
 
 extern Device device;

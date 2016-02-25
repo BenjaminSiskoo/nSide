@@ -42,9 +42,9 @@ auto VSArcadeBoard::r4016() -> uint8 {
   uint8 data = 0x80; // 0x00 for slave CPU, 0x80 for master CPU
   if(!swap_controllers) data |= device.controllerPort1->data() & 0x03;
   else                  data |= device.controllerPort2->data() & 0x03;
-  data |= device.expansionPort->data1(); // buttons 1 and 3
+  data |= device.arcadePanel->data1(); // buttons 1 and 3
   data |= (dip & 0x03) << 3;
-  data |= device.expansionPort->data() << 2; // Service button and coins
+  data |= device.arcadePanel->data() << 2; // Service button and coins
   return data;
 }
 
@@ -52,7 +52,7 @@ auto VSArcadeBoard::r4017() -> uint8 {
   uint8 data = 0x00;
   if(!swap_controllers) data |= device.controllerPort2->data() & 0x03;
   else                  data |= device.controllerPort1->data() & 0x03;
-  data |= device.expansionPort->data2(); // buttons 2 and 4
+  data |= device.arcadePanel->data2(); // buttons 2 and 4
   data |= dip & 0xfc;
   return data;
 }
@@ -66,6 +66,7 @@ auto VSArcadeBoard::w4016(uint8 data) -> void {
   device.controllerPort1->latch(data & 1);
   device.controllerPort2->latch(data & 1);
   device.expansionPort->latch(data & 1);
+  device.arcadePanel->latch(data & 1);
 }
 
 auto VSArcadeBoard::w4020(uint8 data) -> void {
