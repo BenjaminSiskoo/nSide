@@ -15,6 +15,8 @@ struct APU : Thread {
 
   auto serialize(serializer&) -> void;
 
+  bool side; // VS. System; 0: main, 1: sub
+
   struct Filter {
     auto run_hipass_strong(int sample) -> int;
     auto run_hipass_weak(int sample) -> int;

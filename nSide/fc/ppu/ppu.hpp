@@ -63,6 +63,8 @@ struct PPU : Thread, public PPUcounter {
   uint8 cgram[32];
   uint8 oam[256];
 
+  bool side; // VS. System; 0: main, 1: sub
+
   static const uint9 RP2C03[16 * 4];
   static const uint9 RP2C04_0001[16 * 4];
   static const uint9 RP2C04_0002[16 * 4];

@@ -18,6 +18,8 @@ struct CPU : Processor::R6502, Thread {
 
   uint8 ram[0x0800];
 
+  bool side; // VS. System; 0: main, 1: sub
+
 //privileged:
   #include "memory/memory.hpp"
   #include "mmio/mmio.hpp"

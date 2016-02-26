@@ -24,7 +24,7 @@ auto Controller::Enter() -> void {
     if(co_active() == device.controllerPort1->thread) device.controllerPort1->main();
     if(co_active() == device.controllerPort2->thread) device.controllerPort2->main();
     if(co_active() == device.expansionPort->thread)   device.expansionPort->main();
-    if(co_active() == device.arcadePanel->thread)     device.arcadePanel->main();
+    if(system.vs() && co_active() == vsarcadeboard.panel.thread) vsarcadeboard.panel.main();
   }
 }
 

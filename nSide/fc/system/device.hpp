@@ -29,7 +29,6 @@ struct Device {
   Controller* controllerPort1 = nullptr;
   Controller* controllerPort2 = nullptr;
   Controller* expansionPort = nullptr;
-  Controller* arcadePanel = nullptr;
 };
 
 extern Device device;

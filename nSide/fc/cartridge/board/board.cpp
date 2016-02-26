@@ -63,21 +63,19 @@ auto Board::write(MappedRAM& memory, uint addr, uint8 byte) -> void {
 }
 
 auto Board::mirror(uint addr, uint size) -> uint {
+  if(size == 0) return 0;
   uint base = 0;
-  if(size) {
-    uint mask = 1 << 23;
-    while(addr >= size) {
-      while(!(addr & mask)) mask >>= 1;
-      addr -= mask;
-      if(size > mask) {
-        size -= mask;
-        base += mask;
-      }
-      mask >>= 1;
+  uint mask = 1 << 23;
+  while(addr >= size) {
+    while(!(addr & mask)) mask >>= 1;
+    addr -= mask;
+    if(size > mask) {
+      size -= mask;
+      base += mask;
     }
-    base += addr;
+    mask >>= 1;
   }
-  return base;
+  return base + addr;
 }
 
 auto Board::main() -> void {
@@ -111,7 +109,7 @@ auto Board::serialize(serializer& s) -> void {
 }
 
 Board* Board::load(Markup::Node board_node) {
-  if(system.revision() == System::Revision::VSSystem) return new VS(board_node);
+  if(system.vs()) return new VS(board_node);
 
   string type = board_node["id"].text();
 

@@ -9,14 +9,23 @@ auto Cartridge::parseMarkup(const char* markup) -> void {
   if(system.revision() == System::Revision::VSSystem) {
     uint ppus = 0;
     auto side = document.find("side");
+    bool primary_side;
     if(side(0)["ppu"]) {
+      primary_side = 2 - side.size();
       board_node = side(0);
       ppus++;
     }
     if(side(1)["ppu"]) {
-      if(ppus == 0) board_node = side(1);
+      if(ppus == 0) {
+        primary_side = 1;
+        board_node = side(1);
+      }
       ppus++;
     }
+    cpu.side = primary_side;
+    apu.side = primary_side;
+    ppu.side = primary_side;
+
     auto controller = board_node.find("controller");
     vsarcadeboard.swap_controllers = controller(0)["port"].integer() == 2;
     string device1 = board_node.find("controller(port=1)/device")(0).text();
@@ -33,7 +42,7 @@ auto Cartridge::parseMarkup(const char* markup) -> void {
     } else if(device2 == "none") {
       device.connect(1, Famicom::Device::ID::None);
     }
-    vsarcadeboard.set_dip(interface->dipSettings(board_node));
+    vsarcadeboard.set_dip(primary_side, interface->dipSettings(board_node));
     string ppu_revision = board_node["ppu/revision"].text();
     if(ppu_revision == "RP2C02C")     ppu.revision = PPU::Revision::RP2C02C;
     if(ppu_revision == "RP2C02G")     ppu.revision = PPU::Revision::RP2C02G;
