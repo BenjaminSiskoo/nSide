@@ -67,4 +67,3 @@ protected:
 #include "familytrainer/familytrainer.hpp"
 #include "sfcgamepad/sfcgamepad.hpp"
 #include "mouse/mouse.hpp"
-#include "vspanel/vspanel.hpp"

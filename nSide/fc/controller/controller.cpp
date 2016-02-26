@@ -9,7 +9,6 @@ namespace Famicom {
 #include "familytrainer/familytrainer.cpp"
 #include "sfcgamepad/sfcgamepad.cpp"
 #include "mouse/mouse.cpp"
-#include "vspanel/vspanel.cpp"
 
 Controller::Controller(uint port, uint device_id) : port(port), device_id(device_id) {
   if(!thread) create(Controller::Enter, 1);
@@ -24,7 +23,6 @@ auto Controller::Enter() -> void {
     if(co_active() == device.controllerPort1->thread) device.controllerPort1->main();
     if(co_active() == device.controllerPort2->thread) device.controllerPort2->main();
     if(co_active() == device.expansionPort->thread)   device.expansionPort->main();
-    if(system.vs() && co_active() == vsarcadeboard.panel.thread) vsarcadeboard.panel.main();
   }
 }
 

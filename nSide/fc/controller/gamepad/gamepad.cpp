@@ -39,13 +39,8 @@ auto Gamepad::latch(bool data) -> void {
   if(latched == 0) {
     a      = poll(A);
     b      = poll(B);
-    if(!system.vs()) {
-      select = poll(Select);
-      start  = poll(Start);
-    } else {
-      select = 0;
-      start  = 0;
-    }
+    select = poll(Select);
+    start  = poll(Start);
     up     = poll(Up);
     down   = poll(Down);
     left   = poll(Left);

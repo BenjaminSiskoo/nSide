@@ -1,7 +1,13 @@
-struct VSArcadeBoard {
-  VSPanel panel{3};
+struct VSArcadeBoard : Thread {
+  enum : uint {
+    Button1, Button2, Button3, Button4, ServiceButton, Coin1, Coin2,
+  };
 
   bool forceSubRam;
+
+  auto main() -> void;
+  auto step(uint clocks) -> void;
+  auto synchronizeCPU() -> void;
 
   auto init() -> void;
   auto load() -> void;
@@ -29,6 +35,24 @@ private:
   auto r4020(bool side, uint8 data) -> uint8;
   auto w4016(bool side, uint8 data) -> void;
   auto w4020(bool side, uint8 data) -> void;
+
+  //control.cpp
+  bool mainControlLatched;
+  uint mainControlCounter1;
+  uint mainControlCounter2;
+  bool mainButtons[4];
+  bool subControlLatched;
+  uint subControlCounter1;
+  uint subControlCounter2;
+  bool subButtons[4];
+
+  auto resetButtons() -> void;
+  auto poll(bool side, uint input) -> int16;
+  auto data1(bool side) -> bool;
+  auto data2(bool side) -> bool;
+  auto latch(bool side, bool data) -> void;
+
+  static auto Enter() -> void;
 
   friend class Cartridge;
 };

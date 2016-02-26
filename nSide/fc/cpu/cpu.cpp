@@ -22,6 +22,11 @@ auto CPU::step(uint clocks) -> void {
   cartridge.clock -= clocks;
   if(cartridge.clock < 0 && !scheduler.synchronizing()) co_switch(cartridge.thread);
 
+  if(system.vs()) {
+    vsarcadeboard.clock -= clocks;
+    if(vsarcadeboard.clock < 0 && !scheduler.synchronizing()) co_switch(vsarcadeboard.thread);
+  }
+
   device.controllerPort1->clock -= clocks * (uint64)device.controllerPort1->frequency;
   device.controllerPort2->clock -= clocks * (uint64)device.controllerPort2->frequency;
   device.expansionPort->clock -= clocks * (uint64)device.expansionPort->frequency;
