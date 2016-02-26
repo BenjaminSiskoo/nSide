@@ -40,7 +40,7 @@ struct Cartridge : Thread, property<Cartridge> {
   } information;
 
 //privileged:
-  Board *board;
+  Board* board;
 
   auto prg_read(uint addr) -> uint8;
   auto prg_write(uint addr, uint8 data) -> void;
@@ -57,6 +57,7 @@ private:
 
   //markup.cpp
   auto parseMarkup(const char*) -> void;
+  auto parseMarkupVS(Markup::Node&, Markup::Node&) -> void;
   auto parseMarkupMemory(MappedRAM&, Markup::Node, uint id, bool writable) -> void;
 
   auto parseMarkupCartridge(Markup::Node) -> void;

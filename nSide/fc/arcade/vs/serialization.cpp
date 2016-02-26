@@ -1,6 +1,9 @@
 auto VSArcadeBoard::serialize(serializer& s) -> void {
   s.array(ram);
+  s.integer(ramSide);
 
-  s.integer(swap_controllers);
-  s.integer(dip);
+  s.integer(swapControllers);
+  s.integer(mainDip);
+  s.integer(subDip);
+  s.integer(watchdog);
 }
