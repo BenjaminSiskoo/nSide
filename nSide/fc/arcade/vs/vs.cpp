@@ -12,11 +12,11 @@ auto VSArcadeBoard::Enter() -> void {
 }
 
 auto VSArcadeBoard::main() -> void {
-  if(++watchdog > system.cpuFrequency() * 4 / 3) {
-    watchdog = 0;
-    cpu.reset();
-    //ppu.reset();
-  }
+  //if(++watchdog > system.cpuFrequency() * 4 / 3) {
+  //  watchdog = 0;
+  //  cpu.reset();
+  //  //ppu.reset();
+  //}
   step(1);
 }
 
@@ -87,7 +87,7 @@ auto VSArcadeBoard::r4016(bool side, uint8 data) -> uint8 {
 }
 
 auto VSArcadeBoard::r4017(bool side, uint8 data) -> uint8 {
-  //if(side == 1) watchdog = 0;
+  if(side == 1) watchdog = 0;
   data = 0x00;
   data |= data2(side); // buttons 2 and 4
   uint& counter = side == 0 ? mainControlCounter2 : subControlCounter2;
