@@ -5,6 +5,8 @@ namespace Famicom {
 CPU cpu;
 
 #include "serialization.cpp"
+#include "memory/memory.cpp"
+#include "mmio/mmio.cpp"
 #include "timing/timing.cpp"
 
 CPU::CPU() {
@@ -69,8 +71,8 @@ auto CPU::reset() -> void {
   R6502::reset();
   create(CPU::Enter, system.cpuFrequency());
 
-  regs.pc  = bus.read(0xfffc) << 0;
-  regs.pc |= bus.read(0xfffd) << 8;
+  regs.pc  = bus.read(0xfffc, regs.mdr) << 0;
+  regs.pc |= bus.read(0xfffd, regs.mdr) << 8;
 
   status.interrupt_pending = false;
   status.nmi_pending = false;
@@ -86,51 +88,12 @@ auto CPU::reset() -> void {
   status.oam_dma_page = 0x00;
 }
 
-auto CPU::debugger_read(uint16 addr) -> uint8 {
-  return bus.read(addr);
-}
-
 auto CPU::ram_read(uint16 addr) -> uint8 {
   return ram[addr & 0x07ff];
 }
 
 auto CPU::ram_write(uint16 addr, uint8 data) -> void {
   ram[addr & 0x07ff] = data;
-}
-
-auto CPU::read(uint16 addr) -> uint8 {
-  if(!system.vs()) {
-    if(addr == 0x4016) {
-      return (mdr() & 0xe0) | device.controllerPort1->data() | device.expansionPort->data1();
-    }
-
-    if(addr == 0x4017) {
-      return (mdr() & 0xe0) | device.controllerPort2->data() | device.expansionPort->data2();
-    }
-  } else { // if using VS. System
-    if(addr >= 0x4016 && addr <= 0x5fff) return vsarcadeboard.read(addr);
-  }
-
-  return apu.read(addr);
-}
-
-auto CPU::write(uint16 addr, uint8 data) -> void {
-  if(addr == 0x4014) {
-    status.oam_dma_page = data;
-    status.oam_dma_pending = true;
-  }
-
-  if(!system.vs()) {
-    if(addr == 0x4016) {
-      device.controllerPort1->latch(data & 1);
-      device.controllerPort2->latch(data & 1);
-      device.expansionPort->latch(data & 1);
-    }
-  } else { // if using VS. System
-    if(addr >= 0x4016 && addr <= 0x5fff) vsarcadeboard.write(addr, data);
-  }
-
-  return apu.write(addr, data);
 }
 
 }

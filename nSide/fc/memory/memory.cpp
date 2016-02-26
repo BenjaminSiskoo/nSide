@@ -15,7 +15,7 @@ Bus::~Bus() {
 }
 
 auto Bus::reset() -> void {
-  function<auto (uint16) -> uint8> reader = [](uint16) { return cpu.mdr(); };
+  function<auto (uint16, uint8) -> uint8> reader = [](uint16, uint8 data) { return data; };
   function<auto (uint16, uint8) -> void> writer = [](uint16, uint8) {};
 
   idcount = 0;
@@ -23,7 +23,7 @@ auto Bus::reset() -> void {
 }
 
 auto Bus::map(
-  const function<uint8 (uint16)>& reader,
+  const function<uint8 (uint16, uint8)>& reader,
   const function<void (uint16, uint8)>& writer,
   uint16 addrlo, uint16 addrhi,
   uint size, uint base, uint mask

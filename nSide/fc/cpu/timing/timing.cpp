@@ -2,28 +2,6 @@ auto CPU::add_clocks(unsigned clocks) -> void {
   step(clocks);
 }
 
-auto CPU::op_read(uint16 addr) -> uint8 {
-  if(status.oam_dma_pending) {
-    status.oam_dma_pending = false;
-    op_read(addr);
-    oam_dma();
-  }
-
-  while(status.rdy_line == 0) {
-    regs.mdr = bus.read(status.rdy_addr_valid ? status.rdy_addr_value : addr);
-    add_clocks(system.region() == System::Region::NTSC ? 12 : 16);
-  }
-
-  regs.mdr = bus.read(addr);
-  add_clocks(system.region() == System::Region::NTSC ? 12 : 16);
-  return regs.mdr;
-}
-
-auto CPU::op_write(uint16 addr, uint8 data) -> void {
-  bus.write(addr, regs.mdr = data);
-  add_clocks(system.region() == System::Region::NTSC ? 12 : 16);
-}
-
 auto CPU::last_cycle() -> void {
   status.interrupt_pending = ((status.irq_line | status.irq_apu_line) & ~regs.p.i) | status.nmi_pending;
 }

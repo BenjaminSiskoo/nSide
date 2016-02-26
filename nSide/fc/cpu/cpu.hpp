@@ -7,13 +7,8 @@ struct CPU : Processor::R6502, Thread {
   auto synchronizeCartridge() -> void;
   auto synchronizeDevices() -> void;
 
-  auto debugger_read(uint16 addr) -> uint8;
-
   auto ram_read(uint16 addr) -> uint8;
   auto ram_write(uint16 addr, uint8 data) -> void;
-
-  auto read(uint16 addr) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
 
   auto main() -> void;
   auto power() -> void;
@@ -24,6 +19,8 @@ struct CPU : Processor::R6502, Thread {
   uint8 ram[0x0800];
 
 //privileged:
+  #include "memory/memory.hpp"
+  #include "mmio/mmio.hpp"
   #include "timing/timing.hpp"
 
   struct Status {

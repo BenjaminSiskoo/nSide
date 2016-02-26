@@ -2,7 +2,7 @@
 #define NALL_WINDOWS_GUARD_HPP
 
 #define boolean WindowsBoolean
-#define interface WindowsBoolean
+#define interface struct
 
 #else
 #undef NALL_WINDOWS_GUARD_HPP

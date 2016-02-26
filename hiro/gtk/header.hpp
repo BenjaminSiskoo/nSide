@@ -7,6 +7,7 @@
   #define NOMINMAX
   #define TBS_TRANSPARENTBKGND 0x1000
 
+  #include <nall/windows/guard.hpp>
   #include <winsock2.h>
   #include <windows.h>
   #include <windowsx.h>
@@ -14,6 +15,7 @@
   #include <uxtheme.h>
   #include <io.h>
   #include <shlobj.h>
+  #include <nall/windows/guard.hpp>
   #include <cairo.h>
   #include <gdk/gdk.h>
   #include <gdk/gdkwin32.h>

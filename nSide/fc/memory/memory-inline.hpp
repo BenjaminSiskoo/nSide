@@ -10,8 +10,8 @@ StaticRAM::~StaticRAM() { delete[] data_; }
 auto StaticRAM::data() -> uint8* { return data_; }
 auto StaticRAM::size() const -> uint { return size_; }
 
-auto StaticRAM::read(uint16 addr) -> uint8 { return data_[addr]; }
-auto StaticRAM::write(uint16 addr, uint8 n) -> void { data_[addr] = n; }
+auto StaticRAM::read(uint16 addr, uint8) -> uint8 { return data_[addr]; }
+auto StaticRAM::write(uint16 addr, uint8 data) -> void { data_[addr] = data; }
 auto StaticRAM::operator[](uint16 addr) -> uint8& { return data_[addr]; }
 auto StaticRAM::operator[](uint16 addr) const -> const uint8& { return data_[addr]; }
 
@@ -48,8 +48,8 @@ auto MappedRAM::write_protect(bool status) -> void { write_protect_ = status; }
 auto MappedRAM::data() -> uint8* { return data_; }
 auto MappedRAM::size() const -> uint { return size_; }
 
-auto MappedRAM::read(uint16 addr) -> uint8 { return data_[addr]; }
-auto MappedRAM::write(uint16 addr, uint8 n) -> void { if(!write_protect_) data_[addr] = n; }
+auto MappedRAM::read(uint16 addr, uint8) -> uint8 { return data_[addr]; }
+auto MappedRAM::write(uint16 addr, uint8 data) -> void { if(!write_protect_) data_[addr] = data; }
 auto MappedRAM::operator[](uint16 addr) const -> const uint8& { return data_[addr]; }
 
 //Bus
@@ -86,12 +86,12 @@ auto Bus::reduce(uint addr, uint mask) -> uint {
 //$4000-4017 = APU + I/O
 //$4018-ffff = Cartridge
 
-auto Bus::read(uint16 addr) -> uint8 {
-  uint8 data = cartridge.prg_read(addr);
+auto Bus::read(uint16 addr, uint8 data) -> uint8 {
+  data = cartridge.prg_read(addr);
        if(addr <= 0x1fff) data = cpu.ram_read(addr);
   else if(addr <= 0x3fff) data = ppu.read(addr);
-  else if(addr <= 0x4017) data = cpu.read(addr);
-  else if((addr & 0xe020) == 0x4020 && system.vs()) data = cpu.read(addr);
+  else if(addr <= 0x4017) data = cpu.mmio_read(addr, data);
+  else if((addr & 0xe020) == 0x4020 && system.vs()) data = cpu.mmio_read(addr, data);
   if(cheat.enable()) {
     if(auto result = cheat.find(addr, data)) return result();
   }
@@ -102,6 +102,6 @@ auto Bus::write(uint16 addr, uint8 data) -> void {
   cartridge.prg_write(addr, data);
   if(addr <= 0x1fff) return cpu.ram_write(addr, data);
   if(addr <= 0x3fff) return ppu.write(addr, data);
-  if(addr <= 0x4017) return cpu.write(addr, data);
-  if((addr & 0xe020) == 0x4020 && system.vs()) return cpu.write(addr, data);
+  if(addr <= 0x4017) return cpu.mmio_write(addr, data);
+  if((addr & 0xe020) == 0x4020 && system.vs()) return cpu.mmio_write(addr, data);
 }

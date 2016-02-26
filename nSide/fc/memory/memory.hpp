@@ -1,6 +1,6 @@
 struct Memory {
   virtual inline auto size() const -> uint;
-  virtual auto read(uint16 addr) -> uint8 = 0;
+  virtual auto read(uint16 addr, uint8 data = 0) -> uint8 = 0;
   virtual auto write(uint16 addr, uint8 data) -> void = 0;
 };
 
@@ -11,7 +11,7 @@ struct StaticRAM : Memory {
   inline auto data() -> uint8*;
   inline auto size() const -> uint;
 
-  inline auto read(uint16 addr) -> uint8;
+  inline auto read(uint16 addr, uint8 data = 0) -> uint8;
   inline auto write(uint16 addr, uint8 data) -> void;
   inline auto operator[](uint16 addr) -> uint8&;
   inline auto operator[](uint16 addr) const -> const uint8&;
@@ -31,7 +31,7 @@ struct MappedRAM : Memory {
   inline auto data() -> uint8*;
   inline auto size() const -> uint;
 
-  inline auto read(uint16 addr) -> uint8;
+  inline auto read(uint16 addr, uint8 data = 0) -> uint8;
   inline auto write(uint16 addr, uint8 data) -> void;
   inline auto operator[](uint16 addr) const -> const uint8&;
 
@@ -48,13 +48,13 @@ struct Bus {
   Bus();
   ~Bus();
 
-  alwaysinline auto read(uint16 addr) -> uint8;
+  alwaysinline auto read(uint16 addr, uint8 data) -> uint8;
   alwaysinline auto write(uint16 addr, uint8 data) -> void;
 
   auto reset() -> void;
   auto map() -> void;
   auto map(
-    const function<uint8 (uint16)>& reader,
+    const function<uint8 (uint16, uint8)>& reader,
     const function<void (uint16, uint8)>& writer,
     uint16 addrlo, uint16 addrhi,
     uint size = 0, uint base = 0, uint mask = 0
@@ -64,7 +64,7 @@ struct Bus {
   uint32* target = nullptr;
 
   uint idcount = 0;
-  function<auto (uint16) -> uint8> reader[256];
+  function<auto (uint16, uint8) -> uint8> reader[256];
   function<auto (uint16, uint8) -> void> writer[256];
 };
 
