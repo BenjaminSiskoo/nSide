@@ -55,9 +55,9 @@ auto CartPal::playchoice10Manifest(vector<uint8_t>& buffer, string location,
   return markup;
 }
 
-auto CartPal::playchoice10ImportManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void {
+auto CartPal::playchoice10ManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void {
   if(node["name"].text().endsWith(".rom")) roms.append(node);
-  for(auto leaf : node) playchoice10ImportManifestScan(roms, leaf);
+  for(auto leaf : node) playchoice10ManifestScan(roms, leaf);
 }
 
 auto CartPal::playchoice10Import(vector<uint8_t>& buffer, string location) -> string {
@@ -83,7 +83,7 @@ auto CartPal::playchoice10Import(vector<uint8_t>& buffer, string location) -> st
   auto document = BML::unserialize(markup);
   vector<Markup::Node> roms;
   if(has_ines_header) roms.append(BML::unserialize("rom name=ines.rom size=0x10")["rom"]);
-  playchoice10ImportManifestScan(roms, document["board"]);
+  playchoice10ManifestScan(roms, document["board"]);
 
   if(!directory::create(target)) return failure("library path unwritable");
   if(file::exists({source, name, ".sav"}) && !file::exists({target, "save.ram"})) {

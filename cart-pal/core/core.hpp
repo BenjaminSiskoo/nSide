@@ -14,19 +14,19 @@ struct CartPal {
   //famicom.cpp
   auto famicomManifest(string location) -> string;
   auto famicomManifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
-  auto famicomImportManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
+  auto famicomManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
   auto famicomImport(vector<uint8_t>& buffer, string location) -> string;
 
   //vs-system.cpp
   auto vsSystemManifest(string location) -> string;
   auto vsSystemManifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
-  auto vsSystemImportManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
+  auto vsSystemManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
   auto vsSystemImport(vector<uint8_t>& buffer, string location) -> string;
 
   //playchoice-10.cpp
   auto playchoice10Manifest(string location) -> string;
   auto playchoice10Manifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr, uint* instrom = nullptr, uint* keyrom = nullptr) -> string;
-  auto playchoice10ImportManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
+  auto playchoice10ManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
   auto playchoice10Import(vector<uint8_t>& buffer, string location) -> string;
 
   //super-famicom.cpp

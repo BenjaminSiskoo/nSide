@@ -43,12 +43,12 @@ auto CartPal::famicomManifest(vector<uint8_t>& buffer, string location, uint* pr
   return markup;
 }
 
-auto CartPal::famicomImportManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void {
+auto CartPal::famicomManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void {
   if(node["name"].text().endsWith(".rom")) roms.append(node);
-  for(auto leaf : node) famicomImportManifestScan(roms, leaf);
+  for(auto leaf : node) famicomManifestScan(roms, leaf);
 }
 
-auto CartPal::famicomImport(vector<uint8>& buffer, string location) -> string {
+auto CartPal::famicomImport(vector<uint8_t>& buffer, string location) -> string {
   bool has_ines_header = true;
   if(buffer.data()[0] != 'N'
   || buffer.data()[1] != 'E'
@@ -76,7 +76,7 @@ auto CartPal::famicomImport(vector<uint8>& buffer, string location) -> string {
   auto document = BML::unserialize(markup);
   vector<Markup::Node> roms;
   if(has_ines_header) roms.append(BML::unserialize("rom name=ines.rom size=0x10")["rom"]);
-  famicomImportManifestScan(roms, document["board"]);
+  famicomManifestScan(roms, document["board"]);
 
   if(!directory::create(target)) return failure("library path unwritable");
   if(file::exists({source, name, ".sav"}) && !file::exists({target, "save.ram"})) {
