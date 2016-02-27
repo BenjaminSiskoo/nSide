@@ -10,11 +10,11 @@ auto CPU::interrupt_pending() -> bool {
   return false;
 }
 
-auto CPU::port_read(uint8_t port) -> uint8_t {
+auto CPU::portRead(uint8 port) -> uint8 {
   return port_data[port & 3];
 }
 
-auto CPU::port_write(uint8_t port, uint8_t data) -> void {
+auto CPU::portWrite(uint8 port, uint8 data) -> void {
   port_data[port & 3] = data;
 }
 
@@ -22,13 +22,13 @@ auto CPU::op_io() -> void {
   add_clocks(6);
 }
 
-auto CPU::op_read(uint addr) -> uint8_t {
+auto CPU::op_read(uint24 addr) -> uint8 {
   regs.mdr = bus.read(addr, regs.mdr);
   add_clocks(speed(addr));
   return regs.mdr;
 }
 
-auto CPU::op_write(uint addr, uint8_t data) -> void {
+auto CPU::op_write(uint24 addr, uint8 data) -> void {
   add_clocks(speed(addr));
   bus.write(addr, regs.mdr = data);
 }

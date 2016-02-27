@@ -1,8 +1,8 @@
-auto SMP::port_read(uint addr) -> uint {
+auto SMP::portRead(uint addr) -> uint {
   return apuram[0xf4 + (addr & 3)];
 }
 
-auto SMP::port_write(uint addr, uint data) -> void {
+auto SMP::portWrite(uint addr, uint data) -> void {
   apuram[0xf4 + (addr & 3)] = data;
 }
 
@@ -20,7 +20,7 @@ auto SMP::mmio_read(uint addr) -> uint {
   case 0xf6:
   case 0xf7:
     synchronizeCPU();
-    return cpu.port_read(addr);
+    return cpu.portRead(addr);
 
   case 0xf8:
     return status.ram00f8;
@@ -60,12 +60,12 @@ auto SMP::mmio_write(uint addr, uint data) -> void {
     if(data & 0x30) {
       synchronizeCPU();
       if(data & 0x20) {
-        cpu.port_write(3, 0x00);
-        cpu.port_write(2, 0x00);
+        cpu.portWrite(3, 0x00);
+        cpu.portWrite(2, 0x00);
       }
       if(data & 0x10) {
-        cpu.port_write(1, 0x00);
-        cpu.port_write(0, 0x00);
+        cpu.portWrite(1, 0x00);
+        cpu.portWrite(0, 0x00);
       }
     }
 
@@ -103,7 +103,7 @@ auto SMP::mmio_write(uint addr, uint data) -> void {
   case 0xf6:
   case 0xf7:
     synchronizeCPU();
-    port_write(addr, data);
+    portWrite(addr, data);
     break;
 
   case 0xf8:

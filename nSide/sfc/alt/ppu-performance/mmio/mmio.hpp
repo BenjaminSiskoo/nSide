@@ -1,6 +1,6 @@
 public:
-  auto mmio_read(uint addr, uint8_t data) -> uint8_t;
-  auto mmio_write(uint addr, uint8_t data) -> void;
+  auto mmio_read(uint addr, uint8 data) -> uint8;
+  auto mmio_write(uint addr, uint8 data) -> void;
 
 private:
 

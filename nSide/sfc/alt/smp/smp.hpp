@@ -6,8 +6,8 @@ struct SMP : Thread {
   alwaysinline auto synchronizeCPU() -> void;
   alwaysinline auto synchronizeDSP() -> void;
 
-  auto port_read(uint port) -> uint;
-  auto port_write(uint port, unsigned data) -> void;
+  auto portRead(uint port) -> uint;
+  auto portWrite(uint port, unsigned data) -> void;
 
   auto mmio_read(uint addr) -> uint;
   auto mmio_write(uint addr, uint data) -> void;

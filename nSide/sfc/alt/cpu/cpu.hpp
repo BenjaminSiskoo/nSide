@@ -12,14 +12,14 @@ struct CPU : Processor::R65816, Thread, public PPUcounter {
   auto pio() -> uint8_t;
   auto joylatch() -> bool;
   auto interrupt_pending() -> bool;
-  auto port_read(uint8_t port) -> uint8_t;
-  auto port_write(uint8_t port, uint8_t data) -> void;
-  auto mmio_read(uint addr, uint8_t data) -> uint8_t;
-  auto mmio_write(uint addr, uint8_t data) -> void;
+  auto portRead(uint8 port) -> uint8;
+  auto portWrite(uint8 port, uint8 data) -> void;
+  auto mmio_read(uint addr, uint8 data) -> uint8;
+  auto mmio_write(uint addr, uint8 data) -> void;
 
   auto op_io() -> void;
-  auto op_read(uint addr) -> uint8_t;
-  auto op_write(uint addr, uint8_t data) -> void;
+  auto op_read(uint24 addr) -> uint8;
+  auto op_write(uint24 addr, uint8 data) -> void;
 
   auto main() -> void;
   auto enable() -> void;

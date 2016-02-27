@@ -73,8 +73,8 @@ auto CPU::main() -> void {
 }
 
 auto CPU::enable() -> void {
-  function<auto (uint, uint8_t) -> uint8_t> reader{&CPU::mmio_read, (CPU*)&cpu};
-  function<auto (uint, uint8_t) -> void> writer{&CPU::mmio_write, (CPU*)&cpu};
+  function<auto (uint, uint8) -> uint8> reader{&CPU::mmio_read, (CPU*)&cpu};
+  function<auto (uint, uint8) -> void> writer{&CPU::mmio_write, (CPU*)&cpu};
 
   bus.map(reader, writer, 0x00, 0x3f, 0x2140, 0x2183);
   bus.map(reader, writer, 0x80, 0xbf, 0x2140, 0x2183);
@@ -88,8 +88,8 @@ auto CPU::enable() -> void {
   bus.map(reader, writer, 0x00, 0x3f, 0x4300, 0x437f);
   bus.map(reader, writer, 0x80, 0xbf, 0x4300, 0x437f);
 
-  reader = [](uint addr, uint8_t data) { return cpu.wram[addr]; };
-  writer = [](uint addr, uint8_t data) { cpu.wram[addr] = data; };
+  reader = [](uint addr, uint8) -> uint8 { return cpu.wram[addr]; };
+  writer = [](uint addr, uint8 data) -> void { cpu.wram[addr] = data; };
 
   bus.map(reader, writer, 0x00, 0x3f, 0x0000, 0x1fff, 0x002000);
   bus.map(reader, writer, 0x80, 0xbf, 0x0000, 0x1fff, 0x002000);

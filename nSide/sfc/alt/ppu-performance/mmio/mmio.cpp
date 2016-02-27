@@ -154,7 +154,7 @@ auto PPU::mmio_update_video_mode() -> void {
   }
 }
 
-auto PPU::mmio_read(uint addr, uint8_t data) -> uint8_t {
+auto PPU::mmio_read(uint addr, uint8 data) -> uint8 {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -275,7 +275,7 @@ auto PPU::mmio_read(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto PPU::mmio_write(uint addr, uint8_t data) -> void {
+auto PPU::mmio_write(uint addr, uint8 data) -> void {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {

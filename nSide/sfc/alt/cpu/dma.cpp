@@ -28,7 +28,7 @@ auto CPU::dma_transfer(bool direction, uint8_t bbus, uint abus) -> void {
     add_clocks(8);
     dma_write(dma_transfer_valid(bbus, abus), 0x2100 | bbus, data);
   } else {
-    uint8_t data = dma_transfer_valid(bbus, abus) ? bus.read(0x2100 | bbus, regs.mdr) : 0x00;
+    uint8_t data = dma_transfer_valid(bbus, abus) ? (uint8_t)bus.read(0x2100 | bbus, regs.mdr) : 0x00;
     add_clocks(8);
     dma_write(dma_addr_valid(abus), abus, data);
   }
