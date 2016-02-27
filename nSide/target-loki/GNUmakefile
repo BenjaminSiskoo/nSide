@@ -1,6 +1,7 @@
 ifndef name
   name := loki
 endif
+flags += -DDEBUGGER
 
 include sfc/GNUmakefile
 include processor/GNUmakefile

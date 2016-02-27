@@ -1,10 +1,9 @@
 processors += lr35902
 
-gb_objects := gb-interface gb-system gb-scheduler
-gb_objects += gb-memory gb-cartridge
-gb_objects += gb-cpu gb-ppu gb-apu
-gb_objects += gb-cheat
-objects += $(gb_objects)
+objects += gb-interface gb-system gb-scheduler
+objects += gb-memory gb-cartridge
+objects += gb-cpu gb-ppu gb-apu
+objects += gb-cheat
 
 obj/gb-interface.o: gb/interface/interface.cpp $(call rwildcard,gb/interface/)
 obj/gb-system.o:    gb/system/system.cpp $(call rwildcard,gb/system/)

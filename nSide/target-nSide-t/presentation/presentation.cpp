@@ -146,7 +146,7 @@ Presentation::Presentation() {
   });
   about.setText("About ...").onActivate([&] {
     MessageDialog().setParent(*this).setTitle("About nSide ...").setText({
-      Emulator::Name, " v", Emulator::Version,
+      Emulator::Name, "-t v", Emulator::Version,
       #if defined(PROFILE_ACCURACY) or defined(PROFILE_BALANCED) or defined(PROFILE_PERFORMANCE)
       " (", Emulator::Profile, ")",
       #endif

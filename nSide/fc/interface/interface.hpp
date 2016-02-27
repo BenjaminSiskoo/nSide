@@ -27,8 +27,8 @@ struct ID {
     //device ports (bitmask)
     ControllerPort1 = 1,
     ControllerPort2 = 2,
-    ExpansionPort = 4,
-    ArcadePanel = 8,
+    ExpansionPort   = 4,
+    ArcadePanel     = 8,
   };
 };
 

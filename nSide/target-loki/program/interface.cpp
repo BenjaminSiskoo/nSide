@@ -1,117 +1,125 @@
-#include "../loki.hpp"
-Interface* interface = nullptr;
-SuperFamicom::Interface* emulator = nullptr;
+auto Program::loadRequest(uint id, string name, string type, bool required) -> void {
+  string location = BrowserDialog()
+  .setTitle({"Load ", name})
+  .setPath({userpath(), "Emulation/", name})
+  .setFilters({string{name, "|*.", type}})
+  .openFolder();
+  if(!directory::exists(location)) return;
 
-Interface::Interface() {
-  interface = this;
-  emulator = new SuperFamicom::Interface;
-  emulator->bind = this;
+  mediaPaths(id) = location;
+  folderPaths.append(location);
+  emulator->load(id);
 }
 
-bool Interface::load(string pathname) {
-  pathname.transform("\\", "/").rtrim("/");
-  if(!directory::exists(pathname)) return false;
+auto Program::loadRequest(uint id, string filename, bool required) -> void {
+  string pathname = mediaPaths(emulator->group(id));
+  string location = {pathname, filename};
 
-  string type = extension(pathname);
-
-  for(auto& media : emulator->media) {
-    if(media.bootable == false) continue;
-    if(type != media.type) continue;
-
-    this->pathname = pathname.append("/");
-    pathnames.reset();
-    pathnames(0) = program->path({media.name, ".sys/"});
-    pathnames(media.id) = pathname;
-    echo("Loaded ", pathname, "\n");
-
-    emulator->load(media.id);
-    emulator->paletteUpdate(Emulator::Interface::PaletteMode::Standard);
-    emulator->power();
-    presentation->setTitle(emulator->title());
-
-    return true;
-  }
-
-  return false;
-}
-
-void Interface::unload() {
-  emulator->unload();
-}
-
-//bindings
-
-void Interface::loadRequest(unsigned id, string name, string type) {
-}
-
-void Interface::loadRequest(unsigned id, string path) {
-  string pathname = {pathnames(emulator->group(id)), path};
-  if(file::exists(pathname) == false) return;
-  mmapstream stream(pathname);
-  emulator->load(id, stream);
-  echo("Loaded ", path, "\n");
-}
-
-void Interface::saveRequest(unsigned id, string path) {
-  string pathname = {pathnames(emulator->group(id)), path};
-  filestream stream(pathname, file::mode::write);
-  emulator->save(id, stream);
-  echo("Saved ", path, "\n");
-}
-
-uint32_t Interface::videoColor(unsigned source, uint16_t alpha, uint16_t red, uint16_t green, uint16_t blue) {
-  return ((alpha >> 8) << 24) | ((red >> 8) << 16) | ((green >> 8) << 8) | ((blue >> 8) << 0);
-}
-
-void Interface::videoRefresh(const uint32_t* palette, const uint32_t* data, unsigned pitch, unsigned width, unsigned height) {
-  uint32_t* output;
-  unsigned outputPitch;
-
-  if(video.lock(output, outputPitch, width, height)) {
-    pitch >>= 2, outputPitch >>= 2;
-
-    for(unsigned y = 0; y < height; y++) {
-      const uint32_t* sp = data + y * pitch;
-      uint32_t* dp = output + y * outputPitch;
-      for(unsigned x = 0; x < width; x++) {
-        *dp++ = palette[*sp++];
+  if(filename == "manifest.bml" && pathname && !pathname.endsWith("sys/")) {
+    if(!file::exists(location)) {
+      if(auto manifest = execute("icarus", "--manifest", pathname)) {
+        memorystream stream{(const uint8_t*)manifest.data(), manifest.size()};
+        return emulator->load(id, stream);
       }
     }
+  }
 
-    video.unlock();
-    video.refresh();
+  if(file::exists(location)) {
+    mmapstream stream{location};
+    return emulator->load(id, stream);
+  }
+
+  if(required) MessageDialog().setTitle("loki").setText({
+    "Missing required file: ", nall::filename(location), "\n\n",
+    "From location:\n", nall::pathname(location)
+  }).error();
+}
+
+auto Program::saveRequest(uint id, string filename) -> void {
+  string pathname = mediaPaths(emulator->group(id));
+  string location = {pathname, filename};
+
+//filestream stream{location, file::mode::write};
+//return emulator->save(id, stream);
+}
+
+auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint height) -> void {
+  uint32_t* output;
+  uint length;
+
+  if(video->lock(output, length, width, height)) {
+    pitch >>= 2, length >>= 2;
+
+    for(auto y : range(height)) {
+      memory::copy(output + y * length, data + y * pitch, width * sizeof(uint32));
+    }
+
+    video->unlock();
+    video->refresh();
   }
 }
 
-void Interface::audioSample(int16_t lsample, int16_t rsample) {
-  if(settings->audio.mute) lsample = 0, rsample = 0;
-  signed samples[] = {lsample, rsample};
-  dspaudio.sample(samples);
-  while(dspaudio.pending()) {
-    dspaudio.read(samples);
-    audio.sample(samples[0], samples[1]);
+auto Program::audioSample(int16 left, int16 right) -> void {
+  int samples[] = {left, right};
+  dsp.sample(samples);
+  while(dsp.pending()) {
+    dsp.read(samples);
+    audio->sample(samples[0], samples[1]);
   }
 }
 
-int16_t Interface::inputPoll(unsigned port, unsigned device, unsigned input) {
-  unsigned guid = emulator->port[port].device[device].input[input].guid;
-  return inputManager->inputMap[guid]->poll();
-}
+auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
+  if(!presentation->focused()) return 0;
 
-void Interface::inputRumble(unsigned port, unsigned device, unsigned input, bool enable) {
-}
+  shared_pointer<HID::Keyboard> keyboard;
+  for(auto& device : devices) {
+    if(device->isKeyboard()) {
+      keyboard = device;
+      break;
+    }
+  }
 
-unsigned Interface::dipSettings(const Markup::Node& node) {
+  if(port == (uint)SFC::Device::Port::Controller1) {
+    if(device == (uint)SFC::Device::ID::Gamepad) {
+      #define map(id, name) \
+        case id: \
+          if(auto code = keyboard->buttons().find(name)) { \
+            return keyboard->buttons().input(*code).value(); \
+          } \
+          break; \
+
+      switch(input) {
+        map(SFC::Gamepad::Up, "Up");
+        map(SFC::Gamepad::Down, "Down");
+        map(SFC::Gamepad::Left, "Left");
+        map(SFC::Gamepad::Right, "Right");
+        map(SFC::Gamepad::B, "Z");
+        map(SFC::Gamepad::A, "X");
+        map(SFC::Gamepad::Y, "A");
+        map(SFC::Gamepad::X, "S");
+        map(SFC::Gamepad::L, "D");
+        map(SFC::Gamepad::R, "C");
+        map(SFC::Gamepad::Select, "Apostrophe");
+        map(SFC::Gamepad::Start, "Return");
+      }
+
+      #undef map
+    }
+  }
+
   return 0;
 }
 
-string Interface::path(unsigned group) {
-  return pathnames(group);
+auto Program::inputRumble(uint port, uint device, uint input, bool enable) -> void {
 }
 
-string Interface::server() {
-  return "";
+auto Program::dipSettings(const Markup::Node& node) -> uint {
+  return 0;
 }
 
-void Interface::notify(string text) {
+auto Program::path(uint group) -> string {
+  return mediaPaths(group);
+}
+
+auto Program::notify(string text) -> void {
 }

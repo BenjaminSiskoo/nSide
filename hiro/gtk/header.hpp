@@ -15,7 +15,6 @@
   #include <uxtheme.h>
   #include <io.h>
   #include <shlobj.h>
-  #include <nall/windows/guard.hpp>
   #include <cairo.h>
   #include <gdk/gdk.h>
   #include <gdk/gdkwin32.h>
@@ -26,6 +25,7 @@
     #include <gtksourceview/gtksourcelanguagemanager.h>
     #include <gtksourceview/gtksourcestyleschememanager.h>
   #endif
+  #include <nall/windows/guard.hpp>
   #include <nall/windows/registry.hpp>
   #include <nall/windows/utf8.hpp>
 #endif

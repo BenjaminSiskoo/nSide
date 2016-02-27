@@ -334,7 +334,7 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  if(system.vs() || port == 3) return;
+  if(system.vs() || port == (uint)Famicom::Device::Port::ArcadePanel) return;
   Famicom::device.connect(port, (Famicom::Device::ID)device);
 }
 

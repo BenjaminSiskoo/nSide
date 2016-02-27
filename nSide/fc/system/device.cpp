@@ -42,18 +42,18 @@ auto Device::connect(uint port, Device::ID id) -> void {
   }
 
   /*switch(port) {
-  case 0:
-    if(id == ID::FourScore && configuration.controllerPort2 != ID::FourScore) {
-      connect(1, ID::FourScore);
-    } else if(id != ID::FourScore && configuration.controllerPort2 == ID::FourScore) {
-      connect(1, ID::None);
+  case Port::Controller1:
+    if(id == ID::FourScore && settings.controllerPort2 != ID::FourScore) {
+      connect(Port::Controller2, ID::FourScore);
+    } else if(id != ID::FourScore && settings.controllerPort2 == ID::FourScore) {
+      connect(Port::Controller2, ID::None);
     }
     break;
-  case 1:
-    if(id == ID::FourScore && configuration.controllerPort1 != ID::FourScore) {
-      connect(0, ID::FourScore);
-    } else if(id != ID::FourScore && configuration.controllerPort1 == ID::FourScore) {
-      connect(0, ID::None);
+  case Port::Controller2:
+    if(id == ID::FourScore && settings.controllerPort1 != ID::FourScore) {
+      connect(Port::Controller1, ID::FourScore);
+    } else if(id != ID::FourScore && settings.controllerPort1 == ID::FourScore) {
+      connect(Port::Controller1, ID::None);
     }
     break;
   }*/

@@ -1,9 +1,8 @@
 processors += arm
 
-gba_objects := gba-memory gba-interface gba-scheduler gba-system
-gba_objects += gba-cartridge gba-player
-gba_objects += gba-cpu gba-ppu gba-apu gba-cheat
-objects += $(gba_objects)
+objects += gba-memory gba-interface gba-scheduler gba-system
+objects += gba-cartridge gba-player
+objects += gba-cpu gba-ppu gba-apu gba-cheat
 
 obj/gba-memory.o:    gba/memory/memory.cpp $(call rwildcard,gba/memory)
 obj/gba-interface.o: gba/interface/interface.cpp $(call rwildcard,gba/interface)

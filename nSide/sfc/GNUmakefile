@@ -1,38 +1,37 @@
 processors += r65816 spc700 arm gsu hg51b upd96050
 
-sfc_objects := sfc-interface sfc-system sfc-scheduler sfc-controller
-sfc_objects += sfc-cartridge sfc-cheat
-sfc_objects += sfc-memory sfc-cpu sfc-smp sfc-dsp sfc-ppu
-sfc_objects += sfc-satellaview sfc-eboot
-sfc_objects += sfc-icd2 sfc-mcc sfc-nss sfc-event
-sfc_objects += sfc-sa1 sfc-superfx
-sfc_objects += sfc-armdsp sfc-hitachidsp sfc-necdsp
-sfc_objects += sfc-epsonrtc sfc-sharprtc
-sfc_objects += sfc-spc7110 sfc-sdd1 sfc-obc1
-sfc_objects += sfc-msu1
-sfc_objects += sfc-bsmemory sfc-sufamiturbo
-objects += $(sfc_objects)
+objects += sfc-interface sfc-system sfc-scheduler sfc-controller
+objects += sfc-cartridge sfc-cheat
+objects += sfc-memory sfc-cpu sfc-smp sfc-dsp sfc-ppu
+objects += sfc-satellaview sfc-eboot
+objects += sfc-icd2 sfc-mcc sfc-nss sfc-event
+objects += sfc-sa1 sfc-superfx
+objects += sfc-armdsp sfc-hitachidsp sfc-necdsp
+objects += sfc-epsonrtc sfc-sharprtc
+objects += sfc-spc7110 sfc-sdd1 sfc-obc1
+objects += sfc-msu1
+objects += sfc-bsmemory sfc-sufamiturbo
 
 ifeq ($(profile),accuracy)
   flags += -DPROFILE_ACCURACY
-  sfccpu := sfc/cpu
-  sfcsmp := sfc/smp
-  sfcdsp := sfc/dsp
-  sfcppu := sfc/ppu
+  sfccpu := cpu
+  sfcsmp := smp
+  sfcdsp := dsp
+  sfcppu := ppu
 else ifeq ($(profile),balanced)
   flags += -DPROFILE_BALANCED
-  sfccpu := sfc/cpu
-  sfcsmp := sfc/smp
-  sfcdsp := sfc/alt/dsp
-  sfcppu := sfc/alt/ppu-balanced
+  sfccpu := cpu
+  sfcsmp := smp
+  sfcdsp := alt/dsp
+  sfcppu := alt/ppu-balanced
 else ifeq ($(profile),performance)
   flags += -DPROFILE_PERFORMANCE
-  sfccpu := sfc/alt/cpu
-  sfcsmp := sfc/alt/smp
-  sfcdsp := sfc/alt/dsp
-  sfcppu := sfc/alt/ppu-performance
+  sfccpu := alt/cpu
+  sfcsmp := alt/smp
+  sfcdsp := alt/dsp
+  sfcppu := alt/ppu-performance
 else
-  $(error unknown Super Famicom profile)
+  $(error "unknown Super Famicom profile")
 endif
 
 obj/sfc-interface.o:   sfc/interface/interface.cpp $(call rwildcard,sfc/interface)
@@ -42,10 +41,10 @@ obj/sfc-controller.o:  sfc/controller/controller.cpp $(call rwildcard,sfc/contro
 obj/sfc-cartridge.o:   sfc/cartridge/cartridge.cpp $(call rwildcard,sfc/cartridge/)
 obj/sfc-cheat.o:       sfc/cheat/cheat.cpp $(call rwildcard,sfc/cheat/)
 obj/sfc-memory.o:      sfc/memory/memory.cpp $(call rwildcard,sfc/memory/)
-obj/sfc-cpu.o:         $(sfccpu)/cpu.cpp $(call rwildcard,$(sfccpu)/)
-obj/sfc-smp.o:         $(sfcsmp)/smp.cpp $(call rwildcard,$(sfcsmp)/)
-obj/sfc-dsp.o:         $(sfcdsp)/dsp.cpp $(call rwildcard,$(sfcdsp)/)
-obj/sfc-ppu.o:         $(sfcppu)/ppu.cpp $(call rwildcard,$(sfcppu)/)
+obj/sfc-cpu.o:         sfc/$(sfccpu)/cpu.cpp $(call rwildcard,sfc/$(sfccpu)/)
+obj/sfc-smp.o:         sfc/$(sfcsmp)/smp.cpp $(call rwildcard,sfc/$(sfcsmp)/)
+obj/sfc-dsp.o:         sfc/$(sfcdsp)/dsp.cpp $(call rwildcard,sfc/$(sfcdsp)/)
+obj/sfc-ppu.o:         sfc/$(sfcppu)/ppu.cpp $(call rwildcard,sfc/$(sfcppu)/)
 
 obj/sfc-satellaview.o: sfc/expansion/satellaview/satellaview.cpp $(call rwildcard,sfc/expansion/satellaview/)
 obj/sfc-eboot.o:       sfc/expansion/eboot/eboot.cpp $(call rwildcard,sfc/expansion/eboot/)

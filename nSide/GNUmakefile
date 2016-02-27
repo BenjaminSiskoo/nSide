@@ -1,10 +1,10 @@
 include ../nall/GNUmakefile
 
-ifndef profile
-  profile := accuracy
-endif
 ifndef target
   target := nSide-t
+endif
+ifndef profile
+  profile := accuracy
 endif
 # console := true
 

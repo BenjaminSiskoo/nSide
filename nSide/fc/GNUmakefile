@@ -1,10 +1,9 @@
 processors += r6502
 
-fc_objects := fc-interface fc-system fc-scheduler fc-controller
-fc_objects += fc-cartridge fc-cheat
-fc_objects += fc-memory fc-cpu fc-apu fc-ppu
-fc_objects += fc-vsarcade fc-pc10arcade
-objects += $(fc_objects)
+objects += fc-interface fc-system fc-scheduler fc-controller
+objects += fc-cartridge fc-cheat
+objects += fc-memory fc-cpu fc-apu fc-ppu
+objects += fc-vsarcade fc-pc10arcade
 
 obj/fc-interface.o:  fc/interface/interface.cpp $(call rwildcard,fc/interface/)
 obj/fc-system.o:     fc/system/system.cpp $(call rwildcard,fc/system/)
