@@ -1,7 +1,7 @@
 struct Memory {
   virtual inline auto size() const -> uint;
-  virtual auto read(uint addr, uint8 data = 0) -> uint8 = 0;
-  virtual auto write(uint addr, uint8 data) -> void = 0;
+  virtual auto read(uint16 addr, uint8 data = 0) -> uint8 = 0;
+  virtual auto write(uint16 addr, uint8 data) -> void = 0;
 };
 
 struct StaticRAM : Memory {
@@ -11,10 +11,10 @@ struct StaticRAM : Memory {
   inline auto data() -> uint8*;
   inline auto size() const -> uint;
 
-  inline auto read(uint addr, uint8 data = 0) -> uint8;
-  inline auto write(uint addr, uint8 data) -> void;
-  inline auto operator[](uint addr) -> uint8&;
-  inline auto operator[](uint addr) const -> const uint8&;
+  inline auto read(uint16 addr, uint8 data = 0) -> uint8;
+  inline auto write(uint16 addr, uint8 data) -> void;
+  inline auto operator[](uint16 addr) -> uint8&;
+  inline auto operator[](uint16 addr) const -> const uint8&;
 
 private:
   uint8* data_ = nullptr;
@@ -31,9 +31,12 @@ struct MappedRAM : Memory {
   inline auto data() -> uint8*;
   inline auto size() const -> uint;
 
-  inline auto read(uint addr, uint8 data = 0) -> uint8;
-  inline auto write(uint addr, uint8 data) -> void;
-  inline auto operator[](uint addr) const -> const uint8&;
+  inline auto read(uint16 addr, uint8 data = 0) -> uint8;
+  inline auto write(uint16 addr, uint8 data) -> void;
+  inline auto operator[](uint16 addr) const -> const uint8&;
+
+  inline auto readDirect(uint addr, uint8 data = 0) -> uint8;
+  inline auto writeDirect(uint addr, uint8 data) -> void;
 
 private:
   uint8* data_ = nullptr;

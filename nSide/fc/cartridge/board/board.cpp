@@ -55,11 +55,11 @@ Board::~Board() {
 }
 
 auto Board::read(MappedRAM& memory, uint addr) -> uint8 {
-  return memory.read(mirror(addr, memory.size()));
+  return memory.readDirect(mirror(addr, memory.size()));
 }
 
 auto Board::write(MappedRAM& memory, uint addr, uint8 byte) -> void {
-  memory.write(mirror(addr, memory.size()), byte);
+  memory.writeDirect(mirror(addr, memory.size()), byte);
 }
 
 auto Board::mirror(uint addr, uint size) -> uint {
