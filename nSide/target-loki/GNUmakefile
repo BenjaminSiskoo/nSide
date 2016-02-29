@@ -8,8 +8,7 @@ include processor/GNUmakefile
 include emulator/GNUmakefile
 
 ui_objects := ui-loki ui-program ui-settings ui-input
-ui_objects += ui-interface ui-debugger
-ui_objects += ui-terminal ui-presentation
+ui_objects += ui-debugger ui-terminal ui-presentation
 ui_objects += ruby hiro
 ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
 
@@ -48,7 +47,6 @@ obj/ui-loki.o: $(ui)/loki.cpp $(call rwildcard,$(ui)/)
 obj/ui-program.o: $(ui)/program/program.cpp $(call rwildcard,$(ui)/)
 obj/ui-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
 obj/ui-input.o: $(ui)/input/input.cpp $(call rwildcard,$(ui)/)
-obj/ui-interface.o: $(ui)/interface/interface.cpp $(call rwildcard,$(ui)/)
 obj/ui-debugger.o: $(ui)/debugger/debugger.cpp $(call rwildcard,$(ui)/)
 obj/ui-terminal.o: $(ui)/terminal/terminal.cpp $(call rwildcard,$(ui)/)
 obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)

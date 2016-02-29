@@ -50,7 +50,7 @@ auto MappedRAM::size() const -> uint { return size_; }
 
 auto MappedRAM::read(uint16 addr, uint8) -> uint8 { return data_[addr]; }
 auto MappedRAM::write(uint16 addr, uint8 data) -> void { if(!write_protect_) data_[addr] = data; }
-auto MappedRAM::operator[](uint addr) const -> const uint8& { return data_[addr]; }
+auto MappedRAM::operator[](uint16 addr) const -> const uint8& { return data_[addr]; }
 
 auto MappedRAM::readDirect(uint addr, uint8) -> uint8 { return data_[addr]; }
 auto MappedRAM::writeDirect(uint addr, uint8 data) -> void { if(!write_protect_) data_[addr] = data; }
