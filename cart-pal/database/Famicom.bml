@@ -2162,6 +2162,23 @@ cartridge sha256:f22944452be3259aac853258759f469e7d2e2447c6178f26cc7bd0e89945bc0
   :  name:     Baseball
   :  title:    Baseball
 
+cartridge sha256:f9752a3d068d24a97efb4a413fc84858ecae689502ee7002b6884bbe331eb7cd
+  :board region=ntsc id:NES-SFEXPROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :  chr
+  :    rom name=character.rom size=0x10000
+  :
+  :information
+  :  serial:   NES-LD-USA
+  :  board:    NES-SFEXPROM-01
+  :  revision: 1.0
+  :  name:     Bases Loaded
+  :  title:    Bases Loaded
+  :  // The Program ROM is patched at run-time by the NES-LD-0-EXP.
+  :  // pre-patched: 685c94591a76510bf1bb120f81acd68e62ce37384eccc1635180ca3be742fd36
+
 cartridge sha256:3a55db2bf9f03e138c60da85a9e8ee5472aff31475ba30762b247ff362a0216a
   :board region=ntsc id:NES-SFROM
   :  chip type=MMC1B2

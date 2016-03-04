@@ -50,15 +50,19 @@ struct HVC_SxROM : Board {
 
     if(addr & 0x8000) {
       switch(revision) {
-      case Revision::SEROM:
-      case Revision::SHROM:
-      case Revision::SH1ROM:
-        break;
       default:
         addr = mmc1.prg_addr(addr);
         if(revision == Revision::SUROM || revision == Revision::SXROM) {
           addr |= ((mmc1.chr_addr(ppu.status.chr_abus) >> 16) & 1) << 18;
         }
+        break;
+      case Revision::SEROM:
+      case Revision::SHROM:
+      case Revision::SH1ROM:
+        break;
+      case Revision::SFEXPROM:
+        addr = mmc1.prg_addr(addr);
+        if((exp_lock & 0x20) && (addr & 0x7fff) == 0x0180) return 0x05;
         break;
       }
       return read(prgrom, addr);
@@ -71,6 +75,8 @@ struct HVC_SxROM : Board {
     if((addr & 0xe000) == 0x6000) {
       if(revision == Revision::SNROM) {
         if(mmc1.chr_bank[0] & 0x10) return;
+      } else if(revision == Revision::SFEXPROM) {
+        exp_lock = data;
       }
       if(mmc1.ram_disable) return;
       if(prgram.size() > 0) return write(prgram, ram_addr(addr), data);
@@ -95,11 +101,15 @@ struct HVC_SxROM : Board {
 
   auto reset() -> void {
     mmc1.reset();
+    exp_lock = 0x00;
   }
 
   auto serialize(serializer& s) -> void {
     Board::serialize(s);
     mmc1.serialize(s);
+    if(revision == Revision::SFEXPROM) {
+      s.integer(exp_lock);
+    }
   }
 
   enum class Revision : uint {
@@ -131,4 +141,5 @@ struct HVC_SxROM : Board {
   } revision;
 
   MMC1 mmc1;
+  uint8 exp_lock;
 };
