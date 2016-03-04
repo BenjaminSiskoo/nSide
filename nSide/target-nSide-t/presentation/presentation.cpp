@@ -145,12 +145,9 @@ Presentation::Presentation() {
     invoke("http://doc.byuu.org/higan/");
   });
   about.setText("About ...").onActivate([&] {
+    string profile = Emulator::Profile ? string{" (", Emulator::Profile, ")"} : "";
     MessageDialog().setParent(*this).setTitle("About nSide ...").setText({
-      Emulator::Name, "-t v", Emulator::Version,
-      #if defined(PROFILE_ACCURACY) or defined(PROFILE_BALANCED) or defined(PROFILE_PERFORMANCE)
-      " (", Emulator::Profile, ")",
-      #endif
-      "\n",
+      Emulator::Name, "-t v", Emulator::Version, profile, "\n",
       "Based on ", Emulator::OriginalName, " v", Emulator::FromVersion, "\n\n",
       "Original Author: ", Emulator::OriginalAuthor, "\n",
       "Fork Author: ", Emulator::Author, "\n",

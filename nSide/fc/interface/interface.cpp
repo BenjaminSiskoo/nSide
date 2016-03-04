@@ -29,12 +29,6 @@ Interface::Interface() {
   port.append({2, "Expansion Port"});
   port.append({3, "Arcade Panel"});
 
-  // C++ prohibits counting the number of items in an enum. Take care
-  // and update this value whenever a device is added or removed.
-  for(uint i = 0; i < 9; i++) {
-    device_ref.append(DeviceRef{i, 0, 0, 0, 0});
-  }
-
   { Device device{
       (uint)Famicom::Device::ID::None,
       ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort,
@@ -393,6 +387,9 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::addDevice(Device device) -> void {
+  while(device_ref.size() <= device.id) {
+    device_ref.append(DeviceRef{device_ref.size(), 0, 0, 0, 0});
+  }
   for(auto& port : this->port) {
     if(device.portmask & (1 << port.id)) {
       device_ref[device.id].port[port.id] = (uint)port.device.size();
@@ -416,8 +413,9 @@ auto Interface::exportMemory() -> void {
   file::write({pathname, "palette.ram"}, (uint8_t*)ppu.cgram, 32);
   if(cartridge.board->prgram.size()) saveRequest(ID::ProgramRAM, "debug/program.ram");
   if(cartridge.board->chrram.size()) saveRequest(ID::CharacterRAM, "debug/character.ram");
-  if(cartridge.board->chip && cartridge.board->chip->ram.size())
+  if(cartridge.board->chip && cartridge.board->chip->ram.size()) {
     saveRequest(ID::ChipRAM, "debug/chip.ram");
+  }
 }
 
 }

@@ -23,10 +23,6 @@ struct Device {
     // arcade panels
     VSPanel,
   };
-  // C++ prohibits counting the number of items in an enum. Take care
-  // and update the number of unique devices in interface.cpp whenever a device
-  // is added or removed.
-  // Currently, there are 9 devices, counting None.
 
   Device();
   ~Device();
