@@ -38,6 +38,7 @@ extern Emulator::Interface* emulator;
 #include "properties/properties.hpp"
 #include "vram/vram.hpp"
 #include "bg/bg.hpp"
+#include "palette/palette.hpp"
 #include "resource/resource.hpp"
 
 auto locate(string name) -> string;

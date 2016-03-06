@@ -38,6 +38,7 @@ ConsoleWindow::ConsoleWindow() {
     menuWindowsPropertiesViewer.setText("Properties Viewer");
     menuWindowsVRAMViewer.setText("VRAM Viewer");
     menuWindowsBGViewer.setText("BG Viewer");
+    menuWindowsPaletteViewer.setText("Palette Viewer");
 
   menuState.setText("&State");
     menuStateSave1.setText("Save - Slot 1");
@@ -140,6 +141,11 @@ ConsoleWindow::ConsoleWindow() {
   menuWindowsBGViewer.onActivate([&] {
     bgViewer->setVisible();
     bgViewer->setFocused();
+  });
+
+  menuWindowsPaletteViewer.onActivate([&] {
+    paletteViewer->setVisible();
+    paletteViewer->setFocused();
   });
 
   menuStateSave1.onActivate([&] { program->saveState(1); });

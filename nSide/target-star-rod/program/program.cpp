@@ -28,6 +28,7 @@ Program::Program(lstring args) {
   new PropertiesViewer;
   new VRAMViewer;
   new BGViewer;
+  new PaletteViewer;
 
   higan_settings = BML::unserialize(string::read(locateHigan("settings.bml")));
 
