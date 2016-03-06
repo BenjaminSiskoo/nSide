@@ -27,6 +27,7 @@ struct ConsoleWindow : Window {
       MenuItem menuWindowsBreakpointEditor{&menuWindows};
       MenuItem menuWindowsPropertiesViewer{&menuWindows};
       MenuItem menuWindowsVRAMViewer{&menuWindows};
+      MenuItem menuWindowsBGViewer{&menuWindows};
 
     Menu menuState{&menuBar};
       MenuItem menuStateSave1{&menuState};

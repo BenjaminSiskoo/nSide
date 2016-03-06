@@ -16,6 +16,7 @@ auto Debugger::run() -> void {
   if(memoryEditor->autoUpdate.checked()) memoryEditor->updateView();
   if(propertiesViewer->autoUpdate.checked()) propertiesViewer->updateProperties();
   if(vramViewer->autoUpdate.checked()) vramViewer->updateTiles();
+  if(bgViewer->autoUpdate.checked()) bgViewer->updateTiles();
 }
 
 auto Debugger::echo(const string& text) -> void {

@@ -14,7 +14,7 @@ ui_objects += star-rod-debugger star-rod-tracer
 ui_objects += star-rod-window
 ui_objects += star-rod-console star-rod-presentation
 ui_objects += star-rod-cpu star-rod-smp star-rod-memory
-ui_objects += star-rod-breakpoint star-rod-properties star-rod-vram
+ui_objects += star-rod-breakpoint star-rod-properties star-rod-vram star-rod-bg
 ui_objects += ruby hiro
 ui_objects += $(if $(call streq,$(platform),windows),star-rod-resource)
 
@@ -61,6 +61,7 @@ obj/star-rod-memory.o: $(ui)/memory/memory.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-breakpoint.o: $(ui)/breakpoint/breakpoint.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-properties.o: $(ui)/properties/properties.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-vram.o: $(ui)/vram/vram.cpp $(call rwildcard,$(ui)/)
+obj/star-rod-bg.o: $(ui)/bg/bg.cpp $(call rwildcard,$(ui)/)
 
 obj/star-rod-resource.o:
 	windres data/resource.rc obj/star-rod-resource.o

@@ -27,6 +27,7 @@ Program::Program(lstring args) {
   new BreakpointEditor;
   new PropertiesViewer;
   new VRAMViewer;
+  new BGViewer;
 
   higan_settings = BML::unserialize(string::read(locateHigan("settings.bml")));
 
@@ -85,6 +86,7 @@ Program::Program(lstring args) {
   memoryEditor->selectSource();
   propertiesViewer->updateProperties();
   vramViewer->updateTiles();
+  bgViewer->updateTiles();
 }
 
 auto Program::main() -> void {

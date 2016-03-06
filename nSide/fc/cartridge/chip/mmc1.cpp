@@ -2,12 +2,13 @@ struct MMC1 : Chip {
   MMC1(Board& board, Markup::Node& board_node) : Chip(board) {
     string type = board_node["chip/type"].text();
 
-    if(type == "MMC1"  ) revision = Revision::MMC1;
-    if(type == "MMC1A" ) revision = Revision::MMC1A;
-    if(type == "MMC1B1") revision = Revision::MMC1B1;
-    if(type == "MMC1B2") revision = Revision::MMC1B2;
-    if(type == "MMC1B3") revision = Revision::MMC1B3;
-    if(type == "MMC1C" ) revision = Revision::MMC1C;
+    if(type == "MMC1"    ) revision = Revision::MMC1;
+    if(type == "MMC1A"   ) revision = Revision::MMC1A;
+    if(type == "MMC1B1"  ) revision = Revision::MMC1B1;
+    if(type == "MMC1B1-H") revision = Revision::MMC1B1;
+    if(type == "MMC1B2"  ) revision = Revision::MMC1B2;
+    if(type == "MMC1B3"  ) revision = Revision::MMC1B3;
+    if(type == "MMC1C"   ) revision = Revision::MMC1C;
   }
 
   auto main() -> void {

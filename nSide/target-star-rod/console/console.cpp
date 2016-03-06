@@ -37,6 +37,7 @@ ConsoleWindow::ConsoleWindow() {
     menuWindowsBreakpointEditor.setText("Breakpoint Editor");
     menuWindowsPropertiesViewer.setText("Properties Viewer");
     menuWindowsVRAMViewer.setText("VRAM Viewer");
+    menuWindowsBGViewer.setText("BG Viewer");
 
   menuState.setText("&State");
     menuStateSave1.setText("Save - Slot 1");
@@ -134,6 +135,11 @@ ConsoleWindow::ConsoleWindow() {
   menuWindowsVRAMViewer.onActivate([&] {
     vramViewer->setVisible();
     vramViewer->setFocused();
+  });
+
+  menuWindowsBGViewer.onActivate([&] {
+    bgViewer->setVisible();
+    bgViewer->setFocused();
   });
 
   menuStateSave1.onActivate([&] { program->saveState(1); });

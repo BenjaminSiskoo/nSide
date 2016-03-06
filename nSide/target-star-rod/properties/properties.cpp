@@ -100,5 +100,41 @@ auto PropertiesViewer::updateProperties() -> void {
     "\n"
   );
 
+  output.append("$212c  TM\n"
+    "  BG1 Main = ", SuperFamicom::ppu.bg1.regs.main_enable ? "Enabled" : "Disabled", "\n",
+    "  BG2 Main = ", SuperFamicom::ppu.bg2.regs.main_enable ? "Enabled" : "Disabled", "\n",
+    "  BG3 Main = ", SuperFamicom::ppu.bg3.regs.main_enable ? "Enabled" : "Disabled", "\n",
+    "  BG4 Main = ", SuperFamicom::ppu.bg4.regs.main_enable ? "Enabled" : "Disabled", "\n",
+    "  OBJ Main = ", SuperFamicom::ppu.sprite.regs.main_enable ? "Enabled" : "Disabled", "\n",
+    "\n"
+  );
+
+  output.append("$212d  TS\n"
+    "  BG1 Sub = ", SuperFamicom::ppu.bg1.regs.sub_enable ? "Enabled" : "Disabled", "\n",
+    "  BG2 Sub = ", SuperFamicom::ppu.bg2.regs.sub_enable ? "Enabled" : "Disabled", "\n",
+    "  BG3 Sub = ", SuperFamicom::ppu.bg3.regs.sub_enable ? "Enabled" : "Disabled", "\n",
+    "  BG4 Sub = ", SuperFamicom::ppu.bg4.regs.sub_enable ? "Enabled" : "Disabled", "\n",
+    "  OBJ Sub = ", SuperFamicom::ppu.sprite.regs.main_enable ? "Enabled" : "Disabled", "\n",
+    "\n"
+  );
+
+  output.append("$212e  TMW\n"
+    "  BG1 Main Window = ", SuperFamicom::ppu.window.regs.bg1_main_enable ? "Enabled" : "Disabled", "\n",
+    "  BG2 Main Window = ", SuperFamicom::ppu.window.regs.bg2_main_enable ? "Enabled" : "Disabled", "\n",
+    "  BG3 Main Window = ", SuperFamicom::ppu.window.regs.bg3_main_enable ? "Enabled" : "Disabled", "\n",
+    "  BG4 Main Window = ", SuperFamicom::ppu.window.regs.bg4_main_enable ? "Enabled" : "Disabled", "\n",
+    "  OBJ Main Window = ", SuperFamicom::ppu.window.regs.oam_main_enable ? "Enabled" : "Disabled", "\n",
+    "\n"
+  );
+
+  output.append("$212f  TSW\n"
+    "  BG1 Sub Window = ", SuperFamicom::ppu.window.regs.bg1_sub_enable ? "Enabled" : "Disabled", "\n",
+    "  BG2 Sub Window = ", SuperFamicom::ppu.window.regs.bg2_sub_enable ? "Enabled" : "Disabled", "\n",
+    "  BG3 Sub Window = ", SuperFamicom::ppu.window.regs.bg3_sub_enable ? "Enabled" : "Disabled", "\n",
+    "  BG4 Sub Window = ", SuperFamicom::ppu.window.regs.bg4_sub_enable ? "Enabled" : "Disabled", "\n",
+    "  OBJ Sub Window = ", SuperFamicom::ppu.window.regs.oam_sub_enable ? "Enabled" : "Disabled", "\n",
+    "\n"
+  );
+
   properties.setText(output);
 }

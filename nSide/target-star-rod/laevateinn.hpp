@@ -37,6 +37,7 @@ extern Emulator::Interface* emulator;
 #include "breakpoint/breakpoint.hpp"
 #include "properties/properties.hpp"
 #include "vram/vram.hpp"
+#include "bg/bg.hpp"
 #include "resource/resource.hpp"
 
 auto locate(string name) -> string;
