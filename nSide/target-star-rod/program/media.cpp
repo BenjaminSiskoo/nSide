@@ -9,7 +9,7 @@ auto Program::loadMedia(string location) -> bool {
 
   emulator->load(SuperFamicom::ID::SuperFamicom);
   emulator->power();
-  emulator->connect(SuperFamicom::ID::ControllerPort1, (uint)SuperFamicom::Device::ID::Gamepad);
+  emulator->connect((uint)SuperFamicom::Device::Port::Controller1, (uint)SuperFamicom::Device::ID::Gamepad);
   emulator->set("Blur Emulation", false);
   emulator->set("Color Emulation", false);
   emulator->set("Scanline Emulation", false);
