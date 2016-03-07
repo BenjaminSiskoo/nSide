@@ -82,7 +82,7 @@ auto Program::audioSample(int16 lsample, int16 rsample) -> void {
 auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
   if(presentation->focused() == false) return 0;
 
-  if(port == SuperFamicom::ID::ControllerPort1) {
+  if(port == (uint)SuperFamicom::Device::Port::Controller1) {
     if(device == (uint)SuperFamicom::Device::ID::Gamepad) {
       switch(input) {
       case SuperFamicom::Gamepad::B:      return hiro::Keyboard::pressed("Z");
