@@ -70,6 +70,10 @@ auto BGViewer::updateTiles() -> void {
   }
   uint16 screen_addr = bg->regs.screen_addr;
   uint pitch = 16 << bg->regs.mode;
+  bool hires = SuperFamicom::ppu.regs.bgmode == 5 || SuperFamicom::ppu.regs.bgmode == 6;
+  bool tile_size = bg->regs.tile_size;
+  bool tile_size_x = tile_size || hires;
+  bool tile_size_y = tile_size;
 
   uint10 tile_id;
   uint3 palette;
@@ -77,14 +81,16 @@ auto BGViewer::updateTiles() -> void {
   bool mirror_x;
   bool mirror_y;
 
-  for(uint tileY : range((bg->regs.screen_size & 2) ? 64 : 32)) {
-    for(uint tileX : range((bg->regs.screen_size & 1) ? 64 : 32)) {
+  for(uint tileY : range(tile_size_y || (bg->regs.screen_size & 2) ? 64 : 32)) {
+    for(uint tileX : range(tile_size_x || (bg->regs.screen_size & 1) ? 64 : 32)) {
       tiledata = bg->get_tile(tileX * 8, tileY * 8);
       tile_id  = tiledata.bits( 9,  0);
       palette  = tiledata.bits(12, 10);
       priority = tiledata.bit(13);
       mirror_x = tiledata.bit(14);
       mirror_y = tiledata.bit(15);
+      if(tile_size_x && (tileX & 1) ^ mirror_x) tile_id += 1;
+      if(tile_size_y && (tileY & 1) ^ mirror_y) tile_id += 16;
       sp = SuperFamicom::ppu.vram + (bg->regs.tiledata_addr + tile_id * pitch);
       switch(bg->regs.mode) {
       case SuperFamicom::PPU::Background::Mode::BPP2:
