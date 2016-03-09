@@ -13,7 +13,7 @@ namespace GameBoy {
 /*
   nSide-gb - Game Boy, Super Game Boy, and Game Boy Color emulator
   based on higan/bgb by byuu.
-  author: byuu
+  original author: byuu
   contributors: Jonas Quinn
   license: GPLv3
   original project started: 2010-12-27

@@ -2040,6 +2040,38 @@ cartridge sha256:515dd3fdb7c6ba287c87cdfce67a05babceb83bac7dd5ccf0b01b68d853dd31
   :  name:     Wit's
   :  title:    Wit's
 
+cartridge sha256:777345bbde222e06d5dee48f1b02197f5965c57c3e8972142975f0a4eac0c9f5
+  :board region=ntsc id:NAMCOT-3303
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NAM-NXV-4900-03
+  :  board:    3303
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Xevious
+  :  title:    ゼビウス
+
+cartridge sha256:78b4525668842d06dc347b1146cb51dc9bb4a9d268c3c141e09c15fd01a1556b
+  :board region=ntsc id:NAMCOT-3303
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NAM-NXV-4900-03
+  :  board:    3303
+  :  region:   JPN
+  :  revision: 1.1
+  :  name:     Xevious
+  :  title:    ゼビウス
+
 cartridge sha256:703411cb92283840c096d7e1e422582ecda18bd9b27604a253cb0b0702383043
   :board region=ntsc id:JALECO-JF-11
   :  mirror mode=vertical
@@ -2201,6 +2233,21 @@ cartridge sha256:df2609c80e818bb95983b30a3ac1435ea2332ac83e29fde469f397e1d5a2db9
   :  revision: 1.0
   :  name:     Advanced Dungeons & Dragons - Heroes of the Lance
   :  title:    Advanced Dungeons & Dragons: Heroes of the Lance
+
+cartridge sha256:53bfc94fce46a25188f84f102810406f686a7fb13fb5e4ae8f13760106acb969
+  :board region=ntsc id:NES-CNROM
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   NES-TB-USA
+  :  board:    NES-CNROM-07
+  :  revision: 1.0
+  :  name:     Adventure Island
+  :  title:    Hudson's Adventure Island
 
 cartridge sha256:185e4adb2cbcb71ebf0fd3f6af767f2215f93916cd2ccf932ce5864d3953239a
   :board region=ntsc id:NES-SLROM
@@ -3049,6 +3096,22 @@ cartridge sha256:fd2a8520314fb183e15fd62f48df97f92eb9c81140da4e6ab9ff0386e479707
   :  revision: 1.0
   :  name:     Gauntlet
   :  title:    Gauntlet
+
+cartridge sha256:ffa61d9f7bfb1d60662ddf246b21a8756d518292e8fdc0f58ac1c9b3fbad672d
+  :board region=ntsc id:NES-TSROM
+  :  chip type=MMC3B
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :    ram name=work.ram size=0x2000 volatile
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-2U-USA
+  :  board:    NES-TSROM-07
+  :  revision: 1.0
+  :  name:     Gauntlet II
+  :  title:    Gauntlet II
 
 cartridge sha256:c41555b61617e52cae950e0a94d4d655646eed4e4ce4c1d26740ddee0a9ae090
   :board region=ntsc id:NES-NROM-128

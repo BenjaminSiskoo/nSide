@@ -281,6 +281,8 @@ Board* Board::load(Markup::Node board_node) {
   if(type == "NAMCOT-340" ) return new Namco163(board_node);
   if(type == "NAMCOT-3301") return new HVC_NROM(board_node);
   if(type == "NAMCOT-3302") return new HVC_NROM(board_node);
+  if(type == "NAMCOT-3303") return new HVC_NROM(board_node);
+  if(type == "NAMCOT-3304") return new HVC_NROM(board_node);
   if(type == "NAMCOT-3305") return new HVC_NROM(board_node);
   if(type == "NAMCOT-3311") return new HVC_NROM(board_node);
   if(type == "NAMCOT-3312") return new HVC_NROM(board_node);
@@ -330,6 +332,8 @@ Board* Board::load(Markup::Node board_node) {
   // Homebrew boards; feel free to remove
   if(type == "NoConflicts-CNROM") return new NoConflicts_CNROM(board_node);
   if(type == "SingleChip") return new SingleChip(board_node);
+
+  interface->notify(string{"Unrecognized board ID: ", type});
 
   return nullptr;
 }

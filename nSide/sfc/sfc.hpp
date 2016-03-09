@@ -18,7 +18,7 @@ namespace SuperFamicom {
 /*
   nSide-sfc - Super Famicom emulator
   based on higan/bsnes by byuu.
-  author: byuu
+  original author: byuu
   contributors:
     Andreas Naive     (S-DD1 decompression algorithm)
     anomie
@@ -98,8 +98,8 @@ namespace SuperFamicom {
   #include <sfc/controller/controller.hpp>
   #include <sfc/system/system.hpp>
   #include <sfc/scheduler/scheduler.hpp>
-  #include <sfc/expansion/expansion.hpp>
   #include <sfc/coprocessor/coprocessor.hpp>
+  #include <sfc/expansion/expansion.hpp>
   #include <sfc/slot/slot.hpp>
   #include <sfc/cartridge/cartridge.hpp>
   #include <sfc/cheat/cheat.hpp>

@@ -124,4 +124,5 @@ auto Program::path(uint group) -> string {
 }
 
 auto Program::notify(string text) -> void {
+  MessageWindow().setTitle("nSide").setText(text).information();
 }
