@@ -15,6 +15,7 @@ struct Device {
     FourScore,
     BeamGun,
     FamilyTrainer,
+    Vaus,
 
     // unlicensed devices
     SFCGamepad,

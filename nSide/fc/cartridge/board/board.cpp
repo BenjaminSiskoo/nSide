@@ -303,6 +303,7 @@ Board* Board::load(Markup::Node board_node) {
   if(type == "SUNSOFT-4" ) return new Sunsoft4(board_node);
   if(type == "SUNSOFT-5B") return new Sunsoft5B(board_node);
 
+  if(type == "TAITO-CNROM"    ) return new HVC_CxROM(board_node);
   if(type == "TAITO-TC0190FMC") return new TaitoTC(board_node);
   if(type == "TAITO-TC0350FMR") return new TaitoTC(board_node);
   if(type == "TAITO-TC0690FMR") return new TaitoTC(board_node);

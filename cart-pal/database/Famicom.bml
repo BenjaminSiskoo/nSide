@@ -51,6 +51,22 @@ cartridge sha256:60b1aebdc0a19afc5d3e7dc4f09d8a968580e007197461a8a142656702c27f0
   :  name:     Akumajou Dracula
   :  title:    悪魔城ドラキュラ
 
+cartridge sha256:c972cea7f55db3f92b775bd3878ce477feace79e3325e8bbcdd65fe780e2f50f
+  :board region=ntsc id:TAITO-CNROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x4000
+  :
+  :information
+  :  serial:   TFC-AN-5400-10
+  :  board:    FC-010
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Arkanoid
+  :  title:    アルカノイド
+
 cartridge sha256:54526dc9444c0eb4b0e5814f98b5e522bcb9881a6f2c0644fc7a21ca8c03502b
   :board region=ntsc id:HVC-TLSROM
   :  chip type=MMC3B
@@ -1942,6 +1958,22 @@ cartridge sha256:fb6298bb3519faaee26f75e6e071ab109398f06ab381bbb9f3edf299cd69429
   :  name:     Tag Team Pro-Wrestling
   :  title:    タッグチームプロレスリング
 
+cartridge sha256:9583caa45626da3899b725fad3fcf345acbecd77eae6b77dbb065343c995ff1d
+  :board region=ntsc id:HVC-TL1ROM
+  :  chip type=MMC3A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   DTF-H9 (28)
+  :  board:    HVC-TL1ROM-01
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Taito Chase H.Q.
+  :  title:    タイトーチェイスH.Q.
+
 cartridge sha256:a086ff08e7eae822285975d04f5d227f2434d5f1819969e233ff8670f7d57439
   :board region=ntsc id:HVC-SKROM
   :  chip type=MMC1A
@@ -2472,6 +2504,21 @@ cartridge sha256:c5e47c0479f500b86995fc8d09e132f5ba3f54cfd9a2a601ea3848bb60871a2
   :  revision: 1.0
   :  name:     Adventures of Lolo
   :  title:    Adventures of Lolo
+
+cartridge sha256:a3763e702f8ae0818480cf0a8b2395d3f928c539f75e230ed43fa6b904fe6365
+  :board region=ntsc id:NES-CNROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x4000
+  :
+  :information
+  :  serial:   NES-AR-USA
+  :  board:    NES-CN-ROM-256-03
+  :  revision: 1.0
+  :  name:     Arkanoid
+  :  title:    Arkanoid
 
 cartridge sha256:2137d1621d29df50100f4d0fba3bafa0be56ccd0c832e44cd29dd7f0d75b374e
   :board region=ntsc id:NES-UNROM

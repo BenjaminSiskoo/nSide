@@ -65,5 +65,6 @@ protected:
 #include "fourscore/fourscore.hpp"
 #include "beamgun/beamgun.hpp"
 #include "familytrainer/familytrainer.hpp"
+#include "vaus/vaus.hpp"
 #include "sfcgamepad/sfcgamepad.hpp"
 #include "mouse/mouse.hpp"

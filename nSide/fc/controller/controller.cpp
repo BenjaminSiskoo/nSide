@@ -7,6 +7,7 @@ namespace Famicom {
 #include "fourscore/fourscore.cpp"
 #include "beamgun/beamgun.cpp"
 #include "familytrainer/familytrainer.cpp"
+#include "vaus/vaus.cpp"
 #include "sfcgamepad/sfcgamepad.cpp"
 #include "mouse/mouse.cpp"
 

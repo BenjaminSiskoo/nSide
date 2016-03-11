@@ -31,6 +31,7 @@ auto Device::connect(uint port, Device::ID id) -> void {
   case ID::FourScore: controller = new FourScore(port); break;
   case ID::BeamGun: controller = new BeamGun(port); break;
   case ID::FamilyTrainer: controller = new FamilyTrainer(port); break;
+  case ID::Vaus: controller = new Vaus(port); break;
   case ID::SFCGamepad: controller = new SFCGamepad(port); break;
   case ID::Mouse: controller = new Mouse(port); break;
   }

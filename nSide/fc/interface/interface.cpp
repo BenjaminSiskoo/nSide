@@ -163,6 +163,17 @@ Interface::Interface() {
   }
 
   { Device device{
+      (uint)Famicom::Device::ID::Vaus,
+      ID::ControllerPort2 | ID::ExpansionPort,
+      "Arkanoid Vaus"
+    };
+    device.input.append({0, 1, "Control Knob"});
+    device.input.append({2, 0, "Fire Button" });
+    device.order = {0, 1};
+    addDevice(device);
+  }
+
+  { Device device{
       (uint)Famicom::Device::ID::SFCGamepad,
       ID::ControllerPort1 | ID::ControllerPort2,
       "SFC Gamepad"
