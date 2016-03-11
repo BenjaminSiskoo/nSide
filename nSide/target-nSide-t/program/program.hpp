@@ -15,6 +15,7 @@ struct Program : Emulator::Interface::Bind {
   auto inputRumble(uint port, uint device, uint input, bool enable) -> void override;
   auto dipSettings(const Markup::Node& node) -> uint override;
   auto path(uint group) -> string override;
+  auto deviceChanged(uint port, uint device) -> void override;
   auto notify(string text) -> void override;
 
   //media.cpp

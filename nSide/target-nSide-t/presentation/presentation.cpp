@@ -224,7 +224,12 @@ auto Presentation::updateEmulator() -> void {
     }
   }
 
-  systemMenuSeparatorPorts.setVisible(inputPort1.visible() || inputPort2.visible() || inputPort3.visible());
+  systemMenuSeparatorPorts.setVisible(
+    inputPort1.visible() ||
+    inputPort2.visible() ||
+    inputPort3.visible() ||
+    inputPort4.visible()
+  );
 
   emulator->set("Blur Emulation", blurEmulation.checked());
   emulator->set("Color Emulation", colorEmulation.checked());

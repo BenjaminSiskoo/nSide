@@ -41,20 +41,24 @@ auto Device::connect(uint port, Device::ID id) -> void {
   case 2: settings.expansionPort   = (uint)id; break;
   }
 
-  /*switch(port) {
+  switch((Port)port) {
   case Port::Controller1:
-    if(id == ID::FourScore && settings.controllerPort2 != ID::FourScore) {
-      connect(Port::Controller2, ID::FourScore);
-    } else if(id != ID::FourScore && settings.controllerPort2 == ID::FourScore) {
-      connect(Port::Controller2, ID::None);
+    if(id == ID::FourScore && settings.controllerPort2 != (uint)ID::FourScore) {
+      connect((uint)Port::Controller2, ID::FourScore);
+      interface->deviceChanged((uint)Port::Controller2, (uint)ID::FourScore);
+    } else if(id != ID::FourScore && settings.controllerPort2 == (uint)ID::FourScore) {
+      connect((uint)Port::Controller2, ID::None);
+      interface->deviceChanged((uint)Port::Controller2, (uint)ID::None);
     }
     break;
   case Port::Controller2:
-    if(id == ID::FourScore && settings.controllerPort1 != ID::FourScore) {
-      connect(Port::Controller1, ID::FourScore);
-    } else if(id != ID::FourScore && settings.controllerPort1 == ID::FourScore) {
-      connect(Port::Controller1, ID::None);
+    if(id == ID::FourScore && settings.controllerPort1 != (uint)ID::FourScore) {
+      connect((uint)Port::Controller1, ID::FourScore);
+      interface->deviceChanged((uint)Port::Controller1, (uint)ID::FourScore);
+    } else if(id != ID::FourScore && settings.controllerPort1 == (uint)ID::FourScore) {
+      connect((uint)Port::Controller1, ID::None);
+      interface->deviceChanged((uint)Port::Controller1, (uint)ID::None);
     }
     break;
-  }*/
+  }
 }

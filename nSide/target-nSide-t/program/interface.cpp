@@ -123,6 +123,21 @@ auto Program::path(uint group) -> string {
   return mediaPaths(group);
 }
 
+auto Program::deviceChanged(uint port, uint device) -> void {
+  Menu& portMenu = (
+    port == 0 ? presentation->inputPort1 :
+    port == 1 ? presentation->inputPort2 :
+    port == 2 ? presentation->inputPort3 :
+                presentation->inputPort4
+  );
+  uint index;
+  for(auto& _device : emulator->port[port].device) {
+    if(_device.id == device) break;
+    index++;
+  }
+  ((MenuRadioItem)portMenu.action(index)).setChecked();
+}
+
 auto Program::notify(string text) -> void {
   MessageWindow().setTitle("nSide").setText(text).information();
 }

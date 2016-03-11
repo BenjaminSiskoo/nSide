@@ -56,6 +56,7 @@ struct Interface {
     virtual auto inputRumble(uint, uint, uint, bool) -> void {}
     virtual auto dipSettings(const Markup::Node&) -> uint { return 0; }
     virtual auto path(uint) -> string { return ""; }
+    virtual auto deviceChanged(uint port, uint device) -> void {}
     virtual auto notify(string text) -> void { print(text, "\n"); }
   };
   Bind* bind = nullptr;
@@ -70,6 +71,7 @@ struct Interface {
   auto inputRumble(uint port, uint device, uint input, bool enable) -> void { return bind->inputRumble(port, device, input, enable); }
   auto dipSettings(const Markup::Node& node) -> uint { return bind->dipSettings(node); }
   auto path(uint group) -> string { return bind->path(group); }
+  auto deviceChanged(uint port, uint device) -> void { return bind->deviceChanged(port, device); }
   template<typename... P> auto notify(P&&... p) -> void { return bind->notify({forward<P>(p)...}); }
 
   //information

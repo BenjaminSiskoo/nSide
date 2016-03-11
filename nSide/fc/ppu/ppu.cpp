@@ -300,7 +300,7 @@ auto PPU::oam_read(uint8 addr) -> uint8 {
 }
 
 auto PPU::oam_write(uint8 addr, uint8 data) -> void {
-  if((addr & 3) == 2) data &= 0xe3;
+  if(addr.bits(0,1) == 2) data.bits(2,4) = 0;  //clear non-existent bits (always read back as 0)
   oam[addr] = data;
 }
 
