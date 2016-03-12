@@ -2,6 +2,22 @@ database revision=2012-10-22 owner=bootgod
   :hex_usr adds games one at a time from bootgod's database at
   :http://bootgod.dyndns.org:7777/.
 
+cartridge sha256:42b21cc066490b78afca98224d642507a4dbb74c1483c3d63fa85ffc883fe640
+  :board region=ntsc id:HVC-SLROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   KYG-AX
+  :  board:    HVC-SLROM-03
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Airwolf
+  :  title:    エアーウルフ
+
 cartridge sha256:4fb12ad1c791c7ee8d5ec824eff871d71b43b92c4e93b45ed0b60f022459b917
   :board region=ntsc id:SUNSOFT-4
   :  prg
@@ -1892,6 +1908,22 @@ cartridge sha256:a9cf92ec1a080faa195d0b3dcb48fbb5ee3362f0f2f14e14e4257def48ac434
   :  name:     Spy vs. Spy
   :  title:    スパイVSスパイ
 
+cartridge sha256:9c957a63eeac9383082f5984ec95746e087b8c93a0425974763698dd32f48319
+  :board region=ntsc id:NAMCOT-3303
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NAM-NSL-4900-12
+  :  board:    3303
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Star Luster
+  :  title:    スターラスター
+
 cartridge sha256:fcb6a0ef3a20c19b356005fbb21dc8009563b1cb5a9aaebc8e9386b4a8c5912e
   :board region=ntsc id:HVC-NROM-256
   :  mirror mode=vertical
@@ -2505,6 +2537,21 @@ cartridge sha256:c5e47c0479f500b86995fc8d09e132f5ba3f54cfd9a2a601ea3848bb60871a2
   :  name:     Adventures of Lolo
   :  title:    Adventures of Lolo
 
+cartridge sha256:b82c1234165cd725d8e7f3e51926bceb834744eb49ad915bd3ea8b76fa465eb1
+  :board region=ntsc id:NES-SH1ROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-AF-USA
+  :  board:    NES-SH1ROM-01
+  :  revision: 1.0
+  :  name:     Airwolf
+  :  title:    Airwolf
+
 cartridge sha256:a3763e702f8ae0818480cf0a8b2395d3f928c539f75e230ed43fa6b904fe6365
   :board region=ntsc id:NES-CNROM
   :  mirror mode=horizontal
@@ -2947,6 +2994,21 @@ cartridge sha256:f97f05a4f8747d81dc8adaf07df70d1f87366632ae3e93103d387043ef5ec50
   :  revision: 1.0
   :  name:     Darkwing Duck
   :  title:    Disney's Darkwing Duck
+
+cartridge sha256:41f949cfedf7167985f779c0782ee17ee83d82e35111c5f22ee5037f54313a06
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-6D-USA
+  :  board:    NES-SLROM-06
+  :  revision: 1.0
+  :  name:     Day Dreamin' Davey
+  :  title:    Day Dreamin' Davey
 
 cartridge sha256:0115356b0791cc8ddcb7d3163d6ef7aa664f3ff4e68dba561ffffb79eefcbca9
   :board region=ntsc id:NES-BNROM
