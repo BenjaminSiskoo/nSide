@@ -15,10 +15,24 @@ auto locate(string name) -> string {
   if(inode::exists(location)) return location;
 
   location = {configpath(), "higan/", name};
-  if(inode::exists(location)) return location;
+  if(inode::exists(location)) {
+    if(suffixname(location) == ".bml" && suffixname(dirname(location)) != ".sys") {
+      directory::create({configpath(), "nSide/"});
+      file::copy(location, {configpath(), "nSide/", name});
+      return {configpath(), "nSide/", name};
+    }
+    return location;
+  }
 
   location = {localpath(), "higan/", name};
-  if(inode::exists(location)) return location;
+  if(inode::exists(location)) {
+    if(suffixname(location) == ".bml" && suffixname(dirname(location)) != ".sys") {
+      directory::create({localpath(), "nSide/"});
+      file::copy(location, {localpath(), "nSide/", name});
+      return {localpath(), "nSide/", name};
+    }
+    return location;
+  }
 
   directory::create({localpath(), "nSide/"});
   return {localpath(), "nSide/", name};

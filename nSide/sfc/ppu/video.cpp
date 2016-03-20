@@ -104,7 +104,7 @@ auto Video::refresh() -> void {
   interface->videoRefresh(output - (ppu.overscan() ? 0 : 7 * 1024), 512 * sizeof(uint32), 512, 480);
 }
 
-auto Video::drawCursor(uint32 color, int x, int y) -> void {
+auto Video::drawCursor(uint32 color, int x, int y, bool turbo) -> void {
   static const uint8 cursor[15 * 15] = {
     0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
     0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
@@ -123,6 +123,24 @@ auto Video::drawCursor(uint32 color, int x, int y) -> void {
     0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
   };
 
+  static const uint8 turboCursor[15 * 15] = {
+    1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,
+    1,5,5,5,1,0,0,0,0,0,1,5,5,5,1,
+    1,5,5,4,4,1,0,0,0,1,4,4,5,5,1,
+    1,5,4,4,3,1,0,0,0,1,3,4,4,5,1,
+    0,1,4,3,3,2,1,0,1,2,3,3,4,1,0,
+    0,0,1,1,2,2,1,0,1,2,2,1,1,0,0,
+    0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,
+    0,0,1,1,2,2,1,0,1,2,2,1,1,0,0,
+    0,1,4,3,3,2,1,0,1,2,3,3,4,1,0,
+    1,5,4,4,3,1,0,0,0,1,3,4,4,5,1,
+    1,5,5,4,4,1,0,0,0,1,4,4,5,5,1,
+    1,5,5,5,1,0,0,0,0,0,1,5,5,5,1,
+    1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,
+  };
+
   auto output = this->output() + 16 * 512;
   for(int cy = 0; cy < 15; cy++) {
     int vy = y + cy - 7;
@@ -131,9 +149,10 @@ auto Video::drawCursor(uint32 color, int x, int y) -> void {
     for(int cx = 0; cx < 15; cx++) {
       int vx = x + cx - 7;
       if(vx < 0 || vx >= 256) continue;  //do not draw offscreen
-      uint8 pixel = cursor[cy * 15 + cx];
+      uint8 pixel = !turbo ? cursor[cy * 15 + cx] : turboCursor[cy * 15 + cx];
       if(pixel == 0) continue;
       uint32 pixelcolor = pixel == 1 ? (uint32)(255 << 24) : color;
+      if(pixel >= 3) pixelcolor += 0x00003300 * (pixel - 2);
 
       *(output + vy * 1024 + vx * 2 + 0) = pixelcolor;
       *(output + vy * 1024 + vx * 2 + 1) = pixelcolor;
@@ -148,16 +167,16 @@ auto Video::drawCursors() -> void {
   case Device::ID::SuperScope:
     if(dynamic_cast<SuperScope*>(device.controllerPort2)) {
       auto& controller = (SuperScope&)*device.controllerPort2;
-      drawCursor(0xff0000ff, controller.x, controller.y);
+      drawCursor(!controller.turbo ? 0xff0000ff : 0xffff0000, controller.x, controller.y, controller.turbo);
     }
     break;
   case Device::ID::Justifier:
   case Device::ID::Justifiers:
     if(dynamic_cast<Justifier*>(device.controllerPort2)) {
       auto& controller = (Justifier&)*device.controllerPort2;
-      drawCursor(0xffff0000, controller.player1.x, controller.player1.y);
+      drawCursor(0xffff0000, controller.player1.x, controller.player1.y, false);
       if(!controller.chained) break;
-      drawCursor(0xff00bf00, controller.player2.x, controller.player2.y);
+      drawCursor(0xff00bf00, controller.player2.x, controller.player2.y, false);
     }
     break;
   }

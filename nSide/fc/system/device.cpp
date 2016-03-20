@@ -4,6 +4,7 @@ Device::Device() {
   connect(0, ID::None);
   connect(1, ID::None);
   connect(2, ID::None);
+  connect(3, ID::None);
 }
 
 Device::~Device() {

@@ -391,7 +391,7 @@ cartridge sha256:0cfdba2ec06229dfda9d68720d1ce45085e430e75f696092829d4a9325704b7
   :  region:   JPN
   :  revision: 1.0
   :  name:     Digital Devil Monogatari - Megami Tensei
-  :  title:    デジタルデビル物語 女神転生
+  :  title:    デジタル・デビル物語 女神転生
 
 cartridge sha256:1eaa6da0a158dd99c5dc46e0c75b8dcec07ee26300847b3e775c8b8ef1e7484a
   :board region=ntsc id:TAITO-TC0350FMR
@@ -4140,6 +4140,20 @@ cartridge sha256:61cb18d11771cffa08f79fd6973f634c8351703a2fe0f79858171d72a5a4658
   :  name:     Mystery Quest
   :  title:    Mystery Quest
 
+cartridge sha256:dc71dadc3f4eae03f26ac4afec8ef044e7874ad8fdee1567a9b9b9e2c112669e
+  :board region=ntsc id:NES-AMROM
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-NQ-USA
+  :  board:    NES-AMROM-01
+  :  revision: 1.0
+  :  name:     NARC
+  :  title:    NARC
+
 cartridge sha256:55efed163edb02abc2a344aba79edc5ad873a77ed92378ad0c3e62f1e1816d3e
   :board region=ntsc id:NES-SNROM
   :  chip type=MMC1B2
@@ -4896,6 +4910,38 @@ cartridge sha256:d4a94fd07859485fc2aac73d627933b70e1977c93b744ec3d71b66d4365ab7f
   :  revision: 1.0
   :  name:     Tiny Toon Adventures 2 - Trouble in Wackyland
   :  title:    Tiny Toon Adventures 2: Trouble in Wackyland
+
+cartridge sha256:aa43f3138d4f731e5e8df530dbf8fc1f6f45303b84589f7a0715e392887f3dff
+  :board region=ntsc id:NES-UNROM
+  :  chip type=74HC32
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-TG-USA
+  :  board:    NES-UN-ROM-06
+  :  revision: 1.0
+  :  name:     Top Gun
+  :  title:    Top Gun
+
+cartridge sha256:e788ae1dff1b868795395e19357525b93ddd52ac86f6a505d14eac5fa323b023
+  :board region=ntsc id:NES-UNROM
+  :  chip type=74HC32
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-TG-USA
+  :  board:    NES-UN-ROM-07
+  :  revision: 1.1
+  :  name:     Top Gun
+  :  title:    Top Gun
 
 cartridge sha256:0bd29c5b583570e195e05a4272e69b74257db1f4ff928d59c8eb1022bad871ce
   :board region=ntsc id:NES-TLROM
