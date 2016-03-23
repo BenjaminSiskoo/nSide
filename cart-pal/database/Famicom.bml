@@ -2,6 +2,23 @@ database revision=2012-10-22 owner=bootgod
   :hex_usr adds games one at a time from bootgod's database at
   :http://bootgod.dyndns.org:7777/.
 
+cartridge sha256:28cdd5af3c441f361cfa3a21ec97a1ab08691dd5d73f7a10a372fbd1fffb8ba7
+  :board region=ntsc id:HVC-UNROM
+  :  chip type=74HC32
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   CAP-43
+  :  board:    HVC-UNROM-05
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     1943 - The Battle of Valhalla
+  :  title:    1943: The Battle of Valhalla
+
 cartridge sha256:42b21cc066490b78afca98224d642507a4dbb74c1483c3d63fa85ffc883fe640
   :board region=ntsc id:HVC-SLROM
   :  chip type=MMC1A
@@ -653,6 +670,22 @@ cartridge sha256:e9f4c9d1b7c66c6af83f2db5d4f704cf5f4b3c86e26a49c05539237807d8875
   :  name:     Excitebike
   :  title:    Excitebike
 
+cartridge sha256:e9aab85fd91822b9dc7a89997eda3415e45a07fe21580c0df4765ce392e63824
+  :board region=ntsc id:HVC-RROM
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-FR
+  :  board:    HVC-RROM-05S
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     F-1 Race
+  :  title:    F1レース
+
 cartridge sha256:99c18490ed9002d9c6d999b9d8d15be5c051bdfa7cc7e73318053c9a994b0178
   :board region=ntsc id:FDS
   :  prg
@@ -1022,6 +1055,22 @@ cartridge sha256:3d6bf7221fc38cd5bd1a55b50a5b0f50e6cbba0f44e5236e8447876f711e74a
   :  name:     Golgo 13 - Dai 1 Shou - Kamigami no Tasogare
   :  title:    ゴルゴ13 第一章 神々の黄昏
 
+cartridge sha256:100fe2b085e3d57dc1a8f1cea44a31766e8c81c50a6083bf16687dcd1b6219f4
+  :board region=ntsc id:HVC-RROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-GO
+  :  board:    HVC-RROM-05
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Gomoku Narabe - Renju
+  :  title:    五目ならべ 連珠
+
 cartridge sha256:f837e0807ade4bb8036d40746e2433ed66986f043fc2be722e765e45a676cd5d
   :board region=ntsc id:KONAMI-74*139/74
   :  mirror mode=vertical
@@ -1368,6 +1417,38 @@ cartridge sha256:497c3015516cb6ae2f20d70b8fb1b70b8c4cfcd64e118992c438cfe7b0579f2
   :  name:     Magic John
   :  title:    マジック・ジョン
 
+cartridge sha256:ac5b4a29b301e23dc979bfabd2e714513b188dcf9c7ed4ae83ef23fed9cf20ee
+  :board region=ntsc id:HVC-RROM
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-MJ
+  :  board:    HVC-RROM-05
+  :  region:   JPN
+  :  revision: 1.1
+  :  name:     Mahjong
+  :  title:    麻雀
+
+cartridge sha256:0986e9e8057c476aff3726aac6b1b7698e8e6de77530f394b8be2e5b5caf9bea
+  :board region=ntsc id:HVC-NROM-128
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-MJ
+  :  board:    2I
+  :  region:   JPN
+  :  revision: 1.2
+  :  name:     Mahjong
+  :  title:    麻雀
+
 cartridge sha256:4ef61de405406bfa9eeaf19ed1d882444c41bb606ac78673b7ec8ee323d0e073
   :board region=ntsc id:IREM-G101
   :  chip type=G-101
@@ -1384,6 +1465,23 @@ cartridge sha256:4ef61de405406bfa9eeaf19ed1d882444c41bb606ac78673b7ec8ee323d0e07
   :  revision: 1.0
   :  name:     Major League
   :  title:    メジャーリーグ
+
+cartridge sha256:c75201cfacd2ebd3f6376cd84d6af27bd2b9e42cdfdaad2aeca6252f3214b53c
+  :board region=ntsc id:HVC-UNROM
+  :  chip type=74HC32
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   CAP-MK
+  :  board:    HVC-UNROM-01
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Makaimura
+  :  title:    魔界村
 
 cartridge sha256:6bc8f71a1d19cab1a1364c7e2988eaec25b2694aa29670360cab6c513f1c47ac
   :board region=ntsc id:NAMCOT-3302
@@ -1891,6 +1989,22 @@ cartridge sha256:6a0c8be0f6445d9d777080955c7aa8fbff7497633b878a36c8139ec13dabfb8
   :  name:     Soccer
   :  title:    サッカー
 
+cartridge sha256:b47462459841d2aae3e2b10ca85aca70a395e0ba7f1ad51a10f758bedda894fe
+  :board region=ntsc id:HVC-SLROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   DFC-WN
+  :  board:    HVC-SLROM-02
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Soccer League - Winner's Cup
+  :  title:    サッカーリーグ ウィナーズカップ
+
 cartridge sha256:a9cf92ec1a080faa195d0b3dcb48fbb5ee3362f0f2f14e14e4257def48ac4346
   :board region=ntsc id:HVC-CNROM
   :  security pass=0x1
@@ -1989,6 +2103,54 @@ cartridge sha256:fb6298bb3519faaee26f75e6e071ab109398f06ab381bbb9f3edf299cd69429
   :  revision: 1.0
   :  name:     Tag Team Pro-Wrestling
   :  title:    タッグチームプロレスリング
+
+cartridge sha256:1e6d5548a54a0db31a13e05b604afafd8f9402b47079d708e7bf2cf8582e2ac5
+  :board region=ntsc id:HVC-CNROM
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   HFC-TB
+  :  board:    097-1A
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Takahashi Meijin no Bouken Shima
+  :  title:    高橋名人の冒険島
+
+cartridge sha256:e31511ebbea6e664490660eca241d91d3fc427945386570e8f124e7272a2b72d
+  :board region=ntsc id:HVC-TLROM
+  :  chip type=MMC3B
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   HFC-V7
+  :  board:    HVC-TLROM-04
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Takahashi Meijin no Bouken Shima II
+  :  title:    高橋名人の冒険島II
+
+cartridge sha256:c6ef86ee14ec274fd00cec39fd669f24fdc3b7348747bb13bc7425029ea73c56
+  :board region=ntsc id:HVC-TLROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   HFC-4X
+  :  board:    HVC-TLROM-04
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Takahashi Meijin no Bouken Shima III
+  :  title:    高橋名人の冒険島III
 
 cartridge sha256:9583caa45626da3899b725fad3fcf345acbecd77eae6b77dbb065343c995ff1d
   :board region=ntsc id:HVC-TL1ROM
@@ -2264,7 +2426,7 @@ cartridge sha256:adff304553b64384f86f6c2b63571f43972b9d087f92359a1b9b93b54d52354
   :  region:   JPN
   :  revision: 1.1
   :  name:     Wild Gunman
-  :  title:    Wild Gunman
+  :  title:    ワイルドガンマン
 
 cartridge sha256:515dd3fdb7c6ba287c87cdfce67a05babceb83bac7dd5ccf0b01b68d853dd311
   :board region=ntsc id:HVC-UNROM
@@ -2282,6 +2444,22 @@ cartridge sha256:515dd3fdb7c6ba287c87cdfce67a05babceb83bac7dd5ccf0b01b68d853dd31
   :  revision: 1.0
   :  name:     Wit's
   :  title:    Wit's
+
+cartridge sha256:f1eb29dd1c7b2b29f4932df853f32a7560bbfe64997281aa79f61ba9f131fb17
+  :board region=ntsc id:HVC-NROM-256
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-WR
+  :  board:    HVC-NROM-256K-02
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Wrecking Crew
+  :  title:    レッキングクルー
 
 cartridge sha256:777345bbde222e06d5dee48f1b02197f5965c57c3e8972142975f0a4eac0c9f5
   :board region=ntsc id:NAMCOT-3303
@@ -2491,6 +2669,36 @@ cartridge sha256:53bfc94fce46a25188f84f102810406f686a7fb13fb5e4ae8f13760106acb96
   :  revision: 1.0
   :  name:     Adventure Island
   :  title:    Hudson's Adventure Island
+
+cartridge sha256:5ee479ef04d80366a75dd144cbeb47d0347ee82025d1b65dd358e1f6498c9a39
+  :board region=ntsc id:NES-TLROM
+  :  chip type=MMC3B
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-V7-USA
+  :  board:    NES-TLROM-03
+  :  revision: 1.0
+  :  name:     Adventure Island II
+  :  title:    Hudson's Adventure Island II
+
+cartridge sha256:e8dc8c0441c54d09a1cfe0c112a3137bb6d709989b23e6528f8e30360e1ad910
+  :board region=ntsc id:NES-TLROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-AT-USA
+  :  board:    NES-TLROM-03
+  :  revision: 1.0
+  :  name:     Hudson's Adventure Island III
+  :  title:    Hudson's Adventure Island III
 
 cartridge sha256:185e4adb2cbcb71ebf0fd3f6af767f2215f93916cd2ccf932ce5864d3953239a
   :board region=ntsc id:NES-SLROM
@@ -4321,6 +4529,38 @@ cartridge sha256:910ba4505b46a99b3779d84fd22ba8b18f3a649b0c1a11706c4609d06ce0bc1
   :  revision: 1.0
   :  name:     Pinball
   :  title:    Pinball
+
+cartridge sha256:96dafa1208bda2eaa601d6855d86cf670556018c2859805cae51a88f83e66e9e
+  :board region=ntsc id:NES-UNROM
+  :  chip type=74HC32
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-PW-USA
+  :  board:    NES-UN-ROM-01
+  :  revision: 1.0
+  :  name:     Pro Wrestling
+  :  title:    Pro Wrestling
+
+cartridge sha256:e144020f37416f80f1a0da47aa9b3fbda338c61fcd175e8b2dc98df181e24b85
+  :board region=ntsc id:NES-UNROM
+  :  chip type=74HC32
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-PW-USA
+  :  board:    NES-UN-ROM-07
+  :  revision: 1.1
+  :  name:     Pro Wrestling
+  :  title:    Pro Wrestling
 
 cartridge sha256:635271fe654636ec37c882f76c5f8cd39b7b3a476c9aa75cefb548d82de8f896
   :board region=ntsc id:NES-PNROM

@@ -65,8 +65,8 @@ auto SuperScope::data() -> uint2 {
   if(counter == 0) {
     //turbo is a switch; toggle is edge sensitive
     bool newturbo = interface->inputPoll(port, (unsigned)Device::ID::SuperScope, Turbo);
-    if(newturbo && !turbo) {
-      turbo = !turbo;  //toggle state
+    if(newturbo) {
+      if(!turbolock) turbo = !turbo;  //toggle state
       turbolock = true;
     } else {
       turbolock = false;

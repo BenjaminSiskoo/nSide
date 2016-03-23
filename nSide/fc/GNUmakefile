@@ -7,7 +7,7 @@ objects += fc-vsarcade fc-pc10arcade
 
 obj/fc-interface.o:  fc/interface/interface.cpp $(call rwildcard,fc/interface/)
 obj/fc-system.o:     fc/system/system.cpp $(call rwildcard,fc/system/)
-obj/fc-scheduler.o:  fc/scheduler/scheduler.cpp $(call rwildcard,$(sfc)/scheduler/)
+obj/fc-scheduler.o:  fc/scheduler/scheduler.cpp $(call rwildcard,fc/scheduler/)
 obj/fc-controller.o: fc/controller/controller.cpp $(call rwildcard,fc/controller/)
 obj/fc-cartridge.o:  fc/cartridge/cartridge.cpp $(call rwildcard,fc/cartridge/)
 obj/fc-cheat.o:      fc/cheat/cheat.cpp $(call rwildcard,fc/cheat/)
