@@ -1,4 +1,4 @@
-struct VSArcadeBoard : Thread {
+struct VSSystem : Thread {
   enum : uint {
     Button1, Button2, Button3, Button4, ServiceButton, Coin1, Coin2,
   };
@@ -57,4 +57,4 @@ private:
   friend class Cartridge;
 };
 
-extern VSArcadeBoard vsarcadeboard;
+extern VSSystem vssystem;

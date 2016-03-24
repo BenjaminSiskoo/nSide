@@ -52,7 +52,7 @@ struct VS : Board {
       break;
     }
     if((addr & 0xe000) == 0x6000) {
-      if(prgram.size() == 0) return vsarcadeboard.read(cpu.side, addr, cpu.mdr());
+      if(prgram.size() == 0) return vssystem.read(cpu.side, addr, cpu.mdr());
       else                 return read(prgram, addr);
     }
     return cpu.mdr();
@@ -76,7 +76,7 @@ struct VS : Board {
       break;
     }
     if((addr & 0xe000) == 0x6000) {
-      if(prgram.size() == 0) vsarcadeboard.write(cpu.side, addr, data);
+      if(prgram.size() == 0) vssystem.write(cpu.side, addr, data);
       else                   write(prgram, addr, data);
     }
   }

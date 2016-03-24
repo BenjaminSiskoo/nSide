@@ -45,8 +45,8 @@ auto System::serializeAll(serializer& s) -> void {
   apu.serialize(s);
   ppu.serialize(s);
 
-  if(revision() == Revision::VSSystem) vsarcadeboard.serialize(s);
-  if(revision() == Revision::PlayChoice10) pc10arcadeboard.serialize(s);
+  if(revision() == Revision::VSSystem) vssystem.serialize(s);
+  if(revision() == Revision::PlayChoice10) playchoice10.serialize(s);
 }
 
 //perform dry-run state save:

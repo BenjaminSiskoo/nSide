@@ -309,7 +309,6 @@ Board* Board::load(Markup::Node board_node) {
   if(type == "TAITO-TC0690FMR") return new TaitoTC(board_node);
 
   if(type == "FDS") return new FDS(board_node);
-  if(type == "VS" ) return new VS(board_node);
 
   // Unlicensed boards below; feel free to remove
   if(type == "AVE-NINA-01"       ) return new Nina(board_node);

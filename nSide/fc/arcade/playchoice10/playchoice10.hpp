@@ -1,4 +1,4 @@
-struct PC10ArcadeBoard {
+struct PlayChoice10 {
   uint8 bios[16384];
   uint8 wram[2048];
   uint8 sram[2048];
@@ -18,24 +18,24 @@ struct PC10ArcadeBoard {
 
   uint16 dip;
 
-  bool vram_access;
+  bool vramAccess;
   bool controls;
-  bool ppu_output;
-  bool apu_output;
-  bool cpu_reset;
-  bool cpu_stop;
+  bool ppuOutput;
+  bool apuOutput;
+  bool cpuReset;
+  bool cpuStop;
   bool display;
-  bool z80_nmi;
+  bool z80NMI;
   bool watchdog;
-  bool ppu_reset;
+  bool ppuReset;
   uint4 channel;
-  bool sram_bank;
+  bool sramBank;
 
-  bool prom_test;
-  bool prom_clock;
-  uint7 prom_address;
+  bool promTest;
+  bool promClock;
+  uint7 promAddress;
 
-  uint32 video_output[256 * 240];
+  uint32 videoOutput[256 * 240];
 
   auto init() -> void;
   auto load() -> void;
@@ -43,7 +43,7 @@ struct PC10ArcadeBoard {
   auto power() -> void;
   auto reset() -> void;
 
-  auto set_dip(uint16 dip) -> void;
+  auto setDip(uint16 dip) -> void;
   auto read(uint16 addr) -> uint8;
   auto write(uint16 addr, uint8 data) -> void;
 
@@ -53,8 +53,8 @@ struct PC10ArcadeBoard {
   auto serialize(serializer& s) -> void;
 
 private:
-  auto video_power() -> void;
-  auto update_video() -> void;
+  auto videoPower() -> void;
+  auto updateVideo() -> void;
 };
 
-extern PC10ArcadeBoard pc10arcadeboard;
+extern PlayChoice10 playchoice10;

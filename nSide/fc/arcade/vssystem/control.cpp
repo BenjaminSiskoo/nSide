@@ -1,4 +1,4 @@
-auto VSArcadeBoard::resetButtons() -> void {
+auto VSSystem::resetButtons() -> void {
   mainControlLatched = 0;
   mainControlCounter1 = 0;
   mainControlCounter2 = 0;
@@ -11,11 +11,11 @@ auto VSArcadeBoard::resetButtons() -> void {
   for(bool& button : subButtons) button = false;
 }
 
-auto VSArcadeBoard::poll(bool side, uint input) -> int16 {
+auto VSSystem::poll(bool side, uint input) -> int16 {
   return interface->inputPoll(3, interface->device_ref[(uint)Device::ID::VSPanel].port[3], input);
 }
 
-auto VSArcadeBoard::data1(bool side) -> bool {
+auto VSSystem::data1(bool side) -> bool {
   uint& counter = side == 0 ? mainControlCounter1 : subControlCounter1;
   bool* buttons = side == 0 ? mainButtons : subButtons;
   bool data;
@@ -26,7 +26,7 @@ auto VSArcadeBoard::data1(bool side) -> bool {
   return data;
 }
 
-auto VSArcadeBoard::data2(bool side) -> bool {
+auto VSSystem::data2(bool side) -> bool {
   uint& counter = side == 0 ? mainControlCounter2 : subControlCounter2;
   bool* buttons = side == 0 ? mainButtons : subButtons;
   bool data;
@@ -37,7 +37,7 @@ auto VSArcadeBoard::data2(bool side) -> bool {
   return data;
 }
 
-auto VSArcadeBoard::latch(bool side, bool data) -> void {
+auto VSSystem::latch(bool side, bool data) -> void {
   if(side == 0) {
     if(mainControlLatched == data) return;
     mainControlLatched = data;

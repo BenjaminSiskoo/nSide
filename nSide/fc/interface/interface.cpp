@@ -300,13 +300,13 @@ auto Interface::load(uint id, const stream& stream) -> void {
     system.information.manifest = stream.text();
     break;
   case ID::PC10BIOS:
-    stream.read((uint8_t*)pc10arcadeboard.bios, min(16384u, stream.size()));
+    stream.read((uint8_t*)playchoice10.bios, min(16384u, stream.size()));
     break;
   case ID::PC10CharacterROM:
-    stream.read((uint8_t*)pc10arcadeboard.chrrom, min(24576u, stream.size()));
+    stream.read((uint8_t*)playchoice10.chrrom, min(24576u, stream.size()));
     break;
   case ID::PC10PaletteROM:
-    stream.read((uint8_t*)pc10arcadeboard.cgrom, min(768u, stream.size()));
+    stream.read((uint8_t*)playchoice10.cgrom, min(768u, stream.size()));
     break;
   }
 

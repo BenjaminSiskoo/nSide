@@ -1,2 +1,2 @@
-#include <fc/arcade/vs/vs.hpp>
-#include <fc/arcade/pc10/pc10.hpp>
+#include <fc/arcade/vssystem/vssystem.hpp>
+#include <fc/arcade/playchoice10/playchoice10.hpp>

@@ -1,4 +1,4 @@
-auto PC10ArcadeBoard::video_power() -> void {
+auto PlayChoice10::videoPower() -> void {
   uint8 default_vram[0x0800] = {
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
@@ -155,7 +155,7 @@ auto PC10ArcadeBoard::video_power() -> void {
   }
 }
 
-auto PC10ArcadeBoard::update_video() -> void {
+auto PlayChoice10::updateVideo() -> void {
   uint16 addr;
   uint tile_id;
   uint8 y;
@@ -175,7 +175,7 @@ auto PC10ArcadeBoard::update_video() -> void {
             byte = chrrom[(plane << 13) + (tile_id << 3) + pixel_y];
             color += ((byte >> (7 - pixel_x)) & 1) << plane;
           }
-          video_output[y * 256 + x] = color;
+          videoOutput[y * 256 + x] = color;
         }
       }
     }

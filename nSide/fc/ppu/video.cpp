@@ -68,7 +68,7 @@ auto Video::refresh() -> void {
   } else if(system.pc10()) {
     if(interface->information.height == 480) {
       refreshPC10DualScreen();
-    } else if(pc10arcadeboard.display == 0) {
+    } else if(playchoice10.display == 0) {
       refreshPC10Menu();
     } else {
       refreshMain();
@@ -152,7 +152,7 @@ auto Video::refreshPC10DualScreen() -> void {
   if(settings.scanlineEmulation) {
     for(uint y = 0; y < 240; y++) {
       auto sourceGame = ppu.output + y * 256;
-      auto sourceMenu = pc10arcadeboard.video_output + y * 256;
+      auto sourceMenu = playchoice10.videoOutput + y * 256;
       auto targetGameLo = output + y * 512 + 512 * 240;
       auto targetGameHi = output + y * 512 + 512 * 240 + 256;
       auto targetMenuLo = output + y * 512 + 512 *   0;
@@ -169,7 +169,7 @@ auto Video::refreshPC10DualScreen() -> void {
   } else {
     for(uint y = 0; y < 240; y++) {
       auto sourceGame = ppu.output + y * 256;
-      auto sourceMenu = pc10arcadeboard.video_output + y * 256;
+      auto sourceMenu = playchoice10.videoOutput + y * 256;
       auto targetGame = output + y * 256 + 256 * 240;
       auto targetMenu = output + y * 256;
       for(uint x = 0; x < 256; x++) {
@@ -189,7 +189,7 @@ auto Video::refreshPC10Menu() -> void {
 
   if(settings.scanlineEmulation) {
     for(uint y = 0; y < 240; y++) {
-      auto source = pc10arcadeboard.video_output + y * 256;
+      auto source = playchoice10.videoOutput + y * 256;
       auto targetLo = output + y * 512;
       auto targetHi = output + y * 512 + 256;
       for(uint x = 0; x < 256; x++) {
@@ -200,7 +200,7 @@ auto Video::refreshPC10Menu() -> void {
     }
   } else {
     for(uint y = 0; y < 240; y++) {
-      auto source = pc10arcadeboard.video_output + y * 256;
+      auto source = playchoice10.videoOutput + y * 256;
       auto target = output + y * 256;
       for(uint x = 0; x < 256; x++) {
         *target++ = palette[(1 << 9) + *source++];
@@ -291,9 +291,9 @@ auto Video::generatePalettes(const uint9* ppu_pal) -> void {
   }
   if(system.pc10()) {
     for(uint color = 0; color < 256; color++) {
-      uint r = 15 - pc10arcadeboard.cgrom[color + 0x000];
-      uint g = 15 - pc10arcadeboard.cgrom[color + 0x100];
-      uint b = 15 - pc10arcadeboard.cgrom[color + 0x200];
+      uint r = 15 - playchoice10.cgrom[color + 0x000];
+      uint g = 15 - playchoice10.cgrom[color + 0x100];
+      uint b = 15 - playchoice10.cgrom[color + 0x200];
 
       uint R = image::normalize(r, 4, 16);
       uint G = image::normalize(g, 4, 16);
@@ -311,9 +311,9 @@ auto Video::generatePalettes(const uint9* ppu_pal) -> void {
       for(uint color = 0; color < 256; color++) {
         palette[(1 << 9) + color] = interface->videoColor((1 << 9) + color,
           65535, // distinguish from the game screen
-          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x000], 4, 16),
-          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x100], 4, 16),
-          image::normalize(15 - pc10arcadeboard.cgrom[color + 0x200], 4, 16)
+          image::normalize(15 - playchoice10.cgrom[color + 0x000], 4, 16),
+          image::normalize(15 - playchoice10.cgrom[color + 0x100], 4, 16),
+          image::normalize(15 - playchoice10.cgrom[color + 0x200], 4, 16)
         );
       }
     }

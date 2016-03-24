@@ -23,14 +23,13 @@ auto CPU::step(uint clocks) -> void {
   if(cartridge.clock < 0 && !scheduler.synchronizing()) co_switch(cartridge.thread);
 
   if(system.vs()) {
-    vsarcadeboard.clock -= clocks;
-    if(vsarcadeboard.clock < 0 && !scheduler.synchronizing()) co_switch(vsarcadeboard.thread);
+    vssystem.clock -= clocks;
+    if(vssystem.clock < 0 && !scheduler.synchronizing()) co_switch(vssystem.thread);
   }
 
   device.controllerPort1->clock -= clocks * (uint64)device.controllerPort1->frequency;
   device.controllerPort2->clock -= clocks * (uint64)device.controllerPort2->frequency;
   device.expansionPort->clock -= clocks * (uint64)device.expansionPort->frequency;
-  //if(system.vs()) vsarcadeboard.panel.clock -= clocks * (uint64)vsarcadeboard.panel.frequency;
   synchronizeDevices();
 }
 
@@ -50,7 +49,6 @@ auto CPU::synchronizeDevices() -> void {
   if(device.controllerPort1->clock < 0) co_switch(device.controllerPort1->thread);
   if(device.controllerPort2->clock < 0) co_switch(device.controllerPort2->thread);
   if(device.expansionPort->clock < 0) co_switch(device.expansionPort->thread);
-  //if(system.vs() && vsarcadeboard.panel.clock < 0) co_switch(vsarcadeboard.panel.thread);
 }
 
 auto CPU::Enter() -> void {

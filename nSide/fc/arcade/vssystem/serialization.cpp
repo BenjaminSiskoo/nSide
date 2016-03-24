@@ -1,4 +1,4 @@
-auto VSArcadeBoard::serialize(serializer& s) -> void {
+auto VSSystem::serialize(serializer& s) -> void {
   s.array(ram);
   s.integer(ramSide);
 

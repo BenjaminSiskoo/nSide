@@ -26,8 +26,8 @@ auto System::runToSave() -> void {
 auto System::init() -> void {
   assert(interface != nullptr);
 
-  vsarcadeboard.init();
-  pc10arcadeboard.init();
+  vssystem.init();
+  playchoice10.init();
 
   device.connect(0, (Device::ID)settings.controllerPort1);
   device.connect(1, (Device::ID)settings.controllerPort2);
@@ -85,12 +85,12 @@ auto System::load(Revision revision) -> void {
   case Revision::Famicom:
     break;
   case Revision::VSSystem:
-    vsarcadeboard.load();
+    vssystem.load();
     device.connect(3, Device::ID::VSPanel);
     break;
   case Revision::PlayChoice10:
     interface->information.height = min(max(document["system/pc10/screen/mode"].integer(), 1), 2) * 240;
-    pc10arcadeboard.load();
+    playchoice10.load();
     break;
   }
 
@@ -101,8 +101,8 @@ auto System::load(Revision revision) -> void {
 auto System::unload() -> void {
   if(!loaded()) return;
   switch(revision()) {
-  case Revision::VSSystem: vsarcadeboard.unload(); break;
-  case Revision::PlayChoice10: pc10arcadeboard.unload(); break;
+  case Revision::VSSystem: vssystem.unload(); break;
+  case Revision::PlayChoice10: playchoice10.unload(); break;
   }
 
   cartridge.unload();
@@ -116,8 +116,8 @@ auto System::power() -> void {
   ppu.power();
 
   switch(revision()) {
-  case Revision::VSSystem: vsarcadeboard.power(); break;
-  case Revision::PlayChoice10: pc10arcadeboard.power(); break;
+  case Revision::VSSystem: vssystem.power(); break;
+  case Revision::PlayChoice10: playchoice10.power(); break;
   }
 
   ppu.reset();
@@ -133,8 +133,8 @@ auto System::reset() -> void {
   //ppu.reset();
 
   switch(revision()) {
-  case Revision::VSSystem: vsarcadeboard.reset(); break;
-  case Revision::PlayChoice10: pc10arcadeboard.reset(); break;
+  case Revision::VSSystem: vssystem.reset(); break;
+  case Revision::PlayChoice10: playchoice10.reset(); break;
   }
 
   scheduler.reset();

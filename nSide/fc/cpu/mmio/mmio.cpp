@@ -8,7 +8,7 @@ auto CPU::mmio_read(uint16 addr, uint8 data) -> uint8 {
       return (mdr() & 0xe0) | device.controllerPort2->data() | device.expansionPort->data2();
     }
   } else { // if using VS. System
-    if(addr >= 0x4016 && addr <= 0x5fff) return vsarcadeboard.read(side, addr, data);
+    if(addr >= 0x4016 && addr <= 0x5fff) return vssystem.read(side, addr, data);
   }
 
   return apu.read(addr);
@@ -27,7 +27,7 @@ auto CPU::mmio_write(uint16 addr, uint8 data) -> void {
       device.expansionPort->latch(data & 1);
     }
   } else { // if using VS. System
-    if(addr >= 0x4016 && addr <= 0x5fff) vsarcadeboard.write(side, addr, data);
+    if(addr >= 0x4016 && addr <= 0x5fff) vssystem.write(side, addr, data);
   }
 
   return apu.write(addr, data);

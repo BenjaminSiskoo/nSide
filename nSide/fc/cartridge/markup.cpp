@@ -44,7 +44,7 @@ auto Cartridge::parseMarkupVS(Markup::Node& document, Markup::Node& board_node) 
   ppu.side = primarySide;
 
   auto controller = board_node.find("controller");
-  vsarcadeboard.swapControllers = controller(0)["port"].integer() == 2;
+  vssystem.swapControllers = controller(0)["port"].integer() == 2;
   string device1 = board_node.find("controller(port=1)/device")(0).text();
   string device2 = board_node.find("controller(port=2)/device")(0).text();
   if(device1 == "gamepad") {
@@ -59,10 +59,10 @@ auto Cartridge::parseMarkupVS(Markup::Node& document, Markup::Node& board_node) 
   } else if(device2 == "none") {
     device.connect(1, Famicom::Device::ID::None);
   }
-  vsarcadeboard.setDip(primarySide, interface->dipSettings(board_node));
+  vssystem.setDip(primarySide, interface->dipSettings(board_node));
 
   string cpuRevision = side(0)["cpu/revision"].text();
-  vsarcadeboard.forceSubRam = cpuRevision == "RP2A04";
+  vssystem.forceSubRam = cpuRevision == "RP2A04";
 
   string ppuRevision = board_node["ppu/revision"].text();
   if(ppuRevision == "RP2C02C")     ppu.revision = PPU::Revision::RP2C02C;
