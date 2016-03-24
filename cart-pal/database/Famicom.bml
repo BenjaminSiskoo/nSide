@@ -2,6 +2,38 @@ database revision=2012-10-22 owner=bootgod
   :hex_usr adds games one at a time from bootgod's database at
   :http://bootgod.dyndns.org:7777/.
 
+cartridge sha256:a75af9b5972f22056d016474234b03213e5d7932fb1e81890d58bd100bb8d0d2
+  :board region=ntsc id:IREM-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   IF-02
+  :  board:    IREM-01-V
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     10-Yard Fight
+  :  title:    10ヤードファイト
+
+cartridge sha256:3669f979465f03cba7d55c9ad3080b8292557514ef0e7dba0b1de98313e6f392
+  :board region=ntsc id:IREM-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   IF-02
+  :  board:    IREM-01-V
+  :  region:   JPN
+  :  revision: 1.1
+  :  name:     10-Yard Fight
+  :  title:    10ヤードファイト
+
 cartridge sha256:28cdd5af3c441f361cfa3a21ec97a1ab08691dd5d73f7a10a372fbd1fffb8ba7
   :board region=ntsc id:HVC-UNROM
   :  chip type=74HC32
@@ -443,6 +475,22 @@ cartridge sha256:fb0b3aab3fb22ab78b1d94fcbc730ed440591fdc359caec9e9f1d45682a38d0
   :  name:     Don Doko Don 2
   :  title:    ドンドコドン2
 
+cartridge sha256:3ce807f46e50c7f44c0ce17ec61b25500d885623514209beed001e99cdaa27a8
+  :board region=ntsc id:HVC-SLROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   DFC-DX
+  :  board:    HVC-SLROM-02
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Donald Land
+  :  title:    ドナルドランド
+
 cartridge sha256:dd108e55b60070b4c0147f7dba31844ed83065255466bfacd5038e6382483026
   :board region=ntsc id:HVC-NROM-128
   :  mirror mode=horizontal
@@ -819,6 +867,22 @@ cartridge sha256:27c6e9bf1de790ce831a4e9211c897fab813b2f4447a897efaad905f2488d76
   :  revision: 1.0
   :  name:     Family Trainer 3 - Aerobics Studio
   :  title:    ファミリートレーナー3 エアロビスタジオ
+
+cartridge sha256:16f116053eee2d5c0be6c934c750224aaade45d4f6236b36967cdf986772e351
+  :board region=ntsc id:HVC-SLROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   SFX-FI
+  :  board:    HVC-SLROM-02
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Fighting Golf
+  :  title:    ファイティングゴルフ
 
 cartridge sha256:13038600940772bd8276e7de55674d9d241d9bcd56b0ba7f31537b297c0e1e13
   :board region=ntsc id:HVC-SNROM
@@ -2593,6 +2657,21 @@ cartridge sha256:c457644ccfb93f8978326e728931800283821e531edc409fca9c0167495319c
   :  name:     3-D Battles of WorldRunner, The
   :  title:    The 3-D Battles of WorldRunner
 
+cartridge sha256:8e844d77da01f86ace52823f1f974c9230f09e6a6cbf33a07abfe9beeff00292
+  :board region=ntsc id:NES-NROM-256
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-TY-USA
+  :  board:    NES-NROM-256-04
+  :  revision: 1.0
+  :  name:     10-Yard Fight
+  :  title:    10-Yard Fight
+
 cartridge sha256:e868400409c70876b98dad2cca87b8e9ee31877b0cccbbd8405be5c54922722a
   :board region=ntsc id:NES-NROM-256
   :  mirror mode=horizontal
@@ -3919,6 +3998,21 @@ cartridge sha256:24fca0fe86464c807ab5d58a2d56155a3fa1994e9bd78d119e3f8f84c8aee78
   :  name:     Kirby's Adventure
   :  title:    Kirby's Adventure
   //  title:    L'aventure de Kirby
+
+cartridge sha256:ac9d9f60f68c020c99b5bb1b91c723f16ac59091676826bced466b7ee4c97209
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-FI-USA
+  :  board:    NES-SLROM-05
+  :  revision: 1.0
+  :  name:     Lee Trevino's Fighting Golf
+  :  title:    Lee Trevino's Fighting Golf
 
 cartridge sha256:085e5397a3487357c263dfa159fb0fe20a5f3ea8ef82d7af6a7e848d3b9364e8
   :board region=ntsc id:NES-SNROM

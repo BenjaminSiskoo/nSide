@@ -47,7 +47,7 @@ auto System::serializeAll(serializer& s) -> void {
 auto System::serializeInit() -> void {
   serializer s;
 
-  uint signature = 0, version = 0, crc32 = 0;
+  uint signature = 0, version = 0;
   char hash[64], description[512];
 
   s.integer(signature);
