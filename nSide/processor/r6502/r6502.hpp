@@ -18,7 +18,7 @@ struct R6502 {
   auto power() -> void;
   auto reset() -> void;
   auto interrupt() -> void;
-  auto exec() -> void;
+  auto instruction() -> void;
 
   //memory.cpp
   auto readpc() -> uint8;

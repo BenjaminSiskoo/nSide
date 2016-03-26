@@ -56,7 +56,7 @@ auto CPU::Enter() -> void {
 
 auto CPU::main() -> void {
   if(status.interrupt_pending) return interrupt();
-  exec();
+  instruction();
 }
 
 auto CPU::power() -> void {

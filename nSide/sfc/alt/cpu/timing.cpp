@@ -1,11 +1,11 @@
 auto CPU::queue_event(uint id) -> void {
   switch(id) {
-    case QueueEvent::DramRefresh: return add_clocks(40);
+    case QueueEvent::DramRefresh: return addClocks(40);
     case QueueEvent::HdmaRun: return hdma_run();
   }
 }
 
-auto CPU::last_cycle() -> void {
+auto CPU::lastCycle() -> void {
   if(status.irq_lock) {
     status.irq_lock = false;
     return;
@@ -24,7 +24,7 @@ auto CPU::last_cycle() -> void {
   }
 }
 
-auto CPU::add_clocks(uint clocks) -> void {
+auto CPU::addClocks(uint clocks) -> void {
   if(status.hirq_enabled) {
     if(status.virq_enabled) {
       uint cpu_time = vcounter() * 1364 + hcounter();

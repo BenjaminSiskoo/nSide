@@ -44,7 +44,7 @@ L abs.h = read(vector++);
   regs.pc = abs.w;
 }
 
-auto R6502::exec() -> void {
+auto R6502::instruction() -> void {
   uint8 opcode = readpci();
   switch(opcode) {
   case 0x00: return op_brk();

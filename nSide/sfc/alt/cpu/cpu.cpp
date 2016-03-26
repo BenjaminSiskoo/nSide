@@ -3,12 +3,15 @@
 namespace SuperFamicom {
 
 CPU cpu;
-
-#include "serialization.cpp"
 #include "dma.cpp"
 #include "memory.cpp"
 #include "mmio.cpp"
 #include "timing.cpp"
+#include "serialization.cpp"
+
+auto CPU::interruptPending() const -> bool { return false; }
+auto CPU::pio() const -> uint8_t { return status.pio; }
+auto CPU::joylatch() const -> bool { return status.joypad_strobe_latch; }
 
 CPU::CPU() : queue(512, {&CPU::queue_event, this}) {
   PPUcounter::scanline = {&CPU::scanline, this};
@@ -60,24 +63,31 @@ auto CPU::main() -> void {
   if(status.nmi_pending) {
     status.nmi_pending = false;
     regs.vector = (regs.e == false ? 0xffea : 0xfffa);
-    op_irq();
+    interrupt();
   }
 
   if(status.irq_pending) {
     status.irq_pending = false;
     regs.vector = (regs.e == false ? 0xffee : 0xfffe);
-    op_irq();
+    interrupt();
   }
 
-  op_exec();
+  instruction();
 }
 
 auto CPU::enable() -> void {
-  function<auto (uint, uint8) -> uint8> reader{&CPU::mmio_read, (CPU*)&cpu};
-  function<auto (uint, uint8) -> void> writer{&CPU::mmio_write, (CPU*)&cpu};
+  function<auto (uint24, uint8) -> uint8> reader;
+  function<auto (uint24, uint8) -> void> writer;
 
-  bus.map(reader, writer, 0x00, 0x3f, 0x2140, 0x2183);
-  bus.map(reader, writer, 0x80, 0xbf, 0x2140, 0x2183);
+  reader = {&CPU::apuPortRead, this};
+  writer = {&CPU::apuPortWrite, this};
+  bus.map(reader, writer, 0x00, 0x3f, 0x2140, 0x217f);
+  bus.map(reader, writer, 0x80, 0xbf, 0x2140, 0x217f);
+
+  reader = {&CPU::cpuPortRead, this};
+  writer = {&CPU::cpuPortWrite, this};
+  bus.map(reader, writer, 0x00, 0x3f, 0x2180, 0x2183);
+  bus.map(reader, writer, 0x80, 0xbf, 0x2180, 0x2183);
 
   bus.map(reader, writer, 0x00, 0x3f, 0x4016, 0x4017);
   bus.map(reader, writer, 0x80, 0xbf, 0x4016, 0x4017);
@@ -85,12 +95,13 @@ auto CPU::enable() -> void {
   bus.map(reader, writer, 0x00, 0x3f, 0x4200, 0x421f);
   bus.map(reader, writer, 0x80, 0xbf, 0x4200, 0x421f);
 
+  reader = {&CPU::dmaPortRead, this};
+  writer = {&CPU::dmaPortWrite, this};
   bus.map(reader, writer, 0x00, 0x3f, 0x4300, 0x437f);
   bus.map(reader, writer, 0x80, 0xbf, 0x4300, 0x437f);
 
-  reader = [](uint addr, uint8) -> uint8 { return cpu.wram[addr]; };
-  writer = [](uint addr, uint8 data) -> void { cpu.wram[addr] = data; };
-
+  reader = [](uint24 addr, uint8) -> uint8 { return cpu.wram[addr]; };
+  writer = [](uint24 addr, uint8 data) -> void { cpu.wram[addr] = data; };
   bus.map(reader, writer, 0x00, 0x3f, 0x0000, 0x1fff, 0x002000);
   bus.map(reader, writer, 0x80, 0xbf, 0x0000, 0x1fff, 0x002000);
   bus.map(reader, writer, 0x7e, 0x7f, 0x0000, 0xffff, 0x020000);

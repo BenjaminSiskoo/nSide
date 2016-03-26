@@ -1,6 +1,10 @@
 struct CPU : Processor::R65816, Thread, public PPUcounter {
   enum : bool { Threaded = true };
 
+  auto interruptPending() const -> bool override;
+  auto pio() const -> uint8_t;
+  auto joylatch() const -> bool;
+
   CPU();
 
   alwaysinline auto step(uint clocks) -> void;
@@ -9,18 +13,21 @@ struct CPU : Processor::R65816, Thread, public PPUcounter {
   auto synchronizeCoprocessors() -> void;
   auto synchronizeDevices() -> void;
 
-  auto pio() -> uint8_t;
-  auto joylatch() -> bool;
-  auto interrupt_pending() -> bool;
   auto portRead(uint8 port) -> uint8;
   auto portWrite(uint8 port, uint8 data) -> void;
-  auto mmio_read(uint addr, uint8 data) -> uint8;
-  auto mmio_write(uint addr, uint8 data) -> void;
 
-  auto op_io() -> void;
-  auto op_read(uint24 addr) -> uint8;
-  auto op_write(uint24 addr, uint8 data) -> void;
+  auto apuPortRead(uint24 addr, uint8 data) -> uint8;
+  auto cpuPortRead(uint24 addr, uint8 data) -> uint8;
+  auto dmaPortRead(uint24 addr, uint8 data) -> uint8;
+  auto apuPortWrite(uint24 addr, uint8 data) -> void;
+  auto cpuPortWrite(uint24 addr, uint8 data) -> void;
+  auto dmaPortWrite(uint24 addr, uint8 data) -> void;
 
+  auto io() -> void;
+  auto read(uint24 addr) -> uint8;
+  auto write(uint24 addr, uint8 data) -> void;
+
+  static auto Enter() -> void;
   auto main() -> void;
   auto enable() -> void;
   auto power() -> void;
@@ -32,13 +39,10 @@ struct CPU : Processor::R65816, Thread, public PPUcounter {
   vector<Thread*> coprocessors;
 
 private:
-  //cpu
-  static auto Enter() -> void;
-
   //timing
   auto queue_event(uint id) -> void;
-  auto last_cycle() -> void;
-  auto add_clocks(uint clocks) -> void;
+  auto lastCycle() -> void;
+  auto addClocks(uint clocks) -> void;
   auto scanline() -> void;
   auto run_auto_joypad_poll() -> void;
 

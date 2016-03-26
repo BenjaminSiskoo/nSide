@@ -1,9 +1,9 @@
-auto CPU::mmio_read(uint addr, uint8 data) -> uint8 {
-  if((addr & 0xffc0) == 0x2140) {
-    synchronizeSMP();
-    return smp.portRead(addr & 3);
-  }
+auto CPU::apuPortRead(uint24 addr, uint8 data) -> uint8 {
+  synchronizeSMP();
+  return smp.portRead(addr & 3);
+}
 
+auto CPU::cpuPortRead(uint24 addr, uint8 data) -> uint8 {
   switch(addr & 0xffff) {
     case 0x2180: {
       uint8_t result = bus.read(0x7e0000 | status.wram_addr, regs.mdr);
@@ -66,42 +66,43 @@ auto CPU::mmio_read(uint addr, uint8 data) -> uint8 {
     case 0x421f: return status.joy4h;
   }
 
-  if((addr & 0xff80) == 0x4300) {
-    unsigned i = (addr >> 4) & 7;
-    switch(addr & 0xff8f) {
-      case 0x4300: {
-        return (channel[i].direction << 7)
-             | (channel[i].indirect << 6)
-             | (channel[i].unused << 5)
-             | (channel[i].reverse_transfer << 4)
-             | (channel[i].fixed_transfer << 3)
-             | (channel[i].transfer_mode << 0);
-      }
+  return data;
+}
 
-      case 0x4301: return channel[i].dest_addr;
-      case 0x4302: return channel[i].source_addr >> 0;
-      case 0x4303: return channel[i].source_addr >> 8;
-      case 0x4304: return channel[i].source_bank;
-      case 0x4305: return channel[i].transfer_size >> 0;
-      case 0x4306: return channel[i].transfer_size >> 8;
-      case 0x4307: return channel[i].indirect_bank;
-      case 0x4308: return channel[i].hdma_addr >> 0;
-      case 0x4309: return channel[i].hdma_addr >> 8;
-      case 0x430a: return channel[i].line_counter;
-      case 0x430b: case 0x430f: return channel[i].unknown;
+auto CPU::dmaPortRead(uint24 addr, uint8 data) -> uint8 {
+  unsigned i = (addr >> 4) & 7;
+  switch(addr & 0xff8f) {
+    case 0x4300: {
+      return (channel[i].direction << 7)
+           | (channel[i].indirect << 6)
+           | (channel[i].unused << 5)
+           | (channel[i].reverse_transfer << 4)
+           | (channel[i].fixed_transfer << 3)
+           | (channel[i].transfer_mode << 0);
     }
+
+    case 0x4301: return channel[i].dest_addr;
+    case 0x4302: return channel[i].source_addr >> 0;
+    case 0x4303: return channel[i].source_addr >> 8;
+    case 0x4304: return channel[i].source_bank;
+    case 0x4305: return channel[i].transfer_size >> 0;
+    case 0x4306: return channel[i].transfer_size >> 8;
+    case 0x4307: return channel[i].indirect_bank;
+    case 0x4308: return channel[i].hdma_addr >> 0;
+    case 0x4309: return channel[i].hdma_addr >> 8;
+    case 0x430a: return channel[i].line_counter;
+    case 0x430b: case 0x430f: return channel[i].unknown;
   }
 
   return data;
 }
 
-auto CPU::mmio_write(uint addr, uint8 data) -> void {
-  if((addr & 0xffc0) == 0x2140) {
-    synchronizeSMP();
-    portWrite(addr & 3, data);
-    return;
-  }
+auto CPU::apuPortWrite(uint24 addr, uint8 data) -> void {
+  synchronizeSMP();
+  portWrite(addr & 3, data);
+}
 
+auto CPU::cpuPortWrite(uint24 addr, uint8 data) -> void {
   switch(addr & 0xffff) {
     case 0x2180: {
       bus.write(0x7e0000 | status.wram_addr, data);
@@ -226,74 +227,74 @@ auto CPU::mmio_write(uint addr, uint8 data) -> void {
       return;
     }
   }
+}
 
-  if((addr & 0xff80) == 0x4300) {
-    uint i = (addr >> 4) & 7;
-    switch(addr & 0xff8f) {
-      case 0x4300: {
-        channel[i].direction = data & 0x80;
-        channel[i].indirect = data & 0x40;
-        channel[i].unused = data & 0x20;
-        channel[i].reverse_transfer = data & 0x10;
-        channel[i].fixed_transfer = data & 0x08;
-        channel[i].transfer_mode = data & 0x07;
-        return;
-      }
+auto CPU::dmaPortWrite(uint24 addr, uint8 data) -> void {
+  uint i = (addr >> 4) & 7;
+  switch(addr & 0xff8f) {
+    case 0x4300: {
+      channel[i].direction = data & 0x80;
+      channel[i].indirect = data & 0x40;
+      channel[i].unused = data & 0x20;
+      channel[i].reverse_transfer = data & 0x10;
+      channel[i].fixed_transfer = data & 0x08;
+      channel[i].transfer_mode = data & 0x07;
+      return;
+    }
 
-      case 0x4301: {
-        channel[i].dest_addr = data;
-        return;
-      }
+    case 0x4301: {
+      channel[i].dest_addr = data;
+      return;
+    }
 
-      case 0x4302: {
-        channel[i].source_addr = (channel[i].source_addr & 0xff00) | (data << 0);
-        return;
-      }
+    case 0x4302: {
+      channel[i].source_addr = (channel[i].source_addr & 0xff00) | (data << 0);
+      return;
+    }
 
-      case 0x4303: {
-        channel[i].source_addr = (data << 8) | (channel[i].source_addr & 0x00ff);
-        return;
-      }
+    case 0x4303: {
+      channel[i].source_addr = (data << 8) | (channel[i].source_addr & 0x00ff);
+      return;
+    }
 
-      case 0x4304: {
-        channel[i].source_bank = data;
-        return;
-      }
+    case 0x4304: {
+      channel[i].source_bank = data;
+      return;
+    }
 
-      case 0x4305: {
-        channel[i].transfer_size = (channel[i].transfer_size & 0xff00) | (data << 0);
-        return;
-      }
+    case 0x4305: {
+      channel[i].transfer_size = (channel[i].transfer_size & 0xff00) | (data << 0);
+      return;
+    }
 
-      case 0x4306: {
-        channel[i].transfer_size = (data << 8) | (channel[i].transfer_size & 0x00ff);
-        return;
-      }
+    case 0x4306: {
+      channel[i].transfer_size = (data << 8) | (channel[i].transfer_size & 0x00ff);
+      return;
+    }
 
-      case 0x4307: {
-        channel[i].indirect_bank = data;
-        return;
-      }
+    case 0x4307: {
+      channel[i].indirect_bank = data;
+      return;
+    }
 
-      case 0x4308: {
-        channel[i].hdma_addr = (channel[i].hdma_addr & 0xff00) | (data << 0);
-        return;
-      }
+    case 0x4308: {
+      channel[i].hdma_addr = (channel[i].hdma_addr & 0xff00) | (data << 0);
+      return;
+    }
 
-      case 0x4309: {
-        channel[i].hdma_addr = (data << 8) | (channel[i].hdma_addr & 0x00ff);
-        return;
-      }
+    case 0x4309: {
+      channel[i].hdma_addr = (data << 8) | (channel[i].hdma_addr & 0x00ff);
+      return;
+    }
 
-      case 0x430a: {
-        channel[i].line_counter = data;
-        return;
-      }
+    case 0x430a: {
+      channel[i].line_counter = data;
+      return;
+    }
 
-      case 0x430b: case 0x430f: {
-        channel[i].unknown = data;
-        return;
-      }
+    case 0x430b: case 0x430f: {
+      channel[i].unknown = data;
+      return;
     }
   }
 }

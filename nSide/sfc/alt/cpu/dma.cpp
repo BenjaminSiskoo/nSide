@@ -25,11 +25,11 @@ auto CPU::dma_write(bool valid, uint addr, uint8_t data) -> void {
 auto CPU::dma_transfer(bool direction, uint8_t bbus, uint abus) -> void {
   if(direction == 0) {
     uint8_t data = dma_read(abus);
-    add_clocks(8);
+    addClocks(8);
     dma_write(dma_transfer_valid(bbus, abus), 0x2100 | bbus, data);
   } else {
     uint8_t data = dma_transfer_valid(bbus, abus) ? (uint8_t)bus.read(0x2100 | bbus, regs.mdr) : 0x00;
-    add_clocks(8);
+    addClocks(8);
     dma_write(dma_addr_valid(abus), abus, data);
   }
 }
@@ -70,11 +70,11 @@ auto CPU::hdma_iaddr(uint i) -> uint {
 }
 
 auto CPU::dma_run() -> void {
-  add_clocks(16);
+  addClocks(16);
 
   for(uint i = 0; i < 8; i++) {
     if(channel[i].dma_enabled == false) continue;
-    add_clocks(8);
+    addClocks(8);
 
     uint index = 0;
     do {
@@ -99,17 +99,17 @@ auto CPU::hdma_update(uint i) -> void {
     channel[i].line_counter = dma_read(hdma_addr(i));
     channel[i].hdma_completed = (channel[i].line_counter == 0);
     channel[i].hdma_do_transfer = !channel[i].hdma_completed;
-    add_clocks(8);
+    addClocks(8);
 
     if(channel[i].indirect) {
       channel[i].indirect_addr = dma_read(hdma_addr(i)) << 8;
-      add_clocks(8);
+      addClocks(8);
 
     //emulating this glitch causes a slight slowdown; only enable if needed
     //if(!channel[i].hdma_completed || hdma_active_after(i)) {
         channel[i].indirect_addr >>= 8;
         channel[i].indirect_addr |= dma_read(hdma_addr(i)) << 8;
-        add_clocks(8);
+        addClocks(8);
     //}
     }
   }
@@ -122,7 +122,7 @@ auto CPU::hdma_run() -> void {
   }
   if(channels == 0) return;
 
-  add_clocks(16);
+  addClocks(16);
   for(uint i = 0; i < 8; i++) {
     if(channel[i].hdma_enabled == false || channel[i].hdma_completed == true) continue;
     channel[i].dma_enabled = false;
@@ -157,7 +157,7 @@ auto CPU::hdma_init() -> void {
   }
   if(channels == 0) return;
 
-  add_clocks(16);
+  addClocks(16);
   for(uint i = 0; i < 8; i++) {
     if(!channel[i].hdma_enabled) continue;
     channel[i].dma_enabled = false;

@@ -1,15 +1,3 @@
-auto CPU::pio() -> uint8_t {
-  return status.pio;
-}
-
-auto CPU::joylatch() -> bool {
-  return status.joypad_strobe_latch;
-}
-
-auto CPU::interrupt_pending() -> bool {
-  return false;
-}
-
 auto CPU::portRead(uint8 port) -> uint8 {
   return port_data[port & 3];
 }
@@ -18,18 +6,18 @@ auto CPU::portWrite(uint8 port, uint8 data) -> void {
   port_data[port & 3] = data;
 }
 
-auto CPU::op_io() -> void {
-  add_clocks(6);
+auto CPU::io() -> void {
+  addClocks(6);
 }
 
-auto CPU::op_read(uint24 addr) -> uint8 {
+auto CPU::read(uint24 addr) -> uint8 {
   regs.mdr = bus.read(addr, regs.mdr);
-  add_clocks(speed(addr));
+  addClocks(speed(addr));
   return regs.mdr;
 }
 
-auto CPU::op_write(uint24 addr, uint8 data) -> void {
-  add_clocks(speed(addr));
+auto CPU::write(uint24 addr, uint8 data) -> void {
+  addClocks(speed(addr));
   bus.write(addr, regs.mdr = data);
 }
 
