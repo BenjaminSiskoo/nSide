@@ -7,11 +7,12 @@
 namespace Processor {
 
 struct R6502 {
-  virtual auto op_read(uint16 addr) -> uint8 = 0;
-  virtual auto op_write(uint16 addr, uint8 data) -> void = 0;
-  virtual auto last_cycle() -> void = 0;
+  virtual auto read(uint16 addr) -> uint8 = 0;
+  virtual auto write(uint16 addr, uint8 data) -> void = 0;
+  virtual auto lastCycle() -> void = 0;
   virtual auto nmi(uint16& vector) -> void = 0;
-  virtual auto debugger_read(uint16 addr) -> uint8 { return 0u; }
+
+  virtual auto disassemblerRead(uint16 addr) -> uint8 { return 0u; }
 
   auto mdr() const -> uint8;
   auto power() -> void;
@@ -19,19 +20,17 @@ struct R6502 {
   auto interrupt() -> void;
   auto exec() -> void;
 
-  auto serialize(serializer&) -> void;
-
   //memory.cpp
-  auto op_readpc() -> uint8;
-  auto op_readpci() -> uint8;
-  auto op_readsp() -> uint8;
-  auto op_readzp(uint8 addr) -> uint8;
+  auto readpc() -> uint8;
+  auto readpci() -> uint8;
+  auto readsp() -> uint8;
+  auto readzp(uint8 addr) -> uint8;
 
-  auto op_writesp(uint8 data) -> void;
-  auto op_writezp(uint8 addr, uint8 data) -> void;
+  auto writesp(uint8 data) -> void;
+  auto writezp(uint8 addr, uint8 data) -> void;
 
-  auto op_page(uint16 x, uint16 y) -> void;
-  auto op_page_always(uint16 x, uint16 y) -> void;
+  auto page(uint16 x, uint16 y) -> void;
+  auto pageAlways(uint16 x, uint16 y) -> void;
 
   //instructions.cpp
   auto opf_asl();
@@ -138,6 +137,9 @@ struct R6502 {
   auto opill_stp();
   auto opill_tas_absolute_y();
   auto opill_xaa_immediate();
+
+  //serialization.cpp
+  auto serialize(serializer&) -> void;
 
   //disassembler.cpp
   auto disassemble() -> string;

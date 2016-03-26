@@ -1,8 +1,8 @@
-auto CPU::add_clocks(unsigned clocks) -> void {
+auto CPU::addClocks(unsigned clocks) -> void {
   step(clocks);
 }
 
-auto CPU::last_cycle() -> void {
+auto CPU::lastCycle() -> void {
   status.interrupt_pending = ((status.irq_line | status.irq_apu_line) & ~regs.p.i) | status.nmi_pending;
 }
 
@@ -15,8 +15,8 @@ auto CPU::nmi(uint16 &vector) -> void {
 
 auto CPU::oam_dma() -> void {
   for(unsigned n = 0; n < 256; n++) {
-    uint8 data = op_read((status.oam_dma_page << 8) + n);
-    op_write(0x2004, data);
+    uint8 data = read((status.oam_dma_page << 8) + n);
+    write(0x2004, data);
   }
 }
 

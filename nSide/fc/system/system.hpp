@@ -7,8 +7,9 @@ struct System {
 
   enum class Revision : uint {
     Famicom,
-    PlayChoice10,
     VSSystem,
+    PlayChoice10,
+    FamicomBox,
   };
 
   auto loaded() const -> bool;
@@ -19,6 +20,7 @@ struct System {
   inline auto fc()   const { return _revision == Revision::Famicom; }
   inline auto vs()   const { return _revision == Revision::VSSystem; }
   inline auto pc10() const { return _revision == Revision::PlayChoice10; }
+  inline auto fcb()  const { return _revision == Revision::FamicomBox; }
 
   auto run() -> void;
   auto runToSave() -> void;

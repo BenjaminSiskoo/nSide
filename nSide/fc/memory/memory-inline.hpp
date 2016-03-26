@@ -93,8 +93,8 @@ auto Bus::read(uint16 addr, uint8 data) -> uint8 {
   data = cartridge.prg_read(addr);
        if(addr <= 0x1fff) data = cpu.ram_read(addr);
   else if(addr <= 0x3fff) data = ppu.read(addr);
-  else if(addr <= 0x4017) data = cpu.mmio_read(addr, data);
-  else if(system.vs() && (addr & 0xe020) == 0x4020) data = cpu.mmio_read(addr, data);
+  else if(addr <= 0x4017) data = cpu.cpuPortRead(addr, data);
+  else if(system.vs() && (addr & 0xe020) == 0x4020) data = cpu.cpuPortRead(addr, data);
   if(cheat.enable()) {
     if(auto result = cheat.find(addr, data)) return result();
   }
@@ -105,6 +105,6 @@ auto Bus::write(uint16 addr, uint8 data) -> void {
   cartridge.prg_write(addr, data);
   if(addr <= 0x1fff) return cpu.ram_write(addr, data);
   if(addr <= 0x3fff) return ppu.write(addr, data);
-  if(addr <= 0x4017) return cpu.mmio_write(addr, data);
-  if(system.vs() && (addr & 0xe020) == 0x4020) return cpu.mmio_write(addr, data);
+  if(addr <= 0x4017) return cpu.cpuPortWrite(addr, data);
+  if(system.vs() && (addr & 0xe020) == 0x4020) return cpu.cpuPortWrite(addr, data);
 }

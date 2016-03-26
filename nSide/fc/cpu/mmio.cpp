@@ -1,4 +1,4 @@
-auto CPU::mmio_read(uint16 addr, uint8 data) -> uint8 {
+auto CPU::cpuPortRead(uint16 addr, uint8 data) -> uint8 {
   if(!system.vs()) {
     if(addr == 0x4016) {
       return (mdr() & 0xe0) | device.controllerPort1->data() | device.expansionPort->data1();
@@ -14,7 +14,7 @@ auto CPU::mmio_read(uint16 addr, uint8 data) -> uint8 {
   return apu.read(addr);
 }
 
-auto CPU::mmio_write(uint16 addr, uint8 data) -> void {
+auto CPU::cpuPortWrite(uint16 addr, uint8 data) -> void {
   if(addr == 0x4014) {
     status.oam_dma_page = data;
     status.oam_dma_pending = true;

@@ -5,8 +5,9 @@ struct ID {
     //cartridges (folders)
     System,
     Famicom,
-    PlayChoice10,
     VSSystem,
+    PlayChoice10,
+    FamicomBox,
 
     //memory (files)
     SystemManifest,

@@ -3,11 +3,10 @@
 namespace Famicom {
 
 CPU cpu;
-
+#include "memory.cpp"
+#include "mmio.cpp"
+#include "timing.cpp"
 #include "serialization.cpp"
-#include "memory/memory.cpp"
-#include "mmio/mmio.cpp"
-#include "timing/timing.cpp"
 
 CPU::CPU() {
 }

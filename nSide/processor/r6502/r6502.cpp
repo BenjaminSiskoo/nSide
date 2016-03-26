@@ -4,7 +4,7 @@
 namespace Processor {
 
 #define I
-#define L last_cycle();
+#define L lastCycle();
 #define call(op) (this->*op)()
 
 #include "memory.cpp"
@@ -31,21 +31,21 @@ auto R6502::reset() -> void {
 }
 
 auto R6502::interrupt() -> void {
-  op_readpc();
-  op_readpc();
-  op_writesp(regs.pc >> 8);
-  op_writesp(regs.pc >> 0);
+  readpc();
+  readpc();
+  writesp(regs.pc >> 8);
+  writesp(regs.pc >> 0);
   uint16 vector = 0xfffe;  //IRQ
   nmi(vector);
-  op_writesp(regs.p | 0x20);
-  abs.l = op_read(vector++);
+  writesp(regs.p | 0x20);
+  abs.l = read(vector++);
   regs.p.i = 1;
-L abs.h = op_read(vector++);
+L abs.h = read(vector++);
   regs.pc = abs.w;
 }
 
 auto R6502::exec() -> void {
-  uint8 opcode = op_readpci();
+  uint8 opcode = readpci();
   switch(opcode) {
   case 0x00: return op_brk();
   case 0x01: return opi_read_indirect_zero_page_x<&R6502::opf_ora>();

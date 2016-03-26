@@ -10,21 +10,42 @@ struct CPU : Processor::R6502, Thread {
   auto ram_read(uint16 addr) -> uint8;
   auto ram_write(uint16 addr, uint8 data) -> void;
 
+  static auto Enter() -> void;
   auto main() -> void;
   auto power() -> void;
   auto reset() -> void;
 
+  //memory.cpp
+  auto read(uint16 addr) -> uint8 override;
+  auto write(uint16 addr, uint8 data) -> void override;
+  auto disassemblerRead(uint16 addr) -> uint8 override;
+
+  //mmio.cpp
+  auto cpuPortRead(uint16 addr, uint8 data) -> uint8;
+  auto cpuPortWrite(uint16 addr, uint8 data) -> void;
+
+  //timing.cpp
+  auto addClocks(uint clocks) -> void;
+  auto lastCycle() -> void;
+  auto nmi(uint16 &vector) -> void;
+
+  auto oam_dma() -> void;
+
+  auto set_nmi_line(bool) -> void;
+  auto set_irq_line(bool) -> void;
+  auto set_irq_apu_line(bool) -> void;
+
+  auto set_rdy_line(bool) -> void;
+  auto set_rdy_addr(bool valid, uint16 value = 0) -> void;
+
+  //serialization.cpp
   auto serialize(serializer&) -> void;
 
-  uint8 ram[0x0800];
+  uint8 ram[2 * 1024];
 
   bool side; // VS. System; 0: main, 1: sub
 
 //privileged:
-  #include "memory/memory.hpp"
-  #include "mmio/mmio.hpp"
-  #include "timing/timing.hpp"
-
   struct Status {
     bool interrupt_pending;
     bool nmi_pending;
@@ -39,8 +60,6 @@ struct CPU : Processor::R6502, Thread {
     bool oam_dma_pending;
     uint8 oam_dma_page;
   } status;
-
-  static auto Enter() -> void;
 };
 
 extern CPU cpu;

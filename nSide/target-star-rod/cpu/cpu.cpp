@@ -56,10 +56,7 @@ auto CPUDebugger::opcodeLength(uint24 addr) -> uint {
 
 auto CPUDebugger::updateDisassembly() -> void {
   string line[15];
-  char text[512];
-
-  SuperFamicom::cpu.disassemble_opcode(text, opcodePC, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
-  text[29] = 0;
+  string text = SuperFamicom::cpu.disassemble(opcodePC, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
   line[7] = { "> ", text };
 
   int addr = opcodePC;
@@ -67,8 +64,7 @@ auto CPUDebugger::updateDisassembly() -> void {
     for(int b = 1; b <= 4; b++) {
       if(addr - b >= 0 && (debugger->cpuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        SuperFamicom::cpu.disassemble_opcode(text, addr, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
-        text[29] = 0;
+        text = SuperFamicom::cpu.disassemble(addr, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
         line[o] = { "  ", text };
         break;
       }
@@ -80,8 +76,7 @@ auto CPUDebugger::updateDisassembly() -> void {
     for(int b = 1; b <= 4; b++) {
       if(addr + b <= 0xffffff && (debugger->cpuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        SuperFamicom::cpu.disassemble_opcode(text, addr, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
-        text[29] = 0;
+        text = SuperFamicom::cpu.disassemble(addr, SuperFamicom::cpu.regs.e, SuperFamicom::cpu.regs.p.m, SuperFamicom::cpu.regs.p.x);
         line[o] = { "  ", text };
         break;
       }
