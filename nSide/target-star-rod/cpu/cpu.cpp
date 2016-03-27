@@ -107,7 +107,7 @@ CPUDebugger::CPUDebugger() {
   opcodePC = 0x008000;
 
   setTitle("CPU Debugger");
-  setGeometry({128, 128, 520, 255});
+  setGeometry({128, 128, 620, 260});
 
   layout.setMargin(5);
   stepInto.setText("Step Into");

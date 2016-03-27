@@ -74,7 +74,7 @@ SMPDebugger::SMPDebugger() {
   opcodePC = 0xffc0;
 
   setTitle("SMP Debugger");
-  setGeometry({128, 128, 520, 255});
+  setGeometry({128, 128, 520, 260});
 
   layout.setMargin(5);
   stepInto.setText("Step Into");

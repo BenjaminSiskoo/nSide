@@ -38,7 +38,7 @@ BreakpointEditor::BreakpointEditor() {
   layout.setMargin(5);
   for(auto &bp : breakpointEntry) layout.append(bp, {0, 0}, 5);
 
-  setGeometry({128, 128, layout.minimumSize().width(), layout.minimumSize().height() - 5});
+  setGeometry({128, 128, layout.minimumSize().width(), layout.minimumSize().height()});
   synchronize();
 
   windowManager->append(this, "BreakpointEditor");
