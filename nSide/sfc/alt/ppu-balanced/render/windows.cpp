@@ -1,7 +1,7 @@
 //screen: 0 = main, 1 = sub
-auto PPU::build_window_table(uint8_t bg, bool screen) -> void {
+auto PPU::build_window_table(uint8 bg, bool screen) -> void {
   bool set = 1, clr = 0;
-  uint8_t* table = (screen == 0 ? window[bg].main : window[bg].sub);
+  uint8* table = (screen == 0 ? window[bg].main : window[bg].sub);
 
   if(bg != COL) {
     if(screen == 0 && regs.window_enabled[bg] == false) {
@@ -21,10 +21,10 @@ auto PPU::build_window_table(uint8_t bg, bool screen) -> void {
     }
   }
 
-  const uint16_t window1_left  = regs.window1_left;
-  const uint16_t window1_right = regs.window1_right;
-  const uint16_t window2_left  = regs.window2_left;
-  const uint16_t window2_right = regs.window2_right;
+  const uint16 window1_left  = regs.window1_left;
+  const uint16 window1_right = regs.window1_right;
+  const uint16 window2_left  = regs.window2_left;
+  const uint16 window2_right = regs.window2_right;
 
   if(regs.window1_enabled[bg] == false && regs.window2_enabled[bg] == false) {
     memset(table, clr, 256);
@@ -60,7 +60,7 @@ auto PPU::build_window_table(uint8_t bg, bool screen) -> void {
   }
 }
 
-auto PPU::build_window_tables(uint8_t bg) -> void {
+auto PPU::build_window_tables(uint8 bg) -> void {
   build_window_table(bg, 0);
   build_window_table(bg, 1);
 }

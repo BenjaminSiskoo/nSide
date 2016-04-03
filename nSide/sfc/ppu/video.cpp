@@ -174,9 +174,9 @@ auto Video::drawCursors() -> void {
   case Device::ID::Justifiers:
     if(dynamic_cast<Justifier*>(device.controllerPort2)) {
       auto& controller = (Justifier&)*device.controllerPort2;
-      drawCursor(0xffff0000, controller.player1.x, controller.player1.y, false);
+      drawCursor(0xffff0000, controller.player1.x, controller.player1.y);
       if(!controller.chained) break;
-      drawCursor(0xff00bf00, controller.player2.x, controller.player2.y, false);
+      drawCursor(0xff00bf00, controller.player2.x, controller.player2.y);
     }
     break;
   }

@@ -14,22 +14,12 @@ objects += sfc-bsmemory sfc-sufamiturbo
 
 ifeq ($(profile),accuracy)
   flags += -DPROFILE_ACCURACY
-  sfccpu := cpu
-  sfcsmp := smp
   sfcdsp := dsp
   sfcppu := ppu
 else ifeq ($(profile),balanced)
   flags += -DPROFILE_BALANCED
-  sfccpu := cpu
-  sfcsmp := smp
   sfcdsp := alt/dsp
   sfcppu := alt/ppu-balanced
-else ifeq ($(profile),performance)
-  flags += -DPROFILE_PERFORMANCE
-  sfccpu := alt/cpu
-  sfcsmp := alt/smp
-  sfcdsp := alt/dsp
-  sfcppu := alt/ppu-performance
 else
   $(error "unknown Super Famicom profile")
 endif
@@ -41,8 +31,8 @@ obj/sfc-controller.o:  sfc/controller/controller.cpp $(call rwildcard,sfc/contro
 obj/sfc-cartridge.o:   sfc/cartridge/cartridge.cpp $(call rwildcard,sfc/cartridge/)
 obj/sfc-cheat.o:       sfc/cheat/cheat.cpp $(call rwildcard,sfc/cheat/)
 obj/sfc-memory.o:      sfc/memory/memory.cpp $(call rwildcard,sfc/memory/)
-obj/sfc-cpu.o:         sfc/$(sfccpu)/cpu.cpp $(call rwildcard,sfc/$(sfccpu)/)
-obj/sfc-smp.o:         sfc/$(sfcsmp)/smp.cpp $(call rwildcard,sfc/$(sfcsmp)/)
+obj/sfc-cpu.o:         sfc/cpu/cpu.cpp $(call rwildcard,sfc/$(sfccpu)/)
+obj/sfc-smp.o:         sfc/smp/smp.cpp $(call rwildcard,sfc/$(sfcsmp)/)
 obj/sfc-dsp.o:         sfc/$(sfcdsp)/dsp.cpp $(call rwildcard,sfc/$(sfcdsp)/)
 obj/sfc-ppu.o:         sfc/$(sfcppu)/ppu.cpp $(call rwildcard,sfc/$(sfcppu)/)
 

@@ -10,14 +10,12 @@
 
 namespace SuperFamicom {
   namespace Info {
-    static const string Name = "nSide-sfc";
     static const uint SerializerVersion = 29;
   }
 }
 
 /*
-  nSide-sfc - Super Famicom emulator
-  based on higan/bsnes by byuu.
+  based on higan's Super Famicom emulator by byuu.
   original author: byuu
   contributors:
     Andreas Naive     (S-DD1 decompression algorithm)
@@ -91,8 +89,6 @@ namespace SuperFamicom {
   #include "profile-accuracy.hpp"
   #elif defined(PROFILE_BALANCED)
   #include "profile-balanced.hpp"
-  #elif defined(PROFILE_PERFORMANCE)
-  #include "profile-performance.hpp"
   #endif
 
   #include <sfc/controller/controller.hpp>

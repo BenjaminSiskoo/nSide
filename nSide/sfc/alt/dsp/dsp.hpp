@@ -1,4 +1,5 @@
-#include "../../dsp/audio.hpp"
+#include <sfc/dsp/audio.hpp>
+
 #include "SPC_DSP.h"
 
 struct DSP : Thread {
@@ -10,8 +11,8 @@ struct DSP : Thread {
   alwaysinline auto synchronizeSMP() -> void;
 
   auto mute() -> bool;
-  auto read(uint8_t addr) -> uint8_t;
-  auto write(uint8_t addr, uint8_t data) -> void;
+  auto read(uint8 addr) -> uint8;
+  auto write(uint8 addr, uint8 data) -> void;
 
   auto main() -> void;
   auto power() -> void;

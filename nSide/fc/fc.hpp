@@ -5,7 +5,6 @@
 
 namespace Famicom {
   namespace Info {
-    static const string Name[] = "nSide-fc";
     // If you import nSide's changes into another fork of higan, please do not
     // import the serializer version ID unless you intend to import all of
     // nSide-fc simultaneously.
@@ -16,8 +15,7 @@ namespace Famicom {
 }
 
 /*
-  nSide-fc - Famicom emulator
-  based on higan/bnes by byuu and Ryphecha.
+  based on higan's Famicom emulator by byuu and Ryphecha.
   authors: byuu, Ryphecha
   contributors: FitzRoy, hex_usr
   license: GPLv3

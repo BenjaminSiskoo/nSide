@@ -22,80 +22,80 @@ auto R65816::dreadl(uint24 addr) -> uint24 {
   return data;
 }
 
-auto R65816::decode(uint8 mode, uint24 addr, uint24 args) -> uint24 {
+auto R65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
   uint24 r = 0;
 
   switch(mode) {
   case OPTYPE_DP:
-    r = (regs.d + (args & 0xffff)) & 0xffff;
+    r = (regs.d + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_DPX:
-    r = (regs.d + regs.x + (args & 0xffff)) & 0xffff;
+    r = (regs.d + regs.x + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_DPY:
-    r = (regs.d + regs.y + (args & 0xffff)) & 0xffff;
+    r = (regs.d + regs.y + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_IDP:
-    args = (regs.d + (args & 0xffff)) & 0xffff;
-    r = (regs.db << 16) + dreadw(args);
+    arg = (regs.d + (arg & 0xffff)) & 0xffff;
+    r = (regs.db << 16) + dreadw(arg);
     break;
   case OPTYPE_IDPX:
-    args = (regs.d + regs.x + (args & 0xffff)) & 0xffff;
-    r = (regs.db << 16) + dreadw(args);
+    arg = (regs.d + regs.x + (arg & 0xffff)) & 0xffff;
+    r = (regs.db << 16) + dreadw(arg);
     break;
   case OPTYPE_IDPY:
-    args = (regs.d + (args & 0xffff)) & 0xffff;
-    r = (regs.db << 16) + dreadw(args) + regs.y;
+    arg = (regs.d + (arg & 0xffff)) & 0xffff;
+    r = (regs.db << 16) + dreadw(arg) + regs.y;
     break;
   case OPTYPE_ILDP:
-    args = (regs.d + (args & 0xffff)) & 0xffff;
-    r = dreadl(args);
+    arg = (regs.d + (arg & 0xffff)) & 0xffff;
+    r = dreadl(arg);
     break;
   case OPTYPE_ILDPY:
-    args = (regs.d + (args & 0xffff)) & 0xffff;
-    r = dreadl(args) + regs.y;
+    arg = (regs.d + (arg & 0xffff)) & 0xffff;
+    r = dreadl(arg) + regs.y;
     break;
   case OPTYPE_ADDR:
-    r = (regs.db << 16) + (args & 0xffff);
+    r = (regs.db << 16) + (arg & 0xffff);
     break;
   case OPTYPE_ADDR_PC:
-    r = addr.bits(23,16) + (args & 0xffff);
+    r = addr.bits(23,16) + (arg & 0xffff);
     break;
   case OPTYPE_ADDRX:
-    r = (regs.db << 16) + (args & 0xffff) + regs.x;
+    r = (regs.db << 16) + (arg & 0xffff) + regs.x;
     break;
   case OPTYPE_ADDRY:
-    r = (regs.db << 16) + (args & 0xffff) + regs.y;
+    r = (regs.db << 16) + (arg & 0xffff) + regs.y;
     break;
   case OPTYPE_IADDR_PC:
-    r = addr.bits(23,16) + (args & 0xffff);
+    r = addr.bits(23,16) + (arg & 0xffff);
     break;
   case OPTYPE_IADDRX:
-    r = addr.bits(23,16) + ((args + regs.x) & 0xffff);
+    r = addr.bits(23,16) + ((arg + regs.x) & 0xffff);
     break;
   case OPTYPE_ILADDR:
-    r = args;
+    r = arg;
     break;
   case OPTYPE_LONG:
-    r = args;
+    r = arg;
     break;
   case OPTYPE_LONGX:
-    r = (args + regs.x);
+    r = (arg + regs.x);
     break;
   case OPTYPE_SR:
-    r = (regs.s + (args & 0xff)) & 0xffff;
+    r = (regs.s + (arg & 0xff)) & 0xffff;
     break;
   case OPTYPE_ISRY:
-    args = (regs.s + (args & 0xff)) & 0xffff;
-    r = (regs.db << 16) + dreadw(args) + regs.y;
+    arg = (regs.s + (arg & 0xff)) & 0xffff;
+    r = (regs.db << 16) + dreadw(arg) + regs.y;
     break;
   case OPTYPE_RELB:
     r  = addr.bits(23,16) + ((addr + 2) & 0xffff);
-    r += int8(args);
+    r += int8(arg);
     break;
   case OPTYPE_RELW:
     r  = addr.bits(23,16) + ((addr + 3) & 0xffff);
-    r += (int16)args;
+    r += (int16)arg;
     break;
   }
 

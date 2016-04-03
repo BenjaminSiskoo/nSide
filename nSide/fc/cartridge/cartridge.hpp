@@ -60,8 +60,6 @@ private:
   auto parseMarkupVS(Markup::Node&, Markup::Node&) -> void;
   auto parseMarkupMemory(MappedRAM&, Markup::Node, uint id, bool writable) -> void;
 
-  auto parseMarkupCartridge(Markup::Node) -> void;
-
   string _sha256;
   Region _region = Region::NTSC;
 };

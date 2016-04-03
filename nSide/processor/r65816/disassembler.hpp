@@ -27,4 +27,4 @@ auto disassemble(uint24 addr, bool e, bool m, bool x) -> string;
 auto dreadb(uint24 addr) -> uint8;
 auto dreadw(uint24 addr) -> uint16;
 auto dreadl(uint24 addr) -> uint24;
-auto decode(uint8 mode, uint24 addr, uint24 args) -> uint24;
+auto decode(uint8 mode, uint24 addr, uint24 arg) -> uint24;

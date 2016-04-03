@@ -2,6 +2,8 @@
 
 namespace Famicom {
 
+APU apu;
+
 #include "envelope.cpp"
 #include "sweep.cpp"
 #include "pulse.cpp"
@@ -9,7 +11,6 @@ namespace Famicom {
 #include "noise.cpp"
 #include "dmc.cpp"
 #include "serialization.cpp"
-APU apu;
 
 APU::APU() {
   for(uint amp : range(32)) {

@@ -5,7 +5,7 @@ struct Video {
   auto refresh() -> void;
 
 private:
-  auto drawCursor(uint32 color, int x, int y, bool turbo) -> void;
+  auto drawCursor(uint32 color, int x, int y, bool turbo = false) -> void;
   auto drawCursors() -> void;
 
   unique_pointer<uint32[]> output;

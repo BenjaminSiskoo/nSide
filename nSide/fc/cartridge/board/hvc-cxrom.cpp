@@ -12,7 +12,7 @@ struct HVC_CxROM : Board {
     settings.mirror = board_node["mirror/mode"].text() == "horizontal";
     settings.security = (bool)board_node["security"];
     if(settings.security) {
-      settings.pass = board_node["security/pass"].integer();
+      settings.pass = board_node["security/pass"].natural();
     }
   }
 

@@ -5,14 +5,12 @@
 
 namespace GameBoy {
   namespace Info {
-    static const string Name = "nSide-gb";
     static const uint SerializerVersion = 4;
   }
 }
 
 /*
-  nSide-gb - Game Boy, Super Game Boy, and Game Boy Color emulator
-  based on higan/bgb by byuu.
+  based on higan's Game Boy emulator by byuu.
   original author: byuu
   contributors: Jonas Quinn
   license: GPLv3

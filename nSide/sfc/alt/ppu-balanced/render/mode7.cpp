@@ -11,51 +11,51 @@
 #define CLIP(x) ( ((x) & 0x2000) ? ( (x) | ~0x03ff) : ((x) & 0x03ff) )
 
 template<uint bg>
-auto PPU::render_line_mode7(uint8_t pri0_pos, uint8_t pri1_pos) -> void {
+auto PPU::render_line_mode7(uint8 pri0_pos, uint8 pri1_pos) -> void {
   if(layer_enabled[bg][0] == false) pri0_pos = 0;
   if(layer_enabled[bg][1] == false) pri1_pos = 0;
   if(pri0_pos + pri1_pos == 0) return;
 
   if(regs.bg_enabled[bg] == false && regs.bgsub_enabled[bg] == false) return;
 
-  int32_t px, py;
-  int32_t tx, ty, tile, palette;
+  int32 px, py;
+  int32 tx, ty, tile, palette;
 
-  int32_t a = sclip<16>(cache.m7a);
-  int32_t b = sclip<16>(cache.m7b);
-  int32_t c = sclip<16>(cache.m7c);
-  int32_t d = sclip<16>(cache.m7d);
+  int32 a = sclip<16>(cache.m7a);
+  int32 b = sclip<16>(cache.m7b);
+  int32 c = sclip<16>(cache.m7c);
+  int32 d = sclip<16>(cache.m7d);
 
-  int32_t cx   = sclip<13>(cache.m7x);
-  int32_t cy   = sclip<13>(cache.m7y);
-  int32_t hofs = sclip<13>(cache.m7_hofs);
-  int32_t vofs = sclip<13>(cache.m7_vofs);
+  int32 cx   = sclip<13>(cache.m7x);
+  int32 cy   = sclip<13>(cache.m7y);
+  int32 hofs = sclip<13>(cache.m7_hofs);
+  int32 vofs = sclip<13>(cache.m7_vofs);
 
   int  _pri, _x;
   bool _bg_enabled    = regs.bg_enabled[bg];
   bool _bgsub_enabled = regs.bgsub_enabled[bg];
 
   build_window_tables(bg);
-  uint8_t* wt_main = window[bg].main;
-  uint8_t* wt_sub  = window[bg].sub;
+  uint8* wt_main = window[bg].main;
+  uint8* wt_sub  = window[bg].sub;
 
-  int32_t y = (regs.mode7_vflip == false ? line : 255 - line);
+  int32 y = (regs.mode7_vflip == false ? line : 255 - line);
 
-  uint16_t* mtable_x;
-  uint16_t* mtable_y;
+  uint16* mtable_x;
+  uint16* mtable_y;
   if(bg == BG1) {
-    mtable_x = (uint16_t*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? regs.mosaic_size : 0];
-    mtable_y = (uint16_t*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? regs.mosaic_size : 0];
+    mtable_x = (uint16*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? (uint)regs.mosaic_size : 0];
+    mtable_y = (uint16*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? (uint)regs.mosaic_size : 0];
   } else {  //bg == BG2
     //Mode7 EXTBG BG2 uses BG1 mosaic enable to control vertical mosaic,
     //and BG2 mosaic enable to control horizontal mosaic...
-    mtable_x = (uint16_t*)mosaic_table[(regs.mosaic_enabled[BG2] == true) ? regs.mosaic_size : 0];
-    mtable_y = (uint16_t*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? regs.mosaic_size : 0];
+    mtable_x = (uint16*)mosaic_table[(regs.mosaic_enabled[BG2] == true) ? (uint)regs.mosaic_size : 0];
+    mtable_y = (uint16*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? (uint)regs.mosaic_size : 0];
   }
 
-  int32_t psx = ((a * CLIP(hofs - cx)) & ~63) + ((b * CLIP(vofs - cy)) & ~63) + ((b * mtable_y[y]) & ~63) + (cx << 8);
-  int32_t psy = ((c * CLIP(hofs - cx)) & ~63) + ((d * CLIP(vofs - cy)) & ~63) + ((d * mtable_y[y]) & ~63) + (cy << 8);
-  for(int32_t x = 0; x < 256; x++) {
+  int32 psx = ((a * CLIP(hofs - cx)) & ~63) + ((b * CLIP(vofs - cy)) & ~63) + ((b * mtable_y[y]) & ~63) + (cx << 8);
+  int32 psy = ((c * CLIP(hofs - cx)) & ~63) + ((d * CLIP(vofs - cy)) & ~63) + ((d * mtable_y[y]) & ~63) + (cy << 8);
+  for(int32 x = 0; x < 256; x++) {
     px = psx + (a * mtable_x[x]);
     py = psy + (c * mtable_x[x]);
 
@@ -108,9 +108,9 @@ auto PPU::render_line_mode7(uint8_t pri0_pos, uint8_t pri1_pos) -> void {
 
     if(!palette) continue;
 
-    _x = (regs.mode7_hflip == false) ? (x) : (255 - x);
+    _x = (regs.mode7_hflip == false) ? ((uint)x) : (255 - x);
 
-    uint32_t col;
+    uint32 col;
     if(regs.direct_color == true && bg == BG1) {
       //direct color mode does not apply to bg2, as it is only 128 colors...
       col = get_direct_color(0, palette);

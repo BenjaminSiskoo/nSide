@@ -2247,7 +2247,7 @@ cartridge sha256:a086ff08e7eae822285975d04f5d227f2434d5f1819969e233ff8670f7d5743
   :  region:   JPN
   :  revision: 1.0
   :  name:     Tatakae!! Rahmen Man - Sakuretsu Choujin 102 Gei
-  :  title:    闘将!! 拉麺男 炸裂超人一○二芸
+  :  title:    闘将!!拉麺男 炸裂超人一○二芸
 
 cartridge sha256:8da7129bba8c61a5ba1cd7ce02932ea4cefbb12db75c517c14d96819fc57f299
   :board region=ntsc id:HVC-NROM-128

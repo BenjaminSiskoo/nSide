@@ -2,8 +2,8 @@
 
 namespace SuperFamicom {
 
+#include <sfc/ppu/video.cpp>
 PPU ppu;
-#include "../../ppu/video.cpp"
 
 #include "memory/memory.cpp"
 #include "mmio/mmio.cpp"
@@ -11,7 +11,7 @@ PPU ppu;
 #include "serialization.cpp"
 
 PPU::PPU() {
-  output = new uint32_t[512 * 512]();
+  output = new uint32[512 * 512]();
   output += 16 * 512;  //overscan offset
 
   alloc_tiledata_cache();
@@ -49,7 +49,7 @@ auto PPU::step(uint clocks) -> void {
 }
 
 auto PPU::synchronizeCPU() -> void {
-  if(CPU::Threaded) {
+  if(CPU::Threaded == true) {
     if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
   } else {
     while(clock >= 0) cpu.main();
@@ -375,8 +375,7 @@ auto PPU::power() -> void {
 auto PPU::reset() -> void {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memory::fill(output, 512 * 480 * sizeof(uint32_t));
-  video.reset();
+  memory::fill(output, 512 * 480 * sizeof(uint32));
 
   frame();
 
@@ -399,6 +398,8 @@ auto PPU::reset() -> void {
   regs.bg_y[1] = 0;
   regs.bg_y[2] = 0;
   regs.bg_y[3] = 0;
+
+  video.reset();
 }
 
 auto PPU::layer_enable(uint layer, uint priority, bool enable) -> void {

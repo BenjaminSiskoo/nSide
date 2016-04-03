@@ -2,11 +2,11 @@
 
 namespace SuperFamicom {
 
+#include <sfc/dsp/audio.cpp>
 DSP dsp;
-#include "../../dsp/audio.cpp"
 
-#include "SPC_DSP.cpp"
 #include "serialization.cpp"
+#include "SPC_DSP.cpp"
 
 DSP::DSP() {
   for(auto i : range(8)) channel_enabled[i] = true;
@@ -17,7 +17,7 @@ auto DSP::step(uint clocks) -> void {
 }
 
 auto DSP::synchronizeSMP() -> void {
-  if(SMP::Threaded) {
+  if(SMP::Threaded == true) {
     if(clock >= 0 && !scheduler.synchronizing()) co_switch(smp.thread);
   } else {
     while(clock >= 0) smp.main();
@@ -39,11 +39,11 @@ auto DSP::mute() -> bool {
   return spc_dsp.mute();
 }
 
-auto DSP::read(uint8_t addr) -> uint8_t {
+auto DSP::read(uint8 addr) -> uint8 {
   return spc_dsp.read(addr);
 }
 
-auto DSP::write(uint8_t addr, uint8_t data) -> void {
+auto DSP::write(uint8 addr, uint8 data) -> void {
   spc_dsp.write(addr, data);
 }
 
@@ -51,8 +51,6 @@ auto DSP::power() -> void {
   spc_dsp.init(smp.apuram);
   spc_dsp.reset();
   spc_dsp.set_output(samplebuffer, 8192);
-
-  audio.coprocessorEnable(false);
 }
 
 auto DSP::reset() -> void {

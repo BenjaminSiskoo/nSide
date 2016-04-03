@@ -1,6 +1,6 @@
-﻿nSide v009r05 (2015-10-08)
+﻿nSide v009r07 (2016-01-15)
 
-A fork of higan v095 by byuu (http://byuu.org/emulation/higan/), which was
+A fork of higan v097 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
 Individual emulators are also renamed to the following:
 bnes  -> nSide-fc
@@ -74,14 +74,14 @@ Famicom:
   *The VS. Zapper with its own separate protocol is badly supported (timing of
   light sensor is not well understood).
 Super Famicom:
-  *Magical Drop (JP) (1.0) does not play voice effects, and it hangs when trying
-  to show the Game Over screen in Endless Mode (とことんモード).
-  Inherited from higan v094.
+  *Magical Drop (JPN) (1.0) does not play voice effects, and it hangs when
+  trying to show the Game Over screen in Endless Mode (とことんモード).
+  Known to affect actual hardware.
   *Super Bonk's demo sequence is mis-timed. Bonk falls short of entering a pipe,
   which ruins the rest of the demo as he continues reading inputs and gets stuck
   in the area above the pipe. It is likely that this bug is related to the
   Magical Drop bug above.
-  Inherited from higan v094.
+  Known to affect actual hardware.
 Game Boy:
   *When loading a Game Boy game in Game Boy Color mode, colors are applied to
   the wrong areas, making game displays terrible on the eyes.
@@ -173,75 +173,75 @@ Changes from higan: nSide-fc
     NES-EVENT              // Nintendo World Championships 1990
     NES-QJ                 // Super Spike V'Ball / Nintendo World Cup
     NES-SF1ROM             // Bases Loaded II (1.2)
-    HVC-UN1ROM             // 戦場の狼 (Senjou no Ookami) (JP)
-    PAL-ZZ                 // Super Mario Bros. / Tetris / Nintendo World Cup (EU)
-    BANDAI-74*161/02/74    // Oeka Kids (JP)
-    BANDAI-74*161/161/32   // Kamen Rider Club (JP)
-    BANDAI-PT-554          // Family Trainer 3 - Aerobics Studio (JP)
-    IREM-74*161/161/21/138 // ナポレオン戦記 (Napoleon Senki) (JP)
-    IREM-G101              // Image Fight (JP)
-    IREM-H3001             // 大工の源さん2 (Daiku no Gen-san 2) (JP)
-    IREM-HOLYDIVER         // Holy Diver (JP)
-    IREM-TAM-S1            // 快傑ヤンチャ丸 (Kaiketsu Yanchamaru 2) (JP)
-    JALECO-JF-05..08       // 忍者じゃじゃ丸くん (Ninja Jajamaru-kun) (JP)
-    JALECO-JF-09           // じゃじゃ丸の大冒険 (Jajamaru no Daibouken) (JP)
-    JALECO-JF-10           // うる生やつら ルムのウエヂングベル (Urusei Yatsura) (JP)
-    JALECO-JF-11           // 妖怪倶楽部 (Youkai Club) (JP)
-    JALECO-JF-14           // バイオ戦士DAN インクリーサーとの闘い (Bio Senshi DAN) (JP)
-    JALECO-JF-16           // 宇宙船コスモキャリア (Uchuusen: Cosmo Carrier) (JP)
-    JALECO-JF-24           // Magic John (JP)
-    JALECO-JF-25           // 忍者じゃじゃ丸 銀河大作戦 (Ninja Jajamaru G.D.) (JP)
+    HVC-UN1ROM             // 戦場の狼 (Senjou no Ookami) (JPN)
+    PAL-ZZ                 // Super Mario Bros. / Tetris / Nintendo World Cup
+    BANDAI-74*161/02/74    // Oeka Kids (JPN)
+    BANDAI-74*161/161/32   // Kamen Rider Club (JPN)
+    BANDAI-PT-554          // Family Trainer 3 - Aerobics Studio (JPN)
+    IREM-74*161/161/21/138 // ナポレオン戦記 (Napoleon Senki) (JPN)
+    IREM-G101              // Image Fight (JPN)
+    IREM-H3001             // 大工の源さん2 (Daiku no Gen-san 2) (JPN)
+    IREM-HOLYDIVER         // Holy Diver (JPN)
+    IREM-TAM-S1            // 快傑ヤンチャ丸 (Kaiketsu Yanchamaru 2) (JPN)
+    JALECO-JF-05..08       // 忍者じゃじゃ丸くん (Ninja Jajamaru-kun) (JPN)
+    JALECO-JF-09           // じゃじゃ丸の大冒険 (Jajamaru no Daibouken) (JPN)
+    JALECO-JF-10           // うる生やつら ルムのウエヂングベル (Urusei Yatsura) (JPN)
+    JALECO-JF-11           // 妖怪倶楽部 (Youkai Club) (JPN)
+    JALECO-JF-14           // バイオ戦士DAN インクリーサーとの闘い (Bio Senshi DAN) (JPN)
+    JALECO-JF-16           // 宇宙船コスモキャリア (Uchuusen: Cosmo Carrier) (JPN)
+    JALECO-JF-24           // Magic John (JPN)
+    JALECO-JF-25           // 忍者じゃじゃ丸 銀河大作戦 (Ninja Jajamaru G.D.) (JPN)
     NAMCOT-129
-    NAMCOT-163             // 貝獣物語 (Kaijuu Monogatari) (JP)
+    NAMCOT-163             // 貝獣物語 (Kaijuu Monogatari) (JPN)
     NAMCOT-175
     NAMCOT-340
-    NAMCOT-34xx            // SkyKid (JP), The Quest of Ki (JP)
-    SUNSOFT-4              // After Burner (JP)
+    NAMCOT-34xx            // SkyKid (JPN), The Quest of Ki (JPN)
+    SUNSOFT-4              // After Burner (JPN)
     TAITO-TC0190FMC
     TAITO-TC0350FMR
     TAITO-TC0690FMC
 
    Added aliases for existing board classes:
     HVC-??????      to NES-??????  // Games released in Japan
-    NES-HROM        to NES-NROM    // Donkey Kong Jr. (JP)
-    NES-RROM        to NES-NROM    // Duck Hunt (JP)
-    NES-RROM-128    to NES-NROM    // Clu Clu Land (NA)
-    NES-RTROM       to NES-NROM    // Excitebike (JP)
-    NES-SNWEPROM    to NES-SxROM   // Final Fantasy II Prototype (NA)
-    NES-SROM        to NES-NROM    // Mario Bros. (JP)
-    NES-STROM       to NES-NROM    // Pinball (JP)
-    BANDAI-FCG-1    to BANDAI-FCG  // ドラゴンボール　大魔王復活 (JP)
+    NES-HROM        to NES-NROM    // Donkey Kong Jr. (JPN)
+    NES-RROM        to NES-NROM    // Duck Hunt (JPN)
+    NES-RROM-128    to NES-NROM    // Clu Clu Land (USA)
+    NES-RTROM       to NES-NROM    // Excitebike (JPN)
+    NES-SNWEPROM    to NES-SxROM   // Final Fantasy II Prototype (USA)
+    NES-SROM        to NES-NROM    // Mario Bros. (JPN)
+    NES-STROM       to NES-NROM    // Pinball (JPN)
+    BANDAI-FCG-1    to BANDAI-FCG  // ドラゴンボール　大魔王復活 (JPN)
                                    // (Dragon Ball: Dai Maou Fukkatsu)
-    BANDAI-FCG-2    to BANDAI-FCG  // ドラゴンボール３　悟空伝 (JP)
+    BANDAI-FCG-2    to BANDAI-FCG  // ドラゴンボール３　悟空伝 (JPN)
                                    // (Dragon Ball 3: Gokuu Den)
-    BANDAI-JUMP2    to BANDAI-FCG  // ファミコンジャンプII 最強の７人 (JP)
+    BANDAI-JUMP2    to BANDAI-FCG  // ファミコンジャンプII 最強の７人 (JPN)
                                    // (Famicom Jump II: Saikyou no 7 Nin)
-    BANDAI-LZ93D50  to BANDAI-FCG  // クレヨンしんちゃん オラとポイポイ (JP)
+    BANDAI-LZ93D50  to BANDAI-FCG  // クレヨンしんちゃん オラとポイポイ (JPN)
                                    // (Crayon Shin-chan: Ora to Poi Poi)
-    IREM-BNROM      to NES-BNROM   // 魔鐘 (JP)
+    IREM-BNROM      to NES-BNROM   // 魔鐘 (JPN)
                                    // (Mashou)
-    IREM-FCG-1      to BANDAI-FCG  // 西村京太郎ミステリー ブルートレイン殺人事件 (JP)
+    IREM-FCG-1      to BANDAI-FCG  // 西村京太郎ミステリー ブルートレイン殺人事件 (JPN)
                                    // (Nishimura Kyoutarou Mystery: Blue Train
                                    // Satsujin Jiken)
-    IREM-NROM-128   to NES-NROM    // Zippy Race (JP)
-    IREM-NROM-256   to NES-NROM    // Spelunker (JP)
-    IREM-UNROM      to NES-UNROM   // Spelunker II (JP)
-    KONAMI-CNROM    to NES-CNROM   // Gradius (JP)
-    KONAMI-NROM-128 to NES-NROM    // Road Fighter (JP)
-    KONAMI-SLROM    to NES-SLROM   // The Adventures of Bayou Billy (NA)
-    KONAMI-TLROM    to NES-TLROM   // Super C (NA)
-    KONAMI-UNROM    to NES-UNROM   // Life Force (NA)
-    NAMCOT-3301     to NES-NROM    // Galaxian (JP)
-    NAMCOT-3302     to NES-NROM    // Mappy (JP)
-    NAMCOT-3305     to NES-NROM    // The Tower of Druaga (JP)
-    NAMCOT-3311     to NES-NROM    // Tag Team Pro-Wrestling (JP)
-    NAMCOT-3312     to NES-NROM    // Dig Dug II (JP)
+    IREM-NROM-128   to NES-NROM    // Zippy Race (JPN)
+    IREM-NROM-256   to NES-NROM    // Spelunker (JPN)
+    IREM-UNROM      to NES-UNROM   // Spelunker II (JPN)
+    KONAMI-CNROM    to NES-CNROM   // Gradius (JPN)
+    KONAMI-NROM-128 to NES-NROM    // Road Fighter (JPN)
+    KONAMI-SLROM    to NES-SLROM   // The Adventures of Bayou Billy (USA)
+    KONAMI-TLROM    to NES-TLROM   // Super C (USA)
+    KONAMI-UNROM    to NES-UNROM   // Life Force (USA)
+    NAMCOT-3301     to NES-NROM    // Galaxian (JPN)
+    NAMCOT-3302     to NES-NROM    // Mappy (JPN)
+    NAMCOT-3305     to NES-NROM    // The Tower of Druaga (JPN)
+    NAMCOT-3311     to NES-NROM    // Tag Team Pro-Wrestling (JPN)
+    NAMCOT-3312     to NES-NROM    // Dig Dug II (JPN)
     TENGEN-800008
 
    Added unlicensed aliases for existing board classes:
-    TENGEN-800003 to NES-NROM     // Pac-Man (Unlicensed) (NA)
-    TENGEN-800008 to NES-CNROM    // Tetris: The Soviet Mind Game (NA)
-    TENGEN-800042 to SUNSOFT-4    // After Burner (NA)
+    TENGEN-800003 to NES-NROM     // Pac-Man (Unlicensed) (USA)
+    TENGEN-800008 to NES-CNROM    // Tetris: The Soviet Mind Game (USA)
+    TENGEN-800042 to SUNSOFT-4    // After Burner (USA)
 
    Added unlicensed board types: (note that they are sectioned off separately
    from the licensed ones for easy removal):
@@ -387,9 +387,9 @@ Changes from higan: nSide-fc
   as a basic demonstration of the horrid frame-based renderer, it will display
   the PlayChoice-10 logo at the top as you play.
 
-======================================================
-Changes from higan: processor/r6502 (affects nSide-fc)
-======================================================
+=====================================================
+Changes from higan: processor/r6502 (affects Famicom)
+=====================================================
    BRK was improperly clearing the Decimal flag when it should leave it alone.
   Only the interrupt flag is set now.
    An NMI can now redirect a BRK if it occurs after BRK's 4th cycle (after
@@ -400,28 +400,31 @@ Changes from higan: processor/r6502 (affects nSide-fc)
    Added support for the unofficial opcodes ALR, ANC, AXS, DCP, ISC (ISB), LAX,
   RLA, RRA, SAX, SLO, SRE, and STP (KIL).
 
-=============================
-Changes from higan: nSide-sfc
-=============================
+=================================
+Changes from higan: Super Famicom
+=================================
    Revised emulator name and copyright information. Credited multiple people who
-  helped out with bsnes in the past.
+  helped out with higan's Super Famicom emulator in the past.
 
    Expanded exportMemory to dump expansion chip-specific memory.
 
    Added exportRegisters for exporting some PPU registers to a debug report in
   BML format. Not all registers are supported yet.
 
+   Added a second cursor design that will be shown whenever the Super Scope is
+  in Turbo mode.
+
 ============================
-Changes from higan: nSide-gb
+Changes from higan: Game Boy
 ============================
    Added the exportMemory function, which can dump WRAM, HRAM (internal RAM),
   VRAM, OAM, and the palette, which is different for the Game Boy and Game Boy
   Color.
 
-=============================
-Changes from higan: nSide-gba
-=============================
-   Revised emulator name and copyright information. Credited endrift, jchadwick,
+====================================
+Changes from higan: Game Boy Advance
+====================================
+   Revised copyright information. Credited endrift, jchadwick,
   and Jonas Quinn for various improvements to GBA emulation.
 
    Added the exportMemory function, which can dump External WRAM, Internal WRAM,
@@ -430,16 +433,14 @@ Changes from higan: nSide-gba
   dumped, so it has been temporarily disabled (External WRAM is 262144 bytes
   long, the longest of any file dumped by any emulator's exportMemory function).
 
-===================================================================
-Changes from higan: processor/arm (affects nSide-sfc and nSide-gba)
-===================================================================
-   Added Jonas Quinn's rd delayed write code, which fixed multiple errors that
-  armwrestler reported.
+   Added cheat code support. In the Game Boy Advance, it is slightly annoying
+  to use compared to the Famicom, Super Famicom, and Game Boy. A cheat code
+  will only take effect if its data width matches the CPU's access width
+  exactly (8-bit, 16-bit, or 32-bit).
 
-========================================
-Changes from higan: cart-pal/auto_purify
-========================================
-   Renamed "ananke" to "auto_purify".
+============================
+Changes from higan: cart-pal
+============================
    Renamed "icarus" to "cart-pal".
 
    Added support for the following Famicom boards:
@@ -468,11 +469,3 @@ Changes from higan: cart-pal/auto_purify
    Added preliminary support for NES 2.0. This allows submappers to influence
   purification of Konami VRC games, distinguish between IREM-HOLYDIVER and
   JALECO-JF-16 (Cosmo Carrier), among other things.
-
-   (auto_purify only) Added support for PRG ROMs that are 8192 bytes long, half
-  the minimum size needed for iNES and NES 2.0. If a 16384-byte PRG ROM has 2
-  halves with the same data, it is truncated to 8192 bytes.
-
-   (auto_purify only) Corrected the Sufami Turbo database to give SD Gundam
-  Generation - Colony Kakutouki 0x2000 bytes of RAM. It erroneously had 0x800,
-  preventing it from saving properly.
