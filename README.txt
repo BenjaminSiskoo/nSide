@@ -1,12 +1,7 @@
-﻿nSide v009r07 (2016-01-15)
+﻿nSide v009r08 (2016-04-04)
 
 A fork of higan v097 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
-Individual emulators are also renamed to the following:
-bnes  -> nSide-fc
-bsnes -> nSide-sfc
-bgb   -> nSide-gb
-bgba  -> nSide-gba
 
 nSide adds new devices to the Famicom emulator's controller ports. The supported
 devices are:
@@ -14,6 +9,7 @@ devices are:
 *Four Score
 *Zapper (port 2 only)
 *Power Pad (port 2 only)
+*Arkanoid Vaus (port 2 only)
 
 In addition, it adds the Famicom expansion port for its own devices. The only
 expansion port devices supported are:
@@ -21,9 +17,8 @@ expansion port devices supported are:
 *4-Players Adaptor
 *Beam Gun (Zapper)
 *Family Trainer (Power Pad)
-*VS. Panel (VS. arcade games only; if you try to select this for a Famicom or
-  PlayChoice-10 game, it instead selects None, though the menu does not properly
-  recognize that the device change failed)
+
+Finally, it supports the VS. UniSystem, with its own arcade panel and buttons.
 
 Please be aware that a great majority of Famicom and NES games support the use
 of Player 3 and Player 4 as substitutes for Player 1 and Player 2, including
@@ -40,7 +35,7 @@ of 3rd-party tools that depend on it)
 
 nSide uses different directories for storing configuration settings, save
 states, and shaders so as to not conflict with higan.
-In Windows, the configuration files are in "%AppData%\nSide-t".
+In Windows, the configuration files are in "%LocalAppData%\nSide".
 
 You will need the GBA BIOS to play Game Boy Advance games. This is no different
 from higan.
@@ -72,20 +67,28 @@ Famicom:
   *Saving a state while the Zapper or Beam Gun is connected will cause the
   emulator to hang. If the cursor was captured, it can be hard to rescue.
   *The VS. Zapper with its own separate protocol is badly supported (timing of
-  light sensor is not well understood).
+  light sensor is not well understood). VS. Duck Hunt cannot be played because
+  the menu will not recognize light in the VS. Zapper.
+
 Super Famicom:
+  *The SA-1 has no bus conflict emulation. Adding bus conflict emulation will
+  slow the entire emulator down to unplayable speeds that no computer currently
+  in existence will be able to run.
+  All official SA-1 games will work, but homebrew writers are advised to use
+  flash cartridges on their actual Super Famicoms or SNESes instead.
   *Magical Drop (JPN) (1.0) does not play voice effects, and it hangs when
   trying to show the Game Over screen in Endless Mode (とことんモード).
   Known to affect actual hardware.
   *Super Bonk's demo sequence is mis-timed. Bonk falls short of entering a pipe,
   which ruins the rest of the demo as he continues reading inputs and gets stuck
-  in the area above the pipe. It is likely that this bug is related to the
-  Magical Drop bug above.
+  in the area above the pipe.
   Known to affect actual hardware.
+
 Game Boy:
   *When loading a Game Boy game in Game Boy Color mode, colors are applied to
   the wrong areas, making game displays terrible on the eyes.
   Inherited from higan v094.
+
 Game Boy Advance:
   *The Classic NES Series games will not work. Loading them would cause higan
   to hang, and so too do they cause nSide to hang.
@@ -93,6 +96,12 @@ Game Boy Advance:
   it is recommended that you either use mGBA (by endrift) to play these games,
   or play the original Famicom/NES versions instead.
   Inherited from higan v095.
+
+WonderSwan:
+  Many bugs in different spots. higan's WonderSwan emulator is still new and
+  *Card Captor Sakura has columns of corruption when characters speak.
+  *Meitantai Conan - Nishi no Meitantei Saidai no Kiki! will not start because
+  it relies on correct prefetch emulation.
 
 ===========================
 Changes from higan: General
@@ -103,20 +112,15 @@ Changes from higan: General
   Credited blargg and Jonas Quinn as contributors to higan (blargg wrote the
   DSP code for the compatibility and performance cores, and Jonas Quinn
   contributed many fixes for the SFC DSPs and the Game Boy).
-  There may still be more that I am missing, so let me know if you or someone
-  else needs to be credited.
-
-   Moved "<configpath>/higan/library.bml" to "<configpath>/nSide/library.bml".
+  There may still be more that I am missing, so let me know on byuu's forums if
+  you or someone else needs to be credited.
 
    Reformatted the "About" text to show contributors to higan and show which
   program nSide branched from.
 
    Renamed "{game}/higan" folder for save states to "{game}/nSide".
 
-   Renamed the ethos-based UI to "nSide-e", imported tomoko with hiro, and
-  re-branded it as "nSide-t".
-   Notable, nall v094r37 dropped nall::group, which phoenix depends on, so
-  moved nall::group's definition into phoenix/core/core.hpp.
+   Renamed the tomoko-based UI to "nSide-t".
 
    Renamed icarus to "cart-pal".
 

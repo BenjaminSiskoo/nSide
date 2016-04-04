@@ -15,7 +15,7 @@ namespace SuperFamicom {
 }
 
 /*
-  based on higan's Super Famicom emulator by byuu.
+  based on higan's Super Famicom emulator
   original author: byuu
   contributors:
     Andreas Naive     (S-DD1 decompression algorithm)

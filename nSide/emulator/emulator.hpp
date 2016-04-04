@@ -7,11 +7,11 @@ using namespace nall;
 namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
-  static const string Version = "009.07";
-  static const string FromVersion = "097.32";
+  static const string Version = "009.08";
+  static const string FromVersion = "098";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
-  static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, gekkio, and more...";
+  static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, gekkio, trap15, and more...";
   static const string License = "GPLv3";
   static const string Website = "http://byuu.org/";
 

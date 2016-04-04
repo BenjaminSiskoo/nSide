@@ -15,8 +15,8 @@ namespace Famicom {
 }
 
 /*
-  based on higan's Famicom emulator by byuu and Ryphecha.
-  authors: byuu, Ryphecha
+  based on higan's Famicom emulator.
+  original authors: byuu, Ryphecha
   contributors: FitzRoy, hex_usr
   license: GPLv3
   original project started: 2011-09-05

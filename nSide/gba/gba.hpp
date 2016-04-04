@@ -10,7 +10,7 @@ namespace GameBoyAdvance {
 }
 
 /*
-  based on higan's Game Boy Advance emulator by byuu and Cydrak.
+  based on higan's Game Boy Advance emulator.
   original authors: byuu, Cydrak
   contributors: endrift, jchadwick, Jonas Quinn
   license: GPLv3

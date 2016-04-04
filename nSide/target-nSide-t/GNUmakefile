@@ -7,6 +7,7 @@ include fc/GNUmakefile
 include sfc/GNUmakefile
 include gb/GNUmakefile
 include gba/GNUmakefile
+include ws/GNUmakefile
 include processor/GNUmakefile
 include emulator/GNUmakefile
 

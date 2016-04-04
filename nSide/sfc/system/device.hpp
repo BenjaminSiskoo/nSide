@@ -19,7 +19,8 @@ struct Device {
 
     //expansion port devices
     Satellaview,
-    eBoot,
+    SuperDisc,
+    S21FX,
   };
 
   Device();

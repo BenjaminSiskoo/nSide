@@ -31,19 +31,11 @@ auto CPU::step(uint clocks) -> void {
 }
 
 auto CPU::synchronizeSMP() -> void {
-  if(SMP::Threaded) {
-    if(smp.clock < 0) co_switch(smp.thread);
-  } else {
-    while(smp.clock < 0) smp.main();
-  }
+  if(smp.clock < 0) co_switch(smp.thread);
 }
 
 auto CPU::synchronizePPU() -> void {
-  if(PPU::Threaded) {
-    if(ppu.clock < 0) co_switch(ppu.thread);
-  } else {
-    while(ppu.clock < 0) ppu.main();
-  }
+  if(ppu.clock < 0) co_switch(ppu.thread);
 }
 
 auto CPU::synchronizeCoprocessors() -> void {

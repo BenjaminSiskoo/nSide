@@ -1,8 +1,6 @@
 #include <sfc/ppu/video.hpp>
 
 struct PPU : Thread, public PPUcounter {
-  enum : bool { Threaded = true };
-
   PPU();
   ~PPU();
 

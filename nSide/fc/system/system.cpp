@@ -21,6 +21,7 @@ auto System::runToSave() -> void {
   scheduler.synchronize(cpu.thread);
   scheduler.synchronize(apu.thread);
   scheduler.synchronize(cartridge.thread);
+  if(vs()) scheduler.synchronize(vssystem.thread);
 }
 
 auto System::init() -> void {

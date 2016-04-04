@@ -1,6 +1,4 @@
 struct CPU : Processor::R65816, Thread, public PPUcounter {
-  enum : bool { Threaded = true };
-
   auto interruptPending() const -> bool override;
   auto pio() const -> uint8;
   auto joylatch() const -> bool;

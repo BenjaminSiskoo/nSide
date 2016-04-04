@@ -10,7 +10,7 @@ namespace GameBoy {
 }
 
 /*
-  based on higan's Game Boy emulator by byuu.
+  based on higan's Game Boy emulator.
   original author: byuu
   contributors: Jonas Quinn
   license: GPLv3
