@@ -21,11 +21,6 @@ auto S21FX::main() -> void {
   while(true) step(10'000'000);
 }
 
-auto S21FX::step(uint clocks) -> void {
-  clock += clocks * (uint64)cpu.frequency;
-  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
-}
-
 auto S21FX::init() -> void {
 }
 

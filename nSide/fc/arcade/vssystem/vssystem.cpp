@@ -22,11 +22,7 @@ auto VSSystem::main() -> void {
 
 auto VSSystem::step(uint clocks) -> void {
   clock += clocks;
-  synchronizeCPU();
-}
-
-auto VSSystem::synchronizeCPU() -> void {
-  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
+  Cothread::synchronizeCPU();
 }
 
 auto VSSystem::init() -> void {

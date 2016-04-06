@@ -6,7 +6,7 @@ endif
 # console := true
 
 flags += -I. -I.. -O3
-objects := libco
+objects := libco emulator audio video
 
 # profile-guided optimization mode
 # pgo := instrument
@@ -53,6 +53,11 @@ compile = \
 %.o: $<; $(call compile)
 
 all: build;
+
+obj/libco.o: ../libco/libco.c $(call rwildcard,../libco/)
+obj/emulator.o: emulator/emulator.cpp $(call rwildcard,emulator/)
+obj/audio.o: audio/audio.cpp $(call rwildcard,audio/)
+obj/video.o: video/video.cpp $(call rwildcard,video/)
 
 ui := target-$(target)
 include $(ui)/GNUmakefile

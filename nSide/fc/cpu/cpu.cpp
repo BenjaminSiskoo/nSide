@@ -13,23 +13,23 @@ CPU::CPU() {
 
 auto CPU::step(uint clocks) -> void {
   apu.clock -= clocks;
-  if(apu.clock < 0 && !scheduler.synchronizing()) co_switch(apu.thread);
+  if(!scheduler.synchronizing()) synchronizeAPU();
 
   ppu.clock -= clocks;
-  if(ppu.clock < 0 && !scheduler.synchronizing()) co_switch(ppu.thread);
+  if(!scheduler.synchronizing()) synchronizePPU();
 
   cartridge.clock -= clocks;
-  if(cartridge.clock < 0 && !scheduler.synchronizing()) co_switch(cartridge.thread);
+  if(!scheduler.synchronizing()) synchronizeCartridge();
 
   if(system.vs()) {
     vssystem.clock -= clocks;
     if(vssystem.clock < 0 && !scheduler.synchronizing()) co_switch(vssystem.thread);
   }
 
-  device.controllerPort1->clock -= clocks * (uint64)device.controllerPort1->frequency;
-  device.controllerPort2->clock -= clocks * (uint64)device.controllerPort2->frequency;
-  device.expansionPort->clock -= clocks * (uint64)device.expansionPort->frequency;
-  synchronizeDevices();
+  for(auto peripheral : peripherals) {
+    peripheral->clock -= clocks * (uint64)peripheral->frequency;
+  }
+  synchronizePeripherals();
 }
 
 auto CPU::synchronizeAPU() -> void {
@@ -44,10 +44,16 @@ auto CPU::synchronizeCartridge() -> void {
   if(cartridge.clock < 0) co_switch(cartridge.thread);
 }
 
-auto CPU::synchronizeDevices() -> void {
-  if(device.controllerPort1->clock < 0) co_switch(device.controllerPort1->thread);
-  if(device.controllerPort2->clock < 0) co_switch(device.controllerPort2->thread);
-  if(device.expansionPort->clock < 0) co_switch(device.expansionPort->thread);
+auto CPU::synchronizeCoprocessors() -> void {
+  for(auto coprocessor : coprocessors) {
+    if(coprocessor->clock < 0) co_switch(coprocessor->thread);
+  }
+}
+
+auto CPU::synchronizePeripherals() -> void {
+  for(auto peripheral : peripherals) {
+    if(peripheral->clock < 0) co_switch(peripheral->thread);
+  }
 }
 
 auto CPU::Enter() -> void {

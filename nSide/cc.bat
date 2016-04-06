@@ -3,21 +3,11 @@ rem For use with Windows
 mkdir "obj"
 
 rem Accuracy profile
-mkdir "obj\accuracy"
-move "obj\accuracy\sfc-*.o" "obj"
-move "obj\accuracy\ui-presentation.o" "obj"
 mingw32-make -j4 profile=accuracy
-move "obj\sfc-*.o" "obj\accuracy"
-move "obj\ui-presentation.o" "obj\accuracy"
 if not exist "out\nSide.exe" (pause)
 
 rem Balanced profile
-mkdir "obj\balanced"
-move "obj\balanced\sfc-*.o" "obj"
-move "obj\balanced\ui-presentation.o" "obj"
 mingw32-make -j4 profile=balanced name=nSide-balanced
-move "obj\sfc-*.o" "obj\balanced"
-move "obj\ui-presentation.o" "obj\balanced"
 if not exist "out\nSide-balanced.exe" (pause)
 
 @echo on

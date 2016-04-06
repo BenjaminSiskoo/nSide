@@ -10,7 +10,7 @@
 
 namespace SuperFamicom {
   namespace Info {
-    static const uint SerializerVersion = 1;
+    static const uint SerializerVersion = 30 + 0x80000000;
   }
 }
 
@@ -53,10 +53,6 @@ namespace SuperFamicom {
 
 #if defined(SFC_SUPERGAMEBOY)
   #include <gb/gb.hpp>
-#endif
-
-#if defined(PROFILE_PERFORMANCE)
-  #include <nall/priority-queue.hpp>
 #endif
 
 namespace SuperFamicom {

@@ -1,4 +1,4 @@
-struct VSSystem : Thread {
+struct VSSystem : Cothread {
   enum : uint {
     Button1, Button2, Button3, Button4, ServiceButton, Coin1, Coin2,
   };
@@ -7,7 +7,6 @@ struct VSSystem : Thread {
 
   auto main() -> void;
   auto step(uint clocks) -> void;
-  auto synchronizeCPU() -> void;
 
   auto init() -> void;
   auto load() -> void;

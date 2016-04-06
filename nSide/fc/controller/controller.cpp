@@ -31,15 +31,6 @@ auto Controller::main() -> void {
   step(1);
 }
 
-auto Controller::step(uint clocks) -> void {
-  clock += clocks * (uint64)cpu.frequency;
-  synchronizeCPU();
-}
-
-auto Controller::synchronizeCPU() -> void {
-  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
-}
-
 auto Controller::poll(uint input) -> int16 {
   return interface->inputPoll(port, interface->device_ref[device_id].port[port], input);
 }

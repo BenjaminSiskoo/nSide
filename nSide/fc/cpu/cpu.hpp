@@ -5,7 +5,8 @@ struct CPU : Processor::R6502, Thread {
   alwaysinline auto synchronizeAPU() -> void;
   auto synchronizePPU() -> void;
   auto synchronizeCartridge() -> void;
-  auto synchronizeDevices() -> void;
+  auto synchronizeCoprocessors() -> void;
+  auto synchronizePeripherals() -> void;
 
   auto ram_read(uint16 addr) -> uint8;
   auto ram_write(uint16 addr, uint8 data) -> void;
@@ -42,6 +43,8 @@ struct CPU : Processor::R6502, Thread {
   auto serialize(serializer&) -> void;
 
   uint8 ram[2 * 1024];
+  vector<Thread*> coprocessors;
+  vector<Thread*> peripherals;
 
   bool side; // VS. System; 0: main, 1: sub
 

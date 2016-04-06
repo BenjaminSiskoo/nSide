@@ -31,7 +31,7 @@ namespace Famicom {
       if(thread) co_delete(thread);
     }
 
-    auto create(void (*entrypoint)(), uint frequency) -> void {
+    auto create(auto (*entrypoint)() -> void, uint frequency) -> void {
       if(thread) co_delete(thread);
       thread = co_create(65536 * sizeof(void*), entrypoint);
       this->frequency = frequency;
@@ -46,6 +46,12 @@ namespace Famicom {
     cothread_t thread = nullptr;
     uint frequency = 0;
     int64 clock = 0;
+  };
+
+  //dynamic thread bound to CPU (arcade processors and timers)
+  struct Cothread : Thread {
+    auto step(uint clocks) -> void;
+    auto synchronizeCPU() -> void;
   };
 
   #include <fc/memory/memory.hpp>
@@ -64,6 +70,15 @@ namespace Famicom {
 
   #include <fc/memory/memory-inline.hpp>
   #include <fc/ppu/counter/counter-inline.hpp>
+
+  inline auto Cothread::step(uint clocks) -> void {
+    clock += clocks * (uint64)cpu.frequency;
+    synchronizeCPU();
+  }
+
+  inline auto Cothread::synchronizeCPU() -> void {
+    if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
+  }
 }
 
 #include <fc/interface/interface.hpp>

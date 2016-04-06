@@ -22,6 +22,7 @@ obj/sfc-balanced-controller.o:  sfc-balanced/controller/controller.cpp $(call rw
 obj/sfc-balanced-cartridge.o:   sfc-balanced/cartridge/cartridge.cpp $(call rwildcard,sfc-balanced/cartridge/)
 obj/sfc-balanced-cheat.o:       sfc-balanced/cheat/cheat.cpp $(call rwildcard,sfc-balanced/cheat/)
 obj/sfc-balanced-memory.o:      sfc-balanced/memory/memory.cpp $(call rwildcard,sfc-balanced/memory/)
+
 obj/sfc-balanced-cpu.o:         sfc-balanced/cpu/cpu.cpp $(call rwildcard,sfc-balanced/cpu/)
 obj/sfc-balanced-smp.o:         sfc-balanced/smp/smp.cpp $(call rwildcard,sfc-balanced/smp/)
 obj/sfc-balanced-dsp.o:         sfc-balanced/dsp/dsp.cpp $(call rwildcard,sfc-balanced/dsp/)

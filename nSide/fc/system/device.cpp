@@ -69,4 +69,9 @@ auto Device::connect(uint port, Device::ID id) -> void {
   if(port == 3) {
     settings.arcadePanel = (uint)id;
   }
+
+  cpu.peripherals.reset();
+  cpu.peripherals.append(controllerPort1);
+  cpu.peripherals.append(controllerPort2);
+  cpu.peripherals.append(expansionPort);
 }

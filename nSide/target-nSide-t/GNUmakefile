@@ -15,10 +15,9 @@ include gb/GNUmakefile
 include gba/GNUmakefile
 include ws/GNUmakefile
 include processor/GNUmakefile
-include emulator/GNUmakefile
 
 ui_objects := ui-tomoko ui-program ui-configuration ui-input
-ui_objects += ui-settings ui-tools ui-presentation ui-dip-switches
+ui_objects += ui-settings ui-tools ui-dip-switches ui-presentation
 ui_objects += ruby hiro
 ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
 
@@ -53,8 +52,6 @@ link += $(hirolink)
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
 
-obj/libco.o: ../libco/libco.c $(call rwildcard,../libco/)
-
 obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,../ruby/)
 	$(compiler) $(rubyflags) -c $< -o $@
 
@@ -68,8 +65,8 @@ obj/ui-input.o: $(ui)/input/input.cpp $(call rwildcard,$(ui)/)
 obj/ui-library.o: $(ui)/library/library.cpp $(call rwildcard,$(ui)/)
 obj/ui-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
 obj/ui-tools.o: $(ui)/tools/tools.cpp $(call rwildcard,$(ui)/)
-obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)
 obj/ui-dip-switches.o: $(ui)/dip-switches/dip-switches.cpp $(call rwildcard,$(ui)/)
+obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)
 
 obj/ui-resource.o:
 	windres data/resource.rc obj/ui-resource.o

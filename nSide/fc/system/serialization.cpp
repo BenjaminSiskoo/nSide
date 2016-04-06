@@ -1,10 +1,11 @@
 auto System::serialize() -> serializer {
   serializer s(_serializeSize);
 
-  uint signature = 0x31545342, version = Info::SerializerVersion;
-  char hash[64], description[512];
-  memcpy(&hash, (const char*)cartridge.sha256(), 64);
-  memset(&description, 0, sizeof description);
+  uint signature = 0x31545342;
+  uint version = Info::SerializerVersion;
+  char hash[64] = {0};
+  char description[512] = {0};
+  memory::copy(&hash, (const char*)cartridge.sha256(), 64);
 
   s.integer(signature);
   s.integer(version);
@@ -16,8 +17,10 @@ auto System::serialize() -> serializer {
 }
 
 auto System::unserialize(serializer& s) -> bool {
-  uint signature, version;
-  char hash[64], description[512];
+  uint signature = 0;
+  uint version = 0;
+  char hash[64] = {0};
+  char description[512] = {0};
 
   s.integer(signature);
   s.integer(version);
@@ -55,8 +58,10 @@ auto System::serializeAll(serializer& s) -> void {
 auto System::serializeInit() -> void {
   serializer s;
 
-  uint signature = 0, version = 0;
-  char hash[64], description[512];
+  uint signature = 0;
+  uint version = 0;
+  char hash[64] = {0};
+  char description[512] = {0};
 
   s.integer(signature);
   s.integer(version);

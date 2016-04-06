@@ -1,27 +1,20 @@
 #pragma once
 
 #include <nall/nall.hpp>
-#include <nall/dsp.hpp>
 using namespace nall;
+
+#include <audio/audio.hpp>
 
 namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.08";
-  static const string FromVersion = "098";
+  static const string FromVersion = "098.01";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, gekkio, trap15, and more...";
   static const string License = "GPLv3";
   static const string Website = "http://byuu.org/";
-
-  #if defined(PROFILE_ACCURACY)
-  static const string Profile = "Accuracy";
-  #elif defined(PROFILE_BALANCED)
-  static const string Profile = "Balanced";
-  #else
-  static const string Profile = "";
-  #endif
 }
 
 #include "interface.hpp"

@@ -1,6 +1,10 @@
 #include "../tomoko.hpp"
 #include <fc/interface/interface.hpp>
+#if defined(PROFILE_BALANCED)
+#include <sfc-balanced/interface/interface.hpp>
+#else
 #include <sfc/interface/interface.hpp>
+#endif
 #include <gb/interface/interface.hpp>
 #include <gba/interface/interface.hpp>
 #include <ws/interface/interface.hpp>
@@ -21,14 +25,7 @@ Program::Program(lstring args) {
   emulators.append(new WonderSwan::Interface);
   for(auto& emulator : emulators) emulator->bind = this;
 
-  new InputManager;
-  new SettingsManager;
-  new CheatDatabase;
-  new ToolsManager;
   new Presentation;
-  new DipSwitches;
-
-  presentation->setVisible();
 
   video = Video::create(settings["Video/Driver"].text());
   video->set(Video::Handle, presentation->viewport.handle());
@@ -39,7 +36,6 @@ Program::Program(lstring args) {
   audio->set(Audio::Device, settings["Audio/Device"].text());
   audio->set(Audio::Handle, presentation->viewport.handle());
   audio->set(Audio::Synchronize, settings["Audio/Synchronize"].boolean());
-  audio->set(Audio::Frequency, 96000u);
   audio->set(Audio::Latency, 80u);
   if(!audio->init()) audio = Audio::create("None");
 
@@ -52,9 +48,16 @@ Program::Program(lstring args) {
   dsp.setBalance(0.0);
   dsp.setFrequency(32040);
   dsp.setResampler(DSP::ResampleEngine::Sinc);
-  dsp.setResamplerFrequency(96000);
+  dsp.setResamplerFrequency(audio->get(Audio::Frequency).get<uint>());
+
+  new InputManager;
+  new SettingsManager;
+  new CheatDatabase;
+  new ToolsManager;
+  new DipSwitches;
 
   presentation->drawSplashScreen();
+  presentation->setVisible();
 
   updateVideoShader();
   updateAudioVolume();

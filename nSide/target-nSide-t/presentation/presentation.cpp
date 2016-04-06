@@ -145,9 +145,8 @@ Presentation::Presentation() {
     invoke("http://doc.byuu.org/higan/");
   });
   about.setText("About ...").onActivate([&] {
-    string profile = Emulator::Profile ? string{" (", Emulator::Profile, ")"} : "";
     MessageDialog().setParent(*this).setTitle("About nSide ...").setText({
-      Emulator::Name, "-t v", Emulator::Version, profile, "\n",
+      Emulator::Name, "-t v", Emulator::Version, "\n",
       "Based on ", Emulator::OriginalName, " v", Emulator::FromVersion, "\n\n",
       "Original Author: ", Emulator::OriginalAuthor, "\n",
       "Fork Author: ", Emulator::Author, "\n",

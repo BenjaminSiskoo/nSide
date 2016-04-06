@@ -10,7 +10,7 @@
 
 namespace SuperFamicom {
   namespace Info {
-    static const uint SerializerVersion = 29;
+    static const uint SerializerVersion = 30;
   }
 }
 
@@ -55,10 +55,6 @@ namespace SuperFamicom {
   #include <gb/gb.hpp>
 #endif
 
-#if defined(PROFILE_PERFORMANCE)
-  #include <nall/priority-queue.hpp>
-#endif
-
 namespace SuperFamicom {
   struct Thread {
     ~Thread() {
@@ -82,6 +78,12 @@ namespace SuperFamicom {
     int64 clock = 0;
   };
 
+  //dynamic thread bound to CPU (coprocessors and peripherals)
+  struct Cothread : Thread {
+    auto step(uint clocks) -> void;
+    auto synchronizeCPU() -> void;
+  };
+
   #include <sfc/memory/memory.hpp>
   #include <sfc/ppu/counter/counter.hpp>
 
@@ -101,6 +103,15 @@ namespace SuperFamicom {
 
   #include <sfc/memory/memory-inline.hpp>
   #include <sfc/ppu/counter/counter-inline.hpp>
+
+  inline auto Cothread::step(uint clocks) -> void {
+    clock += clocks * (uint64)cpu.frequency;
+    synchronizeCPU();
+  }
+
+  inline auto Cothread::synchronizeCPU() -> void {
+    if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
+  }
 }
 
 #include <sfc/interface/interface.hpp>

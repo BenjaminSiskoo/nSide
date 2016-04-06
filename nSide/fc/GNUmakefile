@@ -12,6 +12,7 @@ obj/fc-controller.o:   fc/controller/controller.cpp $(call rwildcard,fc/controll
 obj/fc-cartridge.o:    fc/cartridge/cartridge.cpp $(call rwildcard,fc/cartridge/)
 obj/fc-cheat.o:        fc/cheat/cheat.cpp $(call rwildcard,fc/cheat/)
 obj/fc-memory.o:       fc/memory/memory.cpp $(call rwildcard,fc/memory/)
+
 obj/fc-cpu.o:          fc/cpu/cpu.cpp $(call rwildcard,fc/cpu/)
 obj/fc-apu.o:          fc/apu/apu.cpp $(call rwildcard,fc/apu/)
 obj/fc-ppu.o:          fc/ppu/ppu.cpp $(call rwildcard,fc/ppu/)

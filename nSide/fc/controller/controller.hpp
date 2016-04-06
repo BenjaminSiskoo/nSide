@@ -36,18 +36,14 @@
 // 14:    /oe 1
 // 15:    +5v
 
-struct Controller : Thread {
+struct Controller : Cothread {
   enum : uint { Port1 = 0, Port2 = 1, ExpansionPort = 2 };
 
   Controller(uint port, uint device_id);
   Controller(uint port);
-
   static auto Enter() -> void;
+
   virtual auto main() -> void;
-
-  auto step(uint clocks) -> void;
-  auto synchronizeCPU() -> void;
-
   virtual auto data() -> uint5 { return 0; }
   virtual auto data1() -> uint2 { return 0; }
   virtual auto data2() -> uint5 { return 0; }

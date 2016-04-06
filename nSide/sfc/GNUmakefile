@@ -20,6 +20,7 @@ obj/sfc-controller.o:  sfc/controller/controller.cpp $(call rwildcard,sfc/contro
 obj/sfc-cartridge.o:   sfc/cartridge/cartridge.cpp $(call rwildcard,sfc/cartridge/)
 obj/sfc-cheat.o:       sfc/cheat/cheat.cpp $(call rwildcard,sfc/cheat/)
 obj/sfc-memory.o:      sfc/memory/memory.cpp $(call rwildcard,sfc/memory/)
+
 obj/sfc-cpu.o:         sfc/cpu/cpu.cpp $(call rwildcard,sfc/cpu/)
 obj/sfc-smp.o:         sfc/smp/smp.cpp $(call rwildcard,sfc/smp/)
 obj/sfc-dsp.o:         sfc/dsp/dsp.cpp $(call rwildcard,sfc/dsp/)

@@ -1,4 +1,4 @@
-struct FamicomBox : Thread {
+struct FamicomBox : Cothread {
 };
 
 extern FamicomBox famicombox;
