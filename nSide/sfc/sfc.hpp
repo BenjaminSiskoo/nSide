@@ -85,11 +85,10 @@ namespace SuperFamicom {
   #include <sfc/memory/memory.hpp>
   #include <sfc/ppu/counter/counter.hpp>
 
-  #if defined(PROFILE_ACCURACY)
-  #include "profile-accuracy.hpp"
-  #elif defined(PROFILE_BALANCED)
-  #include "profile-balanced.hpp"
-  #endif
+  #include <sfc/cpu/cpu.hpp>
+  #include <sfc/smp/smp.hpp>
+  #include <sfc/dsp/dsp.hpp>
+  #include <sfc/ppu/ppu.hpp>
 
   #include <sfc/controller/controller.hpp>
   #include <sfc/system/system.hpp>

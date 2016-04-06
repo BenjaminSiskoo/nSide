@@ -99,6 +99,7 @@ Game Boy Advance:
 
 WonderSwan:
   Many bugs in different spots. higan's WonderSwan emulator is still new and
+  full of bugs, all of which affect nSide's version of the emulator.
   *Card Captor Sakura has columns of corruption when characters speak.
   *Meitantai Conan - Nishi no Meitantei Saidai no Kiki! will not start because
   it relies on correct prefetch emulation.

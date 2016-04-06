@@ -3,9 +3,6 @@ include ../nall/GNUmakefile
 ifndef target
   target := nSide-t
 endif
-ifndef profile
-  profile := accuracy
-endif
 # console := true
 
 flags += -I. -I.. -O3

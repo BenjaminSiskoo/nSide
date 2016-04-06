@@ -4,7 +4,13 @@ endif
 flags += -DSFC_SUPERGAMEBOY
 
 include fc/GNUmakefile
-include sfc/GNUmakefile
+ifndef profile
+  include sfc/GNUmakefile
+else ifeq ($(profile),accuracy)
+  include sfc/GNUmakefile
+else ifeq ($(profile),balanced)
+  include sfc-balanced/GNUmakefile
+endif
 include gb/GNUmakefile
 include gba/GNUmakefile
 include ws/GNUmakefile
