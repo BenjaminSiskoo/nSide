@@ -23,7 +23,6 @@ namespace Famicom {
 */
 
 #include <libco/libco.h>
-#include <nall/priority-queue.hpp>
 
 namespace Famicom {
   struct Thread {

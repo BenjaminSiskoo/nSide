@@ -21,10 +21,8 @@ auto CPU::step(uint clocks) -> void {
   cartridge.clock -= clocks;
   if(!scheduler.synchronizing()) synchronizeCartridge();
 
-  if(system.vs()) {
-    vssystem.clock -= clocks;
-    if(vssystem.clock < 0 && !scheduler.synchronizing()) co_switch(vssystem.thread);
-  }
+  if(system.vs()) vssystem.clock -= clocks;
+  if(!scheduler.synchronizing()) synchronizeCoprocessors();
 
   for(auto peripheral : peripherals) {
     peripheral->clock -= clocks * (uint64)peripheral->frequency;
