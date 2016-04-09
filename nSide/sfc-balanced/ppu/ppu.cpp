@@ -2,11 +2,11 @@
 
 namespace SuperFamicom {
 
-#include <sfc-balanced/ppu/video.cpp>
 PPU ppu;
+#include "video.cpp"
 
-#include "memory/memory.cpp"
-#include "mmio/mmio.cpp"
+#include "memory.cpp"
+#include "mmio.cpp"
 #include "render/render.cpp"
 #include "serialization.cpp"
 
@@ -22,18 +22,6 @@ PPU::PPU() {
     }
   }
 
-  layer_enabled[BG1][0] = true;
-  layer_enabled[BG1][1] = true;
-  layer_enabled[BG2][0] = true;
-  layer_enabled[BG2][1] = true;
-  layer_enabled[BG3][0] = true;
-  layer_enabled[BG3][1] = true;
-  layer_enabled[BG4][0] = true;
-  layer_enabled[BG4][1] = true;
-  layer_enabled[OAM][0] = true;
-  layer_enabled[OAM][1] = true;
-  layer_enabled[OAM][2] = true;
-  layer_enabled[OAM][3] = true;
   frameskip = 0;
   framecounter = 0;
 }
@@ -59,7 +47,7 @@ auto PPU::Enter() -> void {
 auto PPU::main() -> void {
   //H =    0 (initialize)
   scanline();
-  add_clocks(10);
+  addClocks(10);
 
   //H =   10 (cache mode7 registers + OAM address reset)
   cache.m7_hofs = regs.m7_hofs;
@@ -76,11 +64,11 @@ auto PPU::main() -> void {
       regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
     }
   }
-  add_clocks(502);
+  addClocks(502);
 
   //H =  512 (render)
   render_scanline();
-  add_clocks(640);
+  addClocks(640);
 
   //H = 1152 (cache OBSEL)
   if(cache.oam_basesize != regs.oam_basesize) {
@@ -89,65 +77,18 @@ auto PPU::main() -> void {
   }
   cache.oam_nameselect = regs.oam_nameselect;
   cache.oam_tdaddr = regs.oam_tdaddr;
-  add_clocks(lineclocks() - 1152);  //seek to start of next scanline
+  addClocks(lineclocks() - 1152);  //seek to start of next scanline
 }
 
-auto PPU::add_clocks(uint clocks) -> void {
+auto PPU::addClocks(uint clocks) -> void {
   tick(clocks);
   step(clocks);
   synchronizeCPU();
 }
 
-auto PPU::scanline() -> void {
-  line = vcounter();
-
-  if(line == 0) {
-    frame();
-
-    //RTO flag reset
-    regs.time_over  = false;
-    regs.range_over = false;
-  }
-
-  if(line == 1) {
-    //mosaic reset
-    for(int bg = BG1; bg <= BG4; bg++) regs.bg_y[bg] = 1;
-    regs.mosaic_countdown = regs.mosaic_size + 1;
-    regs.mosaic_countdown--;
-  } else {
-    for(int bg = BG1; bg <= BG4; bg++) {
-      if(!regs.mosaic_enabled[bg] || !regs.mosaic_countdown) regs.bg_y[bg] = line;
-    }
-    if(!regs.mosaic_countdown) regs.mosaic_countdown = regs.mosaic_size + 1;
-    regs.mosaic_countdown--;
-  }
-
-  if(line == 241) {
-    video.refresh();
-    scheduler.exit(Scheduler::Event::Frame);
-  }
-}
-
-auto PPU::render_scanline() -> void {
-  if(line >= 1 && line < (!overscan() ? 225 : 240)) {
-    if(framecounter) return;
-    render_line_oam_rto();
-    render_line();
-  }
-}
-
-auto PPU::frame() -> void {
-  if(field() == 0) {
-    display.interlace = regs.interlace;
-    regs.scanlines = (regs.overscan == false) ? 224 : 239;
-  }
-
-  framecounter = (frameskip == 0 ? 0 : (framecounter + 1) % frameskip);
-}
-
 auto PPU::enable() -> void {
-  function<auto (uint, uint8) -> uint8> reader{&PPU::mmio_read, (PPU*)&ppu};
-  function<auto (uint, uint8) -> void> writer{&PPU::mmio_write, (PPU*)&ppu};
+  function<auto (uint24, uint8) -> uint8> reader{&PPU::read, this};
+  function<auto (uint24, uint8) -> void> writer{&PPU::write, this};
 
   bus.map(reader, writer, 0x00, 0x3f, 0x2100, 0x213f);
   bus.map(reader, writer, 0x80, 0xbf, 0x2100, 0x213f);
@@ -398,21 +339,51 @@ auto PPU::reset() -> void {
   video.reset();
 }
 
-auto PPU::layer_enable(uint layer, uint priority, bool enable) -> void {
-  switch(layer * 4 + priority) {
-  case  0: layer_enabled[BG1][0] = enable; break;
-  case  1: layer_enabled[BG1][1] = enable; break;
-  case  4: layer_enabled[BG2][0] = enable; break;
-  case  5: layer_enabled[BG2][1] = enable; break;
-  case  8: layer_enabled[BG3][0] = enable; break;
-  case  9: layer_enabled[BG3][1] = enable; break;
-  case 12: layer_enabled[BG4][0] = enable; break;
-  case 13: layer_enabled[BG4][1] = enable; break;
-  case 16: layer_enabled[OAM][0] = enable; break;
-  case 17: layer_enabled[OAM][1] = enable; break;
-  case 18: layer_enabled[OAM][2] = enable; break;
-  case 19: layer_enabled[OAM][3] = enable; break;
+auto PPU::scanline() -> void {
+  line = vcounter();
+
+  if(line == 0) {
+    frame();
+
+    //RTO flag reset
+    regs.time_over  = false;
+    regs.range_over = false;
   }
+
+  if(line == 1) {
+    //mosaic reset
+    for(int bg = BG1; bg <= BG4; bg++) regs.bg_y[bg] = 1;
+    regs.mosaic_countdown = regs.mosaic_size + 1;
+    regs.mosaic_countdown--;
+  } else {
+    for(int bg = BG1; bg <= BG4; bg++) {
+      if(!regs.mosaic_enabled[bg] || !regs.mosaic_countdown) regs.bg_y[bg] = line;
+    }
+    if(!regs.mosaic_countdown) regs.mosaic_countdown = regs.mosaic_size + 1;
+    regs.mosaic_countdown--;
+  }
+
+  if(line == 241) {
+    video.refresh();
+    scheduler.exit(Scheduler::Event::Frame);
+  }
+}
+
+auto PPU::render_scanline() -> void {
+  if(line >= 1 && line < (!overscan() ? 225 : 240)) {
+    if(framecounter) return;
+    render_line_oam_rto();
+    render_line();
+  }
+}
+
+auto PPU::frame() -> void {
+  if(field() == 0) {
+    display.interlace = regs.interlace;
+    regs.scanlines = (regs.overscan == false) ? 224 : 239;
+  }
+
+  framecounter = (frameskip == 0 ? 0 : (framecounter + 1) % frameskip);
 }
 
 auto PPU::set_frameskip(uint frameskip_) -> void {

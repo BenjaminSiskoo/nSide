@@ -3,8 +3,6 @@
 #include "SPC_DSP.h"
 
 struct DSP : Thread {
-  enum : bool { Threaded = false };
-
   DSP();
 
   alwaysinline auto step(uint clocks) -> void;

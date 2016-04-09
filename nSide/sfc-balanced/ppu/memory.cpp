@@ -1,10 +1,4 @@
-auto PPU::latch_counters() -> void {
-  regs.hcounter = cpu.hdot();
-  regs.vcounter = cpu.vcounter();
-  regs.counters_latched = true;
-}
-
-auto PPU::get_vram_address() -> uint16 {
+auto PPU::getVramAddress() -> uint16 {
   uint16 addr = regs.vram_addr;
   switch(regs.vram_mapping) {
     case 0: break;  //direct mapping
@@ -20,7 +14,7 @@ auto PPU::get_vram_address() -> uint16 {
 //been validated on hardware, as has the edge case where the S-CPU MDR can be written if the
 //write occurs during the very last clock cycle of vblank.
 
-auto PPU::vram_mmio_read(uint16 addr) -> uint8 {
+auto PPU::vramRead(uint16 addr) -> uint8 {
   uint8 data;
 
   if(regs.display_disabled == true) {
@@ -49,7 +43,7 @@ auto PPU::vram_mmio_read(uint16 addr) -> uint8 {
   return data;
 }
 
-auto PPU::vram_mmio_write(uint16 addr, uint8 data) -> void {
+auto PPU::vramWrite(uint16 addr, uint8 data) -> void {
   if(regs.display_disabled == true) {
     vram[addr] = data;
   } else {
@@ -77,7 +71,7 @@ auto PPU::vram_mmio_write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto PPU::oam_mmio_read(uint16 addr) -> uint8 {
+auto PPU::oamRead(uint16 addr) -> uint8 {
   addr &= 0x03ff;
   if(addr & 0x0200) addr &= 0x021f;
   uint8 data;
@@ -95,7 +89,7 @@ auto PPU::oam_mmio_read(uint16 addr) -> uint8 {
   return data;
 }
 
-auto PPU::oam_mmio_write(uint16 addr, uint8 data) -> void {
+auto PPU::oamWrite(uint16 addr, uint8 data) -> void {
   addr &= 0x03ff;
   if(addr & 0x0200) addr &= 0x021f;
 
@@ -115,7 +109,7 @@ auto PPU::oam_mmio_write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto PPU::cgram_mmio_read(uint16 addr) -> uint8 {
+auto PPU::cgramRead(uint16 addr) -> uint8 {
   addr &= 0x01ff;
   uint8 data;
 
@@ -135,7 +129,7 @@ auto PPU::cgram_mmio_read(uint16 addr) -> uint8 {
   return data;
 }
 
-auto PPU::cgram_mmio_write(uint16 addr, uint8 data) -> void {
+auto PPU::cgramWrite(uint16 addr, uint8 data) -> void {
   addr &= 0x01ff;
   if(addr & 1) data &= 0x7f;
 

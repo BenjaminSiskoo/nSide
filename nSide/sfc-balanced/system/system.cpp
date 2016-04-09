@@ -22,10 +22,13 @@ auto System::runToSave() -> void {
   scheduler.synchronize(cpu.thread);
   scheduler.synchronize(smp.thread);
   scheduler.synchronize(ppu.thread);
-  if(DSP::Threaded) scheduler.synchronize(dsp.thread);
-  for(auto chip : cpu.coprocessors) {
-    scheduler.synchronize(chip->thread);
+  //scheduler.synchronize(dsp.thread);
+  for(auto coprocessor : cpu.coprocessors) {
+    scheduler.synchronize(coprocessor->thread);
   }
+  //for(auto peripheral : cpu.peripherals) {
+  //  scheduler.synchronize(peripheral->thread);
+  //}
 }
 
 auto System::init() -> void {

@@ -1,8 +1,3 @@
-struct Coprocessor : Thread {
-  alwaysinline auto step(uint clocks) -> void;
-  alwaysinline auto synchronizeCPU() -> void;
-};
-
 #include <sfc-balanced/coprocessor/icd2/icd2.hpp>
 #include <sfc-balanced/coprocessor/mcc/mcc.hpp>
 #include <sfc-balanced/coprocessor/nss/nss.hpp>
@@ -23,11 +18,3 @@ struct Coprocessor : Thread {
 #include <sfc-balanced/coprocessor/obc1/obc1.hpp>
 
 #include <sfc-balanced/coprocessor/msu1/msu1.hpp>
-
-auto Coprocessor::step(uint clocks) -> void {
-  clock += clocks * (uint64)cpu.frequency;
-}
-
-auto Coprocessor::synchronizeCPU() -> void {
-  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
-}
