@@ -24,9 +24,9 @@ auto System::runToSave() -> void {
   for(auto coprocessor : cpu.coprocessors) {
     scheduler.synchronize(coprocessor->thread);
   }
-  for(auto peripheral : cpu.peripherals) {
-    scheduler.synchronize(peripheral->thread);
-  }
+  //for(auto peripheral : cpu.peripherals) {
+  //  scheduler.synchronize(peripheral->thread);
+  //}
 }
 
 auto System::init() -> void {
@@ -141,6 +141,10 @@ auto System::reset() -> void {
   switch(revision()) {
   case Revision::VSSystem: vssystem.reset(); break;
   case Revision::PlayChoice10: playchoice10.reset(); break;
+  }
+
+  switch(revision()) {
+  case Revision::VSSystem: cpu.coprocessors.append(&vssystem); break;
   }
 
   scheduler.reset();
