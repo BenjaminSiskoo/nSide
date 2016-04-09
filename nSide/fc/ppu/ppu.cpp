@@ -5,6 +5,8 @@ namespace Famicom {
 PPU ppu;
 #include "video.cpp"
 
+#include "memory.cpp"
+#include "mmio.cpp"
 #include "serialization.cpp"
 
 PPU::PPU() {
@@ -31,7 +33,7 @@ auto PPU::main() -> void {
   raster_scanline();
 }
 
-auto PPU::add_clocks(uint clocks) -> void {
+auto PPU::addClocks(uint clocks) -> void {
   uint vbl;
   uint pre;
   switch(system.region()) {
@@ -122,186 +124,6 @@ auto PPU::reset() -> void {
   for(auto& n : oam    ) n = 0;
 
   video.reset();
-}
-
-auto PPU::read(uint16 addr) -> uint8 {
-  uint8 result = 0x00;
-
-  switch(addr & 7) {
-  case 2:  //PPUSTATUS
-    result |= status.nmi_flag << 7;
-    result |= status.sprite_zero_hit << 6;
-    switch(revision) {
-    default:
-      result |= status.sprite_overflow << 5;
-      result |= status.mdr & 0x1f;
-      break;
-    case Revision::RC2C05_01:
-    case Revision::RC2C05_04: result |= 0x1b; break;
-    case Revision::RC2C05_02: result |= 0x3d; break;
-    case Revision::RC2C05_03: result |= 0x1c; break;
-    }
-    status.address_latch = 0;
-    status.nmi_hold = 0;
-    cpu.set_nmi_line(status.nmi_flag = 0);
-    break;
-  case 4:  //OAMDATA
-    switch(revision) {
-    case Revision::RP2C02C:
-      result = status.mdr;
-      break;
-    default:
-      result = oam_read(status.oam_addr);
-      if((status.oam_addr & 3) == 2) {
-        status.mdr = result;
-        for(uint i = 0; i < 8; i++) status.mdr_decay[i] = 3221591;
-      }
-      break;
-    }
-    break;
-  case 7:  //PPUDATA
-    if(raster_enable() && (vcounter() <= 240 || vcounter() == (system.region() == System::Region::NTSC ? 261 : 311))) {
-      return 0x00;
-    }
-
-    addr = status.vaddr & 0x3fff;
-    if(addr <= 0x3eff) {
-      result = status.bus_data;
-    } else if(addr <= 0x3fff) {
-      result = ((status.mdr & 0xc0) | cgram_read(addr));
-    }
-    status.bus_data = cartridge.chr_read(status.chr_abus = addr);
-    status.vaddr += status.vram_increment;
-    status.chr_abus = status.vaddr;
-    status.mdr = result;
-    break;
-  default:
-    result = status.mdr;
-    break;
-  }
-
-  return result;
-}
-
-auto PPU::write(uint16 addr, uint8 data) -> void {
-  status.mdr = data;
-  // Decay rate can vary depending on the system and temperature.
-  // Value used here is PPU's NTSC clock rate * 0.6 rounded to nearest integer.
-  for(uint i = 0; i < 8; i++) status.mdr_decay[i] = 3221591;
-
-  switch(revision) {
-  case Revision::RC2C05_01:
-  case Revision::RC2C05_02:
-  case Revision::RC2C05_03:
-  case Revision::RC2C05_04:
-  case Revision::RC2C05_05: if((addr & 6) == 0) addr ^= 1; break;
-  }
-
-  switch(addr & 7) {
-  case 0:  //PPUCTRL
-    status.nmi_enable = data & 0x80;
-    status.master_select = data & 0x40;
-    status.sprite_size = data & 0x20;
-    status.bg_addr = (data & 0x10) ? 0x1000 : 0x0000;
-    status.sprite_addr = (data & 0x08) ? 0x1000 : 0x0000;
-    status.vram_increment = (data & 0x04) ? 32 : 1;
-    status.taddr = (status.taddr & 0x73ff) | ((data & 0x03) << 10);
-    cpu.set_nmi_line(status.nmi_enable && status.nmi_hold && status.nmi_flag);
-    return;
-  case 1:  //PPUMASK
-    status.emphasis = data >> 5;
-    if(revision == Revision::RP2C07) {
-      status.emphasis =
-        ((status.emphasis & 1) << 1) | // swap red
-        ((status.emphasis & 2) >> 1) | // and green
-        ((status.emphasis & 4)     );
-    }
-    status.sprite_enable = data & 0x10;
-    status.bg_enable = data & 0x08;
-    status.sprite_edge_enable = data & 0x04;
-    status.bg_edge_enable = data & 0x02;
-    status.grayscale = data & 0x01;
-    return;
-  case 2:  //PPUSTATUS
-    return;
-  case 3:  //OAMADDR
-    if(revision != Revision::RP2C07) {
-      // below corruption code only applies for preferred CPU-PPU alignment.
-      // on an actual Famicom/NES, waiting a while after writing to OAM will
-      // make this corruption happen because the OAM will have decayed at the
-      // spot being written to.
-      for(int i = 0; i < 8; i++)
-        oam[((addr & 0xf800) >> 8) + i] = oam[(status.oam_addr & 0xf8) + i];
-    }
-    status.oam_addr = data;
-    return;
-  case 4:  //OAMDATA
-    oam_write(status.oam_addr++, data);
-    return;
-  case 5:  //PPUSCROLL
-    if(status.address_latch == 0) {
-      status.xaddr = data & 0x07;
-      status.taddr = (status.taddr & 0x7fe0) | (data >> 3);
-    } else {
-      status.taddr = (status.taddr & 0x0c1f) | ((data & 0x07) << 12) | ((data >> 3) << 5);
-    }
-    status.address_latch ^= 1;
-    return;
-  case 6:  //PPUADDR
-    if(status.address_latch == 0) {
-      status.taddr = (status.taddr & 0x00ff) | ((data & 0x3f) << 8);
-    } else {
-      status.taddr = (status.taddr & 0x7f00) | data;
-      status.vaddr = status.taddr;
-      status.chr_abus = status.vaddr;
-    }
-    status.address_latch ^= 1;
-    return;
-  case 7:  //PPUDATA
-    if(raster_enable() && (vcounter() <= 240 || vcounter() == (system.region() != System::Region::PAL ? 261 : 311))) {
-      return;
-    }
-
-    addr = status.vaddr & 0x3fff;
-    if(addr <= 0x3eff) {
-      cartridge.chr_write(status.chr_abus = addr, data);
-    } else if(addr <= 0x3fff) {
-      cgram_write(addr, data);
-    }
-    status.vaddr += status.vram_increment;
-    status.chr_abus = status.vaddr;
-    return;
-  }
-}
-
-auto PPU::ciram_read(uint14 addr) -> uint8 {
-  return ciram[addr & (!system.vs() ? 0x07ff : 0x0fff)];
-}
-
-auto PPU::ciram_write(uint14 addr, uint8 data) -> void {
-  ciram[addr & (!system.vs() ? 0x07ff : 0x0fff)] = data;
-}
-
-auto PPU::cgram_read(uint14 addr) -> uint8 {
-  if((addr & 0x13) == 0x10) addr &= ~0x10;
-  uint8 data = cgram[addr & 0x1f];
-  if(status.grayscale) data &= 0x30;
-  return data;
-}
-
-auto PPU::cgram_write(uint14 addr, uint8 data) -> void {
-  if((addr & 0x13) == 0x10) addr &= ~0x10;
-  cgram[addr & 0x1f] = data;
-}
-
-auto PPU::oam_read(uint8 addr) -> uint8 {
-  uint8 data = oam[addr];
-  return data;
-}
-
-auto PPU::oam_write(uint8 addr, uint8 data) -> void {
-  if(addr.bits(0,1) == 2) data.bits(2,4) = 0;  //clear non-existent bits (always read back as 0)
-  oam[addr] = data;
 }
 
 //
@@ -410,7 +232,7 @@ auto PPU::raster_pixel() -> void {
     if((status.vaddr & 0x3f00) != 0x3f00) palette = 0;
     else palette = status.vaddr;
   }
-  output[vcounter() * 256 + lx] = (status.emphasis << 6) | cgram_read(palette);
+  output[vcounter() * 256 + lx] = (status.emphasis << 6) | cgramRead(palette);
 }
 
 auto PPU::raster_sprite() -> void {
@@ -438,7 +260,7 @@ auto PPU::raster_sprite() -> void {
 auto PPU::raster_scanline() -> void {
   uint last_scanline = system.region() == System::Region::NTSC ? 261 : 311;
   if((vcounter() >= 240 && vcounter() < last_scanline)) {
-    add_clocks(341);
+    addClocks(341);
     return scanline();
   }
 
@@ -456,43 +278,43 @@ auto PPU::raster_scanline() -> void {
   }
 
   //  0
-  add_clocks(1);
+  addClocks(1);
 
   for(uint tile = 0; tile < 32; tile++) {  //  1-256
     uint nametable = chr_load(0x2000 | (status.vaddr & 0x0fff));
     uint tileaddr = status.bg_addr + (nametable << 4) + (scrolly() & 7);
     raster_pixel();
-    add_clocks(1);
+    addClocks(1);
 
     raster_pixel();
-    add_clocks(1);
+    addClocks(1);
 
     uint attribute = chr_load(0x23c0 | (status.vaddr & 0x0fc0) | ((scrolly() >> 5) << 3) | (scrollx() >> 5));
     if(scrolly() & 16) attribute >>= 4;
     if(scrollx() & 16) attribute >>= 2;
     raster_pixel();
-    add_clocks(1);
+    addClocks(1);
 
     scrollx_increment();
     if(tile == 31) scrolly_increment();
     raster_pixel();
     raster_sprite();
-    add_clocks(1);
+    addClocks(1);
 
     uint tiledatalo = chr_load(tileaddr + 0);
     raster_pixel();
-    add_clocks(1);
+    addClocks(1);
 
     raster_pixel();
-    add_clocks(1);
+    addClocks(1);
 
     uint tiledatahi = chr_load(tileaddr + 8);
     raster_pixel();
-    add_clocks(1);
+    addClocks(1);
 
     raster_pixel();
     raster_sprite();
-    add_clocks(1);
+    addClocks(1);
 
     raster.nametable = (raster.nametable << 8) | nametable;
     raster.attribute = (raster.attribute << 2) | (attribute & 3);
@@ -504,26 +326,26 @@ auto PPU::raster_scanline() -> void {
 
   for(uint sprite = 0; sprite < 8; sprite++) {  //257-320
     uint nametable = chr_load(0x2000 | (status.vaddr & 0x0fff));
-    add_clocks(1);
+    addClocks(1);
 
     if(raster_enable() && sprite == 0) status.vaddr = (status.vaddr & 0x7be0) | (status.taddr & 0x041f);  //257
-    add_clocks(1);
+    addClocks(1);
 
     uint attribute = chr_load(0x23c0 | (status.vaddr & 0x0fc0) | ((scrolly() >> 5) << 3) | (scrollx() >> 5));
     uint tileaddr = (sprite_height() == 8)
     ? status.sprite_addr + raster.oam[sprite].tile * 16
     : ((raster.oam[sprite].tile & ~1) * 16) + ((raster.oam[sprite].tile & 1) * 0x1000);
-    add_clocks(2);
+    addClocks(2);
 
     uint spritey = (vcounter() - raster.oam[sprite].y) & (sprite_height() - 1);
     if(raster.oam[sprite].attr & 0x80) spritey ^= (sprite_height() - 1);
     tileaddr += spritey + (spritey & 8);
 
     raster.oam[sprite].tiledatalo = chr_load(tileaddr + 0);
-    add_clocks(2);
+    addClocks(2);
 
     raster.oam[sprite].tiledatahi = chr_load(tileaddr + 8);
-    add_clocks(2);
+    addClocks(2);
 
     if(raster_enable() && sprite == 6 && vcounter() == last_scanline) status.vaddr = status.taddr;  //304
   }
@@ -531,21 +353,21 @@ auto PPU::raster_scanline() -> void {
   for(uint tile = 0; tile < 2; tile++) {  //321-336
     uint nametable = chr_load(0x2000 | (status.vaddr & 0x0fff));
     uint tileaddr = status.bg_addr + (nametable << 4) + (scrolly() & 7);
-    add_clocks(2);
+    addClocks(2);
 
     uint attribute = chr_load(0x23c0 | (status.vaddr & 0x0fc0) | ((scrolly() >> 5) << 3) | (scrollx() >> 5));
     if(scrolly() & 16) attribute >>= 4;
     if(scrollx() & 16) attribute >>= 2;
-    add_clocks(1);
+    addClocks(1);
 
     scrollx_increment();
-    add_clocks(1);
+    addClocks(1);
 
     uint tiledatalo = chr_load(tileaddr + 0);
-    add_clocks(2);
+    addClocks(2);
 
     uint tiledatahi = chr_load(tileaddr + 8);
-    add_clocks(2);
+    addClocks(2);
 
     raster.nametable = (raster.nametable << 8) | nametable;
     raster.attribute = (raster.attribute << 2) | (attribute & 3);
@@ -555,11 +377,11 @@ auto PPU::raster_scanline() -> void {
 
   //337-340
   chr_load(0x2000 | (status.vaddr & 0x0fff));
-  add_clocks(2);
+  addClocks(2);
 
   chr_load(0x2000 | (status.vaddr & 0x0fff));
-  add_clocks(1);
-  if(hcounter() > 0) add_clocks(1);
+  addClocks(1);
+  if(hcounter() > 0) addClocks(1);
 
   return scanline();
 }

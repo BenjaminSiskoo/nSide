@@ -267,13 +267,13 @@ struct MMC5 : Chip {
     cpu_cycle_counter = 0;
   }
 
-  auto ciram_read(uint addr) -> uint8 {
+  auto ciramRead(uint addr) -> uint8 {
     if(vs_fetch && (hcounter & 2) == 0) return ram.read(vs_vpos / 8 * 32 + vs_hpos / 8);
     if(vs_fetch && (hcounter & 2) != 0) return ram.read(vs_vpos / 32 * 8 + vs_hpos / 32 + 0x03c0);
 
     switch(nametable_mode[(addr >> 10) & 3]) {
-    case 0: return ppu.ciram_read(0x0000 | (addr & 0x03ff));
-    case 1: return ppu.ciram_read(0x0400 | (addr & 0x03ff));
+    case 0: return ppu.ciramRead(0x0000 | (addr & 0x03ff));
+    case 1: return ppu.ciramRead(0x0400 | (addr & 0x03ff));
     case 2: return exram_mode < 2 ? ram.read(addr & 0x03ff) : (uint8)0x00;
     case 3: return (hcounter & 2) == 0 ? fillmode_tile : fillmode_color;
     }
@@ -293,7 +293,7 @@ struct MMC5 : Chip {
 
     if(in_frame == false) {
       vs_fetch = false;
-      if(addr & 0x2000) return ciram_read(addr);
+      if(addr & 0x2000) return ciramRead(addr);
       return board.read(board.chrrom, (chr_active ? chr_bg_addr(addr) : chr_sprite_addr(addr)));
     }
 
@@ -307,14 +307,14 @@ struct MMC5 : Chip {
       && (vs_side ? vs_hpos / 8 >= vs_tile : vs_hpos / 8 < vs_tile);
       if(vs_vpos >= 240) vs_vpos -= 240;
 
-      result = ciram_read(addr);
+      result = ciramRead(addr);
 
       exbank = (chr_bank_hi << 6) | (ram.read(addr & 0x03ff) & 0x3f);
       exattr = ram.read(addr & 0x03ff) >> 6;
       exattr |= exattr << 2;
       exattr |= exattr << 4;
     } else if((hcounter & 7) == 2) {
-      result = ciram_read(addr);
+      result = ciramRead(addr);
       if(bg_fetch && exram_mode == 1) result = exattr;
     } else {
       if(vs_fetch) result = board.read(board.chrrom, (chr_vs_addr(addr)));
@@ -330,8 +330,8 @@ struct MMC5 : Chip {
   auto chr_write(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       switch(nametable_mode[(addr >> 10) & 3]) {
-      case 0: return ppu.ciram_write(0x0000 | (addr & 0x03ff), data);
-      case 1: return ppu.ciram_write(0x0400 | (addr & 0x03ff), data);
+      case 0: return ppu.ciramWrite(0x0000 | (addr & 0x03ff), data);
+      case 1: return ppu.ciramWrite(0x0400 | (addr & 0x03ff), data);
       case 2: ram.write(addr & 0x03ff, data); break;
       }
     }

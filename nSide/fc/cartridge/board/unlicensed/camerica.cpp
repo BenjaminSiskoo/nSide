@@ -48,12 +48,12 @@ struct Camerica : Board {
   }
 
   auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciram_read(ciram_addr(addr));
+    if(addr & 0x2000) return ppu.ciramRead(ciram_addr(addr));
     return Board::chr_read(addr);
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciram_write(ciram_addr(addr), data);
+    if(addr & 0x2000) return ppu.ciramWrite(ciram_addr(addr), data);
     return Board::chr_write(addr, data);
   }
 

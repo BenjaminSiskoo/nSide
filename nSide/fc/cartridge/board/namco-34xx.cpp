@@ -77,24 +77,24 @@ struct Namco34xx : Board {
   auto chr_read(uint addr) -> uint8 {
     if(revision == Revision::DRROM) {
       if(addr & 0x2000) {
-        if(!(addr & 0x0800)) return ppu.ciram_read(addr & 0x07ff);
+        if(!(addr & 0x0800)) return ppu.ciramRead(addr & 0x07ff);
         else                 return read(chrram, addr & 0x07ff);
       }
       return read(chrrom, n108.chr_addr(addr));
     }
-    if(addr & 0x2000) return ppu.ciram_read(ciram_addr(addr));
+    if(addr & 0x2000) return ppu.ciramRead(ciram_addr(addr));
     return Board::chr_read(chr_addr(addr));
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
     if(revision == Revision::DRROM) {
       if(addr & 0x2000) {
-        if(!(addr & 0x0800)) ppu.ciram_write(addr & 0x07ff, data);
+        if(!(addr & 0x0800)) ppu.ciramWrite(addr & 0x07ff, data);
         else                 write(chrram, addr & 0x07ff, data);
       }
       return;
     }
-    if(addr & 0x2000) return ppu.ciram_write(ciram_addr(addr), data);
+    if(addr & 0x2000) return ppu.ciramWrite(ciram_addr(addr), data);
     return Board::chr_write(chr_addr(addr), data);
   }
 

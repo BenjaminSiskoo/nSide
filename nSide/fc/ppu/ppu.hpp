@@ -26,21 +26,10 @@ struct PPU : Thread, public PPUcounter {
   alwaysinline auto step(uint clocks) -> void;
   alwaysinline auto synchronizeCPU() -> void;
 
+  static auto Enter() -> void;
   auto main() -> void;
   auto power() -> void;
   auto reset() -> void;
-
-  auto read(uint16 addr) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
-
-  auto ciram_read(uint14 addr) -> uint8;
-  auto ciram_write(uint14 addr, uint8 data) -> void;
-
-  auto cgram_read(uint14 addr) -> uint8;
-  auto cgram_write(uint14 addr, uint8 data) -> void;
-
-  auto oam_read(uint8 addr) -> uint8;
-  auto oam_write(uint8 addr, uint8 data) -> void;
 
   auto raster_enable() const -> bool;
   auto nametable_addr() const -> uint;
@@ -59,6 +48,18 @@ struct PPU : Thread, public PPUcounter {
 
   auto serialize(serializer&) -> void;
 
+  //memory.cpp
+  auto ciramRead(uint14 addr) -> uint8;
+  auto ciramWrite(uint14 addr, uint8 data) -> void;
+  alwaysinline auto cgramRead(uint14 addr) -> uint8;
+  alwaysinline auto cgramWrite(uint14 addr, uint8 data) -> void;
+  alwaysinline auto oamRead(uint8 addr) -> uint8;
+  alwaysinline auto oamWrite(uint8 addr, uint8 data) -> void;
+
+  //mmio.cpp
+  auto read(uint16 addr) -> uint8;
+  auto write(uint16 addr, uint8 data) -> void;
+
   uint8 ciram[4096]; // 2048 in Famicom and PlayChoice-10
   uint8 cgram[32];
   uint8 oam[256];
@@ -73,8 +74,6 @@ struct PPU : Thread, public PPUcounter {
 
   //debugger functions
   auto exportRegisters(string &markup) -> void;
-
-  uint32* output = nullptr;
 
   struct Status {
     uint14 chr_abus;
@@ -138,13 +137,15 @@ struct PPU : Thread, public PPUcounter {
   } raster;
 
 privileged:
-  static auto Enter() -> void;
-  alwaysinline auto add_clocks(uint) -> void;
+  uint32* output = nullptr;
+
+  alwaysinline auto addClocks(uint) -> void;
 
   auto scanline() -> void;
   auto frame() -> void;
 
   friend class Video;
+  friend class BeamGun;
 };
 
 extern PPU ppu;

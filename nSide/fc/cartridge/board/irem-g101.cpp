@@ -22,18 +22,18 @@ struct IremG101 : Board {
 
   auto chr_read(uint addr) -> uint8 {
     if(addr & 0x2000) switch(settings.mirror) {
-    case 0: return ppu.ciram_read(g101.ciram_addr(addr));
-    case 1: return ppu.ciram_read((addr & 0x03ff) | 0x0400);
-    case 2: return ppu.ciram_read((addr & 0x03ff) | 0x0800);
+    case 0: return ppu.ciramRead(g101.ciram_addr(addr));
+    case 1: return ppu.ciramRead((addr & 0x03ff) | 0x0400);
+    case 2: return ppu.ciramRead((addr & 0x03ff) | 0x0800);
     }
     return Board::chr_read(g101.chr_addr(addr));
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
     if(addr & 0x2000) switch(settings.mirror) {
-    case 0: return ppu.ciram_write(g101.ciram_addr(addr), data);
-    case 1: return ppu.ciram_write((addr & 0x03ff) | 0x0400, data);
-    case 2: return ppu.ciram_write((addr & 0x03ff) | 0x0800, data);
+    case 0: return ppu.ciramWrite(g101.ciram_addr(addr), data);
+    case 1: return ppu.ciramWrite((addr & 0x03ff) | 0x0400, data);
+    case 2: return ppu.ciramWrite((addr & 0x03ff) | 0x0800, data);
     }
     return Board::chr_write(g101.chr_addr(addr), data);
   }

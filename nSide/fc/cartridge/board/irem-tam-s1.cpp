@@ -29,7 +29,7 @@ struct IremTamS1 : Board {
       case 2: addr = ((addr & 0x0400) >> 0) | (addr & 0x03ff); break;
       case 3: addr = (0x0400              ) | (addr & 0x03ff); break;
       }
-      return ppu.ciram_read(addr);
+      return ppu.ciramRead(addr);
     }
     return Board::chr_read(addr);
   }
@@ -42,7 +42,7 @@ struct IremTamS1 : Board {
       case 2: addr = ((addr & 0x0400) >> 0) | (addr & 0x03ff); break;
       case 3: addr = (0x0400              ) | (addr & 0x03ff); break;
       }
-      return ppu.ciram_write(addr, data);
+      return ppu.ciramWrite(addr, data);
     }
     return Board::chr_write(addr, data);
   }

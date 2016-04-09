@@ -1,5 +1,10 @@
 #pragma once
 
+//based on higan's Game Boy emulator by byuu,
+//with contributions from Jonas Quinn.
+//license: GPLv3
+//original project started: 2010-12-27
+
 #include <emulator/emulator.hpp>
 #include <processor/lr35902/lr35902.hpp>
 
@@ -8,14 +13,6 @@ namespace GameBoy {
     static const uint SerializerVersion = 4;
   }
 }
-
-/*
-  based on higan's Game Boy emulator.
-  original author: byuu
-  contributors: Jonas Quinn
-  license: GPLv3
-  original project started: 2010-12-27
-*/
 
 #include <libco/libco.h>
 

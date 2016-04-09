@@ -18,12 +18,12 @@ struct IremH3001 : Board {
   }
 
   auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciram_read(ifh3001.ciram_addr(addr));
+    if(addr & 0x2000) return ppu.ciramRead(ifh3001.ciram_addr(addr));
     return Board::chr_read(ifh3001.chr_addr(addr));
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciram_write(ifh3001.ciram_addr(addr), data);
+    if(addr & 0x2000) return ppu.ciramWrite(ifh3001.ciram_addr(addr), data);
     return Board::chr_write(ifh3001.chr_addr(addr), data);
   }
 

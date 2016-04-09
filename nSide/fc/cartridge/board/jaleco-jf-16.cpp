@@ -24,7 +24,7 @@ struct JalecoJF16 : Board {
   auto chr_read(uint addr) -> uint8 {
     if(addr & 0x2000) {
       addr = (nametable << 10) | (addr & 0x03ff);
-      return ppu.ciram_read(addr);
+      return ppu.ciramRead(addr);
     }
     return Board::chr_read((chr_bank * 0x2000) + (addr & 0x1fff));
   }
@@ -32,7 +32,7 @@ struct JalecoJF16 : Board {
   auto chr_write(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       addr = (nametable << 10) | (addr & 0x03ff);
-      return ppu.ciram_write(addr, data);
+      return ppu.ciramWrite(addr, data);
     }
     Board::chr_write((chr_bank * 0x2000) + (addr & 0x1fff), data);
   }

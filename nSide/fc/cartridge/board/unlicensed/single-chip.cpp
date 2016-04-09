@@ -13,12 +13,12 @@ struct SingleChip : Board {
 
   auto chr_read(uint addr) -> uint8 {
     addr = ((addr & (1 << settings.va10)) >> (settings.va10 - 10)) | (addr & 0x03ff);
-    return ppu.ciram_read(addr);
+    return ppu.ciramRead(addr);
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
     addr = ((addr & (1 << settings.va10)) >> (settings.va10 - 10)) | (addr & 0x03ff);
-    return ppu.ciram_write(addr, data);
+    return ppu.ciramWrite(addr, data);
   }
 
   auto serialize(serializer& s) -> void {

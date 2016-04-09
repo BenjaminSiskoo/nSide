@@ -22,12 +22,12 @@ struct KonamiVRC7 : Board {
   }
 
   auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciram_read(vrc7.ciram_addr(addr));
+    if(addr & 0x2000) return ppu.ciramRead(vrc7.ciram_addr(addr));
     return Board::chr_read(vrc7.chr_addr(addr));
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciram_write(vrc7.ciram_addr(addr), data);
+    if(addr & 0x2000) return ppu.ciramWrite(vrc7.ciram_addr(addr), data);
     return Board::chr_write(vrc7.chr_addr(addr), data);
   }
 

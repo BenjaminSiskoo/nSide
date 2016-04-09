@@ -24,12 +24,12 @@ struct PAL_ZZ : Board {
   }
 
   auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciram_read(mmc3.ciram_addr(addr));
+    if(addr & 0x2000) return ppu.ciramRead(mmc3.ciram_addr(addr));
     return Board::chr_read((mmc3.chr_addr(addr) & 0x1ffff) | (bank << 17));
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciram_write(mmc3.ciram_addr(addr), data);
+    if(addr & 0x2000) return ppu.ciramWrite(mmc3.ciram_addr(addr), data);
     return Board::chr_write((mmc3.chr_addr(addr) & 0x1ffff) | (bank << 17), data);
   }
 

@@ -1,5 +1,37 @@
 #pragma once
 
+//based on higan's Super Famicom emulator by byuu,
+//with contributions from:
+// Andreas Naive     (S-DD1 decompression algorithm)
+// anomie
+// AWJ               (PPUcounter NTSC/PAL timing)
+// blargg            (Balanced/Performance DSP)
+// Cydrak            (ST-018 discoveries and bug fixes)
+// _Demo_
+// Derrick Sobodash
+// DMV27
+// Dr. Decapitator   (DSP-1,2,3,4, ST-010,011,018 ROM dumps)
+// FirebrandX
+// FitzRoy
+// GIGO
+// Jonas Quinn       (DSP fixes, Game Boy fixes)
+// kode54
+// krom
+// LostTemplar       (ST-018 program ROM analysis)
+// Matthew Callis
+// Nach
+// neviksti          (SPC7110 decompression algorithm)
+// Overload          (Cx4 data ROM dump)
+// RedDwarf
+// Richard Bannister
+// segher            (Cx4 reverse engineering)
+// tetsuo55
+// TRAC
+// zones
+// hex_usr           (exportMemory PPU register/expansion chip support, Super Scope turbo cursor)
+//license: GPLv3
+//original project started: 2004-10-14
+
 #include <emulator/emulator.hpp>
 #include <processor/arm/arm.hpp>
 #include <processor/gsu/gsu.hpp>
@@ -13,41 +45,6 @@ namespace SuperFamicom {
     static const uint SerializerVersion = 30;
   }
 }
-
-/*
-  based on higan's Super Famicom emulator
-  original author: byuu
-  contributors:
-    Andreas Naive     (S-DD1 decompression algorithm)
-    anomie
-    AWJ               (PPUcounter NTSC/PAL timing)
-    blargg            (Balanced/Performance DSP)
-    Cydrak            (ST-018 discoveries and bug fixes)
-    _Demo_
-    Derrick Sobodash
-    DMV27
-    Dr. Decapitator   (DSP-1,2,3,4, ST-010,011,018 ROM dumps)
-    FirebrandX
-    FitzRoy
-    GIGO
-    Jonas Quinn       (DSP fixes, Game Boy fixes)
-    kode54
-    krom
-    LostTemplar       (ST-018 program ROM analysis)
-    Matthew Callis
-    Nach
-    neviksti          (SPC7110 decompression algorithm)
-    Overload          (Cx4 data ROM dump)
-    RedDwarf
-    Richard Bannister
-    segher            (Cx4 reverse engineering)
-    tetsuo55
-    TRAC
-    zones
-    hex_usr           (exportMemory PPU register/expansion chip support)
-  license: GPLv3
-  original project started: 2004-10-14
-*/
 
 #include <libco/libco.h>
 

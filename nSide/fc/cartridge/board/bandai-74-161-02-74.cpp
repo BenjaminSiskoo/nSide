@@ -31,13 +31,13 @@ struct Bandai74_161_02_74 : Board {
 
   auto chr_read(uint addr) -> uint8 {
     chr_abus_test(addr);
-    if(addr & 0x2000) return ppu.ciram_read(addr & 0x07ff);
+    if(addr & 0x2000) return ppu.ciramRead(addr & 0x07ff);
     return Board::chr_read(chr_addr(addr));
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
     chr_abus_test(addr);
-    if(addr & 0x2000) return ppu.ciram_write(addr & 0x07ff, data);
+    if(addr & 0x2000) return ppu.ciramWrite(addr & 0x07ff, data);
     Board::chr_write(chr_addr(addr), data);
   }
 

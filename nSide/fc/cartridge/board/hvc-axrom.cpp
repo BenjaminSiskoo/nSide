@@ -27,12 +27,12 @@ struct HVC_AxROM : Board {
   }
 
   auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciram_read((mirror_select << 10) | (addr & 0x03ff));
+    if(addr & 0x2000) return ppu.ciramRead((mirror_select << 10) | (addr & 0x03ff));
     return Board::chr_read(addr);
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciram_write((mirror_select << 10) | (addr & 0x03ff), data);
+    if(addr & 0x2000) return ppu.ciramWrite((mirror_select << 10) | (addr & 0x03ff), data);
     return Board::chr_write(addr, data);
   }
 

@@ -40,7 +40,7 @@ struct HVC_TxROM : Board {
       if(addr & 0x2000) return read(chrram, addr & 0x0fff);
       return read(chrrom, mmc3.chr_addr(addr));
     }
-    if(addr & 0x2000) return ppu.ciram_read(ciram_addr(addr));
+    if(addr & 0x2000) return ppu.ciramRead(ciram_addr(addr));
     if(revision == Revision::TQROM) {
       if(mmc3.chr_addr(addr) & (0x40 << 10))
         return read(chrram, mmc3.chr_addr(addr));
@@ -55,7 +55,7 @@ struct HVC_TxROM : Board {
       if(addr & 0x2000) write(chrram, addr & 0x0fff, data);
       return;
     }
-    if(addr & 0x2000) return ppu.ciram_write(ciram_addr(addr), data);
+    if(addr & 0x2000) return ppu.ciramWrite(ciram_addr(addr), data);
     return Board::chr_write(mmc3.chr_addr(addr), data);
   }
 

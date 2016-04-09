@@ -39,7 +39,7 @@ struct Sunsoft4 : Board {
     if(addr & 0x2000) {
       addr = ciram_addr(addr);
       if(nametable_mode) return Board::chr_read(((ntrom_bank[(addr & 0x0400) >> 10] | 0x80) << 10) | (addr & 0x03FF));
-      else               return ppu.ciram_read(addr);
+      else               return ppu.ciramRead(addr);
     }
     addr = (chr_bank[(addr & 0x1800) >> 11] << 11) | (addr & 0x07ff);
     return Board::chr_read(addr);
@@ -47,7 +47,7 @@ struct Sunsoft4 : Board {
 
   auto chr_write(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
-      if(nametable_mode == 0) return ppu.ciram_write(ciram_addr(addr), data);
+      if(nametable_mode == 0) return ppu.ciramWrite(ciram_addr(addr), data);
     } else {
       return Board::chr_write(addr, data);
     }

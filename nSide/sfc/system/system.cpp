@@ -26,9 +26,9 @@ auto System::runToSave() -> void {
   for(auto coprocessor : cpu.coprocessors) {
     scheduler.synchronize(coprocessor->thread);
   }
-  for(auto peripheral : cpu.peripherals) {
-    scheduler.synchronize(peripheral->thread);
-  }
+  //for(auto peripheral : cpu.peripherals) {
+  //  scheduler.synchronize(peripheral->thread);
+  //}
 }
 
 auto System::init() -> void {

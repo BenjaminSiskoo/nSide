@@ -21,7 +21,7 @@ struct KonamiVRC3 : Board {
   auto chr_read(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(settings.mirror == 0) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciram_read(addr);
+      return ppu.ciramRead(addr);
     }
     return Board::chr_read(addr);
   }
@@ -29,7 +29,7 @@ struct KonamiVRC3 : Board {
   auto chr_write(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(settings.mirror == 0) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciram_write(addr, data);
+      return ppu.ciramWrite(addr, data);
     }
     return Board::chr_write(addr, data);
   }

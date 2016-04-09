@@ -120,7 +120,7 @@ struct N163 : Chip {
   auto chr_read(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(revision == Revision::N175 || revision == Revision::N340) {
-        return ppu.ciram_read(ciram_addr(addr));
+        return ppu.ciramRead(ciram_addr(addr));
       }
       addr &= 0x2fff;
     }
@@ -128,14 +128,14 @@ struct N163 : Chip {
     if(bank >= 0xe0 && ((addr & 0x2000) | !(chrram_disable & (1 << ((addr & 0x1000) >> 12))))) {
       addr = (addr & 0x03ff) | (bank << 10);
       if(board.chrram.size()) return board.read(board.chrram, addr);
-      else                    return ppu.ciram_read(addr);
+      else                    return ppu.ciramRead(addr);
     } else return board.read(board.chrrom, ((bank << 10) | (addr & 0x3ff)));
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(revision == Revision::N175 || revision == Revision::N340) {
-        return ppu.ciram_write(ciram_addr(addr), data);
+        return ppu.ciramWrite(ciram_addr(addr), data);
       }
       addr &= 0x2fff;
     }
@@ -143,7 +143,7 @@ struct N163 : Chip {
     if(bank >= 0xe0 && ((addr & 0x2000) | !(chrram_disable & (1 << ((addr & 0x1000) >> 12))))) {
       addr = (addr & 0x03ff) | (bank << 10);
       if(board.chrram.size()) return board.write(board.chrram, addr, data);
-      else                    return ppu.ciram_write(addr, data);
+      else                    return ppu.ciramWrite(addr, data);
     }
   }
 

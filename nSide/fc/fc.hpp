@@ -1,5 +1,10 @@
 #pragma once
 
+//based on higan's Famicom emulator by byuu and Ryphecha,
+//with contributions from FitzRoy and hex_usr.
+//license: GPLv3
+//original project started: 2011-09-05
+
 #include <emulator/emulator.hpp>
 #include <processor/r6502/r6502.hpp>
 
@@ -13,14 +18,6 @@ namespace Famicom {
     static const uint SerializerVersion = 0;
   }
 }
-
-/*
-  based on higan's Famicom emulator.
-  original authors: byuu, Ryphecha
-  contributors: FitzRoy, hex_usr
-  license: GPLv3
-  original project started: 2011-09-05
-*/
 
 #include <libco/libco.h>
 

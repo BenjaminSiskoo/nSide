@@ -1,5 +1,10 @@
 #pragma once
 
+//based on higan's Game Boy Advance emulator by byuu and Cydrak,
+//with contributions from endrift, jchadwick, and Jonas Quinn.
+//license: GPLv3
+//original project started: 2012-03-19
+
 #include <emulator/emulator.hpp>
 #include <processor/arm/arm.hpp>
 
@@ -8,14 +13,6 @@ namespace GameBoyAdvance {
     static const uint SerializerVersion = 3;
   }
 }
-
-/*
-  based on higan's Game Boy Advance emulator.
-  original authors: byuu, Cydrak
-  contributors: endrift, jchadwick, Jonas Quinn
-  license: GPLv3
-  original project started: 2012-03-19
-*/
 
 #include <libco/libco.h>
 

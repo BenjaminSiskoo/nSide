@@ -82,7 +82,7 @@ struct VS : Board {
   }
 
   auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciram_read(addr);
+    if(addr & 0x2000) return ppu.ciramRead(addr);
     switch(chip_type) {
     case ChipType::None:
       if(chrrom.size() < bank << 13) return ppu.status.mdr;
@@ -97,7 +97,7 @@ struct VS : Board {
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciram_write(addr, data);
+    if(addr & 0x2000) return ppu.ciramWrite(addr, data);
     switch(chip_type) {
     case ChipType::None:
       break;

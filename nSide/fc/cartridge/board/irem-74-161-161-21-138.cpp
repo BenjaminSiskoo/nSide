@@ -19,27 +19,27 @@ struct Irem74_161_161_21_138 : Board {
   }
 
   auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ciram_read(addr);
+    if(addr & 0x2000) return ciramRead(addr);
     if((addr & 0x1800) == 0x0000) return read(chrrom, (addr & 0x07ff) | (chr_bank << 11));
     return read(chrram, addr);
   }
 
   auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ciram_write(addr, data);
+    if(addr & 0x2000) return ciramWrite(addr, data);
     if((addr & 0x1800) != 0x0000) return write(chrram, addr & 0x1fff, data);
   }
 
-  auto ciram_read(uint addr) -> uint8 {
+  auto ciramRead(uint addr) -> uint8 {
     switch(addr & 0x0800) {
     case 0x0000: return read(chrram, addr & 0x1fff);
-    case 0x0800: return ppu.ciram_read(addr);
+    case 0x0800: return ppu.ciramRead(addr);
     }
   }
 
-  auto ciram_write(uint addr, uint8 data) -> void {
+  auto ciramWrite(uint addr, uint8 data) -> void {
     switch(addr & 0x0800) {
     case 0x0000: return write(chrram, addr & 0x1fff, data);
-    case 0x0800: return ppu.ciram_write(addr, data);
+    case 0x0800: return ppu.ciramWrite(addr, data);
     }
   }
 
