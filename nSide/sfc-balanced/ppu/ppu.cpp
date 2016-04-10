@@ -86,14 +86,6 @@ auto PPU::addClocks(uint clocks) -> void {
   synchronizeCPU();
 }
 
-auto PPU::enable() -> void {
-  function<auto (uint24, uint8) -> uint8> reader{&PPU::read, this};
-  function<auto (uint24, uint8) -> void> writer{&PPU::write, this};
-
-  bus.map(reader, writer, 0x00, 0x3f, 0x2100, 0x213f);
-  bus.map(reader, writer, 0x80, 0xbf, 0x2100, 0x213f);
-}
-
 auto PPU::power() -> void {
   for(auto& n : vram) n = 0x00;
   for(auto& n : oam) n = 0x00;
@@ -313,6 +305,10 @@ auto PPU::reset() -> void {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
   memory::fill(output, 512 * 480 * sizeof(uint32));
+
+  function<auto (uint24, uint8) -> uint8> reader{&PPU::read, this};
+  function<auto (uint24, uint8) -> void> writer{&PPU::write, this};
+  bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
   frame();
 

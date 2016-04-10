@@ -91,7 +91,11 @@ auto PPU::power() -> void {
 auto PPU::reset() -> void {
   create(PPU::Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memset(output, 0, 256 * 312 * sizeof(uint32));
+  memory::fill(output, 256 * 312 * sizeof(uint32));
+
+  function<auto (uint16, uint8) -> uint8> reader{&PPU::read, this};
+  function<auto (uint16, uint8) -> void> writer{&PPU::write, this};
+  bus.map(reader, writer, "2000-3fff");
 
   status.mdr = 0x00;
   status.bus_data = 0x00;

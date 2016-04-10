@@ -16,6 +16,10 @@ namespace SFC = SuperFamicom;
 
 auto locate(string name) -> string;
 
+template<typename... Args> auto echo(Args&&... args) -> void {
+  //terminal->print({std::forward<Args>(args)...});
+}
+
 #include "program/program.hpp"
 #include "settings/settings.hpp"
 #include "input/input.hpp"

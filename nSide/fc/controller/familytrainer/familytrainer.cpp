@@ -1,4 +1,4 @@
-FamilyTrainer::FamilyTrainer(uint port) : Controller(port, (uint)Device::ID::FamilyTrainer) {
+FamilyTrainer::FamilyTrainer(uint port) : Controller(port, Device::FamilyTrainer) {
   latched = 0;
   counter = 0;
 

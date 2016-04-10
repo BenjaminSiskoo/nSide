@@ -12,15 +12,15 @@ auto VSSystem::resetButtons() -> void {
 }
 
 auto VSSystem::poll(bool side, uint input) -> int16 {
-  return interface->inputPoll(3, interface->device_ref[(uint)Device::ID::VSPanel].port[3], input);
+  return interface->inputPoll(3, interface->device_ref[Device::VSPanel].port[3], input);
 }
 
 auto VSSystem::data1(bool side) -> bool {
   uint& counter = side == 0 ? mainControlCounter1 : subControlCounter1;
   bool* buttons = side == 0 ? mainButtons : subButtons;
   bool data;
-  if(!swapControllers) data = device.controllerPort1->data() & 0x01;
-  else                 data = device.controllerPort2->data() & 0x01;
+  if(!swapControllers) data = peripherals.controllerPort1->data() & 0x01;
+  else                 data = peripherals.controllerPort2->data() & 0x01;
   if(counter == 2) return buttons[Button1];
   if(counter == 3) return buttons[Button3];
   return data;
@@ -30,8 +30,8 @@ auto VSSystem::data2(bool side) -> bool {
   uint& counter = side == 0 ? mainControlCounter2 : subControlCounter2;
   bool* buttons = side == 0 ? mainButtons : subButtons;
   bool data;
-  if(!swapControllers) data = device.controllerPort2->data() & 0x01;
-  else                 data = device.controllerPort1->data() & 0x01;
+  if(!swapControllers) data = peripherals.controllerPort2->data() & 0x01;
+  else                 data = peripherals.controllerPort1->data() & 0x01;
   if(counter == 2) return buttons[Button2];
   if(counter == 3) return buttons[Button4];
   return data;

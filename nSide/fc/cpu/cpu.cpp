@@ -77,6 +77,18 @@ auto CPU::reset() -> void {
   R6502::reset();
   create(CPU::Enter, system.cpuFrequency());
 
+  function<auto (uint16, uint8) -> uint8> reader;
+  function<auto (uint16, uint8) -> void> writer;
+
+  reader = [](uint16 addr, uint8) -> uint8 { return cpu.ram[addr]; };
+  writer = [](uint16 addr, uint8 data) -> void { cpu.ram[addr] = data; };
+  bus.map(reader, writer, "0000-1fff", 0x800);
+
+  reader = {&CPU::cpuPortRead, this};
+  writer = {&CPU::cpuPortWrite, this};
+  bus.map(reader, writer, "4000-4017");
+
+  //CPU
   regs.pc  = bus.read(0xfffc, regs.mdr) << 0;
   regs.pc |= bus.read(0xfffd, regs.mdr) << 8;
 

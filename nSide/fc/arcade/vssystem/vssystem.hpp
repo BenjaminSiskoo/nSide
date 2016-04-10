@@ -3,10 +3,8 @@ struct VSSystem : Cothread {
     Button1, Button2, Button3, Button4, ServiceButton, Coin1, Coin2,
   };
 
-  bool forceSubRam;
-
+  static auto Enter() -> void;
   auto main() -> void;
-  auto step(uint clocks) -> void;
 
   auto init() -> void;
   auto load() -> void;
@@ -20,6 +18,8 @@ struct VSSystem : Cothread {
 
   auto serialize(serializer& s) -> void;
 
+  bool forceSubRam;
+
 private:
   uint8 ram[0x800];
   bool ramSide; // 0: main, 1: sub
@@ -28,12 +28,6 @@ private:
   uint8 mainDip;
   uint8 subDip;
   uint watchdog;
-
-  auto r4016(bool side, uint8 data) -> uint8;
-  auto r4017(bool side, uint8 data) -> uint8;
-  auto r4020(bool side, uint8 data) -> uint8;
-  auto w4016(bool side, uint8 data) -> void;
-  auto w4020(bool side, uint8 data) -> void;
 
   //control.cpp
   bool mainControlLatched;
@@ -50,8 +44,6 @@ private:
   auto data1(bool side) -> bool;
   auto data2(bool side) -> bool;
   auto latch(bool side, bool data) -> void;
-
-  static auto Enter() -> void;
 
   friend class Cartridge;
 };

@@ -1,4 +1,4 @@
-Vaus::Vaus(uint port) : Controller(port, (uint)Device::ID::Vaus) {
+Vaus::Vaus(uint port) : Controller(port, Device::Vaus) {
   create(Controller::Enter, system.cpuFrequency());
   latched = 0;
   counter = 0;

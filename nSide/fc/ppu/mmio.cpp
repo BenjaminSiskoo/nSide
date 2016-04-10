@@ -1,6 +1,4 @@
-auto PPU::read(uint16 addr) -> uint8 {
-  uint8 result = 0x00;
-
+auto PPU::read(uint16 addr, uint8 data) -> uint8 {
   switch(addr & 7) {
 
   case 0: case 1: case 3:
@@ -10,39 +8,36 @@ auto PPU::read(uint16 addr) -> uint8 {
 
   //PPUSTATUS
   case 2: {
-    result |= status.nmi_flag << 7;
-    result |= status.sprite_zero_hit << 6;
+    data = 0x00;
+    data |= status.nmi_flag << 7;
+    data |= status.sprite_zero_hit << 6;
     switch(revision) {
     default:
-      result |= status.sprite_overflow << 5;
-      result |= status.mdr & 0x1f;
+      data |= status.sprite_overflow << 5;
+      data |= status.mdr & 0x1f;
       break;
     case Revision::RC2C05_01:
-    case Revision::RC2C05_04: result |= 0x1b; break;
-    case Revision::RC2C05_02: result |= 0x3d; break;
-    case Revision::RC2C05_03: result |= 0x1c; break;
+    case Revision::RC2C05_04: data |= 0x1b; break;
+    case Revision::RC2C05_02: data |= 0x3d; break;
+    case Revision::RC2C05_03: data |= 0x1c; break;
     }
     status.address_latch = 0;
     status.nmi_hold = 0;
     cpu.set_nmi_line(status.nmi_flag = 0);
-    break;
+    return data;
   }
 
   //OAMDATA
   case 4: {
     switch(revision) {
     case Revision::RP2C02C:
-      result = status.mdr;
-      break;
+      return status.mdr;
     default:
-      result = oamRead(status.oam_addr);
-      if((status.oam_addr & 3) == 2) {
-        status.mdr = result;
-        for(uint i = 0; i < 8; i++) status.mdr_decay[i] = 3221591;
-      }
+      status.mdr = oamRead(status.oam_addr);
+      for(uint i = 0; i < 8; i++) status.mdr_decay[i] = 3221591;
       break;
     }
-    break;
+    return status.mdr;
   }
 
   //PPUDATA
@@ -53,20 +48,19 @@ auto PPU::read(uint16 addr) -> uint8 {
 
     addr = status.vaddr & 0x3fff;
     if(addr <= 0x3eff) {
-      result = status.bus_data;
+      status.mdr = status.bus_data;
     } else if(addr <= 0x3fff) {
-      result = ((status.mdr & 0xc0) | cgramRead(addr));
+      status.mdr = (status.mdr & 0xc0) | cgramRead(addr);
     }
     status.bus_data = cartridge.chr_read(status.chr_abus = addr);
     status.vaddr += status.vram_increment;
     status.chr_abus = status.vaddr;
-    status.mdr = result;
-    break;
+    return status.mdr;
   }
 
   }
 
-  return result;
+  return data;
 }
 
 auto PPU::write(uint16 addr, uint8 data) -> void {
@@ -87,31 +81,31 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
 
   //PPUCTRL
   case 0: {
-    status.nmi_enable = data & 0x80;
-    status.master_select = data & 0x40;
-    status.sprite_size = data & 0x20;
-    status.bg_addr = (data & 0x10) ? 0x1000 : 0x0000;
-    status.sprite_addr = (data & 0x08) ? 0x1000 : 0x0000;
-    status.vram_increment = (data & 0x04) ? 32 : 1;
-    status.taddr = (status.taddr & 0x73ff) | ((data & 0x03) << 10);
+    status.nmi_enable     = data.bit(7);
+    status.master_select  = data.bit(6);
+    status.sprite_size    = data.bit(5);
+    status.bg_addr        = data.bit(4) ? 0x1000 : 0x0000;
+    status.sprite_addr    = data.bit(3) ? 0x1000 : 0x0000;
+    status.vram_increment = data.bit(2) ? 32 : 1;
+    status.taddr = (status.taddr & 0x73ff) | (data.bits(1,0) << 10);
     cpu.set_nmi_line(status.nmi_enable && status.nmi_hold && status.nmi_flag);
     return;
   }
 
   //PPUMASK
   case 1: {
-    status.emphasis = data >> 5;
+    status.emphasis = data.bits(7,5);
     if(revision == Revision::RP2C07) {
       status.emphasis =
         ((status.emphasis & 1) << 1) | // swap red
         ((status.emphasis & 2) >> 1) | // and green
         ((status.emphasis & 4)     );
     }
-    status.sprite_enable = data & 0x10;
-    status.bg_enable = data & 0x08;
-    status.sprite_edge_enable = data & 0x04;
-    status.bg_edge_enable = data & 0x02;
-    status.grayscale = data & 0x01;
+    status.sprite_enable      = data.bit(4);
+    status.bg_enable          = data.bit(3);
+    status.sprite_edge_enable = data.bit(2);
+    status.bg_edge_enable     = data.bit(1);
+    status.grayscale          = data.bit(0);
     return;
   }
 
@@ -127,8 +121,7 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
       // on an actual Famicom/NES, waiting a while after writing to OAM will
       // make this corruption happen because the OAM will have decayed at the
       // spot being written to.
-      for(int i = 0; i < 8; i++)
-        oam[((addr & 0xf800) >> 8) + i] = oam[(status.oam_addr & 0xf8) + i];
+      for(int i = 0; i < 8; i++) oam[((addr & 0xf800) >> 8) + i] = oam[(status.oam_addr & 0xf8) + i];
     }
     status.oam_addr = data;
     return;
@@ -143,10 +136,10 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
   //PPUSCROLL
   case 5: {
     if(status.address_latch == 0) {
-      status.xaddr = data & 0x07;
-      status.taddr = (status.taddr & 0x7fe0) | (data >> 3);
+      status.xaddr = data.bits(2,0);
+      status.taddr = (status.taddr & 0x7fe0) | data.bits(7,3);
     } else {
-      status.taddr = (status.taddr & 0x0c1f) | ((data & 0x07) << 12) | ((data >> 3) << 5);
+      status.taddr = (status.taddr & 0x0c1f) | (data.bits(2,0) << 12) | (data.bits(7,3) << 5);
     }
     status.address_latch ^= 1;
     return;
@@ -155,7 +148,7 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
   //PPUADDR
   case 6: {
     if(status.address_latch == 0) {
-      status.taddr = (status.taddr & 0x00ff) | ((data & 0x3f) << 8);
+      status.taddr = (status.taddr & 0x00ff) | (data.bits(5,0) << 8);
     } else {
       status.taddr = (status.taddr & 0x7f00) | data;
       status.vaddr = status.taddr;

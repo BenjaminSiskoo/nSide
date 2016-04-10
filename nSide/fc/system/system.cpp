@@ -4,7 +4,7 @@ namespace Famicom {
 
 System system;
 
-#include "device.cpp"
+#include "peripherals.cpp"
 #include "serialization.cpp"
 
 auto System::loaded() const -> bool { return _loaded; }
@@ -24,9 +24,9 @@ auto System::runToSave() -> void {
   for(auto coprocessor : cpu.coprocessors) {
     scheduler.synchronize(coprocessor->thread);
   }
-  //for(auto peripheral : cpu.peripherals) {
-  //  scheduler.synchronize(peripheral->thread);
-  //}
+  for(auto peripheral : cpu.peripherals) {
+    scheduler.synchronize(peripheral->thread);
+  }
 }
 
 auto System::init() -> void {
@@ -34,17 +34,14 @@ auto System::init() -> void {
 
   vssystem.init();
   playchoice10.init();
-
-  device.connect(0, (Device::ID)settings.controllerPort1);
-  device.connect(1, (Device::ID)settings.controllerPort2);
-  device.connect(2, (Device::ID)settings.expansionPort);
-  device.connect(3, Device::ID::None);
 }
 
 auto System::term() -> void {
 }
 
 auto System::load(Revision revision) -> void {
+  bus.reset();
+
   _revision = revision;
   interface->loadRequest(ID::SystemManifest, "manifest.bml", true);
   auto document = BML::unserialize(information.manifest);
@@ -89,14 +86,19 @@ auto System::load(Revision revision) -> void {
 
   switch(revision) {
   case Revision::Famicom:
+    peripherals.connect(3, Device::None);
     break;
   case Revision::VSSystem:
     vssystem.load();
-    device.connect(3, Device::ID::VSPanel);
+    peripherals.connect(3, Device::VSPanel);
     break;
   case Revision::PlayChoice10:
     interface->information.height = min(max(document["system/pc10/screen/mode"].integer(), 1), 2) * 240;
     playchoice10.load();
+    peripherals.connect(3, Device::None);
+    break;
+  case Revision::FamicomBox:
+    peripherals.connect(3, Device::None);
     break;
   }
 
@@ -106,6 +108,8 @@ auto System::load(Revision revision) -> void {
 
 auto System::unload() -> void {
   if(!loaded()) return;
+  peripherals.unload();
+
   switch(revision()) {
   case Revision::VSSystem: vssystem.unload(); break;
   case Revision::PlayChoice10: playchoice10.unload(); break;
@@ -148,15 +152,7 @@ auto System::reset() -> void {
   }
 
   scheduler.reset();
-  device.connect(0, (Device::ID)settings.controllerPort1);
-  device.connect(1, (Device::ID)settings.controllerPort2);
-  device.connect(2, (Device::ID)settings.expansionPort);
-
-  switch(revision()) {
-  case Revision::Famicom:      device.connect(3, Device::ID::None);    break;
-  case Revision::VSSystem:     device.connect(3, Device::ID::VSPanel); break;
-  case Revision::PlayChoice10: device.connect(3, Device::ID::None);    break;
-  }
+  peripherals.reset();
 }
 
 }

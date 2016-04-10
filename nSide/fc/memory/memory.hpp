@@ -48,27 +48,26 @@ struct Bus {
   alwaysinline static auto mirror(uint addr, uint size) -> uint;
   alwaysinline static auto reduce(uint addr, uint mask) -> uint;
 
-  Bus();
   ~Bus();
 
   alwaysinline auto read(uint16 addr, uint8 data) -> uint8;
   alwaysinline auto write(uint16 addr, uint8 data) -> void;
 
   auto reset() -> void;
-  auto map() -> void;
   auto map(
-    const function<uint8 (uint16, uint8)>& reader,
-    const function<void (uint16, uint8)>& writer,
-    uint16 addrlo, uint16 addrhi,
-    uint size = 0, uint base = 0, uint mask = 0
+    const function<uint8 (uint16, uint8)>& read,
+    const function<void (uint16, uint8)>& write,
+    const string& addr, uint size = 0, uint base = 0, uint mask = 0
   ) -> void;
+  auto unmap(const string& addr) -> void;
 
+private:
   uint8* lookup = nullptr;
   uint32* target = nullptr;
 
-  uint idcount = 0;
   function<auto (uint16, uint8) -> uint8> reader[256];
   function<auto (uint16, uint8) -> void> writer[256];
+  uint16 counter[256];
 };
 
 extern Bus bus;

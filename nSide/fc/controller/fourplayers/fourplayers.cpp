@@ -1,4 +1,4 @@
-FourPlayers::FourPlayers(uint port) : Controller(port, (uint)Device::ID::FourPlayers) {
+FourPlayers::FourPlayers(uint port) : Controller(port, Device::FourPlayers) {
   latched = 0;
   counter1 = 0;
   counter2 = 0;

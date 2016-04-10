@@ -1,4 +1,4 @@
-Gamepad::Gamepad(uint port) : Controller(port, (uint)Device::ID::Gamepad) {
+Gamepad::Gamepad(uint port) : Controller(port, Device::Gamepad) {
   latched = 0;
   counter = 0;
 

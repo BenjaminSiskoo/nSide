@@ -1,6 +1,6 @@
 struct Interface;
 
-#include "device.hpp"
+#include "peripherals.hpp"
 
 struct System {
   enum class Region : uint { NTSC = 0, PAL = 1, Dendy = 2 };

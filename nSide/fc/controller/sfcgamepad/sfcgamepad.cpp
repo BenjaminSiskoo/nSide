@@ -1,4 +1,4 @@
-SFCGamepad::SFCGamepad(uint port) : Controller(port, (uint)Device::ID::SFCGamepad) {
+SFCGamepad::SFCGamepad(uint port) : Controller(port, Device::SFCGamepad) {
   latched = 0;
   counter = 0;
 

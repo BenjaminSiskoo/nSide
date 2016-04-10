@@ -1,4 +1,4 @@
-BeamGun::BeamGun(uint port) : Controller(port, (uint)Device::ID::BeamGun) {
+BeamGun::BeamGun(uint port) : Controller(port, Device::BeamGun) {
   create(Controller::Enter, system.cpuFrequency());
   latched = 0;
   counter = 0;

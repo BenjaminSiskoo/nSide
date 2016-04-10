@@ -18,18 +18,18 @@ Debugger::Debugger() {
 }
 
 void Debugger::load() {
-  directory::create({interface->pathname, "loki/"});
+  directory::create({program->folderPaths(0), "loki/"});
 
-  cpuUsage = new uint8[0x1000000]();
-  apuUsage = new uint8[0x10000]();
+  cpuUsage = new uint8_t[0x1000000]();
+  apuUsage = new uint8_t[0x10000]();
   file fp;
 
-  if(fp.open({interface->pathname, "loki/cpu.usage.map"}, file::mode::read)) {
+  if(fp.open({program->folderPaths(0), "loki/cpu.usage.map"}, file::mode::read)) {
     if(fp.size() == 0x1000000) fp.read(cpuUsage, 0x1000000);
     fp.close();
   }
 
-  if(fp.open({interface->pathname, "loki/apu.usage.map"}, file::mode::read)) {
+  if(fp.open({program->folderPaths(0), "loki/apu.usage.map"}, file::mode::read)) {
     if(fp.size() == 0x10000) fp.read(apuUsage, 0x10000);
     fp.close();
   }
@@ -38,8 +38,8 @@ void Debugger::load() {
 void Debugger::unload() {
   if(cpuTracerFile.open()) cpuTracerFile.close();
   if(smpTracerFile.open()) smpTracerFile.close();
-  file::write({interface->pathname, "loki/cpu.usage.map"}, cpuUsage, 0x1000000);
-  file::write({interface->pathname, "loki/apu.usage.map"}, apuUsage, 0x10000);
+  file::write({program->folderPaths(0), "loki/cpu.usage.map"}, cpuUsage, 0x1000000);
+  file::write({program->folderPaths(0), "loki/apu.usage.map"}, apuUsage, 0x10000);
   delete[] cpuUsage;
   delete[] apuUsage;
   cpuUsage = nullptr;
@@ -73,7 +73,7 @@ void Debugger::stop() {
 
 void Debugger::leave() {
   stop();
-  SFC::scheduler.debug();
+  SFC::scheduler.exit(SFC::Scheduler::Event::Debugger);
 }
 
 bool Debugger::breakpointTest(Source source, Breakpoint::Mode mode, unsigned addr, uint8 data) {
@@ -85,8 +85,8 @@ bool Debugger::breakpointTest(Source source, Breakpoint::Mode mode, unsigned add
     if(bp.addr != addr) continue;
     if(bp.mode != Breakpoint::Mode::Execute && bp.data && bp.data() != data) continue;
     string output = {"Breakpoint #", n, " hit"};
-    if(bp.mode == Breakpoint::Mode::Read ) output.append("; read ",  hex<2>(data));
-    if(bp.mode == Breakpoint::Mode::Write) output.append("; wrote ", hex<2>(data));
+    if(bp.mode == Breakpoint::Mode::Read ) output.append("; read ",  hex(data, 2U));
+    if(bp.mode == Breakpoint::Mode::Write) output.append("; wrote ", hex(data, 2U));
     output.append("; triggered: ", ++bp.triggered);
     echo(output, "\n");
     return true;
@@ -97,13 +97,13 @@ bool Debugger::breakpointTest(Source source, Breakpoint::Mode mode, unsigned add
 string Debugger::cpuDisassemble() {
   char text[4096];
   SFC::cpu.disassemble_opcode(text);
-  return {text, " F:", (unsigned)SFC::cpu.field(), " V:", format<3>(SFC::cpu.vcounter()), " H:", format<4>(SFC::cpu.hcounter())};
+  return {text, " F:", (unsigned)SFC::cpu.field(), " V:", natural(SFC::cpu.vcounter(), 3U), " H:", natural(SFC::cpu.hcounter(), 4U)};
 }
 
 string Debugger::cpuDisassemble(unsigned addr, bool e, bool m, bool x) {
   char text[4096];
   SFC::cpu.disassemble_opcode(text, addr, e, m, x);
-  return {text, " F:", (unsigned)SFC::cpu.field(), " V:", format<3>(SFC::cpu.vcounter()), " H:", format<4>(SFC::cpu.hcounter())};
+  return {text, " F:", (unsigned)SFC::cpu.field(), " V:", natural(SFC::cpu.vcounter(), 3U), " H:", natural(SFC::cpu.hcounter(), 4U)};
 }
 
 void Debugger::cpuExec(uint24 addr) {
@@ -170,17 +170,20 @@ void Debugger::echoBreakpoints() {
   if(breakpoints.size() == 0) return;
   echo("#    source  type      addr    data  triggered\n");
   echo("---  ------  --------  ------  ----  ---------\n");
+  char t[256];
   for(unsigned n = 0; n < breakpoints.size(); n++) {
     auto& bp = breakpoints[n];
-    string output = {format<-3>(n), "  "};
-    output.append(format<-6>(sourceName(bp.source)), "  ");
+    string output = {natural(n, 3U), "  "};
+    sprintf(t, "%-6s", (const uint8_t*)sourceName(bp.source));
+    output.append(string{t}, "  ");
     if(bp.mode == Breakpoint::Mode::Disabled) output.append("disabled  ");
     if(bp.mode == Breakpoint::Mode::Read    ) output.append("read      ");
     if(bp.mode == Breakpoint::Mode::Write   ) output.append("write     ");
     if(bp.mode == Breakpoint::Mode::Execute ) output.append("execute   ");
-    output.append(hex<6>(bp.addr), "  ");
-    output.append(bp.data ? hex<2>(bp.data()) : "  ", "    ");
-    output.append(format<-9>(bp.triggered));
+    output.append(hex(bp.addr, 6U), "  ");
+    output.append(bp.data ? hex(bp.data(), 2U) : "  ", "    ");
+    sprintf(t, "%-9s", (const uint8_t*)bp.triggered);
+    output.append(string{t});
     echo(output, "\n");
   }
 }
@@ -188,8 +191,8 @@ void Debugger::echoBreakpoints() {
 void Debugger::echoDisassemble(Source source, unsigned addr, signed size) {
   if(source != Source::CPU && source != Source::SMP) return;
   const unsigned maximumDisplacement = (source == Source::CPU ? 5 : 4);  //maximum opcode length
-  uint8* usage = (source == Source::CPU ? cpuUsage : apuUsage);
-  if(!(usage[addr] & Usage::Execute)) return echo("No usage data available for ", sourceName(source), "/", hex<6>(addr), "\n");
+  uint8_t* usage = (source == Source::CPU ? cpuUsage : apuUsage);
+  if(!(usage[addr] & Usage::Execute)) return; echo("No usage data available for ", sourceName(source), "/", hex(addr, 6U), "\n");
 
   while(size > 0) {
     string text;
@@ -229,29 +232,29 @@ void Debugger::echoHex(Source source, unsigned addr, signed size) {
         asciidata.append("?");
       } else {
         uint8 byte = memoryRead(source, addr + n);
-        hexdata.append(hex<2>(byte), " ");
+        hexdata.append(hex(byte, 2U), " ");
         asciidata.append(byte >= 0x20 && byte <= 0x7e ? (char)byte : '.');
       }
     }
-    echo(hex<6>(addr % memorySize(source)), " [ ", hexdata, "] ", asciidata, "\n");
+    echo(hex(addr % memorySize(source), 6U), " [ ", hexdata, "] ", asciidata, "\n");
     addr += 16, size -= 16;
   }
 }
 
-void Debugger::memoryExport(Source source, string filename) {
+void Debugger::memoryExport(Source source, string name) {
   file fp;
-  if(fp.open(filename, file::mode::write)) {
+  if(fp.open(name, file::mode::write)) {
     unsigned size = memorySize(source);
     for(unsigned addr = 0; addr < size; addr++) {
       fp.write(memoryRead(source, addr));
     }
-    echo("Exported memory to ", notdir(filename), "\n");
+    echo("Exported memory to ", filename(name), "\n");
   }
 }
 
 uint8 Debugger::memoryRead(Source source, unsigned addr) {
   if(source == Source::CPU) {
-    return SFC::bus.read(addr & 0xffffff);
+    return SFC::bus.read(addr & 0xffffff, SFC::cpu.regs.mdr);
   }
 
   if(source == Source::APU) {
@@ -348,11 +351,11 @@ void Debugger::ppuVramWrite(uint16 addr, uint8 data) {
 }
 
 string Debugger::smpDisassemble() {
-  return SFC::smp.disassemble_opcode(SFC::smp.regs.pc, SFC::smp.regs.p.p);
+  return SFC::smp.disassemble(SFC::smp.regs.pc, SFC::smp.regs.p.p);
 }
 
 string Debugger::smpDisassemble(uint16 addr, bool p) {
-  return SFC::smp.disassemble_opcode(addr, p);
+  return SFC::smp.disassemble(addr, p);
 }
 
 void Debugger::smpExec(uint16 addr) {
@@ -428,19 +431,19 @@ string Debugger::sourceName(Source source) {
   return "none";
 }
 
-void Debugger::stateLoad(string filename) {
-  auto memory = file::read(filename);
-  if(memory.size() == 0) return echo("Error: state file ", notdir(filename), " not found\n");
+void Debugger::stateLoad(string name) {
+  auto memory = file::read(name);
+  if(memory.size() == 0) return; echo("Error: state file ", filename(name), " not found\n");
   serializer s(memory.data(), memory.size());
-  if(emulator->unserialize(s) == false) return echo("Error: failed to unserialize state from ", notdir(filename), "\n");
-  echo("State loaded from ", notdir(filename), "\n");
+  if(emulator->unserialize(s) == false) return; echo("Error: failed to unserialize state from ", filename(name), "\n");
+  echo("State loaded from ", filename(name), "\n");
 }
 
-void Debugger::stateSave(string filename) {
+void Debugger::stateSave(string name) {
   savingState = true;
   serializer s = emulator->serialize();
-  if(file::write(filename, s.data(), s.size())) {
-    echo("State saved to ", notdir(filename), "\n");
+  if(file::write(name, s.data(), s.size())) {
+    echo("State saved to ", filename(name), "\n");
   }
   savingState = false;
 }
@@ -450,7 +453,7 @@ void Debugger::tracerDisable(Source source) {
   file& tracerFile = (source == Source::CPU ? cpuTracerFile : smpTracerFile);
   if(tracerFile.open() == false) return;
   tracerFile.close();
-  echo(sourceName(source).upper(), " tracer disabled\n");
+  echo(sourceName(source).upcase(), " tracer disabled\n");
 }
 
 void Debugger::tracerEnable(Source source, string filename) {
@@ -458,7 +461,7 @@ void Debugger::tracerEnable(Source source, string filename) {
   file& tracerFile = (source == Source::CPU ? cpuTracerFile : smpTracerFile);
   if(tracerFile.open() == true) return;
   if(tracerFile.open(filename, file::mode::write)) {
-    echo(sourceName(source).upper(), " tracer enabled\n");
+    echo(sourceName(source).upcase(), " tracer enabled\n");
   }
 }
 
@@ -466,7 +469,7 @@ void Debugger::tracerMaskDisable(Source source) {
   if(source != Source::CPU && source != Source::SMP) return;
   bitvector& tracerMask = (source == Source::CPU ? cpuTracerMask : smpTracerMask);
   tracerMask.reset();
-  echo(sourceName(source).upper(), " tracer mask disabled\n");
+  echo(sourceName(source).upcase(), " tracer mask disabled\n");
 }
 
 void Debugger::tracerMaskEnable(Source source) {
@@ -475,5 +478,5 @@ void Debugger::tracerMaskEnable(Source source) {
   unsigned size = (source == Source::CPU ? 0x1000000 : 0x10000);
   tracerMask.resize(size);
   tracerMask.clear();
-  echo(sourceName(source).upper(), " tracer mask enabled\n");
+  echo(sourceName(source).upcase(), " tracer mask enabled\n");
 }

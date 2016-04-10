@@ -23,7 +23,7 @@ namespace Famicom {
 
 namespace Famicom {
   struct Thread {
-    ~Thread() {
+    virtual ~Thread() {
       if(thread) co_delete(thread);
     }
 

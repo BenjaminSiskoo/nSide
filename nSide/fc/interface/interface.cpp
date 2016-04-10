@@ -30,7 +30,7 @@ Interface::Interface() {
   port.append({3, "Arcade Panel"});
 
   { Device device{
-      (uint)Famicom::Device::ID::None,
+      Famicom::Device::None,
       ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort,
       "None"
     };
@@ -38,7 +38,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::Gamepad,
+      Famicom::Device::Gamepad,
       ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort,
       "Gamepad"
     };
@@ -55,7 +55,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::FourPlayers,
+      Famicom::Device::FourPlayers,
       ID::ExpansionPort,
       "4-Players Adaptor"
     };
@@ -75,7 +75,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::FourScore,
+      Famicom::Device::FourScore,
       ID::ControllerPort1,
       "Four Score"
     };
@@ -95,7 +95,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::FourScore,
+      Famicom::Device::FourScore,
       ID::ControllerPort2,
       "Four Score"
     };
@@ -115,7 +115,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::BeamGun,
+      Famicom::Device::BeamGun,
       ID::ExpansionPort,
       "Beam Gun"
     };
@@ -127,7 +127,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::BeamGun,
+      Famicom::Device::BeamGun,
       ID::ControllerPort2,
       "Zapper"
     };
@@ -139,7 +139,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::FamilyTrainer,
+      Famicom::Device::FamilyTrainer,
       ID::ExpansionPort,
       "Family Trainer"
     };
@@ -151,7 +151,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::FamilyTrainer,
+      Famicom::Device::FamilyTrainer,
       ID::ControllerPort2,
       "Power Pad"
     };
@@ -163,7 +163,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::Vaus,
+      Famicom::Device::Vaus,
       ID::ControllerPort2 | ID::ExpansionPort,
       "Arkanoid Vaus"
     };
@@ -174,7 +174,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::SFCGamepad,
+      Famicom::Device::SFCGamepad,
       ID::ControllerPort1 | ID::ControllerPort2,
       "SFC Gamepad"
     };
@@ -195,7 +195,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::Mouse,
+      Famicom::Device::Mouse,
       ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort,
       "Mouse"
     };
@@ -208,7 +208,7 @@ Interface::Interface() {
   }
 
   { Device device{
-      (uint)Famicom::Device::ID::VSPanel,
+      Famicom::Device::VSPanel,
       ID::ArcadePanel,
       "VS. Panel"
     };
@@ -341,8 +341,8 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  if(system.vs() || port == (uint)Famicom::Device::Port::ArcadePanel) return;
-  Famicom::device.connect(port, (Famicom::Device::ID)device);
+  if(system.vs() || port == Famicom::Port::Arcade) return;
+  Famicom::peripherals.connect(port, device);
 }
 
 auto Interface::power() -> void {

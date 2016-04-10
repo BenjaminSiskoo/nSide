@@ -1,5 +1,10 @@
 #pragma once
 
+//based on higan's WonderSwan, WonderSwan Color, and SwanCrystal emulator by byuu,
+//with contributions from trap15.
+//license: GPLv3
+//original project started: 2016-01-26
+
 #include <emulator/emulator.hpp>
 #include <processor/v30mz/v30mz.hpp>
 
@@ -8,14 +13,6 @@ namespace WonderSwan {
     static const uint SerializerVersion = 1;
   }
 }
-
-/*
-  based on higan's WonderSwan, WonderSwan Color, and SwanCrystal emulator
-  original author: byuu
-  contributors: trap15
-  license: GPLv3
-  original project started: 2016-01-26
-*/
 
 #include <libco/libco.h>
 

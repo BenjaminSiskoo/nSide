@@ -48,16 +48,16 @@ auto Cartridge::parseMarkupVS(Markup::Node& document, Markup::Node& board_node) 
   string device1 = board_node.find("controller(port=1)/device")(0).text();
   string device2 = board_node.find("controller(port=2)/device")(0).text();
   if(device1 == "gamepad") {
-    device.connect(0, Famicom::Device::ID::Gamepad);
+    peripherals.connect(0, Device::Gamepad);
   } else if(device1 == "none") {
-    device.connect(0, Famicom::Device::ID::None);
+    peripherals.connect(0, Device::None);
   }
   if(device2 == "gamepad") {
-    device.connect(1, Famicom::Device::ID::Gamepad);
+    peripherals.connect(1, Device::Gamepad);
   } else if(device2 == "beamgun") {
-    device.connect(1, Famicom::Device::ID::BeamGun);
+    peripherals.connect(1, Device::BeamGun);
   } else if(device2 == "none") {
-    device.connect(1, Famicom::Device::ID::None);
+    peripherals.connect(1, Device::None);
   }
   vssystem.setDip(primarySide, interface->dipSettings(board_node));
 

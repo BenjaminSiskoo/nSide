@@ -31,4 +31,4 @@ struct Settings : Configuration::Document {
   void command(string s, lstring args);
 };
 
-extern Settings* settings;
+extern unique_pointer<Settings> settings;

@@ -5,7 +5,7 @@ void AbstractInput::bind() {
   for(auto device : inputManager->devices) {
     if(device->isKeyboard() == false) continue;
     if(auto group = device->find("Button")) {
-      if(auto input = device->group[group()].find(mapping)) {
+      if(auto input = device->group(group()).find(mapping)) {
         this->device = device;
         this->group = group();
         this->input = input();
@@ -16,8 +16,8 @@ void AbstractInput::bind() {
 }
 
 int16_t AbstractInput::poll() {
-  if(device == nullptr) return 0;
-  return device->group[group].input[input].value;
+  if(!device) return 0;
+  return device->group(group).input(input).value();
 }
 
 InputManager::InputManager() {
@@ -54,12 +54,12 @@ void InputManager::load() {
 
   append(emulatorNode, "SuperFamicom");
 
-  Configuration::Document::load(program->path("input.bml"));
-  Configuration::Document::save(program->path("input.bml"));
+  Configuration::Document::load(locate("input.bml"));
+  Configuration::Document::save(locate("input.bml"));
 }
 
 void InputManager::unload() {
-  Configuration::Document::save(program->path("input.bml"));
+  Configuration::Document::save(locate("input.bml"));
 }
 
 void InputManager::bind() {
@@ -67,7 +67,7 @@ void InputManager::bind() {
 }
 
 void InputManager::poll() {
-  auto devices = input.poll();
+  auto devices = input->poll();
   bool changed = devices.size() != this->devices.size();
   if(changed == false) {
     for(unsigned n = 0; n < devices.size(); n++) {

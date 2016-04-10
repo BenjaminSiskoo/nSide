@@ -358,15 +358,15 @@ auto Video::drawCursor(uint32 color, int x, int y) -> void {
 }
 
 auto Video::drawCursors() -> void {
-  if((Device::ID)settings.controllerPort2 == Famicom::Device::ID::BeamGun) { // Zapper
-    if(dynamic_cast<BeamGun*>(device.controllerPort2)) {
-      auto& controller = (BeamGun&)*device.controllerPort2;
+  if(settings.controllerPort2 == Device::BeamGun) { // Zapper
+    if(dynamic_cast<BeamGun*>(peripherals.controllerPort2)) {
+      auto& controller = (BeamGun&)*peripherals.controllerPort2;
       drawCursor(0xfffd9b00, controller.x, controller.y);
     }
   }
-  if((Device::ID)settings.expansionPort == Famicom::Device::ID::BeamGun) { // Beam Gun
-    if(dynamic_cast<BeamGun*>(device.expansionPort)) {
-      auto& controller = (BeamGun&)*device.expansionPort;
+  if(settings.expansionPort == Device::BeamGun) { // Beam Gun
+    if(dynamic_cast<BeamGun*>(peripherals.expansionPort)) {
+      auto& controller = (BeamGun&)*peripherals.expansionPort;
       drawCursor(0xff4e4e4e, controller.x, controller.y);
     }
   }

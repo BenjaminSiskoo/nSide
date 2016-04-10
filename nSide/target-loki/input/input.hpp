@@ -5,7 +5,7 @@ struct AbstractInput {
   string name;
   string mapping;
 
-  HID::Device* device = nullptr;
+  shared_pointer<HID::Device> device;
   unsigned group = 0;
   unsigned input = 0;
 };
@@ -18,7 +18,7 @@ struct InputManager : Configuration::Document {
   void bind();
   void poll();
 
-  vector<HID::Device*> devices;
+  vector<shared_pointer<HID::Device>> devices;
   vector<AbstractInput*> inputMap;
 };
 

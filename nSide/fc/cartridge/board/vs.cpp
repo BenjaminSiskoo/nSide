@@ -53,7 +53,7 @@ struct VS : Board {
     }
     if((addr & 0xe000) == 0x6000) {
       if(prgram.size() == 0) return vssystem.read(cpu.side, addr, cpu.mdr());
-      else                 return read(prgram, addr);
+      else                   return read(prgram, addr);
     }
     return cpu.mdr();
   }

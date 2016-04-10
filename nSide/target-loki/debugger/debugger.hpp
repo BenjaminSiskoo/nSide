@@ -70,7 +70,7 @@ struct Debugger {
   bool running = false;      //emulation runs asynchronously (cooperatively) to terminal commands
   bool savingState = false;  //suppresses all break events to allow state to be captured synchronously
 
-  uint8* apuUsage = nullptr;
+  uint8_t* apuUsage = nullptr;
   vector<Breakpoint> breakpoints;
   unsigned cpuInstructionCounter = 0;
   maybe<unsigned> cpuRunFor;
@@ -79,7 +79,7 @@ struct Debugger {
   maybe<unsigned> cpuStepTo;
   file cpuTracerFile;
   bitvector cpuTracerMask;
-  uint8* cpuUsage = nullptr;
+  uint8_t* cpuUsage = nullptr;
   unsigned smpInstructionCounter = 0;
   maybe<unsigned> smpRunFor;
   maybe<unsigned> smpRunTo;

@@ -15,15 +15,16 @@ Controller::Controller(uint port, uint device_id) : port(port), device_id(device
   if(!thread) create(Controller::Enter, 1);
 }
 
-Controller::Controller(uint port) : port(port), device_id((uint)Device::ID::None) {
+Controller::Controller(uint port) : port(port), device_id(Device::None) {
   if(!thread) create(Controller::Enter, 1);
 }
 
 auto Controller::Enter() -> void {
   while(true) {
-    if(co_active() == device.controllerPort1->thread) device.controllerPort1->main();
-    if(co_active() == device.controllerPort2->thread) device.controllerPort2->main();
-    if(co_active() == device.expansionPort->thread)   device.expansionPort->main();
+    scheduler.synchronize();
+    if(co_active() == peripherals.controllerPort1->thread) peripherals.controllerPort1->main();
+    if(co_active() == peripherals.controllerPort2->thread) peripherals.controllerPort2->main();
+    if(co_active() == peripherals.expansionPort->thread)   peripherals.expansionPort->main();
   }
 }
 

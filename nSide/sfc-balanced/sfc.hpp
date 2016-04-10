@@ -27,7 +27,7 @@ namespace SuperFamicom {
 
 namespace SuperFamicom {
   struct Thread {
-    ~Thread() {
+    virtual ~Thread() {
       if(thread) co_delete(thread);
     }
 
@@ -63,10 +63,10 @@ namespace SuperFamicom {
   #include <sfc-balanced/ppu/ppu.hpp>
 
   #include <sfc-balanced/controller/controller.hpp>
+  #include <sfc-balanced/expansion/expansion.hpp>
   #include <sfc-balanced/system/system.hpp>
   #include <sfc-balanced/scheduler/scheduler.hpp>
   #include <sfc-balanced/coprocessor/coprocessor.hpp>
-  #include <sfc-balanced/expansion/expansion.hpp>
   #include <sfc-balanced/slot/slot.hpp>
   #include <sfc-balanced/cartridge/cartridge.hpp>
   #include <sfc-balanced/cheat/cheat.hpp>

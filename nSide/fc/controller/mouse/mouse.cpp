@@ -1,4 +1,4 @@
-Mouse::Mouse(uint port) : Controller(port, (uint)Device::ID::Mouse) {
+Mouse::Mouse(uint port) : Controller(port, Device::Mouse) {
   latched = 0;
   counter = 0;
 

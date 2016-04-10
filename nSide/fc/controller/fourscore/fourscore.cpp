@@ -1,4 +1,4 @@
-FourScore::FourScore(uint port) : Controller(port, (uint)Device::ID::FourScore) {
+FourScore::FourScore(uint port) : Controller(port, Device::FourScore) {
   latched = 0;
   counter = 0;
 }

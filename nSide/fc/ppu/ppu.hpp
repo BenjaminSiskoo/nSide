@@ -57,7 +57,7 @@ struct PPU : Thread, public PPUcounter {
   alwaysinline auto oamWrite(uint8 addr, uint8 data) -> void;
 
   //mmio.cpp
-  auto read(uint16 addr) -> uint8;
+  auto read(uint16 addr, uint8 data) -> uint8;
   auto write(uint16 addr, uint8 data) -> void;
 
   uint8 ciram[4096]; // 2048 in Famicom and PlayChoice-10

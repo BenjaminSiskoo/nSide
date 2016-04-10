@@ -5,7 +5,6 @@ flags += -DDEBUGGER
 
 include sfc/GNUmakefile
 include processor/GNUmakefile
-include emulator/GNUmakefile
 
 ui_objects := ui-loki ui-program ui-settings ui-input
 ui_objects += ui-debugger ui-terminal ui-presentation
@@ -34,8 +33,6 @@ link += $(hirolink)
 # rules
 objects := $(ui_objects) $(objects)
 objects := $(patsubst %,obj/%.o,$(objects))
-
-obj/libco.o: ../libco/libco.c $(call rwildcard,../libco/)
 
 obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,../ruby/)
 	$(compiler) $(rubyflags) -c $< -o $@

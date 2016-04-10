@@ -1,4 +1,19 @@
 struct PlayChoice10 {
+  auto init() -> void;
+  auto load() -> void;
+  auto unload() -> void;
+  auto power() -> void;
+  auto reset() -> void;
+
+  auto setDip(uint16 dip) -> void;
+  auto read(uint16 addr) -> uint8;
+  auto write(uint16 addr, uint8 data) -> void;
+
+  auto io_read(uint16 addr) -> uint8;
+  auto io_write(uint16 addr, uint8 data) -> void;
+
+  auto serialize(serializer& s) -> void;
+
   uint8 bios[16384];
   uint8 wram[2048];
   uint8 sram[2048];
@@ -36,21 +51,6 @@ struct PlayChoice10 {
   uint7 promAddress;
 
   uint32 videoOutput[256 * 240];
-
-  auto init() -> void;
-  auto load() -> void;
-  auto unload() -> void;
-  auto power() -> void;
-  auto reset() -> void;
-
-  auto setDip(uint16 dip) -> void;
-  auto read(uint16 addr) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
-
-  auto io_read(uint16 addr) -> uint8;
-  auto io_write(uint16 addr, uint8 data) -> void;
-
-  auto serialize(serializer& s) -> void;
 
 private:
   auto videoPower() -> void;
