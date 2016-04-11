@@ -228,7 +228,7 @@ auto Cartridge::parseMarkupARMDSP(Markup::Node root) -> void {
   interface->loadRequest(ID::ArmDSPPROM, root["prom"]["name"].text(), true);
   interface->loadRequest(ID::ArmDSPDROM, root["drom"]["name"].text(), true);
   interface->loadRequest(ID::ArmDSPRAM, root["dram"]["name"].text(), false);
-  memory.append({ID::ArmDSPRAM, root["dram"]["name"].text()});
+  if(!root["dram/volatile"]) memory.append({ID::ArmDSPRAM, root["dram/name"].text()});
 
   for(auto node : root.find("map")) {
     parseMarkupMap(node, {&ArmDSP::mmio_read, &armdsp}, {&ArmDSP::mmio_write, &armdsp});
@@ -247,6 +247,7 @@ auto Cartridge::parseMarkupHitachiDSP(Markup::Node root, uint roms) -> void {
 
   interface->loadRequest(ID::HitachiDSPDROM, root["drom"]["name"].text(), true);
   interface->loadRequest(ID::HitachiDSPDRAM, root["dram"]["name"].text(), false);
+  if(!root["dram/volatile"]) memory.append({ID::HitachiDSPDRAM, root["dram/name"].text()});
 
   parseMarkupMemory(hitachidsp.rom, root["rom"], ID::HitachiDSPROM, false);
   parseMarkupMemory(hitachidsp.ram, root["ram"], ID::HitachiDSPRAM, true);
@@ -286,14 +287,14 @@ auto Cartridge::parseMarkupNECDSP(Markup::Node root) -> void {
     interface->loadRequest(ID::Nec7725DSPPROM, root["prom"]["name"].text(), true);
     interface->loadRequest(ID::Nec7725DSPDROM, root["drom"]["name"].text(), true);
     interface->loadRequest(ID::Nec7725DSPRAM, root["dram"]["name"].text(), false);
-    memory.append({ID::Nec7725DSPRAM, root["dram"]["name"].text()});
+    if(!root["dram/volatile"]) memory.append({ID::Nec7725DSPRAM, root["dram/name"].text()});
   }
 
   if(necdsp.revision == NECDSP::Revision::uPD96050) {
     interface->loadRequest(ID::Nec96050DSPPROM, root["prom"]["name"].text(), true);
     interface->loadRequest(ID::Nec96050DSPDROM, root["drom"]["name"].text(), true);
     interface->loadRequest(ID::Nec96050DSPRAM, root["dram"]["name"].text(), false);
-    memory.append({ID::Nec96050DSPRAM, root["dram"]["name"].text()});
+    if(!root["dram/volatile"]) memory.append({ID::Nec96050DSPRAM, root["dram/name"].text()});
   }
 
   for(auto node : root.find("map")) {
