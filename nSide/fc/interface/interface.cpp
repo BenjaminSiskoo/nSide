@@ -260,6 +260,8 @@ auto Interface::group(uint id) -> uint {
   case ID::PC10BIOS:
   case ID::PC10CharacterROM:
   case ID::PC10PaletteROM:
+  case ID::FamicomBoxPRG:
+  case ID::FamicomBoxCHR:
     return ID::System;
   case ID::Manifest:
   case ID::ProgramROM:
@@ -271,6 +273,7 @@ auto Interface::group(uint id) -> uint {
     case System::Revision::Famicom:      return ID::Famicom;
     case System::Revision::VSSystem:     return ID::VSSystem;
     case System::Revision::PlayChoice10: return ID::PlayChoice10;
+    case System::Revision::FamicomBox:   return ID::FamicomBox;
     }
   case ID::InstructionROM:
   case ID::KeyROM:
@@ -283,9 +286,10 @@ auto Interface::group(uint id) -> uint {
 auto Interface::load(uint id) -> void {
   information.width  = 256;
   information.height = 240;
-  if(id == ID::Famicom) system.load(System::Revision::Famicom);
-  if(id == ID::VSSystem) system.load(System::Revision::VSSystem); 
+  if(id == ID::Famicom)      system.load(System::Revision::Famicom);
+  if(id == ID::VSSystem)     system.load(System::Revision::VSSystem); 
   if(id == ID::PlayChoice10) system.load(System::Revision::PlayChoice10);
+  if(id == ID::FamicomBox)   system.load(System::Revision::FamicomBox);
 }
 
 auto Interface::save() -> void {
@@ -307,6 +311,12 @@ auto Interface::load(uint id, const stream& stream) -> void {
     break;
   case ID::PC10PaletteROM:
     stream.read((uint8_t*)playchoice10.cgrom, min(768u, stream.size()));
+    break;
+  case ID::FamicomBoxPRG:
+    stream.read((uint8_t*)famicombox.bios_prg, min(32768u, stream.size()));
+    break;
+  case ID::FamicomBoxCHR:
+    stream.read((uint8_t*)famicombox.bios_chr, min(8192u, stream.size()));
     break;
   }
 

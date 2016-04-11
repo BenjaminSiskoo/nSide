@@ -14,6 +14,8 @@ struct ID {
     PC10BIOS,
     PC10CharacterROM,
     PC10PaletteROM,
+    FamicomBoxPRG,
+    FamicomBoxCHR,
 
     Manifest,
     ProgramROM,

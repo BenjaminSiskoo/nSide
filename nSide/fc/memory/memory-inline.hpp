@@ -90,7 +90,8 @@ auto Bus::reduce(uint addr, uint mask) -> uint {
 //$4018-ffff = Cartridge
 
 auto Bus::read(uint16 addr, uint8 data) -> uint8 {
-  data = reader[lookup[addr]](target[addr], cartridge.prg_read(addr));
+  if(!system.fcb()) data = cartridge.prg_read(addr);
+  data = reader[lookup[addr]](target[addr], data);
   if(cheat.enable()) {
     if(auto result = cheat.find(addr, data)) return result();
   }
@@ -98,6 +99,6 @@ auto Bus::read(uint16 addr, uint8 data) -> uint8 {
 }
 
 auto Bus::write(uint16 addr, uint8 data) -> void {
-  cartridge.prg_write(addr, data);
+  if(!system.fcb()) cartridge.prg_write(addr, data);
   return writer[lookup[addr]](target[addr], data);
 }

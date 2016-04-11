@@ -1,9 +1,9 @@
-processors += r6502
+processors += r6502 z80
 
 objects += fc-interface fc-system fc-scheduler fc-controller
 objects += fc-cartridge fc-cheat
 objects += fc-memory fc-cpu fc-apu fc-ppu
-objects += fc-vssystem fc-playchoice10
+objects += fc-vssystem fc-playchoice10 fc-famicombox
 
 obj/fc-interface.o:    fc/interface/interface.cpp $(call rwildcard,fc/interface/)
 obj/fc-system.o:       fc/system/system.cpp $(call rwildcard,fc/system/)
@@ -19,3 +19,4 @@ obj/fc-ppu.o:          fc/ppu/ppu.cpp $(call rwildcard,fc/ppu/)
 
 obj/fc-vssystem.o:     fc/arcade/vssystem/vssystem.cpp $(call rwildcard,fc/arcade/vssystem/)
 obj/fc-playchoice10.o: fc/arcade/playchoice10/playchoice10.cpp $(call rwildcard,fc/arcade/playchoice10/)
+obj/fc-famicombox.o:   fc/arcade/famicombox/famicombox.cpp $(call rwildcard,fc/arcade/famicombox/)

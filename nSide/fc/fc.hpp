@@ -7,6 +7,7 @@
 
 #include <emulator/emulator.hpp>
 #include <processor/r6502/r6502.hpp>
+#include <processor/z80/z80.hpp>
 
 namespace Famicom {
   namespace Info {

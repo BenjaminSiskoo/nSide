@@ -3,7 +3,7 @@
 namespace Famicom {
 
 PlayChoice10 playchoice10;
-
+#include "cpu.cpp"
 #include "video-circuit.cpp"
 #include "serialization.cpp"
 
@@ -18,6 +18,7 @@ auto PlayChoice10::unload() -> void {
 }
 
 auto PlayChoice10::power() -> void {
+  pc10cpu.power();
   vramAccess = 1; // 0: Z80,                  1: video circuit
   controls   = 1; // 0: disable START/SELECT, 1: enable START/SELECT
   ppuOutput  = 1; // 0: disable,              1: enable
@@ -28,13 +29,14 @@ auto PlayChoice10::power() -> void {
   z80NMI     = 0; // 0: disable,              1: enable
   watchdog   = 1; // 0: enable,               1: disable
   ppuReset   = 1; // 0: reset,                1: run
-  channel    = 0; // 0-9 internally, 1-10 to players
+  channel    = 0; // 0-9 internally, 1-10 on screen
   sramBank   = 1; // bank at $8c00-8fff
   videoPower();
   updateVideo();
 }
 
 auto PlayChoice10::reset() -> void {
+  //pc10cpu.reset();
 }
 
 auto PlayChoice10::setDip(uint16 dip) -> void {
@@ -77,7 +79,7 @@ auto PlayChoice10::write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto PlayChoice10::io_read(uint16 addr) -> uint8 {
+auto PlayChoice10::portRead(uint8 addr) -> uint8 {
   uint8 data = 0x00;
   bool channelSelect = false;
   bool enter         = false;
@@ -85,8 +87,8 @@ auto PlayChoice10::io_read(uint16 addr) -> uint8 {
   bool coin2         = false;
   bool service       = false;
   bool coin1         = false;
-  switch(addr & 0x0003) {
-  case 0x0000:
+  switch(addr & 0x03) {
+  case 0x00:
     data |= channelSelect       << 0;
     data |= enter               << 1;
     data |= reset               << 2;
@@ -96,37 +98,37 @@ auto PlayChoice10::io_read(uint16 addr) -> uint8 {
     data |= service             << 6;
     data |= coin1               << 7;
     break;
-  case 0x0001: data = (dip >> 0) & 0xff; break;
-  case 0x0002: data = (dip >> 8) & 0xff; break;
-  case 0x0003: data = 0x00; break;
+  case 0x01: data = (dip >> 0) & 0xff; break;
+  case 0x02: data = (dip >> 8) & 0xff; break;
+  case 0x03: data = 0x00; break;
   }
   return data;
 }
 
-auto PlayChoice10::io_write(uint16 addr, uint8 data) -> void {
+auto PlayChoice10::portWrite(uint8 addr, uint8 data) -> void {
   data &= 0x01;
-  switch(addr & 0x001f) {
-  case 0x0000: vramAccess = data; break;
-  case 0x0001: controls   = data; break;
-  case 0x0002: ppuOutput  = data; break;
-  case 0x0003: apuOutput  = data; break;
-  case 0x0004: cpuReset   = data; break;
-  case 0x0005: cpuStop    = data; break;
-  case 0x0006: display    = data; break;
-  case 0x0008: z80NMI     = data; break;
-  case 0x0009: watchdog   = data; break;
-  case 0x000a: ppuReset   = data; break;
-  case 0x000b: channel = (channel & 0xe) | (data << 0); break;
-  case 0x000c: channel = (channel & 0xd) | (data << 1); break;
-  case 0x000d: channel = (channel & 0xb) | (data << 2); break;
-  case 0x000e: channel = (channel & 0x7) | (data << 3); break;
-  case 0x000f: sramBank   = data; break;
+  switch(addr & 0x1f) {
+  case 0x00: vramAccess = data; break;
+  case 0x01: controls   = data; break;
+  case 0x02: ppuOutput  = data; break;
+  case 0x03: apuOutput  = data; break;
+  case 0x04: cpuReset   = data; break;
+  case 0x05: cpuStop    = data; break;
+  case 0x06: display    = data; break;
+  case 0x08: z80NMI     = data; break;
+  case 0x09: watchdog   = data; break;
+  case 0x0a: ppuReset   = data; break;
+  case 0x0b: channel = (channel & 0xe) | (data << 0); break;
+  case 0x0c: channel = (channel & 0xd) | (data << 1); break;
+  case 0x0d: channel = (channel & 0xb) | (data << 2); break;
+  case 0x0e: channel = (channel & 0x7) | (data << 3); break;
+  case 0x0f: sramBank   = data; break;
   }
   switch(addr & 0x13) {
-  case 0x0010: break;
-  case 0x0011: break;
-  case 0x0012: break;
-  case 0x0013: break;
+  case 0x10: break;
+  case 0x11: break;
+  case 0x12: break;
+  case 0x13: break;
   }
 }
 

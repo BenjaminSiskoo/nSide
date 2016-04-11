@@ -1,9 +1,11 @@
 system name:PlayChoice-10
   pc10
     screen mode=2
-    rom name=bios-dual.rom size=16384
-    rom name=character.rom size=24576
-    rom name=palette.rom size=768
+    cpu
+      rom name=bios-dual.rom size=0x4000
+    video-circuit
+      vrom name=character.rom size=0x6000
+      cgrom name=palette.rom size=0x300
     setting name="Attract Mode Sounds"
       option value="0x0040" name="Plays"
       option value="0x0000" name="Muted"

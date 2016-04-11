@@ -1,0 +1,5 @@
+system name:FamicomBox
+  prg
+    rom name=bios.program.rom size=0x8000
+  chr
+    rom name=bios.character.rom size=0x2000

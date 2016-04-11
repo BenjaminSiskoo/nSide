@@ -1,4 +1,6 @@
 auto PlayChoice10::serialize(serializer& s) -> void {
+  pc10cpu.serialize(s);
+
   s.array(wram);
   s.array(sram);
   s.array(vram);
@@ -17,4 +19,9 @@ auto PlayChoice10::serialize(serializer& s) -> void {
   s.integer(ppuReset);
   s.integer(channel);
   s.integer(sramBank);
+}
+
+auto PlayChoice10::PC10CPU::serialize(serializer& s) -> void {
+  Z80::serialize(s);
+  Thread::serialize(s);
 }

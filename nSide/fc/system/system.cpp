@@ -34,6 +34,7 @@ auto System::init() -> void {
 
   vssystem.init();
   playchoice10.init();
+  famicombox.init();
 }
 
 auto System::term() -> void {
@@ -47,25 +48,14 @@ auto System::load(Revision revision) -> void {
   auto document = BML::unserialize(information.manifest);
 
   if(pc10()) {
-    auto rom = document["system/pc10"].find("rom");
-
-    auto firmware = rom(0)["name"].text();
+    auto firmware = document["system/pc10/cpu/rom/name"].text();
     interface->loadRequest(ID::PC10BIOS, firmware, true);
-    if(!file::exists({interface->path(ID::System), firmware})) {
-      interface->notify("Error: required PlayChoice-10 firmware ", firmware, " not found.\n");
-    }
 
-    auto character = rom(1)["name"].text();
+    auto character = document["system/pc10/video-circuit/vrom/name"].text();
     interface->loadRequest(ID::PC10CharacterROM, character, true);
-    if(!file::exists({interface->path(ID::System), character})) {
-      interface->notify("Error: required PlayChoice-10 character data ", character, " not found.\n");
-    }
 
-    auto palette = rom(2)["name"].text();
+    auto palette = document["system/pc10/video-circuit/cgrom/name"].text();
     interface->loadRequest(ID::PC10PaletteROM, palette, true);
-    if(!file::exists({interface->path(ID::System), palette})) {
-      interface->notify("Error: required PlayChoice-10 palette data ", palette, " not found.\n");
-    }
   }
 
   cartridge.load();
@@ -98,6 +88,7 @@ auto System::load(Revision revision) -> void {
     peripherals.connect(3, Device::None);
     break;
   case Revision::FamicomBox:
+    famicombox.load();
     peripherals.connect(3, Device::None);
     break;
   }
@@ -111,8 +102,9 @@ auto System::unload() -> void {
   peripherals.unload();
 
   switch(revision()) {
-  case Revision::VSSystem: vssystem.unload(); break;
+  case Revision::VSSystem:     vssystem.unload(); break;
   case Revision::PlayChoice10: playchoice10.unload(); break;
+  case Revision::FamicomBox:   famicombox.unload(); break;
   }
 
   cartridge.unload();
@@ -126,8 +118,9 @@ auto System::power() -> void {
   ppu.power();
 
   switch(revision()) {
-  case Revision::VSSystem: vssystem.power(); break;
+  case Revision::VSSystem:     vssystem.power(); break;
   case Revision::PlayChoice10: playchoice10.power(); break;
+  case Revision::FamicomBox:   famicombox.power(); break;
   }
 
   ppu.reset();
@@ -143,12 +136,15 @@ auto System::reset() -> void {
   //ppu.reset();
 
   switch(revision()) {
-  case Revision::VSSystem: vssystem.reset(); break;
+  case Revision::VSSystem:     vssystem.reset(); break;
   case Revision::PlayChoice10: playchoice10.reset(); break;
+  case Revision::FamicomBox:   famicombox.reset(); break;
   }
 
   switch(revision()) {
-  case Revision::VSSystem: cpu.coprocessors.append(&vssystem); break;
+  case Revision::VSSystem:     cpu.coprocessors.append(&vssystem); break;
+  case Revision::PlayChoice10: cpu.coprocessors.append(&playchoice10.pc10cpu); break;
+  case Revision::FamicomBox:   cpu.coprocessors.append(&famicombox); break;
   }
 
   scheduler.reset();

@@ -1,4 +1,44 @@
 struct PlayChoice10 {
+  struct PC10CPU : Processor::Z80, Cothread {
+    static auto Enter() -> void;
+    auto main() -> void;
+    auto stop() -> bool;
+    auto power() -> void;
+    auto reset() -> void;
+
+    auto op_io() -> void;
+    auto op_read(uint16 addr) -> uint8;
+    auto op_write(uint16 addr, uint8 data) -> void;
+    auto port_read(uint8 port) -> uint8;
+    auto port_write(uint8 port, uint8 data) -> void;
+
+    auto cycleEdge() -> void;
+    auto addClocks(uint clocks) -> void;
+
+    auto debugger_read(uint16 addr) -> uint8;
+
+    auto serialize(serializer& s) -> void;
+  } pc10cpu;
+
+  bool vramAccess;
+  bool controls;
+  bool ppuOutput;
+  bool apuOutput;
+  bool cpuReset;
+  bool cpuStop;
+  bool display;
+  bool z80NMI;
+  bool watchdog;
+  bool ppuReset;
+  uint4 channel;
+  bool sramBank;
+
+  bool promTest;
+  bool promClock;
+  uint7 promAddress;
+
+  uint32 videoOutput[256 * 240];
+
   auto init() -> void;
   auto load() -> void;
   auto unload() -> void;
@@ -9,8 +49,8 @@ struct PlayChoice10 {
   auto read(uint16 addr) -> uint8;
   auto write(uint16 addr, uint8 data) -> void;
 
-  auto io_read(uint16 addr) -> uint8;
-  auto io_write(uint16 addr, uint8 data) -> void;
+  auto portRead(uint8 addr) -> uint8;
+  auto portWrite(uint8 addr, uint8 data) -> void;
 
   auto serialize(serializer& s) -> void;
 
@@ -33,26 +73,8 @@ struct PlayChoice10 {
 
   uint16 dip;
 
-  bool vramAccess;
-  bool controls;
-  bool ppuOutput;
-  bool apuOutput;
-  bool cpuReset;
-  bool cpuStop;
-  bool display;
-  bool z80NMI;
-  bool watchdog;
-  bool ppuReset;
-  uint4 channel;
-  bool sramBank;
-
-  bool promTest;
-  bool promClock;
-  uint7 promAddress;
-
-  uint32 videoOutput[256 * 240];
-
 private:
+  //video-circuit.cpp
   auto videoPower() -> void;
   auto updateVideo() -> void;
 };
