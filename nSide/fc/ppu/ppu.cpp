@@ -3,7 +3,6 @@
 namespace Famicom {
 
 PPU ppu;
-#include "video.cpp"
 
 #include "memory.cpp"
 #include "mmio.cpp"
@@ -66,16 +65,6 @@ auto PPU::addClocks(uint clocks) -> void {
   }
 }
 
-auto PPU::scanline() -> void {
-  if(vcounter() == 0) frame();
-  cartridge.scanline(vcounter());
-}
-
-auto PPU::frame() -> void {
-  video.refresh();
-  scheduler.exit(Scheduler::Event::Frame);
-}
-
 auto PPU::power() -> void {
   status.vaddr = 0x0000;
 
@@ -126,8 +115,38 @@ auto PPU::reset() -> void {
 
   for(auto& n : cgram  ) n = 0;
   for(auto& n : oam    ) n = 0;
+}
 
-  video.reset();
+auto PPU::origin_x() -> uint {
+  return (system.vs() && interface->information.width == 512) ? side * 256 : 0;
+}
+
+auto PPU::origin_y() -> uint {
+  if(system.pc10()) {
+    switch(playchoice10.screenConfig) {
+    case PlayChoice10::ScreenConfig::Dual:
+      return 240;
+    case PlayChoice10::ScreenConfig::Single:
+      return 0;
+    }
+  } else {
+    return 0;
+  }
+}
+
+auto PPU::scanline() -> void {
+  if(vcounter() == 0) frame();
+  cartridge.scanline(vcounter());
+
+  if(vcounter() == 241) {
+    auto output = this->output;
+    Emulator::video.refreshRegion(output, 256 * sizeof(uint32), origin_x(), origin_y(), 256, 240);
+    scheduler.exit(Scheduler::Event::Frame);
+  }
+}
+
+auto PPU::frame() -> void {
+  if(system.pc10()) playchoice10.videoCircuit.update();
 }
 
 //

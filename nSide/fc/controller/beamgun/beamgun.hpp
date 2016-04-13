@@ -26,4 +26,9 @@ struct BeamGun : Controller {
   bool triggerlock;
 
   uint prev;
+
+  Emulator::Video::Cursor cursor;
+  static const uint64 beamgunPalette[3];
+  static const uint64 zapperPalette[3];
+  static const uint8 cursorData[15 * 15];
 };

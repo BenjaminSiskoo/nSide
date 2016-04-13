@@ -4,12 +4,13 @@
 using namespace nall;
 
 #include <audio/audio.hpp>
+#include <video/video.hpp>
 
 namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.08";
-  static const string FromVersion = "098.03";
+  static const string FromVersion = "098.04";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, gekkio, trap15, and more...";

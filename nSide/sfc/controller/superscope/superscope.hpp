@@ -26,4 +26,10 @@ struct SuperScope : Controller {
   bool pauselock;
 
   unsigned prev;
+
+  Emulator::Video::Cursor videoCursor;
+  static const uint64 normalPalette[3];
+  static const uint64 turboPalette[6];
+  static const uint8 normalData[15 * 15];
+  static const uint8 turboData[15 * 15];
 };

@@ -20,6 +20,13 @@ struct System {
   auto power() -> void;
   auto reset() -> void;
 
+  //video.cpp
+  auto configureVideo() -> void;
+  auto configureVideoPalette() -> void;
+  auto configureVideoEffects() -> void;
+  auto configureVideoCursors() -> void;
+
+  //serialization.cpp
   auto serialize() -> serializer;
   auto unserialize(serializer&) -> bool;
 

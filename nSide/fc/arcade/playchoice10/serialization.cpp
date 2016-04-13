@@ -3,7 +3,6 @@ auto PlayChoice10::serialize(serializer& s) -> void {
 
   s.array(wram);
   s.array(sram);
-  s.array(vram);
 
   s.integer(dip);
 
@@ -19,6 +18,8 @@ auto PlayChoice10::serialize(serializer& s) -> void {
   s.integer(ppuReset);
   s.integer(channel);
   s.integer(sramBank);
+
+  s.array(videoCircuit.vram);
 }
 
 auto PlayChoice10::PC10CPU::serialize(serializer& s) -> void {

@@ -30,6 +30,15 @@ SuperScope::SuperScope(bool port) : Controller(port) {
   pauselock   = false;
 
   prev = 0;
+
+  videoCursor.origin_x = 14;
+  videoCursor.origin_y = 7;
+  videoCursor.width = 15;
+  videoCursor.height = 15;
+  videoCursor.stretch_x = 2;
+  videoCursor.stretch_y = 1;
+  videoCursor.palette = normalPalette;
+  videoCursor.data = normalData;
 }
 
 auto SuperScope::main() -> void {
@@ -52,7 +61,10 @@ auto SuperScope::main() -> void {
     ny += y;
     x = max(-16, min(256 + 16, nx));
     y = max(-16, min(240 + 16, ny));
-    offscreen = (x < 0 || y < 0 || x >= 256 || y >= (ppu.overscan() ? 240 : 225));
+    offscreen = (x < 0 || y < 0 || x >= 256 || y >= ppu.vdisp());
+    videoCursor.stretch_y = ppu.interlace() + 1;
+    videoCursor.x = x * videoCursor.stretch_x;
+    videoCursor.y = y * videoCursor.stretch_y;
   }
 
   prev = next;
@@ -68,6 +80,8 @@ auto SuperScope::data() -> uint2 {
     if(newturbo) {
       if(!turbolock) turbo = !turbo;  //toggle state
       turbolock = true;
+      videoCursor.palette = !turbo ? normalPalette : turboPalette;
+      videoCursor.data = !turbo ? normalData : turboData;
     } else {
       turbolock = false;
     }
@@ -96,7 +110,7 @@ auto SuperScope::data() -> uint2 {
       pauselock = false;
     }
 
-    offscreen = (x < 0 || y < 0 || x >= 256 || y >= (ppu.overscan() ? 240 : 225));
+    offscreen = (x < 0 || y < 0 || x >= 256 || y >= ppu.vdisp());
   }
 
   switch(counter++) {
@@ -116,3 +130,44 @@ auto SuperScope::latch(bool data) -> void {
   latched = data;
   counter = 0;
 }
+
+const uint64 SuperScope::normalPalette[3] = {0x0000000000000000l, 0xffff000000000000l, 0xffff00000000ffffl};
+const uint64 SuperScope::turboPalette[6] = {
+  0x0000000000000000l, 0xffff000000000000l,
+  0xffffffff00000000l, 0xffffffff33330000l,
+  0xffffffff66660000l, 0xffffffff99990000l,
+};
+const uint8 SuperScope::normalData[15 * 15] = {
+  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
+  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
+  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
+  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
+  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
+  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
+  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
+  1,2,2,1,1,2,2,2,2,2,1,1,2,2,1,
+  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
+  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
+  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
+  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
+  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
+  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
+  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
+};
+const uint8 SuperScope::turboData[15 * 15] = {
+  1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,
+  1,5,5,5,1,0,0,0,0,0,1,5,5,5,1,
+  1,5,5,4,4,1,0,0,0,1,4,4,5,5,1,
+  1,5,4,4,3,1,0,0,0,1,3,4,4,5,1,
+  0,1,4,3,3,2,1,0,1,2,3,3,4,1,0,
+  0,0,1,1,2,2,1,0,1,2,2,1,1,0,0,
+  0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,
+  0,0,1,1,2,2,1,0,1,2,2,1,1,0,0,
+  0,1,4,3,3,2,1,0,1,2,3,3,4,1,0,
+  1,5,4,4,3,1,0,0,0,1,3,4,4,5,1,
+  1,5,5,4,4,1,0,0,0,1,4,4,5,5,1,
+  1,5,5,5,1,0,0,0,0,0,1,5,5,5,1,
+  1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,
+};

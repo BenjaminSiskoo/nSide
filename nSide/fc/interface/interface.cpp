@@ -307,10 +307,10 @@ auto Interface::load(uint id, const stream& stream) -> void {
     stream.read((uint8_t*)playchoice10.bios, min(16384u, stream.size()));
     break;
   case ID::PC10CharacterROM:
-    stream.read((uint8_t*)playchoice10.chrrom, min(24576u, stream.size()));
+    stream.read((uint8_t*)playchoice10.videoCircuit.chrrom, min(24576u, stream.size()));
     break;
   case ID::PC10PaletteROM:
-    stream.read((uint8_t*)playchoice10.cgrom, min(768u, stream.size()));
+    stream.read((uint8_t*)playchoice10.videoCircuit.cgrom, min(768u, stream.size()));
     break;
   case ID::FamicomBoxPRG:
     stream.read((uint8_t*)famicombox.bios_prg, min(32768u, stream.size()));
@@ -402,8 +402,16 @@ auto Interface::get(const string& name) -> any {
 }
 
 auto Interface::set(const string& name, const any& value) -> bool {
-  if(name == "Color Emulation" && value.is<bool>()) return settings.colorEmulation = value.get<bool>(), true;
-  if(name == "Scanline Emulation" && value.is<bool>()) return settings.scanlineEmulation = value.get<bool>(), true;
+  if(name == "Color Emulation" && value.is<bool>()) {
+    settings.colorEmulation = value.get<bool>();
+    system.configureVideoPalette();
+    return true;
+  }
+  if(name == "Scanline Emulation" && value.is<bool>()) {
+    settings.scanlineEmulation = value.get<bool>();
+    system.configureVideoEffects();
+    return true;
+  }
   return false;
 }
 

@@ -1,5 +1,3 @@
-#include "video.hpp"
-
 struct PPU : Thread, public PPUcounter {
   enum class Revision : uint {
     RP2C02C,
@@ -30,6 +28,9 @@ struct PPU : Thread, public PPUcounter {
   auto main() -> void;
   auto power() -> void;
   auto reset() -> void;
+
+  auto origin_x() -> uint;
+  auto origin_y() -> uint;
 
   auto raster_enable() const -> bool;
   auto nametable_addr() const -> uint;

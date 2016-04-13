@@ -21,4 +21,10 @@ struct Justifier : Controller {
     signed x, y;
     bool trigger, start;
   } player1, player2;
+
+  Emulator::Video::Cursor cursor1;
+  Emulator::Video::Cursor cursor2;
+  static const uint64 cursorPalette1[3];
+  static const uint64 cursorPalette2[6];
+  static const uint8 cursorData[15 * 15];
 };

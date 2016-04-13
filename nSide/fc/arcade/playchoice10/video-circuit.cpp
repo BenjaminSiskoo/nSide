@@ -1,4 +1,4 @@
-auto PlayChoice10::videoPower() -> void {
+auto PlayChoice10::VideoCircuit::power() -> void {
   uint8 default_vram[0x0800] = {
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
@@ -155,7 +155,7 @@ auto PlayChoice10::videoPower() -> void {
   }
 }
 
-auto PlayChoice10::updateVideo() -> void {
+auto PlayChoice10::VideoCircuit::update() -> void {
   uint16 addr;
   uint tile_id;
   uint8 y;
@@ -163,7 +163,7 @@ auto PlayChoice10::updateVideo() -> void {
   uint8 byte;
   uint color;
   for(uint tile_y = 1; tile_y < 31; tile_y++) {
-    for(uint tile_x = 0; tile_x < 32; tile_x++) {
+    for(uint tile_x : range(32)) {
       addr = tile_y * 64 + tile_x * 2;
       tile_id = ((vram[addr + 0] & 0xff) << 0) + ((vram[addr + 1] & 0x07) << 8);
       for(uint pixel_y = 0; pixel_y < 8; pixel_y++) {
@@ -175,9 +175,12 @@ auto PlayChoice10::updateVideo() -> void {
             byte = chrrom[(plane << 13) + (tile_id << 3) + pixel_y];
             color += ((byte >> (7 - pixel_x)) & 1) << plane;
           }
-          videoOutput[y * 256 + x] = color;
+          output[y * 256 + x] = color;
         }
       }
     }
+  }
+  if(playchoice10.screenConfig == ScreenConfig::Dual) {
+    Emulator::video.refreshRegion(output, 256 * sizeof(uint32), 0, 0, 256, 240, 1 << 9);
   }
 }

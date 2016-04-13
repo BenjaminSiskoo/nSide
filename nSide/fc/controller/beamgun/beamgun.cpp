@@ -16,6 +16,13 @@ BeamGun::BeamGun(uint port) : Controller(port, Device::BeamGun) {
   triggerlock = false;
 
   prev = 0;
+
+  cursor.origin_x = 7;
+  cursor.origin_y = 7;
+  cursor.width = 15;
+  cursor.height = 15;
+  cursor.palette = port == Port::Controller2 ? zapperPalette : beamgunPalette;
+  cursor.data = cursorData;
 }
 
 auto BeamGun::main() -> void {
@@ -44,6 +51,8 @@ auto BeamGun::main() -> void {
     x = max(-16, min(256 + 16, nx));
     y = max(-16, min(240 + 16, ny));
     offscreen = (x < 0 || y < 0 || x >= 256 || y >= 240);
+    cursor.x = x + ppu.origin_x();
+    cursor.y = y + ppu.origin_y();
   }
 
   prev = next;
@@ -91,7 +100,7 @@ bool BeamGun::read_light() {
   uint color;
   switch(ppu.revision) {
   default:
-    return ((palette_index & 0x20) && ((palette_index & 0x0F) < 0x0D));
+    return ((palette_index & 0x20) && ((palette_index & 0x0f) < 0x0d));
   case PPU::Revision::RP2C04_0001:
     color = PPU::RP2C04_0001[palette_index & 63];
     break;
@@ -105,9 +114,9 @@ bool BeamGun::read_light() {
     color = PPU::RP2C04_0004[palette_index & 63];
     break;
   }
-  if((color & 0xF00) > 0x600) return true;
-  if((color & 0x0F0) > 0x060) return true;
-  if((color & 0x00F) > 0x006) return true;
+  if((color & 0xf00) > 0x600) return true;
+  if((color & 0x0f0) > 0x060) return true;
+  if((color & 0x00f) > 0x006) return true;
   return false;
 }
 
@@ -120,3 +129,23 @@ void BeamGun::latch(bool data) {
     light = lighttime > 0;
   }
 }
+
+const uint64 BeamGun::beamgunPalette[3] = {0x0000000000000000l, 0xffff000000000000l, 0xffff4e4e4e4e4e4el};
+const uint64 BeamGun::zapperPalette[3] = {0x0000000000000000l, 0xffff000000000000l, 0xfffffdfd9b9b0000l};
+const uint8 BeamGun::cursorData[15 * 15] = {
+  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
+  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
+  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
+  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
+  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
+  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
+  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
+  1,2,2,1,1,2,2,2,2,2,1,1,2,2,1,
+  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
+  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
+  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
+  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
+  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
+  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
+  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
+};

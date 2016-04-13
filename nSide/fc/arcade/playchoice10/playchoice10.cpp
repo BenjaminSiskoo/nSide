@@ -31,8 +31,8 @@ auto PlayChoice10::power() -> void {
   ppuReset   = 1; // 0: reset,                1: run
   channel    = 0; // 0-9 internally, 1-10 on screen
   sramBank   = 1; // bank at $8c00-8fff
-  videoPower();
-  updateVideo();
+  videoCircuit.power();
+  videoCircuit.update();
 }
 
 auto PlayChoice10::reset() -> void {
@@ -67,7 +67,7 @@ auto PlayChoice10::write(uint16 addr, uint8 data) -> void {
   else if(addr <= 0x87ff) wram[addr & 0x07ff] = data;
   else if(addr <= 0x8bff) sram[addr & 0x03ff] = data;
   else if(addr <= 0x8fff) sram[(addr & 0x03ff) | (sramBank << 10)] = data;
-  else if(addr <= 0x97ff) vram[addr & 0x07ff] = data;
+  else if(addr <= 0x97ff) videoCircuit.vram[addr & 0x07ff] = data;
   else if(addr <= 0xbfff) return;
   else if(addr <= 0xdfff) return;
   else if(addr <= 0xffff) {

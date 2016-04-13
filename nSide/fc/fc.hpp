@@ -16,7 +16,7 @@ namespace Famicom {
     // nSide-fc simultaneously.
     // This is required to avoid errors in case a save state created in one
     // higan fork is loaded into another.
-    static const uint SerializerVersion = 0;
+    static const uint SerializerVersion = 1;
   }
 }
 
