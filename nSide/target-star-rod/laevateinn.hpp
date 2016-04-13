@@ -1,16 +1,4 @@
-#if !defined(PROFILE_ACCURACY)
-  #error "debugger is only compatible with accuracy profile"
-#endif
-
-#include <nall/config.hpp>
-#include <nall/directory.hpp>
-#include <nall/dsp.hpp>
-#include <nall/file.hpp>
-#include <nall/filemap.hpp>
-#include <nall/stream/file.hpp>
-#include <nall/stream/memory.hpp>
-#include <nall/stream/mmap.hpp>
-#include <nall/stream/vector.hpp>
+#include <nall/nall.hpp>
 #include <ruby/ruby.hpp>
 #include <hiro/hiro.hpp>
 using namespace nall;
@@ -21,8 +9,14 @@ extern unique_pointer<Audio> audio;
 extern unique_pointer<Input> input;
 
 #include <emulator/emulator.hpp>
-#include <sfc/sfc.hpp>
 extern Emulator::Interface* emulator;
+
+#include <sfc/sfc.hpp>
+namespace SFC = SuperFamicom;
+
+auto locate(string name) -> string;
+auto locateHigan(string name) -> string;
+auto locateSystem(string name) -> string;
 
 #include "program/program.hpp"
 #include "settings/settings.hpp"
@@ -40,7 +34,3 @@ extern Emulator::Interface* emulator;
 #include "bg/bg.hpp"
 #include "palette/palette.hpp"
 #include "resource/resource.hpp"
-
-auto locate(string name) -> string;
-auto locateHigan(string name) -> string;
-auto locateSystem(string name) -> string;
