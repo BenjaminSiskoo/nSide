@@ -1,4 +1,14 @@
 struct APU : Thread {
+  enum class Revision : uint {
+    RP2A03,
+    RP2A03A,
+    RP2A03C,
+    RP2A03E,
+    RP2A03F,
+    RP2A03G,
+    RP2A03H,
+  } revision;
+
   APU();
 
   static auto Enter() -> void;

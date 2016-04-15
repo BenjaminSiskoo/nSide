@@ -130,21 +130,21 @@ auto APU::read(uint16 addr) -> uint8 {
 }
 
 auto APU::write(uint16 addr, uint8 data) -> void {
-  const uint n = (addr >> 2) & 1;  //pulse#
+  const uint n = addr.bit(2);  //pulse#
 
   switch(addr) {
   case 0x4000: case 0x4004:
-    pulse[n].duty = data >> 6;
-    pulse[n].envelope.loop_mode = data & 0x20;
-    pulse[n].envelope.use_speed_as_volume = data & 0x10;
-    pulse[n].envelope.speed = data & 0x0f;
+    pulse[n].duty = data.bits(6,7);
+    pulse[n].envelope.loop_mode = data.bit(5);
+    pulse[n].envelope.use_speed_as_volume = data.bit(4);
+    pulse[n].envelope.speed = data.bits(0,3);
     break;
 
   case 0x4001: case 0x4005:
-    pulse[n].sweep.enable = data & 0x80;
-    pulse[n].sweep.period = (data & 0x70) >> 4;
-    pulse[n].sweep.decrement = data & 0x08;
-    pulse[n].sweep.shift = data & 0x07;
+    pulse[n].sweep.enable = data.bit(7);
+    pulse[n].sweep.period = data.bits(4,6);
+    pulse[n].sweep.decrement = data.bit(3);
+    pulse[n].sweep.shift = data.bits(0,2);
     pulse[n].sweep.reload = true;
     break;
 
@@ -161,13 +161,13 @@ auto APU::write(uint16 addr, uint8 data) -> void {
     pulse[n].envelope.reload_decay = true;
 
     if(enabled_channels & (1 << n)) {
-      pulse[n].length_counter = length_counter_table[(data >> 3) & 0x1f];
+      pulse[n].length_counter = length_counter_table[data.bits(3,7)];
     }
     break;
 
   case 0x4008:
-    triangle.halt_length_counter = data & 0x80;
-    triangle.linear_length = data & 0x7f;
+    triangle.halt_length_counter = data.bit(7);
+    triangle.linear_length = data.bits(0,6);
     break;
 
   case 0x400a:
@@ -179,41 +179,39 @@ auto APU::write(uint16 addr, uint8 data) -> void {
 
     triangle.reload_linear = true;
 
-    if(enabled_channels & (1 << 2)) {
-      triangle.length_counter = length_counter_table[(data >> 3) & 0x1f];
-    }
+    if(enabled_channels.bit(2)) triangle.length_counter = length_counter_table[data.bits(3,7)];
     break;
 
   case 0x400c:
-    noise.envelope.loop_mode = data & 0x20;
-    noise.envelope.use_speed_as_volume = data & 0x10;
-    noise.envelope.speed = data & 0x0f;
+    noise.envelope.loop_mode = data.bit(5);
+    noise.envelope.use_speed_as_volume = data.bit(4);
+    noise.envelope.speed = data.bits(0,3);
     break;
 
   case 0x400e:
-    noise.short_mode = data & 0x80;
-    noise.period = data & 0x0f;
+    //TODO: Check if the RP2A03E and prior revisions support short mode.
+    //Currently assuming that the RP2A03F is bugged. See noise.cpp for bug implementation.
+    if(revision != Revision::RP2A03) noise.short_mode = data.bit(7);
+    noise.period = data.bits(0,3);
     break;
 
   case 0x400f:
     noise.envelope.reload_decay = true;
 
-    if(enabled_channels & (1 << 3)) {
-      noise.length_counter = length_counter_table[(data >> 3) & 0x1f];
-    }
+    if(enabled_channels.bit(3)) noise.length_counter = length_counter_table[data.bits(3,7)];
     break;
 
   case 0x4010:
-    dmc.irq_enable = data & 0x80;
-    dmc.loop_mode = data & 0x40;
-    dmc.period = data & 0x0f;
+    dmc.irq_enable = data.bit(7);
+    dmc.loop_mode = data.bit(6);
+    dmc.period = data.bits(0,3);
 
     dmc.irq_pending = dmc.irq_pending && dmc.irq_enable && !dmc.loop_mode;
     set_irq_line();
     break;
 
   case 0x4011:
-    dmc.dac_latch = data & 0x7f;
+    dmc.dac_latch = data.bits(0,6);
     break;
 
   case 0x4012:
@@ -225,31 +223,28 @@ auto APU::write(uint16 addr, uint8 data) -> void {
     break;
 
   case 0x4015:
-    if((data & 0x01) == 0) pulse[0].length_counter = 0;
-    if((data & 0x02) == 0) pulse[1].length_counter = 0;
-    if((data & 0x04) == 0) triangle.length_counter = 0;
-    if((data & 0x08) == 0)    noise.length_counter = 0;
+    if(!data.bit(0)) pulse[0].length_counter = 0;
+    if(!data.bit(1)) pulse[1].length_counter = 0;
+    if(!data.bit(2)) triangle.length_counter = 0;
+    if(!data.bit(3))    noise.length_counter = 0;
 
-    (data & 0x10) ? dmc.start() : dmc.stop();
+    data.bit(4) ? dmc.start() : dmc.stop();
     dmc.irq_pending = false;
 
     set_irq_line();
-    enabled_channels = data & 0x1f;
+    enabled_channels = data.bits(0,4);
     break;
 
   case 0x4017:
-    frame.mode = data >> 6;
+    frame.mode = data.bits(6,7);
 
     frame.counter = 0;
-    if(frame.mode & 2) clock_frame_counter();
-    if(frame.mode & 1) {
+    if(frame.mode.bit(1)) clock_frame_counter();
+    if(frame.mode.bit(0)) {
       frame.irq_pending = false;
       set_irq_line();
     }
-    if(system.region() == System::Region::NTSC)
-      frame.divider = FrameCounter::NtscPeriod;
-    else
-      frame.divider = FrameCounter::PalPeriod;
+    frame.divider = system.region() == System::Region::NTSC ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
     break;
   }
 }

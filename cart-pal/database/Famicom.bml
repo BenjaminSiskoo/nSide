@@ -1888,6 +1888,38 @@ cartridge sha256:910ba4505b46a99b3779d84fd22ba8b18f3a649b0c1a11706c4609d06ce0bc1
   :  name:     Pinball
   :  title:    ピンボール
 
+cartridge sha256:70c307aa0b1a4ce11259bf861e9a3260ea56743d4987d3a82e500687212e1cc0
+  :board region=ntsc id:HVC-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-PP
+  :  board:    9011-04
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Popeye
+  :  title:    ポパイ
+
+cartridge sha256:e20c619fec4c7aeb244710a3b89040f85b0aaa4cea52b5f7fede63d11db00cea
+  :board region=ntsc id:HVC-SROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-EN
+  :  board:    HVC-SROM-03
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Popeye no Eigo Asobi
+  :  title:    ポパイの英語遊び
+
 cartridge sha256:f9434e80c4153283c96a4aac99d40319de9b0d4836520003c16bb70a5d53a3d7
   :board region=ntsc id:HVC-NROM-256
   :  mirror mode=vertical
@@ -4624,6 +4656,21 @@ cartridge sha256:910ba4505b46a99b3779d84fd22ba8b18f3a649b0c1a11706c4609d06ce0bc1
   :  name:     Pinball
   :  title:    Pinball
 
+cartridge sha256:97f56ee3bcb0542996401a65c63a0e91c1c9c71da07f0619975e910946f9540d
+  :board region=ntsc id:NES-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-PP-USA
+  :  board:    NES-NROM-128-06
+  :  revision: 1.1
+  :  name:     Popeye
+  :  title:    Popeye
+
 cartridge sha256:96dafa1208bda2eaa601d6855d86cf670556018c2859805cae51a88f83e66e9e
   :board region=ntsc id:NES-UNROM
   :  chip type=74HC32
@@ -5647,6 +5694,23 @@ cartridge sha256:6157c99fe7a214025c65fd3649e4afe9cd2d38c333e65af028b935e49fbeb50
   :  revision: 1.0
   :  name:     Noah's Ark
   :  title:    Noah's Ark
+
+cartridge sha256:97f56ee3bcb0542996401a65c63a0e91c1c9c71da07f0619975e910946f9540d
+  :board region=pal id:NES-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-PP-EEC
+  :  serial:   NES-PP-FRA
+  :  serial:   NES-PP-ESP
+  :  board:    NES-NROM-128-06
+  :  revision: 1.1
+  :  name:     Popeye
+  :  title:    Popeye
 
 cartridge sha256:fcb6a0ef3a20c19b356005fbb21dc8009563b1cb5a9aaebc8e9386b4a8c5912e
   :board region=pal subregion=A id:NES-NROM-256

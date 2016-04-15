@@ -12,17 +12,15 @@ auto APU::Noise::clock() -> uint8 {
   if(--period_counter == 0) {
     uint feedback;
 
-    if(short_mode) {
+    //TODO: Check if the RP2A03E and prior revisions support short mode.
+    if(short_mode && apu.revision != APU::Revision::RP2A03 && apu.revision != APU::Revision::RP2A03F) {
       feedback = ((lfsr >> 0) & 1) ^ ((lfsr >> 6) & 1);
     } else {
       feedback = ((lfsr >> 0) & 1) ^ ((lfsr >> 1) & 1);
     }
 
     lfsr = (lfsr >> 1) | (feedback << 14);
-    if(system.region() == System::Region::NTSC)
-      period_counter = apu.ntsc_noise_period_table[period];
-    else
-      period_counter = apu.pal_noise_period_table[period];
+    period_counter = system.region() == System::Region::NTSC ? apu.ntsc_noise_period_table[period] : apu.pal_noise_period_table[period];
   }
 
   return result;
