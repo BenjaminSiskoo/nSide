@@ -156,7 +156,7 @@ auto System::configureVideoPalette() -> void {
 
 auto System::configureVideoEffects() -> void {
   Emulator::video.setEffect(Emulator::Video::Effect::Scanlines, settings.scanlineEmulation);
-  Emulator::video.resize(interface->information.width, interface->information.height);
+  Emulator::video.resize(interface->information.canvasWidth, interface->information.canvasHeight);
 }
 
 auto System::configureVideoCursors() -> void {

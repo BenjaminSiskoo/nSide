@@ -44,6 +44,7 @@ struct Interface : Emulator::Interface {
 
   auto power() -> void override;
   auto run() -> void override;
+  auto rotate() -> void override;
 
   auto serialize() -> serializer override;
   auto unserialize(serializer&) -> bool override;

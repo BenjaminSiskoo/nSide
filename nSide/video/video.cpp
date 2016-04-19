@@ -37,9 +37,9 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
       uint32* source = input + y * pitch;
       uint32* target = output + (origin_y + y) * this->width + origin_x;
       switch(effects.rotation) {
-      case 1: target = output + (this->height - 1 - y); break;
-      case 2: target = output + (this->height - 1 - y) * this->width + this->width - 1; break;
-      case 3: target = output + (this->width - 1) * this->height + y; break;
+      case 1: target = output + (this->height - 1 - origin_y - y); break;
+      case 2: target = output + (this->height - 1 - origin_y - y) * this->width + this->width - 1 - origin_x; break;
+      case 3: target = output + (this->width - 1 - origin_x) * this->height + origin_y + y; break;
       }
 
       if(!effects.interframeBlending) {
@@ -123,6 +123,10 @@ auto Video::drawCursors() -> void {
   }
 }
 
+auto Video::clear() -> void {
+  memory::fill(output, width * (height << effects.scanlines) * sizeof(uint32));
+}
+
 auto Video::reset() -> void {
   interface = nullptr;
   delete output;
@@ -133,6 +137,7 @@ auto Video::reset() -> void {
   height = 0;
   effects.colorBleed = false;
   effects.interframeBlending = false;
+  effects.rotation = 0;
   cursors.reset();
 }
 

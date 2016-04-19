@@ -130,17 +130,17 @@ auto FamicomBox::portRead(uint16 addr, uint8 data) -> uint8 {
 
     //Test connector (25-pin) inputs 2, 15, 3, 16, 4, 17, 5, 18
     case 0x5004: {
-      return 0xff;
+      return data;
     }
 
     //Expansion connector (50-pin) input pin 28
     case 0x5005: {
-      return 0x00;
+      return data;
     }
 
     //Expansion connector (50-pin) input pin 27
     case 0x5006: {
-      return 0x00;
+      return data;
     }
 
     //Misc. status

@@ -69,6 +69,14 @@ auto InputManager::appendHotkeys() -> void {
   }
 
   { auto hotkey = new InputHotkey;
+    hotkey->name = "Rotate";
+    hotkey->press = [] {
+      program->rotate();
+    };
+    hotkeys.append(hotkey);
+  }
+
+  { auto hotkey = new InputHotkey;
     hotkey->name = "Export Memory";
     hotkey->press = [] {
       if(!emulator) return;

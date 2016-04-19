@@ -85,7 +85,7 @@ auto System::load(Revision revision) -> void {
     ppu.revision = PPU::Revision::RP2C03B;
     playchoice10.screenConfig = min(max(document["system/pc10/screen/mode"].integer(), 1), 2);
     playchoice10.load();
-    interface->information.height = playchoice10.screenConfig * 240;
+    interface->information.canvasHeight = playchoice10.screenConfig * 240;
     peripherals.connect(Port::Arcade, Device::None);
     break;
 

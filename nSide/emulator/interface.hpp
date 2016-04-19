@@ -6,8 +6,8 @@ struct Interface {
   struct Information {
     string manufacturer;
     string name;
-    uint width;
-    uint height;
+    uint canvasWidth;
+    uint canvasHeight;
     bool overscan;
     double aspectRatio;
     bool resettable;
@@ -95,6 +95,7 @@ struct Interface {
   virtual auto power() -> void {}
   virtual auto reset() -> void {}
   virtual auto run() -> void {}
+  virtual auto rotate() -> void {}
 
   //time functions
   virtual auto rtc() -> bool { return false; }

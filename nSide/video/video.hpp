@@ -30,6 +30,7 @@ struct Video {
   auto resize(uint width, uint height) -> void;
   auto refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_y, uint width, uint height, uint paletteOffset = 0) -> void;
   auto drawCursors() -> void;
+  auto clear() -> void;
   auto reset() -> void;
   auto setInterface(Interface* interface) -> void;
   auto setPalette(uint32 size, function<uint64 (uint32)> callback) -> void;

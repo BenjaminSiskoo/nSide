@@ -11,8 +11,8 @@ Interface::Interface() {
 
   information.manufacturer = "Nintendo";
   information.name         = "Famicom";
-  information.width        = 256;
-  information.height       = 240;
+  information.canvasWidth  = 256; //increases to 512 during VS. DualSystem emulation
+  information.canvasHeight = 240; //increases to 480 during PlayChoice-10 emulation
   information.overscan     = true;
   information.aspectRatio  = 8.0 / 7.0;
   information.resettable   = true;
@@ -23,6 +23,7 @@ Interface::Interface() {
   media.append({ID::Famicom,      "Famicom",       "fc",   true});
   media.append({ID::VSSystem,     "VS. System",    "vs",   true});
   media.append({ID::PlayChoice10, "PlayChoice-10", "pc10", true});
+  //media.append({ID::FamicomBox,   "FamicomBox",    "fcb",  true});
 
   port.append({0, "Port 1"});
   port.append({1, "Port 2"});
@@ -234,15 +235,17 @@ auto Interface::title() -> string {
 
 auto Interface::videoFrequency() -> double {
   switch(system.region()) { default:
-  case System::Region::NTSC: return system.cpuFrequency() / (262.0 * 1364.0 - 4.0);
-  case System::Region::PAL:  return system.cpuFrequency() / (312.0 * 1705.0);
+  case System::Region::NTSC:  return system.cpuFrequency() / (262.0 * 1364.0 - 4.0);
+  case System::Region::PAL:   return system.cpuFrequency() / (312.0 * 1705.0);
+  case System::Region::Dendy: return system.cpuFrequency() / (312.0 * 1705.0);
   }
 }
 
 auto Interface::audioFrequency() -> double {
   switch(system.region()) { default:
-  case System::Region::NTSC: return system.cpuFrequency() / 12.0;
-  case System::Region::PAL:  return system.cpuFrequency() / 16.0;
+  case System::Region::NTSC:  return system.cpuFrequency() / 12.0;
+  case System::Region::PAL:   return system.cpuFrequency() / 16.0;
+  case System::Region::Dendy: return system.cpuFrequency() / 15.0;
   }
 }
 
@@ -284,8 +287,8 @@ auto Interface::group(uint id) -> uint {
 }
 
 auto Interface::load(uint id) -> void {
-  information.width  = 256;
-  information.height = 240;
+  information.canvasWidth  = 256;
+  information.canvasHeight = 240;
   if(id == ID::Famicom)      system.load(System::Revision::Famicom);
   if(id == ID::VSSystem)     system.load(System::Revision::VSSystem); 
   if(id == ID::PlayChoice10) system.load(System::Revision::PlayChoice10);

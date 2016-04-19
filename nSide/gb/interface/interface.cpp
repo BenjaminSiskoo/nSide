@@ -11,8 +11,8 @@ Interface::Interface() {
 
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy";
-  information.width        = 160;
-  information.height       = 144;
+  information.canvasWidth  = 160;
+  information.canvasHeight = 144;
   information.overscan     = false;
   information.aspectRatio  = 1.0;
   information.resettable   = false;

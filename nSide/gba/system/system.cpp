@@ -9,6 +9,7 @@ BIOS bios;
 System system;
 
 auto System::loaded() const -> bool { return _loaded; }
+auto System::orientation() const -> bool { return _orientation; }
 
 auto System::init() -> void {
 }
@@ -37,6 +38,7 @@ auto System::load() -> void {
   cartridge.load();
   serializeInit();
   configureVideo();
+  _orientation = 0;
   _loaded = true;
 }
 
@@ -54,6 +56,11 @@ auto System::runToSave() -> void {
   scheduler.synchronize(cpu.thread);
   scheduler.synchronize(ppu.thread);
   scheduler.synchronize(apu.thread);
+}
+
+auto System::rotate() -> void {
+  _orientation = !_orientation;
+  configureVideoEffects();
 }
 
 }

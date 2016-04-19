@@ -118,7 +118,7 @@ auto PPU::reset() -> void {
 }
 
 auto PPU::origin_x() -> uint {
-  return (system.vs() && interface->information.width == 512) ? side * 256 : 0;
+  return (system.vs() && interface->information.canvasWidth == 512) ? side * 256 : 0;
 }
 
 auto PPU::origin_y() -> uint {

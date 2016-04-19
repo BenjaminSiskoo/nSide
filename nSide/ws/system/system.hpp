@@ -15,6 +15,7 @@ struct System : IO {
   auto run() -> void;
   auto runToSave() -> void;
   auto pollKeypad() -> void;
+  auto rotate() -> void;
 
   //io.cpp
   auto portRead(uint16 addr) -> uint8 override;
@@ -42,7 +43,6 @@ struct System : IO {
     bool y1, y2, y3, y4;
     bool x1, x2, x3, x4;
     bool b, a, start;
-    bool rotate;
   } keypad;
 
 privileged:

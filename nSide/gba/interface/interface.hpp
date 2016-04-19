@@ -18,7 +18,8 @@ struct ID {
   };
 
   enum : uint {
-    Device = 1,
+    DeviceHorizontal = 1,
+    DeviceVertical = 2,
   };
 };
 
@@ -41,6 +42,7 @@ struct Interface : Emulator::Interface {
   auto power() -> void;
   auto reset() -> void;
   auto run() -> void;
+  auto rotate() -> void;
 
   auto serialize() -> serializer;
   auto unserialize(serializer&) -> bool;

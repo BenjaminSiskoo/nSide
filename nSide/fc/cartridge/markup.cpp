@@ -81,7 +81,7 @@ auto Cartridge::parseMarkupVS(Markup::Node& document, Markup::Node& board_node) 
   if(ppuRevision == "RC2C05-04")   ppu.revision = PPU::Revision::RC2C05_04;
   if(ppuRevision == "RC2C05-05")   ppu.revision = PPU::Revision::RC2C05_05;
 
-  if(ppus == 2) interface->information.width = 512;
+  if(ppus == 2) interface->information.canvasWidth = 512;
 }
 
 //

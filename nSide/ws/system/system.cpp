@@ -41,8 +41,8 @@ auto System::load(Model model) -> void {
 
   cartridge.load();
   serializeInit();
-  _orientation = cartridge.information.orientation;
   configureVideo();
+  _orientation = cartridge.information.orientation;
   _loaded = true;
 }
 
@@ -88,7 +88,6 @@ auto System::runToSave() -> void {
 }
 
 auto System::pollKeypad() -> void {
-  bool rotate = keypad.rotate;
   keypad.y1 = interface->inputPoll(_orientation, 0, 0);
   keypad.y2 = interface->inputPoll(_orientation, 0, 1);
   keypad.y3 = interface->inputPoll(_orientation, 0, 2);
@@ -100,7 +99,6 @@ auto System::pollKeypad() -> void {
   keypad.b = interface->inputPoll(_orientation, 0, 8);
   keypad.a = interface->inputPoll(_orientation, 0, 9);
   keypad.start = interface->inputPoll(_orientation, 0, 10);
-  keypad.rotate = interface->inputPoll(_orientation, 0, 11);
 
   if(keypad.y1 || keypad.y2 || keypad.y3 || keypad.y4
   || keypad.x1 || keypad.x2 || keypad.x3 || keypad.x4
@@ -108,11 +106,11 @@ auto System::pollKeypad() -> void {
   ) {
     cpu.raise(CPU::Interrupt::Input);
   }
+}
 
-  if(!rotate && keypad.rotate) {
-    //_orientation = !_orientation;
-    //configureVideoEffects();
-  }
+auto System::rotate() -> void {
+  _orientation = !_orientation;
+  configureVideoEffects();
 }
 
 }

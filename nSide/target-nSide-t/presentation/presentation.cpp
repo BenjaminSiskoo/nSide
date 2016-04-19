@@ -236,8 +236,8 @@ auto Presentation::updateEmulator() -> void {
 }
 
 auto Presentation::resizeViewport() -> void {
-  int width   = emulator ? emulator->information.width  : 256;
-  int height  = emulator ? emulator->information.height : 240;
+  int width   = emulator ? emulator->information.canvasWidth  : 256;
+  int height  = emulator ? emulator->information.canvasHeight : 240;
   double stretch = emulator ? emulator->information.aspectRatio : 1.0;
   if(stretch != 1.0) {
     //aspect correction is always enabled in fullscreen mode

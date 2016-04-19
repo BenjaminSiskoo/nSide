@@ -10,8 +10,8 @@ Interface::Interface() {
 
   information.manufacturer = "Bandai";
   information.name         = "WonderSwan";
-  information.width        = 224;  //note: technically 224x144; but screen can be rotated
-  information.height       = 144;  //by using a square size; this can be done in the core
+  information.canvasWidth  = 224;  //note: technically 224x144; but screen can be rotated
+  information.canvasHeight = 224;  //by using a square size
   information.overscan     = false;
   information.aspectRatio  = 1.0;
   information.resettable   = false;
@@ -34,8 +34,7 @@ Interface::Interface() {
     device.input.append({ 8, 0, "B"});
     device.input.append({ 9, 0, "A"});
     device.input.append({10, 0, "Start"});
-    device.input.append({11, 0, "Rotate"});
-    device.order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    device.order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     this->device.append(device);
   }
 
@@ -51,8 +50,7 @@ Interface::Interface() {
     device.input.append({ 8, 0, "B"});
     device.input.append({ 9, 0, "A"});
     device.input.append({10, 0, "Start"});
-    device.input.append({11, 0, "Rotate"});
-    device.order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    device.order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     this->device.append(device);
   }
 
@@ -178,6 +176,10 @@ auto Interface::power() -> void {
 
 auto Interface::run() -> void {
   system.run();
+}
+
+auto Interface::rotate() -> void {
+  system.rotate();
 }
 
 auto Interface::serialize() -> serializer {

@@ -10,8 +10,8 @@ Interface::Interface() {
 
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy Advance";
-  information.width        = 240;
-  information.height       = 160;
+  information.canvasWidth  = 240;  //note: technically 240x160; but screen can be rotated
+  information.canvasHeight = 240;  //by using a square size
   information.overscan     = false;
   information.aspectRatio  = 1.0;
   information.resettable   = false;
@@ -21,7 +21,7 @@ Interface::Interface() {
 
   media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", true});
 
-  { Device device{0, ID::Device, "Controller"};
+  { Device device{0, ID::DeviceHorizontal, "Controller"};
     device.input.append({ 0, 0, "A"     });
     device.input.append({ 1, 0, "B"     });
     device.input.append({ 2, 0, "Select"});
@@ -37,7 +37,24 @@ Interface::Interface() {
     this->device.append(device);
   }
 
-  port.append({0, "Device", {device[0]}});
+  { Device device{1, ID::DeviceVertical, "Controller"};
+    device.input.append({ 0, 0, "A"     });
+    device.input.append({ 1, 0, "B"     });
+    device.input.append({ 2, 0, "Select"});
+    device.input.append({ 3, 0, "Start" });
+    device.input.append({ 4, 0, "Up"    });
+    device.input.append({ 5, 0, "Down"  });
+    device.input.append({ 6, 0, "Left"  });
+    device.input.append({ 7, 0, "Right" });
+    device.input.append({ 8, 0, "R"     });
+    device.input.append({ 9, 0, "L"     });
+    device.input.append({10, 2, "Rumble"});
+    device.order = {4, 5, 6, 7, 1, 0, 9, 8, 2, 3, 10};
+    this->device.append(device);
+  }
+
+  port.append({0, "Horizontal Orientation", {device[0]}});
+  port.append({1, "Vertical Orientation", {device[1]}});
 }
 
 auto Interface::manifest() -> string {
@@ -145,6 +162,10 @@ auto Interface::reset() -> void {
 
 auto Interface::run() -> void {
   system.run();
+}
+
+auto Interface::rotate() -> void {
+  system.rotate();
 }
 
 auto Interface::serialize() -> serializer {

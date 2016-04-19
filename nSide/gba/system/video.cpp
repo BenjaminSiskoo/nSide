@@ -1,6 +1,7 @@
 auto System::configureVideo() -> void {
   Emulator::video.reset();
   Emulator::video.setInterface(interface);
+  Emulator::video.resize(240, 240);
   configureVideoPalette();
   configureVideoEffects();
 }
@@ -31,4 +32,6 @@ auto System::configureVideoPalette() -> void {
 
 auto System::configureVideoEffects() -> void {
   Emulator::video.setEffect(Emulator::Video::Effect::InterframeBlending, settings.blurEmulation);
+  Emulator::video.setEffect(Emulator::Video::Effect::Rotation, !orientation() ? 0 : 3);
+  Emulator::video.clear();
 }

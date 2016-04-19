@@ -16,6 +16,7 @@ struct BIOS : Memory {
 
 struct System {
   auto loaded() const -> bool;
+  auto orientation() const -> bool;
 
   auto init() -> void;
   auto term() -> void;
@@ -24,6 +25,7 @@ struct System {
   auto power() -> void;
   auto run() -> void;
   auto runToSave() -> void;
+  auto rotate() -> void;
 
   //video.cpp
   auto configureVideo() -> void;
@@ -43,6 +45,7 @@ struct System {
   } information;
 
   bool _loaded = false;
+  bool _orientation = 0;  //0 = horizontal, 1 = vertical
   uint _serializeSize = 0;
 };
 

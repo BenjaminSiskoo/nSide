@@ -72,7 +72,7 @@ auto PPU::scanline() -> void {
 auto PPU::frame() -> void {
   s.field = !s.field;
   s.vclk = 0;
-  Emulator::video.refresh(output, 224 * sizeof(uint32), 224, 144);
+  Emulator::video.refreshRegion(output, 224 * sizeof(uint32), 0, (224 - 144) / 2, 224, 144);
   scheduler.exit(Scheduler::Event::Frame);
 }
 
