@@ -28,7 +28,6 @@ struct System {
   auto rotate() -> void;
 
   //video.cpp
-  auto configureVideo() -> void;
   auto configureVideoPalette() -> void;
   auto configureVideoEffects() -> void;
 

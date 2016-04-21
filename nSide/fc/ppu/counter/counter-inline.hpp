@@ -13,7 +13,7 @@ auto PPUcounter::vcounter_tick() -> void {
   status.vcounter++;
 
   if((system.region() == System::Region::NTSC && status.vcounter == 262)
-  || (system.region() == System::Region::PAL  && status.vcounter == 312)
+  || (system.region() != System::Region::NTSC && status.vcounter == 312)
   ) {
     status.vcounter = 0;
     status.field = !status.field;
@@ -25,8 +25,10 @@ auto PPUcounter::field   () const -> bool   { return status.field; }
 auto PPUcounter::vcounter() const -> uint16 { return status.vcounter; }
 auto PPUcounter::hcounter() const -> uint16 { return status.hcounter; }
 
+//one PPU dot = 4 CPU clocks (1/3 CPU cycle)
+
 auto PPUcounter::lineclocks() const -> uint16 {
-  if(system.region() == System::Region::NTSC && ppu.raster_enable() && vcounter() == 261 && field() == 1) return 340;
+  if(system.region() == System::Region::NTSC && ppu.yiq() && ppu.raster_enable() && vcounter() == 261 && field() == 1) return 340;
   return 341;
 }
 

@@ -1,8 +1,8 @@
-#include "audio.hpp"
-
 #include "SPC_DSP.h"
 
 struct DSP : Thread {
+  shared_pointer<Emulator::Stream> stream;
+
   DSP();
 
   alwaysinline auto step(uint clocks) -> void;

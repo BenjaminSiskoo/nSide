@@ -26,17 +26,24 @@ struct Video {
   };
 
   ~Video();
+
+  auto reset() -> void;
+  auto setInterface(Interface* interface) -> void;
+
+  auto setPalette() -> void;
+  auto setSaturation(double saturation) -> void;
+  auto setGamma(double gamma) -> void;
+  auto setLuminance(double luminance) -> void;
+
+  auto setEffect(Effect effect, const any& value) -> void;
+  auto addCursor(Cursor& cursor) -> void;
+  auto clearCursors() -> void;
+
   auto refresh(uint32* input, uint pitch, uint width, uint height) -> void;
   auto resize(uint width, uint height) -> void;
   auto refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_y, uint width, uint height, uint paletteOffset = 0) -> void;
   auto drawCursors() -> void;
   auto clear() -> void;
-  auto reset() -> void;
-  auto setInterface(Interface* interface) -> void;
-  auto setPalette(uint32 size, function<uint64 (uint32)> callback) -> void;
-  auto setEffect(Effect effect, const any& value) -> void;
-  auto addCursor(Cursor& cursor) -> void;
-  auto clearCursors() -> void;
 
 private:
   Emulator::Interface* interface = nullptr;
@@ -45,6 +52,10 @@ private:
   uint width = 0;
   uint height = 0;
   uint colors = 0;
+
+  double saturation = 1.0;
+  double gamma = 1.0;
+  double luminance = 1.0;
 
   struct Effects {
     bool colorBleed = false;

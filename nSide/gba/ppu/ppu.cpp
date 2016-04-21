@@ -178,8 +178,11 @@ auto PPU::scanline() -> void {
 
 auto PPU::frame() -> void {
   player.frame();
-  Emulator::video.refreshRegion(output, 240 * sizeof(uint32), 0, (240 - 160) / 2, 240, 160);
   scheduler.exit(Scheduler::Event::Frame);
+}
+
+auto PPU::refresh() -> void {
+  Emulator::video.refreshRegion(output, 240 * sizeof(uint32), 0, (240 - 160) / 2, 240, 160);
 }
 
 }

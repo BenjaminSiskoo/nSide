@@ -14,7 +14,7 @@ Interface::Interface() {
   information.canvasWidth  = 256; //increases to 512 during VS. DualSystem emulation
   information.canvasHeight = 240; //increases to 480 during PlayChoice-10 emulation
   information.overscan     = true;
-  information.aspectRatio  = 8.0 / 7.0;
+  information.aspectRatio  = 8.0 / 7.0; //PAL: 2950000.0 / 2128137.0
   information.resettable   = true;
 
   information.capability.states = true;
@@ -238,6 +238,151 @@ auto Interface::videoFrequency() -> double {
   case System::Region::NTSC:  return system.cpuFrequency() / (262.0 * 1364.0 - 4.0);
   case System::Region::PAL:   return system.cpuFrequency() / (312.0 * 1705.0);
   case System::Region::Dendy: return system.cpuFrequency() / (312.0 * 1705.0);
+  }
+}
+
+auto Interface::videoColors() -> uint32 {
+  return ((1 << 9) << system.vs()) + system.pc10() * (1 << 8);
+}
+
+auto Interface::videoColor(uint32 n) -> uint64 {
+  double saturation = 2.0;
+  double hue = 0.0;
+  double contrast = 1.0;
+  double brightness = 1.0;
+  double gamma = settings.colorEmulation ? 1.8 : 2.2;
+
+  static auto generateYIQColor = [](uint9 n, double saturation, double hue, double contrast, double brightness, double gamma) -> uint64 {
+    int color = n.bits(0,3), level = color < 0xe ? n.bits(4,5) : 1;
+
+    static const double black = 0.518, white = 1.962, attenuation = 0.746;
+    static const double levels[8] = {
+      0.350, 0.518, 0.962, 1.550,
+      1.094, 1.506, 1.962, 1.962,
+    };
+
+    double lo_and_hi[2] = {
+      levels[level + 4 * (color == 0x0)],
+      levels[level + 4 * (color <  0xd)],
+    };
+
+    double y = 0.0, i = 0.0, q = 0.0;
+    auto wave = [](int p, int color) -> int { return (color + p + 8) % 12 < 6; };
+    for(int p : range(12)) {
+      double spot = lo_and_hi[wave(p, color)];
+
+      if(color < 0xe && (
+         ((n.bit(6)) && wave(p, 12))
+      || ((n.bit(7)) && wave(p,  4))
+      || ((n.bit(8)) && wave(p,  8))
+      )) spot *= attenuation;
+
+      double v = (spot - black) / (white - black);
+
+      v = (v - 0.5) * contrast + 0.5;
+      v *= brightness / 12.0;
+
+      y += v;
+      i += v * std::cos((3.141592653 / 6.0) * (p + hue));
+      q += v * std::sin((3.141592653 / 6.0) * (p + hue));
+    }
+
+    i *= saturation;
+    q *= saturation;
+
+    auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
+    uint64 r = uclamp<16>(65535.0 * gammaAdjust(y +  0.946882 * i +  0.623557 * q));
+    uint64 g = uclamp<16>(65535.0 * gammaAdjust(y + -0.274788 * i + -0.635691 * q));
+    uint64 b = uclamp<16>(65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q));
+
+    return r << 32 | g << 16 | b << 0;
+  };
+
+  static auto generateRGBColor = [](uint9 color, const uint9* palette) -> uint64 {
+    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)] >> 6 & 7;
+    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)] >> 3 & 7;
+    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)] >> 0 & 7;
+
+    uint64 R = image::normalize(r, 3, 16);
+    uint64 G = image::normalize(g, 3, 16);
+    uint64 B = image::normalize(b, 3, 16);
+
+    if(settings.colorEmulation) {
+      //TODO: check how arcade displays alter the signal
+      static const uint8 gammaRamp[8] = {
+        0x00, 0x0a,
+        0x2d, 0x5b,
+        0x98, 0xb8,
+        0xe0, 0xff,
+      };
+      R = gammaRamp[r] * 0x0101;
+      G = gammaRamp[g] * 0x0101;
+      B = gammaRamp[b] * 0x0101;
+    }
+
+    return R << 32 | G << 16 | B << 0;
+  };
+
+  static auto generatePC10Color = [](uint9 color) -> uint64 {
+    uint r = 15 - playchoice10.videoCircuit.cgrom[color + 0x000];
+    uint g = 15 - playchoice10.videoCircuit.cgrom[color + 0x100];
+    uint b = 15 - playchoice10.videoCircuit.cgrom[color + 0x200];
+
+    uint64 R = image::normalize(r, 4, 16);
+    uint64 G = image::normalize(g, 4, 16);
+    uint64 B = image::normalize(b, 4, 16);
+
+    if(settings.colorEmulation) {
+      //TODO: check the menu monitor's gamma ramp
+      static const uint8 gammaRamp[16] = {
+        0x00, 0x03, 0x0a, 0x15,
+        0x24, 0x37, 0x4e, 0x69,
+        0x90, 0xa0, 0xb0, 0xc0,
+        0xd0, 0xe0, 0xf0, 0xff,
+      };
+      R = gammaRamp[r] * 0x0101;
+      G = gammaRamp[g] * 0x0101;
+      B = gammaRamp[b] * 0x0101;
+    }
+
+    return R << 32 | G << 16 | B << 0;
+  };
+
+  if(!system.pc10() || n < (1 << 9)) {
+    if(ppu.yiq()) {
+      auto gamma = settings.colorEmulation ? 1.8 : 2.2;
+      return generateYIQColor(n & 0x1ff, 2.0, 0.0, 1.0, 1.0, gamma);
+    } else if(ppu.rgb()) {
+      const uint9* palette = nullptr;
+      switch(ppu.revision) {
+      case PPU::Revision::RP2C03B:
+      case PPU::Revision::RP2C03G:
+      case PPU::Revision::RC2C03B:
+      case PPU::Revision::RC2C03C:
+      case PPU::Revision::RC2C05_01:
+      case PPU::Revision::RC2C05_02:
+      case PPU::Revision::RC2C05_03:
+      case PPU::Revision::RC2C05_04:
+      case PPU::Revision::RC2C05_05:
+        palette = PPU::RP2C03;
+        break;
+      case PPU::Revision::RP2C04_0001:
+        palette = PPU::RP2C04_0001;
+        break;
+      case PPU::Revision::RP2C04_0002:
+        palette = PPU::RP2C04_0002;
+        break;
+      case PPU::Revision::RP2C04_0003:
+        palette = PPU::RP2C04_0003;
+        break;
+      case PPU::Revision::RP2C04_0004:
+        palette = PPU::RP2C04_0004;
+        break;
+      }
+      return generateRGBColor(n & 0x1ff, palette);
+    }
+  } else {
+    return generatePC10Color(n - (1 << 9));
   }
 }
 

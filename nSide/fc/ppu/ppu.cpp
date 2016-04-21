@@ -38,11 +38,11 @@ auto PPU::addClocks(uint clocks) -> void {
   switch(system.region()) {
   case System::Region::NTSC:  vbl = 241; pre = 261; break;
   case System::Region::PAL:   vbl = 241; pre = 311; break;
-//case System::Region::Dendy: vbl = 291; pre = 311; break;
+  case System::Region::Dendy: vbl = 291; pre = 311; break;
   }
 
   while(clocks--) {
-    if(vcounter() == 240 && hcounter() == 340) status.nmi_hold = 1;
+    if(vcounter() == vbl - 1 && hcounter() == 340) status.nmi_hold = 1;
 
     if(vcounter() == vbl && hcounter() ==   0) status.chr_abus = status.vaddr & 0x3fff;
     if(vcounter() == vbl && hcounter() ==   0) status.nmi_flag = status.nmi_hold;
@@ -117,6 +117,19 @@ auto PPU::reset() -> void {
   for(auto& n : oam    ) n = 0;
 }
 
+auto PPU::scanline() -> void {
+  if(vcounter() == 0) frame();
+  cartridge.scanline(vcounter());
+
+  if(vcounter() == 241) {
+    scheduler.exit(Scheduler::Event::Frame);
+  }
+}
+
+auto PPU::frame() -> void {
+  //TODO: Verify whether putting the scheduler exit event at vcounter() == 241 reduces lag as opposed to here
+}
+
 auto PPU::origin_x() -> uint {
   return (system.vs() && interface->information.canvasWidth == 512) ? side * 256 : 0;
 }
@@ -134,19 +147,9 @@ auto PPU::origin_y() -> uint {
   }
 }
 
-auto PPU::scanline() -> void {
-  if(vcounter() == 0) frame();
-  cartridge.scanline(vcounter());
-
-  if(vcounter() == 241) {
-    auto output = this->output;
-    Emulator::video.refreshRegion(output, 256 * sizeof(uint32), origin_x(), origin_y(), 256, 240);
-    scheduler.exit(Scheduler::Event::Frame);
-  }
-}
-
-auto PPU::frame() -> void {
-  if(system.pc10()) playchoice10.videoCircuit.update();
+auto PPU::refresh() -> void {
+  auto output = this->output;
+  Emulator::video.refreshRegion(output, 256 * sizeof(uint32), origin_x(), origin_y(), 256, 240);
 }
 
 //
@@ -217,16 +220,15 @@ auto PPU::raster_pixel() -> void {
   palette |= (raster.tiledatalo & mask) ? 1 : 0;
   palette |= (raster.tiledatahi & mask) ? 2 : 0;
   if(palette) {
-    uint attr = raster.attribute;
+    uint16 attr = raster.attribute;
     if(mask >= 256) attr >>= 2;
-    palette |= (attr & 3) << 2;
+    palette |= attr.bits(0,1) << 2;
   }
 
   if(status.bg_enable == false) palette = 0;
   if(status.bg_edge_enable == false && lx < 8) palette = 0;
 
-  if(status.sprite_enable == true)
-  for(int sprite = 7; sprite >= 0; sprite--) {
+  if(status.sprite_enable == true) for(int sprite = 7; sprite >= 0; sprite--) {
     if(status.sprite_edge_enable == false && lx < 8) continue;
     if(raster.oam[sprite].id == 64) continue;
 
@@ -251,7 +253,10 @@ auto PPU::raster_pixel() -> void {
     if(palette == 0 || object_priority == 0) palette = object_palette;
   }
 
-  if(raster_enable() == false) {
+  if(revision >= Revision::RP2C07 && (lx < 2 || lx >= 254 || vcounter() <= 0)) {
+    output[vcounter() * 256 + lx] = (status.emphasis << 6) | 0x1d;
+    return;
+  } else if(!raster_enable()) {
     if((status.vaddr & 0x3f00) != 0x3f00) palette = 0;
     else palette = status.vaddr;
   }
@@ -263,7 +268,7 @@ auto PPU::raster_sprite() -> void {
 
   uint n = raster.oam_iterator++;
   uint lastScanline = system.region() == System::Region::NTSC ? 261 : 311;
-  int ly = (vcounter() == lastScanline ? (int)-1U : (int)vcounter());
+  int ly = vcounter() == lastScanline ? -1 : (int)vcounter();
   uint y = ly - oam[(n * 4) + 0];
 
   if(y >= sprite_height()) return;

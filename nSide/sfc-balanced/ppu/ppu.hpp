@@ -53,6 +53,7 @@ privileged:
   auto scanline() -> void;
   auto render_scanline() -> void;
   auto frame() -> void;
+  auto refresh() -> void;
 
   auto render_line() -> void;
   auto update_oam_status() -> void;
@@ -218,7 +219,7 @@ privileged:
 
   #include "render/render.hpp"
 
-  friend class Video;
+  friend class Scheduler;
 };
 
 extern PPU ppu;

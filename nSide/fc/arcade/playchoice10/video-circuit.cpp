@@ -180,6 +180,9 @@ auto PlayChoice10::VideoCircuit::update() -> void {
       }
     }
   }
+}
+
+auto PlayChoice10::VideoCircuit::refresh() -> void {
   if(playchoice10.screenConfig == ScreenConfig::Dual) {
     Emulator::video.refreshRegion(output, 256 * sizeof(uint32), 0, 0, 256, 240, 1 << 9);
   }

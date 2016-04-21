@@ -1,4 +1,6 @@
 struct APU : Thread {
+  shared_pointer<Emulator::Stream> stream;
+
   enum class Revision : uint {
     RP2A03,
     RP2A03A,

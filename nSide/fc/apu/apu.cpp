@@ -58,13 +58,17 @@ auto APU::main() -> void {
 //output  = filter.run_lopass(output);
   output  = sclamp<16>(output);
 
-  interface->audioSample(output, output);
+  stream->sample(output, output);
 
   tick();
 }
 
 auto APU::tick() -> void {
-  clock += (system.region() == System::Region::NTSC ? 12 : 16);
+  switch(system.region()) {
+  case System::Region::NTSC:  clock += 12; break;
+  case System::Region::PAL:   clock += 16; break;
+  case System::Region::Dendy: clock += 15; break;
+  }
   if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
 }
 
@@ -90,6 +94,13 @@ auto APU::power() -> void {
 
 auto APU::reset() -> void {
   create(APU::Enter, system.cpuFrequency());
+  double clockDivider;
+  switch(system.region()) {
+  case System::Region::NTSC:  clockDivider = 12.0; break;
+  case System::Region::PAL:   clockDivider = 16.0; break;
+  case System::Region::Dendy: clockDivider = 15.0; break;
+  }
+  stream = Emulator::audio.createStream(system.cpuFrequency() / clockDivider);
 
   pulse[0].reset();
   pulse[1].reset();

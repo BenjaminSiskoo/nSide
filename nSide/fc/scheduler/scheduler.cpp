@@ -13,6 +13,10 @@ auto Scheduler::enter(Mode mode_) -> Event {
   mode = mode_;
   host = co_active();
   co_switch(resume);
+  if(event == Event::Frame) {
+    ppu.refresh();
+    if(system.pc10()) playchoice10.videoCircuit.refresh();
+  }
   return event;
 }
 

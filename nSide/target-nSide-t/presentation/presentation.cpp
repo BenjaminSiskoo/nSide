@@ -104,7 +104,7 @@ Presentation::Presentation() {
   });
   muteAudio.setText("Mute Audio").setChecked(settings["Audio/Mute"].boolean()).onToggle([&] {
     settings["Audio/Mute"].setValue(muteAudio.checked());
-    program->updateAudioVolume();
+    program->updateAudioEffects();
   });
   showStatusBar.setText("Show Status Bar").setChecked(settings["UserInterface/ShowStatusBar"].boolean()).onToggle([&] {
     settings["UserInterface/ShowStatusBar"].setValue(showStatusBar.checked());
@@ -252,7 +252,7 @@ auto Presentation::resizeViewport() -> void {
 
   int windowWidth = 0, windowHeight = 0;
   if(!fullScreen()) {
-    windowWidth  = 256 * scale * (settings["Video/AspectCorrection"].boolean() ? 8.0 / 7.0 : 1.0);
+    windowWidth  = 256 * scale * (settings["Video/AspectCorrection"].boolean() ? stretch : 1.0);
     windowHeight = 240 * scale;
   } else {
     windowWidth  = geometry().width();

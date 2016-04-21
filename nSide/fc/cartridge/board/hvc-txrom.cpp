@@ -37,7 +37,7 @@ struct HVC_TxROM : Board {
 
   auto chr_read(uint addr) -> uint8 {
     if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
-      if(addr & 0x2000) return read(chrram, addr & 0x0fff);
+      if(addr & 0x2000) return read(chrram, addr);
       return read(chrrom, mmc3.chr_addr(addr));
     }
     if(addr & 0x2000) return ppu.ciramRead(ciram_addr(addr));
@@ -52,7 +52,7 @@ struct HVC_TxROM : Board {
 
   auto chr_write(uint addr, uint8 data) -> void {
     if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
-      if(addr & 0x2000) write(chrram, addr & 0x0fff, data);
+      if(addr & 0x2000) write(chrram, addr, data);
       return;
     }
     if(addr & 0x2000) return ppu.ciramWrite(ciram_addr(addr), data);

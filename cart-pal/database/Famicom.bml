@@ -182,6 +182,22 @@ cartridge sha256:a9d7e89bd4ea28cfd169e32c4516ef5d059e19afb9dfa4ede8412f2373dfb0a
   :  name:     Babel no Tou
   :  title:    バベルの塔
 
+cartridge sha256:3c8dde4541766bff7fc5b6d987e1ef985eb07375ede46bb3b48536ac133fd85a
+  :board region=ntsc id:HVC-RROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   HVC-BF
+  :  board:    HVC-RROM-05S
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Balloon Fight
+  :  title:    バルーンファイト
+
 cartridge sha256:a0fe077a6f0babf27b691e42db79cb4fc580a2f358f679b996fb17c2b0a68f59
   :board region=ntsc id:HVC-RROM
   :  mirror mode=horizontal
@@ -3098,6 +3114,21 @@ cartridge sha256:7a26c62a9b1605cbedf7cd5b2672aa0fc15b688b227a6cb57dbf74aa71a05f1
   :  name:     Blaster Master
   :  title:    Blaster Master
 
+cartridge sha256:31523322db8f94e7244f6e2d958692a412c1395fc744601d83d1e5111eff9042
+  :board region=ntsc id:NES-SFROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   NES-B2-USA
+  :  board:    NES-SFROM-02
+  :  revision: 1.0
+  :  name:     Bubble Bobble
+  :  title:    Bubble Bobble
+
 cartridge sha256:a35e846379ff252594ace83da2a1a1cb0692717b931055d1f6603812f18ad5cd
   :board region=ntsc id:NES-UNROM
   :  chip type=74HC32
@@ -5552,6 +5583,21 @@ cartridge sha256:d0850075065ecbd125a33accc952de5d012527be45aa14a1b8223a9adf1643a
   :  name:     Zoda's Revenge - StarTropics 2
   :  title:    Zoda's Revenge: StarTropics 2
 
+cartridge sha256:0bcd77e76d842c04a47f0dbc18c440da07da393400386fa13d6fdf59495a7be3
+  :board region=pal id:NES-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-BF-EEC
+  :  board:    NES-NROM-128-03
+  :  revision: 1.0
+  :  name:     Balloon Fight
+  :  title:    Balloon Fight
+
 cartridge sha256:f22944452be3259aac853258759f469e7d2e2447c6178f26cc7bd0e89945bc04
   :board region=pal id:NES-NROM-128
   :  mirror mode=horizontal
@@ -5630,6 +5676,41 @@ cartridge sha256:8e4a04076b6a728a7e65a09737776dcb9defed7922bf0437d9a89bbe8c724b5
   :  revision: 1.0
   :  name:     Hogan's Alley
   :  title:    Hogan's Alley
+
+cartridge sha256:95bc817c38bd7fa4b92efdb20bd48e3d7a9c46a4d2981f419708652e5475acaf
+  :board region=pal id:NES-SNROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :    ram name=save.ram size=0x2000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-ZL-EEC
+  :  board:    NES-SNROM-02
+  :  revision: 1.0
+  :  name:     Legend of Zelda, The
+  :  title:    The Legend of Zelda
+
+cartridge sha256:b822db53a1cc09564044b273b4b0bae8e76527688e733f80df884dc1ffb2abfa
+  :board region=pal id:NES-SNROM
+  :  chip type=MMC1B3
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :    ram name=save.ram size=0x2000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-ZL-EEC
+  :  serial:   NES-ZL-FRA
+  :  serial:   NES-ZL-FRG
+  :  serial:   NES-ZL-ESP
+  :  board:    NES-SNROM-05
+  :  revision: 1.1
+  :  name:     Legend of Zelda, The
+  :  title:    The Legend of Zelda
 
 cartridge sha256:3264e4c57ffaf64df816cc97b1d6d278042545a4be248f5c195d82037f0a9bfd
   :board region=pal id:NES-BTR

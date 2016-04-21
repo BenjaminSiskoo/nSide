@@ -77,6 +77,7 @@ struct PlayChoice10 {
   struct VideoCircuit {
     auto power() -> void;
     auto update() -> void;
+    auto refresh() -> void;
 
     uint8 chrrom[0x2000 * 3];
     uint8 cgrom[0x100 * 3];

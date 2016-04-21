@@ -18,6 +18,15 @@ auto System::term() -> void {
 }
 
 auto System::power() -> void {
+  Emulator::video.reset();
+  Emulator::video.setInterface(interface);
+  Emulator::video.resize(240, 240);
+  configureVideoPalette();
+  configureVideoEffects();
+
+  Emulator::audio.reset();
+  Emulator::audio.setInterface(interface);
+
   bus.power();
   player.power();
   cpu.power();
@@ -37,7 +46,6 @@ auto System::load() -> void {
 
   cartridge.load();
   serializeInit();
-  configureVideo();
   _orientation = 0;
   _loaded = true;
 }

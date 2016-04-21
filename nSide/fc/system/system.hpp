@@ -33,7 +33,6 @@ struct System {
   auto reset() -> void;
 
   //video.cpp
-  auto configureVideo() -> void;
   auto configureVideoPalette() -> void;
   auto configureVideoEffects() -> void;
   auto configureVideoCursors() -> void;

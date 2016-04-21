@@ -1,8 +1,7 @@
-struct PPU : Thread, public PPUcounter {
+struct PPU : Thread, PPUcounter {
   enum class Revision : uint {
     RP2C02C,
     RP2C02G,
-    RP2C07,
     RP2C03B,
     RP2C03G,
     RP2C04_0001,
@@ -16,7 +15,13 @@ struct PPU : Thread, public PPUcounter {
     RC2C05_03,
     RC2C05_04,
     RC2C05_05,
+    RP2C07,
+
+    UA6538,
   } revision;
+
+  alwaysinline auto yiq() const -> bool { return revision <= Revision::RP2C02G || revision >= Revision::RP2C07; }
+  alwaysinline auto rgb() const -> bool { return revision >= Revision::RP2C03B && revision <= Revision::RC2C05_05; }
 
   PPU();
   ~PPU();
@@ -144,9 +149,10 @@ privileged:
 
   auto scanline() -> void;
   auto frame() -> void;
+  auto refresh() -> void;
 
-  friend class Video;
   friend class BeamGun;
+  friend class Scheduler;
 };
 
 extern PPU ppu;

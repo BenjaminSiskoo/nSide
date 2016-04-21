@@ -60,7 +60,11 @@ auto System::load(Revision revision) -> void {
   }
 
   cartridge.load();
-  _region = cartridge.region() == Cartridge::Region::NTSC ? Region::NTSC : Region::PAL;
+  switch(cartridge.region()) {
+  case Cartridge::Region::NTSC:  _region = Region::NTSC;  break;
+  case Cartridge::Region::PAL:   _region = Region::PAL;   break;
+  case Cartridge::Region::Dendy: _region = Region::Dendy; break;
+  }
   _cpuFrequency = region() == Region::NTSC ? 21'477'272 : 26'601'712;
 
   switch(revision) {
@@ -69,7 +73,12 @@ auto System::load(Revision revision) -> void {
     apu.revision = APU::Revision::RP2A03G;
     // most Famicoms use a PPU with open bus OAMDATA (read).
     // For now, we use an NES PPU where OAMDATA (read) is defined.
-    ppu.revision = region() == Region::NTSC ? PPU::Revision::RP2C02G : PPU::Revision::RP2C07;
+    switch(region()) {
+    case Region::NTSC:  ppu.revision = PPU::Revision::RP2C02G; break;
+    case Region::PAL:   ppu.revision = PPU::Revision::RP2C07;  break;
+    case Region::Dendy: ppu.revision = PPU::Revision::UA6538;  break;
+    }
+    if(region() != Region::NTSC) interface->information.aspectRatio = 2950000.0 / 2128137.0;
     peripherals.connect(Port::Arcade, Device::None);
     break;
 
@@ -105,7 +114,6 @@ auto System::load(Revision revision) -> void {
   }
 
   serializeInit();
-  configureVideo();
   _loaded = true;
 }
 
@@ -124,6 +132,16 @@ auto System::unload() -> void {
 }
 
 auto System::power() -> void {
+  Emulator::video.reset();
+  Emulator::video.setInterface(interface);
+  //Emulator::video.resize() is called in configureVideoEffects()
+  configureVideoPalette();
+  configureVideoEffects();
+  configureVideoCursors();
+
+  Emulator::audio.reset();
+  Emulator::audio.setInterface(interface);
+
   cartridge.power();
   cpu.power();
   apu.power();

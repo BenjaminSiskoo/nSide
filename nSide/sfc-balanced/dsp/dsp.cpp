@@ -2,7 +2,6 @@
 
 namespace SuperFamicom {
 
-#include "audio.cpp"
 DSP dsp;
 
 #include "serialization.cpp"
@@ -26,7 +25,7 @@ auto DSP::main() -> void {
 
   int count = spc_dsp.sample_count();
   if(count > 0) {
-    for(uint n = 0; n < count; n += 2) audio.sample(samplebuffer[n + 0], samplebuffer[n + 1]);
+    for(uint n = 0; n < count; n += 2) stream->sample(samplebuffer[n + 0], samplebuffer[n + 1]);
     spc_dsp.set_output(samplebuffer, 8192);
   }
 }
@@ -50,6 +49,7 @@ auto DSP::power() -> void {
 }
 
 auto DSP::reset() -> void {
+  stream = Emulator::audio.createStream(system.apuFrequency() / 768.0);
   Thread::clock = 0;
   spc_dsp.soft_reset();
   spc_dsp.set_output(samplebuffer, 8192);
