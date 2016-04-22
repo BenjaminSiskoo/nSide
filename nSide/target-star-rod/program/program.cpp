@@ -73,12 +73,6 @@ Program::Program(lstring args) {
   input->set(Input::Handle, presentation->viewport.handle());
   if(!input->init()) input = Input::create("None");
 
-  dspaudio.setPrecision(16);
-  dspaudio.setBalance(0.0);
-  dspaudio.setFrequency(32040);
-  dspaudio.setResampler(DSP::ResampleEngine::Sinc);
-  dspaudio.setResamplerFrequency(48000);
-
   presentation->drawSplashScreen();
 
   if(loadMedia(location) == false) return;

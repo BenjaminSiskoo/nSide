@@ -78,7 +78,7 @@ auto System::load(Revision revision) -> void {
     case Region::PAL:   ppu.revision = PPU::Revision::RP2C07;  break;
     case Region::Dendy: ppu.revision = PPU::Revision::UA6538;  break;
     }
-    if(region() != Region::NTSC) interface->information.aspectRatio = 2950000.0 / 2128137.0;
+    if(region() != Region::NTSC) interface->information.aspectRatio = 2'950'000.0 / 2'128'137.0;
     peripherals.connect(Port::Arcade, Device::None);
     break;
 

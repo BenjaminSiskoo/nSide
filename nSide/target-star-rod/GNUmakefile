@@ -28,9 +28,11 @@ else ifeq ($(platform),bsd)
   ruby := video.xshm audio.oss input.sdl
 endif
 
+# ruby
 include ../ruby/GNUmakefile
 link += $(rubylink)
 
+# hiro
 include ../hiro/GNUmakefile
 link += $(hirolink)
 

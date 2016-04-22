@@ -24,8 +24,6 @@ struct Program : Emulator::Interface::Bind {
   //utility.cpp
   auto message(const string& text) -> void;
 
-  DSP dspaudio;
-
   vector<string> mediaPaths;
   vector<string> folderPaths;
 

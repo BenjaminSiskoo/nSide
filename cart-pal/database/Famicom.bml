@@ -5712,6 +5712,23 @@ cartridge sha256:b822db53a1cc09564044b273b4b0bae8e76527688e733f80df884dc1ffb2abf
   :  name:     Legend of Zelda, The
   :  title:    The Legend of Zelda
 
+cartridge sha256:c8e7036e8afcd95acaf3a5e0956df53beaab127a7defcc0e80d629653ff67c23
+  :board region=pal id:NES-UNROM
+  :  chip type=74HC32
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-MN-EEC
+  :  serial:   NES-MN-FRG
+  :  board:    NES-UNROM-09
+  :  revision: 1.0
+  :  name:     Mega Man
+  :  title:    Mega Man
+
 cartridge sha256:3264e4c57ffaf64df816cc97b1d6d278042545a4be248f5c195d82037f0a9bfd
   :board region=pal id:NES-BTR
   :  chip type=FME-7

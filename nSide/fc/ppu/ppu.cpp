@@ -33,13 +33,8 @@ auto PPU::main() -> void {
 }
 
 auto PPU::addClocks(uint clocks) -> void {
-  uint vbl;
-  uint pre;
-  switch(system.region()) {
-  case System::Region::NTSC:  vbl = 241; pre = 261; break;
-  case System::Region::PAL:   vbl = 241; pre = 311; break;
-  case System::Region::Dendy: vbl = 291; pre = 311; break;
-  }
+  uint vbl = system.region() != System::Region::Dendy ? 241 : 291;
+  uint pre = system.region() == System::Region::NTSC ? 261 : 311;
 
   while(clocks--) {
     if(vcounter() == vbl - 1 && hcounter() == 340) status.nmi_hold = 1;
@@ -74,7 +69,7 @@ auto PPU::power() -> void {
   //$2003
   status.oam_addr = 0x00;
 
-  for(auto& n : ciram  ) n = 0xff;
+  for(auto& n : ciram) n = 0xff;
 }
 
 auto PPU::reset() -> void {
@@ -113,8 +108,8 @@ auto PPU::reset() -> void {
   status.sprite_zero_hit = false;
   status.sprite_overflow = false;
 
-  for(auto& n : cgram  ) n = 0;
-  for(auto& n : oam    ) n = 0;
+  for(auto& n : cgram) n = 0;
+  for(auto& n : oam) n = 0;
 }
 
 auto PPU::scanline() -> void {
