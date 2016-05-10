@@ -9,8 +9,7 @@ inline auto render_line_mode6() -> void;
 inline auto render_line_mode7() -> void;
 
 //cache.cpp
-enum : uint { COLORDEPTH_4 = 0, COLORDEPTH_16 = 1, COLORDEPTH_256 = 2 };
-enum : uint { TILE_2BIT = 0, TILE_4BIT = 1, TILE_8BIT = 2 };
+enum : uint { BPP2 = 0, BPP4 = 1, BPP8 = 2 };
 
 struct pixel_t {
   //bgr555 color data for main/subscreen pixels: 0x0000 = transparent / use palette color # 0
@@ -76,7 +75,7 @@ struct oam_tileitem {
 enum : uint { OAM_PRI_NONE = 4 };
 uint8 oam_line_pal[256], oam_line_pri[256];
 
-auto update_sprite_list(unsigned addr, uint8 data) -> void;
+auto update_sprite_list(uint addr, uint8 data) -> void;
 auto build_sprite_list() -> void;
 auto is_sprite_on_scanline() -> bool;
 auto load_oam_tiles() -> void;

@@ -100,7 +100,7 @@ auto APU::reset() -> void {
   case System::Region::PAL:   clockDivider = 16.0; break;
   case System::Region::Dendy: clockDivider = 15.0; break;
   }
-  stream = Emulator::audio.createStream(system.cpuFrequency() / clockDivider);
+  stream = Emulator::audio.createStream(1, system.cpuFrequency() / clockDivider);
 
   pulse[0].reset();
   pulse[1].reset();

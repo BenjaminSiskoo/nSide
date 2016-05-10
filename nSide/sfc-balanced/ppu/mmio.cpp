@@ -376,9 +376,9 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   case 0x2118: {
     uint16 addr = getVramAddress();
     vramWrite(addr, data);
-    bg_tiledata_state[TILE_2BIT][(addr >> 4)] = 1;
-    bg_tiledata_state[TILE_4BIT][(addr >> 5)] = 1;
-    bg_tiledata_state[TILE_8BIT][(addr >> 6)] = 1;
+    bg_tiledata_state[BPP2][addr >> 4] = 1;
+    bg_tiledata_state[BPP4][addr >> 5] = 1;
+    bg_tiledata_state[BPP8][addr >> 6] = 1;
 
     if(regs.vram_incmode == 0) {
       regs.vram_addr += regs.vram_incsize;
@@ -390,9 +390,9 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   case 0x2119: {
     uint16 addr = getVramAddress() + 1;
     vramWrite(addr, data);
-    bg_tiledata_state[TILE_2BIT][(addr >> 4)] = 1;
-    bg_tiledata_state[TILE_4BIT][(addr >> 5)] = 1;
-    bg_tiledata_state[TILE_8BIT][(addr >> 6)] = 1;
+    bg_tiledata_state[BPP2][addr >> 4] = 1;
+    bg_tiledata_state[BPP4][addr >> 5] = 1;
+    bg_tiledata_state[BPP8][addr >> 6] = 1;
 
     if(regs.vram_incmode == 1) {
       regs.vram_addr += regs.vram_incsize;

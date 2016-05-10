@@ -1,14 +1,10 @@
-//bsnes mode7 renderer
+//higan mode7 renderer
 //
 //base algorithm written by anomie
-//bsnes implementation written by byuu
+//higan implementation written by byuu
 //
 //supports mode 7 + extbg + rotate + zoom + direct color + scrolling + m7sel + windowing + mosaic
 //interlace and pseudo-hires support are automatic via main rendering routine
-
-//13-bit sign extend
-//--s---vvvvvvvvvv -> ssssssvvvvvvvvvv
-#define CLIP(x) ( ((x) & 0x2000) ? ( (x) | ~0x03ff) : ((x) & 0x03ff) )
 
 template<uint bg>
 auto PPU::render_line_mode7(uint8 pri0_pos, uint8 pri1_pos) -> void {
@@ -42,17 +38,24 @@ auto PPU::render_line_mode7(uint8 pri0_pos, uint8 pri1_pos) -> void {
   uint16* mtable_x;
   uint16* mtable_y;
   if(bg == BG1) {
-    mtable_x = (uint16*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? (uint)regs.mosaic_size : 0];
-    mtable_y = (uint16*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? (uint)regs.mosaic_size : 0];
+    mtable_x = (uint16*)mosaic_table[regs.mosaic_enabled[BG1] == true ? (uint)regs.mosaic_size : 0];
+    mtable_y = (uint16*)mosaic_table[regs.mosaic_enabled[BG1] == true ? (uint)regs.mosaic_size : 0];
   } else {  //bg == BG2
     //Mode7 EXTBG BG2 uses BG1 mosaic enable to control vertical mosaic,
     //and BG2 mosaic enable to control horizontal mosaic...
-    mtable_x = (uint16*)mosaic_table[(regs.mosaic_enabled[BG2] == true) ? (uint)regs.mosaic_size : 0];
-    mtable_y = (uint16*)mosaic_table[(regs.mosaic_enabled[BG1] == true) ? (uint)regs.mosaic_size : 0];
+    mtable_x = (uint16*)mosaic_table[regs.mosaic_enabled[BG2] == true ? (uint)regs.mosaic_size : 0];
+    mtable_y = (uint16*)mosaic_table[regs.mosaic_enabled[BG1] == true ? (uint)regs.mosaic_size : 0];
   }
+
+  //13-bit sign extend
+  //--s---vvvvvvvvvv -> ssssssvvvvvvvvvv
+  #define CLIP(x) ( (x) & 0x2000 ? (x) | ~0x03ff : (x) & 0x03ff )
 
   int32 psx = ((a * CLIP(hofs - cx)) & ~63) + ((b * CLIP(vofs - cy)) & ~63) + ((b * mtable_y[y]) & ~63) + (cx << 8);
   int32 psy = ((c * CLIP(hofs - cx)) & ~63) + ((d * CLIP(vofs - cy)) & ~63) + ((d * mtable_y[y]) & ~63) + (cy << 8);
+
+  #undef CLIP
+
   for(int32 x = 0; x < 256; x++) {
     px = psx + (a * mtable_x[x]);
     py = psy + (c * mtable_x[x]);
@@ -106,7 +109,7 @@ auto PPU::render_line_mode7(uint8 pri0_pos, uint8 pri1_pos) -> void {
 
     if(!palette) continue;
 
-    _x = (regs.mode7_hflip == false) ? ((uint)x) : (255 - x);
+    _x = regs.mode7_hflip == false ? (uint)x : 255 - x;
 
     uint32 col;
     if(regs.direct_color == true && bg == BG1) {
@@ -134,5 +137,3 @@ auto PPU::render_line_mode7(uint8 pri0_pos, uint8 pri1_pos) -> void {
     }
   }
 }
-
-#undef CLIP

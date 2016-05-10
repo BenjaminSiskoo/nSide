@@ -193,7 +193,6 @@ privileged:
 
   auto set_frameskip(uint frameskip) -> void;
 
-  enum : uint { NTSC = 0, PAL = 1 };
   enum : uint { BG1 = 0, BG2 = 1, BG3 = 2, BG4 = 3, OAM = 4, BACK = 5, COL = 5 };
   enum : uint { SC_32x32 = 0, SC_64x32 = 1, SC_32x64 = 2, SC_64x64 = 3 };
 

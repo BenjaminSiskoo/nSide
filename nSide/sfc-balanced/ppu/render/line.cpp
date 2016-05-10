@@ -88,13 +88,13 @@ inline auto PPU::render_line_output() -> void {
   auto ptr = (uint32*)output + (line * 1024) + ((interlace() && field()) ? 512 : 0);
 
   if(!regs.pseudo_hires && regs.bg_mode != 5 && regs.bg_mode != 6) {
-    for(uint x = 0; x < 256; x++) {
+    for(uint x : range(256)) {
       uint color = (regs.display_brightness << 15) | get_pixel_normal(x);
       *ptr++ = color;
       *ptr++ = color;
     }
   } else {
-    for(uint x = 0; x < 256; x++) {
+    for(uint x : range(256)) {
       *ptr++ = (regs.display_brightness << 15) | get_pixel_swap(x);
       *ptr++ = (regs.display_brightness << 15) | get_pixel_normal(x);
     }

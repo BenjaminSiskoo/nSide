@@ -1,21 +1,21 @@
 //called once at the start of every rendered scanline
 auto PPU::update_bg_info() -> void {
-  const unsigned hires = (regs.bg_mode == 5 || regs.bg_mode == 6);
-  const unsigned width = (!hires ? 256 : 512);
+  const uint hires = regs.bg_mode == 5 || regs.bg_mode == 6;
+  const uint width = !hires ? 256 : 512;
 
-  for(unsigned bg = 0; bg < 4; bg++) {
-    bg_info[bg].th = (regs.bg_tilesize[bg] ? 4 : 3);
-    bg_info[bg].tw = (hires ? 4 : (uint)bg_info[bg].th);
+  for(uint bg : range(4)) {
+    bg_info[bg].th = regs.bg_tilesize[bg] ? 4 : 3;
+    bg_info[bg].tw = hires ? 4 : (uint)bg_info[bg].th;
 
-    bg_info[bg].mx = (bg_info[bg].th == 4 ? (width << 1) : width);
+    bg_info[bg].mx = bg_info[bg].th == 4 ? width << 1 : width;
     bg_info[bg].my = bg_info[bg].mx;
     if(regs.bg_scsize[bg] & 0x01) bg_info[bg].mx <<= 1;
     if(regs.bg_scsize[bg] & 0x02) bg_info[bg].my <<= 1;
     bg_info[bg].mx--;
     bg_info[bg].my--;
 
-    bg_info[bg].scy = (regs.bg_scsize[bg] & 0x02) ? (32 << 5) : 0;
-    bg_info[bg].scx = (regs.bg_scsize[bg] & 0x01) ? (32 << 5) : 0;
+    bg_info[bg].scy = regs.bg_scsize[bg] & 0x02 ? 32 << 5 : 0;
+    bg_info[bg].scx = regs.bg_scsize[bg] & 0x01 ? 32 << 5 : 0;
     if(regs.bg_scsize[bg] == 3) bg_info[bg].scy <<= 1;
   }
 }
@@ -33,22 +33,6 @@ auto PPU::bg_get_tile(uint16 x, uint16 y) -> uint16 {
   return vram[addr] + (vram[addr + 1] << 8);
 }
 
-#define setpixel_main(x) \
-  if(pixel_cache[x].pri_main < tile_pri) { \
-    pixel_cache[x].pri_main = tile_pri; \
-    pixel_cache[x].bg_main  = bg; \
-    pixel_cache[x].src_main = col; \
-    pixel_cache[x].ce_main  = false; \
-  }
-
-#define setpixel_sub(x) \
-  if(pixel_cache[x].pri_sub < tile_pri) { \
-    pixel_cache[x].pri_sub = tile_pri; \
-    pixel_cache[x].bg_sub  = bg; \
-    pixel_cache[x].src_sub = col; \
-    pixel_cache[x].ce_sub  = false; \
-  }
-
 template<uint mode, uint bg, uint color_depth>
 auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
   if(pri0_pos + pri1_pos == 0) return;
@@ -58,14 +42,14 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
   const bool bg_enabled    = regs.bg_enabled[bg];
   const bool bgsub_enabled = regs.bgsub_enabled[bg];
 
-  const uint16 opt_valid_bit = (bg == BG1) ? 0x2000 : (bg == BG2) ? 0x4000 : 0x0000;
-  const uint8  bgpal_index   = (mode == 0 ? (bg << 5) : 0);
+  const uint16 opt_valid_bit = bg == BG1 ? 0x2000 : bg == BG2 ? 0x4000 : 0x0000;
+  const uint8  bgpal_index   = mode == 0 ? bg << 5 : 0;
 
   const uint8  pal_size  = 2 << color_depth;       //<<2 (*4), <<4 (*16), <<8 (*256)
   const uint16 tile_mask = 0x0fff >> color_depth;  //0x0fff, 0x07ff, 0x03ff
   //4 + color_depth = >>(4-6) -- / {16, 32, 64 } bytes/tile
   //index is a tile number count to add to base tile number
-  const unsigned tiledata_index = regs.bg_tdaddr[bg] >> (4 + color_depth);
+  const uint tiledata_index = regs.bg_tdaddr[bg] >> (4 + color_depth);
 
   const uint8 *bg_td       = bg_tiledata[color_depth];
   const uint8 *bg_td_state = bg_tiledata_state[color_depth];
@@ -79,8 +63,8 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
   uint16 hscroll = regs.bg_hofs[bg];
   uint16 vscroll = regs.bg_vofs[bg];
 
-  const unsigned hires = (mode == 5 || mode == 6);
-  const unsigned width = (!hires ? 256 : 512);
+  const uint hires = mode == 5 || mode == 6;
+  const uint width = !hires ? 256 : 512;
 
   if(hires) {
     hscroll <<= 1;
@@ -95,22 +79,22 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
 
   const uint8*  tile_ptr;
   const uint16* mtable = mosaic_table[regs.mosaic_enabled[bg] ? (uint)regs.mosaic_size : 0];
-  const bool    is_opt_mode = (mode == 2 || mode == 4 || mode == 6);
-  const bool    is_direct_color_mode = (regs.direct_color == true && bg == BG1 && (mode == 3 || mode == 4));
+  const bool    is_opt_mode = mode == 2 || mode == 4 || mode == 6;
+  const bool    is_direct_color_mode = regs.direct_color && bg == BG1 && (mode == 3 || mode == 4);
 
   build_window_tables(bg);
   const uint8* wt_main = window[bg].main;
   const uint8* wt_sub  = window[bg].sub;
 
   uint16 prev_x = 0xffff, prev_y = 0xffff, prev_optx = 0xffff;
-  for(uint16 x = 0; x < width; x++) {
+  for(uint16 x : range(width)) {
     hoffset = mtable[x] + hscroll;
     voffset = y + vscroll;
 
     if(is_opt_mode) {
-      opt_x = (x + (hscroll & 7));
+      opt_x = x + (hscroll & 7);
 
-      //tile 0 is unaffected by OPT mode...
+      //tile 0 is unaffected by offset-per-tile mode...
       if(opt_x >= 8) {
         //cache tile data in hval, vval if possible
         if((opt_x >> 3) != (prev_optx >> 3)) {
@@ -144,15 +128,15 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
     hoffset &= mask_x;
     voffset &= mask_y;
 
-    if((hoffset >> 3) != prev_x || (voffset >> 3) != prev_y) {
-      prev_x = (hoffset >> 3);
-      prev_y = (voffset >> 3);
+    if(hoffset >> 3 != prev_x || voffset >> 3 != prev_y) {
+      prev_x = hoffset >> 3;
+      prev_y = voffset >> 3;
 
       tile_num  = bg_get_tile<bg>(hoffset, voffset);  //format = vhopppcc cccccccc
-      mirror_y  = (tile_num & 0x8000);
-      mirror_x  = (tile_num & 0x4000);
-      tile_pri  = (tile_num & 0x2000) ? pri1_pos : pri0_pos;
-      pal_num   = ((tile_num >> 10) & 7);
+      mirror_y  = tile_num & 0x8000;
+      mirror_x  = tile_num & 0x4000;
+      tile_pri  = tile_num & 0x2000 ? pri1_pos : pri0_pos;
+      pal_num   = (tile_num >> 10) & 7;
       pal_index = bgpal_index + (pal_num << pal_size);
 
       if(tile_width  == 4) {  //16x16 horizontal tile mirroring
@@ -184,6 +168,21 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
         col = get_palette(col + pal_index);
       }
 
+      #define setpixel_main(x) \
+        if(pixel_cache[x].pri_main < tile_pri) { \
+          pixel_cache[x].pri_main = tile_pri; \
+          pixel_cache[x].bg_main  = bg; \
+          pixel_cache[x].src_main = col; \
+          pixel_cache[x].ce_main  = false; \
+        }
+
+      #define setpixel_sub(x) \
+        if(pixel_cache[x].pri_sub < tile_pri) { \
+          pixel_cache[x].pri_sub = tile_pri; \
+          pixel_cache[x].bg_sub  = bg; \
+          pixel_cache[x].src_sub = col; \
+          pixel_cache[x].ce_sub  = false; \
+        }
       if(!hires) {
         if(bg_enabled    == true && !wt_main[x]) { setpixel_main(x); }
         if(bgsub_enabled == true && !wt_sub[x])  { setpixel_sub(x);  }
@@ -195,9 +194,8 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
           if(bgsub_enabled == true && !wt_sub[hx])  { setpixel_sub(hx);  }
         }
       }
+      #undef setpixel_main
+      #undef setpixel_sub
     }
   }
 }
-
-#undef setpixel_main
-#undef setpixel_sub

@@ -71,6 +71,8 @@ auto System::load() -> void {
   _cpuFrequency = region() == Region::NTSC ? 21'477'272 : 21'281'370;
   _apuFrequency = 24'606'720;
 
+  interface->information.aspectRatio = region() == Region::NTSC ? 8.0 / 7.0 : 2'950'000.0 / 2'128'137.0;
+
   if(cartridge.hasICD2()) icd2.load();
   if(cartridge.hasMCC()) mcc.load();
   if(cartridge.hasNSSDIP()) nss.load();

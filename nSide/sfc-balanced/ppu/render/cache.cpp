@@ -1,34 +1,34 @@
-#define render_bg_tile_line_2bpp(mask) \
-  col  = !!(d0 & mask) << 0; \
-  col += !!(d1 & mask) << 1; \
-  *dest++ = col
-
-#define render_bg_tile_line_4bpp(mask) \
-  col  = !!(d0 & mask) << 0; \
-  col += !!(d1 & mask) << 1; \
-  col += !!(d2 & mask) << 2; \
-  col += !!(d3 & mask) << 3; \
-  *dest++ = col
-
-#define render_bg_tile_line_8bpp(mask) \
-  col  = !!(d0 & mask) << 0; \
-  col += !!(d1 & mask) << 1; \
-  col += !!(d2 & mask) << 2; \
-  col += !!(d3 & mask) << 3; \
-  col += !!(d4 & mask) << 4; \
-  col += !!(d5 & mask) << 5; \
-  col += !!(d6 & mask) << 6; \
-  col += !!(d7 & mask) << 7; \
-  *dest++ = col
-
 template<uint color_depth>
 auto PPU::render_bg_tile(uint16 tile_num) -> void {
   uint8 col, d0, d1, d2, d3, d4, d5, d6, d7;
 
-  if(color_depth == COLORDEPTH_4) {
-    uint8* dest = (uint8*)bg_tiledata[TILE_2BIT] + tile_num * 64;
-    unsigned pos = tile_num * 16;
-    unsigned y = 8;
+  #define render_bg_tile_line_2bpp(mask) \
+    col  = !!(d0 & mask) << 0; \
+    col += !!(d1 & mask) << 1; \
+    *dest++ = col
+
+  #define render_bg_tile_line_4bpp(mask) \
+    col  = !!(d0 & mask) << 0; \
+    col += !!(d1 & mask) << 1; \
+    col += !!(d2 & mask) << 2; \
+    col += !!(d3 & mask) << 3; \
+    *dest++ = col
+
+  #define render_bg_tile_line_8bpp(mask) \
+    col  = !!(d0 & mask) << 0; \
+    col += !!(d1 & mask) << 1; \
+    col += !!(d2 & mask) << 2; \
+    col += !!(d3 & mask) << 3; \
+    col += !!(d4 & mask) << 4; \
+    col += !!(d5 & mask) << 5; \
+    col += !!(d6 & mask) << 6; \
+    col += !!(d7 & mask) << 7; \
+    *dest++ = col
+
+  if(color_depth == BPP2) {
+    uint8* dest = (uint8*)bg_tiledata[BPP2] + tile_num * 64;
+    uint pos = tile_num * 16;
+    uint y = 8;
     while(y--) {
       d0 = vram[pos    ];
       d1 = vram[pos + 1];
@@ -42,13 +42,13 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
       render_bg_tile_line_2bpp(0x01);
       pos += 2;
     }
-    bg_tiledata_state[TILE_2BIT][tile_num] = 0;
+    bg_tiledata_state[BPP2][tile_num] = 0;
   }
 
-  if(color_depth == COLORDEPTH_16) {
-    uint8* dest = (uint8*)bg_tiledata[TILE_4BIT] + tile_num * 64;
-    unsigned pos = tile_num * 32;
-    unsigned y = 8;
+  if(color_depth == BPP4) {
+    uint8* dest = (uint8*)bg_tiledata[BPP4] + tile_num * 64;
+    uint pos = tile_num * 32;
+    uint y = 8;
     while(y--) {
       d0 = vram[pos     ];
       d1 = vram[pos +  1];
@@ -64,13 +64,13 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
       render_bg_tile_line_4bpp(0x01);
       pos += 2;
     }
-    bg_tiledata_state[TILE_4BIT][tile_num] = 0;
+    bg_tiledata_state[BPP4][tile_num] = 0;
   }
 
-  if(color_depth == COLORDEPTH_256) {
-    uint8* dest = (uint8*)bg_tiledata[TILE_8BIT] + tile_num * 64;
-    unsigned pos = tile_num * 64;
-    unsigned y = 8;
+  if(color_depth == BPP8) {
+    uint8* dest = (uint8*)bg_tiledata[BPP8] + tile_num * 64;
+    uint pos = tile_num * 64;
+    uint y = 8;
     while(y--) {
       d0 = vram[pos     ];
       d1 = vram[pos +  1];
@@ -90,13 +90,13 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
       render_bg_tile_line_8bpp(0x01);
       pos += 2;
     }
-    bg_tiledata_state[TILE_8BIT][tile_num] = 0;
+    bg_tiledata_state[BPP8][tile_num] = 0;
   }
-}
 
-#undef render_bg_tile_line_2bpp
-#undef render_bg_tile_line_4bpp
-#undef render_bg_tile_line_8bpp
+  #undef render_bg_tile_line_2bpp
+  #undef render_bg_tile_line_4bpp
+  #undef render_bg_tile_line_8bpp
+}
 
 auto PPU::flush_pixel_cache() -> void {
   uint16 main = get_palette(0);
@@ -104,7 +104,7 @@ auto PPU::flush_pixel_cache() -> void {
               ? main
               : regs.color_rgb;
 
-  unsigned i = 255;
+  uint i = 255;
   do {
     pixel_cache[i].src_main = main;
     pixel_cache[i].src_sub  = sub;
@@ -118,26 +118,26 @@ auto PPU::flush_pixel_cache() -> void {
 }
 
 auto PPU::alloc_tiledata_cache() -> void {
-  bg_tiledata[TILE_2BIT]       = new uint8[262144]();
-  bg_tiledata[TILE_4BIT]       = new uint8[131072]();
-  bg_tiledata[TILE_8BIT]       = new uint8[ 65536]();
-  bg_tiledata_state[TILE_2BIT] = new uint8[  4096]();
-  bg_tiledata_state[TILE_4BIT] = new uint8[  2048]();
-  bg_tiledata_state[TILE_8BIT] = new uint8[  1024]();
+  bg_tiledata[BPP2]       = new uint8[262144]();
+  bg_tiledata[BPP4]       = new uint8[131072]();
+  bg_tiledata[BPP8]       = new uint8[ 65536]();
+  bg_tiledata_state[BPP2] = new uint8[  4096]();
+  bg_tiledata_state[BPP4] = new uint8[  2048]();
+  bg_tiledata_state[BPP8] = new uint8[  1024]();
 }
 
 //marks all tiledata cache entries as dirty
 auto PPU::flush_tiledata_cache() -> void {
-  for(unsigned i = 0; i < 4096; i++) bg_tiledata_state[TILE_2BIT][i] = 1;
-  for(unsigned i = 0; i < 2048; i++) bg_tiledata_state[TILE_4BIT][i] = 1;
-  for(unsigned i = 0; i < 1024; i++) bg_tiledata_state[TILE_8BIT][i] = 1;
+  for(uint i : range(4096)) bg_tiledata_state[BPP2][i] = 1;
+  for(uint i : range(2048)) bg_tiledata_state[BPP4][i] = 1;
+  for(uint i : range(1024)) bg_tiledata_state[BPP8][i] = 1;
 }
 
 auto PPU::free_tiledata_cache() -> void {
-  delete[] bg_tiledata[TILE_2BIT];
-  delete[] bg_tiledata[TILE_4BIT];
-  delete[] bg_tiledata[TILE_8BIT];
-  delete[] bg_tiledata_state[TILE_2BIT];
-  delete[] bg_tiledata_state[TILE_4BIT];
-  delete[] bg_tiledata_state[TILE_8BIT];
+  delete[] bg_tiledata[BPP2];
+  delete[] bg_tiledata[BPP4];
+  delete[] bg_tiledata[BPP8];
+  delete[] bg_tiledata_state[BPP2];
+  delete[] bg_tiledata_state[BPP4];
+  delete[] bg_tiledata_state[BPP8];
 }

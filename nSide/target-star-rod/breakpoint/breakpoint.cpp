@@ -132,7 +132,7 @@ auto BreakpointEditor::testExecCPU(uint24 addr) -> bool {
   addr = cpuDebugger->mirror(addr);
   for(auto &bp : breakpointExecCPU) {
     if(bp.addr == addr) {
-      debugger->print("Breapoint #", bp.id, " hit\n");
+      debugger->print("Breakpoint #", bp.id, " hit\n");
       return true;
     }
   }
@@ -167,7 +167,7 @@ auto BreakpointEditor::testWriteSMP(uint16 addr, uint8 data) -> bool {
 auto BreakpointEditor::testExecSMP(uint16 addr) -> bool {
   for(auto &bp : breakpointExecSMP) {
     if(bp.addr == addr) {
-      debugger->print("Breapoint #", bp.id, " hit\n");
+      debugger->print("Breakpoint #", bp.id, " hit\n");
       return true;
     }
   }

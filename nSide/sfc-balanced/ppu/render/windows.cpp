@@ -33,7 +33,7 @@ auto PPU::build_window_table(uint8 bg, bool screen) -> void {
 
   if(regs.window1_enabled[bg] == true && regs.window2_enabled[bg] == false) {
     if(regs.window1_invert[bg] == true) set ^= clr ^= set ^= clr;
-    for(unsigned x = 0; x < 256; x++) {
+    for(uint x : range(256)) {
       table[x] = (x >= window1_left && x <= window1_right) ? set : clr;
     }
     return;
@@ -41,13 +41,13 @@ auto PPU::build_window_table(uint8 bg, bool screen) -> void {
 
   if(regs.window1_enabled[bg] == false && regs.window2_enabled[bg] == true) {
     if(regs.window2_invert[bg] == true) set ^= clr ^= set ^= clr;
-    for(unsigned x = 0; x < 256; x++) {
+    for(uint x : range(256)) {
       table[x] = (x >= window2_left && x <= window2_right) ? set : clr;
     }
     return;
   }
 
-  for(unsigned x = 0; x < 256; x++) {
+  for(uint x : range(256)) {
     bool w1_mask = (x >= window1_left && x <= window1_right) ^ regs.window1_invert[bg];
     bool w2_mask = (x >= window2_left && x <= window2_right) ^ regs.window2_invert[bg];
 

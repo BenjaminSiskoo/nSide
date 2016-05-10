@@ -246,12 +246,6 @@ auto Interface::videoColors() -> uint32 {
 }
 
 auto Interface::videoColor(uint32 n) -> uint64 {
-  double saturation = 2.0;
-  double hue = 0.0;
-  double contrast = 1.0;
-  double brightness = 1.0;
-  double gamma = settings.colorEmulation ? 1.8 : 2.2;
-
   static auto generateYIQColor = [](uint9 n, double saturation, double hue, double contrast, double brightness, double gamma) -> uint64 {
     int color = n.bits(0,3), level = color < 0xe ? n.bits(4,5) : 1;
 
@@ -294,6 +288,52 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     uint64 r = uclamp<16>(65535.0 * gammaAdjust(y +  0.946882 * i +  0.623557 * q));
     uint64 g = uclamp<16>(65535.0 * gammaAdjust(y + -0.274788 * i + -0.635691 * q));
     uint64 b = uclamp<16>(65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q));
+
+    return r << 32 | g << 16 | b << 0;
+  };
+
+  static auto generateYUVColor = [](uint9 n, double saturation, double hue, double contrast, double brightness, double gamma) -> uint64 {
+    int color = n.bits(0,3), level = color < 0xe ? n.bits(4,5) : 1;
+
+    static const double black = 0.518, white = 1.962, attenuation = 0.746;
+    static const double levels[8] = {
+      0.350, 0.518, 0.962, 1.550,
+      1.094, 1.506, 1.962, 1.962,
+    };
+
+    double lo_and_hi[2] = {
+      levels[level + 4 * (color == 0x0)],
+      levels[level + 4 * (color <  0xd)],
+    };
+
+    double y = 0.0, u = 0.0, v = 0.0;
+    auto wave = [](int p, int color) -> int { return (color + p + 8) % 12 < 6; };
+    for(int p : range(12)) {
+      double spot = lo_and_hi[wave(p, color)];
+
+      if(color < 0xe && (
+         ((n.bit(6)) && wave(p, 12))
+      || ((n.bit(7)) && wave(p,  4))
+      || ((n.bit(8)) && wave(p,  8))
+      )) spot *= attenuation;
+
+      double vv = (spot - black) / (white - black);
+
+      vv = (vv - 0.5) * contrast + 0.5;
+      vv *= brightness / 12.0;
+
+      y += vv;
+      u += vv * std::sin((3.141592653 / 6.0) * (p + hue));
+      v += vv * std::cos((3.141592653 / 6.0) * (p + hue));
+    }
+
+    u *= saturation;
+    v *= saturation;
+
+    auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
+    uint64 r = uclamp<16>(65535.0 * gammaAdjust(y +  0.000000 * u +  1.140000 * v));
+    uint64 g = uclamp<16>(65535.0 * gammaAdjust(y + -0.395000 * u + -0.581000 * v));
+    uint64 b = uclamp<16>(65535.0 * gammaAdjust(y +  2.032000 * u +  0.000000 * v));
 
     return r << 32 | g << 16 | b << 0;
   };
@@ -350,8 +390,12 @@ auto Interface::videoColor(uint32 n) -> uint64 {
 
   if(!system.pc10() || n < (1 << 9)) {
     if(ppu.yiq()) {
-      auto gamma = settings.colorEmulation ? 1.8 : 2.2;
-      return generateYIQColor(n & 0x1ff, 2.0, 0.0, 1.0, 1.0, gamma);
+      double gamma = settings.colorEmulation ? 1.8 : 2.2;
+      if(system.region() == System::Region::NTSC) {
+        return generateYIQColor(n & 0x1ff, 2.0, 0.0, 1.0, 1.0, gamma);
+      } else {
+        return generateYUVColor(n & 0x1ff, 2.0, 30.0 * (12.0 / 360.0), 1.0, 1.0, gamma);
+      }
     } else if(ppu.rgb()) {
       const uint9* palette = nullptr;
       switch(ppu.revision) {
@@ -434,6 +478,7 @@ auto Interface::group(uint id) -> uint {
 auto Interface::load(uint id) -> void {
   information.canvasWidth  = 256;
   information.canvasHeight = 240;
+  information.aspectRatio = 8.0 / 7.0;
   if(id == ID::Famicom)      system.load(System::Revision::Famicom);
   if(id == ID::VSSystem)     system.load(System::Revision::VSSystem); 
   if(id == ID::PlayChoice10) system.load(System::Revision::PlayChoice10);

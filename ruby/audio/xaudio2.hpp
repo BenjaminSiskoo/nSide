@@ -2,8 +2,6 @@
 
 //ruby-specific header to provide mingw-friendly xaudio2 interfaces
 
-#include <audioclient.h>
-
 //64-bit GCC fix
 #define GUID_EXT EXTERN_C
 #define GUID_SECT
