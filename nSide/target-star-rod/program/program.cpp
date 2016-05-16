@@ -40,7 +40,7 @@ Program::Program(lstring args) {
   path.append("Super Famicom/");
 
   string location;
-  args.takeFirst();  //ignore program location in argument parsing
+  args.takeLeft();  //ignore program location in argument parsing
   for(auto& argument : args) {
     location = argument.transform("\\", "/").rtrim("/").append("/");
   }
@@ -66,7 +66,8 @@ Program::Program(lstring args) {
   audio = Audio::create(settings->audio.driver);
   audio->set(Audio::Handle, presentation->viewport.handle());
   audio->set(Audio::Synchronize, settings->audio.synchronize);
-  audio->set(Audio::Frequency, 48000u);
+  audio->set(Audio::Exclusive, false);
+  audio->set(Audio::Latency, 80u);
   if(!audio->init()) audio = Audio::create("None");
 
   input = Input::create(settings->input.driver);

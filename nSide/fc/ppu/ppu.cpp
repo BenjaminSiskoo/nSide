@@ -207,10 +207,16 @@ auto PPU::scrolly_increment() -> void {
 
 //
 
+auto PPU::ext() -> uint4 {
+  return 0; //EXT pins are tied to ground
+}
+
+//
+
 auto PPU::raster_pixel() -> void {
   uint lx = hcounter() - 1;
-  uint mask = 0x8000 >> (status.xaddr + (lx & 7));
-  uint palette = 0, object_palette = 0;
+  uint16 mask = 0x8000 >> (status.xaddr + (lx & 7));
+  uint8 palette = 0, object_palette = 0;
   bool object_priority = 0;
   palette |= (raster.tiledatalo & mask) ? 1 : 0;
   palette |= (raster.tiledatahi & mask) ? 2 : 0;
@@ -252,8 +258,10 @@ auto PPU::raster_pixel() -> void {
     output[vcounter() * 256 + lx] = (status.emphasis << 6) | 0x1d;
     return;
   } else if(!raster_enable()) {
-    if((status.vaddr & 0x3f00) != 0x3f00) palette = 0;
+    if((status.vaddr & 0x3f00) != 0x3f00) palette = ext();
     else palette = status.vaddr;
+  } else {
+    if(!palette) palette = ext();
   }
   output[vcounter() * 256 + lx] = (status.emphasis << 6) | cgramRead(palette);
 }

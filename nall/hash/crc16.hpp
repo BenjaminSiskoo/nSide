@@ -2,38 +2,57 @@
 
 #include <nall/range.hpp>
 
-namespace nall {
-struct string;
-namespace Hash {
+namespace nall { struct string; }
+
+namespace nall { namespace Hash {
 
 struct CRC16 {
   CRC16() { reset(); }
-  CRC16(const void* values, unsigned size) : CRC16() { data(values, size); }
+  CRC16(const void* values, uint size) : CRC16() { data(values, size); }
+  CRC16(const vector<uint8_t>& values) : CRC16() { data(values); }
 
   auto reset() -> void {
     checksum = ~0;
   }
 
   auto data(uint8_t value) -> void {
-    for(auto n : range(8)) {
-      if((checksum & 1) ^ (value & 1)) checksum = (checksum >> 1) ^ 0x8408;
-      else checksum >>= 1;
-      value >>= 1;
-    }
+    checksum = (checksum >> 8) ^ table(checksum ^ value);
   }
 
-  auto data(const void* values, unsigned size) -> void {
+  auto data(const void* values, uint size) -> void {
     auto p = (const uint8_t*)values;
     while(size--) data(*p++);
   }
 
-  auto value() -> uint16_t {
+  auto data(const vector<uint8_t>& values) -> void {
+    for(auto value : values) data(value);
+  }
+
+  auto value() const -> uint16_t {
     return ~checksum;
   }
 
-  inline auto digest() -> string;
+  inline auto digest() const -> string;
 
 private:
+  static auto table(uint8_t index) -> uint16_t {
+    static uint16_t table[256] = {0};
+    static bool initialized = false;
+
+    if(!initialized) {
+      initialized = true;
+      for(auto index : range(256)) {
+        uint16_t crc = index;
+        for(auto bit : range(8)) {
+          crc = (crc >> 1) ^ (crc & 1 ? 0x8408 : 0);
+        }
+        table[index] = crc;
+      }
+    }
+
+    return table[index];
+  }
+
   uint16_t checksum;
 };
 

@@ -1,7 +1,7 @@
 auto Program::loadState(uint slot) -> bool {
   string filename = {folderPaths[0], "state-", slot, ".bst"};
   auto memory = file::read(filename);
-  if(memory.empty()) return false;
+  if(memory.size() == 0) return debugger->print("Slot ", slot, " does not exist\n"), false;
   serializer s(memory.data(), memory.size());
   bool result = SuperFamicom::system.unserialize(s);
   if(result) debugger->print("Loaded state from ", filename, "\n");

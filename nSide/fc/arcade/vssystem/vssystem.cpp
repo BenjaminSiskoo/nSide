@@ -41,7 +41,9 @@ auto VSSystem::reset() -> void {
   function<auto (uint16, uint8) -> void> writer;
   reader = [](uint16 addr, uint8 data) -> uint8 { return vssystem.read(cpu.side, addr, data); };
   writer = [](uint16 addr, uint8 data) -> void { vssystem.write(cpu.side, addr, data); };
-  bus.map(reader, writer, "4016-7fff");
+  bus.map(reader, writer, "4016-4017");
+  bus.map(reader, writer, "4020-5fff", 0, 0, 0x0020);
+  bus.map(reader, writer, "6000-7fff");
 
   ramSide = forceSubRam ? 1 : 0;
   resetButtons();
@@ -80,7 +82,7 @@ auto VSSystem::read(bool side, uint16 addr, uint8 data) -> uint8 {
   }
 
   if(addr >= 0x4020 && addr <= 0x5fff) {
-    write(side, 0x4020, data);
+    write(side, addr, data);
     return data;
   }
 

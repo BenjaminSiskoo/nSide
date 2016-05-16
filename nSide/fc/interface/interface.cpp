@@ -69,8 +69,8 @@ Interface::Interface() {
       device.input.append({n + 5, 0, {"Port ", p, " - ", "Down"  }});
       device.input.append({n + 6, 0, {"Port ", p, " - ", "Left"  }});
       device.input.append({n + 7, 0, {"Port ", p, " - ", "Right" }});
-      device.order.append(n + 4, n + 5, n + 6, n + 7);
-      device.order.append(n + 1, n + 0, n + 2, n + 3);
+      device.order.append({n + 4, n + 5, n + 6, n + 7});
+      device.order.append({n + 1, n + 0, n + 2, n + 3});
     }
     addDevice(device);
   }
@@ -89,8 +89,8 @@ Interface::Interface() {
       device.input.append({n + 5, 0, {"Port ", p, " - ", "Down"  }});
       device.input.append({n + 6, 0, {"Port ", p, " - ", "Left"  }});
       device.input.append({n + 7, 0, {"Port ", p, " - ", "Right" }});
-      device.order.append(n + 4, n + 5, n + 6, n + 7);
-      device.order.append(n + 1, n + 0, n + 2, n + 3);
+      device.order.append({n + 4, n + 5, n + 6, n + 7});
+      device.order.append({n + 1, n + 0, n + 2, n + 3});
     }
     addDevice(device);
   }
@@ -109,8 +109,8 @@ Interface::Interface() {
       device.input.append({n + 5, 0, {"Port ", p, " - ", "Down"  }});
       device.input.append({n + 6, 0, {"Port ", p, " - ", "Left"  }});
       device.input.append({n + 7, 0, {"Port ", p, " - ", "Right" }});
-      device.order.append(n + 4, n + 5, n + 6, n + 7);
-      device.order.append(n + 1, n + 0, n + 2, n + 3);
+      device.order.append({n + 4, n + 5, n + 6, n + 7});
+      device.order.append({n + 1, n + 0, n + 2, n + 3});
     }
     addDevice(device);
   }
@@ -246,45 +246,48 @@ auto Interface::videoColors() -> uint32 {
 }
 
 auto Interface::videoColor(uint32 n) -> uint64 {
-  static auto generateYIQColor = [](uint9 n, double saturation, double hue, double contrast, double brightness, double gamma) -> uint64 {
+  //YIQ decoder by Bisqwit (http://forums.nesdev.com/viewtopic.php?p=85060)
+  static auto generateNTSCColor = [](uint9 n, double saturation, double hue, double contrast, double brightness, double gamma) -> uint64 {
     int color = n.bits(0,3), level = color < 0xe ? n.bits(4,5) : 1;
 
-    static const double black = 0.518, white = 1.962, attenuation = 0.746;
-    static const double levels[8] = {
-      0.350, 0.518, 0.962, 1.550,
-      1.094, 1.506, 1.962, 1.962,
-    };
+    static const double  lowLevels[4] = {0.350, 0.518, 0.962, 1.550};
+    static const double highLevels[4] = {1.094, 1.506, 1.962, 1.962};
+
+    static const double black = lowLevels[1], white = highLevels[3];
+    static const double attenuation = 0.746;
 
     double lo_and_hi[2] = {
-      levels[level + 4 * (color == 0x0)],
-      levels[level + 4 * (color <  0xd)],
+      (color == 0x0 ? highLevels : lowLevels)[level],
+      (color <  0xd ? highLevels : lowLevels)[level],
     };
 
     double y = 0.0, i = 0.0, q = 0.0;
-    auto wave = [](int p, int color) -> int { return (color + p + 8) % 12 < 6; };
-    for(int p : range(12)) {
-      double spot = lo_and_hi[wave(p, color)];
+    auto wave = [](int phase, int color) -> bool { return (color + phase + 8) % 12 < 6; };
+    for(int phase : range(12)) {
+      double spot = lo_and_hi[wave(phase, color)];
 
       if(color < 0xe && (
-         ((n.bit(6)) && wave(p, 12))
-      || ((n.bit(7)) && wave(p,  4))
-      || ((n.bit(8)) && wave(p,  8))
+         ((n.bit(6)) && wave(phase, 12))
+      || ((n.bit(7)) && wave(phase,  4))
+      || ((n.bit(8)) && wave(phase,  8))
       )) spot *= attenuation;
 
-      double v = (spot - black) / (white - black);
+      double voltage = (spot - black) / (white - black);
 
-      v = (v - 0.5) * contrast + 0.5;
-      v *= brightness / 12.0;
+      voltage = (voltage - 0.5) * contrast + 0.5;
+      voltage *= brightness / 12.0;
 
-      y += v;
-      i += v * std::cos((3.141592653 / 6.0) * (p + hue));
-      q += v * std::sin((3.141592653 / 6.0) * (p + hue));
+      y += voltage;
+      i += voltage * std::cos((Math::Pi / 6.0) * (phase + hue));
+      q += voltage * std::sin((Math::Pi / 6.0) * (phase + hue));
     }
 
     i *= saturation;
     q *= saturation;
 
     auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
+    //This matrix is from FCC's 1953 NTSC standard.
+    //The Famicom and American NES are older than the SMPTE C standard that followed in 1987.
     uint64 r = uclamp<16>(65535.0 * gammaAdjust(y +  0.946882 * i +  0.623557 * q));
     uint64 g = uclamp<16>(65535.0 * gammaAdjust(y + -0.274788 * i + -0.635691 * q));
     uint64 b = uclamp<16>(65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q));
@@ -292,48 +295,61 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     return r << 32 | g << 16 | b << 0;
   };
 
-  static auto generateYUVColor = [](uint9 n, double saturation, double hue, double contrast, double brightness, double gamma) -> uint64 {
+  static auto generatePALColor = [](uint9 n, double saturation, double hue, double contrast, double brightness, double gamma) -> uint64 {
     int color = n.bits(0,3), level = color < 0xe ? n.bits(4,5) : 1;
 
-    static const double black = 0.518, white = 1.962, attenuation = 0.746;
-    static const double levels[8] = {
-      0.350, 0.518, 0.962, 1.550,
-      1.094, 1.506, 1.962, 1.962,
-    };
+    static const double  lowLevels[4] = {0.350, 0.518, 0.962, 1.550};
+    static const double highLevels[4] = {1.094, 1.506, 1.962, 1.962};
+
+    static const double black = lowLevels[1], white = highLevels[3];
+    static const double attenuation = 0.746;
 
     double lo_and_hi[2] = {
-      levels[level + 4 * (color == 0x0)],
-      levels[level + 4 * (color <  0xd)],
+      (color == 0x0 ? highLevels : lowLevels)[level],
+      (color <  0xd ? highLevels : lowLevels)[level],
     };
 
-    double y = 0.0, u = 0.0, v = 0.0;
-    auto wave = [](int p, int color) -> int { return (color + p + 8) % 12 < 6; };
-    for(int p : range(12)) {
-      double spot = lo_and_hi[wave(p, color)];
+    double ys[2] = {0.0, 0.0}, us[2] = {0.0, 0.0}, vs[2] = {0.0, 0.0};
+    //Add 12 to work around C++ modulus implementation
+    auto wave1 = [](int phase, int color) -> bool { return (color + 10 - phase + 12) % 12 < 6; };
+    auto wave2 = [](int phase, int color) -> bool { return (color +  1 - phase + 12) % 12 < 6; };
+    for(int phase : range(12)) {
+      double spot[] = {lo_and_hi[wave1(phase, color)], lo_and_hi[wave2(phase, color)]};
+
+      //swap red and green
+      if(color < 0xe && (
+         ((n.bit(6)) && wave1(phase,  4))
+      || ((n.bit(7)) && wave1(phase, 12))
+      || ((n.bit(8)) && wave1(phase,  8))
+      )) spot[0] *= attenuation;
 
       if(color < 0xe && (
-         ((n.bit(6)) && wave(p, 12))
-      || ((n.bit(7)) && wave(p,  4))
-      || ((n.bit(8)) && wave(p,  8))
-      )) spot *= attenuation;
+         ((n.bit(6)) && wave2(phase,  4))
+      || ((n.bit(7)) && wave2(phase, 12))
+      || ((n.bit(8)) && wave2(phase,  8))
+      )) spot[1] *= attenuation;
 
-      double vv = (spot - black) / (white - black);
+      double voltage[] = {(spot[0] - black) / (white - black), (spot[1] - black) / (white - black)};
 
-      vv = (vv - 0.5) * contrast + 0.5;
-      vv *= brightness / 12.0;
+      for(uint i : range(2)) {
+        voltage[i] = (voltage[i] - 0.5) * contrast + 0.5;
+        voltage[i] *= brightness / 12.0;
 
-      y += vv;
-      u += vv * std::sin((3.141592653 / 6.0) * (p + hue));
-      v += vv * std::cos((3.141592653 / 6.0) * (p + hue));
+        ys[i] += voltage[i];
+        us[i] += voltage[i] * std::cos((Math::Pi / 6.0) * (phase + hue));
+        vs[i] += voltage[i] * std::sin((Math::Pi / 6.0) * (phase + hue));
+      }
     }
+
+    double y = (ys[0] + ys[1]) / 2, u = (us[0] + us[1]) / 2, v = (vs[0] + vs[1]) / 2;
 
     u *= saturation;
     v *= saturation;
 
     auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
-    uint64 r = uclamp<16>(65535.0 * gammaAdjust(y +  0.000000 * u +  1.140000 * v));
-    uint64 g = uclamp<16>(65535.0 * gammaAdjust(y + -0.395000 * u + -0.581000 * v));
-    uint64 b = uclamp<16>(65535.0 * gammaAdjust(y +  2.032000 * u +  0.000000 * v));
+    uint64 r = uclamp<16>(65535.0 * gammaAdjust(y                 +  1.139837 * v));
+    uint64 g = uclamp<16>(65535.0 * gammaAdjust(y + -0.394652 * u + -0.580599 * v));
+    uint64 b = uclamp<16>(65535.0 * gammaAdjust(y +  2.032110 * u                ));
 
     return r << 32 | g << 16 | b << 0;
   };
@@ -389,14 +405,25 @@ auto Interface::videoColor(uint32 n) -> uint64 {
   };
 
   if(!system.pc10() || n < (1 << 9)) {
-    if(ppu.yiq()) {
+    if(ppu.ntsc()) { //NTSC
+      double saturation = 2.0;
+      double hue = 0.0;
+      double contrast = 1.0;
+      double brightness = 1.0;
       double gamma = settings.colorEmulation ? 1.8 : 2.2;
-      if(system.region() == System::Region::NTSC) {
-        return generateYIQColor(n & 0x1ff, 2.0, 0.0, 1.0, 1.0, gamma);
-      } else {
-        return generateYUVColor(n & 0x1ff, 2.0, 30.0 * (12.0 / 360.0), 1.0, 1.0, gamma);
-      }
-    } else if(ppu.rgb()) {
+
+      return generateNTSCColor(n & 0x1ff, saturation, hue, contrast, brightness, gamma);
+
+    } else if(ppu.pal()) { //PAL
+      double saturation = 2.0;
+      double hue = 0.0;
+      double contrast = 1.0;
+      double brightness = 1.0;
+      double gamma = settings.colorEmulation ? 1.8 : 2.2;
+
+      return generatePALColor(n & 0x1ff, saturation, hue, contrast, brightness, gamma);
+
+    } else if(ppu.rgb()) { //Arcade
       const uint9* palette = nullptr;
       switch(ppu.revision) {
       case PPU::Revision::RP2C03B:

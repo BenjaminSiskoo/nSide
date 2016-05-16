@@ -95,12 +95,6 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
   //PPUMASK
   case 1: {
     status.emphasis = data.bits(7,5);
-    if(revision == Revision::RP2C07 || revision == Revision::UA6538) {
-      status.emphasis =
-        ((status.emphasis & 1) << 1) | // swap red
-        ((status.emphasis & 2) >> 1) | // and green
-        ((status.emphasis & 4)     );
-    }
     status.sprite_enable      = data.bit(4);
     status.bg_enable          = data.bit(3);
     status.sprite_edge_enable = data.bit(2);

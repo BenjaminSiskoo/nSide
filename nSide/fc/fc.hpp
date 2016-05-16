@@ -1,7 +1,11 @@
 #pragma once
 
 //based on higan's Famicom emulator by byuu and Ryphecha,
-//with contributions from FitzRoy and hex_usr.
+//with contributions from:
+// Bisqwit (PPU color generation for NTSC systems)
+// FitzRoy
+// kevtris (PPU voltage levels in Bisqwit's color formula)
+// hex_usr (Many code organization changes, PPU timing fixes, mapper implementations, controllers, etc.)
 //license: GPLv3
 //original project started: 2011-09-05
 

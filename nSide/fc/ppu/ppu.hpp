@@ -1,7 +1,10 @@
 struct PPU : Thread, PPUcounter {
   enum class Revision : uint {
+    //YIQ
     RP2C02C,
     RP2C02G,
+
+    //RGB
     RP2C03B,
     RP2C03G,
     RP2C04_0001,
@@ -15,13 +18,15 @@ struct PPU : Thread, PPUcounter {
     RC2C05_03,
     RC2C05_04,
     RC2C05_05,
-    RP2C07,
 
+    //YUV
+    RP2C07,
     UA6538,
   } revision;
 
-  alwaysinline auto yiq() const -> bool { return revision <= Revision::RP2C02G || revision >= Revision::RP2C07; }
-  alwaysinline auto rgb() const -> bool { return revision >= Revision::RP2C03B && revision <= Revision::RC2C05_05; }
+  alwaysinline auto ntsc() const -> bool { return revision >= Revision::RP2C02C && revision <= Revision::RP2C02G; }
+  alwaysinline auto pal()  const -> bool { return revision >= Revision::RP2C07  && revision <= Revision::UA6538;  }
+  alwaysinline auto rgb()  const -> bool { return revision >= Revision::RP2C03B && revision <= Revision::RC2C05_05; }
 
   PPU();
   ~PPU();
@@ -47,6 +52,8 @@ struct PPU : Thread, PPUcounter {
 
   auto scrollx_increment() -> void;
   auto scrolly_increment() -> void;
+
+  auto ext() -> uint4;
 
   auto raster_pixel() -> void;
   auto raster_sprite() -> void;
