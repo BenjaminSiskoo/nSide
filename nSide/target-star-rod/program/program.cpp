@@ -57,20 +57,20 @@ Program::Program(lstring args) {
   presentation->setVisible();
   consoleWindow->setFocused();
 
-  video = Video::create(settings->video.driver);
+  video = Video::create();
   video->set(Video::Handle, presentation->viewport.handle());
   if(!video->init()) video = Video::create("None");
   video->set(Video::Synchronize, settings->video.synchronize);
   video->set(Video::Filter, Video::FilterNearest);
 
-  audio = Audio::create(settings->audio.driver);
+  audio = Audio::create();
   audio->set(Audio::Handle, presentation->viewport.handle());
   audio->set(Audio::Synchronize, settings->audio.synchronize);
   audio->set(Audio::Exclusive, false);
   audio->set(Audio::Latency, 80u);
   if(!audio->init()) audio = Audio::create("None");
 
-  input = Input::create(settings->input.driver);
+  input = Input::create();
   input->set(Input::Handle, presentation->viewport.handle());
   if(!input->init()) input = Input::create("None");
 
