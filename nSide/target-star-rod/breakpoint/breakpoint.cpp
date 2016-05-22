@@ -54,7 +54,7 @@ auto BreakpointEditor::synchronize() -> void {
     if(entry.enable.checked() == false) continue;
     Breakpoint bp;
     bp.id = id;
-    bp.compare = !entry.data.text().empty();
+    bp.compare = entry.data.text().length() > 0;
     bp.addr = hex(entry.addr.text());
     bp.data = hex(entry.data.text());
     bp.type = entry.type.selected().offset();

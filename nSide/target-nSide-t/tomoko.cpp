@@ -5,37 +5,37 @@ unique_pointer<Input> input;
 Emulator::Interface* emulator = nullptr;
 
 auto locate(string name) -> string {
-  string location = {programpath(), name};
+  string location = {Path::program(), name};
   if(inode::exists(location)) return location;
 
-  location = {configpath(), "nSide/", name};
+  location = {Path::config(), "nSide/", name};
   if(inode::exists(location)) return location;
 
-  location = {localpath(), "nSide/", name};
+  location = {Path::local(), "nSide/", name};
   if(inode::exists(location)) return location;
 
-  location = {configpath(), "higan/", name};
+  location = {Path::config(), "higan/", name};
   if(inode::exists(location)) {
     if(suffixname(location) == ".bml" && suffixname(dirname(location)) != ".sys") {
-      directory::create({configpath(), "nSide/"});
-      file::copy(location, {configpath(), "nSide/", name});
-      return {configpath(), "nSide/", name};
+      directory::create({Path::config(), "nSide/"});
+      file::copy(location, {Path::config(), "nSide/", name});
+      return {Path::config(), "nSide/", name};
     }
     return location;
   }
 
-  location = {localpath(), "higan/", name};
+  location = {Path::local(), "higan/", name};
   if(inode::exists(location)) {
     if(suffixname(location) == ".bml" && suffixname(dirname(location)) != ".sys") {
-      directory::create({localpath(), "nSide/"});
-      file::copy(location, {localpath(), "nSide/", name});
-      return {localpath(), "nSide/", name};
+      directory::create({Path::local(), "nSide/"});
+      file::copy(location, {Path::local(), "nSide/", name});
+      return {Path::local(), "nSide/", name};
     }
     return location;
   }
 
-  directory::create({localpath(), "nSide/"});
-  return {localpath(), "nSide/", name};
+  directory::create({Path::local(), "nSide/"});
+  return {Path::local(), "nSide/", name};
 }
 
 auto locateSystem(string name) -> string {

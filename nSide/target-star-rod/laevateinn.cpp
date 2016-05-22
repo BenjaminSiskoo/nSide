@@ -6,24 +6,24 @@ unique_pointer<Input> input;
 Emulator::Interface* emulator = nullptr;
 
 auto locate(string name) -> string {
-  string location = {programpath(), "star-rod-", name};
+  string location = {Path::program(), "star-rod-", name};
   if(inode::exists(location)) return location;
 
-  location = {configpath(), "star-rod/", name};
+  location = {Path::config(), "star-rod/", name};
   if(inode::exists(location)) return location;
 
-  directory::create({localpath(), "star-rod/"});
-  return {localpath(), "star-rod/", name};
+  directory::create({Path::local(), "star-rod/"});
+  return {Path::local(), "star-rod/", name};
 }
 
 auto locateHigan(string name) -> string {
-  string location = {programpath(), name};
+  string location = {Path::program(), name};
   if(inode::exists(location)) return location;
 
-  location = {configpath(), "nSide/", name};
+  location = {Path::config(), "nSide/", name};
   if(inode::exists(location)) return location;
 
-  return {localpath(), "nSide/", name};
+  return {Path::local(), "nSide/", name};
 }
 
 auto locateSystem(string name) -> string {

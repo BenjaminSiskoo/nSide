@@ -11,9 +11,9 @@ Settings::Settings() {
     if(!operator[](name)) operator()(name).setValue(value);
   };
 
-  set("Library/Location", {userpath(), "Emulation/"});
+  set("Library/Location", {Path::user(), "Emulation/"});
 
-  set("cart-pal/Path", userpath());
+  set("cart-pal/Path", Path::user());
   set("cart-pal/CreateManifests", false);
   set("cart-pal/UseDatabase", true);
   set("cart-pal/UseHeuristics", true);

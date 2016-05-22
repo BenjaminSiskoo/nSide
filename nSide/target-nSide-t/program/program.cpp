@@ -82,7 +82,7 @@ auto Program::load(string location) -> void {
 
     //ask cart-pal to import the game; and play it upon success
     if(auto result = execute("cart-pal", "--import", location)) {
-      loadMedia(result.strip());
+      loadMedia(result.output.strip());
     }
   }
 }

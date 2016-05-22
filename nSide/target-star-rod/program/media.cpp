@@ -12,12 +12,12 @@ auto Program::loadMedia(string location) -> bool {
   emulator->connect(SuperFamicom::Port::Controller1, SuperFamicom::Device::Gamepad);
   emulator->connect(SuperFamicom::Port::Controller2, SuperFamicom::Device::None);
   emulator->load(SuperFamicom::ID::SuperFamicom);
-  emulator->power();
   emulator->set("Blur Emulation", false);
   emulator->set("Color Emulation", false);
   emulator->set("Scanline Emulation", false);
+  emulator->power();
 
-  presentation->setTitle(basename(folderPaths(0)).rtrim("/"));
+  presentation->setTitle(basename(folderPaths(0)).trimRight("/"));
   debugger->print(SuperFamicom::cartridge.information.markup.cartridge, "\n");
   debugger->suspend();
   return true;

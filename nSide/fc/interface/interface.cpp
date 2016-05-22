@@ -310,38 +310,39 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     };
 
     double ys[2] = {0.0, 0.0}, us[2] = {0.0, 0.0}, vs[2] = {0.0, 0.0};
-    //Add 12 to work around C++ modulus implementation
-    auto wave1 = [](int phase, int color) -> bool { return (color + 10 - phase + 12) % 12 < 6; };
-    auto wave2 = [](int phase, int color) -> bool { return (color +  1 - phase + 12) % 12 < 6; };
+    //Add 12 to work around C++ modulus implementation,
+    //then 4 to compensate for reversed hue direction (cause unknown)
+    auto wave0 = [](int phase, int color) -> bool { return (color + 6 - phase + 16) % 12 < 6; };
+    auto wave1 = [](int phase, int color) -> bool { return (color + 9 - phase + 16) % 12 < 6; };
     for(int phase : range(12)) {
-      double spot[] = {lo_and_hi[wave1(phase, color)], lo_and_hi[wave2(phase, color)]};
+      double spot[] = {lo_and_hi[wave0(phase, color)], lo_and_hi[wave1(phase, color)]};
 
       //swap red and green
+      if(color < 0xe && (
+         ((n.bit(6)) && wave0(phase,  4))
+      || ((n.bit(7)) && wave0(phase, 12))
+      || ((n.bit(8)) && wave0(phase,  8))
+      )) spot[0] *= attenuation;
+
       if(color < 0xe && (
          ((n.bit(6)) && wave1(phase,  4))
       || ((n.bit(7)) && wave1(phase, 12))
       || ((n.bit(8)) && wave1(phase,  8))
-      )) spot[0] *= attenuation;
-
-      if(color < 0xe && (
-         ((n.bit(6)) && wave2(phase,  4))
-      || ((n.bit(7)) && wave2(phase, 12))
-      || ((n.bit(8)) && wave2(phase,  8))
       )) spot[1] *= attenuation;
 
-      double voltage[] = {(spot[0] - black) / (white - black), (spot[1] - black) / (white - black)};
-
       for(uint i : range(2)) {
-        voltage[i] = (voltage[i] - 0.5) * contrast + 0.5;
-        voltage[i] *= brightness / 12.0;
+        double voltage = (spot[i] - black) / (white - black);
 
-        ys[i] += voltage[i];
-        us[i] += voltage[i] * std::cos((Math::Pi / 6.0) * (phase + hue));
-        vs[i] += voltage[i] * std::sin((Math::Pi / 6.0) * (phase + hue));
+        voltage = (voltage - 0.5) * contrast + 0.5;
+        voltage *= brightness / 12.0;
+
+        ys[i] += voltage;
+        us[i] += voltage * std::cos((Math::Pi / 6.0) * (phase + hue));
+        vs[i] += voltage * std::sin((Math::Pi / 6.0) * (phase + hue));
       }
     }
 
-    double y = (ys[0] + ys[1]) / 2, u = (us[0] + us[1]) / 2, v = (vs[0] + vs[1]) / 2;
+    double y = (ys[0] + ys[1]) / 2.0, u = (us[0] + us[1]) / 2.0, v = (vs[0] + vs[1]) / 2.0;
 
     u *= saturation;
     v *= saturation;
@@ -364,7 +365,9 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     uint64 B = image::normalize(b, 3, 16);
 
     if(settings.colorEmulation) {
-      //TODO: check how arcade displays alter the signal
+      //TODO: check how arcade displays alter the signal.
+      //The red, green, and blue channels are connected directly without any
+      //conversion to YIQ/YUV/YPbPr/etc. and back.
       static const uint8 gammaRamp[8] = {
         0x00, 0x0a,
         0x2d, 0x5b,

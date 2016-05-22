@@ -35,14 +35,14 @@ Program::Program(lstring args) {
   settings->load();
 
   string path = higan_settings["Library/Location"].text().transform("\\", "/");
-  if(path.empty()) path = {nall::userpath(), "Emulation/"};
-  if(path.endsWith("/") == false) path.append("/");
+  if(!path) path = {Path::user(), "Emulation/"};
+  if(!path.endsWith("/")) path.append("/");
   path.append("Super Famicom/");
 
   string location;
   args.takeLeft();  //ignore program location in argument parsing
   for(auto& argument : args) {
-    location = argument.transform("\\", "/").rtrim("/").append("/");
+    location = argument.transform("\\", "/").trimRight("/").append("/");
   }
   if(!directory::exists(location)) location = BrowserDialog()
   .setTitle("Load Super Famicom")

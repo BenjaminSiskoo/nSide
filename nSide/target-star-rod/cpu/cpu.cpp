@@ -85,10 +85,10 @@ auto CPUDebugger::updateDisassembly() -> void {
 
   string output;
   for(auto& n : line) {
-    if(n.empty()) output.append("  ...\n");
-    else output.append(n, "\n");
+    if(!n) output.append("  ...\n");
+    else   output.append(n, "\n");
   }
-  output.rtrim("\n");
+  output.trimRight("\n");
 
   disassembly.setText(output);
   registers.setText({

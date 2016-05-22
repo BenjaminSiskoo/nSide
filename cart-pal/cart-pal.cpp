@@ -5,14 +5,14 @@ using namespace nall;
 using namespace hiro;
 
 auto locate(string name) -> string {
-  string location = {programpath(), name};
+  string location = {Path::program(), name};
   if(inode::exists(location)) return location;
 
-  location = {configpath(), "cart-pal/", name};
+  location = {Path::config(), "cart-pal/", name};
   if(inode::exists(location)) return location;
 
-  directory::create({localpath(), "cart-pal/"});
-  return {localpath(), "cart-pal/", name};
+  directory::create({Path::local(), "cart-pal/"});
+  return {Path::local(), "cart-pal/", name};
 }
 
 #include "settings.cpp"

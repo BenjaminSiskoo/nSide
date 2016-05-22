@@ -24,12 +24,12 @@ Presentation::Presentation() {
     }
   }
   //add cart-pal menu options -- but only if cart-pal binary is present
-  if(execute("cart-pal", "--name").strip() == "cart-pal") {
+  if(execute("cart-pal", "--name").output.strip() == "cart-pal") {
     libraryMenu.append(MenuSeparator());
     libraryMenu.append(MenuItem().setText("Load ROM File ...").onActivate([&] {
       audio->clear();
       if(auto location = execute("cart-pal", "--import")) {
-        program->loadMedia(location.strip());
+        program->loadMedia(location.output.strip());
       }
     }));
     libraryMenu.append(MenuItem().setText("Import ROM Files ...").onActivate([&] {
@@ -309,7 +309,7 @@ auto Presentation::loadShaders() -> void {
     for(auto shader : directory::folders(pathname, "*.shader")) {
       if(videoShaders.objectCount() == 2) videoShaderMenu.append(MenuSeparator());
       MenuRadioItem item{&videoShaderMenu};
-      item.setText(string{shader}.rtrim(".shader/", 1L)).onActivate([=] {
+      item.setText(string{shader}.trimRight(".shader/", 1L)).onActivate([=] {
         settings["Video/Shader"].setValue({pathname, shader});
         program->updateVideoShader();
       });

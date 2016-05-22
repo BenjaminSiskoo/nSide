@@ -27,7 +27,7 @@ auto CartPal::failure(string message) -> string {
 }
 
 auto CartPal::manifest(string location) -> string {
-  location.transform("\\", "/").rtrim("/").append("/");
+  location.transform("\\", "/").trimRight("/").append("/");
   if(!directory::exists(location)) return "";
 
   auto type = suffixname(location).downcase();
@@ -47,7 +47,7 @@ auto CartPal::manifest(string location) -> string {
 }
 
 auto CartPal::import(string location) -> string {
-  location.transform("\\", "/").rtrim("/");
+  location.transform("\\", "/").trimRight("/");
   if(!file::exists(location)) return failure("file does not exist");
   if(!file::readable(location)) return failure("file is unreadable");
 
