@@ -72,7 +72,7 @@ struct Interface : Emulator::Interface {
   void exportMemory();
 
 private:
-  vector<Device> device;
+  vector<Device> devices;
 };
 
 struct Settings {

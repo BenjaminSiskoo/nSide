@@ -47,7 +47,7 @@ struct Controller : Cothread {
 
   virtual auto main() -> void;
   virtual auto data() -> uint5 { return 0; }
-  virtual auto data1() -> uint2 { return 0; }
+  virtual auto data1() -> bool { return 0; }
   virtual auto data2() -> uint5 { return 0; }
   virtual auto latch(bool data) -> void {}
 

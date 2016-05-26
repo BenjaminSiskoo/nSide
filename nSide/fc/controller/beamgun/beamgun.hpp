@@ -7,9 +7,9 @@ struct BeamGun : Controller {
 
   auto main() -> void;
   auto data() -> uint5;
-  auto data1() -> uint2;
+  auto data1() -> bool;
   auto data2() -> uint5;
-  auto read_light() -> bool;
+  auto readLight() -> bool;
   auto latch(bool data) -> void;
 
 //private:

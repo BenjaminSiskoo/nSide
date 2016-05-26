@@ -22,39 +22,37 @@ Interface::Interface() {
   media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", true});
 
   { Device device{0, ID::DeviceHorizontal, "Controller"};
-    device.input.append({ 0, 0, "A"     });
-    device.input.append({ 1, 0, "B"     });
-    device.input.append({ 2, 0, "Select"});
-    device.input.append({ 3, 0, "Start" });
-    device.input.append({ 4, 0, "Right" });
-    device.input.append({ 5, 0, "Left"  });
-    device.input.append({ 6, 0, "Up"    });
-    device.input.append({ 7, 0, "Down"  });
-    device.input.append({ 8, 0, "R"     });
-    device.input.append({ 9, 0, "L"     });
-    device.input.append({10, 2, "Rumble"});
-    device.order = {6, 7, 5, 4, 1, 0, 9, 8, 2, 3, 10};
-    this->device.append(device);
+    device.inputs.append({ 0, 0, "Up"    });
+    device.inputs.append({ 1, 0, "Down"  });
+    device.inputs.append({ 2, 0, "Left"  });
+    device.inputs.append({ 3, 0, "Right" });
+    device.inputs.append({ 4, 0, "B"     });
+    device.inputs.append({ 5, 0, "A"     });
+    device.inputs.append({ 6, 0, "L"     });
+    device.inputs.append({ 7, 0, "R"     });
+    device.inputs.append({ 8, 0, "Select"});
+    device.inputs.append({ 9, 0, "Start" });
+    device.inputs.append({10, 2, "Rumble"});
+    devices.append(device);
   }
 
   { Device device{1, ID::DeviceVertical, "Controller"};
-    device.input.append({ 0, 0, "A"     });
-    device.input.append({ 1, 0, "B"     });
-    device.input.append({ 2, 0, "Select"});
-    device.input.append({ 3, 0, "Start" });
-    device.input.append({ 4, 0, "Up"    });
-    device.input.append({ 5, 0, "Down"  });
-    device.input.append({ 6, 0, "Left"  });
-    device.input.append({ 7, 0, "Right" });
-    device.input.append({ 8, 0, "R"     });
-    device.input.append({ 9, 0, "L"     });
-    device.input.append({10, 2, "Rumble"});
-    device.order = {4, 5, 6, 7, 1, 0, 9, 8, 2, 3, 10};
-    this->device.append(device);
+    device.inputs.append({ 0, 0, "Up"    });
+    device.inputs.append({ 1, 0, "Down"  });
+    device.inputs.append({ 2, 0, "Left"  });
+    device.inputs.append({ 3, 0, "Right" });
+    device.inputs.append({ 4, 0, "B"     });
+    device.inputs.append({ 5, 0, "A"     });
+    device.inputs.append({ 6, 0, "L"     });
+    device.inputs.append({ 7, 0, "R"     });
+    device.inputs.append({ 8, 0, "Select"});
+    device.inputs.append({ 9, 0, "Start" });
+    device.inputs.append({10, 2, "Rumble"});
+    devices.append(device);
   }
 
-  port.append({0, "Horizontal Orientation", {device[0]}});
-  port.append({1, "Vertical Orientation", {device[1]}});
+  ports.append({0, "Horizontal Orientation", {devices[0]}});
+  ports.append({1, "Vertical Orientation",   {devices[1]}});
 }
 
 auto Interface::manifest() -> string {

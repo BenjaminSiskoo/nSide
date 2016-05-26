@@ -7,6 +7,9 @@
 namespace Processor {
 
 struct R6502 {
+  #include "registers.hpp"
+  #include "memory.hpp"
+
   virtual auto read(uint16 addr) -> uint8 = 0;
   virtual auto write(uint16 addr, uint8 data) -> void = 0;
   virtual auto lastCycle() -> void = 0;
@@ -19,18 +22,6 @@ struct R6502 {
   auto reset() -> void;
   auto interrupt() -> void;
   auto instruction() -> void;
-
-  //memory.cpp
-  auto readpc() -> uint8;
-  auto readpci() -> uint8;
-  auto readsp() -> uint8;
-  auto readzp(uint8 addr) -> uint8;
-
-  auto writesp(uint8 data) -> void;
-  auto writezp(uint8 addr, uint8 data) -> void;
-
-  auto page(uint16 x, uint16 y) -> void;
-  auto pageAlways(uint16 x, uint16 y) -> void;
 
   //instructions.cpp
   auto opf_asl();
@@ -77,14 +68,14 @@ struct R6502 {
   template<auto (R6502::*op)() -> void> auto opi_rmw_zero_page_x();
   auto opi_set_flag(bool& flag);
   template<auto (R6502::*op)() -> void> auto opi_shift();
-  auto opi_store_absolute(uint8 r);
-  auto opi_store_absolute_x(uint8& r);
-  auto opi_store_absolute_y(uint8& r);
-  auto opi_store_indirect_zero_page_x(uint8 r);
-  auto opi_store_indirect_zero_page_y(uint8& r);
-  auto opi_store_zero_page(uint8 r);
-  auto opi_store_zero_page_x(uint8 r);
-  auto opi_store_zero_page_y(uint8 r);
+  auto opi_store_absolute(uint8);
+  auto opi_store_absolute_x(uint8&);
+  auto opi_store_absolute_y(uint8&);
+  auto opi_store_indirect_zero_page_x(uint8);
+  auto opi_store_indirect_zero_page_y(uint8&);
+  auto opi_store_zero_page(uint8);
+  auto opi_store_zero_page_x(uint8);
+  auto opi_store_zero_page_y(uint8);
   auto opi_transfer(uint8& s, uint8& d, bool flag);
 
   auto op_brk();
@@ -144,7 +135,10 @@ struct R6502 {
   //disassembler.cpp
   auto disassemble() -> string;
 
-  #include "registers.hpp"
+  Registers r;
+  reg16 abs, iabs;
+  uint8 rd, zp;
+  uint16 aa;
 };
 
 }

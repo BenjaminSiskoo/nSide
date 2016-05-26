@@ -64,14 +64,14 @@ ConsoleWindow::ConsoleWindow() {
   onClose([&] {
     setVisible(false);
     if(Intrinsics::platform() == Intrinsics::Platform::MacOSX) {
-      program->unloadMedia();
+      program->unloadMedium();
     } else {
       Application::quit();
     }
   });
 
   menuEmulationReloadCartridge.onActivate([&] {
-    program->loadMedia(program->folderPaths(0));
+    program->loadMedium(program->folderPaths(0));
   });
 
   menuEmulationPowerCycle.onActivate([&] {

@@ -9,7 +9,7 @@
 #include <gba/interface/interface.hpp>
 #include <ws/interface/interface.hpp>
 #include "interface.cpp"
-#include "media.cpp"
+#include "medium.cpp"
 #include "state.cpp"
 #include "utility.cpp"
 unique_pointer<Program> program;
@@ -69,7 +69,7 @@ Program::Program(lstring args) {
 
 auto Program::load(string location) -> void {
   if(directory::exists(location)) {
-    loadMedia(location);
+    loadMedium(location);
   } else if(file::exists(location)) {
     //special handling to allow importing the Game Boy Advance BIOS
     if(file::size(location) == 16384 && file::sha256(location).beginsWith("fd2547724b505f48")) {
@@ -82,7 +82,7 @@ auto Program::load(string location) -> void {
 
     //ask cart-pal to import the game; and play it upon success
     if(auto result = execute("cart-pal", "--import", location)) {
-      loadMedia(result.output.strip());
+      loadMedium(result.output.strip());
     }
   }
 }
@@ -101,7 +101,7 @@ auto Program::main() -> void {
 }
 
 auto Program::quit() -> void {
-  unloadMedia();
+  unloadMedium();
   settings.quit();
   inputManager->quit();
   Application::quit();

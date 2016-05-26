@@ -39,7 +39,7 @@ auto PPU::read(uint24 addr, uint8 data) -> uint8 {
     if(cpu.pio() & 0x80) {
       latchCounters();
     }
-    return cpu.regs.mdr;
+    return cpu.r.mdr;
   }
 
   //OAMDATAREAD

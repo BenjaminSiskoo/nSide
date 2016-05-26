@@ -27,7 +27,7 @@ auto Vaus::data() -> uint5 {
   return data1() << 2 | data2() << 3;
 }
 
-auto Vaus::data1() -> uint2 {
+auto Vaus::data1() -> bool {
   return poll(Fire) << 1;
 }
 

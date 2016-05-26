@@ -17,15 +17,24 @@ struct Registers {
   uint16 pc;
   uint8  a, x, y, s;
   Flags  p;
-} regs;
+};
 
-struct Register16 {
+struct reg16 {
   union {
     uint16_t w;
     struct { uint8_t order_lsb2(l, h); };
   };
-} abs, iabs;
 
-uint8 rd;
-uint8 zp;
-uint16 aa;
+  inline operator uint() const { return w; }
+  inline auto operator  =(uint i) -> uint { return w   = i; }
+  inline auto operator |=(uint i) -> uint { return w  |= i; }
+  inline auto operator ^=(uint i) -> uint { return w  ^= i; }
+  inline auto operator &=(uint i) -> uint { return w  &= i; }
+  inline auto operator<<=(uint i) -> uint { return w <<= i; }
+  inline auto operator>>=(uint i) -> uint { return w >>= i; }
+  inline auto operator +=(uint i) -> uint { return w  += i; }
+  inline auto operator -=(uint i) -> uint { return w  -= i; }
+  inline auto operator *=(uint i) -> uint { return w  *= i; }
+  inline auto operator /=(uint i) -> uint { return w  /= i; }
+  inline auto operator %=(uint i) -> uint { return w  %= i; }
+};

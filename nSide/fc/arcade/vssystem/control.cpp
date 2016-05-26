@@ -12,7 +12,7 @@ auto VSSystem::resetButtons() -> void {
 }
 
 auto VSSystem::poll(bool side, uint input) -> int16 {
-  return interface->inputPoll(3, interface->device_ref[Device::VSPanel].port[3], input);
+  return interface->inputPoll(3, interface->deviceRefs[Device::VSPanel].port[3], input);
 }
 
 auto VSSystem::data1(bool side) -> bool {

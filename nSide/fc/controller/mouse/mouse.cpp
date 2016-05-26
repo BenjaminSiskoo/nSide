@@ -59,8 +59,8 @@ auto Mouse::data() -> uint5 {
   }
 }
 
-auto Mouse::data1() -> uint2 {
-  return data() << 1;
+auto Mouse::data1() -> bool {
+  return data().bit(0);
 }
 
 auto Mouse::data2() -> uint5 {

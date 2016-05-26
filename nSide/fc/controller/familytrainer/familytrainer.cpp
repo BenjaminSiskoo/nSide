@@ -11,7 +11,7 @@ auto FamilyTrainer::data() -> uint5 {
   return data2();
 }
 
-auto FamilyTrainer::data1() -> uint2 {
+auto FamilyTrainer::data1() -> bool {
   return 0;
 }
 

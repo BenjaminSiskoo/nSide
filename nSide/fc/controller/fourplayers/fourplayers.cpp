@@ -4,20 +4,20 @@ FourPlayers::FourPlayers(uint port) : Controller(port, Device::FourPlayers) {
   counter2 = 0;
 }
 
-auto FourPlayers::data1() -> uint2 {
-  if(counter1 >= 8) return 2;
-  if(latched) return poll(A + 0) << 1;
+auto FourPlayers::data1() -> bool {
+  if(counter1 >= 8) return 1;
+  if(latched) return poll(A + 0);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter1++) {
-  case 0: return a3 << 1;
-  case 1: return b3 << 1;
-  case 2: return select3 << 1;
-  case 3: return start3 << 1;
-  case 4: return (up3 & !down3) << 1;
-  case 5: return (down3 & !up3) << 1;
-  case 6: return (left3 & !right3) << 1;
-  case 7: return (right3 & !left3) << 1;
+  case 0: return a3;
+  case 1: return b3;
+  case 2: return select3;
+  case 3: return start3;
+  case 4: return up3 & !down3;
+  case 5: return down3 & !up3;
+  case 6: return left3 & !right3;
+  case 7: return right3 & !left3;
   }
 }
 

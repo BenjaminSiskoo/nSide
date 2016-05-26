@@ -1,6 +1,6 @@
 #include "../laevateinn.hpp"
 #include "interface.cpp"
-#include "media.cpp"
+#include "medium.cpp"
 #include "state.cpp"
 #include "utility.cpp"
 unique_pointer<Program> program;
@@ -76,7 +76,7 @@ Program::Program(lstring args) {
 
   presentation->drawSplashScreen();
 
-  if(loadMedia(location) == false) return;
+  if(loadMedium(location) == false) return;
   cpuDebugger->updateDisassembly();
   smpDebugger->updateDisassembly();
   memoryEditor->selectSource();
@@ -90,7 +90,7 @@ auto Program::main() -> void {
 }
 
 auto Program::quit() -> void {
-  unloadMedia();
+  unloadMedium();
   windowManager->saveGeometry();
   settings->unload();
   Application::quit();

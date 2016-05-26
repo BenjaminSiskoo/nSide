@@ -1,8 +1,8 @@
-auto Program::loadMedia(string location) -> bool {
-  unloadMedia();
+auto Program::loadMedium(string location) -> bool {
+  unloadMedium();
 
-  mediaPaths(0) = locateSystem("Super Famicom.sys/");
-  mediaPaths(1) = location;
+  mediumPaths(0) = locateSystem("Super Famicom.sys/");
+  mediumPaths(1) = location;
   folderPaths.append(location);
 
   directory::create({folderPaths(0), "debug/"});
@@ -23,9 +23,9 @@ auto Program::loadMedia(string location) -> bool {
   return true;
 }
 
-auto Program::unloadMedia() -> void {
+auto Program::unloadMedium() -> void {
   emulator->unload();
   debugger->print("Cartridge unloaded\n");
-  mediaPaths.reset();
+  mediumPaths.reset();
   folderPaths.reset();
 }

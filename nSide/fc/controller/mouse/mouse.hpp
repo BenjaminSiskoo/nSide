@@ -6,7 +6,7 @@ struct Mouse : Controller {
   Mouse(uint port);
 
   auto data() -> uint5;
-  auto data1() -> uint2;
+  auto data1() -> bool;
   auto data2() -> uint5;
   auto latch(bool data) -> void;
 

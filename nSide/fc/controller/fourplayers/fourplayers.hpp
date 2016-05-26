@@ -1,11 +1,11 @@
 struct FourPlayers : Controller {
   enum : uint {
-    A, B, Select, Start, Up, Down, Left, Right,
+    Up, Down, Left, Right, B, A, Select, Start,
   };
 
   FourPlayers(uint port);
 
-  auto data1() -> uint2;
+  auto data1() -> bool;
   auto data2() -> uint5;
   auto latch(bool data) -> void;
 

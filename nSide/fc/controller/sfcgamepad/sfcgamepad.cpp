@@ -30,8 +30,8 @@ auto SFCGamepad::data() -> uint5 {
   return 0;  //12-15: signature
 }
 
-auto SFCGamepad::data1() -> uint2 {
-  return ((data() << 1) & 0x02);
+auto SFCGamepad::data1() -> bool {
+  return data().bit(0);
 }
 
 auto SFCGamepad::data2() -> uint5 {

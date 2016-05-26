@@ -1,7 +1,7 @@
 auto CPU::cpuPortRead(uint16 addr, uint8 data) -> uint8 {
   if(!system.vs()) {
     if(addr == 0x4016) {
-      return (mdr() & 0xe0) | Famicom::peripherals.controllerPort1->data() | Famicom::peripherals.expansionPort->data1();
+      return (mdr() & 0xe0) | Famicom::peripherals.controllerPort1->data() | (Famicom::peripherals.expansionPort->data1() << 1);
     }
 
     if(addr == 0x4017) {

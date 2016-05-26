@@ -31,7 +31,7 @@ SuperScope::SuperScope(bool port) : Controller(port) {
 
   prev = 0;
 
-  videoCursor.origin_x = 14;
+  videoCursor.origin_x = 7;
   videoCursor.origin_y = 7;
   videoCursor.width = 15;
   videoCursor.height = 15;
@@ -131,12 +131,21 @@ auto SuperScope::latch(bool data) -> void {
   counter = 0;
 }
 
-const uint64 SuperScope::normalPalette[3] = {0x0000000000000000l, 0xffff000000000000l, 0xffff00000000ffffl};
-const uint64 SuperScope::turboPalette[6] = {
-  0x0000000000000000l, 0xffff000000000000l,
-  0xffffffff00000000l, 0xffffffff33330000l,
-  0xffffffff66660000l, 0xffffffff99990000l,
+const uint64 SuperScope::normalPalette[3] = {
+  0x0000'0000'0000'0000l, //transparent
+  0xffff'0000'0000'0000l, //black
+  0xffff'0000'0000'ffffl, //blue
 };
+
+const uint64 SuperScope::turboPalette[6] = {
+  0x0000'0000'0000'0000l, //transparent
+  0xffff'0000'0000'0000l, //black
+  0xffff'ffff'0000'0000l, //red
+  0xffff'ffff'3333'0000l, //red, with a little orange
+  0xffff'ffff'6666'0000l, //red, with more orange
+  0xffff'ffff'9999'0000l, //orange
+};
+
 const uint8 SuperScope::normalData[15 * 15] = {
   0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
   0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
@@ -154,6 +163,7 @@ const uint8 SuperScope::normalData[15 * 15] = {
   0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
   0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
 };
+
 const uint8 SuperScope::turboData[15 * 15] = {
   1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,
   1,5,5,5,1,0,0,0,0,0,1,5,5,5,1,

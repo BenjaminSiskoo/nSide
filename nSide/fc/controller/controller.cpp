@@ -33,7 +33,7 @@ auto Controller::main() -> void {
 }
 
 auto Controller::poll(uint input) -> int16 {
-  return interface->inputPoll(port, interface->device_ref[device_id].port[port], input);
+  return interface->inputPoll(port, interface->deviceRefs[device_id].port[port], input);
 }
 
 }

@@ -23,8 +23,8 @@ auto Gamepad::data() -> uint5 {
   }
 }
 
-auto Gamepad::data1() -> uint2 {
-  return ((data() << 1) & 0x02);
+auto Gamepad::data1() -> bool {
+  return data().bit(0);
 }
 
 auto Gamepad::data2() -> uint5 {

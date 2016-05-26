@@ -1,16 +1,16 @@
 auto R6502::serialize(serializer& s) -> void {
-  s.integer(regs.mdr);
-  s.integer(regs.pc);
-  s.integer(regs.a);
-  s.integer(regs.x);
-  s.integer(regs.y);
-  s.integer(regs.s);
-  s.integer(regs.p.n);
-  s.integer(regs.p.v);
-  s.integer(regs.p.d);
-  s.integer(regs.p.i);
-  s.integer(regs.p.z);
-  s.integer(regs.p.c);
+  s.integer(r.mdr);
+  s.integer(r.pc);
+  s.integer(r.a);
+  s.integer(r.x);
+  s.integer(r.y);
+  s.integer(r.s);
+  s.integer(r.p.n);
+  s.integer(r.p.v);
+  s.integer(r.p.d);
+  s.integer(r.p.i);
+  s.integer(r.p.z);
+  s.integer(r.p.c);
 
   s.integer(abs.w);
   s.integer(iabs.w);

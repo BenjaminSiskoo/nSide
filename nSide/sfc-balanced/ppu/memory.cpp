@@ -53,7 +53,7 @@ auto PPU::vramWrite(uint16 addr, uint8 data) -> void {
       if(h <= 4) {
         vram[addr] = data;
       } else if(h == 6) {
-        vram[addr] = cpu.regs.mdr;
+        vram[addr] = cpu.r.mdr;
       } else {
         //no write
       }

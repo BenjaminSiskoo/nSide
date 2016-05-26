@@ -1,6 +1,6 @@
 //request from emulation core to load non-volatile media file
 auto Program::loadRequest(uint id, string filename, bool required) -> void {
-  string pathname = mediaPaths(emulator->group(id));
+  string pathname = mediumPaths(emulator->group(id));
   string location = {pathname, filename};
 
   if(filename == "manifest.bml" && pathname && !pathname.endsWith("sys/")) {
@@ -28,7 +28,7 @@ auto Program::loadRequest(uint id, string filename, bool required) -> void {
 
 //request from emulation core to save non-volatile media file
 auto Program::saveRequest(uint id, string filename) -> void {
-  string pathname = mediaPaths(emulator->group(id));
+  string pathname = mediumPaths(emulator->group(id));
   string location = {pathname, filename};
   filestream stream(location, file::mode::write);
   debugger->print("Saved ", location, "\n");

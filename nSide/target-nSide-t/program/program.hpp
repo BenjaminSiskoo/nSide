@@ -18,10 +18,10 @@ struct Program : Emulator::Interface::Bind {
   auto deviceChanged(uint port, uint device) -> void override;
   auto notify(string text) -> void override;
 
-  //media.cpp
-  auto loadMedia(string location) -> void;
-  auto loadMedia(Emulator::Interface& interface, Emulator::Interface::Media& media, string location) -> void;
-  auto unloadMedia() -> void;
+  //medium.cpp
+  auto loadMedium(string location) -> void;
+  auto loadMedium(Emulator::Interface& interface, Emulator::Interface::Medium& medium, string location) -> void;
+  auto unloadMedium() -> void;
 
   //state.cpp
   auto stateName(uint slot, bool manager = false) -> string;
@@ -44,7 +44,7 @@ struct Program : Emulator::Interface::Bind {
 
   vector<Emulator::Interface*> emulators;
 
-  vector<string> mediaPaths;
+  vector<string> mediumPaths;
   vector<string> folderPaths;
 
   string statusText;

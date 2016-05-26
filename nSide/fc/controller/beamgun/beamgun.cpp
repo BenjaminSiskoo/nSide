@@ -37,7 +37,7 @@ auto BeamGun::main() -> void {
     if(next >= target && prev < target) {
       //CRT raster detected
       //light remains in the gun for 10-25 scanlines
-      if(read_light()) lighttime = (!system.vs() ? 341 * 16 : 341 * 262);
+      if(readLight()) lighttime = (!system.vs() ? 341 * 16 : 341 * 262);
     }
   }
 
@@ -76,11 +76,11 @@ auto BeamGun::data() -> uint5 {
   }
 }
 
-uint2 BeamGun::data1() {
+auto BeamGun::data1() -> bool {
   return 0;
 }
 
-uint5 BeamGun::data2() {
+auto BeamGun::data2() -> uint5 {
   bool newtrigger = poll(Trigger);
   if(newtrigger && !triggerlock) {
     triggertime = 2;
@@ -94,7 +94,7 @@ uint5 BeamGun::data2() {
   return (trigger << 4) | ((!light) << 3);
 }
 
-bool BeamGun::read_light() {
+auto BeamGun::readLight() -> bool {
   if(offscreen) return false;
   uint32 palette_index = ppu.output[y * 256 + x];
   uint color;
@@ -120,7 +120,7 @@ bool BeamGun::read_light() {
   return false;
 }
 
-void BeamGun::latch(bool data) {
+auto BeamGun::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
   if(system.vs() && latched == 0) {

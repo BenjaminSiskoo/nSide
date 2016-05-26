@@ -75,7 +75,7 @@ struct Interface : Emulator::Interface {
     uint id;
     uint port[4];
   };
-  vector<DeviceRef> device_ref;
+  vector<DeviceRef> deviceRefs;
 
 private:
   auto addDevice(Device device) -> void;

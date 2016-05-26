@@ -1,6 +1,6 @@
 struct FourScore : Controller {
   enum : uint {
-    A, B, Select, Start, Up, Down, Left, Right,
+    Up, Down, Left, Right, B, A, Select, Start,
   };
 
   FourScore(uint port);

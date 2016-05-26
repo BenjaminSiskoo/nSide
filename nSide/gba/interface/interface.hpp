@@ -19,7 +19,7 @@ struct ID {
 
   enum : uint {
     DeviceHorizontal = 1,
-    DeviceVertical = 2,
+    DeviceVertical   = 2,
   };
 };
 
@@ -59,7 +59,7 @@ struct Interface : Emulator::Interface {
   auto exportMemory() -> void;
 
 private:
-  vector<Device> device;
+  vector<Device> devices;
 };
 
 struct Settings {

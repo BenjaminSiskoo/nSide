@@ -13,9 +13,9 @@ struct Program : Emulator::Interface::Bind {
   auto inputPoll(uint port, uint device, uint index) -> int16 override;
   auto dipSettings(const Markup::Node& node) -> uint override { return 0u; }
 
-  //media.cpp
-  auto loadMedia(string foldername) -> bool;
-  auto unloadMedia() -> void;
+  //medium.cpp
+  auto loadMedium(string foldername) -> bool;
+  auto unloadMedium() -> void;
 
   //state.cpp
   auto loadState(uint slot) -> bool;
@@ -24,7 +24,7 @@ struct Program : Emulator::Interface::Bind {
   //utility.cpp
   auto message(const string& text) -> void;
 
-  vector<string> mediaPaths;
+  vector<string> mediumPaths;
   vector<string> folderPaths;
 
   Markup::Node higan_settings;

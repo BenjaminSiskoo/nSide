@@ -3,7 +3,7 @@ auto CPU::addClocks(unsigned clocks) -> void {
 }
 
 auto CPU::lastCycle() -> void {
-  status.interrupt_pending = ((status.irq_line | status.irq_apu_line) & ~regs.p.i) | status.nmi_pending;
+  status.interrupt_pending = ((status.irq_line | status.irq_apu_line) & ~r.p.i) | status.nmi_pending;
 }
 
 auto CPU::nmi(uint16 &vector) -> void {

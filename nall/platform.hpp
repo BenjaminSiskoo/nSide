@@ -17,7 +17,6 @@ namespace Math {
 #endif
 
 #include <atomic>
-#include <cmath>
 #include <limits>
 #include <mutex>
 #include <utility>
@@ -25,6 +24,7 @@ namespace Math {
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -89,8 +89,8 @@ auto CPU::reset() -> void {
   bus.map(reader, writer, "4000-4017");
 
   //CPU
-  regs.pc  = bus.read(0xfffc, regs.mdr) << 0;
-  regs.pc |= bus.read(0xfffd, regs.mdr) << 8;
+  r.pc  = bus.read(0xfffc, r.mdr) << 0;
+  r.pc |= bus.read(0xfffd, r.mdr) << 8;
 
   status.interrupt_pending = false;
   status.nmi_pending = false;

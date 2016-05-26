@@ -29,6 +29,12 @@ auto Peripherals::connect(uint port, uint id) -> void {
     case Device::SFCGamepad: controllerPort1 = new SFCGamepad(0); break;
     case Device::Mouse:      controllerPort1 = new Mouse(0); break;
     }
+
+    if(id == Device::FourScore && settings.controllerPort2 != Device::FourScore) {
+      connect(Port::Controller2, Device::FourScore);
+    } else if(id != Device::FourScore && settings.controllerPort2 == Device::FourScore) {
+      connect(Port::Controller2, Device::None);
+    }
   }
 
   if(port == Port::Controller2) {
@@ -45,6 +51,12 @@ auto Peripherals::connect(uint port, uint id) -> void {
     case Device::Vaus:          controllerPort2 = new Vaus(1); break;
     case Device::SFCGamepad:    controllerPort2 = new SFCGamepad(1); break;
     case Device::Mouse:         controllerPort2 = new Mouse(1); break;
+    }
+
+    if(id == Device::FourScore && settings.controllerPort1 != Device::FourScore) {
+      connect(Port::Controller1, Device::FourScore);
+    } else if(id != Device::FourScore && settings.controllerPort1 == Device::FourScore) {
+      connect(Port::Controller1, Device::None);
     }
   }
 
