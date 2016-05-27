@@ -11,7 +11,10 @@
 //Note that no commercial game ever utilizes a Super Scope in port 1.
 
 SuperScope::SuperScope(bool port) : Controller(port) {
-  create(Controller::Enter, 21477272);
+  create(Controller::Enter, 21'477'272);
+  sprite = Emulator::video.createSprite(32, 32);
+  sprite->setPixels(Resource::Sprite::CrosshairGreen);
+
   latched = 0;
   counter = 0;
 
@@ -25,27 +28,22 @@ SuperScope::SuperScope(bool port) : Controller(port) {
   pause     = false;
   offscreen = false;
 
-  turbolock   = false;
+  oldturbo    = false;
   triggerlock = false;
   pauselock   = false;
 
   prev = 0;
+}
 
-  videoCursor.origin_x = 7;
-  videoCursor.origin_y = 7;
-  videoCursor.width = 15;
-  videoCursor.height = 15;
-  videoCursor.stretch_x = 2;
-  videoCursor.stretch_y = 1;
-  videoCursor.palette = normalPalette;
-  videoCursor.data = normalData;
+SuperScope::~SuperScope() {
+  Emulator::video.removeSprite(sprite);
 }
 
 auto SuperScope::main() -> void {
-  unsigned next = cpu.vcounter() * 1364 + cpu.hcounter();
+  uint next = cpu.vcounter() * 1364 + cpu.hcounter();
 
-  if(offscreen == false) {
-    unsigned target = y * 1364 + (x + 24) * 4;
+  if(!offscreen) {
+    uint target = y * 1364 + (x + 24) * 4;
     if(next >= target && prev < target) {
       //CRT raster detected, toggle iobit to latch counters
       iobit(0);
@@ -62,9 +60,8 @@ auto SuperScope::main() -> void {
     x = max(-16, min(256 + 16, nx));
     y = max(-16, min(240 + 16, ny));
     offscreen = (x < 0 || y < 0 || x >= 256 || y >= ppu.vdisp());
-    videoCursor.stretch_y = ppu.interlace() + 1;
-    videoCursor.x = x * videoCursor.stretch_x;
-    videoCursor.y = y * videoCursor.stretch_y;
+    sprite->setPosition(x * 2 - 16, y * 2 - 16);
+    sprite->setVisible(true);
   }
 
   prev = next;
@@ -77,14 +74,11 @@ auto SuperScope::data() -> uint2 {
   if(counter == 0) {
     //turbo is a switch; toggle is edge sensitive
     bool newturbo = interface->inputPoll(port, Device::SuperScope, Turbo);
-    if(newturbo) {
-      if(!turbolock) turbo = !turbo;  //toggle state
-      turbolock = true;
-      videoCursor.palette = !turbo ? normalPalette : turboPalette;
-      videoCursor.data = !turbo ? normalData : turboData;
-    } else {
-      turbolock = false;
+    if(newturbo && !oldturbo) {
+      turbo = !turbo;  //toggle state
+      sprite->setPixels(turbo ? Resource::Sprite::CrosshairTurbo : Resource::Sprite::CrosshairGreen);
     }
+    oldturbo = newturbo;
 
     //trigger is a button
     //if turbo is active, trigger is level sensitive; otherwise, it is edge sensitive
@@ -130,54 +124,3 @@ auto SuperScope::latch(bool data) -> void {
   latched = data;
   counter = 0;
 }
-
-const uint64 SuperScope::normalPalette[3] = {
-  0x0000'0000'0000'0000l, //transparent
-  0xffff'0000'0000'0000l, //black
-  0xffff'0000'0000'ffffl, //blue
-};
-
-const uint64 SuperScope::turboPalette[6] = {
-  0x0000'0000'0000'0000l, //transparent
-  0xffff'0000'0000'0000l, //black
-  0xffff'ffff'0000'0000l, //red
-  0xffff'ffff'3333'0000l, //red, with a little orange
-  0xffff'ffff'6666'0000l, //red, with more orange
-  0xffff'ffff'9999'0000l, //orange
-};
-
-const uint8 SuperScope::normalData[15 * 15] = {
-  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
-  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
-  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
-  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
-  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
-  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
-  1,2,2,1,1,2,2,2,2,2,1,1,2,2,1,
-  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
-  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
-  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
-  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
-  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
-  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
-  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-};
-
-const uint8 SuperScope::turboData[15 * 15] = {
-  1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,
-  1,5,5,5,1,0,0,0,0,0,1,5,5,5,1,
-  1,5,5,4,4,1,0,0,0,1,4,4,5,5,1,
-  1,5,4,4,3,1,0,0,0,1,3,4,4,5,1,
-  0,1,4,3,3,2,1,0,1,2,3,3,4,1,0,
-  0,0,1,1,2,2,1,0,1,2,2,1,1,0,0,
-  0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,
-  0,0,1,1,2,2,1,0,1,2,2,1,1,0,0,
-  0,1,4,3,3,2,1,0,1,2,3,3,4,1,0,
-  1,5,4,4,3,1,0,0,0,1,3,4,4,5,1,
-  1,5,5,4,4,1,0,0,0,1,4,4,5,5,1,
-  1,5,5,5,1,0,0,0,0,0,1,5,5,5,1,
-  1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,
-};

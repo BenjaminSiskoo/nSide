@@ -43,6 +43,7 @@ struct Controller : Cothread {
 
   Controller(uint port, uint device_id);
   Controller(uint port);
+  virtual ~Controller();
   static auto Enter() -> void;
 
   virtual auto main() -> void;

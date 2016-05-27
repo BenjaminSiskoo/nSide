@@ -1,0 +1,9 @@
+namespace name=Resource
+  namespace name=Sprite
+    binary name=CrosshairRed file=sprite/crosshair-red.png
+    binary name=CrosshairGreen file=sprite/crosshair-green.png
+    binary name=CrosshairBlue file=sprite/crosshair-blue.png
+    binary name=CrosshairTurbo file=sprite/crosshair-turbo.png
+    binary name=CrosshairRedSmall file=sprite/crosshair-red-small.png
+    binary name=CrosshairGreenSmall file=sprite/crosshair-green-small.png
+    binary name=CrosshairBlueSmall file=sprite/crosshair-blue-small.png

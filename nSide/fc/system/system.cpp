@@ -137,7 +137,6 @@ auto System::power() -> void {
   //Emulator::video.resize() is called in configureVideoEffects()
   configureVideoPalette();
   configureVideoEffects();
-  configureVideoCursors();
 
   Emulator::audio.reset();
   Emulator::audio.setInterface(interface);

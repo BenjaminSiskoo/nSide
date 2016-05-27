@@ -1,9 +1,12 @@
 struct BeamGun : Controller {
+  shared_pointer<Emulator::Sprite> sprite;
+
   enum : uint {
     X, Y, Trigger,
   };
 
   BeamGun(uint port);
+  ~BeamGun();
 
   auto main() -> void;
   auto data() -> uint5;
@@ -12,11 +15,13 @@ struct BeamGun : Controller {
   auto readLight() -> bool;
   auto latch(bool data) -> void;
 
-//private:
+private:
   bool latched;
   uint counter; // VS. System
 
-  int x, y;
+  int x;
+  int y;
+
   bool light;
   bool trigger;
   uint lighttime;
@@ -26,9 +31,4 @@ struct BeamGun : Controller {
   bool triggerlock;
 
   uint prev;
-
-  Emulator::Video::Cursor cursor;
-  static const uint64 beamgunPalette[3];
-  static const uint64 zapperPalette[3];
-  static const uint8 cursorData[15 * 15];
 };

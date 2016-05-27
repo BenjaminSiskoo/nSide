@@ -3,17 +3,21 @@ Controller(port),
 chained(chained),
 device(chained == false ? Device::Justifier : Device::Justifiers)
 {
-  create(Controller::Enter, 21477272);
+  create(Controller::Enter, 21'477'272);
   latched = 0;
   counter = 0;
   active = 0;
   prev = 0;
 
+  player1.sprite = Emulator::video.createSprite(32, 32);
+  player1.sprite->setPixels(Resource::Sprite::CrosshairBlue);
   player1.x = 256 / 2;
   player1.y = 240 / 2;
   player1.trigger = false;
   player2.start = false;
 
+  player2.sprite = Emulator::video.createSprite(32, 32);
+  player2.sprite->setPixels(Resource::Sprite::CrosshairRed);
   player2.x = 256 / 2;
   player2.y = 240 / 2;
   player2.trigger = false;
@@ -26,33 +30,21 @@ device(chained == false ? Device::Justifier : Device::Justifiers)
     player1.x -= 16;
     player2.x += 16;
   }
+}
 
-  cursor1.origin_x = 7;
-  cursor1.origin_y = 7;
-  cursor1.width = 15;
-  cursor1.height = 15;
-  cursor1.stretch_x = 2;
-  cursor1.stretch_y = 1;
-  cursor1.palette = cursorPalette1;
-  cursor1.data = cursorData;
-  cursor2.origin_x = 7;
-  cursor2.origin_y = 7;
-  cursor2.width = 15;
-  cursor2.height = 15;
-  cursor2.stretch_x = 2;
-  cursor2.stretch_y = 1;
-  cursor2.palette = cursorPalette2;
-  cursor2.data = cursorData;
+Justifier::~Justifier() {
+  Emulator::video.removeSprite(player1.sprite);
+  Emulator::video.removeSprite(player2.sprite);
 }
 
 auto Justifier::main() -> void {
-  unsigned next = cpu.vcounter() * 1364 + cpu.hcounter();
+  uint next = cpu.vcounter() * 1364 + cpu.hcounter();
 
-  signed x = (active == 0 ? player1.x : player2.x), y = (active == 0 ? player1.y : player2.y);
+  int x = (active == 0 ? player1.x : player2.x), y = (active == 0 ? player1.y : player2.y);
   bool offscreen = (x < 0 || y < 0 || x >= 256 || y >= ppu.vdisp());
 
-  if(offscreen == false) {
-    unsigned target = y * 1364 + (x + 24) * 4;
+  if(!offscreen) {
+    uint target = y * 1364 + (x + 24) * 4;
     if(next >= target && prev < target) {
       //CRT raster detected, toggle iobit to latch counters
       iobit(0);
@@ -67,9 +59,8 @@ auto Justifier::main() -> void {
     ny1 += player1.y;
     player1.x = max(-16, min(256 + 16, nx1));
     player1.y = max(-16, min(240 + 16, ny1));
-    cursor1.stretch_y = ppu.interlace() + 1;
-    cursor1.x = player1.x * cursor1.stretch_x;
-    cursor1.y = player1.y * cursor1.stretch_y;
+    player1.sprite->setPosition(player1.x * 2 - 16, player1.y * 2 - 16);
+    player1.sprite->setVisible(true);
   }
 
   if(next < prev && chained) {
@@ -79,9 +70,8 @@ auto Justifier::main() -> void {
     ny2 += player2.y;
     player2.x = max(-16, min(256 + 16, nx2));
     player2.y = max(-16, min(240 + 16, ny2));
-    cursor2.stretch_y = ppu.interlace() + 1;
-    cursor2.x = player2.x * cursor2.stretch_x;
-    cursor2.y = player2.y * cursor2.stretch_y;
+    player2.sprite->setPosition(player2.x * 2 - 16, player2.y * 2 - 16);
+    player2.sprite->setVisible(true);
   }
 
   prev = next;
@@ -147,23 +137,3 @@ auto Justifier::latch(bool data) -> void {
   counter = 0;
   if(latched == 0) active = !active;  //toggle between both controllers, even when unchained
 }
-
-const uint64 Justifier::cursorPalette1[3] = {0x0000000000000000l, 0xffff000000000000l, 0xffffffff00000000l};
-const uint64 Justifier::cursorPalette2[6] = {0x0000000000000000l, 0xffff000000000000l, 0xffff0000bfff0000l};
-const uint8 Justifier::cursorData[15 * 15] = {
-  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
-  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
-  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
-  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
-  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
-  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
-  1,2,2,1,1,2,2,2,2,2,1,1,2,2,1,
-  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
-  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
-  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
-  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
-  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
-  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
-  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-};

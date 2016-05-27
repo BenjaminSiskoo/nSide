@@ -157,7 +157,6 @@ auto System::reset() -> void {
   Emulator::video.setInterface(interface);
   configureVideoPalette();
   configureVideoEffects();
-  configureVideoCursors();
 
   Emulator::audio.reset();
   Emulator::audio.setInterface(interface);

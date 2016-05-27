@@ -362,9 +362,8 @@ auto PPU::scanline() -> void {
 }
 
 auto PPU::render_scanline() -> void {
-  if(line >= 1 && line < (!overscan() ? 225 : 240)) {
+  if(line >= 1 && line < 240) {
     if(framecounter) return;
-    render_line_oam_rto();
     render_line();
   }
 }
@@ -372,7 +371,7 @@ auto PPU::render_scanline() -> void {
 auto PPU::frame() -> void {
   if(field() == 0) {
     display.interlace = regs.interlace;
-    regs.scanlines = (regs.overscan == false) ? 224 : 239;
+    regs.scanlines = !regs.overscan ? 224 : 239;
   }
 
   framecounter = (frameskip == 0 ? 0 : (framecounter + 1) % frameskip);
@@ -381,9 +380,9 @@ auto PPU::frame() -> void {
 auto PPU::refresh() -> void {
   auto output = this->output;
   if(!overscan()) output -= 14 * 512;
-  auto pitch = 1024 >> interlace();
+  auto pitch = 512; //1024 >> interlace();
   auto width = 512;
-  auto height = !interlace() ? 240 : 480;
+  auto height = 480; //!interlace() ? 240 : 480;
   Emulator::video.refresh(output, pitch * sizeof(uint32), width, height);
 }
 

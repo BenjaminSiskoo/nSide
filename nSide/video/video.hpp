@@ -3,6 +3,8 @@
 namespace Emulator {
 
 struct Interface;
+struct Video;
+struct Sprite;
 
 struct Video {
   enum class Effect : uint {
@@ -10,19 +12,6 @@ struct Video {
     InterframeBlending,
     Scanlines,
     Rotation,
-  };
-
-  struct Cursor {
-    uint x = 0;
-    uint y = 0;
-    uint origin_x = 0;
-    uint origin_y = 0;
-    uint width = 0;
-    uint height = 0;
-    uint stretch_x = 1;
-    uint stretch_y = 1;
-    const uint64* palette = nullptr;
-    const uint8* data = nullptr;
   };
 
   ~Video();
@@ -36,19 +25,22 @@ struct Video {
   auto setLuminance(double luminance) -> void;
 
   auto setEffect(Effect effect, const any& value) -> void;
-  auto addCursor(Cursor& cursor) -> void;
-  auto clearCursors() -> void;
+
+  auto createSprite(uint width, uint height) -> shared_pointer<Sprite>;
+  auto removeSprite(shared_pointer<Sprite> sprite) -> bool;
 
   auto refresh(uint32* input, uint pitch, uint width, uint height) -> void;
   auto resize(uint width, uint height) -> void;
   auto refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_y, uint width, uint height, uint paletteOffset = 0) -> void;
-  auto drawCursors() -> void;
   auto clear() -> void;
 
 private:
   Emulator::Interface* interface = nullptr;
+  vector<shared_pointer<Sprite>> sprites;
+
   uint32* output = nullptr;
   uint32* palette = nullptr;
+
   uint width = 0;
   uint height = 0;
   uint colors = 0;
@@ -64,7 +56,27 @@ private:
     uint2 rotation = 0;
   } effects;
 
-  vector<Cursor*> cursors;
+  friend class Sprite;
+};
+
+struct Sprite {
+  Sprite(uint width, uint height);
+  ~Sprite();
+
+  auto setPixels(const nall::image& image) -> void;
+  auto setVisible(bool visible) -> void;
+  auto setPosition(int x, int y) -> void;
+
+private:
+  const uint width;
+  const uint height;
+  uint32* pixels = nullptr;
+
+  bool visible = false;
+  int x = 0;
+  int y = 0;
+
+  friend class Video;
 };
 
 extern Video video;

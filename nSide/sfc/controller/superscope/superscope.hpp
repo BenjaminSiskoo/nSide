@@ -1,19 +1,23 @@
 struct SuperScope : Controller {
+  shared_pointer<Emulator::Sprite> sprite;
+
   enum : uint {
     X, Y, Trigger, Cursor, Turbo, Pause,
   };
 
   SuperScope(bool port);
+  ~SuperScope();
 
   auto main() -> void;
   auto data() -> uint2;
   auto latch(bool data) -> void;
 
-//private:
+private:
   bool latched;
-  unsigned counter;
+  uint counter;
 
-  signed x, y;
+  int x;
+  int y;
 
   bool trigger;
   bool cursor;
@@ -21,15 +25,9 @@ struct SuperScope : Controller {
   bool pause;
   bool offscreen;
 
-  bool turbolock;
+  bool oldturbo;
   bool triggerlock;
   bool pauselock;
 
-  unsigned prev;
-
-  Emulator::Video::Cursor videoCursor;
-  static const uint64 normalPalette[3];
-  static const uint64 turboPalette[6];
-  static const uint8 normalData[15 * 15];
-  static const uint8 turboData[15 * 15];
+  uint prev;
 };

@@ -85,5 +85,4 @@ auto Peripherals::connect(uint port, uint id) -> void {
   cpu.peripherals.append(controllerPort1);
   cpu.peripherals.append(controllerPort2);
   cpu.peripherals.append(expansionPort);
-  system.configureVideoCursors();
 }

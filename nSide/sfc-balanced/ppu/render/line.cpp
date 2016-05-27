@@ -85,23 +85,28 @@ inline auto PPU::get_pixel_swap(uint32 x) -> uint16 {
 }
 
 inline auto PPU::render_line_output() -> void {
-  auto ptr = (uint32*)output + (line * 1024) + ((interlace() && field()) ? 512 : 0);
+  auto lineA = (uint32*)output + line * 1024;
+  auto lineB = lineA + (interlace() ? 0 : 512);
+  if(interlace() && field()) lineA += 512, lineB += 512;
 
   if(!regs.pseudo_hires && regs.bg_mode != 5 && regs.bg_mode != 6) {
     for(uint x : range(256)) {
       uint color = (regs.display_brightness << 15) | get_pixel_normal(x);
-      *ptr++ = color;
-      *ptr++ = color;
+      *lineA++ = *lineB++ = color;
+      *lineA++ = *lineB++ = color;
     }
   } else {
     for(uint x : range(256)) {
-      *ptr++ = (regs.display_brightness << 15) | get_pixel_swap(x);
-      *ptr++ = (regs.display_brightness << 15) | get_pixel_normal(x);
+      *lineA++ = *lineB++ = (regs.display_brightness << 15) | get_pixel_swap(x);
+      *lineA++ = *lineB++ = (regs.display_brightness << 15) | get_pixel_normal(x);
     }
   }
 }
 
 inline auto PPU::render_line_clear() -> void {
-  auto ptr = (uint32*)output + (line * 1024) + ((interlace() && field()) ? 512 : 0);
-  memory::fill(ptr, 512 * sizeof(uint32));
+  auto lineA = (uint32*)output + line * 1024;
+  auto lineB = lineA + (interlace() ? 0 : 512);
+  if(interlace() && field()) lineA += 512, lineB += 512;
+  memory::fill(lineA, 512 * sizeof(uint32));
+  memory::fill(lineB, 512 * sizeof(uint32));
 }

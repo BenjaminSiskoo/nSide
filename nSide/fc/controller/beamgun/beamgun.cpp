@@ -1,5 +1,8 @@
 BeamGun::BeamGun(uint port) : Controller(port, Device::BeamGun) {
   create(Controller::Enter, system.cpuFrequency());
+  sprite = Emulator::video.createSprite(16, 16);
+  sprite->setPixels(port == Port::Expansion ? Resource::Sprite::CrosshairGreenSmall : Resource::Sprite::CrosshairRedSmall);
+
   latched = 0;
   counter = 0;
 
@@ -16,13 +19,10 @@ BeamGun::BeamGun(uint port) : Controller(port, Device::BeamGun) {
   triggerlock = false;
 
   prev = 0;
+}
 
-  cursor.origin_x = 7;
-  cursor.origin_y = 7;
-  cursor.width = 15;
-  cursor.height = 15;
-  cursor.palette = port == Port::Controller2 ? zapperPalette : beamgunPalette;
-  cursor.data = cursorData;
+BeamGun::~BeamGun() {
+  Emulator::video.removeSprite(sprite);
 }
 
 auto BeamGun::main() -> void {
@@ -51,8 +51,8 @@ auto BeamGun::main() -> void {
     x = max(-16, min(256 + 16, nx));
     y = max(-16, min(240 + 16, ny));
     offscreen = (x < 0 || y < 0 || x >= 256 || y >= 240);
-    cursor.x = x + ppu.origin_x();
-    cursor.y = y + ppu.origin_y();
+    sprite->setPosition(x - 8, y - 8);
+    sprite->setVisible(true);
   }
 
   prev = next;
@@ -129,23 +129,3 @@ auto BeamGun::latch(bool data) -> void {
     light = lighttime > 0;
   }
 }
-
-const uint64 BeamGun::beamgunPalette[3] = {0x0000000000000000l, 0xffff000000000000l, 0xffff4e4e4e4e4e4el};
-const uint64 BeamGun::zapperPalette[3] = {0x0000000000000000l, 0xffff000000000000l, 0xfffffdfd9b9b0000l};
-const uint8 BeamGun::cursorData[15 * 15] = {
-  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
-  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
-  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
-  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
-  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
-  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
-  1,2,2,1,1,2,2,2,2,2,1,1,2,2,1,
-  1,2,1,0,0,1,1,2,1,1,0,0,1,2,1,
-  0,1,2,1,0,0,1,2,1,0,0,1,2,1,0,
-  0,1,2,1,0,0,0,1,0,0,0,1,2,1,0,
-  0,0,1,2,1,1,0,1,0,1,1,2,1,0,0,
-  0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
-  0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
-  0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-};

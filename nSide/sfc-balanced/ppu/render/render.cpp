@@ -101,10 +101,8 @@ auto PPU::render_line_mode7() -> void {
 }
 
 auto PPU::render_line() -> void {
-  if(regs.display_disabled == true) {
-    render_line_clear();
-    return;
-  }
+  render_line_oam_rto();
+  if(regs.display_disabled || line >= (!overscan() ? 225 : 240)) return render_line_clear();
 
   flush_pixel_cache();
   build_window_tables(COL);

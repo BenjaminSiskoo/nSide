@@ -63,6 +63,5 @@ auto Video::refresh() -> void {
     }
   }
 
-  drawCursors();
   interface->videoRefresh(output - (ppu.overscan() ? 0 : 7 * 1024), 512 * sizeof(uint32), 512, 480);
 }

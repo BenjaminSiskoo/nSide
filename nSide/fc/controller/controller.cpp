@@ -19,6 +19,9 @@ Controller::Controller(uint port) : port(port), device_id(Device::None) {
   if(!thread) create(Controller::Enter, 1);
 }
 
+Controller::~Controller() {
+}
+
 auto Controller::Enter() -> void {
   while(true) {
     scheduler.synchronize();

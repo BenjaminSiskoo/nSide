@@ -2,6 +2,7 @@
 
 namespace Emulator {
 
+#include "sprite.cpp"
 Video video;
 
 Video::~Video() {
@@ -10,6 +11,7 @@ Video::~Video() {
 
 auto Video::reset() -> void {
   interface = nullptr;
+  sprites.reset();
   delete output;
   output = nullptr;
   delete palette;
@@ -19,7 +21,6 @@ auto Video::reset() -> void {
   effects.colorBleed = false;
   effects.interframeBlending = false;
   effects.rotation = 0;
-  cursors.reset();
 }
 
 auto Video::setInterface(Interface* interface) -> void {
@@ -98,12 +99,20 @@ auto Video::setEffect(Effect effect, const any& value) -> void {
   }
 }
 
-auto Video::addCursor(Video::Cursor& cursor) -> void {
-  cursors.append(&cursor);
+auto Video::createSprite(uint width, uint height) -> shared_pointer<Sprite> {
+  shared_pointer<Sprite> sprite = new Sprite{width, height};
+  sprites.append(sprite);
+  return sprite;
 }
 
-auto Video::clearCursors() -> void {
-  cursors.reset();
+auto Video::removeSprite(shared_pointer<Sprite> sprite) -> bool {
+  for(uint n : range(sprites)) {
+    if(sprite == sprites[n]) {
+      sprites.remove(n);
+      return true;
+    }
+  }
+  return false;
 }
 
 auto Video::refresh(uint32* input, uint pitch, uint width, uint height) -> void {
@@ -191,7 +200,23 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
     }
   }
 
-  drawCursors();
+  for(auto& sprite : sprites) {
+    if(!sprite->visible) continue;
+
+    for(int y : range(sprite->height)) {
+      for(int x : range(sprite->width)) {
+        int pixelY = sprite->y + y;
+        if(pixelY < 0 || pixelY >= height) continue;
+
+        int pixelX = sprite->x + x;
+        if(pixelX < 0 || pixelX >= width) continue;
+
+        auto pixel = sprite->pixels[y * sprite->width + x];
+        if(pixel) output[pixelY * width + pixelX] = 0xff000000 | pixel;
+      }
+    }
+  }
+
   if(!effects.rotation.bit(0)) {
     interface->videoRefresh(output, this->width * sizeof(uint32), this->width, this->height << effects.scanlines);
   } else {
@@ -199,25 +224,6 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
       output, (this->height << effects.scanlines) * sizeof(uint32),
       this->height << effects.scanlines, this->width
     );
-  }
-}
-
-auto Video::drawCursors() -> void {
-  for(auto cursor : cursors) {
-    for(uint cy : range(cursor->height * cursor->stretch_y)) {
-      int vy = cursor->y + cy - cursor->origin_y * cursor->stretch_y;
-      if(vy <= 0 || vy >= this->height) continue;  //do not draw offscreen
-
-      for(uint cx : range(cursor->width * cursor->stretch_x)) {
-        int vx = cursor->x + cx - cursor->origin_x * cursor->stretch_x;
-        if(vx < 0 || vx >= this->width) continue;  //do not draw offscreen
-        uint8 pixel = cursor->data[cy / cursor->stretch_y * cursor->width + cx / cursor->stretch_x];
-        if(pixel == 0) continue;
-        uint64 color = cursor->palette[pixel];
-
-        *(output + vy * this->width + vx) = 255u << 24 | color.bits(40,47) << 16 | color.bits(24,31) << 8 | color.bits(8,15) << 0;
-      }
-    }
   }
 }
 

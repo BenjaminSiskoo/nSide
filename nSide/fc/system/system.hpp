@@ -35,7 +35,6 @@ struct System {
   //video.cpp
   auto configureVideoPalette() -> void;
   auto configureVideoEffects() -> void;
-  auto configureVideoCursors() -> void;
 
   //serialization.cpp
   serializer serialize();
