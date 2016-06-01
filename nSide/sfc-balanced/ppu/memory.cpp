@@ -17,7 +17,7 @@ auto PPU::getVramAddress() -> uint16 {
 auto PPU::vramRead(uint16 addr) -> uint8 {
   uint8 data;
 
-  if(regs.display_disabled == true) {
+  if(regs.display_disable) {
     data = vram[addr];
   } else {
     uint16 v = cpu.vcounter();
@@ -27,9 +27,9 @@ auto PPU::vramRead(uint16 addr) -> uint8 {
 
     if(v == ls && h == 1362) {
       data = 0x00;
-    } else if(v < (!overscan() ? 224 : 239)) {
+    } else if(v < vdisp() - 1) {
       data = 0x00;
-    } else if(v == (!overscan() ? 224 : 239)) {
+    } else if(v == vdisp() - 1) {
       if(h == 1362) {
         data = vram[addr];
       } else {
@@ -44,7 +44,7 @@ auto PPU::vramRead(uint16 addr) -> uint8 {
 }
 
 auto PPU::vramWrite(uint16 addr, uint8 data) -> void {
-  if(regs.display_disabled == true) {
+  if(regs.display_disable) {
     vram[addr] = data;
   } else {
     uint16 v = cpu.vcounter();
@@ -57,9 +57,9 @@ auto PPU::vramWrite(uint16 addr, uint8 data) -> void {
       } else {
         //no write
       }
-    } else if(v < (!overscan() ? 225 : 240)) {
+    } else if(v < vdisp()) {
       //no write
-    } else if(v == (!overscan() ? 225 : 240)) {
+    } else if(v == vdisp()) {
       if(h <= 4) {
         //no write
       } else {
@@ -76,11 +76,11 @@ auto PPU::oamRead(uint16 addr) -> uint8 {
   if(addr & 0x0200) addr &= 0x021f;
   uint8 data;
 
-  if(regs.display_disabled == true) {
+  if(regs.display_disable) {
     data = oam[addr];
   } else {
-    if(cpu.vcounter() < (!overscan() ? 225 : 240)) {
-      data = oam[regs.ioamaddr];
+    if(cpu.vcounter() < vdisp()) {
+      data = oam[regs.oam_iaddr];
     } else {
       data = oam[addr];
     }
@@ -95,13 +95,13 @@ auto PPU::oamWrite(uint16 addr, uint8 data) -> void {
 
   sprite_list_valid = false;
 
-  if(regs.display_disabled == true) {
+  if(regs.display_disable) {
     oam[addr] = data;
     update_sprite_list(addr, data);
   } else {
-    if(cpu.vcounter() < (!overscan() ? 225 : 240)) {
-      oam[regs.ioamaddr] = data;
-      update_sprite_list(regs.ioamaddr, data);
+    if(cpu.vcounter() < vdisp()) {
+      oam[regs.oam_iaddr] = data;
+      update_sprite_list(regs.oam_iaddr, data);
     } else {
       oam[addr] = data;
       update_sprite_list(addr, data);
@@ -113,13 +113,13 @@ auto PPU::cgramRead(uint16 addr) -> uint8 {
   addr &= 0x01ff;
   uint8 data;
 
-  if(1 || regs.display_disabled == true) {
+  if(1 || regs.display_disable) {
     data = cgram[addr];
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
-    if(v < (!overscan() ? 225 : 240) && h >= 128 && h < 1096) {
-      data = cgram[regs.icgramaddr] & 0x7f;
+    if(v < vdisp() && h >= 128 && h < 1096) {
+      data = cgram[regs.cgram_iaddr] & 0x7f;
     } else {
       data = cgram[addr];
     }
@@ -133,13 +133,13 @@ auto PPU::cgramWrite(uint16 addr, uint8 data) -> void {
   addr &= 0x01ff;
   if(addr & 1) data &= 0x7f;
 
-  if(1 || regs.display_disabled == true) {
+  if(1 || regs.display_disable) {
     cgram[addr] = data;
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
-    if(v < (!overscan() ? 225 : 240) && h >= 128 && h < 1096) {
-      cgram[regs.icgramaddr] = data & 0x7f;
+    if(v < vdisp() && h >= 128 && h < 1096) {
+      cgram[regs.cgram_iaddr] = data & 0x7f;
     } else {
       cgram[addr] = data;
     }

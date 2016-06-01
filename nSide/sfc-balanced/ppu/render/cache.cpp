@@ -25,8 +25,8 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
     col += !!(d7 & mask) << 7; \
     *dest++ = col
 
-  if(color_depth == BPP2) {
-    uint8* dest = (uint8*)bg_tiledata[BPP2] + tile_num * 64;
+  if(color_depth == Background::Mode::BPP2) {
+    uint8* dest = (uint8*)bg_tiledata[Background::Mode::BPP2] + tile_num * 64;
     uint pos = tile_num * 16;
     uint y = 8;
     while(y--) {
@@ -42,11 +42,11 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
       render_bg_tile_line_2bpp(0x01);
       pos += 2;
     }
-    bg_tiledata_state[BPP2][tile_num] = 0;
+    bg_tiledata_state[Background::Mode::BPP2][tile_num] = 0;
   }
 
-  if(color_depth == BPP4) {
-    uint8* dest = (uint8*)bg_tiledata[BPP4] + tile_num * 64;
+  if(color_depth == Background::Mode::BPP4) {
+    uint8* dest = (uint8*)bg_tiledata[Background::Mode::BPP4] + tile_num * 64;
     uint pos = tile_num * 32;
     uint y = 8;
     while(y--) {
@@ -64,11 +64,11 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
       render_bg_tile_line_4bpp(0x01);
       pos += 2;
     }
-    bg_tiledata_state[BPP4][tile_num] = 0;
+    bg_tiledata_state[Background::Mode::BPP4][tile_num] = 0;
   }
 
-  if(color_depth == BPP8) {
-    uint8* dest = (uint8*)bg_tiledata[BPP8] + tile_num * 64;
+  if(color_depth == Background::Mode::BPP8) {
+    uint8* dest = (uint8*)bg_tiledata[Background::Mode::BPP8] + tile_num * 64;
     uint pos = tile_num * 64;
     uint y = 8;
     while(y--) {
@@ -90,7 +90,7 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
       render_bg_tile_line_8bpp(0x01);
       pos += 2;
     }
-    bg_tiledata_state[BPP8][tile_num] = 0;
+    bg_tiledata_state[Background::Mode::BPP8][tile_num] = 0;
   }
 
   #undef render_bg_tile_line_2bpp
@@ -100,44 +100,44 @@ auto PPU::render_bg_tile(uint16 tile_num) -> void {
 
 auto PPU::flush_pixel_cache() -> void {
   uint16 main = get_palette(0);
-  uint16 sub  = (regs.pseudo_hires || regs.bg_mode == 5 || regs.bg_mode == 6)
+  uint16 sub  = (regs.pseudo_hires || regs.bgmode == 5 || regs.bgmode == 6)
               ? main
               : regs.color_rgb;
 
   uint i = 255;
   do {
-    pixel_cache[i].src_main = main;
-    pixel_cache[i].src_sub  = sub;
-    pixel_cache[i].bg_main  = BACK;
-    pixel_cache[i].bg_sub   = BACK;
-    pixel_cache[i].ce_main  = false;
-    pixel_cache[i].ce_sub   = false;
-    pixel_cache[i].pri_main = 0;
-    pixel_cache[i].pri_sub  = 0;
+    pixelCache[i].src_main = main;
+    pixelCache[i].src_sub  = sub;
+    pixelCache[i].bg_main  = BACK;
+    pixelCache[i].bg_sub   = BACK;
+    pixelCache[i].ce_main  = false;
+    pixelCache[i].ce_sub   = false;
+    pixelCache[i].pri_main = 0;
+    pixelCache[i].pri_sub  = 0;
   } while(i--);
 }
 
 auto PPU::alloc_tiledata_cache() -> void {
-  bg_tiledata[BPP2]       = new uint8[262144]();
-  bg_tiledata[BPP4]       = new uint8[131072]();
-  bg_tiledata[BPP8]       = new uint8[ 65536]();
-  bg_tiledata_state[BPP2] = new uint8[  4096]();
-  bg_tiledata_state[BPP4] = new uint8[  2048]();
-  bg_tiledata_state[BPP8] = new uint8[  1024]();
+  bg_tiledata[Background::Mode::BPP2]       = new uint8[262144]();
+  bg_tiledata[Background::Mode::BPP4]       = new uint8[131072]();
+  bg_tiledata[Background::Mode::BPP8]       = new uint8[ 65536]();
+  bg_tiledata_state[Background::Mode::BPP2] = new uint8[  4096]();
+  bg_tiledata_state[Background::Mode::BPP4] = new uint8[  2048]();
+  bg_tiledata_state[Background::Mode::BPP8] = new uint8[  1024]();
 }
 
 //marks all tiledata cache entries as dirty
 auto PPU::flush_tiledata_cache() -> void {
-  for(uint i : range(4096)) bg_tiledata_state[BPP2][i] = 1;
-  for(uint i : range(2048)) bg_tiledata_state[BPP4][i] = 1;
-  for(uint i : range(1024)) bg_tiledata_state[BPP8][i] = 1;
+  for(uint i : range(4096)) bg_tiledata_state[Background::Mode::BPP2][i] = 1;
+  for(uint i : range(2048)) bg_tiledata_state[Background::Mode::BPP4][i] = 1;
+  for(uint i : range(1024)) bg_tiledata_state[Background::Mode::BPP8][i] = 1;
 }
 
 auto PPU::free_tiledata_cache() -> void {
-  delete[] bg_tiledata[BPP2];
-  delete[] bg_tiledata[BPP4];
-  delete[] bg_tiledata[BPP8];
-  delete[] bg_tiledata_state[BPP2];
-  delete[] bg_tiledata_state[BPP4];
-  delete[] bg_tiledata_state[BPP8];
+  delete[] bg_tiledata[Background::Mode::BPP2];
+  delete[] bg_tiledata[Background::Mode::BPP4];
+  delete[] bg_tiledata[Background::Mode::BPP8];
+  delete[] bg_tiledata_state[Background::Mode::BPP2];
+  delete[] bg_tiledata_state[Background::Mode::BPP4];
+  delete[] bg_tiledata_state[Background::Mode::BPP8];
 }

@@ -48,7 +48,7 @@ auto PPU::read(uint24 addr, uint8 data) -> uint8 {
 
     regs.oam_addr++;
     regs.oam_addr &= 0x03ff;
-    regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
+    sprite.regs.first_sprite = !regs.oam_priority ? 0 : (regs.oam_addr >> 2) & 127;
 
     return regs.ppu1_mdr;
   }
@@ -109,7 +109,7 @@ auto PPU::read(uint24 addr, uint8 data) -> uint8 {
 
   //OPVCT
   case 0x213d: {
-    if(!regs.latch_vcounter) {
+    if(regs.latch_vcounter == 0) {
       regs.ppu2_mdr  = regs.vcounter & 0xff;
     } else {
       regs.ppu2_mdr &= 0xfe;
@@ -122,10 +122,10 @@ auto PPU::read(uint24 addr, uint8 data) -> uint8 {
   //STAT77
   case 0x213e: {
     uint8 r = 0x00;
-    r |= (regs.time_over)  ? 0x80 : 0x00;
-    r |= (regs.range_over) ? 0x40 : 0x00;
-    r |= (regs.ppu1_mdr & 0x10);
-    r |= (ppu1_version & 0x0f);
+    r |= sprite.regs.time_over  ? 0x80 : 0x00;
+    r |= sprite.regs.range_over ? 0x40 : 0x00;
+    r |= regs.ppu1_mdr & 0x10;
+    r |= ppu1_version & 0x0f;
     regs.ppu1_mdr = r;
     return regs.ppu1_mdr;
   }
@@ -137,15 +137,15 @@ auto PPU::read(uint24 addr, uint8 data) -> uint8 {
     regs.latch_vcounter = 0;
 
     r |= cpu.field() << 7;
-    if(!(cpu.pio() & 0x80)) {
+    if((cpu.pio() & 0x80) == 0) {
       r |= 0x40;
-    } else if(regs.counters_latched == true) {
+    } else if(regs.counters_latched) {
       r |= 0x40;
       regs.counters_latched = false;
     }
     r |= (regs.ppu2_mdr & 0x20);
-    r |= (region << 4); //0 = NTSC, 1 = PAL
-    r |= (ppu2_version & 0x0f);
+    r |= (system.region() == System::Region::NTSC ? 0 : 1) << 4;
+    r |= ppu2_version & 0x0f;
     regs.ppu2_mdr = r;
     return regs.ppu2_mdr;
   }
@@ -162,40 +162,40 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
 
   //INIDISP
   case 0x2100: {
-    if(regs.display_disabled == true && cpu.vcounter() == (!overscan() ? 225 : 240)) {
+    if(regs.display_disable && cpu.vcounter() == vdisp()) {
       regs.oam_addr = regs.oam_baseaddr << 1;
-      regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
+      sprite.regs.first_sprite = !regs.oam_priority ? 0 : (regs.oam_addr >> 2) & 127;
     }
 
-    regs.display_disabled   = !!(data & 0x80);
-    regs.display_brightness = data & 15;
+    regs.display_disable = data & 0x80;
+    regs.display_brightness = data & 0x0f;
     return;
   }
 
   //OBSEL
   case 0x2101: {
-    regs.oam_basesize   = (data >> 5) & 7;
-    regs.oam_nameselect = (data >> 3) & 3;
-    regs.oam_tdaddr     = (data & 3) << 14;
+    sprite.regs.base_size = (data >> 5) & 7;
+    sprite.regs.nameselect = (data >> 3) & 3;
+    sprite.regs.tiledata_addr = (data & 3) << 14;
     return;
   }
 
   //OAMADDL
   case 0x2102: {
-    regs.oam_baseaddr    = (regs.oam_baseaddr & ~0xff) | (data << 0);
-    regs.oam_baseaddr   &= 0x01ff;
-    regs.oam_addr        = regs.oam_baseaddr << 1;
-    regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
+    regs.oam_baseaddr        = (regs.oam_baseaddr & ~0xff) | (data << 0);
+    regs.oam_baseaddr       &= 0x01ff;
+    regs.oam_addr            = regs.oam_baseaddr << 1;
+    sprite.regs.first_sprite = !regs.oam_priority ? 0 : (regs.oam_addr >> 2) & 127;
     return;
   }
 
   //OAMADDH
   case 0x2103: {
-    regs.oam_priority    = !!(data & 0x80);
-    regs.oam_baseaddr    = (regs.oam_baseaddr &  0xff) | (data << 8);
-    regs.oam_baseaddr   &= 0x01ff;
-    regs.oam_addr        = regs.oam_baseaddr << 1;
-    regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
+    regs.oam_priority        = data & 0x80;
+    regs.oam_baseaddr        = (regs.oam_baseaddr &  0xff) | (data << 8);
+    regs.oam_baseaddr       &= 0x01ff;
+    regs.oam_addr            = regs.oam_baseaddr << 1;
+    sprite.regs.first_sprite = !regs.oam_priority ? 0 : (regs.oam_addr >> 2) & 127;
     return;
   }
 
@@ -212,132 +212,132 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
 
     regs.oam_addr++;
     regs.oam_addr &= 0x03ff;
-    regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
+    sprite.regs.first_sprite = !regs.oam_priority ? 0 : (regs.oam_addr >> 2) & 127;
     return;
   }
 
   //BGMODE
   case 0x2105: {
-    regs.bg_tilesize[BG4] = !!(data & 0x80);
-    regs.bg_tilesize[BG3] = !!(data & 0x40);
-    regs.bg_tilesize[BG2] = !!(data & 0x20);
-    regs.bg_tilesize[BG1] = !!(data & 0x10);
-    regs.bg3_priority     = !!(data & 0x08);
-    regs.bg_mode          = (data & 7);
+    bg4.regs.tile_size = (data & 0x80);
+    bg3.regs.tile_size = (data & 0x40);
+    bg2.regs.tile_size = (data & 0x20);
+    bg1.regs.tile_size = (data & 0x10);
+    regs.bg3_priority = (data & 0x08);
+    regs.bgmode = (data & 0x07);
     return;
   }
 
   //MOSAIC
   case 0x2106: {
-    regs.mosaic_size         = (data >> 4) & 15;
-    regs.mosaic_enabled[BG4] = !!(data & 0x08);
-    regs.mosaic_enabled[BG3] = !!(data & 0x04);
-    regs.mosaic_enabled[BG2] = !!(data & 0x02);
-    regs.mosaic_enabled[BG1] = !!(data & 0x01);
+    regs.mosaic_size = (data >> 4) & 15;
+    bg4.regs.mosaic_enabled = data & 0x08;
+    bg3.regs.mosaic_enabled = data & 0x04;
+    bg2.regs.mosaic_enabled = data & 0x02;
+    bg1.regs.mosaic_enabled = data & 0x01;
     return;
   }
 
   //BG1SC
   case 0x2107: {
-    regs.bg_scaddr[BG1] = (data & 0x7c) << 9;
-    regs.bg_scsize[BG1] = data & 3;
+    bg1.regs.screen_addr = (data & 0x7c) << 9;
+    bg1.regs.screen_size = data & 3;
     return;
   }
 
   //BG2SC
   case 0x2108: {
-    regs.bg_scaddr[BG2] = (data & 0x7c) << 9;
-    regs.bg_scsize[BG2] = data & 3;
+    bg2.regs.screen_addr = (data & 0x7c) << 9;
+    bg2.regs.screen_size = data & 3;
     return;
   }
 
   //BG3SC
   case 0x2109: {
-    regs.bg_scaddr[BG3] = (data & 0x7c) << 9;
-    regs.bg_scsize[BG3] = data & 3;
+    bg3.regs.screen_addr = (data & 0x7c) << 9;
+    bg3.regs.screen_size = data & 3;
     return;
   }
 
   //BG4SC
   case 0x210a: {
-    regs.bg_scaddr[BG4] = (data & 0x7c) << 9;
-    regs.bg_scsize[BG4] = data & 3;
+    bg4.regs.screen_addr = (data & 0x7c) << 9;
+    bg4.regs.screen_size = data & 3;
     return;
   }
 
   //BG12NBA
   case 0x210b: {
-    regs.bg_tdaddr[BG1] = (data & 0x07) << 13;
-    regs.bg_tdaddr[BG2] = (data & 0x70) <<  9;
+    bg1.regs.tiledata_addr = (data & 0x07) << 13;
+    bg2.regs.tiledata_addr = (data & 0x70) <<  9;
     return;
   }
 
   //BG34NBA
   case 0x210c: {
-    regs.bg_tdaddr[BG3] = (data & 0x07) << 13;
-    regs.bg_tdaddr[BG4] = (data & 0x70) <<  9;
+    bg3.regs.tiledata_addr = (data & 0x07) << 13;
+    bg4.regs.tiledata_addr = (data & 0x70) <<  9;
     return;
   }
 
   //BG1HOFS
   case 0x210d: {
-    regs.m7_hofs  = (data << 8) | regs.m7_latch;
-    regs.m7_latch = data;
+    regs.mode7_hoffset = (data << 8) | regs.mode7_latchdata;
+    regs.mode7_latchdata = data;
 
-    regs.bg_hofs[BG1] = (data << 8) | (regs.bg_ofslatch & ~7) | ((regs.bg_hofs[BG1] >> 8) & 7);
-    regs.bg_ofslatch  = data;
+    bg1.regs.hoffset = (data << 8) | (regs.bgofs_latchdata & ~7) | ((bg1.regs.hoffset >> 8) & 7);
+    regs.bgofs_latchdata = data;
     return;
   }
 
   //BG1VOFS
   case 0x210e: {
-    regs.m7_vofs  = (data << 8) | regs.m7_latch;
-    regs.m7_latch = data;
+    regs.mode7_voffset = (data << 8) | regs.mode7_latchdata;
+    regs.mode7_latchdata = data;
 
-    regs.bg_vofs[BG1] = (data << 8) | (regs.bg_ofslatch);
-    regs.bg_ofslatch  = data;
+    bg1.regs.voffset = (data << 8) | (regs.bgofs_latchdata);
+    regs.bgofs_latchdata = data;
     return;
   }
 
   //BG2HOFS
   case 0x210f: {
-    regs.bg_hofs[BG2] = (data << 8) | (regs.bg_ofslatch & ~7) | ((regs.bg_hofs[BG2] >> 8) & 7);
-    regs.bg_ofslatch  = data;
+    bg2.regs.hoffset = (data << 8) | (regs.bgofs_latchdata & ~7) | ((bg2.regs.hoffset >> 8) & 7);
+    regs.bgofs_latchdata = data;
     return;
   }
 
   //BG2VOFS
   case 0x2110: {
-    regs.bg_vofs[BG2] = (data << 8) | (regs.bg_ofslatch);
-    regs.bg_ofslatch  = data;
+    bg2.regs.voffset = (data << 8) | (regs.bgofs_latchdata);
+    regs.bgofs_latchdata = data;
     return;
   }
 
   //BG3HOFS
   case 0x2111: {
-    regs.bg_hofs[BG3] = (data << 8) | (regs.bg_ofslatch & ~7) | ((regs.bg_hofs[BG3] >> 8) & 7);
-    regs.bg_ofslatch  = data;
+    bg3.regs.hoffset = (data << 8) | (regs.bgofs_latchdata & ~7) | ((bg3.regs.hoffset >> 8) & 7);
+    regs.bgofs_latchdata = data;
     return;
   }
 
   //BG3VOFS
   case 0x2112: {
-    regs.bg_vofs[BG3] = (data << 8) | (regs.bg_ofslatch);
-    regs.bg_ofslatch  = data;
+    bg3.regs.voffset = (data << 8) | (regs.bgofs_latchdata);
+    regs.bgofs_latchdata = data;
     return;
   }
 
   //BG4HOFS
   case 0x2113: {
-    regs.bg_hofs[BG4] = (data << 8) | (regs.bg_ofslatch & ~7) | ((regs.bg_hofs[BG4] >> 8) & 7);
-    regs.bg_ofslatch  = data;
+    bg4.regs.hoffset = (data << 8) | (regs.bgofs_latchdata & ~7) | ((bg4.regs.hoffset >> 8) & 7);
+    regs.bgofs_latchdata = data;
     return;
   }
 
   //BG4VOFS
   case 0x2114: {
-    regs.bg_vofs[BG4] = (data << 8) | (regs.bg_ofslatch);
-    regs.bg_ofslatch  = data;
+    bg4.regs.voffset = (data << 8) | (regs.bgofs_latchdata);
+    regs.bgofs_latchdata = data;
     return;
   }
 
@@ -376,9 +376,9 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   case 0x2118: {
     uint16 addr = getVramAddress();
     vramWrite(addr, data);
-    bg_tiledata_state[BPP2][addr >> 4] = 1;
-    bg_tiledata_state[BPP4][addr >> 5] = 1;
-    bg_tiledata_state[BPP8][addr >> 6] = 1;
+    bg_tiledata_state[Background::Mode::BPP2][addr >> 4] = 1;
+    bg_tiledata_state[Background::Mode::BPP4][addr >> 5] = 1;
+    bg_tiledata_state[Background::Mode::BPP8][addr >> 6] = 1;
 
     if(regs.vram_incmode == 0) {
       regs.vram_addr += regs.vram_incsize;
@@ -390,9 +390,9 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   case 0x2119: {
     uint16 addr = getVramAddress() + 1;
     vramWrite(addr, data);
-    bg_tiledata_state[BPP2][addr >> 4] = 1;
-    bg_tiledata_state[BPP4][addr >> 5] = 1;
-    bg_tiledata_state[BPP8][addr >> 6] = 1;
+    bg_tiledata_state[Background::Mode::BPP2][addr >> 4] = 1;
+    bg_tiledata_state[Background::Mode::BPP4][addr >> 5] = 1;
+    bg_tiledata_state[Background::Mode::BPP8][addr >> 6] = 1;
 
     if(regs.vram_incmode == 1) {
       regs.vram_addr += regs.vram_incsize;
@@ -403,50 +403,50 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   //M7SEL
   case 0x211a: {
     regs.mode7_repeat = (data >> 6) & 3;
-    regs.mode7_vflip  = !!(data & 0x02);
-    regs.mode7_hflip  = !!(data & 0x01);
+    regs.mode7_vflip = data & 0x02;
+    regs.mode7_hflip = data & 0x01;
     return;
   }
 
   //M7A
   case 0x211b: {
-    regs.m7a      = (data << 8) | regs.m7_latch;
-    regs.m7_latch = data;
+    regs.m7a = (data << 8) | regs.mode7_latchdata;
+    regs.mode7_latchdata = data;
     return;
   }
 
   //M7B
   case 0x211c: {
-    regs.m7b      = (data << 8) | regs.m7_latch;
-    regs.m7_latch = data;
+    regs.m7b = (data << 8) | regs.mode7_latchdata;
+    regs.mode7_latchdata = data;
     return;
   }
 
   //M7C
   case 0x211d: {
-    regs.m7c      = (data << 8) | regs.m7_latch;
-    regs.m7_latch = data;
+    regs.m7c = (data << 8) | regs.mode7_latchdata;
+    regs.mode7_latchdata = data;
     return;
   }
 
   //M7D
   case 0x211e: {
-    regs.m7d      = (data << 8) | regs.m7_latch;
-    regs.m7_latch = data;
+    regs.m7d = (data << 8) | regs.mode7_latchdata;
+    regs.mode7_latchdata = data;
     return;
   }
 
   //M7X
   case 0x211f: {
-    regs.m7x      = (data << 8) | regs.m7_latch;
-    regs.m7_latch = data;
+    regs.m7x = (data << 8) | regs.mode7_latchdata;
+    regs.mode7_latchdata = data;
     return;
   }
 
   //M7Y
   case 0x2120: {
-    regs.m7y      = (data << 8) | regs.m7_latch;
-    regs.m7_latch = data;
+    regs.m7y = (data << 8) | regs.mode7_latchdata;
+    regs.mode7_latchdata = data;
     return;
   }
 
@@ -478,164 +478,164 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
 
   //W12SEL
   case 0x2123: {
-    regs.window2_enabled[BG2] = !!(data & 0x80);
-    regs.window2_invert [BG2] = !!(data & 0x40);
-    regs.window1_enabled[BG2] = !!(data & 0x20);
-    regs.window1_invert [BG2] = !!(data & 0x10);
-    regs.window2_enabled[BG1] = !!(data & 0x08);
-    regs.window2_invert [BG1] = !!(data & 0x04);
-    regs.window1_enabled[BG1] = !!(data & 0x02);
-    regs.window1_invert [BG1] = !!(data & 0x01);
+    window.regs.bg2_two_enable = data & 0x80;
+    window.regs.bg2_two_invert = data & 0x40;
+    window.regs.bg2_one_enable = data & 0x20;
+    window.regs.bg2_one_invert = data & 0x10;
+    window.regs.bg1_two_enable = data & 0x08;
+    window.regs.bg1_two_invert = data & 0x04;
+    window.regs.bg1_one_enable = data & 0x02;
+    window.regs.bg1_one_invert = data & 0x01;
     return;
   }
 
   //W34SEL
   case 0x2124: {
-    regs.window2_enabled[BG4] = !!(data & 0x80);
-    regs.window2_invert [BG4] = !!(data & 0x40);
-    regs.window1_enabled[BG4] = !!(data & 0x20);
-    regs.window1_invert [BG4] = !!(data & 0x10);
-    regs.window2_enabled[BG3] = !!(data & 0x08);
-    regs.window2_invert [BG3] = !!(data & 0x04);
-    regs.window1_enabled[BG3] = !!(data & 0x02);
-    regs.window1_invert [BG3] = !!(data & 0x01);
+    window.regs.bg4_two_enable = data & 0x80;
+    window.regs.bg4_two_invert = data & 0x40;
+    window.regs.bg4_one_enable = data & 0x20;
+    window.regs.bg4_one_invert = data & 0x10;
+    window.regs.bg3_two_enable = data & 0x08;
+    window.regs.bg3_two_invert = data & 0x04;
+    window.regs.bg3_one_enable = data & 0x02;
+    window.regs.bg3_one_invert = data & 0x01;
     return;
   }
 
   //WOBJSEL
   case 0x2125: {
-    regs.window2_enabled[COL] = !!(data & 0x80);
-    regs.window2_invert [COL] = !!(data & 0x40);
-    regs.window1_enabled[COL] = !!(data & 0x20);
-    regs.window1_invert [COL] = !!(data & 0x10);
-    regs.window2_enabled[OAM] = !!(data & 0x08);
-    regs.window2_invert [OAM] = !!(data & 0x04);
-    regs.window1_enabled[OAM] = !!(data & 0x02);
-    regs.window1_invert [OAM] = !!(data & 0x01);
+    window.regs.col_two_enable = data & 0x80;
+    window.regs.col_two_invert = data & 0x40;
+    window.regs.col_one_enable = data & 0x20;
+    window.regs.col_one_invert = data & 0x10;
+    window.regs.oam_two_enable = data & 0x08;
+    window.regs.oam_two_invert = data & 0x04;
+    window.regs.oam_one_enable = data & 0x02;
+    window.regs.oam_one_invert = data & 0x01;
     return;
   }
 
   //WH0
   case 0x2126: {
-    regs.window1_left = data;
+    window.regs.one_left = data;
     return;
   }
 
   //WH1
   case 0x2127: {
-    regs.window1_right = data;
+    window.regs.one_right = data;
     return;
   }
 
   //WH2
   case 0x2128: {
-    regs.window2_left = data;
+    window.regs.two_left = data;
     return;
   }
 
   //WH3
   case 0x2129: {
-    regs.window2_right = data;
+    window.regs.two_right = data;
     return;
   }
 
   //WBGLOG
   case 0x212a: {
-    regs.window_mask[BG4] = (data >> 6) & 3;
-    regs.window_mask[BG3] = (data >> 4) & 3;
-    regs.window_mask[BG2] = (data >> 2) & 3;
-    regs.window_mask[BG1] = (data     ) & 3;
+    window.regs.bg4_mask = (data >> 6) & 3;
+    window.regs.bg3_mask = (data >> 4) & 3;
+    window.regs.bg2_mask = (data >> 2) & 3;
+    window.regs.bg1_mask = (data     ) & 3;
     return;
   }
 
   //WOBJLOG
   case 0x212b: {
-    regs.window_mask[COL] = (data >> 2) & 3;
-    regs.window_mask[OAM] = (data     ) & 3;
+    window.regs.col_mask = (data >> 2) & 3;
+    window.regs.oam_mask = (data     ) & 3;
     return;
   }
 
   //TM
   case 0x212c: {
-    regs.bg_enabled[OAM] = !!(data & 0x10);
-    regs.bg_enabled[BG4] = !!(data & 0x08);
-    regs.bg_enabled[BG3] = !!(data & 0x04);
-    regs.bg_enabled[BG2] = !!(data & 0x02);
-    regs.bg_enabled[BG1] = !!(data & 0x01);
+    sprite.regs.main_enable = data & 0x10;
+    bg4.regs.main_enable = data & 0x08;
+    bg3.regs.main_enable = data & 0x04;
+    bg2.regs.main_enable = data & 0x02;
+    bg1.regs.main_enable = data & 0x01;
     return;
   }
 
   //TS
   case 0x212d: {
-    regs.bgsub_enabled[OAM] = !!(data & 0x10);
-    regs.bgsub_enabled[BG4] = !!(data & 0x08);
-    regs.bgsub_enabled[BG3] = !!(data & 0x04);
-    regs.bgsub_enabled[BG2] = !!(data & 0x02);
-    regs.bgsub_enabled[BG1] = !!(data & 0x01);
+    sprite.regs.sub_enable = data & 0x10;
+    bg4.regs.sub_enable = data & 0x08;
+    bg3.regs.sub_enable = data & 0x04;
+    bg2.regs.sub_enable = data & 0x02;
+    bg1.regs.sub_enable = data & 0x01;
     return;
   }
 
   //TMW
   case 0x212e: {
-    regs.window_enabled[OAM] = !!(data & 0x10);
-    regs.window_enabled[BG4] = !!(data & 0x08);
-    regs.window_enabled[BG3] = !!(data & 0x04);
-    regs.window_enabled[BG2] = !!(data & 0x02);
-    regs.window_enabled[BG1] = !!(data & 0x01);
+    window.regs.oam_main_enable = data & 0x10;
+    window.regs.bg4_main_enable = data & 0x08;
+    window.regs.bg3_main_enable = data & 0x04;
+    window.regs.bg2_main_enable = data & 0x02;
+    window.regs.bg1_main_enable = data & 0x01;
     return;
   }
 
   //TSW
   case 0x212f: {
-    regs.sub_window_enabled[OAM] = !!(data & 0x10);
-    regs.sub_window_enabled[BG4] = !!(data & 0x08);
-    regs.sub_window_enabled[BG3] = !!(data & 0x04);
-    regs.sub_window_enabled[BG2] = !!(data & 0x02);
-    regs.sub_window_enabled[BG1] = !!(data & 0x01);
+    window.regs.oam_sub_enable = data & 0x10;
+    window.regs.bg4_sub_enable = data & 0x08;
+    window.regs.bg3_sub_enable = data & 0x04;
+    window.regs.bg2_sub_enable = data & 0x02;
+    window.regs.bg1_sub_enable = data & 0x01;
     return;
   }
 
   //CGWSEL
   case 0x2130: {
-    regs.color_mask    = (data >> 6) & 3;
-    regs.colorsub_mask = (data >> 4) & 3;
-    regs.addsub_mode   = !!(data & 0x02);
-    regs.direct_color  = !!(data & 0x01);
+    window.regs.col_main_mask = (data >> 6) & 3;
+    window.regs.col_sub_mask = (data >> 4) & 3;
+    screen.regs.addsub_mode = data & 0x02;
+    screen.regs.direct_color = data & 0x01;
     return;
   }
 
   //CGADDSUB
   case 0x2131: {
-    regs.color_mode          = !!(data & 0x80);
-    regs.color_halve         = !!(data & 0x40);
-    regs.color_enabled[BACK] = !!(data & 0x20);
-    regs.color_enabled[OAM]  = !!(data & 0x10);
-    regs.color_enabled[BG4]  = !!(data & 0x08);
-    regs.color_enabled[BG3]  = !!(data & 0x04);
-    regs.color_enabled[BG2]  = !!(data & 0x02);
-    regs.color_enabled[BG1]  = !!(data & 0x01);
+    screen.regs.color_mode = data & 0x80;
+    screen.regs.color_halve = data & 0x40;
+    screen.regs.back_color_enable = data & 0x20;
+    screen.regs.oam_color_enable = data & 0x10;
+    screen.regs.bg4_color_enable = data & 0x08;
+    screen.regs.bg3_color_enable = data & 0x04;
+    screen.regs.bg2_color_enable = data & 0x02;
+    screen.regs.bg1_color_enable = data & 0x01;
     return;
   }
 
   //COLDATA
   case 0x2132: {
-    if(data & 0x80) regs.color_b = data & 0x1f;
-    if(data & 0x40) regs.color_g = data & 0x1f;
-    if(data & 0x20) regs.color_r = data & 0x1f;
+    if(data & 0x80) screen.regs.color_b = data & 0x1f;
+    if(data & 0x40) screen.regs.color_g = data & 0x1f;
+    if(data & 0x20) screen.regs.color_r = data & 0x1f;
 
-    regs.color_rgb = (regs.color_r)
-                   | (regs.color_g << 5)
-                   | (regs.color_b << 10);
+    regs.color_rgb = (screen.regs.color_r      )
+                   | (screen.regs.color_g <<  5)
+                   | (screen.regs.color_b << 10);
     return;
   }
 
   //SETINI
   case 0x2133: {
-    regs.mode7_extbg   = !!(data & 0x40);
-    regs.pseudo_hires  = !!(data & 0x08);
-    regs.overscan      = !!(data & 0x04);
-    regs.oam_interlace = !!(data & 0x02);
-    regs.interlace     = !!(data & 0x01);
+    regs.mode7_extbg = data & 0x40;
+    regs.pseudo_hires = data & 0x08;
+    regs.overscan = data & 0x04;
+    sprite.regs.interlace = data & 0x02;
+    regs.interlace = data & 0x01;
 
     display.overscan = regs.overscan;
     sprite_list_valid = false;

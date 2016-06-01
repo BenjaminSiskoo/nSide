@@ -1,67 +1,86 @@
 //called once at the start of every rendered scanline
 auto PPU::update_bg_info() -> void {
-  const uint hires = regs.bg_mode == 5 || regs.bg_mode == 6;
+  const uint hires = regs.bgmode == 5 || regs.bgmode == 6;
   const uint width = !hires ? 256 : 512;
 
-  for(uint bg : range(4)) {
-    bg_info[bg].th = regs.bg_tilesize[bg] ? 4 : 3;
-    bg_info[bg].tw = hires ? 4 : (uint)bg_info[bg].th;
+  auto bg = &bg1;
+  for(uint bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) {
+    switch(bg_id) {
+    case Background::ID::BG1: bg = &bg1; break;
+    case Background::ID::BG2: bg = &bg2; break;
+    case Background::ID::BG3: bg = &bg3; break;
+    case Background::ID::BG4: bg = &bg4; break;
+    }
 
-    bg_info[bg].mx = bg_info[bg].th == 4 ? width << 1 : width;
-    bg_info[bg].my = bg_info[bg].mx;
-    if(regs.bg_scsize[bg] & 0x01) bg_info[bg].mx <<= 1;
-    if(regs.bg_scsize[bg] & 0x02) bg_info[bg].my <<= 1;
-    bg_info[bg].mx--;
-    bg_info[bg].my--;
+    bg_info[bg_id].th = bg->regs.tile_size ? 4 : 3;
+    bg_info[bg_id].tw = hires ? 4 : (uint)bg_info[bg_id].th;
 
-    bg_info[bg].scy = regs.bg_scsize[bg] & 0x02 ? 32 << 5 : 0;
-    bg_info[bg].scx = regs.bg_scsize[bg] & 0x01 ? 32 << 5 : 0;
-    if(regs.bg_scsize[bg] == 3) bg_info[bg].scy <<= 1;
+    bg_info[bg_id].mx = bg_info[bg_id].th == 4 ? width << 1 : width;
+    bg_info[bg_id].my = bg_info[bg_id].mx;
+    if(bg->regs.screen_size & 0x01) bg_info[bg_id].mx <<= 1;
+    if(bg->regs.screen_size & 0x02) bg_info[bg_id].my <<= 1;
+    bg_info[bg_id].mx--;
+    bg_info[bg_id].my--;
+
+    bg_info[bg_id].scy = bg->regs.screen_size & 0x02 ? 32 << 5 : 0;
+    bg_info[bg_id].scx = bg->regs.screen_size & 0x01 ? 32 << 5 : 0;
+    if(bg->regs.screen_size == Background::ScreenSize::Size64x64) bg_info[bg_id].scy <<= 1;
   }
 }
 
-template<uint bg>
+template<uint bg_id>
 auto PPU::bg_get_tile(uint16 x, uint16 y) -> uint16 {
-  x = (x & bg_info[bg].mx) >> bg_info[bg].tw;
-  y = (y & bg_info[bg].my) >> bg_info[bg].th;
+  x = (x & bg_info[bg_id].mx) >> bg_info[bg_id].tw;
+  y = (y & bg_info[bg_id].my) >> bg_info[bg_id].th;
 
   uint16 pos = ((y & 0x1f) << 5) + (x & 0x1f);
-  if(y & 0x20) pos += bg_info[bg].scy;
-  if(x & 0x20) pos += bg_info[bg].scx;
+  if(y & 0x20) pos += bg_info[bg_id].scy;
+  if(x & 0x20) pos += bg_info[bg_id].scx;
 
-  const uint16 addr = regs.bg_scaddr[bg] + (pos << 1);
+  auto bg = &bg1;
+  switch(bg_id) {
+  case Background::ID::BG1: bg = &bg1; break;
+  case Background::ID::BG2: bg = &bg2; break;
+  case Background::ID::BG3: bg = &bg3; break;
+  case Background::ID::BG4: bg = &bg4; break;
+  }
+  const uint16 addr = bg->regs.screen_addr + (pos << 1);
   return vram[addr] + (vram[addr + 1] << 8);
 }
 
-template<uint mode, uint bg, uint color_depth>
+template<uint mode, uint bg_id, uint color_depth>
 auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
   if(pri0_pos + pri1_pos == 0) return;
 
-  if(regs.bg_enabled[bg] == false && regs.bgsub_enabled[bg] == false) return;
+  auto bg = &bg1;
+  switch(bg_id) {
+  case Background::ID::BG1: bg = &bg1; break;
+  case Background::ID::BG2: bg = &bg2; break;
+  case Background::ID::BG3: bg = &bg3; break;
+  case Background::ID::BG4: bg = &bg4; break;
+  }
+  if(!bg->regs.main_enable && !bg->regs.sub_enable) return;
 
-  const bool bg_enabled    = regs.bg_enabled[bg];
-  const bool bgsub_enabled = regs.bgsub_enabled[bg];
-
-  const uint16 opt_valid_bit = bg == BG1 ? 0x2000 : bg == BG2 ? 0x4000 : 0x0000;
-  const uint8  bgpal_index   = mode == 0 ? bg << 5 : 0;
+  const uint16 opt_valid_bit = bg_id == Background::ID::BG1 ? 0x2000 : bg_id == Background::ID::BG2 ? 0x4000 : 0x0000;
+  const uint8  bgpal_index   = mode == 0 ? bg_id << 5 : 0;
 
   const uint8  pal_size  = 2 << color_depth;       //<<2 (*4), <<4 (*16), <<8 (*256)
   const uint16 tile_mask = 0x0fff >> color_depth;  //0x0fff, 0x07ff, 0x03ff
   //4 + color_depth = >>(4-6) -- / {16, 32, 64 } bytes/tile
   //index is a tile number count to add to base tile number
-  const uint tiledata_index = regs.bg_tdaddr[bg] >> (4 + color_depth);
+  const uint tiledata_index = bg->regs.tiledata_addr >> (4 + color_depth);
 
   const uint8 *bg_td       = bg_tiledata[color_depth];
   const uint8 *bg_td_state = bg_tiledata_state[color_depth];
 
-  const uint8  tile_width  = bg_info[bg].tw;
-  const uint8  tile_height = bg_info[bg].th;
-  const uint16 mask_x      = bg_info[bg].mx;  //screen width  mask
-  const uint16 mask_y      = bg_info[bg].my;  //screen height mask
+  const uint8  tile_width  = bg_info[bg_id].tw;
+  const uint8  tile_height = bg_info[bg_id].th;
+  const uint16 mask_x      = bg_info[bg_id].mx;  //screen width  mask
+  const uint16 mask_y      = bg_info[bg_id].my;  //screen height mask
 
-  uint16 y       = regs.bg_y[bg];
-  uint16 hscroll = regs.bg_hofs[bg];
-  uint16 vscroll = regs.bg_vofs[bg];
+  uint16 y       = regs.bg_y[bg_id];
+  uint16 hscroll = bg->regs.hoffset;
+  uint16 vscroll = bg->regs.voffset;
 
   const uint hires = mode == 5 || mode == 6;
   const uint width = !hires ? 256 : 512;
@@ -78,13 +97,13 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
   bool   mirror_x, mirror_y;
 
   const uint8*  tile_ptr;
-  const uint16* mtable = mosaic_table[regs.mosaic_enabled[bg] ? (uint)regs.mosaic_size : 0];
+  const uint16* mtable = mosaic_table[bg->regs.mosaic_enabled ? (uint)regs.mosaic_size : 0];
   const bool    is_opt_mode = mode == 2 || mode == 4 || mode == 6;
-  const bool    is_direct_color_mode = regs.direct_color && bg == BG1 && (mode == 3 || mode == 4);
+  const bool    is_direct_color_mode = screen.regs.direct_color && bg_id == Background::ID::BG1 && (mode == 3 || mode == 4);
 
-  build_window_tables(bg);
-  const uint8* wt_main = window[bg].main;
-  const uint8* wt_sub  = window[bg].sub;
+  build_window_tables(bg_id);
+  const uint8* wt_main = windowCache[bg_id].main;
+  const uint8* wt_sub  = windowCache[bg_id].sub;
 
   uint16 prev_x = 0xffff, prev_y = 0xffff, prev_optx = 0xffff;
   for(uint16 x : range(width)) {
@@ -100,9 +119,9 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
         if((opt_x >> 3) != (prev_optx >> 3)) {
           prev_optx = opt_x;
 
-          hval = bg_get_tile<BG3>((opt_x - 8) + (regs.bg_hofs[BG3] & ~7), regs.bg_vofs[BG3]);
+          hval = bg_get_tile<Background::ID::BG3>((opt_x - 8) + (bg3.regs.hoffset & ~7), bg3.regs.voffset);
           if(mode != 4) {
-            vval = bg_get_tile<BG3>((opt_x - 8) + (regs.bg_hofs[BG3] & ~7), regs.bg_vofs[BG3] + 8);
+            vval = bg_get_tile<Background::ID::BG3>((opt_x - 8) + (bg3.regs.hoffset & ~7), bg3.regs.voffset + 8);
           }
         }
 
@@ -132,7 +151,7 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
       prev_x = hoffset >> 3;
       prev_y = voffset >> 3;
 
-      tile_num  = bg_get_tile<bg>(hoffset, voffset);  //format = vhopppcc cccccccc
+      tile_num  = bg_get_tile<bg_id>(hoffset, voffset);  //format = vhopppcc cccccccc
       mirror_y  = tile_num & 0x8000;
       mirror_x  = tile_num & 0x4000;
       tile_pri  = tile_num & 0x2000 ? pri1_pos : pri0_pos;
@@ -169,29 +188,29 @@ auto PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) -> void {
       }
 
       #define setpixel_main(x) \
-        if(pixel_cache[x].pri_main < tile_pri) { \
-          pixel_cache[x].pri_main = tile_pri; \
-          pixel_cache[x].bg_main  = bg; \
-          pixel_cache[x].src_main = col; \
-          pixel_cache[x].ce_main  = false; \
+        if(pixelCache[x].pri_main < tile_pri) { \
+          pixelCache[x].pri_main = tile_pri; \
+          pixelCache[x].bg_main  = bg_id; \
+          pixelCache[x].src_main = col; \
+          pixelCache[x].ce_main  = false; \
         }
 
       #define setpixel_sub(x) \
-        if(pixel_cache[x].pri_sub < tile_pri) { \
-          pixel_cache[x].pri_sub = tile_pri; \
-          pixel_cache[x].bg_sub  = bg; \
-          pixel_cache[x].src_sub = col; \
-          pixel_cache[x].ce_sub  = false; \
+        if(pixelCache[x].pri_sub < tile_pri) { \
+          pixelCache[x].pri_sub = tile_pri; \
+          pixelCache[x].bg_sub  = bg_id; \
+          pixelCache[x].src_sub = col; \
+          pixelCache[x].ce_sub  = false; \
         }
       if(!hires) {
-        if(bg_enabled    == true && !wt_main[x]) { setpixel_main(x); }
-        if(bgsub_enabled == true && !wt_sub[x])  { setpixel_sub(x);  }
+        if(bg->regs.main_enable && !wt_main[x]) { setpixel_main(x); }
+        if(bg->regs.sub_enable  && !wt_sub[x])  { setpixel_sub(x);  }
       } else {
         int hx = x >> 1;
         if(x & 1) {
-          if(bg_enabled    == true && !wt_main[hx]) { setpixel_main(hx); }
+          if(bg->regs.main_enable && !wt_main[hx]) { setpixel_main(hx); }
         } else {
-          if(bgsub_enabled == true && !wt_sub[hx])  { setpixel_sub(hx);  }
+          if(bg->regs.sub_enable  && !wt_sub[hx])  { setpixel_sub(hx);  }
         }
       }
       #undef setpixel_main

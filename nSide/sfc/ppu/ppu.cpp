@@ -235,31 +235,24 @@ auto PPU::refresh() -> void {
 
 auto PPU::exportRegisters(string &markup) -> void {
   markup.append("ppu\n");
-  // 2105
+  //$2105  BGMODE
   markup.append("  bgmode:       ", regs.bgmode,       "\n");
   markup.append("  bg3-priority: ", regs.bg3_priority, "\n");
-  // 2133
+  //$2133  SETINI
   markup.append("  pseudo-hires: ", regs.pseudo_hires, "\n");
   markup.append("  overscan:     ", regs.overscan,     "\n");
-  // individual backgrounds
-  auto bg = &bg1;
-  for(uint bg_id = 1; bg_id <= 4; bg_id++) {
-    switch(bg_id) {
-      case 1: bg = &bg1; break;
-      case 2: bg = &bg2; break;
-      case 3: bg = &bg3; break;
-      case 4: bg = &bg4; break;
-    }
+
+  for(Background bg : (const Background[]){bg1, bg2, bg3, bg4}) {
     markup.append("  bg\n");
-    markup.append("    tile-size:     ",   bg->regs.tile_size,              "\n");
-    markup.append("    mosaic:        ",   bg->regs.mosaic,                 "\n");
-    markup.append("    screen-addr:   0x", hex(bg->regs.screen_addr, 4L),   "\n");
-    markup.append("    screen-size:   ",   bg->regs.screen_size,            "\n");
-    markup.append("    tiledata-addr: 0x", hex(bg->regs.tiledata_addr, 4L), "\n");
-    markup.append("    hoffset:       0x", hex(bg->regs.hoffset, 3L),       "\n");
-    markup.append("    voffset:       0x", hex(bg->regs.voffset, 3L),       "\n");
-    markup.append("    main-enable:   ",   bg->regs.main_enable,            "\n");
-    markup.append("    sub-enable:    ",   bg->regs.sub_enable,             "\n");
+    markup.append("    tile-size:     ",   bg.regs.tile_size,              "\n");
+    markup.append("    mosaic:        ",   bg.regs.mosaic,                 "\n");
+    markup.append("    screen-addr:   0x", hex(bg.regs.screen_addr, 4L),   "\n");
+    markup.append("    screen-size:   ",   bg.regs.screen_size,            "\n");
+    markup.append("    tiledata-addr: 0x", hex(bg.regs.tiledata_addr, 4L), "\n");
+    markup.append("    hoffset:       0x", hex(bg.regs.hoffset, 4L),       "\n");
+    markup.append("    voffset:       0x", hex(bg.regs.voffset, 4L),       "\n");
+    markup.append("    main-enable:   ",   bg.regs.main_enable,            "\n");
+    markup.append("    sub-enable:    ",   bg.regs.sub_enable,             "\n");
   }
 }
 
