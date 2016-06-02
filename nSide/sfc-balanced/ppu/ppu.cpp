@@ -357,7 +357,9 @@ auto PPU::reset() -> void {
   function<auto (uint24, uint8) -> void> writer{&PPU::write, this};
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
-  frame();
+  //open bus support
+  regs.ppu1_mdr = 0xff;
+  regs.ppu2_mdr = 0xff;
 
   //$2100
   regs.display_disable = true;
@@ -368,15 +370,13 @@ auto PPU::reset() -> void {
   memset(sprite_list, 0, sizeof(sprite_list));
   sprite_list_valid = false;
 
-  //open bus support
-  regs.ppu1_mdr = 0xff;
-  regs.ppu2_mdr = 0xff;
-
   //bg line counters
   regs.bg_y[Background::ID::BG1] = 0;
   regs.bg_y[Background::ID::BG2] = 0;
   regs.bg_y[Background::ID::BG3] = 0;
   regs.bg_y[Background::ID::BG4] = 0;
+
+  frame();
 }
 
 auto PPU::scanline() -> void {

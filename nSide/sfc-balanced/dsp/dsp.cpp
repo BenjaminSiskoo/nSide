@@ -25,7 +25,7 @@ auto DSP::main() -> void {
 
   int count = spc_dsp.sample_count();
   if(count > 0) {
-    for(uint n = 0; n < count; n += 2) stream->sample(samplebuffer[n + 0], samplebuffer[n + 1]);
+    for(uint n = 0; n < count; n += 2) stream->sample(samplebuffer[n + 0] / 32768.0, samplebuffer[n + 1] / 32768.0);
     spc_dsp.set_output(samplebuffer, 8192);
   }
 }

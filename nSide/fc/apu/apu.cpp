@@ -58,7 +58,7 @@ auto APU::main() -> void {
 //output  = filter.run_lopass(output);
   output  = sclamp<16>(output);
 
-  stream->sample(output, output);
+  stream->sample(output / 32768.0);
 
   tick();
 }

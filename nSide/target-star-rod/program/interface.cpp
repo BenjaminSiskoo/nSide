@@ -80,15 +80,11 @@ auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint heig
   */
 }
 
-auto Program::audioSample(int16 lsample, int16 rsample) -> void {
-  if(settings->audio.mute) lsample = 0, rsample = 0;
-  audio->sample(lsample, rsample);
-//int samples[] = {lsample, rsample};
-//dsp.sample(samples);
-//while(dsp.pending()) {
-//  dsp.read(samples);
-//  audio->sample(samples[0], samples[1]);
-//}
+auto Program::audioSample(const double* samples, uint channels) -> void {
+  if(settings->audio.mute) return audio->sample(0, 0);
+  int16 left  = sclamp<16>(samples[0] * 32768.0);
+  int16 right = sclamp<16>(samples[1] * 32768.0);
+  audio->sample(left, right);
 }
 
 auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
