@@ -6,7 +6,7 @@ auto PlayChoice10::PC10CPU::Enter() -> void {
 auto PlayChoice10::PC10CPU::main() -> void {
   //interrupt_test();
   print("PC10 CPU main\n");
-  exec();
+  instruction();
 }
 
 auto PlayChoice10::PC10CPU::stop() -> bool {
@@ -28,34 +28,34 @@ auto PlayChoice10::PC10CPU::reset() -> void {
   r[HL] = 0x0000;
 }
 
-auto PlayChoice10::PC10CPU::op_io() -> void {
-  print("PC10 CPU Op IO\n");
+auto PlayChoice10::PC10CPU::io() -> void {
+  print("PC10 CPU IO\n");
   cycleEdge();
   addClocks(2);
 }
 
-auto PlayChoice10::PC10CPU::op_read(uint16 addr) -> uint8 {
-  print("PC10 CPU Op Read\n");
+auto PlayChoice10::PC10CPU::read(uint16 addr) -> uint8 {
+  print("PC10 CPU Read\n");
   cycleEdge();
   addClocks(3);
   return playchoice10.read(addr);
 }
 
-auto PlayChoice10::PC10CPU::op_write(uint16 addr, uint8 data) -> void {
-  print("PC10 CPU Op Write\n");
+auto PlayChoice10::PC10CPU::write(uint16 addr, uint8 data) -> void {
+  print("PC10 CPU Write\n");
   cycleEdge();
   addClocks(3);
   playchoice10.write(addr, data);
 }
 
-auto PlayChoice10::PC10CPU::port_read(uint8 addr) -> uint8 {
+auto PlayChoice10::PC10CPU::portRead(uint8 addr) -> uint8 {
   print("PC10 CPU Port Read\n");
   cycleEdge();
   addClocks(4);
   return playchoice10.portRead(addr);
 }
 
-auto PlayChoice10::PC10CPU::port_write(uint8 addr, uint8 data) -> void {
+auto PlayChoice10::PC10CPU::portWrite(uint8 addr, uint8 data) -> void {
   print("PC10 CPU Port Write\n");
   cycleEdge();
   addClocks(4);
@@ -78,6 +78,6 @@ auto PlayChoice10::PC10CPU::addClocks(uint clocks) -> void {
   }
 }
 
-auto PlayChoice10::PC10CPU::debugger_read(uint16 addr) -> uint8 {
+auto PlayChoice10::PC10CPU::debuggerRead(uint16 addr) -> uint8 {
   return playchoice10.read(addr);
 }

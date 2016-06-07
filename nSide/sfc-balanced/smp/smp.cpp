@@ -18,7 +18,7 @@ auto SMP::synchronizeCPU() -> void {
 }
 
 auto SMP::synchronizeDSP() -> void {
-  while(dsp.clock < 0) dsp.main();
+  if(dsp.clock < 0 && !scheduler.synchronizing()) co_switch(dsp.thread);
 }
 
 auto SMP::Enter() -> void {
@@ -27,7 +27,7 @@ auto SMP::Enter() -> void {
 
 auto SMP::main() -> void {
   debugger.op_exec(regs.pc);
-  op_step();
+  instruction();
 }
 
 auto SMP::power() -> void {

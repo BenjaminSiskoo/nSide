@@ -60,16 +60,16 @@ struct PlayChoice10 {
     auto power() -> void;
     auto reset() -> void;
 
-    auto op_io() -> void;
-    auto op_read(uint16 addr) -> uint8;
-    auto op_write(uint16 addr, uint8 data) -> void;
-    auto port_read(uint8 port) -> uint8;
-    auto port_write(uint8 port, uint8 data) -> void;
+    auto io() -> void;
+    auto read(uint16 addr) -> uint8;
+    auto write(uint16 addr, uint8 data) -> void;
+    auto portRead(uint8 port) -> uint8;
+    auto portWrite(uint8 port, uint8 data) -> void;
 
     auto cycleEdge() -> void;
     auto addClocks(uint clocks) -> void;
 
-    auto debugger_read(uint16 addr) -> uint8;
+    auto debuggerRead(uint16 addr) -> uint8;
 
     auto serialize(serializer& s) -> void;
   } pc10cpu;

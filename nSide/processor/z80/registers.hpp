@@ -110,7 +110,7 @@ struct Registers {
   bool ime;
 
   Register& operator[](unsigned reg_id) {
-    static Register* table[] = {
+    static Register* const table[] = {
       &a, &f, &af,
       &b, &c, &bc,
       &d, &e, &de,

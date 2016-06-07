@@ -1,159 +1,7 @@
-//opcode functions
-//================
-
-auto R6502::opf_adc() {
-  int result = r.a + rd + r.p.c;
-  r.p.v = ~(r.a ^ rd) & (r.a ^ result) & 0x80;
-  r.p.c = (result > 0xff);
-  r.p.n = (result & 0x80);
-  r.p.z = ((uint8)result == 0);
-  r.a = result;
-}
-
-auto R6502::opf_and() {
-  r.a &= rd;
-  r.p.n = (r.a & 0x80);
-  r.p.z = (r.a == 0);
-}
-
-auto R6502::opf_asl() {
-  r.p.c = rd & 0x80;
-  rd <<= 1;
-  r.p.n = (rd & 0x80);
-  r.p.z = (rd == 0);
-}
-
-auto R6502::opf_bit() {
-  r.p.n = (rd & 0x80);
-  r.p.v = (rd & 0x40);
-  r.p.z = ((rd & r.a) == 0);
-}
-
-auto R6502::opf_cmp() {
-  int result = r.a - rd;
-  r.p.n = (result & 0x80);
-  r.p.z = (uint8)(result == 0);
-  r.p.c = (result >= 0);
-}
-
-auto R6502::opf_cpx() {
-  int result = r.x - rd;
-  r.p.n = (result & 0x80);
-  r.p.z = (uint8)(result == 0);
-  r.p.c = (result >= 0);
-}
-
-auto R6502::opf_cpy() {
-  int result = r.y - rd;
-  r.p.n = (result & 0x80);
-  r.p.z = (uint8)(result == 0);
-  r.p.c = (result >= 0);
-}
-
-auto R6502::opf_dec() {
-  rd--;
-  r.p.n = (rd & 0x80);
-  r.p.z = (rd == 0);
-}
-
-auto R6502::opf_eor() {
-  r.a ^= rd;
-  r.p.n = (r.a & 0x80);
-  r.p.z = (r.a == 0);
-}
-
-auto R6502::opf_inc() {
-  rd++;
-  r.p.n = (rd & 0x80);
-  r.p.z = (rd == 0);
-}
-
-auto R6502::opf_lda() {
-  r.a = rd;
-  r.p.n = (r.a & 0x80);
-  r.p.z = (r.a == 0);
-}
-
-auto R6502::opf_ldx() {
-  r.x = rd;
-  r.p.n = (r.x & 0x80);
-  r.p.z = (r.x == 0);
-}
-
-auto R6502::opf_ldy() {
-  r.y = rd;
-  r.p.n = (r.y & 0x80);
-  r.p.z = (r.y == 0);
-}
-
-auto R6502::opf_lsr() {
-  r.p.c = rd & 0x01;
-  rd >>= 1;
-  r.p.n = (rd & 0x80);
-  r.p.z = (rd == 0);
-}
-
-auto R6502::opf_ora() {
-  r.a |= rd;
-  r.p.n = (r.a & 0x80);
-  r.p.z = (r.a == 0);
-}
-
-auto R6502::opf_rla() {
-  uint carry = (uint)r.p.c;
-  r.p.c = r.a & 0x80;
-  r.a = (r.a << 1) | carry;
-  r.p.n = (r.a & 0x80);
-  r.p.z = (r.a == 0);
-}
-
-auto R6502::opf_rol() {
-  uint carry = (uint)r.p.c;
-  r.p.c = rd & 0x80;
-  rd = (rd << 1) | carry;
-  r.p.n = (rd & 0x80);
-  r.p.z = (rd == 0);
-}
-
-auto R6502::opf_ror() {
-  uint carry = (uint)r.p.c << 7;
-  r.p.c = rd & 0x01;
-  rd = carry | (rd >> 1);
-  r.p.n = (rd & 0x80);
-  r.p.z = (rd == 0);
-}
-
-auto R6502::opf_rra() {
-  uint carry = (uint)r.p.c << 7;
-  r.p.c = r.a & 0x01;
-  r.a = carry | (r.a >> 1);
-  r.p.n = (r.a & 0x80);
-  r.p.z = (r.a == 0);
-}
-
-auto R6502::opf_sbc() {
-  rd ^= 0xff;
-  return opf_adc();
-}
-
-auto R6502::opf_sla() {
-  r.p.c = r.a & 0x80;
-  r.a <<= 1;
-  r.p.n = (r.a & 0x80);
-  r.p.z = (r.a == 0);
-}
-
-auto R6502::opf_sra() {
-  r.p.c = r.a & 0x01;
-  r.a >>= 1;
-  r.p.n = (r.a & 0x80);
-  r.p.z = (r.a == 0);
-}
-
 //opcode implementations
 //======================
 
-auto R6502::opi_branch(bool condition) {
+auto R6502::op_branch(bool condition) {
   if(condition == false) {
 L   rd = readPCi();
   } else {
@@ -165,26 +13,26 @@ L   readPC();
   }
 }
 
-auto R6502::opi_clear_flag(bool& flag) {
+auto R6502::op_clear_flag(bool& flag) {
 L readPC();
   flag = 0;
 }
 
-auto R6502::opi_decrement(uint8& reg) {
+auto R6502::op_decrement(uint8& reg) {
 L readPC();
   reg--;
   r.p.n = (reg & 0x80);
   r.p.z = (reg == 0);
 }
 
-auto R6502::opi_increment(uint8& reg) {
+auto R6502::op_increment(uint8& reg) {
 L readPC();
   reg++;
   r.p.n = (reg & 0x80);
   r.p.z = (reg == 0);
 }
 
-auto R6502::opi_pull(uint8& reg) {
+auto R6502::op_pull(uint8& reg) {
   readPC();
   readPC();
 L reg = readSP();
@@ -192,21 +40,19 @@ L reg = readSP();
   r.p.z = (reg == 0);
 }
 
-auto R6502::opi_push(uint8& reg) {
+auto R6502::op_push(uint8& reg) {
   readPC();
 L writeSP(reg);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_absolute() {
+auto R6502::op_read_absolute(fp op) {
   abs.l = readPCi();
   abs.h = readPCi();
 L rd = read(abs.w);
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_absolute_x() {
+auto R6502::op_read_absolute_x(fp op) {
   abs.l = readPCi();
   abs.h = readPCi();
   page(abs.w, abs.w + r.x);
@@ -214,8 +60,7 @@ L rd = read(abs.w + r.x);
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_absolute_y() {
+auto R6502::op_read_absolute_y(fp op) {
   abs.l = readPCi();
   abs.h = readPCi();
   page(abs.w, abs.w + r.y);
@@ -223,14 +68,12 @@ L rd = read(abs.w + r.y);
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_immediate() {
+auto R6502::op_read_immediate(fp op) {
 L rd = readPCi();
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_indirect_zero_page_x() {
+auto R6502::op_read_indirect_zero_page_x(fp op) {
   zp = readPCi();
   readZP(zp);
   abs.l = readZP(zp++ + r.x);
@@ -239,8 +82,7 @@ L rd = read(abs.w);
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_indirect_zero_page_y() {
+auto R6502::op_read_indirect_zero_page_y(fp op) {
   rd = readPCi();
   abs.l = readZP(rd++);
   abs.h = readZP(rd++);
@@ -249,31 +91,27 @@ L rd = read(abs.w + r.y);
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_zero_page() {
+auto R6502::op_read_zero_page(fp op) {
   zp = readPCi();
 L rd = readZP(zp);
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_zero_page_x() {
+auto R6502::op_read_zero_page_x(fp op) {
   zp = readPCi();
   readZP(zp);
 L rd = readZP(zp + r.x);
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_read_zero_page_y() {
+auto R6502::op_read_zero_page_y(fp op) {
   zp = readPCi();
   readZP(zp);
 L rd = readZP(zp + r.y);
   call(op);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_rmw_absolute() {
+auto R6502::op_rmw_absolute(fp op) {
   abs.l = readPCi();
   abs.h = readPCi();
   rd = read(abs.w);
@@ -282,8 +120,7 @@ auto R6502::opi_rmw_absolute() {
 L write(abs.w, rd);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_rmw_absolute_x() {
+auto R6502::op_rmw_absolute_x(fp op) {
   abs.l = readPCi();
   abs.h = readPCi();
   pageAlways(abs.w, abs.w + r.x);
@@ -293,8 +130,7 @@ auto R6502::opi_rmw_absolute_x() {
 L write(abs.w + r.x, rd);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_rmw_zero_page() {
+auto R6502::op_rmw_zero_page(fp op) {
   zp = readPCi();
   rd = readZP(zp);
   writeZP(zp, rd);
@@ -302,8 +138,7 @@ auto R6502::opi_rmw_zero_page() {
 L writeZP(zp, rd);
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_rmw_zero_page_x() {
+auto R6502::op_rmw_zero_page_x(fp op) {
   zp = readPCi();
   readZP(zp);
   rd = readZP(zp + r.x);
@@ -312,38 +147,37 @@ auto R6502::opi_rmw_zero_page_x() {
 L writeZP(zp + r.x, rd);
 }
 
-auto R6502::opi_set_flag(bool& flag) {
+auto R6502::op_set_flag(bool& flag) {
 L readPC();
   flag = 1;
 }
 
-template<auto (R6502::*op)() -> void>
-auto R6502::opi_shift() {
+auto R6502::op_shift(fp op) {
 L readPC();
   call(op);
 }
 
-auto R6502::opi_store_absolute(uint8 reg) {
+auto R6502::op_store_absolute(uint8 reg) {
   abs.l = readPCi();
   abs.h = readPCi();
 L write(abs.w, reg);
 }
 
-auto R6502::opi_store_absolute_x(uint8& reg) {
+auto R6502::op_store_absolute_x(uint8& reg) {
   abs.l = readPCi();
   abs.h = readPCi();
   pageAlways(abs.w, abs.w + r.x);
 L write(abs.w + r.x, reg);
 }
 
-auto R6502::opi_store_absolute_y(uint8& reg) {
+auto R6502::op_store_absolute_y(uint8& reg) {
   abs.l = readPCi();
   abs.h = readPCi();
   pageAlways(abs.w, abs.w + r.y);
 L write(abs.w + r.y, reg);
 }
 
-auto R6502::opi_store_indirect_zero_page_x(uint8 reg) {
+auto R6502::op_store_indirect_zero_page_x(uint8 reg) {
   zp = readPCi();
   readZP(zp);
   abs.l = readZP(zp++ + r.x);
@@ -351,7 +185,7 @@ auto R6502::opi_store_indirect_zero_page_x(uint8 reg) {
 L write(abs.w, reg);
 }
 
-auto R6502::opi_store_indirect_zero_page_y(uint8& reg) {
+auto R6502::op_store_indirect_zero_page_y(uint8& reg) {
   rd = readPCi();
   abs.l = readZP(rd++);
   abs.h = readZP(rd++);
@@ -359,24 +193,24 @@ auto R6502::opi_store_indirect_zero_page_y(uint8& reg) {
 L write(abs.w + r.y, reg);
 }
 
-auto R6502::opi_store_zero_page(uint8 reg) {
+auto R6502::op_store_zero_page(uint8 reg) {
   zp = readPCi();
 L writeZP(zp, reg);
 }
 
-auto R6502::opi_store_zero_page_x(uint8 reg) {
+auto R6502::op_store_zero_page_x(uint8 reg) {
   zp = readPCi();
   readZP(zp);
 L writeZP(zp + r.x, reg);
 }
 
-auto R6502::opi_store_zero_page_y(uint8 reg) {
+auto R6502::op_store_zero_page_y(uint8 reg) {
   zp = readPCi();
   readZP(zp);
 L writeZP(zp + r.y, reg);
 }
 
-auto R6502::opi_transfer(uint8& s, uint8& d, bool flag) {
+auto R6502::op_transfer(uint8& s, uint8& d, bool flag) {
 L readPC();
   d = s;
   if(flag == false) return;
@@ -457,24 +291,10 @@ L readPC();
   r.pc = ++abs.w;
 }
 
-//illegal opcode functions
-//========================
-
-auto R6502::opillf_dcp() {
-  opf_dec();
-  opf_cmp();
-}
-
-auto R6502::opillf_lax() {
-  opf_lda();
-  r.x = r.a;
-}
-
 //illegal opcode implementations
 //==============================
 
-template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-auto R6502::opilli_rmwr_absolute() {
+auto R6502::opill_rmwr_absolute(fp opw, fp opr) {
   abs.l = readPCi();
   abs.h = readPCi();
   rd = read(abs.w);
@@ -484,8 +304,7 @@ L write(abs.w, rd);
   call(opr);
 }
 
-template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-auto R6502::opilli_rmwr_absolute_x() {
+auto R6502::opill_rmwr_absolute_x(fp opw, fp opr) {
   abs.l = readPCi();
   abs.h = readPCi();
   pageAlways(abs.w, abs.w + r.x);
@@ -496,8 +315,7 @@ L write(abs.w + r.x, rd);
   call(opr);
 }
 
-template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-auto R6502::opilli_rmwr_absolute_y() {
+auto R6502::opill_rmwr_absolute_y(fp opw, fp opr) {
   abs.l = readPCi();
   abs.h = readPCi();
   pageAlways(abs.w, abs.w + r.y);
@@ -508,8 +326,7 @@ L write(abs.w + r.y, rd);
   call(opr);
 }
 
-template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-auto R6502::opilli_rmwr_indirect_zero_page_x() {
+auto R6502::opill_rmwr_indirect_zero_page_x(fp opw, fp opr) {
   zp = readPCi();
   readZP(zp);
   abs.l = readZP(zp++ + r.x);
@@ -521,8 +338,7 @@ L write(abs.w, rd);
   call(opr);
 }
 
-template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-auto R6502::opilli_rmwr_indirect_zero_page_y() {
+auto R6502::opill_rmwr_indirect_zero_page_y(fp opw, fp opr) {
   rd = readPCi();
   abs.l = readZP(rd++);
   abs.h = readZP(rd++);
@@ -534,8 +350,7 @@ L write(abs.w + r.y, rd);
   call(opr);
 }
 
-template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-auto R6502::opilli_rmwr_zero_page() {
+auto R6502::opill_rmwr_zero_page(fp opw, fp opr) {
   zp = readPCi();
   rd = readZP(zp);
   writeZP(zp, rd);
@@ -544,8 +359,7 @@ L writeZP(zp, rd);
   call(opr);
 }
 
-template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-auto R6502::opilli_rmwr_zero_page_x() {
+auto R6502::opill_rmwr_zero_page_x(fp opw, fp opr) {
   zp = readPCi();
   readZP(zp);
   rd = readZP(zp + r.x);
@@ -559,13 +373,13 @@ L writeZP(zp + r.x, rd);
 //===============
 
 auto R6502::opill_alr_immediate() {
-  opi_read_immediate<&R6502::opf_and>();
-  opf_sra();
+  op_read_immediate(&R6502::op_and);
+  op_sra();
 }
 
 auto R6502::opill_anc_immediate() {
 L rd = readPCi();
-  opf_and();
+  op_and();
   r.p.c = r.p.n;
 }
 
@@ -594,8 +408,8 @@ auto R6502::opill_dcp_absolute_y() {
   pageAlways(abs.w, abs.w + r.y);
   rd = read(abs.w + r.y);
   write(abs.w + r.y, rd);
-  opf_dec();
-  opf_cmp();
+  op_dec();
+  op_cmp();
 L write(abs.w + r.y, rd);
 }
 
@@ -606,8 +420,8 @@ auto R6502::opill_dcp_indirect_zero_page_x() {
   abs.h = readZP(zp++ + r.x);
   rd = read(abs.w);
   write(abs.w, rd);
-  opf_dec();
-  opf_cmp();
+  op_dec();
+  op_cmp();
 L write(abs.w, rd);
 }
 
@@ -618,8 +432,8 @@ auto R6502::opill_dcp_indirect_zero_page_y() {
   pageAlways(abs.w, abs.w + r.y);
   rd = read(abs.w + r.y);
   write(abs.w + r.y, rd);
-  opf_dec();
-  opf_cmp();
+  op_dec();
+  op_cmp();
 L write(abs.w + r.y, rd);
 }
 

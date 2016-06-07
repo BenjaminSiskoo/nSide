@@ -8,265 +8,271 @@ namespace Processor {
 #include "disassembler.cpp"
 #include "serialization.cpp"
 
-auto SPC700::op_step() -> void {
-  switch(opcode = op_readpc()) {
-  case 0x00: return op_nop();
-  case 0x01: return op_jst();
-  case 0x02: return op_set_bit();
-  case 0x03: return op_branch_bit();
-  case 0x04: return op_read_dp<&SPC700::op_or>(regs.a);
-  case 0x05: return op_read_addr<&SPC700::op_or>(regs.a);
-  case 0x06: return op_read_ix<&SPC700::op_or>();
-  case 0x07: return op_read_idpx<&SPC700::op_or>();
-  case 0x08: return op_read_const<&SPC700::op_or>(regs.a);
-  case 0x09: return op_write_dp_dp<&SPC700::op_or>();
-  case 0x0a: return op_set_addr_bit();
-  case 0x0b: return op_adjust_dp<&SPC700::op_asl>();
-  case 0x0c: return op_adjust_addr<&SPC700::op_asl>();
-  case 0x0d: return op_push(regs.p);
-  case 0x0e: return op_test_addr(1);
-  case 0x0f: return op_brk();
-  case 0x10: return op_branch(regs.p.n == 0);
-  case 0x11: return op_jst();
-  case 0x12: return op_set_bit();
-  case 0x13: return op_branch_bit();
-  case 0x14: return op_read_dpi<&SPC700::op_or>(regs.a, regs.x);
-  case 0x15: return op_read_addri<&SPC700::op_or>(regs.x);
-  case 0x16: return op_read_addri<&SPC700::op_or>(regs.y);
-  case 0x17: return op_read_idpy<&SPC700::op_or>();
-  case 0x18: return op_write_dp_const<&SPC700::op_or>();
-  case 0x19: return op_write_ix_iy<&SPC700::op_or>();
-  case 0x1a: return op_adjust_dpw(-1);
-  case 0x1b: return op_adjust_dpx<&SPC700::op_asl>();
-  case 0x1c: return op_adjust<&SPC700::op_asl>(regs.a);
-  case 0x1d: return op_adjust<&SPC700::op_dec>(regs.x);
-  case 0x1e: return op_read_addr<&SPC700::op_cmp>(regs.x);
-  case 0x1f: return op_jmp_iaddrx();
-  case 0x20: return op_set_flag(regs.p.p, 0);
-  case 0x21: return op_jst();
-  case 0x22: return op_set_bit();
-  case 0x23: return op_branch_bit();
-  case 0x24: return op_read_dp<&SPC700::op_and>(regs.a);
-  case 0x25: return op_read_addr<&SPC700::op_and>(regs.a);
-  case 0x26: return op_read_ix<&SPC700::op_and>();
-  case 0x27: return op_read_idpx<&SPC700::op_and>();
-  case 0x28: return op_read_const<&SPC700::op_and>(regs.a);
-  case 0x29: return op_write_dp_dp<&SPC700::op_and>();
-  case 0x2a: return op_set_addr_bit();
-  case 0x2b: return op_adjust_dp<&SPC700::op_rol>();
-  case 0x2c: return op_adjust_addr<&SPC700::op_rol>();
-  case 0x2d: return op_push(regs.a);
-  case 0x2e: return op_bne_dp();
-  case 0x2f: return op_branch(true);
-  case 0x30: return op_branch(regs.p.n == 1);
-  case 0x31: return op_jst();
-  case 0x32: return op_set_bit();
-  case 0x33: return op_branch_bit();
-  case 0x34: return op_read_dpi<&SPC700::op_and>(regs.a, regs.x);
-  case 0x35: return op_read_addri<&SPC700::op_and>(regs.x);
-  case 0x36: return op_read_addri<&SPC700::op_and>(regs.y);
-  case 0x37: return op_read_idpy<&SPC700::op_and>();
-  case 0x38: return op_write_dp_const<&SPC700::op_and>();
-  case 0x39: return op_write_ix_iy<&SPC700::op_and>();
-  case 0x3a: return op_adjust_dpw(+1);
-  case 0x3b: return op_adjust_dpx<&SPC700::op_rol>();
-  case 0x3c: return op_adjust<&SPC700::op_rol>(regs.a);
-  case 0x3d: return op_adjust<&SPC700::op_inc>(regs.x);
-  case 0x3e: return op_read_dp<&SPC700::op_cmp>(regs.x);
-  case 0x3f: return op_jsr_addr();
-  case 0x40: return op_set_flag(regs.p.p, 1);
-  case 0x41: return op_jst();
-  case 0x42: return op_set_bit();
-  case 0x43: return op_branch_bit();
-  case 0x44: return op_read_dp<&SPC700::op_eor>(regs.a);
-  case 0x45: return op_read_addr<&SPC700::op_eor>(regs.a);
-  case 0x46: return op_read_ix<&SPC700::op_eor>();
-  case 0x47: return op_read_idpx<&SPC700::op_eor>();
-  case 0x48: return op_read_const<&SPC700::op_eor>(regs.a);
-  case 0x49: return op_write_dp_dp<&SPC700::op_eor>();
-  case 0x4a: return op_set_addr_bit();
-  case 0x4b: return op_adjust_dp<&SPC700::op_lsr>();
-  case 0x4c: return op_adjust_addr<&SPC700::op_lsr>();
-  case 0x4d: return op_push(regs.x);
-  case 0x4e: return op_test_addr(0);
-  case 0x4f: return op_jsp_dp();
-  case 0x50: return op_branch(regs.p.v == 0);
-  case 0x51: return op_jst();
-  case 0x52: return op_set_bit();
-  case 0x53: return op_branch_bit();
-  case 0x54: return op_read_dpi<&SPC700::op_eor>(regs.a, regs.x);
-  case 0x55: return op_read_addri<&SPC700::op_eor>(regs.x);
-  case 0x56: return op_read_addri<&SPC700::op_eor>(regs.y);
-  case 0x57: return op_read_idpy<&SPC700::op_eor>();
-  case 0x58: return op_write_dp_const<&SPC700::op_eor>();
-  case 0x59: return op_write_ix_iy<&SPC700::op_eor>();
-  case 0x5a: return op_read_dpw<&SPC700::op_cpw>();
-  case 0x5b: return op_adjust_dpx<&SPC700::op_lsr>();
-  case 0x5c: return op_adjust<&SPC700::op_lsr>(regs.a);
-  case 0x5d: return op_transfer(regs.a, regs.x);
-  case 0x5e: return op_read_addr<&SPC700::op_cmp>(regs.y);
-  case 0x5f: return op_jmp_addr();
-  case 0x60: return op_set_flag(regs.p.c, 0);
-  case 0x61: return op_jst();
-  case 0x62: return op_set_bit();
-  case 0x63: return op_branch_bit();
-  case 0x64: return op_read_dp<&SPC700::op_cmp>(regs.a);
-  case 0x65: return op_read_addr<&SPC700::op_cmp>(regs.a);
-  case 0x66: return op_read_ix<&SPC700::op_cmp>();
-  case 0x67: return op_read_idpx<&SPC700::op_cmp>();
-  case 0x68: return op_read_const<&SPC700::op_cmp>(regs.a);
-  case 0x69: return op_write_dp_dp<&SPC700::op_cmp>();
-  case 0x6a: return op_set_addr_bit();
-  case 0x6b: return op_adjust_dp<&SPC700::op_ror>();
-  case 0x6c: return op_adjust_addr<&SPC700::op_ror>();
-  case 0x6d: return op_push(regs.y);
-  case 0x6e: return op_bne_dpdec();
-  case 0x6f: return op_rts();
-  case 0x70: return op_branch(regs.p.v == 1);
-  case 0x71: return op_jst();
-  case 0x72: return op_set_bit();
-  case 0x73: return op_branch_bit();
-  case 0x74: return op_read_dpi<&SPC700::op_cmp>(regs.a, regs.x);
-  case 0x75: return op_read_addri<&SPC700::op_cmp>(regs.x);
-  case 0x76: return op_read_addri<&SPC700::op_cmp>(regs.y);
-  case 0x77: return op_read_idpy<&SPC700::op_cmp>();
-  case 0x78: return op_write_dp_const<&SPC700::op_cmp>();
-  case 0x79: return op_write_ix_iy<&SPC700::op_cmp>();
-  case 0x7a: return op_read_dpw<&SPC700::op_adw>();
-  case 0x7b: return op_adjust_dpx<&SPC700::op_ror>();
-  case 0x7c: return op_adjust<&SPC700::op_ror>(regs.a);
-  case 0x7d: return op_transfer(regs.x, regs.a);
-  case 0x7e: return op_read_dp<&SPC700::op_cmp>(regs.y);
-  case 0x7f: return op_rti();
-  case 0x80: return op_set_flag(regs.p.c, 1);
-  case 0x81: return op_jst();
-  case 0x82: return op_set_bit();
-  case 0x83: return op_branch_bit();
-  case 0x84: return op_read_dp<&SPC700::op_adc>(regs.a);
-  case 0x85: return op_read_addr<&SPC700::op_adc>(regs.a);
-  case 0x86: return op_read_ix<&SPC700::op_adc>();
-  case 0x87: return op_read_idpx<&SPC700::op_adc>();
-  case 0x88: return op_read_const<&SPC700::op_adc>(regs.a);
-  case 0x89: return op_write_dp_dp<&SPC700::op_adc>();
-  case 0x8a: return op_set_addr_bit();
-  case 0x8b: return op_adjust_dp<&SPC700::op_dec>();
-  case 0x8c: return op_adjust_addr<&SPC700::op_dec>();
-  case 0x8d: return op_read_const<&SPC700::op_ld>(regs.y);
-  case 0x8e: return op_plp();
-  case 0x8f: return op_write_dp_const<&SPC700::op_st>();
-  case 0x90: return op_branch(regs.p.c == 0);
-  case 0x91: return op_jst();
-  case 0x92: return op_set_bit();
-  case 0x93: return op_branch_bit();
-  case 0x94: return op_read_dpi<&SPC700::op_adc>(regs.a, regs.x);
-  case 0x95: return op_read_addri<&SPC700::op_adc>(regs.x);
-  case 0x96: return op_read_addri<&SPC700::op_adc>(regs.y);
-  case 0x97: return op_read_idpy<&SPC700::op_adc>();
-  case 0x98: return op_write_dp_const<&SPC700::op_adc>();
-  case 0x99: return op_write_ix_iy<&SPC700::op_adc>();
-  case 0x9a: return op_read_dpw<&SPC700::op_sbw>();
-  case 0x9b: return op_adjust_dpx<&SPC700::op_dec>();
-  case 0x9c: return op_adjust<&SPC700::op_dec>(regs.a);
-  case 0x9d: return op_transfer(regs.s, regs.x);
-  case 0x9e: return op_div_ya_x();
-  case 0x9f: return op_xcn();
-  case 0xa0: return op_set_flag(regs.p.i, 1);
-  case 0xa1: return op_jst();
-  case 0xa2: return op_set_bit();
-  case 0xa3: return op_branch_bit();
-  case 0xa4: return op_read_dp<&SPC700::op_sbc>(regs.a);
-  case 0xa5: return op_read_addr<&SPC700::op_sbc>(regs.a);
-  case 0xa6: return op_read_ix<&SPC700::op_sbc>();
-  case 0xa7: return op_read_idpx<&SPC700::op_sbc>();
-  case 0xa8: return op_read_const<&SPC700::op_sbc>(regs.a);
-  case 0xa9: return op_write_dp_dp<&SPC700::op_sbc>();
-  case 0xaa: return op_set_addr_bit();
-  case 0xab: return op_adjust_dp<&SPC700::op_inc>();
-  case 0xac: return op_adjust_addr<&SPC700::op_inc>();
-  case 0xad: return op_read_const<&SPC700::op_cmp>(regs.y);
-  case 0xae: return op_pull(regs.a);
-  case 0xaf: return op_sta_ixinc();
-  case 0xb0: return op_branch(regs.p.c == 1);
-  case 0xb1: return op_jst();
-  case 0xb2: return op_set_bit();
-  case 0xb3: return op_branch_bit();
-  case 0xb4: return op_read_dpi<&SPC700::op_sbc>(regs.a, regs.x);
-  case 0xb5: return op_read_addri<&SPC700::op_sbc>(regs.x);
-  case 0xb6: return op_read_addri<&SPC700::op_sbc>(regs.y);
-  case 0xb7: return op_read_idpy<&SPC700::op_sbc>();
-  case 0xb8: return op_write_dp_const<&SPC700::op_sbc>();
-  case 0xb9: return op_write_ix_iy<&SPC700::op_sbc>();
-  case 0xba: return op_read_dpw<&SPC700::op_ldw>();
-  case 0xbb: return op_adjust_dpx<&SPC700::op_inc>();
-  case 0xbc: return op_adjust<&SPC700::op_inc>(regs.a);
-  case 0xbd: return op_transfer(regs.x, regs.s);
-  case 0xbe: return op_das();
-  case 0xbf: return op_lda_ixinc();
-  case 0xc0: return op_set_flag(regs.p.i, 0);
-  case 0xc1: return op_jst();
-  case 0xc2: return op_set_bit();
-  case 0xc3: return op_branch_bit();
-  case 0xc4: return op_write_dp(regs.a);
-  case 0xc5: return op_write_addr(regs.a);
-  case 0xc6: return op_sta_ix();
-  case 0xc7: return op_sta_idpx();
-  case 0xc8: return op_read_const<&SPC700::op_cmp>(regs.x);
-  case 0xc9: return op_write_addr(regs.x);
-  case 0xca: return op_set_addr_bit();
-  case 0xcb: return op_write_dp(regs.y);
-  case 0xcc: return op_write_addr(regs.y);
-  case 0xcd: return op_read_const<&SPC700::op_ld>(regs.x);
-  case 0xce: return op_pull(regs.x);
-  case 0xcf: return op_mul_ya();
-  case 0xd0: return op_branch(regs.p.z == 0);
-  case 0xd1: return op_jst();
-  case 0xd2: return op_set_bit();
-  case 0xd3: return op_branch_bit();
-  case 0xd4: return op_write_dpi(regs.a, regs.x);
-  case 0xd5: return op_write_addri(regs.x);
-  case 0xd6: return op_write_addri(regs.y);
-  case 0xd7: return op_sta_idpy();
-  case 0xd8: return op_write_dp(regs.x);
-  case 0xd9: return op_write_dpi(regs.x, regs.y);
-  case 0xda: return op_stw_dp();
-  case 0xdb: return op_write_dpi(regs.y, regs.x);
-  case 0xdc: return op_adjust<&SPC700::op_dec>(regs.y);
-  case 0xdd: return op_transfer(regs.y, regs.a);
-  case 0xde: return op_bne_dpx();
-  case 0xdf: return op_daa();
-  case 0xe0: return op_clv();
-  case 0xe1: return op_jst();
-  case 0xe2: return op_set_bit();
-  case 0xe3: return op_branch_bit();
-  case 0xe4: return op_read_dp<&SPC700::op_ld>(regs.a);
-  case 0xe5: return op_read_addr<&SPC700::op_ld>(regs.a);
-  case 0xe6: return op_read_ix<&SPC700::op_ld>();
-  case 0xe7: return op_read_idpx<&SPC700::op_ld>();
-  case 0xe8: return op_read_const<&SPC700::op_ld>(regs.a);
-  case 0xe9: return op_read_addr<&SPC700::op_ld>(regs.x);
-  case 0xea: return op_set_addr_bit();
-  case 0xeb: return op_read_dp<&SPC700::op_ld>(regs.y);
-  case 0xec: return op_read_addr<&SPC700::op_ld>(regs.y);
-  case 0xed: return op_cmc();
-  case 0xee: return op_pull(regs.y);
-  case 0xef: return op_wait();
-  case 0xf0: return op_branch(regs.p.z == 1);
-  case 0xf1: return op_jst();
-  case 0xf2: return op_set_bit();
-  case 0xf3: return op_branch_bit();
-  case 0xf4: return op_read_dpi<&SPC700::op_ld>(regs.a, regs.x);
-  case 0xf5: return op_read_addri<&SPC700::op_ld>(regs.x);
-  case 0xf6: return op_read_addri<&SPC700::op_ld>(regs.y);
-  case 0xf7: return op_read_idpy<&SPC700::op_ld>();
-  case 0xf8: return op_read_dp<&SPC700::op_ld>(regs.x);
-  case 0xf9: return op_read_dpi<&SPC700::op_ld>(regs.x, regs.y);
-  case 0xfa: return op_write_dp_dp<&SPC700::op_st>();
-  case 0xfb: return op_read_dpi<&SPC700::op_ld>(regs.y, regs.x);
-  case 0xfc: return op_adjust<&SPC700::op_inc>(regs.y);
-  case 0xfd: return op_transfer(regs.a, regs.y);
-  case 0xfe: return op_bne_ydec();
-  case 0xff: return op_wait();
+#define op(id, name, ...) case id: return op_##name(__VA_ARGS__);
+#define fp(name) &SPC700::op_##name
+
+auto SPC700::instruction() -> void {
+  switch(opcode = readPC()) {
+  op(0x00, nop)
+  op(0x01, jst)
+  op(0x02, set_bit)
+  op(0x03, branch_bit)
+  op(0x04, read_dp, fp(or), regs.a)
+  op(0x05, read_addr, fp(or), regs.a)
+  op(0x06, read_ix, fp(or))
+  op(0x07, read_idpx, fp(or))
+  op(0x08, read_const, fp(or), regs.a)
+  op(0x09, write_dp_dp, fp(or))
+  op(0x0a, set_addr_bit)
+  op(0x0b, adjust_dp, fp(asl))
+  op(0x0c, adjust_addr, fp(asl))
+  op(0x0d, push, regs.p)
+  op(0x0e, test_addr, 1)
+  op(0x0f, brk)
+  op(0x10, branch, regs.p.n == 0)
+  op(0x11, jst)
+  op(0x12, set_bit)
+  op(0x13, branch_bit)
+  op(0x14, read_dpi, fp(or), regs.a, regs.x)
+  op(0x15, read_addri, fp(or), regs.x)
+  op(0x16, read_addri, fp(or), regs.y)
+  op(0x17, read_idpy, fp(or))
+  op(0x18, write_dp_const, fp(or))
+  op(0x19, write_ix_iy, fp(or))
+  op(0x1a, adjust_dpw, -1)
+  op(0x1b, adjust_dpx, fp(asl))
+  op(0x1c, adjust, fp(asl), regs.a)
+  op(0x1d, adjust, fp(dec), regs.x)
+  op(0x1e, read_addr, fp(cmp), regs.x)
+  op(0x1f, jmp_iaddrx)
+  op(0x20, set_flag, regs.p.p, 0)
+  op(0x21, jst)
+  op(0x22, set_bit)
+  op(0x23, branch_bit)
+  op(0x24, read_dp, fp(and), regs.a)
+  op(0x25, read_addr, fp(and), regs.a)
+  op(0x26, read_ix, fp(and))
+  op(0x27, read_idpx, fp(and))
+  op(0x28, read_const, fp(and), regs.a)
+  op(0x29, write_dp_dp, fp(and))
+  op(0x2a, set_addr_bit)
+  op(0x2b, adjust_dp, fp(rol))
+  op(0x2c, adjust_addr, fp(rol))
+  op(0x2d, push, regs.a)
+  op(0x2e, bne_dp)
+  op(0x2f, branch, true)
+  op(0x30, branch, regs.p.n == 1)
+  op(0x31, jst)
+  op(0x32, set_bit)
+  op(0x33, branch_bit)
+  op(0x34, read_dpi, fp(and), regs.a, regs.x)
+  op(0x35, read_addri, fp(and), regs.x)
+  op(0x36, read_addri, fp(and), regs.y)
+  op(0x37, read_idpy, fp(and))
+  op(0x38, write_dp_const, fp(and))
+  op(0x39, write_ix_iy, fp(and))
+  op(0x3a, adjust_dpw, +1)
+  op(0x3b, adjust_dpx, fp(rol))
+  op(0x3c, adjust, fp(rol), regs.a)
+  op(0x3d, adjust, fp(inc), regs.x)
+  op(0x3e, read_dp, fp(cmp), regs.x)
+  op(0x3f, jsr_addr)
+  op(0x40, set_flag, regs.p.p, 1)
+  op(0x41, jst)
+  op(0x42, set_bit)
+  op(0x43, branch_bit)
+  op(0x44, read_dp, fp(eor), regs.a)
+  op(0x45, read_addr, fp(eor), regs.a)
+  op(0x46, read_ix, fp(eor))
+  op(0x47, read_idpx, fp(eor))
+  op(0x48, read_const, fp(eor), regs.a)
+  op(0x49, write_dp_dp, fp(eor))
+  op(0x4a, set_addr_bit)
+  op(0x4b, adjust_dp, fp(lsr))
+  op(0x4c, adjust_addr, fp(lsr))
+  op(0x4d, push, regs.x)
+  op(0x4e, test_addr, 0)
+  op(0x4f, jsp_dp)
+  op(0x50, branch, regs.p.v == 0)
+  op(0x51, jst)
+  op(0x52, set_bit)
+  op(0x53, branch_bit)
+  op(0x54, read_dpi, fp(eor), regs.a, regs.x)
+  op(0x55, read_addri, fp(eor), regs.x)
+  op(0x56, read_addri, fp(eor), regs.y)
+  op(0x57, read_idpy, fp(eor))
+  op(0x58, write_dp_const, fp(eor))
+  op(0x59, write_ix_iy, fp(eor))
+  op(0x5a, read_dpw, fp(cpw))
+  op(0x5b, adjust_dpx, fp(lsr))
+  op(0x5c, adjust, fp(lsr), regs.a)
+  op(0x5d, transfer, regs.a, regs.x)
+  op(0x5e, read_addr, fp(cmp), regs.y)
+  op(0x5f, jmp_addr)
+  op(0x60, set_flag, regs.p.c, 0)
+  op(0x61, jst)
+  op(0x62, set_bit)
+  op(0x63, branch_bit)
+  op(0x64, read_dp, fp(cmp), regs.a)
+  op(0x65, read_addr, fp(cmp), regs.a)
+  op(0x66, read_ix, fp(cmp))
+  op(0x67, read_idpx, fp(cmp))
+  op(0x68, read_const, fp(cmp), regs.a)
+  op(0x69, write_dp_dp, fp(cmp))
+  op(0x6a, set_addr_bit)
+  op(0x6b, adjust_dp, fp(ror))
+  op(0x6c, adjust_addr, fp(ror))
+  op(0x6d, push, regs.y)
+  op(0x6e, bne_dpdec)
+  op(0x6f, rts)
+  op(0x70, branch, regs.p.v == 1)
+  op(0x71, jst)
+  op(0x72, set_bit)
+  op(0x73, branch_bit)
+  op(0x74, read_dpi, fp(cmp), regs.a, regs.x)
+  op(0x75, read_addri, fp(cmp), regs.x)
+  op(0x76, read_addri, fp(cmp), regs.y)
+  op(0x77, read_idpy, fp(cmp))
+  op(0x78, write_dp_const, fp(cmp))
+  op(0x79, write_ix_iy, fp(cmp))
+  op(0x7a, read_dpw, fp(adw))
+  op(0x7b, adjust_dpx, fp(ror))
+  op(0x7c, adjust, fp(ror), regs.a)
+  op(0x7d, transfer, regs.x, regs.a)
+  op(0x7e, read_dp, fp(cmp), regs.y)
+  op(0x7f, rti)
+  op(0x80, set_flag, regs.p.c, 1)
+  op(0x81, jst)
+  op(0x82, set_bit)
+  op(0x83, branch_bit)
+  op(0x84, read_dp, fp(adc), regs.a)
+  op(0x85, read_addr, fp(adc), regs.a)
+  op(0x86, read_ix, fp(adc))
+  op(0x87, read_idpx, fp(adc))
+  op(0x88, read_const, fp(adc), regs.a)
+  op(0x89, write_dp_dp, fp(adc))
+  op(0x8a, set_addr_bit)
+  op(0x8b, adjust_dp, fp(dec))
+  op(0x8c, adjust_addr, fp(dec))
+  op(0x8d, read_const, fp(ld), regs.y)
+  op(0x8e, plp)
+  op(0x8f, write_dp_const, fp(st))
+  op(0x90, branch, regs.p.c == 0)
+  op(0x91, jst)
+  op(0x92, set_bit)
+  op(0x93, branch_bit)
+  op(0x94, read_dpi, fp(adc), regs.a, regs.x)
+  op(0x95, read_addri, fp(adc), regs.x)
+  op(0x96, read_addri, fp(adc), regs.y)
+  op(0x97, read_idpy, fp(adc))
+  op(0x98, write_dp_const, fp(adc))
+  op(0x99, write_ix_iy, fp(adc))
+  op(0x9a, read_dpw, fp(sbw))
+  op(0x9b, adjust_dpx, fp(dec))
+  op(0x9c, adjust, fp(dec), regs.a)
+  op(0x9d, transfer, regs.s, regs.x)
+  op(0x9e, div_ya_x)
+  op(0x9f, xcn)
+  op(0xa0, set_flag, regs.p.i, 1)
+  op(0xa1, jst)
+  op(0xa2, set_bit)
+  op(0xa3, branch_bit)
+  op(0xa4, read_dp, fp(sbc), regs.a)
+  op(0xa5, read_addr, fp(sbc), regs.a)
+  op(0xa6, read_ix, fp(sbc))
+  op(0xa7, read_idpx, fp(sbc))
+  op(0xa8, read_const, fp(sbc), regs.a)
+  op(0xa9, write_dp_dp, fp(sbc))
+  op(0xaa, set_addr_bit)
+  op(0xab, adjust_dp, fp(inc))
+  op(0xac, adjust_addr, fp(inc))
+  op(0xad, read_const, fp(cmp), regs.y)
+  op(0xae, pull, regs.a)
+  op(0xaf, sta_ixinc)
+  op(0xb0, branch, regs.p.c == 1)
+  op(0xb1, jst)
+  op(0xb2, set_bit)
+  op(0xb3, branch_bit)
+  op(0xb4, read_dpi, fp(sbc), regs.a, regs.x)
+  op(0xb5, read_addri, fp(sbc), regs.x)
+  op(0xb6, read_addri, fp(sbc), regs.y)
+  op(0xb7, read_idpy, fp(sbc))
+  op(0xb8, write_dp_const, fp(sbc))
+  op(0xb9, write_ix_iy, fp(sbc))
+  op(0xba, read_dpw, fp(ldw))
+  op(0xbb, adjust_dpx, fp(inc))
+  op(0xbc, adjust, fp(inc), regs.a)
+  op(0xbd, transfer, regs.x, regs.s)
+  op(0xbe, das)
+  op(0xbf, lda_ixinc)
+  op(0xc0, set_flag, regs.p.i, 0)
+  op(0xc1, jst)
+  op(0xc2, set_bit)
+  op(0xc3, branch_bit)
+  op(0xc4, write_dp, regs.a)
+  op(0xc5, write_addr, regs.a)
+  op(0xc6, sta_ix)
+  op(0xc7, sta_idpx)
+  op(0xc8, read_const, fp(cmp), regs.x)
+  op(0xc9, write_addr, regs.x)
+  op(0xca, set_addr_bit)
+  op(0xcb, write_dp, regs.y)
+  op(0xcc, write_addr, regs.y)
+  op(0xcd, read_const, fp(ld), regs.x)
+  op(0xce, pull, regs.x)
+  op(0xcf, mul_ya)
+  op(0xd0, branch, regs.p.z == 0)
+  op(0xd1, jst)
+  op(0xd2, set_bit)
+  op(0xd3, branch_bit)
+  op(0xd4, write_dpi, regs.a, regs.x)
+  op(0xd5, write_addri, regs.x)
+  op(0xd6, write_addri, regs.y)
+  op(0xd7, sta_idpy)
+  op(0xd8, write_dp, regs.x)
+  op(0xd9, write_dpi, regs.x, regs.y)
+  op(0xda, stw_dp)
+  op(0xdb, write_dpi, regs.y, regs.x)
+  op(0xdc, adjust, fp(dec), regs.y)
+  op(0xdd, transfer, regs.y, regs.a)
+  op(0xde, bne_dpx)
+  op(0xdf, daa)
+  op(0xe0, clv)
+  op(0xe1, jst)
+  op(0xe2, set_bit)
+  op(0xe3, branch_bit)
+  op(0xe4, read_dp, fp(ld), regs.a)
+  op(0xe5, read_addr, fp(ld), regs.a)
+  op(0xe6, read_ix, fp(ld))
+  op(0xe7, read_idpx, fp(ld))
+  op(0xe8, read_const, fp(ld), regs.a)
+  op(0xe9, read_addr, fp(ld), regs.x)
+  op(0xea, set_addr_bit)
+  op(0xeb, read_dp, fp(ld), regs.y)
+  op(0xec, read_addr, fp(ld), regs.y)
+  op(0xed, cmc)
+  op(0xee, pull, regs.y)
+  op(0xef, wait)
+  op(0xf0, branch, regs.p.z == 1)
+  op(0xf1, jst)
+  op(0xf2, set_bit)
+  op(0xf3, branch_bit)
+  op(0xf4, read_dpi, fp(ld), regs.a, regs.x)
+  op(0xf5, read_addri, fp(ld), regs.x)
+  op(0xf6, read_addri, fp(ld), regs.y)
+  op(0xf7, read_idpy, fp(ld))
+  op(0xf8, read_dp, fp(ld), regs.x)
+  op(0xf9, read_dpi, fp(ld), regs.x, regs.y)
+  op(0xfa, write_dp_dp, fp(st))
+  op(0xfb, read_dpi, fp(ld), regs.y, regs.x)
+  op(0xfc, adjust, fp(inc), regs.y)
+  op(0xfd, transfer, regs.a, regs.y)
+  op(0xfe, bne_ydec)
+  op(0xff, wait)
   }
 }
+
+#undef op
+#undef fp
 
 }

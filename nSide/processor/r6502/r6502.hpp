@@ -10,6 +10,8 @@ struct R6502 {
   #include "registers.hpp"
   #include "memory.hpp"
 
+  using fp = auto (R6502::*)() -> void;
+
   virtual auto read(uint16 addr) -> uint8 = 0;
   virtual auto write(uint16 addr, uint8 data) -> void = 0;
   virtual auto lastCycle() -> void = 0;
@@ -23,60 +25,61 @@ struct R6502 {
   auto interrupt() -> void;
   auto instruction() -> void;
 
-  //instructions.cpp
-  auto opf_asl();
-  auto opf_adc();
-  auto opf_and();
-  auto opf_bit();
-  auto opf_cmp();
-  auto opf_cpx();
-  auto opf_cpy();
-  auto opf_dec();
-  auto opf_eor();
-  auto opf_inc();
-  auto opf_lda();
-  auto opf_ldx();
-  auto opf_ldy();
-  auto opf_lsr();
-  auto opf_ora();
-  auto opf_rla();
-  auto opf_rol();
-  auto opf_ror();
-  auto opf_rra();
-  auto opf_sbc();
-  auto opf_sla();
-  auto opf_sra();
+  //algorithms.cpp
+  auto op_asl();
+  auto op_adc();
+  auto op_and();
+  auto op_bit();
+  auto op_cmp();
+  auto op_cpx();
+  auto op_cpy();
+  auto op_dec();
+  auto op_eor();
+  auto op_inc();
+  auto op_lda();
+  auto op_ldx();
+  auto op_ldy();
+  auto op_lsr();
+  auto op_ora();
+  auto op_rla();
+  auto op_rol();
+  auto op_ror();
+  auto op_rra();
+  auto op_sbc();
+  auto op_sla();
+  auto op_sra();
 
-  auto opi_branch(bool condition);
-  auto opi_clear_flag(bool& flag);
-  auto opi_decrement(uint8& r);
-  auto opi_increment(uint8& r);
-  auto opi_pull(uint8& r);
-  auto opi_push(uint8& r);
-  template<auto (R6502::*op)() -> void> auto opi_read_absolute();
-  template<auto (R6502::*op)() -> void> auto opi_read_absolute_x();
-  template<auto (R6502::*op)() -> void> auto opi_read_absolute_y();
-  template<auto (R6502::*op)() -> void> auto opi_read_immediate();
-  template<auto (R6502::*op)() -> void> auto opi_read_indirect_zero_page_x();
-  template<auto (R6502::*op)() -> void> auto opi_read_indirect_zero_page_y();
-  template<auto (R6502::*op)() -> void> auto opi_read_zero_page();
-  template<auto (R6502::*op)() -> void> auto opi_read_zero_page_x();
-  template<auto (R6502::*op)() -> void> auto opi_read_zero_page_y();
-  template<auto (R6502::*op)() -> void> auto opi_rmw_absolute();
-  template<auto (R6502::*op)() -> void> auto opi_rmw_absolute_x();
-  template<auto (R6502::*op)() -> void> auto opi_rmw_zero_page();
-  template<auto (R6502::*op)() -> void> auto opi_rmw_zero_page_x();
-  auto opi_set_flag(bool& flag);
-  template<auto (R6502::*op)() -> void> auto opi_shift();
-  auto opi_store_absolute(uint8);
-  auto opi_store_absolute_x(uint8&);
-  auto opi_store_absolute_y(uint8&);
-  auto opi_store_indirect_zero_page_x(uint8);
-  auto opi_store_indirect_zero_page_y(uint8&);
-  auto opi_store_zero_page(uint8);
-  auto opi_store_zero_page_x(uint8);
-  auto opi_store_zero_page_y(uint8);
-  auto opi_transfer(uint8& s, uint8& d, bool flag);
+  //instructions.cpp
+  auto op_branch(bool condition);
+  auto op_clear_flag(bool& flag);
+  auto op_decrement(uint8& r);
+  auto op_increment(uint8& r);
+  auto op_pull(uint8& r);
+  auto op_push(uint8& r);
+  auto op_read_absolute(fp);
+  auto op_read_absolute_x(fp);
+  auto op_read_absolute_y(fp);
+  auto op_read_immediate(fp);
+  auto op_read_indirect_zero_page_x(fp);
+  auto op_read_indirect_zero_page_y(fp);
+  auto op_read_zero_page(fp);
+  auto op_read_zero_page_x(fp);
+  auto op_read_zero_page_y(fp);
+  auto op_rmw_absolute(fp);
+  auto op_rmw_absolute_x(fp);
+  auto op_rmw_zero_page(fp);
+  auto op_rmw_zero_page_x(fp);
+  auto op_set_flag(bool& flag);
+  auto op_shift(fp);
+  auto op_store_absolute(uint8);
+  auto op_store_absolute_x(uint8&);
+  auto op_store_absolute_y(uint8&);
+  auto op_store_indirect_zero_page_x(uint8);
+  auto op_store_indirect_zero_page_y(uint8&);
+  auto op_store_zero_page(uint8);
+  auto op_store_zero_page_x(uint8);
+  auto op_store_zero_page_y(uint8);
+  auto op_transfer(uint8& s, uint8& d, bool flag);
 
   auto op_brk();
   auto op_jmp_absolute();
@@ -88,23 +91,16 @@ struct R6502 {
   auto op_rti();
   auto op_rts();
 
-  auto opillf_dcp();
-  auto opillf_lax();
+  auto opill_dcp();
+  auto opill_lax();
 
-  template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-  auto opilli_rmwr_absolute();
-  template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-  auto opilli_rmwr_absolute_x();
-  template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-  auto opilli_rmwr_absolute_y();
-  template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-  auto opilli_rmwr_indirect_zero_page_x();
-  template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-  auto opilli_rmwr_indirect_zero_page_y();
-  template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-  auto opilli_rmwr_zero_page();
-  template<auto (R6502::*opw)() -> void,auto (R6502::*opr)() -> void>
-  auto opilli_rmwr_zero_page_x();
+  auto opill_rmwr_absolute(fp, fp);
+  auto opill_rmwr_absolute_x(fp, fp);
+  auto opill_rmwr_absolute_y(fp, fp);
+  auto opill_rmwr_indirect_zero_page_x(fp, fp);
+  auto opill_rmwr_indirect_zero_page_y(fp, fp);
+  auto opill_rmwr_zero_page(fp, fp);
+  auto opill_rmwr_zero_page_x(fp, fp);
 
   auto opill_alr_immediate();
   auto opill_anc_immediate();
@@ -134,6 +130,7 @@ struct R6502 {
 
   //disassembler.cpp
   auto disassemble() -> string;
+  auto disassemble(uint16 addr) -> string;
 
   Registers r;
   reg16 abs, iabs;

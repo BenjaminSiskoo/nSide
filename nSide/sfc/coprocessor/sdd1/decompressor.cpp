@@ -1,12 +1,10 @@
 //S-DD1 decompression algorithm implementation
 //original code written by Andreas Naive (public domain license)
-//higan port written by byuu
+//bsnes port written by byuu
 
-//note: decompression module does not need to be serialized with higan
-//this is because decompression only runs during DMA, and higan will complete
+//note: decompression module does not need to be serialized with bsnes
+//this is because decompression only runs during DMA, and bsnes will complete
 //any pending DMA transfers prior to serialization.
-
-//all of the above also applies to nSide
 
 //input manager
 
