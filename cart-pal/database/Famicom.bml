@@ -1,5 +1,5 @@
-database revision=2012-10-22 owner=bootgod
-  :hex_usr adds games one at a time from bootgod's database at
+database revision=2012-10-22 owner=BootGod
+  :hex_usr adds games one at a time from BootGod's database at
   :http://bootgod.dyndns.org:7777/.
 
 cartridge sha256:a75af9b5972f22056d016474234b03213e5d7932fb1e81890d58bd100bb8d0d2
