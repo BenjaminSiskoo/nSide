@@ -10,7 +10,7 @@
 
 namespace GameBoyAdvance {
   namespace Info {
-    static const uint SerializerVersion = 3;
+    static const uint SerializerVersion = 4;
   }
 }
 

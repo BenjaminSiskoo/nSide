@@ -1,30 +1,33 @@
-﻿nSide v009r08 (2016-04-04)
+﻿nSide v009r09 (2016-06-10)
 
-A fork of higan v097 by byuu (http://byuu.org/emulation/higan/), which was
+A fork of higan v099 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
 
 nSide adds new devices to the Famicom emulator's controller ports. The supported
 devices are:
-*Standard controller
+*Gamepad
 *Four Score
 *Zapper (port 2 only)
 *Power Pad (port 2 only)
 *Arkanoid Vaus (port 2 only)
+*SFC Gamepad (unlicensed)
+*Mouse (unlicensed, only supported by homebrew)
 
 In addition, it adds the Famicom expansion port for its own devices. The only
 expansion port devices supported are:
-*Standard controller (counts as Player 3)
+*Gamepad (counts as Player 3)
 *4-Players Adaptor
 *Beam Gun (Zapper)
 *Family Trainer (Power Pad)
+*Mouse (unlicensed, only supported by homebrew)
 
 Finally, it supports the VS. UniSystem, with its own arcade panel and buttons.
 
 Please be aware that a great majority of Famicom and NES games support the use
 of Player 3 and Player 4 as substitutes for Player 1 and Player 2, including
 ones that use the NES Four Score such as A Nightmare on Elm Street. If the
-expansion slot is not explicitly set to "None", this can result in Player 3's
-controller controlling both Player 1 and Player 3.
+expansion slot is set to Gamepad or 4-Players Adapter, this can result in
+Player 3's controller controlling both Player 1 and Player 3.
 
 The Export Memory functions for the Famicom and Super Famicom emulators now
 export a limited selection of PPU registers in BML format and expansion chip
@@ -34,11 +37,13 @@ will also dump their RAMs but not registers.
 of 3rd-party tools that depend on it)
 
 nSide uses different directories for storing configuration settings, save
-states, and shaders so as to not conflict with higan.
+states, and shaders so as to not conflict with higan. However, nSide will import
+higan's settings upon first load.
 In Windows, the configuration files are in "%LocalAppData%\nSide".
 
 You will need the GBA BIOS to play Game Boy Advance games. This is no different
-from higan.
+from higan. Like with higan, just drag the Game Boy Advance BIOS onto nSide's
+icon to install it.
 
 GBA BIOS
 sha256: fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570
@@ -60,7 +65,8 @@ sha256: 9f639da2e0248431b59a9344769a38fad8b64742ce6e0e44534e6918b8977a0a)
 
 ...but if you do not wish to emulate the PlayChoice-10, the above 3 files are
 not necessary. Keep in mind that PlayChoice-10 emulation is still incomplete, so
-these files will not be very useful right now.
+these files will not be very useful right now. Dragging and dropping is not
+supported like with the Game Boy Advance BIOS.
 
 Known Bugs:
 Famicom:
@@ -87,6 +93,8 @@ Super Famicom:
 Game Boy:
   *When loading a Game Boy game in Game Boy Color mode, colors are applied to
   the wrong areas, making game displays terrible on the eyes.
+  For example, in Donkey Kong Land III, Dixie Kong's yellow and dark brown
+  colors are swapped, while her mid-brown color is not.
   Inherited from higan v094.
 
 Game Boy Advance:
@@ -101,7 +109,7 @@ WonderSwan:
   Many bugs in different spots. higan's WonderSwan emulator is still new and
   full of bugs, all of which affect nSide's version of the emulator.
   *Card Captor Sakura has columns of corruption when characters speak.
-  *Meitantai Conan - Nishi no Meitantei Saidai no Kiki! will not start because
+  *Meitantai Conan - Nishi no Meitantei Saidai no Kiki!? will not start because
   it relies on correct prefetch emulation.
 
 ===========================
@@ -125,25 +133,17 @@ Changes from higan: General
 
    Renamed icarus to "cart-pal".
 
-============================
-Changes from higan: nSide-fc
-============================
+===========================
+Changes from higan: Famicom
+===========================
    Revised emulator name and copyright information.
 
-   Moved fc/video/*, fc/audio/*, and fc/input/* into fc/system and changed
-  references to point to the new locations.
-
-   Changed the Serializer version from 2 to 127. This step is necessary because
-  of the addition of the Famicom's expansion port. Why 127 instead of 3? To
-  account for official revisions in the future.
+   Replaced fc/input/* with fc/controller/* and fc/system/peripherals.cpp,
+   overhauling the device implementation to depend on controller objects like
+  in the Super Famicom emulator.
 
    The read registers at $4016 and $4017 only have 5 bits each, not 6, so
   cpu.mdr() is ANDed with 0xe0 instead of 0xc0.
-
-   Commented out a line in ppu_read for the OAMREAD register that was making
-  Magic Floor's ball sprite behave strangely. The mystery of this behavior is
-  still not solved, however: a shadow ball copies the ball's previous X
-  coördinate upon update, which does not appear in Nestopia or FCEUX.
 
    Added emulation of PPU open bus behavior according to the notes blargg wrote
   when he published his ppu_open_bus demo. ppu.status.mdr will decay to 0x00 if
@@ -151,8 +151,8 @@ Changes from higan: nSide-fc
   put the 2 highest MDR bits into the read value.
 
    Changed PPU timing to account for the dummy tick in front of every scanline.
-  bnes had pixel rendering on ticks 0-255 of every scanline, whereas an actual
-  PPU renders on ticks 1-256.
+  higan/fc has pixel rendering on ticks 0-255 of every scanline, whereas an
+  actual PPU renders on ticks 1-256.
 
    Added direct color support (when rendering is disabled and PPUADDR points to
   the palette at $3F00-$3FFF, the selected color will render instead of the
@@ -160,9 +160,6 @@ Changes from higan: nSide-fc
 
    Added PAL support, which reduces games to 50Hz and swaps the red and green
   color emphasis bits.
-
-   Overhauled the device implementation to depend on controller objects like in
-  the Super Famicom emulator.
 
    Added the ability to change controllers for the Famicom, which required
   adding an Interface#connect method that calls Input#connect.
@@ -403,7 +400,7 @@ Changes from higan: processor/r6502 (affects Famicom)
   NOP #imm now advances the program counter properly, fixing Puzznic's columns
   of corruption bug.
    Added support for the unofficial opcodes ALR, ANC, AXS, DCP, ISC (ISB), LAX,
-  RLA, RRA, SAX, SLO, SRE, and STP (KIL).
+  RLA, RRA, SAX, SHA, SHX, SHY, SLO, SRE, and STP (KIL).
 
 =================================
 Changes from higan: Super Famicom
@@ -418,6 +415,15 @@ Changes from higan: Super Famicom
 
    Added a second cursor design that will be shown whenever the Super Scope is
   in Turbo mode.
+
+============================================================
+Changes from higan: processor/r65816 (affects Super Famicom)
+============================================================
+   Changed the decode() function in the disassembler to take 3 arguments instead
+  of 2. The new argument is the address of the opcode being decoded. In higan,
+  this function uses the program counter to figure out the opcode's location,
+  which produces incorrect results for opcodes with relative addresses such as
+  branching opcodes.
 
 ============================
 Changes from higan: Game Boy
@@ -442,6 +448,21 @@ Changes from higan: Game Boy Advance
   to use compared to the Famicom, Super Famicom, and Game Boy. A cheat code
   will only take effect if its data width matches the CPU's access width
   exactly (8-bit, 16-bit, or 32-bit).
+
+   Added video rotation to support games such as Dr. Mario & Puzzle League.
+  This support is emulator-agnostic.
+
+==============================
+Changes from higan: WonderSwan
+==============================
+   Changed video rotation to be emulator-agnostic rotation.
+
+=========================
+Changes from higan: Video
+=========================
+   Added emulator-agnistic video rotation for use with the Game Boy Advance and
+  WonderSwan, activated by a hotkey in the UI. It can support 0°, 90°, 180°,
+  and 270° rotation. While in use, scanline emulation will be disabled.
 
 ============================
 Changes from higan: cart-pal
@@ -468,8 +489,6 @@ Changes from higan: cart-pal
 
    Revised the header information for iNES mappers 16, 153, and 159 to select
   which type of EEPROM/SRAM to use for the Bandai FCG series of boards.
-
-   Began planning support for purification based on bootgod's database.
 
    Added preliminary support for NES 2.0. This allows submappers to influence
   purification of Konami VRC games, distinguish between IREM-HOLYDIVER and

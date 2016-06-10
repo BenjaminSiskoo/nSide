@@ -10,7 +10,7 @@
 
 namespace WonderSwan {
   namespace Info {
-    static const uint SerializerVersion = 1;
+    static const uint SerializerVersion = 2;
   }
 }
 

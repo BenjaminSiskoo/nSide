@@ -10,8 +10,8 @@ using namespace nall;
 namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
-  static const string Version = "009.08";
-  static const string FromVersion = "098.17";
+  static const string Version = "009.09";
+  static const string FromVersion = "099";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string Contributors = "blargg, Ryphecha, FitzRoy, Jonas Quinn, Cydrak, gekkio, trap15, and more...";

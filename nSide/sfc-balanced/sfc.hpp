@@ -1,7 +1,9 @@
 #pragma once
 
 //clone of higan's Super Famicom emulator's balanced profile.
-//Credits are available in <sfc/sfc.hpp>.
+//Credits for all components excpet for PPU and DSP are available in <sfc/sfc.hpp>.
+// blargg            (Balanced/Performance DSP)
+// hex_usr           (Balanced PPU code clean-up)
 //license: GPLv3
 //maintained since: 2016-04-05
 
