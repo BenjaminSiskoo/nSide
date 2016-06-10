@@ -207,6 +207,7 @@ auto R6502::opill_shx_absolute_y() {
   abs.l = readPCi();
   abs.h = readPCi();
   pageAlways(abs.w, abs.w + r.y);
+  if(abs.h != (abs.w + r.y) >> 8) abs.h &= r.x;
 L write(abs.w + r.y, r.x & (abs.h + 1));
 }
 
@@ -214,6 +215,7 @@ auto R6502::opill_shy_absolute_x() {
   abs.l = readPCi();
   abs.h = readPCi();
   pageAlways(abs.w, abs.w + r.x);
+  if(abs.h != (abs.w + r.x) >> 8) abs.h &= r.y;
 L write(abs.w + r.x, r.y & (abs.h + 1));
 }
 
