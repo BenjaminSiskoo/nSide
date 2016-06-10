@@ -24,7 +24,7 @@ AudioSettings::AudioSettings(TabFrame* parent) : TabFrameItem(parent) {
   latencyCombo.onChange([&] { updateDriver(); });
 
   frequencyLabel.setText("Frequency:");
-  auto frequencyValue = audio->get(Audio::Frequency).get<uint>();
+  auto frequencyValue = audio->get(Audio::Frequency).get<uint>(44100);
   frequencyCombo.append(ComboButtonItem().setText({frequencyValue, "hz"}));
   frequencyCombo.setEnabled(false);
 
@@ -40,19 +40,13 @@ AudioSettings::AudioSettings(TabFrame* parent) : TabFrameItem(parent) {
 
   volumeLabel.setText("Volume:");
   volumeValue.setAlignment(0.5);
-  volumeSlider.setLength(201).setPosition(settings["Audio/Volume"].natural()).onChange([&] { updateEffects(); });
+  volumeSlider.setLength(501).setPosition(settings["Audio/Volume"].natural()).onChange([&] { updateEffects(); });
 
   balanceLabel.setText("Balance:");
   balanceValue.setAlignment(0.5);
   balanceSlider.setLength(101).setPosition(settings["Audio/Balance"].natural()).onChange([&] { updateEffects(); });
 
-  reverbDelayLabel.setText("Reverb Delay:");
-  reverbDelayValue.setAlignment(0.5);
-  reverbDelaySlider.setLength(201).setPosition(settings["Audio/Reverb/Delay"].natural()).onChange([&] { updateEffects(); });
-
-  reverbLevelLabel.setText("Reverb Level:");
-  reverbLevelValue.setAlignment(0.5);
-  reverbLevelSlider.setLength(101).setPosition(settings["Audio/Reverb/Level"].natural()).onChange([&] { updateEffects(); });
+  reverbEnable.setText("Reverb").setChecked(settings["Audio/Reverb/Enable"].boolean()).onToggle([&] { updateEffects(); });
 
   updateDriver();
   updateEffects();
@@ -81,11 +75,7 @@ auto AudioSettings::updateEffects() -> void {
   settings["Audio/Balance"].setValue(balanceSlider.position());
   balanceValue.setText({balanceSlider.position(), "%"});
 
-  settings["Audio/Reverb/Delay"].setValue(reverbDelaySlider.position());
-  reverbDelayValue.setText({reverbDelaySlider.position(), "ms"});
-
-  settings["Audio/Reverb/Level"].setValue(reverbLevelSlider.position());
-  reverbLevelValue.setText({reverbLevelSlider.position(), "%"});
+  settings["Audio/Reverb/Enable"].setValue(reverbEnable.checked());
 
   program->updateAudioEffects();
 }

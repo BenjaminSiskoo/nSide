@@ -1,4 +1,4 @@
-#include <sfc/sfc.hpp>
+#include <sfc-balanced/sfc.hpp>
 
 namespace SuperFamicom {
 

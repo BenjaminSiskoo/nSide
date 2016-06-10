@@ -9,7 +9,9 @@ L readPC();
 auto R65816::op_xba() {
   io();
 L io();
-  swap(r.a.l, r.a.h);
+  r.a.l ^= r.a.h;
+  r.a.h ^= r.a.l;
+  r.a.l ^= r.a.h;
   r.p.n = (r.a.l & 0x80);
   r.p.z = (r.a.l == 0);
 }
@@ -81,9 +83,19 @@ L ioIRQ();
   }
 }
 
-auto R65816::op_flag(bool& flag, bool value) {
+//auto R65816::op_flag(bool& flag, bool value) {
+//L ioIRQ();
+//  flag = value;
+//}
+
+auto R65816::op_set_flag(uint bit) {
 L ioIRQ();
-  flag = value;
+  r.p |= 1 << bit;
+}
+
+auto R65816::op_clear_flag(uint bit) {
+L ioIRQ();
+  r.p &= ~(1 << bit);
 }
 
 auto R65816::op_pflag(bool mode) {
@@ -97,14 +109,14 @@ E r.p.m = 1, r.p.x = 1;
   }
 }
 
-auto R65816::op_transfer_b(reg16& from, reg16& to) {
+auto R65816::op_transfer_b(Reg16& from, Reg16& to) {
 L ioIRQ();
   to.l = from.l;
   r.p.n = (to.l & 0x80);
   r.p.z = (to.l == 0);
 }
 
-auto R65816::op_transfer_w(reg16& from, reg16& to) {
+auto R65816::op_transfer_w(Reg16& from, Reg16& to) {
 L ioIRQ();
   to.w = from.w;
   r.p.n = (to.w & 0x8000);
@@ -137,12 +149,12 @@ E r.s.l = r.x.l;
 N r.s.w = r.x.w;
 }
 
-auto R65816::op_push_b(reg16& reg) {
+auto R65816::op_push_b(Reg16& reg) {
   io();
 L writeSP(reg.l);
 }
 
-auto R65816::op_push_w(reg16& reg) {
+auto R65816::op_push_w(Reg16& reg) {
   io();
   writeSP(reg.h);
 L writeSP(reg.l);
@@ -170,7 +182,7 @@ auto R65816::op_php() {
 L writeSP(r.p);
 }
 
-auto R65816::op_pull_b(reg16& reg) {
+auto R65816::op_pull_b(Reg16& reg) {
   io();
   io();
 L reg.l = readSP();
@@ -178,7 +190,7 @@ L reg.l = readSP();
   r.p.z = (reg.l == 0);
 }
 
-auto R65816::op_pull_w(reg16& reg) {
+auto R65816::op_pull_w(Reg16& reg) {
   io();
   io();
   reg.l = readSP();

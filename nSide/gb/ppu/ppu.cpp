@@ -50,7 +50,7 @@ auto PPU::main() -> void {
 }
 
 auto PPU::mode(uint mode) -> void {
-  if(!enabled()) mode = 1;  //force blank
+  //if(!enabled()) mode = 1;  //force blank
   status.mode = mode;
 }
 

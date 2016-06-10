@@ -3,7 +3,7 @@ alwaysinline auto readPC() -> uint8 {
 }
 
 alwaysinline auto readPCi() -> uint8 {
-  return read(r.pc++);
+  return read(r.pc.w++);
 }
 
 alwaysinline auto readSP() -> uint8 {

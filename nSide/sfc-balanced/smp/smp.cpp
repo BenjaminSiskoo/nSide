@@ -18,7 +18,7 @@ auto SMP::synchronizeCPU() -> void {
 }
 
 auto SMP::synchronizeDSP() -> void {
-  if(dsp.clock < 0 && !scheduler.synchronizing()) co_switch(dsp.thread);
+  while(dsp.clock < 0) dsp.main();
 }
 
 auto SMP::Enter() -> void {
