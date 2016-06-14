@@ -29,14 +29,14 @@ BGViewer::BGViewer() {
     case 2: bg = &SuperFamicom::ppu.bg3; break;
     case 3: bg = &SuperFamicom::ppu.bg4; break;
     }
-    uint x = position.x(), y = position.y(), mode = bg->regs.mode;
-    uint16_t tiledata = bg->get_tile(x, y);
+    uint x = position.x(), y = position.y(), mode = bg->r.mode;
+    uint16_t tiledata = bg->getTile(x, y);
     x /= 8, y /= 8;
     string output = { x, ", ", y, ", " };
     uint tile = tiledata & 0x03ff;
     output.append(
       "Tile: 0x", hex(tile, 4L), ", ",
-      "Address: 0x", hex(bg->regs.tiledata_addr + tile * (16 << mode), 4L)
+      "Address: 0x", hex(bg->r.tiledataAddress + tile * (16 << mode), 4L)
     );
     statusBar.setText(output);
   });
@@ -60,7 +60,7 @@ auto BGViewer::updateTiles() -> void {
   }
   dp = canvas.data();
   uint16 tiledata;
-  const uint8* sp = SuperFamicom::ppu.vram;
+  const uint8* sp = SuperFamicom::ppu.memory.vram;
   SuperFamicom::PPU::Background* bg;
   switch(bgSelection.selected().offset()) {
   case 0: bg = &SuperFamicom::ppu.bg1; break;
@@ -68,12 +68,12 @@ auto BGViewer::updateTiles() -> void {
   case 2: bg = &SuperFamicom::ppu.bg3; break;
   case 3: bg = &SuperFamicom::ppu.bg4; break;
   }
-  uint16 screen_addr = bg->regs.screen_addr;
-  uint pitch = 16 << bg->regs.mode;
-  bool hires = SuperFamicom::ppu.regs.bgmode == 5 || SuperFamicom::ppu.regs.bgmode == 6;
-  bool tile_size = bg->regs.tile_size;
-  bool tile_size_x = tile_size || hires;
-  bool tile_size_y = tile_size;
+  uint16 screenAddress = bg->r.screenAddress;
+  uint pitch = 16 << bg->r.mode;
+  bool hires = SuperFamicom::ppu.r.bgMode == 5 || SuperFamicom::ppu.r.bgMode == 6;
+  bool tileSize = bg->r.tileSize;
+  bool tileSize_x = tileSize || hires;
+  bool tileSize_y = tileSize;
 
   uint10 tile_id;
   uint3 palette;
@@ -81,18 +81,18 @@ auto BGViewer::updateTiles() -> void {
   bool mirror_x;
   bool mirror_y;
 
-  for(uint tileY : range(tile_size_y || (bg->regs.screen_size & 2) ? 64 : 32)) {
-    for(uint tileX : range(tile_size_x || (bg->regs.screen_size & 1) ? 64 : 32)) {
-      tiledata = bg->get_tile(tileX * 8, tileY * 8);
+  for(uint tileY : range(tileSize_y || (bg->r.screenSize & 2) ? 64 : 32)) {
+    for(uint tileX : range(tileSize_x || (bg->r.screenSize & 1) ? 64 : 32)) {
+      tiledata = bg->getTile(tileX * 8, tileY * 8);
       tile_id  = tiledata.bits( 9,  0);
       palette  = tiledata.bits(12, 10);
       priority = tiledata.bit(13);
       mirror_x = tiledata.bit(14);
       mirror_y = tiledata.bit(15);
-      if(tile_size_x && (tileX & 1) ^ mirror_x) tile_id += 1;
-      if(tile_size_y && (tileY & 1) ^ mirror_y) tile_id += 16;
-      sp = SuperFamicom::ppu.vram + (bg->regs.tiledata_addr + tile_id * pitch);
-      switch(bg->regs.mode) {
+      if(tileSize_x && (tileX & 1) ^ mirror_x) tile_id += 1;
+      if(tileSize_y && (tileY & 1) ^ mirror_y) tile_id += 16;
+      sp = SuperFamicom::ppu.memory.vram + (bg->r.tiledataAddress + tile_id * pitch);
+      switch(bg->r.mode) {
       case SuperFamicom::PPU::Background::Mode::BPP2:
         for(uint y : (!mirror_y ? range(8) : rrange(8))) {
           uint8 d[] = { sp[0], sp[1] };
@@ -102,7 +102,7 @@ auto BGViewer::updateTiles() -> void {
             color += d[1] & 0x80 ? 2 : 0;
             for(auto& b : d) b <<= 1;
             color += palette << 2;
-            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -123,7 +123,7 @@ auto BGViewer::updateTiles() -> void {
             color += d[3] & 0x80 ? 8 : 0;
             for(auto& b : d) b <<= 1;
             color += palette << 4;
-            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -148,7 +148,7 @@ auto BGViewer::updateTiles() -> void {
             color += d[7] & 0x80 ? 128 : 0;
             for(auto& b : d) b <<= 1;
             color += palette << 4;
-            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |

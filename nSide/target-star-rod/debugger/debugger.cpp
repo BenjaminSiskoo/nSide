@@ -68,12 +68,12 @@ Debugger::Debugger() {
   SuperFamicom::smp.debugger.op_read = {&Debugger::smp_op_read, this};
   SuperFamicom::smp.debugger.op_write = {&Debugger::smp_op_write, this};
 
-  SuperFamicom::ppu.debugger.vram_read = {&Debugger::ppu_vram_read, this};
-  SuperFamicom::ppu.debugger.vram_write = {&Debugger::ppu_vram_write, this};
+  SuperFamicom::ppu.debugger.vramRead = {&Debugger::ppu_vramRead, this};
+  SuperFamicom::ppu.debugger.vramWrite = {&Debugger::ppu_vramWrite, this};
 
-  SuperFamicom::ppu.debugger.oam_read = {&Debugger::ppu_oam_read, this};
-  SuperFamicom::ppu.debugger.oam_write = {&Debugger::ppu_oam_write, this};
+  SuperFamicom::ppu.debugger.oamRead = {&Debugger::ppu_oamRead, this};
+  SuperFamicom::ppu.debugger.oamWrite = {&Debugger::ppu_oamWrite, this};
 
-  SuperFamicom::ppu.debugger.cgram_read = {&Debugger::ppu_cgram_read, this};
-  SuperFamicom::ppu.debugger.cgram_write = {&Debugger::ppu_cgram_write, this};
+  SuperFamicom::ppu.debugger.cgramRead = {&Debugger::ppu_cgramRead, this};
+  SuperFamicom::ppu.debugger.cgramWrite = {&Debugger::ppu_cgramWrite, this};
 }

@@ -12,10 +12,10 @@ struct System {
     FamicomBox,
   };
 
-  auto loaded() const -> bool;
-  auto revision() const -> Revision;
-  auto region() const -> Region;
-  auto cpuFrequency() const -> uint;
+  inline auto loaded() const -> bool { return _loaded; }
+  inline auto revision() const -> Revision { return _revision; }
+  inline auto region() const -> Region { return _region; }
+  inline auto cpuFrequency() const -> uint { return _cpuFrequency; }
 
   inline auto fc()   const { return _revision == Revision::Famicom; }
   inline auto vs()   const { return _revision == Revision::VSSystem; }

@@ -1,26 +1,36 @@
 struct Screen {
-  struct Regs {
-    bool addsub_mode;
-    bool direct_color;
+  auto reset() -> void;
 
-    bool color_mode;
-    bool color_halve;
-    bool bg1_color_enable;
-    bool bg2_color_enable;
-    bool bg3_color_enable;
-    bool bg4_color_enable;
-    bool oam_color_enable;
-    bool back_color_enable;
-
-    uint5 color_b;
-    uint5 color_g;
-    uint5 color_r;
-  } regs;
-
-  Screen(PPU& self);
+  auto blend(uint x, uint y) const -> uint16;
 
   auto serialize(serializer&) -> void;
 
-  PPU& self;
+  struct ID { enum : uint { BACK = 5 }; };
+
+  struct Registers {
+    bool blendMode;
+    bool directColor;
+
+    bool colorMode;
+    bool colorHalve;
+    struct Layer {
+      bool colorEnable;
+    } bg1, bg2, bg3, bg4, oam, back;
+
+    uint5 colorBlue;
+    uint5 colorGreen;
+    uint5 colorRed;
+  } r;
+
+  struct Math {
+    //struct Screen {
+    //  uint16 color;
+    //  bool colorEnable;
+    //} above, below;
+    //bool transparent;
+    //bool blendMode;
+    bool colorHalve;
+  } math;
+
   friend class PPU;
 };

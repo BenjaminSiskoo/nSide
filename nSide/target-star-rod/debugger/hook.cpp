@@ -123,7 +123,7 @@ auto Debugger::smp_op_write(uint16 addr, uint8 data) -> void {
 //S-PPU
 //=====
 
-auto Debugger::ppu_vram_read(uint16 addr, uint8 data) -> void {
+auto Debugger::ppu_vramRead(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testReadVRAM(addr);
 
   if(breakpointHit) {
@@ -134,7 +134,7 @@ auto Debugger::ppu_vram_read(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::ppu_vram_write(uint16 addr, uint8 data) -> void {
+auto Debugger::ppu_vramWrite(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testWriteVRAM(addr, data);
 
   if(breakpointHit) {
@@ -145,7 +145,7 @@ auto Debugger::ppu_vram_write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::ppu_oam_read(uint16 addr, uint8 data) -> void {
+auto Debugger::ppu_oamRead(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testReadOAM(addr);
 
   if(breakpointHit) {
@@ -156,7 +156,7 @@ auto Debugger::ppu_oam_read(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::ppu_oam_write(uint16 addr, uint8 data) -> void {
+auto Debugger::ppu_oamWrite(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testWriteOAM(addr, data);
 
   if(breakpointHit) {
@@ -167,7 +167,7 @@ auto Debugger::ppu_oam_write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::ppu_cgram_read(uint16 addr, uint8 data) -> void {
+auto Debugger::ppu_cgramRead(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testReadCGRAM(addr);
 
   if(breakpointHit) {
@@ -178,7 +178,7 @@ auto Debugger::ppu_cgram_read(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::ppu_cgram_write(uint16 addr, uint8 data) -> void {
+auto Debugger::ppu_cgramWrite(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testWriteCGRAM(addr, data);
 
   if(breakpointHit) {

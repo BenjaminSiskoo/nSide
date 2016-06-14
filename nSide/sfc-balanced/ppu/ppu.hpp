@@ -1,7 +1,7 @@
 struct PPU : Thread, PPUcounter {
   alwaysinline auto interlace() const -> bool { return display.interlace; }
   alwaysinline auto overscan() const -> bool { return display.overscan; }
-  alwaysinline auto vdisp() const -> uint { return !display.overscan ? 225 : 240; }
+  alwaysinline auto vdisp() const -> uint { return display.overscan ? 240 : 225; }
 
   PPU();
   ~PPU();
@@ -18,29 +18,29 @@ struct PPU : Thread, PPUcounter {
 
   //memory.cpp
   alwaysinline auto getVramAddress() -> uint16;
-  alwaysinline auto vramRead(uint16 addr) -> uint8;
-  alwaysinline auto vramWrite(uint16 addr, uint8 data) -> void;
-  alwaysinline auto oamRead(uint16 addr) -> uint8;
-  alwaysinline auto oamWrite(uint16 addr, uint8 data) -> void;
-  alwaysinline auto cgramRead(uint16 addr) -> uint8;
-  alwaysinline auto cgramWrite(uint16 addr, uint8 data) -> void;
+  alwaysinline auto vramRead(uint addr) -> uint8;
+  alwaysinline auto vramWrite(uint addr, uint8 data) -> void;
+  alwaysinline auto oamRead(uint addr) -> uint8;
+  alwaysinline auto oamWrite(uint addr, uint8 data) -> void;
+  alwaysinline auto cgramRead(uint addr) -> uint8;
+  alwaysinline auto cgramWrite(uint addr, uint8 data) -> void;
 
   //mmio.cpp
   auto read(uint24 addr, uint8 data) -> uint8;
   auto write(uint24 addr, uint8 data) -> void;
   auto latchCounters() -> void;
+  auto updateVideoMode() -> void;
 
-  uint8 vram[128 * 1024];
-  uint8 oam[544];
-  uint8 cgram[512];
+  struct {
+    uint8 vram[128 * 1024];
+    uint8 oam[544];
+    uint8 cgram[512];
+  } memory;
 
   //debugger functions
   auto exportRegisters(string &markup) -> void;
 
 privileged:
-  uint ppu1_version = 1;
-  uint ppu2_version = 3;
-
   uint32* output = nullptr;
 
   struct {
@@ -51,67 +51,72 @@ privileged:
   alwaysinline auto addClocks(uint) -> void;
 
   auto scanline() -> void;
-  auto render_scanline() -> void;
+  auto renderScanline() -> void;
   auto frame() -> void;
   auto refresh() -> void;
 
-  auto render_line() -> void;
+  struct {
+    uint version;
+    uint8 mdr;
+  } ppu1, ppu2;
+
+  auto renderLine() -> void;
   auto update_oam_status() -> void;
 
-  struct Registers {
-    uint8 ppu1_mdr;
-    uint8 ppu2_mdr;
+  struct Latches {
+    uint16 vram;
+    uint8 oam;
+    uint8 cgram;
+    uint8 bgofs;
+    uint8 mode7;
+    bool counters;
+    bool hcounter;
+    bool vcounter;
 
-    uint16 vram_readbuffer;
-    uint8 oam_latchdata;
-    uint8 cgram_latchdata;
-    uint8 bgofs_latchdata;
-    uint8 mode7_latchdata;
-    bool counters_latched;
-    bool latch_hcounter;
-    bool latch_vcounter;
+    uint10 oamAddress;
+    uint9 cgramAddress;
+  } latch;
+
+  struct Registers {
     uint16 bg_y[4];
 
-    uint16 oam_iaddr;
-    uint16 cgram_iaddr;
-
     //$2100  INIDSP
-    bool display_disable;
-    uint8 display_brightness;
+    bool displayDisable;
+    uint4 displayBrightness;
 
     //$2102  OAMADDL
     //$2103  OAMADDH
-    uint16 oam_baseaddr;
-    uint16 oam_addr;
-    bool oam_priority;
+    uint10 oamBaseAddress;
+    uint10 oamAddress;
+    bool oamPriority;
 
     //$2105  BGMODE
-    bool bg3_priority;
-    uint8 bgmode;
+    bool bgPriority;
+    uint8 bgMode;
 
     //$2106  MOSAIC
-    uint8  mosaic_size;
-    uint16 mosaic_countdown;
+    uint8  mosaicSize;
+    uint16 mosaicCountdown;
 
     //$210d  BG1HOFS
-    uint16 mode7_hoffset;
+    uint16 hoffsetMode7;
 
     //$210e  BG1VOFS
-    uint16 mode7_voffset;
+    uint16 voffsetMode7;
 
     //$2115  VMAIN
-    bool vram_incmode;
-    uint8 vram_mapping;
-    uint8 vram_incsize;
+    bool vramIncrementMode;
+    uint8 vramMapping;
+    uint8 vramIncrementSize;
 
     //$2116  VMADDL
     //$2117  VMADDH
-    uint16 vram_addr;
+    uint16 vramAddress;
 
     //$211a  M7SEL
-    uint8 mode7_repeat;
-    bool mode7_vflip;
-    bool mode7_hflip;
+    uint8 repeatMode7;
+    bool vflipMode7;
+    bool hflipMode7;
 
     //$211b  M7A
     uint16 m7a;
@@ -132,7 +137,7 @@ privileged:
     uint16 m7y;
 
     //$2121  CGADD
-    uint16 cgram_addr;
+    uint9 cgramAddress;
 
     //$2132  COLDATA
     uint16 color_rgb;
@@ -142,8 +147,8 @@ privileged:
     //determine if entire frame should be interlaced/non-interlace
     //and overscan adjusted. therefore, the variables act sort of
     //like a buffer, but they do still affect internal rendering
-    bool mode7_extbg;
-    bool pseudo_hires;
+    bool extbg;
+    bool pseudoHires;
     bool overscan;
     bool interlace;
 
@@ -152,30 +157,24 @@ privileged:
 
     //$213d  OPVCT
     uint16 vcounter;
-  } regs;
-
-  auto set_frameskip(uint frameskip) -> void;
-
-  enum : uint { OAM = 4, BACK = 5, COL = 5 };
+  } r;
 
   uint line;
 
   struct {
     //$2101
-    uint8  oam_basesize;
-    uint8  oam_nameselect;
-    uint16 oam_tdaddr;
+    uint8  oam_baseSize;
+    uint8  oam_nameSelect;
+    uint16 oam_tiledataAddress;
 
     //$210d-$210e
-    uint16 mode7_hoffset, mode7_voffset;
+    uint16 hoffsetMode7, voffsetMode7;
 
     //$211b-$2120
     uint16 m7a, m7b, m7c, m7d, m7x, m7y;
   } cache;
 
-  uint16 mosaic_table[16][4096];
-  uint frameskip;
-  uint framecounter;
+  uint16 mosaicTable[16][4096];
 
   #include "background/background.hpp"
   #include "screen/screen.hpp"
@@ -187,12 +186,12 @@ privileged:
   Background bg2;
   Background bg3;
   Background bg4;
-  Sprite sprite;
+  OAM oam;
   Window window;
   Screen screen;
 
   friend class PPU::Background;
-  friend class PPU::Sprite;
+  friend class PPU::OAM;
   friend class PPU::Window;
   friend class PPU::Screen;
   friend class Scheduler;

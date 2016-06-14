@@ -1,6 +1,6 @@
 auto PPU::getVramAddress() -> uint16 {
-  uint16 addr = regs.vram_addr;
-  switch(regs.vram_mapping) {
+  uint16 addr = r.vramAddress;
+  switch(r.vramMapping) {
     case 0: break;  //direct mapping
     case 1: addr = (addr & 0xff00) | ((addr & 0x001f) << 3) | ((addr >> 5) & 7); break;
     case 2: addr = (addr & 0xfe00) | ((addr & 0x003f) << 3) | ((addr >> 6) & 7); break;
@@ -14,11 +14,11 @@ auto PPU::getVramAddress() -> uint16 {
 //been validated on hardware, as has the edge case where the S-CPU MDR can be written if the
 //write occurs during the very last clock cycle of vblank.
 
-auto PPU::vramRead(uint16 addr) -> uint8 {
+auto PPU::vramRead(uint addr) -> uint8 {
   uint8 data;
 
-  if(regs.display_disable) {
-    data = vram[addr];
+  if(r.displayDisable) {
+    data = memory.vram[addr];
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
@@ -31,29 +31,29 @@ auto PPU::vramRead(uint16 addr) -> uint8 {
       data = 0x00;
     } else if(v == vdisp() - 1) {
       if(h == 1362) {
-        data = vram[addr];
+        data = memory.vram[addr];
       } else {
         data = 0x00;
       }
     } else {
-      data = vram[addr];
+      data = memory.vram[addr];
     }
   }
 
   return data;
 }
 
-auto PPU::vramWrite(uint16 addr, uint8 data) -> void {
-  if(regs.display_disable) {
-    vram[addr] = data;
+auto PPU::vramWrite(uint addr, uint8 data) -> void {
+  if(r.displayDisable) {
+    memory.vram[addr] = data;
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
     if(v == 0) {
       if(h <= 4) {
-        vram[addr] = data;
+        memory.vram[addr] = data;
       } else if(h == 6) {
-        vram[addr] = cpu.r.mdr;
+        memory.vram[addr] = cpu.r.mdr;
       } else {
         //no write
       }
@@ -63,65 +63,65 @@ auto PPU::vramWrite(uint16 addr, uint8 data) -> void {
       if(h <= 4) {
         //no write
       } else {
-        vram[addr] = data;
+        memory.vram[addr] = data;
       }
     } else {
-      vram[addr] = data;
+      memory.vram[addr] = data;
     }
   }
 }
 
-auto PPU::oamRead(uint16 addr) -> uint8 {
+auto PPU::oamRead(uint addr) -> uint8 {
   addr &= 0x03ff;
   if(addr & 0x0200) addr &= 0x021f;
   uint8 data;
 
-  if(regs.display_disable) {
-    data = oam[addr];
+  if(r.displayDisable) {
+    data = memory.oam[addr];
   } else {
     if(cpu.vcounter() < vdisp()) {
-      data = oam[regs.oam_iaddr];
+      data = memory.oam[latch.oamAddress];
     } else {
-      data = oam[addr];
+      data = memory.oam[addr];
     }
   }
 
   return data;
 }
 
-auto PPU::oamWrite(uint16 addr, uint8 data) -> void {
+auto PPU::oamWrite(uint addr, uint8 data) -> void {
   addr &= 0x03ff;
   if(addr & 0x0200) addr &= 0x021f;
 
-  sprite_list_valid = false;
+  spriteListValid = false;
 
-  if(regs.display_disable) {
-    oam[addr] = data;
-    update_sprite_list(addr, data);
+  if(r.displayDisable) {
+    memory.oam[addr] = data;
+    updateSpriteList(addr, data);
   } else {
     if(cpu.vcounter() < vdisp()) {
-      oam[regs.oam_iaddr] = data;
-      update_sprite_list(regs.oam_iaddr, data);
+      memory.oam[latch.oamAddress] = data;
+      updateSpriteList(latch.oamAddress, data);
     } else {
-      oam[addr] = data;
-      update_sprite_list(addr, data);
+      memory.oam[addr] = data;
+      updateSpriteList(addr, data);
     }
   }
 }
 
-auto PPU::cgramRead(uint16 addr) -> uint8 {
+auto PPU::cgramRead(uint addr) -> uint8 {
   addr &= 0x01ff;
   uint8 data;
 
-  if(1 || regs.display_disable) {
-    data = cgram[addr];
+  if(1 || r.displayDisable) {
+    data = memory.cgram[addr];
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
     if(v < vdisp() && h >= 128 && h < 1096) {
-      data = cgram[regs.cgram_iaddr] & 0x7f;
+      data = memory.cgram[latch.cgramAddress] & 0x7f;
     } else {
-      data = cgram[addr];
+      data = memory.cgram[addr];
     }
   }
 
@@ -129,19 +129,19 @@ auto PPU::cgramRead(uint16 addr) -> uint8 {
   return data;
 }
 
-auto PPU::cgramWrite(uint16 addr, uint8 data) -> void {
+auto PPU::cgramWrite(uint addr, uint8 data) -> void {
   addr &= 0x01ff;
   if(addr & 1) data &= 0x7f;
 
-  if(1 || regs.display_disable) {
-    cgram[addr] = data;
+  if(1 || r.displayDisable) {
+    memory.cgram[addr] = data;
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
     if(v < vdisp() && h >= 128 && h < 1096) {
-      cgram[regs.cgram_iaddr] = data & 0x7f;
+      memory.cgram[latch.cgramAddress] = data & 0x7f;
     } else {
-      cgram[addr] = data;
+      memory.cgram[addr] = data;
     }
   }
 }

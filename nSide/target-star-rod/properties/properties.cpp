@@ -26,129 +26,129 @@ auto PropertiesViewer::updateProperties() -> void {
   switch(sourceSelection.selected().offset()) {
   case 0: { //PPU
     output.append("$2100  INIDISP\n"
-      "  Display Disable = ", SuperFamicom::ppu.regs.display_disable, "\n",
-      "  Display Brightness = ", SuperFamicom::ppu.regs.display_brightness, "\n",
+      "  Display Brightness = ", SuperFamicom::ppu.r.displayBrightness, "\n",
+      "  Display Disable = ", SuperFamicom::ppu.r.displayDisable, "\n",
       "\n"
     );
 
     output.append("$2101  OBSEL\n"
-      "  Base Size = ", SuperFamicom::ppu.sprite.regs.base_size, "\n",
-      "  Name Select = $", hex(SuperFamicom::ppu.sprite.regs.nameselect << 13, 4L), "\n",
-      "  Tiledata Address = $", hex(SuperFamicom::ppu.sprite.regs.tiledata_addr, 4L), "\n",
+      "  OAM Tiledata Address = $", hex(SuperFamicom::ppu.oam.r.tiledataAddress, 4L), "\n",
+      "  OAM Name Select = $", hex(SuperFamicom::ppu.oam.r.nameSelect << 13, 4L), "\n",
+      "  OAM Base Size = ", SuperFamicom::ppu.oam.r.baseSize, "\n",
       "\n"
     );
 
     output.append("$2102  OAMADDL\n"
                   "$2103  OAMADDH\n"
-      "  Base Address = $", hex(SuperFamicom::ppu.regs.oam_baseaddr, 4L), "\n",
-      "  Priority = ", SuperFamicom::ppu.regs.oam_priority, "\n",
+      "  OAM Priority = ", SuperFamicom::ppu.r.oamPriority, "\n",
+      "  OAM Base Address = $", hex(SuperFamicom::ppu.r.oamBaseAddress, 4L), "\n",
       "\n"
     );
 
     output.append("$2105  BGMODE\n"
-      "  Mode = ", SuperFamicom::ppu.regs.bgmode, "\n",
-      "  BG3 Priority = ", SuperFamicom::ppu.regs.bg3_priority, "\n",
-      "  BG1 Tile Size = ", SuperFamicom::ppu.bg1.regs.tile_size ? "16×16" : "8×8", "\n",
-      "  BG2 Tile Size = ", SuperFamicom::ppu.bg2.regs.tile_size ? "16×16" : "8×8", "\n",
-      "  BG3 Tile Size = ", SuperFamicom::ppu.bg3.regs.tile_size ? "16×16" : "8×8", "\n",
-      "  BG4 Tile Size = ", SuperFamicom::ppu.bg4.regs.tile_size ? "16×16" : "8×8", "\n",
+      "  BG Mode = ", SuperFamicom::ppu.r.bgMode, "\n",
+      "  BG Priority = ", SuperFamicom::ppu.r.bgPriority, "\n",
+      "  BG1 Tile Size = ", SuperFamicom::ppu.bg1.r.tileSize ? "16×16" : "8×8", "\n",
+      "  BG2 Tile Size = ", SuperFamicom::ppu.bg2.r.tileSize ? "16×16" : "8×8", "\n",
+      "  BG3 Tile Size = ", SuperFamicom::ppu.bg3.r.tileSize ? "16×16" : "8×8", "\n",
+      "  BG4 Tile Size = ", SuperFamicom::ppu.bg4.r.tileSize ? "16×16" : "8×8", "\n",
       "\n"
     );
 
     output.append("$2106  MOSAIC\n"
-      "  BG1 Mosaic = ", 1u + SuperFamicom::ppu.bg1.regs.mosaic, "×", 1u + SuperFamicom::ppu.bg1.regs.mosaic, "\n",
-      "  BG2 Mosaic = ", 1u + SuperFamicom::ppu.bg2.regs.mosaic, "×", 1u + SuperFamicom::ppu.bg2.regs.mosaic, "\n",
-      "  BG3 Mosaic = ", 1u + SuperFamicom::ppu.bg3.regs.mosaic, "×", 1u + SuperFamicom::ppu.bg3.regs.mosaic, "\n",
-      "  BG4 Mosaic = ", 1u + SuperFamicom::ppu.bg4.regs.mosaic, "×", 1u + SuperFamicom::ppu.bg4.regs.mosaic, "\n",
+      "  BG1 Mosaic = ", 1u + SuperFamicom::ppu.bg1.r.mosaic, "×", 1u + SuperFamicom::ppu.bg1.r.mosaic, "\n",
+      "  BG2 Mosaic = ", 1u + SuperFamicom::ppu.bg2.r.mosaic, "×", 1u + SuperFamicom::ppu.bg2.r.mosaic, "\n",
+      "  BG3 Mosaic = ", 1u + SuperFamicom::ppu.bg3.r.mosaic, "×", 1u + SuperFamicom::ppu.bg3.r.mosaic, "\n",
+      "  BG4 Mosaic = ", 1u + SuperFamicom::ppu.bg4.r.mosaic, "×", 1u + SuperFamicom::ppu.bg4.r.mosaic, "\n",
       "\n"
     );
 
     static lstring screenSizes = {"32x×32y", "64x×32y", "32x×64y", "64x×64y"};
 
     output.append("$2107  BG1SC\n"
-      "  BG1 Screen Address = $", hex(SuperFamicom::ppu.bg1.regs.screen_addr, 4L), "\n",
-      "  BG1 Screen Size = ", screenSizes[SuperFamicom::ppu.bg1.regs.screen_size], "\n",
+      "  BG1 Screen Size = ", screenSizes[SuperFamicom::ppu.bg1.r.screenSize], "\n",
+      "  BG1 Screen Address = $", hex(SuperFamicom::ppu.bg1.r.screenAddress, 4L), "\n",
       "\n"
     );
 
     output.append("$2108  BG2SC\n"
-      "  BG2 Screen Address = $", hex(SuperFamicom::ppu.bg2.regs.screen_addr, 4L), "\n",
-      "  BG2 Screen Size = ", screenSizes[SuperFamicom::ppu.bg2.regs.screen_size], "\n",
+      "  BG2 Screen Size = ", screenSizes[SuperFamicom::ppu.bg2.r.screenSize], "\n",
+      "  BG2 Screen Address = $", hex(SuperFamicom::ppu.bg2.r.screenAddress, 4L), "\n",
       "\n"
     );
 
     output.append("$2109  BG3SC\n"
-      "  BG3 Screen Address = $", hex(SuperFamicom::ppu.bg3.regs.screen_addr, 4L), "\n",
-      "  BG3 Screen Size = ", screenSizes[SuperFamicom::ppu.bg3.regs.screen_size], "\n",
+      "  BG3 Screen Size = ", screenSizes[SuperFamicom::ppu.bg3.r.screenSize], "\n",
+      "  BG3 Screen Address = $", hex(SuperFamicom::ppu.bg3.r.screenAddress, 4L), "\n",
       "\n"
     );
 
     output.append("$210a  BG4SC\n"
-      "  BG4 Screen Address = $", hex(SuperFamicom::ppu.bg4.regs.screen_addr, 4L), "\n",
-      "  BG4 Screen Size = ", screenSizes[SuperFamicom::ppu.bg4.regs.screen_size], "\n",
+      "  BG4 Screen Size = ", screenSizes[SuperFamicom::ppu.bg4.r.screenSize], "\n",
+      "  BG4 Screen Address = $", hex(SuperFamicom::ppu.bg4.r.screenAddress, 4L), "\n",
       "\n"
     );
 
     output.append("$210b  BG12NBA\n"
-      "  BG1 Tiledata Address = $", hex(SuperFamicom::ppu.bg1.regs.tiledata_addr, 4L), "\n",
-      "  BG2 Tiledata Address = $", hex(SuperFamicom::ppu.bg2.regs.tiledata_addr, 4L), "\n",
+      "  BG1 Tiledata Address = $", hex(SuperFamicom::ppu.bg1.r.tiledataAddress, 4L), "\n",
+      "  BG2 Tiledata Address = $", hex(SuperFamicom::ppu.bg2.r.tiledataAddress, 4L), "\n",
       "\n"
     );
 
     output.append("$210c  BG34NBA\n"
-      "  BG3 Tiledata Address = $", hex(SuperFamicom::ppu.bg3.regs.tiledata_addr, 4L), "\n",
-      "  BG4 Tiledata Address = $", hex(SuperFamicom::ppu.bg4.regs.tiledata_addr, 4L), "\n",
+      "  BG3 Tiledata Address = $", hex(SuperFamicom::ppu.bg3.r.tiledataAddress, 4L), "\n",
+      "  BG4 Tiledata Address = $", hex(SuperFamicom::ppu.bg4.r.tiledataAddress, 4L), "\n",
       "\n"
     );
 
     static lstring vramMappings = {"Direct", "2-bit", "4-bit", "8-bit"};
     output.append("$2115  VMAINC\n"
-      "  VRAM Increment Mode = ", SuperFamicom::ppu.regs.vram_incmode ? "high" : "low", "\n",
-      "  VRAM Increment Mapping = ", vramMappings[SuperFamicom::ppu.regs.vram_mapping], "\n",
-      "  VRAM Increment Size = ", SuperFamicom::ppu.regs.vram_incsize, "\n",
+      "  VRAM Increment Mode = ", SuperFamicom::ppu.r.vramIncrementMode ? "high" : "low", "\n",
+      "  VRAM Mapping        = ", vramMappings[SuperFamicom::ppu.r.vramMapping], "\n",
+      "  VRAM Increment Size = ", SuperFamicom::ppu.r.vramIncrementSize, "\n",
       "\n"
     );
 
     output.append("$2116  VMADDL\n"
                   "$2117  VMADDH\n"
-      "  VRAM Address = $", hex(SuperFamicom::ppu.regs.vram_addr << 1, 4L),
-      ", $", hex(SuperFamicom::ppu.regs.vram_addr, 4L), "\n",
+      "  VRAM Address = $", hex(SuperFamicom::ppu.r.vramAddress << 1, 4L),
+      " ($", hex(SuperFamicom::ppu.r.vramAddress, 4L), ")\n",
       "\n"
     );
 
     output.append("$212c  TM\n"
-      "  BG1 Main = ", SuperFamicom::ppu.bg1.regs.main_enable ? "Enabled" : "Disabled", "\n",
-      "  BG2 Main = ", SuperFamicom::ppu.bg2.regs.main_enable ? "Enabled" : "Disabled", "\n",
-      "  BG3 Main = ", SuperFamicom::ppu.bg3.regs.main_enable ? "Enabled" : "Disabled", "\n",
-      "  BG4 Main = ", SuperFamicom::ppu.bg4.regs.main_enable ? "Enabled" : "Disabled", "\n",
-      "  OBJ Main = ", SuperFamicom::ppu.sprite.regs.main_enable ? "Enabled" : "Disabled", "\n",
+      "  BG1 Above = ", SuperFamicom::ppu.bg1.r.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  BG2 Above = ", SuperFamicom::ppu.bg2.r.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  BG3 Above = ", SuperFamicom::ppu.bg3.r.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  BG4 Above = ", SuperFamicom::ppu.bg4.r.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  OAM Above = ", SuperFamicom::ppu.oam.r.aboveEnable ? "Enabled" : "Disabled", "\n",
       "\n"
     );
 
     output.append("$212d  TS\n"
-      "  BG1 Sub = ", SuperFamicom::ppu.bg1.regs.sub_enable ? "Enabled" : "Disabled", "\n",
-      "  BG2 Sub = ", SuperFamicom::ppu.bg2.regs.sub_enable ? "Enabled" : "Disabled", "\n",
-      "  BG3 Sub = ", SuperFamicom::ppu.bg3.regs.sub_enable ? "Enabled" : "Disabled", "\n",
-      "  BG4 Sub = ", SuperFamicom::ppu.bg4.regs.sub_enable ? "Enabled" : "Disabled", "\n",
-      "  OBJ Sub = ", SuperFamicom::ppu.sprite.regs.main_enable ? "Enabled" : "Disabled", "\n",
+      "  BG1 Below = ", SuperFamicom::ppu.bg1.r.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  BG2 Below = ", SuperFamicom::ppu.bg2.r.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  BG3 Below = ", SuperFamicom::ppu.bg3.r.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  BG4 Below = ", SuperFamicom::ppu.bg4.r.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  OAM Below = ", SuperFamicom::ppu.oam.r.belowEnable ? "Enabled" : "Disabled", "\n",
       "\n"
     );
 
     output.append("$212e  TMW\n"
-      "  BG1 Main Window = ", SuperFamicom::ppu.window.regs.bg1_main_enable ? "Enabled" : "Disabled", "\n",
-      "  BG2 Main Window = ", SuperFamicom::ppu.window.regs.bg2_main_enable ? "Enabled" : "Disabled", "\n",
-      "  BG3 Main Window = ", SuperFamicom::ppu.window.regs.bg3_main_enable ? "Enabled" : "Disabled", "\n",
-      "  BG4 Main Window = ", SuperFamicom::ppu.window.regs.bg4_main_enable ? "Enabled" : "Disabled", "\n",
-      "  OBJ Main Window = ", SuperFamicom::ppu.window.regs.oam_main_enable ? "Enabled" : "Disabled", "\n",
+      "  BG1 Above Window = ", SuperFamicom::ppu.window.r.bg1.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  BG2 Above Window = ", SuperFamicom::ppu.window.r.bg2.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  BG3 Above Window = ", SuperFamicom::ppu.window.r.bg3.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  BG4 Above Window = ", SuperFamicom::ppu.window.r.bg4.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  OAM Above Window = ", SuperFamicom::ppu.window.r.oam.aboveEnable ? "Enabled" : "Disabled", "\n",
       "\n"
     );
 
     output.append("$212f  TSW\n"
-      "  BG1 Sub Window = ", SuperFamicom::ppu.window.regs.bg1_sub_enable ? "Enabled" : "Disabled", "\n",
-      "  BG2 Sub Window = ", SuperFamicom::ppu.window.regs.bg2_sub_enable ? "Enabled" : "Disabled", "\n",
-      "  BG3 Sub Window = ", SuperFamicom::ppu.window.regs.bg3_sub_enable ? "Enabled" : "Disabled", "\n",
-      "  BG4 Sub Window = ", SuperFamicom::ppu.window.regs.bg4_sub_enable ? "Enabled" : "Disabled", "\n",
-      "  OBJ Sub Window = ", SuperFamicom::ppu.window.regs.oam_sub_enable ? "Enabled" : "Disabled", "\n",
+      "  BG1 Below Window = ", SuperFamicom::ppu.window.r.bg1.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  BG2 Below Window = ", SuperFamicom::ppu.window.r.bg2.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  BG3 Below Window = ", SuperFamicom::ppu.window.r.bg3.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  BG4 Below Window = ", SuperFamicom::ppu.window.r.bg4.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  OAM Below Window = ", SuperFamicom::ppu.window.r.oam.belowEnable ? "Enabled" : "Disabled", "\n",
       "\n"
     );
 

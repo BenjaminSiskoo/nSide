@@ -14,102 +14,101 @@ auto PPU::serialize(serializer& s) -> void {
   Thread::serialize(s);
   PPUcounter::serialize(s);
 
-  s.array(vram);
-  s.array(oam);
-  s.array(cgram);
+  s.array(memory.vram);
+  s.array(memory.oam);
+  s.array(memory.cgram);
 
-  s.integer(ppu1_version);
-  s.integer(ppu2_version);
+  s.integer(ppu1.version);
+  s.integer(ppu1.mdr);
+
+  s.integer(ppu2.version);
+  s.integer(ppu2.mdr);
 
   s.integer(line);
 
   s.integer(display.interlace);
   s.integer(display.overscan);
 
-  s.integer(cache.oam_basesize);
-  s.integer(cache.oam_nameselect);
-  s.integer(cache.oam_tdaddr);
+  s.integer(cache.oam_baseSize);
+  s.integer(cache.oam_nameSelect);
+  s.integer(cache.oam_tiledataAddress);
 
-  s.integer(regs.ppu1_mdr);
-  s.integer(regs.ppu2_mdr);
-  for(uint n : range(4)) s.integer(regs.bg_y[n]);
+  for(uint n : range(4)) s.integer(r.bg_y[n]);
 
-  s.integer(regs.oam_iaddr);
-  s.integer(regs.cgram_iaddr);
+  s.integer(latch.vram);
+  s.integer(latch.oam);
+  s.integer(latch.cgram);
+  s.integer(latch.bgofs);
+  s.integer(latch.mode7);
+  s.integer(latch.counters);
+  s.integer(latch.hcounter);
+  s.integer(latch.vcounter);
 
-  s.integer(regs.display_disable);
-  s.integer(regs.display_brightness);
+  s.integer(latch.oamAddress);
+  s.integer(latch.cgramAddress);
 
-  s.integer(regs.oam_baseaddr);
-  s.integer(regs.oam_addr);
-  s.integer(regs.oam_priority);
+  s.integer(r.displayDisable);
+  s.integer(r.displayBrightness);
 
-  s.integer(regs.oam_latchdata);
+  s.integer(r.oamBaseAddress);
+  s.integer(r.oamAddress);
+  s.integer(r.oamPriority);
 
-  s.integer(regs.bg3_priority);
-  s.integer(regs.bgmode);
+  s.integer(r.bgPriority);
+  s.integer(r.bgMode);
 
-  s.integer(regs.mosaic_size);
-  s.integer(regs.mosaic_countdown);
+  s.integer(r.mosaicSize);
+  s.integer(r.mosaicCountdown);
 
-  s.integer(regs.bgofs_latchdata);
-  s.integer(regs.mode7_hoffset);
-  s.integer(regs.mode7_voffset);
+  s.integer(r.hoffsetMode7);
+  s.integer(r.voffsetMode7);
 
-  s.integer(regs.vram_incmode);
-  s.integer(regs.vram_mapping);
-  s.integer(regs.vram_incsize);
+  s.integer(r.vramIncrementMode);
+  s.integer(r.vramMapping);
+  s.integer(r.vramIncrementSize);
 
-  s.integer(regs.vram_addr);
+  s.integer(r.vramAddress);
 
-  s.integer(regs.mode7_repeat);
-  s.integer(regs.mode7_vflip);
-  s.integer(regs.mode7_hflip);
+  s.integer(r.repeatMode7);
+  s.integer(r.vflipMode7);
+  s.integer(r.hflipMode7);
 
-  s.integer(regs.mode7_latchdata);
-  s.integer(regs.m7a);
-  s.integer(regs.m7b);
-  s.integer(regs.m7c);
-  s.integer(regs.m7d);
-  s.integer(regs.m7x);
-  s.integer(regs.m7y);
+  s.integer(r.m7a);
+  s.integer(r.m7b);
+  s.integer(r.m7c);
+  s.integer(r.m7d);
+  s.integer(r.m7x);
+  s.integer(r.m7y);
 
-  s.integer(regs.cgram_addr);
+  s.integer(r.cgramAddress);
 
-  s.integer(regs.cgram_latchdata);
+  s.integer(r.color_rgb);
 
-  s.integer(regs.color_rgb);
+  s.integer(r.extbg);
+  s.integer(r.pseudoHires);
+  s.integer(r.overscan);
+  s.integer(r.interlace);
 
-  s.integer(regs.mode7_extbg);
-  s.integer(regs.pseudo_hires);
-  s.integer(regs.overscan);
-  s.integer(regs.interlace);
-
-  s.integer(regs.hcounter);
-  s.integer(regs.vcounter);
-  s.integer(regs.latch_hcounter);
-  s.integer(regs.latch_vcounter);
-  s.integer(regs.counters_latched);
-
-  s.integer(regs.vram_readbuffer);
+  s.integer(r.hcounter);
+  s.integer(r.vcounter);
 
   for(uint n : range(256)) {
-    s.integer(pixelCache[n].src_main);
-    s.integer(pixelCache[n].src_sub);
-    s.integer(pixelCache[n].bg_main);
-    s.integer(pixelCache[n].bg_sub);
-    s.integer(pixelCache[n].ce_main);
-    s.integer(pixelCache[n].ce_sub);
-    s.integer(pixelCache[n].pri_main);
-    s.integer(pixelCache[n].pri_sub);
+    s.integer(pixelCache[n].src_above);
+    s.integer(pixelCache[n].src_below);
+    s.integer(pixelCache[n].bg_above);
+    s.integer(pixelCache[n].bg_below);
+    s.integer(pixelCache[n].ce_above);
+    s.integer(pixelCache[n].ce_below);
+    s.integer(pixelCache[n].pri_above);
+    s.integer(pixelCache[n].pri_below);
   }
 
   //better to just take a small speed hit than store all of bg_tiledata[3][] ...
-  flush_tiledata_cache();
+  flushTiledataCache();
 
   for(uint n : range(6)) {
-    s.array(windowCache[n].main, 256);
-    s.array(windowCache[n].sub,  256);
+    s.array(windowCache[n].above, 256);
+    s.array(windowCache[n].below, 256);
   }
 
   for(uint n : range(4)) {
@@ -122,147 +121,147 @@ auto PPU::serialize(serializer& s) -> void {
   }
 
   for(uint n : range(128)) {
-    s.integer(sprite_list[n].width);
-    s.integer(sprite_list[n].height);
-    s.integer(sprite_list[n].x);
-    s.integer(sprite_list[n].y);
-    s.integer(sprite_list[n].character);
-    s.integer(sprite_list[n].use_nameselect);
-    s.integer(sprite_list[n].vflip);
-    s.integer(sprite_list[n].hflip);
-    s.integer(sprite_list[n].palette);
-    s.integer(sprite_list[n].priority);
-    s.integer(sprite_list[n].size);
+    s.integer(spriteList[n].width);
+    s.integer(spriteList[n].height);
+    s.integer(spriteList[n].x);
+    s.integer(spriteList[n].y);
+    s.integer(spriteList[n].character);
+    s.integer(spriteList[n].nameSelect);
+    s.integer(spriteList[n].vflip);
+    s.integer(spriteList[n].hflip);
+    s.integer(spriteList[n].palette);
+    s.integer(spriteList[n].priority);
+    s.integer(spriteList[n].size);
   }
-  s.integer(sprite_list_valid);
-  s.integer(active_sprite);
+  s.integer(spriteListValid);
+  s.integer(activeSprite);
 
-  s.array(oam_itemlist, 32);
+  s.array(oam_itemList, 32);
 
   for(uint n : range(34)) {
-    s.integer(oam_tilelist[n].x);
-    s.integer(oam_tilelist[n].y);
-    s.integer(oam_tilelist[n].pri);
-    s.integer(oam_tilelist[n].pal);
-    s.integer(oam_tilelist[n].tile);
-    s.integer(oam_tilelist[n].hflip);
+    s.integer(oam_tileList[n].x);
+    s.integer(oam_tileList[n].y);
+    s.integer(oam_tileList[n].pri);
+    s.integer(oam_tileList[n].pal);
+    s.integer(oam_tileList[n].tile);
+    s.integer(oam_tileList[n].hflip);
   }
 
-  s.array(oam_line_pal, 256);
-  s.array(oam_line_pri, 256);
+  s.array(oam_linePalette, 256);
+  s.array(oam_linePriority, 256);
 
   bg1.serialize(s);
   bg2.serialize(s);
   bg3.serialize(s);
   bg4.serialize(s);
-  sprite.serialize(s);
+  oam.serialize(s);
   window.serialize(s);
   screen.serialize(s);
 }
 
 auto PPU::Background::serialize(serializer& s) -> void {
-  s.integer(regs.tiledata_addr);
-  s.integer(regs.screen_addr);
-  s.integer(regs.screen_size);
-  s.integer(regs.mosaic_enabled);
-  s.integer(regs.tile_size);
+  s.integer(r.tiledataAddress);
+  s.integer(r.screenAddress);
+  s.integer(r.screenSize);
+  s.integer(r.mosaicEnabled);
+  s.integer(r.tileSize);
 
-  s.integer(regs.main_enable);
-  s.integer(regs.sub_enable);
+  s.integer(r.aboveEnable);
+  s.integer(r.belowEnable);
 
-  s.integer(regs.hoffset);
-  s.integer(regs.voffset);
+  s.integer(r.hoffset);
+  s.integer(r.voffset);
 }
 
-auto PPU::Sprite::serialize(serializer& s) -> void {
-  s.integer(t.item_count);
-  s.integer(t.tile_count);
+auto PPU::OAM::serialize(serializer& s) -> void {
+  s.integer(r.aboveEnable);
+  s.integer(r.belowEnable);
+  s.integer(r.interlace);
 
-  s.integer(regs.main_enable);
-  s.integer(regs.sub_enable);
-  s.integer(regs.interlace);
+  s.integer(r.baseSize);
+  s.integer(r.nameSelect);
+  s.integer(r.tiledataAddress);
+  s.integer(r.firstSprite);
 
-  s.integer(regs.base_size);
-  s.integer(regs.nameselect);
-  s.integer(regs.tiledata_addr);
-  s.integer(regs.first_sprite);
+  s.integer(r.timeOver);
+  s.integer(r.rangeOver);
 
-  s.integer(regs.time_over);
-  s.integer(regs.range_over);
+  s.integer(t.itemCount);
+  s.integer(t.tileCount);
 }
 
 auto PPU::Window::serialize(serializer& s) -> void {
-  s.integer(regs.bg1_one_enable);
-  s.integer(regs.bg1_one_invert);
-  s.integer(regs.bg1_two_enable);
-  s.integer(regs.bg1_two_invert);
+  s.integer(r.bg1.oneEnable);
+  s.integer(r.bg1.oneInvert);
+  s.integer(r.bg1.twoEnable);
+  s.integer(r.bg1.twoInvert);
+  s.integer(r.bg1.mask);
+  s.integer(r.bg1.aboveEnable);
+  s.integer(r.bg1.belowEnable);
   
-  s.integer(regs.bg2_one_enable);
-  s.integer(regs.bg2_one_invert);
-  s.integer(regs.bg2_two_enable);
-  s.integer(regs.bg2_two_invert);
+  s.integer(r.bg2.oneEnable);
+  s.integer(r.bg2.oneInvert);
+  s.integer(r.bg2.twoEnable);
+  s.integer(r.bg2.twoInvert);
+  s.integer(r.bg2.mask);
+  s.integer(r.bg2.aboveEnable);
+  s.integer(r.bg2.belowEnable);
 
-  s.integer(regs.bg3_one_enable);
-  s.integer(regs.bg3_one_invert);
-  s.integer(regs.bg3_two_enable);
-  s.integer(regs.bg3_two_invert);
+  s.integer(r.bg3.oneEnable);
+  s.integer(r.bg3.oneInvert);
+  s.integer(r.bg3.twoEnable);
+  s.integer(r.bg3.twoInvert);
+  s.integer(r.bg3.mask);
+  s.integer(r.bg3.aboveEnable);
+  s.integer(r.bg3.belowEnable);
 
-  s.integer(regs.bg4_one_enable);
-  s.integer(regs.bg4_one_invert);
-  s.integer(regs.bg4_two_enable);
-  s.integer(regs.bg4_two_invert);
+  s.integer(r.bg4.oneEnable);
+  s.integer(r.bg4.oneInvert);
+  s.integer(r.bg4.twoEnable);
+  s.integer(r.bg4.twoInvert);
+  s.integer(r.bg4.mask);
+  s.integer(r.bg4.aboveEnable);
+  s.integer(r.bg4.belowEnable);
 
-  s.integer(regs.oam_one_enable);
-  s.integer(regs.oam_one_invert);
-  s.integer(regs.oam_two_enable);
-  s.integer(regs.oam_two_invert);
+  s.integer(r.oam.oneEnable);
+  s.integer(r.oam.oneInvert);
+  s.integer(r.oam.twoEnable);
+  s.integer(r.oam.twoInvert);
+  s.integer(r.oam.mask);
+  s.integer(r.oam.aboveEnable);
+  s.integer(r.oam.belowEnable);
 
-  s.integer(regs.col_one_enable);
-  s.integer(regs.col_one_invert);
-  s.integer(regs.col_two_enable);
-  s.integer(regs.col_two_invert);
+  s.integer(r.col.oneEnable);
+  s.integer(r.col.oneInvert);
+  s.integer(r.col.twoEnable);
+  s.integer(r.col.twoInvert);
+  s.integer(r.col.mask);
+  s.integer(r.col.aboveMask);
+  s.integer(r.col.belowMask);
 
-  s.integer(regs.one_left);
-  s.integer(regs.one_right);
-  s.integer(regs.two_left);
-  s.integer(regs.two_right);
-
-  s.integer(regs.bg1_mask);
-  s.integer(regs.bg2_mask);
-  s.integer(regs.bg3_mask);
-  s.integer(regs.bg4_mask);
-  s.integer(regs.oam_mask);
-  s.integer(regs.col_mask);
-
-  s.integer(regs.bg1_main_enable);
-  s.integer(regs.bg1_sub_enable);
-  s.integer(regs.bg2_main_enable);
-  s.integer(regs.bg2_sub_enable);
-  s.integer(regs.bg3_main_enable);
-  s.integer(regs.bg3_sub_enable);
-  s.integer(regs.bg4_main_enable);
-  s.integer(regs.bg4_sub_enable);
-  s.integer(regs.oam_main_enable);
-  s.integer(regs.oam_sub_enable);
-
-  s.integer(regs.col_main_mask);
-  s.integer(regs.col_sub_mask);
+  s.integer(r.oneLeft);
+  s.integer(r.oneRight);
+  s.integer(r.twoLeft);
+  s.integer(r.twoRight);
 }
 
 auto PPU::Screen::serialize(serializer& s) -> void {
-  s.integer(regs.addsub_mode);
-  s.integer(regs.direct_color);
+  s.integer(r.blendMode);
+  s.integer(r.directColor);
 
-  s.integer(regs.color_mode);
-  s.integer(regs.color_halve);
-  s.integer(regs.bg1_color_enable);
-  s.integer(regs.bg2_color_enable);
-  s.integer(regs.bg3_color_enable);
-  s.integer(regs.bg4_color_enable);
-  s.integer(regs.oam_color_enable);
-  s.integer(regs.back_color_enable);
+  s.integer(r.colorMode);
+  s.integer(r.colorHalve);
+  s.integer(r.bg1.colorEnable);
+  s.integer(r.bg2.colorEnable);
+  s.integer(r.bg3.colorEnable);
+  s.integer(r.bg4.colorEnable);
+  s.integer(r.oam.colorEnable);
+  s.integer(r.back.colorEnable);
 
-  s.integer(regs.color_b);
-  s.integer(regs.color_g);
-  s.integer(regs.color_r);
+  s.integer(r.colorBlue);
+  s.integer(r.colorGreen);
+  s.integer(r.colorRed);
+
+  //Not necessary?
+  //s.integer(math.colorHalve);
 }

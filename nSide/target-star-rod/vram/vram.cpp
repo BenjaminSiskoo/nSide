@@ -83,7 +83,7 @@ auto VRAMViewer::updateTiles() -> void {
     }
   }
   dp = canvas.data();
-  const uint8* sp = SuperFamicom::ppu.vram;
+  const uint8* sp = SuperFamicom::ppu.memory.vram;
 
   switch(modeSelection.selected().offset()) {
   case 0: // 2BPP
@@ -99,7 +99,7 @@ auto VRAMViewer::updateTiles() -> void {
             //color *= 0x55;
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color += paletteSelection.selected().offset() << 2;
-            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -127,7 +127,7 @@ auto VRAMViewer::updateTiles() -> void {
             //color *= 0x11;
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color += paletteSelection.selected().offset() << 4;
-            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -158,7 +158,7 @@ auto VRAMViewer::updateTiles() -> void {
             color += d[7] & 0x80 ? 128 : 0;
             for(auto& b : d) b <<= 1;
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
-            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -180,7 +180,7 @@ auto VRAMViewer::updateTiles() -> void {
             uint color = 0;
             color += sp[x << 1 | 1];
             //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
-            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |

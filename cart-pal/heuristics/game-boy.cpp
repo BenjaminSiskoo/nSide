@@ -31,18 +31,20 @@ GameBoyCartridge::GameBoyCartridge(uint8_t* romdata, unsigned romsize) {
   info.romsize = 0;
   info.ramsize = 0;
 
-  unsigned base = romsize - 0x8000;
-  if(romdata[base + 0x0104] == 0xce && romdata[base + 0x0105] == 0xed
-  && romdata[base + 0x0106] == 0x66 && romdata[base + 0x0107] == 0x66
-  && romdata[base + 0x0108] == 0xcc && romdata[base + 0x0109] == 0x0d
-  && romdata[base + 0x0147] >= 0x0b && romdata[base + 0x0147] <= 0x0d
-  ) {
-    //MMM01 stores header at bottom of image
-    //flip this around for consistency with all other mappers
-    uint8_t header[0x8000];
-    memcpy(header, romdata + base, 0x8000);
-    memmove(romdata + 0x8000, romdata, romsize - 0x8000);
-    memcpy(romdata, header, 0x8000);
+  if(romsize >= 0x10000) {
+    uint base = romsize - 0x8000;
+    if(romdata[base + 0x0104] == 0xce && romdata[base + 0x0105] == 0xed
+    && romdata[base + 0x0106] == 0x66 && romdata[base + 0x0107] == 0x66
+    && romdata[base + 0x0108] == 0xcc && romdata[base + 0x0109] == 0x0d
+    && romdata[base + 0x0147] >= 0x0b && romdata[base + 0x0147] <= 0x0d
+    ) {
+      //MMM01 stores header at bottom of image
+      //flip this around for consistency with all other mappers
+      uint8_t header[0x8000];
+      memcpy(header, romdata + base, 0x8000);
+      memmove(romdata + 0x8000, romdata, romsize - 0x8000);
+      memcpy(romdata, header, 0x8000);
+    }
   }
 
   info.cgb     = (romdata[0x0143] & 0x80) == 0x80;

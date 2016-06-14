@@ -8,11 +8,6 @@ System system;
 #include "peripherals.cpp"
 #include "serialization.cpp"
 
-auto System::loaded() const -> bool { return _loaded; }
-auto System::revision() const -> Revision { return _revision; }
-auto System::region() const -> Region { return _region; }
-auto System::cpuFrequency() const -> uint { return _cpuFrequency; }
-
 auto System::run() -> void {
   scheduler.enter();
 }
