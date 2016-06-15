@@ -55,7 +55,6 @@ SMPRegisterEditor::SMPRegisterEditor() {
   });
 
   setGeometry({{128, 128}, layout.minimumSize()});
-  windowManager->append(this, "SMPRegisterEditor");
 }
 
 auto SMPRegisterEditor::loadRegisters() -> void {

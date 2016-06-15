@@ -3,6 +3,46 @@ unique_pointer<CPUDebugger> cpuDebugger;
 
 #include "registers.cpp"
 
+CPUDebugger::CPUDebugger() {
+  cpuDebugger = this;
+  opcodePC = 0x008000;
+
+  setTitle("CPU Debugger");
+  setGeometry({128, 128, 620, 260});
+
+  layout.setMargin(5);
+  stepInto.setText("Step Into");
+  stepNMI.setText("NMI");
+  stepIRQ.setText("IRQ");
+  autoUpdate.setText("Auto");
+  update.setText("Update");
+  disassembly.setFont(Font().setFamily(Font::Mono));
+  registers.setFont(Font().setFamily(Font::Mono));
+  registers.setText(" ");
+
+  stepInto.onActivate([&] {
+    debugger->flags.cpu.stepInto = true;
+    debugger->resume();
+  });
+
+  stepNMI.onActivate([&] {
+    debugger->flags.cpu.nmi = true;
+    debugger->resume();
+  });
+
+  stepIRQ.onActivate([&] {
+    debugger->flags.cpu.irq = true;
+    debugger->resume();
+  });
+
+  update.onActivate({ &CPUDebugger::updateDisassembly, this });
+
+  registers.onActivate([&] {
+    cpuRegisterEditor->loadRegisters();
+    cpuRegisterEditor->setVisible();
+  });
+}
+
 auto CPUDebugger::mirror(uint24 addr) -> uint24 {
   if((addr & 0x40e000) == 0x0000) addr = 0x7e0000 | (addr & 0x1fff);  //$00-3f:80-bf:0000-1fff WRAM
   return addr;
@@ -100,46 +140,4 @@ auto CPUDebugger::updateDisassembly() -> void {
     SuperFamicom::cpu.r.p.d ? "D" : "d", SuperFamicom::cpu.r.p.i ? "I" : "i",
     SuperFamicom::cpu.r.p.z ? "Z" : "z", SuperFamicom::cpu.r.p.c ? "C" : "c",
   });
-}
-
-CPUDebugger::CPUDebugger() {
-  cpuDebugger = this;
-  opcodePC = 0x008000;
-
-  setTitle("CPU Debugger");
-  setGeometry({128, 128, 620, 260});
-
-  layout.setMargin(5);
-  stepInto.setText("Step Into");
-  stepNMI.setText("NMI");
-  stepIRQ.setText("IRQ");
-  autoUpdate.setText("Auto");
-  update.setText("Update");
-  disassembly.setFont(Font().setFamily(Font::Mono));
-  registers.setFont(Font().setFamily(Font::Mono));
-  registers.setText(" ");
-
-  stepInto.onActivate([&] {
-    debugger->flags.cpu.stepInto = true;
-    debugger->resume();
-  });
-
-  stepNMI.onActivate([&] {
-    debugger->flags.cpu.nmi = true;
-    debugger->resume();
-  });
-
-  stepIRQ.onActivate([&] {
-    debugger->flags.cpu.irq = true;
-    debugger->resume();
-  });
-
-  update.onActivate({ &CPUDebugger::updateDisassembly, this });
-
-  registers.onActivate([&] {
-    cpuRegisterEditor->loadRegisters();
-    cpuRegisterEditor->setVisible();
-  });
-
-  windowManager->append(this, "CPUDebugger");
 }

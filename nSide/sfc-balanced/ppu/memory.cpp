@@ -18,7 +18,7 @@ auto PPU::vramRead(uint addr) -> uint8 {
   uint8 data;
 
   if(r.displayDisable) {
-    data = memory.vram[addr];
+    data = vram[addr];
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
@@ -31,12 +31,12 @@ auto PPU::vramRead(uint addr) -> uint8 {
       data = 0x00;
     } else if(v == vdisp() - 1) {
       if(h == 1362) {
-        data = memory.vram[addr];
+        data = vram[addr];
       } else {
         data = 0x00;
       }
     } else {
-      data = memory.vram[addr];
+      data = vram[addr];
     }
   }
 
@@ -45,15 +45,15 @@ auto PPU::vramRead(uint addr) -> uint8 {
 
 auto PPU::vramWrite(uint addr, uint8 data) -> void {
   if(r.displayDisable) {
-    memory.vram[addr] = data;
+    vram[addr] = data;
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
     if(v == 0) {
       if(h <= 4) {
-        memory.vram[addr] = data;
+        vram[addr] = data;
       } else if(h == 6) {
-        memory.vram[addr] = cpu.r.mdr;
+        vram[addr] = cpu.r.mdr;
       } else {
         //no write
       }
@@ -63,10 +63,10 @@ auto PPU::vramWrite(uint addr, uint8 data) -> void {
       if(h <= 4) {
         //no write
       } else {
-        memory.vram[addr] = data;
+        vram[addr] = data;
       }
     } else {
-      memory.vram[addr] = data;
+      vram[addr] = data;
     }
   }
 }
@@ -77,12 +77,12 @@ auto PPU::oamRead(uint addr) -> uint8 {
   uint8 data;
 
   if(r.displayDisable) {
-    data = memory.oam[addr];
+    data = oam[addr];
   } else {
     if(cpu.vcounter() < vdisp()) {
-      data = memory.oam[latch.oamAddress];
+      data = oam[latch.oamAddress];
     } else {
-      data = memory.oam[addr];
+      data = oam[addr];
     }
   }
 
@@ -96,14 +96,14 @@ auto PPU::oamWrite(uint addr, uint8 data) -> void {
   spriteListValid = false;
 
   if(r.displayDisable) {
-    memory.oam[addr] = data;
+    oam[addr] = data;
     updateSpriteList(addr, data);
   } else {
     if(cpu.vcounter() < vdisp()) {
-      memory.oam[latch.oamAddress] = data;
+      oam[latch.oamAddress] = data;
       updateSpriteList(latch.oamAddress, data);
     } else {
-      memory.oam[addr] = data;
+      oam[addr] = data;
       updateSpriteList(addr, data);
     }
   }
@@ -114,14 +114,14 @@ auto PPU::cgramRead(uint addr) -> uint8 {
   uint8 data;
 
   if(1 || r.displayDisable) {
-    data = memory.cgram[addr];
+    data = cgram[addr];
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
     if(v < vdisp() && h >= 128 && h < 1096) {
-      data = memory.cgram[latch.cgramAddress] & 0x7f;
+      data = cgram[latch.cgramAddress] & 0x7f;
     } else {
-      data = memory.cgram[addr];
+      data = cgram[addr];
     }
   }
 
@@ -134,14 +134,14 @@ auto PPU::cgramWrite(uint addr, uint8 data) -> void {
   if(addr & 1) data &= 0x7f;
 
   if(1 || r.displayDisable) {
-    memory.cgram[addr] = data;
+    cgram[addr] = data;
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
     if(v < vdisp() && h >= 128 && h < 1096) {
-      memory.cgram[latch.cgramAddress] = data & 0x7f;
+      cgram[latch.cgramAddress] = data & 0x7f;
     } else {
-      memory.cgram[addr] = data;
+      cgram[addr] = data;
     }
   }
 }

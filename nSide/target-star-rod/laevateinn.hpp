@@ -22,7 +22,6 @@ auto locateSystem(string name) -> string;
 #include "settings/settings.hpp"
 #include "debugger/debugger.hpp"
 #include "tracer/tracer.hpp"
-#include "window/window.hpp"
 #include "console/console.hpp"
 #include "presentation/presentation.hpp"
 #include "cpu/cpu.hpp"

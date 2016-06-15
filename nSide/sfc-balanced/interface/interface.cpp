@@ -545,14 +545,9 @@ auto Interface::exportMemory() -> void {
 
   // Registers
   string markup = "";
-  ppu.exportRegisters(markup);
   file::write({pathname, "registers.bml"}, markup);
 
   file::write({pathname, "work.ram"}, (uint8_t*)cpu.wram, 128 * 1024);
-  file::write({pathname, "video.ram"}, (uint8_t*)ppu.memory.vram, 64 * 1024);
-  file::write({pathname, "sprite.ram"}, (uint8_t*)ppu.memory.oam, 544);
-  file::write({pathname, "palette.ram"}, (uint8_t*)ppu.memory.cgram, 512);
-  file::write({pathname, "apu.ram"}, (uint8_t*)smp.apuram, 64 * 1024);
   if(cartridge.ram.size()) saveRequest(ID::RAM, "debug/program-save.ram");
   if(cartridge.hasEvent()) saveRequest(ID::EventRAM, "debug/event.ram");
   if(cartridge.hasSA1()) {

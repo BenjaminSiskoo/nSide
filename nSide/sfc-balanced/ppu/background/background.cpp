@@ -7,7 +7,7 @@ auto PPU::Background::getTile(uint x, uint y) -> uint {
   if(x & 0x20) pos += ppu.bg_info[id].scx;
 
   const uint16 addr = r.screenAddress + (pos << 1);
-  return ppu.memory.vram[addr] + (ppu.memory.vram[addr + 1] << 8);
+  return ppu.vram[addr] + (ppu.vram[addr + 1] << 8);
 }
 
 auto PPU::Background::reset() -> void {

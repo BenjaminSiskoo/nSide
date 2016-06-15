@@ -1,6 +1,18 @@
 #include "../laevateinn.hpp"
 unique_pointer<Tracer> tracer;
 
+Tracer::Tracer() {
+  tracer = this;
+  mask = false;
+  cpuMask = new uint8[0x200000]();
+  smpMask = new uint8[0x2000]();
+}
+
+Tracer::~Tracer() {
+  delete[] cpuMask;
+  delete[] smpMask;
+}
+
 auto Tracer::resetMask() -> void {
   memset(cpuMask, 0, 0x200000);
   memset(smpMask, 0, 0x2000);
@@ -41,16 +53,4 @@ auto Tracer::enable(bool state) -> void {
   string filename = {program->folderPaths(0), "debug/trace-", natural(n, 3L), ".log"};
   if(fp.open(filename, file::mode::write) == false) return;
   debugger->print("Tracing to ", filename, "\n");
-}
-
-Tracer::Tracer() {
-  tracer = this;
-  mask = false;
-  cpuMask = new uint8[0x200000]();
-  smpMask = new uint8[0x2000]();
-}
-
-Tracer::~Tracer() {
-  delete[] cpuMask;
-  delete[] smpMask;
 }

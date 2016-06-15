@@ -9,7 +9,6 @@ include processor/GNUmakefile
 
 ui_objects := star-rod-laevateinn star-rod-program star-rod-settings
 ui_objects += star-rod-debugger star-rod-tracer
-ui_objects += star-rod-window
 ui_objects += star-rod-console star-rod-presentation
 ui_objects += star-rod-cpu star-rod-smp star-rod-memory
 ui_objects += star-rod-breakpoint star-rod-properties
@@ -51,7 +50,6 @@ obj/star-rod-program.o: $(ui)/program/program.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-debugger.o: $(ui)/debugger/debugger.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-tracer.o: $(ui)/tracer/tracer.cpp $(call rwildcard,$(ui)/)
-obj/star-rod-window.o: $(ui)/window/window.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-console.o: $(ui)/console/console.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-cpu.o: $(ui)/cpu/cpu.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-smp.o: $(ui)/smp/smp.cpp $(call rwildcard,$(ui)/)

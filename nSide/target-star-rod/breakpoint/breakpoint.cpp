@@ -40,8 +40,6 @@ BreakpointEditor::BreakpointEditor() {
 
   setGeometry({128, 128, layout.minimumSize().width(), layout.minimumSize().height()});
   synchronize();
-
-  windowManager->append(this, "BreakpointEditor");
 }
 
 //enable checkbox toggled on one of the five BreakpointEntry items:
@@ -180,7 +178,7 @@ auto BreakpointEditor::testExecSMP(uint16 addr) -> bool {
 auto BreakpointEditor::testReadVRAM(uint16 addr) -> bool {
   for(auto &bp : breakpointReadVRAM) {
     if(bp.addr == addr) {
-      if(bp.compare && bp.data != SuperFamicom::ppu.memory.vram[addr]) continue;
+      if(bp.compare && bp.data != SuperFamicom::ppu.vram[addr]) continue;
       debugger->print("Breakpoint #", bp.id, " hit\n");
       return true;
     }
@@ -202,7 +200,7 @@ auto BreakpointEditor::testWriteVRAM(uint16 addr, uint8 data) -> bool {
 auto BreakpointEditor::testReadOAM(uint16 addr) -> bool {
   for(auto &bp : breakpointReadOAM) {
     if(bp.addr == addr) {
-      if(bp.compare && bp.data != SuperFamicom::ppu.memory.oam[addr]) continue;
+      if(bp.compare && bp.data != SuperFamicom::ppu.oam[addr]) continue;
       debugger->print("Breakpoint #", bp.id, " hit\n");
       return true;
     }
@@ -224,7 +222,7 @@ auto BreakpointEditor::testWriteOAM(uint16 addr, uint8 data) -> bool {
 auto BreakpointEditor::testReadCGRAM(uint16 addr) -> bool {
   for(auto &bp : breakpointReadCGRAM) {
     if(bp.addr == addr) {
-      if(bp.compare && bp.data != SuperFamicom::ppu.memory.cgram[addr]) continue;
+      if(bp.compare && bp.data != SuperFamicom::ppu.cgram[addr]) continue;
       debugger->print("Breakpoint #", bp.id, " hit\n");
       return true;
     }

@@ -16,8 +16,6 @@ PropertiesViewer::PropertiesViewer() {
 
   sourceSelection.onChange({ &PropertiesViewer::updateProperties, this });
   update.onActivate({ &PropertiesViewer::updateProperties, this });
-
-  windowManager->append(this, "PropertiesViewer");
 }
 
 auto PropertiesViewer::updateProperties() -> void {
@@ -32,9 +30,9 @@ auto PropertiesViewer::updateProperties() -> void {
     );
 
     output.append("$2101  OBSEL\n"
-      "  OAM Tiledata Address = $", hex(SuperFamicom::ppu.oam.r.tiledataAddress, 4L), "\n",
-      "  OAM Name Select = $", hex(SuperFamicom::ppu.oam.r.nameSelect << 13, 4L), "\n",
-      "  OAM Base Size = ", SuperFamicom::ppu.oam.r.baseSize, "\n",
+      "  OAM Tiledata Address = $", hex(SuperFamicom::ppu.obj.r.tiledataAddress, 4L), "\n",
+      "  OAM Name Select = $", hex(SuperFamicom::ppu.obj.r.nameSelect << 13, 4L), "\n",
+      "  OAM Base Size = ", SuperFamicom::ppu.obj.r.baseSize, "\n",
       "\n"
     );
 
@@ -121,7 +119,7 @@ auto PropertiesViewer::updateProperties() -> void {
       "  BG2 Above = ", SuperFamicom::ppu.bg2.r.aboveEnable ? "Enabled" : "Disabled", "\n",
       "  BG3 Above = ", SuperFamicom::ppu.bg3.r.aboveEnable ? "Enabled" : "Disabled", "\n",
       "  BG4 Above = ", SuperFamicom::ppu.bg4.r.aboveEnable ? "Enabled" : "Disabled", "\n",
-      "  OAM Above = ", SuperFamicom::ppu.oam.r.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  OBJ Above = ", SuperFamicom::ppu.obj.r.aboveEnable ? "Enabled" : "Disabled", "\n",
       "\n"
     );
 
@@ -130,7 +128,7 @@ auto PropertiesViewer::updateProperties() -> void {
       "  BG2 Below = ", SuperFamicom::ppu.bg2.r.belowEnable ? "Enabled" : "Disabled", "\n",
       "  BG3 Below = ", SuperFamicom::ppu.bg3.r.belowEnable ? "Enabled" : "Disabled", "\n",
       "  BG4 Below = ", SuperFamicom::ppu.bg4.r.belowEnable ? "Enabled" : "Disabled", "\n",
-      "  OAM Below = ", SuperFamicom::ppu.oam.r.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  OBJ Below = ", SuperFamicom::ppu.obj.r.belowEnable ? "Enabled" : "Disabled", "\n",
       "\n"
     );
 
@@ -139,7 +137,7 @@ auto PropertiesViewer::updateProperties() -> void {
       "  BG2 Above Window = ", SuperFamicom::ppu.window.r.bg2.aboveEnable ? "Enabled" : "Disabled", "\n",
       "  BG3 Above Window = ", SuperFamicom::ppu.window.r.bg3.aboveEnable ? "Enabled" : "Disabled", "\n",
       "  BG4 Above Window = ", SuperFamicom::ppu.window.r.bg4.aboveEnable ? "Enabled" : "Disabled", "\n",
-      "  OAM Above Window = ", SuperFamicom::ppu.window.r.oam.aboveEnable ? "Enabled" : "Disabled", "\n",
+      "  OBJ Above Window = ", SuperFamicom::ppu.window.r.obj.aboveEnable ? "Enabled" : "Disabled", "\n",
       "\n"
     );
 
@@ -148,7 +146,7 @@ auto PropertiesViewer::updateProperties() -> void {
       "  BG2 Below Window = ", SuperFamicom::ppu.window.r.bg2.belowEnable ? "Enabled" : "Disabled", "\n",
       "  BG3 Below Window = ", SuperFamicom::ppu.window.r.bg3.belowEnable ? "Enabled" : "Disabled", "\n",
       "  BG4 Below Window = ", SuperFamicom::ppu.window.r.bg4.belowEnable ? "Enabled" : "Disabled", "\n",
-      "  OAM Below Window = ", SuperFamicom::ppu.window.r.oam.belowEnable ? "Enabled" : "Disabled", "\n",
+      "  OBJ Below Window = ", SuperFamicom::ppu.window.r.obj.belowEnable ? "Enabled" : "Disabled", "\n",
       "\n"
     );
 

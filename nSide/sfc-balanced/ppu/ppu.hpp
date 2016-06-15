@@ -31,16 +31,11 @@ struct PPU : Thread, PPUcounter {
   auto latchCounters() -> void;
   auto updateVideoMode() -> void;
 
-  struct {
-    uint8 vram[128 * 1024];
-    uint8 oam[544];
-    uint8 cgram[512];
-  } memory;
-
-  //debugger functions
-  auto exportRegisters(string &markup) -> void;
-
 privileged:
+  uint8 vram[128 * 1024];
+  uint8 oam[544];
+  uint8 cgram[512];
+
   uint32* output = nullptr;
 
   struct {
@@ -61,7 +56,6 @@ privileged:
   } ppu1, ppu2;
 
   auto renderLine() -> void;
-  auto update_oam_status() -> void;
 
   struct Latches {
     uint16 vram;
@@ -163,9 +157,9 @@ privileged:
 
   struct {
     //$2101
-    uint8  oam_baseSize;
-    uint8  oam_nameSelect;
-    uint16 oam_tiledataAddress;
+    uint8  obj_baseSize;
+    uint8  obj_nameSelect;
+    uint16 obj_tiledataAddress;
 
     //$210d-$210e
     uint16 hoffsetMode7, voffsetMode7;
@@ -178,7 +172,7 @@ privileged:
 
   #include "background/background.hpp"
   #include "screen/screen.hpp"
-  #include "sprite/sprite.hpp"
+  #include "object/object.hpp"
   #include "window/window.hpp"
   #include "render/render.hpp"
 
@@ -186,12 +180,12 @@ privileged:
   Background bg2;
   Background bg3;
   Background bg4;
-  OAM oam;
+  Object obj;
   Window window;
   Screen screen;
 
   friend class PPU::Background;
-  friend class PPU::OAM;
+  friend class PPU::Object;
   friend class PPU::Window;
   friend class PPU::Screen;
   friend class Scheduler;

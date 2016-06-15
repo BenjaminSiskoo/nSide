@@ -4,43 +4,6 @@ unique_pointer<Debugger> debugger;
 #include "hook.cpp"
 #include "usage.cpp"
 
-auto Debugger::run() -> void {
-  if(paused == true) {
-    usleep(2000);
-    return;
-  }
-
-  emulator->run();
-  if(cpuDebugger->autoUpdate.checked()) cpuDebugger->updateDisassembly();
-  if(smpDebugger->autoUpdate.checked()) smpDebugger->updateDisassembly();
-  if(memoryEditor->autoUpdate.checked()) memoryEditor->updateView();
-  if(propertiesViewer->autoUpdate.checked()) propertiesViewer->updateProperties();
-  if(vramViewer->autoUpdate.checked()) vramViewer->updateTiles();
-  if(bgViewer->autoUpdate.checked()) bgViewer->updateTiles();
-  if(paletteViewer->autoUpdate.checked()) paletteViewer->updateColors();
-}
-
-auto Debugger::echo(const string& text) -> void {
-  consoleWindow->print(text);
-}
-
-auto Debugger::resume() -> void {
-  if(paused == false) return;
-  paused = false;
-  consoleWindow->runButton.setText("Stop");
-}
-
-auto Debugger::suspend() -> void {
-  if(paused == true) return;
-  paused = true;
-  flags.step = false;
-  flags.cpu.stepInto = false;
-  flags.cpu.nmi = false;
-  flags.cpu.irq = false;
-  flags.smp.stepInto = false;
-  consoleWindow->runButton.setText("Run");
-}
-
 Debugger::Debugger() {
   debugger = this;
   paused = true;
@@ -76,4 +39,41 @@ Debugger::Debugger() {
 
   SuperFamicom::ppu.debugger.cgramRead = {&Debugger::ppu_cgramRead, this};
   SuperFamicom::ppu.debugger.cgramWrite = {&Debugger::ppu_cgramWrite, this};
+}
+
+auto Debugger::run() -> void {
+  if(paused == true) {
+    usleep(2000);
+    return;
+  }
+
+  emulator->run();
+  if(cpuDebugger->autoUpdate.checked()) cpuDebugger->updateDisassembly();
+  if(smpDebugger->autoUpdate.checked()) smpDebugger->updateDisassembly();
+  if(memoryEditor->autoUpdate.checked()) memoryEditor->updateView();
+  if(propertiesViewer->autoUpdate.checked()) propertiesViewer->updateProperties();
+  if(vramViewer->autoUpdate.checked()) vramViewer->updateTiles();
+  if(bgViewer->autoUpdate.checked()) bgViewer->updateTiles();
+  if(paletteViewer->autoUpdate.checked()) paletteViewer->updateColors();
+}
+
+auto Debugger::echo(const string& text) -> void {
+  consoleWindow->print(text);
+}
+
+auto Debugger::resume() -> void {
+  if(paused == false) return;
+  paused = false;
+  consoleWindow->runButton.setText("Stop");
+}
+
+auto Debugger::suspend() -> void {
+  if(paused == true) return;
+  paused = true;
+  flags.step = false;
+  flags.cpu.stepInto = false;
+  flags.cpu.nmi = false;
+  flags.cpu.irq = false;
+  flags.smp.stepInto = false;
+  consoleWindow->runButton.setText("Run");
 }

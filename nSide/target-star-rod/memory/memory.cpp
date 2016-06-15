@@ -4,7 +4,7 @@ unique_pointer<MemoryEditor> memoryEditor;
 MemoryEditor::MemoryEditor() {
   memoryEditor = this;
   setTitle("Memory Editor");
-  setGeometry({128, 128, 485, 255});
+  setGeometry({128, 128, 585, 245});
 
   gotoLabel.setText("Goto:");
   gotoAddress.setFont(Font().setFamily(Font::Mono));
@@ -37,8 +37,6 @@ MemoryEditor::MemoryEditor() {
   exportMemory.onActivate({ &MemoryEditor::exportMemoryToDisk, this });
   editor.onRead({ &MemoryEditor::read, this });
   editor.onWrite({ &MemoryEditor::write, this });
-
-  windowManager->append(this, "MemoryEditor");
 }
 
 auto MemoryEditor::read(uint addr) -> uint8_t {
@@ -46,9 +44,9 @@ auto MemoryEditor::read(uint addr) -> uint8_t {
   switch(source.selected().offset()) {
   case 0: return cpuDebugger->read(addr);
   case 1: return smpDebugger->read(addr);
-  case 2: return SuperFamicom::ppu.memory.vram[addr & 0xffff];
-  case 3: return SuperFamicom::ppu.memory.oam[addr % 544];
-  case 4: return SuperFamicom::ppu.memory.cgram[addr & 0x01ff];
+  case 2: return SuperFamicom::ppu.vram[addr & 0xffff];
+  case 3: return SuperFamicom::ppu.oam[addr % 544];
+  case 4: return SuperFamicom::ppu.cgram[addr & 0x01ff];
   }
   return ~0;
 }
@@ -65,14 +63,14 @@ auto MemoryEditor::write(uint addr, uint8_t data) -> void {
     smpDebugger->write(addr, data);
     break;
   case 2:
-    SuperFamicom::ppu.memory.vram[addr & 0xffff] = data;
+    SuperFamicom::ppu.vram[addr & 0xffff] = data;
     break;
   case 3:
-    SuperFamicom::ppu.memory.oam[addr % 544] = data;
-    SuperFamicom::ppu.oam.synchronize();  //cache OAM changes internally
+    SuperFamicom::ppu.oam[addr % 544] = data;
+    SuperFamicom::ppu.obj.synchronize();  //cache OAM changes internally
     break;
   case 4:
-    SuperFamicom::ppu.memory.cgram[addr & 0x01ff] = data;
+    SuperFamicom::ppu.cgram[addr & 0x01ff] = data;
     break;
   }
 }
@@ -90,22 +88,22 @@ auto MemoryEditor::selectSource() -> void {
 }
 
 auto MemoryEditor::exportMemoryToDisk() -> void {
-  string filename = {program->folderPaths(0), "debug/memory-"};
+  string filename = {program->folderPaths(0), "debug/"};
   switch(source.selected().offset()) {
-  case 0: filename.append("cpu.bin"); break;
-  case 1: filename.append("apu.bin"); break;
-  case 2: filename.append("vram.bin"); break;
-  case 3: filename.append("oam.bin"); break;
-  case 4: filename.append("cgram.bin"); break;
+  case 0: filename.append("work.ram"); break;
+  case 1: filename.append("apu.ram"); break;
+  case 2: filename.append("video.ram"); break;
+  case 3: filename.append("object.ram"); break;
+  case 4: filename.append("palette.ram"); break;
   }
   file fp;
   if(fp.open(filename, file::mode::write) == false) return;
   switch(source.selected().offset()) {
   case 0: for(uint addr = 0; addr <= 0xffffff; addr++) fp.write(cpuDebugger->read(addr)); break;
   case 1: for(uint addr = 0; addr <= 0xffff; addr++) fp.write(smpDebugger->read(addr)); break;
-  case 2: for(uint addr = 0; addr <= 0xffff; addr++) fp.write(SuperFamicom::ppu.memory.vram[addr]); break;
-  case 3: for(uint addr = 0; addr <= 0x021f; addr++) fp.write(SuperFamicom::ppu.memory.oam[addr]); break;
-  case 4: for(uint addr = 0; addr <= 0x01ff; addr++) fp.write(SuperFamicom::ppu.memory.cgram[addr]); break;
+  case 2: for(uint addr = 0; addr <= 0xffff; addr++) fp.write(SuperFamicom::ppu.vram[addr]); break;
+  case 3: for(uint addr = 0; addr <= 0x021f; addr++) fp.write(SuperFamicom::ppu.oam[addr]); break;
+  case 4: for(uint addr = 0; addr <= 0x01ff; addr++) fp.write(SuperFamicom::ppu.cgram[addr]); break;
   }
   debugger->print("Exported memory to ", filename, "\n");
 }

@@ -15,7 +15,6 @@ Program::Program(lstring args) {
   new Settings;
   new Debugger;
   new Tracer;
-  new WindowManager;
   new ConsoleWindow;
   new AboutWindow;
   new Presentation;
@@ -52,7 +51,6 @@ Program::Program(lstring args) {
   if(!location.endsWith(".sfc/")) return;
   if(!directory::exists(location)) return;
 
-  windowManager->loadGeometry();
   consoleWindow->setVisible();
   presentation->setVisible();
   consoleWindow->setFocused();
@@ -91,7 +89,6 @@ auto Program::main() -> void {
 
 auto Program::quit() -> void {
   unloadMedium();
-  windowManager->saveGeometry();
   settings->unload();
   Application::quit();
 }

@@ -3,6 +3,34 @@ unique_pointer<SMPDebugger> smpDebugger;
 
 #include "registers.cpp"
 
+SMPDebugger::SMPDebugger() {
+  smpDebugger = this;
+  opcodePC = 0xffc0;
+
+  setTitle("SMP Debugger");
+  setGeometry({128, 128, 520, 260});
+
+  layout.setMargin(5);
+  stepInto.setText("Step Into");
+  autoUpdate.setText("Auto");
+  update.setText("Update");
+  disassembly.setFont(Font().setFamily(Font::Mono));
+  registers.setFont(Font().setFamily(Font::Mono));
+  registers.setText(" ");
+
+  stepInto.onActivate([&] {
+    debugger->flags.smp.stepInto = true;
+    debugger->resume();
+  });
+
+  update.onActivate({ &SMPDebugger::updateDisassembly, this });
+
+  registers.onActivate([&] {
+    smpRegisterEditor->loadRegisters();
+    smpRegisterEditor->setVisible();
+  });
+}
+
 auto SMPDebugger::read(uint16 addr) -> uint8 {
   if((addr & 0xfff0) == 0x00f0) return ~0;  //$00f0-00ff  MMIO
   return SuperFamicom::smp.busRead(addr);
@@ -67,34 +95,4 @@ auto SMPDebugger::updateDisassembly() -> void {
     SuperFamicom::smp.regs.p.h ? "H" : "h", SuperFamicom::smp.regs.p.i ? "I" : "i",
     SuperFamicom::smp.regs.p.z ? "Z" : "z", SuperFamicom::smp.regs.p.c ? "C" : "c",
   });
-}
-
-SMPDebugger::SMPDebugger() {
-  smpDebugger = this;
-  opcodePC = 0xffc0;
-
-  setTitle("SMP Debugger");
-  setGeometry({128, 128, 520, 260});
-
-  layout.setMargin(5);
-  stepInto.setText("Step Into");
-  autoUpdate.setText("Auto");
-  update.setText("Update");
-  disassembly.setFont(Font().setFamily(Font::Mono));
-  registers.setFont(Font().setFamily(Font::Mono));
-  registers.setText(" ");
-
-  stepInto.onActivate([&] {
-    debugger->flags.smp.stepInto = true;
-    debugger->resume();
-  });
-
-  update.onActivate({ &SMPDebugger::updateDisassembly, this });
-
-  registers.onActivate([&] {
-    smpRegisterEditor->loadRegisters();
-    smpRegisterEditor->setVisible();
-  });
-
-  windowManager->append(this, "SMPDebugger");
 }

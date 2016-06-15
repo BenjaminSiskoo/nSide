@@ -7,9 +7,9 @@ PPU ppu;
 #include "memory.cpp"
 #include "mmio.cpp"
 #include "background/background.cpp"
-#include "screen/screen.cpp"
-#include "sprite/sprite.cpp"
+#include "object/object.cpp"
 #include "window/window.cpp"
+#include "screen/screen.cpp"
 #include "serialization.cpp"
 
 PPU::PPU() :
@@ -62,7 +62,7 @@ auto PPU::main() -> void {
       bg3.run(0);
       bg4.run(0);
       if(pixel >= 0) {
-        oam.run();
+        obj.run();
         window.run();
         screen.run();
       }
@@ -70,7 +70,7 @@ auto PPU::main() -> void {
     }
 
     addClocks(14);
-    oam.tilefetch();
+    obj.tilefetch();
   } else {
     addClocks(1052 + 14 + 136);
   }
@@ -88,9 +88,9 @@ auto PPU::addClocks(uint clocks) -> void {
 }
 
 auto PPU::power() -> void {
-  for(auto& n : memory.vram) n = random(0x00);
-  for(auto& n : memory.oam) n = random(0x00);
-  for(auto& n : memory.cgram) n = random(0x00);
+  for(auto& n : vram) n = random(0x00);
+  for(auto& n : oam) n = random(0x00);
+  for(auto& n : cgram) n = random(0x00);
 }
 
 auto PPU::reset() -> void {
@@ -188,7 +188,7 @@ auto PPU::reset() -> void {
   bg2.reset();
   bg3.reset();
   bg4.reset();
-  oam.reset();
+  obj.reset();
   window.reset();
   screen.reset();
 
@@ -208,7 +208,7 @@ auto PPU::scanline() -> void {
   bg2.scanline();
   bg3.scanline();
   bg4.scanline();
-  oam.scanline();
+  obj.scanline();
   window.scanline();
   screen.scanline();
 
@@ -218,7 +218,7 @@ auto PPU::scanline() -> void {
 }
 
 auto PPU::frame() -> void {
-  oam.frame();
+  obj.frame();
   display.interlace = r.interlace;
   display.overscan = r.overscan;
 }
@@ -230,29 +230,6 @@ auto PPU::refresh() -> void {
   auto width = 512;
   auto height = 480;
   Emulator::video.refresh(output, pitch * sizeof(uint32), width, height);
-}
-
-auto PPU::exportRegisters(string &markup) -> void {
-  markup.append("ppu\n");
-  //$2105  BGMODE
-  markup.append("  bg-mode:      ", r.bgMode,     "\n");
-  markup.append("  bg-priority:  ", r.bgPriority, "\n");
-  //$2133  SETINI
-  markup.append("  pseudo-hires: ", r.pseudoHires, "\n");
-  markup.append("  overscan:     ", r.overscan,     "\n");
-
-  for(Background bg : (const Background[]){bg1, bg2, bg3, bg4}) {
-    markup.append("  bg\n");
-    markup.append("    tile-size:        ",   bg.r.tileSize,                 "\n");
-    markup.append("    mosaic:           ",   bg.r.mosaic,                   "\n");
-    markup.append("    screen-address:   0x", hex(bg.r.screenAddress, 4L),   "\n");
-    markup.append("    screen-size:      ",   bg.r.screenSize,               "\n");
-    markup.append("    tiledata-address: 0x", hex(bg.r.tiledataAddress, 4L), "\n");
-    markup.append("    hoffset:          0x", hex(bg.r.hoffset, 4L),         "\n");
-    markup.append("    voffset:          0x", hex(bg.r.voffset, 4L),         "\n");
-    markup.append("    above-enable:     ",   bg.r.aboveEnable,              "\n");
-    markup.append("    below-enable:     ",   bg.r.belowEnable,              "\n");
-  }
 }
 
 }

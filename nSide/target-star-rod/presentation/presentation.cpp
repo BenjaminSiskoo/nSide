@@ -18,8 +18,6 @@ Presentation::Presentation() {
   splash.impose(image::blend::sourceAlpha, 0, 0, floor, 0, 0, floor.width(), floor.height());
   nall::image logo(resource::star_rod);
   splash.impose(image::blend::sourceAlpha, (512 - logo.width()) / 2, (480 - logo.height()) / 2, logo, 0, 0, logo.width(), logo.height());
-
-  windowManager->append(this, "Presentation");
 }
 
 auto Presentation::drawSplashScreen() -> void {

@@ -1,11 +1,20 @@
-struct OAM {
+struct Object {
   alwaysinline auto addressReset() -> void;
   alwaysinline auto setFirstSprite() -> void;
+  auto frame() -> void;
+  auto scanline() -> void;
+  auto run() -> void;
+  auto tilefetch() -> void;
   auto reset() -> void;
 
-  auto serialize(serializer&) -> void;
+  struct Sprite;
+  auto onScanline(Sprite&) -> bool;
 
-  struct ID { enum : uint { OAM = 4 }; };
+  //list.cpp
+  auto update(uint10 addr, uint8 data) -> void;
+  auto synchronize() -> void;
+
+  auto serialize(serializer&) -> void;
 
   struct Registers {
     bool aboveEnable;
@@ -23,7 +32,6 @@ struct OAM {
     bool rangeOver;
   } r;
 
-  /*
   struct Item {
     bool  valid;
     uint7 index;
@@ -37,21 +45,19 @@ struct OAM {
     uint1  hflip;
     uint32 data;
   };
-  */
 
   struct State {
-    //uint x;
-    //uint y;
+    uint x;
+    uint y;
 
     uint itemCount;
     uint tileCount;
 
-    //bool active;
-    //Item item[2][32];
-    //Tile tile[2][34];
+    bool active;
+    Item item[2][32];
+    Tile tile[2][34];
   } t;
 
-  /*
   struct Output {
     struct Pixel {
       uint  priority;  //0 = none (transparent)
@@ -59,7 +65,7 @@ struct OAM {
     } above, below;
   } output;
 
-  struct Object {
+  struct Sprite {
     alwaysinline auto width() const -> uint;
     alwaysinline auto height() const -> uint;
 
@@ -73,7 +79,6 @@ struct OAM {
     uint3 palette;
     uint1 size;
   } list[128];
-  */
 
   friend class PPU;
 };

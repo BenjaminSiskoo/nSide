@@ -1,9 +1,3 @@
-auto Usage::allocate(uint size_) -> void {
-  if(data) delete[] data;
-  size = size_;
-  data = new uint8_t[size]();
-}
-
 Usage::Usage() {
   data = nullptr;
   size = 0;
@@ -11,6 +5,12 @@ Usage::Usage() {
 
 Usage::~Usage() {
   if(data) delete[] data;
+}
+
+auto Usage::allocate(uint size_) -> void {
+  if(data) delete[] data;
+  size = size_;
+  data = new uint8_t[size]();
 }
 
 auto Debugger::loadUsage() -> void {

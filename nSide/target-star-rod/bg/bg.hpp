@@ -6,7 +6,9 @@ struct BGViewer : Window {
       Widget spacer{&controlLayout, Size{~0, 0}};
       CheckLabel autoUpdate{&controlLayout, Size{0, 0}, 5};
       Button update{&controlLayout, Size{80, 0}};
-    Canvas canvas{&layout, Size{512, 512}};
+    HorizontalLayout canvasLayout{&layout, Size{~0, 0}, 5};
+      Canvas canvas{&canvasLayout, Size{1024, 512}};
+      VerticalScrollBar scroll{&canvasLayout, Size{0, ~0}};
 
   StatusBar statusBar{this};
 

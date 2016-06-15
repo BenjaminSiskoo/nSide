@@ -31,13 +31,13 @@ auto PPU::Window::reset() -> void {
   r.bg4.aboveEnable = false;
   r.bg4.belowEnable = false;
 
-  r.oam.oneEnable = false;
-  r.oam.oneInvert = false;
-  r.oam.twoEnable = false;
-  r.oam.twoInvert = false;
-  r.oam.mask = 0;
-  r.oam.aboveEnable = false;
-  r.oam.belowEnable = false;
+  r.obj.oneEnable = false;
+  r.obj.oneInvert = false;
+  r.obj.twoEnable = false;
+  r.obj.twoInvert = false;
+  r.obj.mask = 0;
+  r.obj.aboveEnable = false;
+  r.obj.belowEnable = false;
 
   r.col.oneEnable = false;
   r.col.oneInvert = false;

@@ -1,6 +1,6 @@
 inline auto PPU::getPalette(uint8 index) -> uint16 {
   const uint addr = index << 1;
-  return memory.cgram[addr] + (memory.cgram[addr + 1] << 8);
+  return cgram[addr] + (cgram[addr + 1] << 8);
 }
 
 //p = 00000bgr <palette data>
@@ -13,95 +13,93 @@ inline auto PPU::getDirectColor(uint8 p, uint8 t) -> uint16 {
 }
 
 inline auto PPU::get_pixel_normal(uint32 x) -> uint16 {
-  pixel_t& p = pixelCache[x];
-  uint16 src_above, src_below;
-  uint8 bg_below;
+  CachePixel& p = pixelCache[x];
+  uint16 aboveColor, belowColor;
+  uint8 belowLayer;
 
-  src_above = p.src_above;
+  aboveColor = p.aboveColor;
 
   if(!screen.r.blendMode) {
-    bg_below  = Screen::ID::BACK;
-    src_below = r.color_rgb;
+    belowLayer = Screen::ID::BACK;
+    belowColor = r.color_rgb;
   } else {
-    bg_below  = p.bg_below;
-    src_below = p.src_below;
+    belowLayer = p.belowLayer;
+    belowColor = p.belowColor;
   }
 
   if(!windowCache[Window::ID::COL].above[x]) {
     if(!windowCache[Window::ID::COL].below[x]) {
       return 0x0000;
     }
-    src_above = 0x0000;
+    aboveColor = 0x0000;
   }
 
-  bool color_enable;
-  switch(p.bg_above) {
-  case Background::ID::BG1: color_enable = screen.r.bg1.colorEnable; break;
-  case Background::ID::BG2: color_enable = screen.r.bg2.colorEnable; break;
-  case Background::ID::BG3: color_enable = screen.r.bg3.colorEnable; break;
-  case Background::ID::BG4: color_enable = screen.r.bg4.colorEnable; break;
-  case OAM::ID::OAM:        color_enable = screen.r.oam.colorEnable; break;
-  case Screen::ID::BACK:    color_enable = screen.r.back.colorEnable; break;
+  bool colorEnable;
+  switch(p.aboveLayer) {
+  case Background::ID::BG1: colorEnable = screen.r.bg1.colorEnable; break;
+  case Background::ID::BG2: colorEnable = screen.r.bg2.colorEnable; break;
+  case Background::ID::BG3: colorEnable = screen.r.bg3.colorEnable; break;
+  case Background::ID::BG4: colorEnable = screen.r.bg4.colorEnable; break;
+  case Object::ID::OBJ:     colorEnable = screen.r.obj.colorEnable; break;
+  case Screen::ID::BACK:    colorEnable = screen.r.back.colorEnable; break;
   }
 
-  if(!p.ce_above && color_enable && windowCache[Window::ID::COL].below[x]) {
+  if(!p.aboveColorExemption && colorEnable && windowCache[Window::ID::COL].below[x]) {
     screen.math.colorHalve = false;
     if(screen.r.colorHalve && windowCache[Window::ID::COL].above[x]) {
-      if(screen.r.blendMode && bg_below == Screen::ID::BACK);
-      else {
+      if(screen.r.blendMode == 0 || belowLayer != Screen::ID::BACK) {
         screen.math.colorHalve = true;
       }
     }
-    return screen.blend(src_above, src_below);
+    return screen.blend(aboveColor, belowColor);
   }
 
-  return src_above;
+  return aboveColor;
 }
 
 inline auto PPU::get_pixel_swap(uint32 x) -> uint16 {
-  pixel_t& p = pixelCache[x];
-  uint16 src_above, src_below;
-  uint8 bg_below;
+  CachePixel& p = pixelCache[x];
+  uint16 aboveColor, belowColor;
+  uint8 belowLayer;
 
-  src_above = p.src_below;
+  aboveColor = p.belowColor;
 
   if(!screen.r.blendMode) {
-    bg_below  = Screen::ID::BACK;
-    src_below = r.color_rgb;
+    belowLayer = Screen::ID::BACK;
+    belowColor = r.color_rgb;
   } else {
-    bg_below  = p.bg_above;
-    src_below = p.src_above;
+    belowLayer = p.aboveLayer;
+    belowColor = p.aboveColor;
   }
 
   if(!windowCache[Window::ID::COL].above[x]) {
     if(!windowCache[Window::ID::COL].below[x]) {
       return 0x0000;
     }
-    src_above = 0x0000;
+    aboveColor = 0x0000;
   }
 
-  bool color_enable;
-  switch(p.bg_below) {
-  case Background::ID::BG1: color_enable = screen.r.bg1.colorEnable; break;
-  case Background::ID::BG2: color_enable = screen.r.bg2.colorEnable; break;
-  case Background::ID::BG3: color_enable = screen.r.bg3.colorEnable; break;
-  case Background::ID::BG4: color_enable = screen.r.bg4.colorEnable; break;
-  case OAM::ID::OAM:        color_enable = screen.r.oam.colorEnable; break;
-  case Screen::ID::BACK:    color_enable = screen.r.back.colorEnable; break;
+  bool colorEnable;
+  switch(p.belowLayer) {
+  case Background::ID::BG1: colorEnable = screen.r.bg1.colorEnable; break;
+  case Background::ID::BG2: colorEnable = screen.r.bg2.colorEnable; break;
+  case Background::ID::BG3: colorEnable = screen.r.bg3.colorEnable; break;
+  case Background::ID::BG4: colorEnable = screen.r.bg4.colorEnable; break;
+  case Object::ID::OBJ:     colorEnable = screen.r.obj.colorEnable; break;
+  case Screen::ID::BACK:    colorEnable = screen.r.back.colorEnable; break;
   }
 
-  if(!p.ce_below && color_enable && windowCache[Window::ID::COL].below[x]) {
+  if(!p.belowColorExemption && colorEnable && windowCache[Window::ID::COL].below[x]) {
     screen.math.colorHalve = false;
     if(screen.r.colorHalve && windowCache[Window::ID::COL].above[x]) {
-      if(screen.r.blendMode && bg_below == Screen::ID::BACK);
-      else {
+      if(screen.r.blendMode == 0 || belowLayer != Screen::ID::BACK) {
         screen.math.colorHalve = true;
       }
     }
-    return screen.blend(src_above, src_below);
+    return screen.blend(aboveColor, belowColor);
   }
 
-  return src_above;
+  return aboveColor;
 }
 
 inline auto PPU::renderLine_output() -> void {

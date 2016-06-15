@@ -8,7 +8,7 @@ PPU ppu;
 #include "mmio.cpp"
 #include "background/background.cpp"
 #include "screen/screen.cpp"
-#include "sprite/sprite.cpp"
+#include "object/object.cpp"
 #include "window/window.cpp"
 #include "render/render.cpp"
 #include "serialization.cpp"
@@ -24,7 +24,7 @@ bg4(Background::ID::BG4) {
   output = new uint32[512 * 512];
   output += 16 * 512;  //overscan offset
 
-  alloc_tiledata_cache();
+  tiledataCache.allocate();
 
   for(uint l : range(16)) {
     for(uint i : range(4096)) {
@@ -36,7 +36,7 @@ bg4(Background::ID::BG4) {
 PPU::~PPU() {
   output -= 16 * 512;
   delete[] output;
-  freeTiledataCache();
+  tiledataCache.free();
 }
 
 auto PPU::step(uint clocks) -> void {
@@ -65,7 +65,7 @@ auto PPU::main() -> void {
   cache.m7d = r.m7d;
   cache.m7x = r.m7x;
   cache.m7y = r.m7y;
-  if(vcounter() == vdisp() && !r.displayDisable) oam.addressReset();
+  if(vcounter() == vdisp() && !r.displayDisable) obj.addressReset();
   addClocks(502);
 
   //H =  512 (render)
@@ -73,12 +73,12 @@ auto PPU::main() -> void {
   addClocks(640);
 
   //H = 1152 (cache OBSEL)
-  if(cache.oam_baseSize != oam.r.baseSize) {
-    cache.oam_baseSize = oam.r.baseSize;
+  if(cache.obj_baseSize != obj.r.baseSize) {
+    cache.obj_baseSize = obj.r.baseSize;
     spriteListValid = false;
   }
-  cache.oam_nameSelect = oam.r.nameSelect;
-  cache.oam_tiledataAddress = oam.r.tiledataAddress;
+  cache.obj_nameSelect = obj.r.nameSelect;
+  cache.obj_tiledataAddress = obj.r.tiledataAddress;
   addClocks(lineclocks() - 1152);  //seek to start of next scanline
 }
 
@@ -89,10 +89,10 @@ auto PPU::addClocks(uint clocks) -> void {
 }
 
 auto PPU::power() -> void {
-  for(auto& n : memory.vram) n = 0x00;
-  for(auto& n : memory.oam) n = 0x00;
-  for(auto& n : memory.cgram) n = 0x00;
-  flushTiledataCache();
+  for(auto& n : vram) n = 0x00;
+  for(auto& n : oam) n = 0x00;
+  for(auto& n : cgram) n = 0x00;
+  tiledataCache.flush();
 }
 
 auto PPU::reset() -> void {
@@ -125,9 +125,9 @@ auto PPU::reset() -> void {
   r.displayBrightness = 0;
 
   //$2101
-  cache.oam_baseSize = 0;
-  cache.oam_nameSelect = 0;
-  cache.oam_tiledataAddress = 0x0000;
+  cache.obj_baseSize = 0;
+  cache.obj_nameSelect = 0;
+  cache.obj_tiledataAddress = 0x0000;
 
   //$2102  OAMADDL
   //$2103  OAMADDH
@@ -203,11 +203,11 @@ auto PPU::reset() -> void {
   bg2.reset();
   bg3.reset();
   bg4.reset();
-  oam.reset();
+  obj.reset();
   window.reset();
   screen.reset();
 
-  memset(spriteList, 0, sizeof(spriteList));
+  memset(obj.list, 0, sizeof(obj.list));
   spriteListValid = false;
 
   //bg line counters
@@ -226,8 +226,8 @@ auto PPU::scanline() -> void {
     frame();
 
     //RTO flag reset
-    oam.r.timeOver  = false;
-    oam.r.rangeOver = false;
+    obj.r.timeOver  = false;
+    obj.r.rangeOver = false;
   }
 
   if(line == 1) {
@@ -272,29 +272,6 @@ auto PPU::refresh() -> void {
   auto width = 512;
   auto height = 480; //!interlace() ? 240 : 480;
   Emulator::video.refresh(output, pitch * sizeof(uint32), width, height);
-}
-
-auto PPU::exportRegisters(string &markup) -> void {
-  markup.append("ppu\n");
-  //$2105  BGMODE
-  markup.append("  bg-mode:      ", r.bgMode,     "\n");
-  markup.append("  bg-priority:  ", r.bgPriority, "\n");
-  //$2133  SETINI
-  markup.append("  pseudo-hires: ", r.pseudoHires, "\n");
-  markup.append("  overscan:     ", r.overscan,    "\n");
-
-  for(Background bg : (const Background[]){bg1, bg2, bg3, bg4}) {
-    markup.append("  bg\n");
-    markup.append("    tile-size:        ",   bg.r.tileSize,                 "\n");
-    markup.append("    mosaic:           ",   bg.r.mosaicEnabled ? (uint)r.mosaicSize : 0, "\n");
-    markup.append("    screen-address:   0x", hex(bg.r.screenAddress, 4L),   "\n");
-    markup.append("    screen-size:      ",   bg.r.screenSize,               "\n");
-    markup.append("    tiledata-address: 0x", hex(bg.r.tiledataAddress, 4L), "\n");
-    markup.append("    hoffset:          0x", hex(bg.r.hoffset, 4L),         "\n");
-    markup.append("    voffset:          0x", hex(bg.r.voffset, 4L),         "\n");
-    markup.append("    above-enable:     ",   bg.r.aboveEnable,              "\n");
-    markup.append("    below-enable:     ",   bg.r.belowEnable,              "\n");
-  }
 }
 
 }

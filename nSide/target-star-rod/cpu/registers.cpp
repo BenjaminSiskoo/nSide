@@ -65,7 +65,6 @@ CPURegisterEditor::CPURegisterEditor() {
   });
 
   setGeometry({{128, 128}, layout.minimumSize()});
-  windowManager->append(this, "CPURegisterEditor");
 }
 
 void CPURegisterEditor::loadRegisters() {

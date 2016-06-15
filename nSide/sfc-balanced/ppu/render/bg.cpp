@@ -29,7 +29,8 @@ auto PPU::updateBGInfo() -> void {
 }
 
 template<uint bg_id>
-auto PPU::renderBGLine(uint mode) -> void {
+auto PPU::bg_renderLine() -> void {
+  if(r.bgMode == 7) return bg_renderLineMode7<bg_id>();
   Background& bg = (
   bg_id == Background::ID::BG1 ? bg1 :
   bg_id == Background::ID::BG2 ? bg2 :
@@ -41,7 +42,7 @@ auto PPU::renderBGLine(uint mode) -> void {
   if(!bg.r.aboveEnable && !bg.r.belowEnable) return;
 
   const uint16 opt_valid_bit = bg_id == Background::ID::BG1 ? 0x2000 : bg_id == Background::ID::BG2 ? 0x4000 : 0x0000;
-  const uint8  bgpal_index   = mode == 0 ? bg_id << 5 : 0;
+  const uint8  bgpal_index   = r.bgMode == 0 ? bg_id << 5 : 0;
 
   const uint8  pal_size  = 2 << bg.r.mode;       //<<2 (*4), <<4 (*16), <<8 (*256)
   const uint16 tile_mask = 0x0fff >> bg.r.mode;  //0x0fff, 0x07ff, 0x03ff
@@ -49,8 +50,8 @@ auto PPU::renderBGLine(uint mode) -> void {
   //index is a tile number count to add to base tile number
   const uint tiledata_index = bg.r.tiledataAddress >> (4 + bg.r.mode);
 
-  const uint8 *bg_td       = bg_tiledata[bg.r.mode];
-  const uint8 *bg_td_state = bg_tiledataState[bg.r.mode];
+  const uint8* bg_tiledata  = tiledataCache.tiledata[bg.r.mode];
+  const uint8* bg_tilestate = tiledataCache.tiledataState[bg.r.mode];
 
   const uint8  tile_width  = bg_info[bg_id].tw;
   const uint8  tile_height = bg_info[bg_id].th;
@@ -61,7 +62,7 @@ auto PPU::renderBGLine(uint mode) -> void {
   uint16 hscroll = bg.r.hoffset;
   uint16 vscroll = bg.r.voffset;
 
-  const uint hires = mode == 5 || mode == 6;
+  const uint hires = r.bgMode == 5 || r.bgMode == 6;
   const uint width = !hires ? 256 : 512;
 
   if(hires) {
@@ -77,8 +78,8 @@ auto PPU::renderBGLine(uint mode) -> void {
 
   const uint8*  tile_ptr;
   const uint16* mtable = mosaicTable[bg.r.mosaicEnabled ? (uint)r.mosaicSize : 0];
-  const bool    is_opt_mode = mode == 2 || mode == 4 || mode == 6;
-  const bool    isDirectColorMode = screen.r.directColor && bg_id == Background::ID::BG1 && (mode == 3 || mode == 4);
+  const bool isOPTMode = r.bgMode == 2 || r.bgMode == 4 || r.bgMode == 6;
+  const bool isDirectColorMode = screen.r.directColor && bg_id == Background::ID::BG1 && (r.bgMode == 3 || r.bgMode == 4);
 
   buildWindowTables(bg_id);
   const uint8* wt_above = windowCache[bg_id].above;
@@ -89,7 +90,7 @@ auto PPU::renderBGLine(uint mode) -> void {
     hoffset = mtable[x] + hscroll;
     voffset = y + vscroll;
 
-    if(is_opt_mode) {
+    if(isOPTMode) {
       opt_x = x + (hscroll & 7);
 
       //tile 0 is unaffected by offset-per-tile mode...
@@ -99,12 +100,12 @@ auto PPU::renderBGLine(uint mode) -> void {
           prev_optx = opt_x;
 
           hval = bg3.getTile((opt_x - 8) + (bg3.r.hoffset & ~7), bg3.r.voffset);
-          if(mode != 4) {
+          if(r.bgMode != 4) {
             vval = bg3.getTile((opt_x - 8) + (bg3.r.hoffset & ~7), bg3.r.voffset + 8);
           }
         }
 
-        if(mode == 4) {
+        if(r.bgMode == 4) {
           if(hval & opt_valid_bit) {
             if(!(hval & 0x8000)) {
               hoffset = opt_x + (hval & ~7);
@@ -133,7 +134,7 @@ auto PPU::renderBGLine(uint mode) -> void {
       tile_num  = bg.getTile((uint)hoffset, (uint)voffset);  //format = vhopppcc cccccccc
       mirror_y  = tile_num & 0x8000;
       mirror_x  = tile_num & 0x4000;
-      tile_pri  = tile_num & 0x2000 ? bg.r.priority[1] : bg.r.priority[0];
+      tile_pri  = bg.r.priority[(tile_num & 0x2000) >> 13];
       pal_num   = (tile_num >> 10) & 7;
       pal_index = bgpal_index + (pal_num << pal_size);
 
@@ -149,12 +150,12 @@ auto PPU::renderBGLine(uint mode) -> void {
       tile_num += tiledata_index;
       tile_num &= tile_mask;
 
-      if(bg_td_state[tile_num] == 1) {
-        render_bg_tile(bg.r.mode, tile_num);
+      if(bg_tilestate[tile_num] == 1) {
+        renderBGTile(bg.r.mode, tile_num);
       }
 
       if(mirror_y) voffset ^= 7;  //invert y tile pos
-      tile_ptr = bg_td + (tile_num * 64) + ((voffset & 7) * 8);
+      tile_ptr = bg_tiledata + (tile_num * 64) + ((voffset & 7) * 8);
     }
 
     if(mirror_x) hoffset ^= 7;  //invert x tile pos
@@ -167,33 +168,183 @@ auto PPU::renderBGLine(uint mode) -> void {
       }
 
       #define setpixel_above(x) \
-        if(pixelCache[x].pri_above < tile_pri) { \
-          pixelCache[x].pri_above = tile_pri; \
-          pixelCache[x].bg_above  = bg_id; \
-          pixelCache[x].src_above = col; \
-          pixelCache[x].ce_above  = false; \
+        if(pixelCache[x].abovePriority < tile_pri) { \
+          pixelCache[x].abovePriority = tile_pri; \
+          pixelCache[x].aboveLayer = bg_id; \
+          pixelCache[x].aboveColor = col; \
+          pixelCache[x].aboveColorExemption = false; \
         }
 
       #define setpixel_below(x) \
-        if(pixelCache[x].pri_below < tile_pri) { \
-          pixelCache[x].pri_below = tile_pri; \
-          pixelCache[x].bg_below  = bg_id; \
-          pixelCache[x].src_below = col; \
-          pixelCache[x].ce_below  = false; \
+        if(pixelCache[x].belowPriority < tile_pri) { \
+          pixelCache[x].belowPriority = tile_pri; \
+          pixelCache[x].belowLayer = bg_id; \
+          pixelCache[x].belowColor = col; \
+          pixelCache[x].belowColorExemption = false; \
         }
       if(!hires) {
         if(bg.r.aboveEnable && !wt_above[x]) { setpixel_above(x); }
-        if(bg.r.belowEnable  && !wt_below[x])  { setpixel_below(x);  }
+        if(bg.r.belowEnable && !wt_below[x]) { setpixel_below(x); }
       } else {
         int hx = x >> 1;
         if(x & 1) {
           if(bg.r.aboveEnable && !wt_above[hx]) { setpixel_above(hx); }
         } else {
-          if(bg.r.belowEnable  && !wt_below[hx])  { setpixel_below(hx);  }
+          if(bg.r.belowEnable && !wt_below[hx]) { setpixel_below(hx); }
         }
       }
       #undef setpixel_above
       #undef setpixel_below
+    }
+  }
+}
+
+//higan mode7 renderer
+//
+//base algorithm written by anomie
+//higan implementation written by byuu
+//
+//supports mode 7 + extbg + rotate + zoom + direct color + scrolling + m7sel + windowing + mosaic
+//interlace and pseudo-hires support are automatic via main rendering routine
+
+template<uint bg_id>
+auto PPU::bg_renderLineMode7() -> void {
+  Background& bg = (
+  bg_id == Background::ID::BG1 ? bg1 :
+  bg_id == Background::ID::BG2 ? bg2 :
+  bg_id == Background::ID::BG3 ? bg3 :
+                                 bg4
+  );
+  if(bg.r.mode == Background::Mode::Inactive) return;
+  if(bg.r.priority[0] + bg.r.priority[1] == 0) return;
+  if(!bg.r.aboveEnable && !bg.r.belowEnable) return;
+
+  int32 px, py;
+  int32 tx, ty, tile, palette;
+
+  int32 a = sclip<16>(cache.m7a);
+  int32 b = sclip<16>(cache.m7b);
+  int32 c = sclip<16>(cache.m7c);
+  int32 d = sclip<16>(cache.m7d);
+
+  int32 cx   = sclip<13>(cache.m7x);
+  int32 cy   = sclip<13>(cache.m7y);
+  int32 hofs = sclip<13>(cache.hoffsetMode7);
+  int32 vofs = sclip<13>(cache.voffsetMode7);
+
+  int  _pri, _x;
+
+  buildWindowTables(bg_id);
+  uint8* wt_above = windowCache[bg_id].above;
+  uint8* wt_below = windowCache[bg_id].below;
+
+  int32 y = !r.vflipMode7 ? line : 255 - line;
+
+  uint16* mtable_x;
+  uint16* mtable_y;
+  if(bg_id == Background::ID::BG1) {
+    mtable_x = (uint16*)mosaicTable[bg1.r.mosaicEnabled ? (uint)r.mosaicSize : 0];
+    mtable_y = (uint16*)mosaicTable[bg1.r.mosaicEnabled ? (uint)r.mosaicSize : 0];
+  } else {  //bg_id == Background::ID::BG2
+    //Mode7 EXTBG BG2 uses BG1 mosaic enable to control vertical mosaic,
+    //and BG2 mosaic enable to control horizontal mosaic...
+    mtable_x = (uint16*)mosaicTable[bg2.r.mosaicEnabled ? (uint)r.mosaicSize : 0];
+    mtable_y = (uint16*)mosaicTable[bg1.r.mosaicEnabled ? (uint)r.mosaicSize : 0];
+  }
+
+  //13-bit sign extend
+  //--s---vvvvvvvvvv -> ssssssvvvvvvvvvv
+  #define CLIP(x) ( (x) & 0x2000 ? (x) | ~0x03ff : (x) & 0x03ff )
+
+  int32 psx = ((a * CLIP(hofs - cx)) & ~63) + ((b * CLIP(vofs - cy)) & ~63) + ((b * mtable_y[y]) & ~63) + (cx << 8);
+  int32 psy = ((c * CLIP(hofs - cx)) & ~63) + ((d * CLIP(vofs - cy)) & ~63) + ((d * mtable_y[y]) & ~63) + (cy << 8);
+
+  #undef CLIP
+
+  for(int32 x = 0; x < 256; x++) {
+    px = psx + (a * mtable_x[x]);
+    py = psy + (c * mtable_x[x]);
+
+    //mask floating-point bits (low 8 bits)
+    px >>= 8;
+    py >>= 8;
+
+    switch(r.repeatMode7) {
+    case 0:    //screen repetition outside of screen area
+    case 1: {  //same as case 0
+      px &= 1023;
+      py &= 1023;
+      tx = ((px >> 3) & 127);
+      ty = ((py >> 3) & 127);
+      tile    = vram[(ty * 128 + tx) << 1];
+      palette = vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+      break;
+    }
+
+    case 2: {  //palette color 0 outside of screen area
+      if((px | py) & ~1023) {
+        palette = 0;
+      } else {
+        px &= 1023;
+        py &= 1023;
+        tx = ((px >> 3) & 127);
+        ty = ((py >> 3) & 127);
+        tile    = vram[(ty * 128 + tx) << 1];
+        palette = vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+      }
+      break;
+    }
+
+    case 3: {  //character 0 repetition outside of screen area
+      if((px | py) & ~1023) {
+        tile = 0;
+      } else {
+        px &= 1023;
+        py &= 1023;
+        tx = ((px >> 3) & 127);
+        ty = ((py >> 3) & 127);
+        tile = vram[(ty * 128 + tx) << 1];
+      }
+      palette = vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+      break;
+    }
+
+    }
+
+    if(bg_id == Background::ID::BG1) {
+      _pri = bg.r.priority[0];
+    } else {
+      _pri = bg.r.priority[(palette >> 7) ? 1 : 0];
+      palette &= 0x7f;
+    }
+
+    if(!palette) continue;
+
+    _x = !r.hflipMode7 ? (uint)x : 255 - x;
+
+    uint32 col;
+    if(screen.r.directColor && bg_id == Background::ID::BG1) {
+      //direct color mode does not apply to bg2, as it is only 128 colors...
+      col = getDirectColor(0, palette);
+    } else {
+      col = getPalette(palette);
+    }
+
+    if(bg.r.aboveEnable && !wt_above[_x]) {
+      if(pixelCache[_x].abovePriority < _pri) {
+        pixelCache[_x].abovePriority = _pri;
+        pixelCache[_x].aboveLayer = bg_id;
+        pixelCache[_x].aboveColor = col;
+        pixelCache[_x].aboveColorExemption = false;
+      }
+    }
+    if(bg.r.belowEnable && !wt_below[_x]) {
+      if(pixelCache[_x].belowPriority < _pri) {
+        pixelCache[_x].belowPriority = _pri;
+        pixelCache[_x].belowLayer = bg_id;
+        pixelCache[_x].belowColor = col;
+        pixelCache[_x].belowColorExemption = false;
+      }
     }
   }
 }

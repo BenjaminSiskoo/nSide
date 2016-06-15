@@ -179,8 +179,6 @@ ConsoleWindow::ConsoleWindow() {
   clearButton.onActivate([&] {
     console.setText("");
   });
-
-  windowManager->append(this, "ConsoleWindow");
 }
 
 auto ConsoleWindow::print(const string& text) -> void {

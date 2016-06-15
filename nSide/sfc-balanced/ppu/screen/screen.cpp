@@ -1,3 +1,5 @@
+//color addition / subtraction
+//thanks go to blargg for the optimized algorithms
 auto PPU::Screen::blend(uint x, uint y) const -> uint16 {
   if(!r.colorMode) {
     if(!math.colorHalve) {
@@ -27,7 +29,7 @@ auto PPU::Screen::reset() -> void {
   r.bg2.colorEnable = false;
   r.bg3.colorEnable = false;
   r.bg4.colorEnable = false;
-  r.oam.colorEnable = false;
+  r.obj.colorEnable = false;
   r.back.colorEnable = false;
   r.colorBlue = 0;
   r.colorGreen = 0;

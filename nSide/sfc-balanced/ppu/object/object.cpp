@@ -1,13 +1,13 @@
-auto PPU::OAM::addressReset() -> void {
+auto PPU::Object::addressReset() -> void {
   ppu.r.oamAddress = ppu.r.oamBaseAddress;
   setFirstSprite();
 }
 
-auto PPU::OAM::setFirstSprite() -> void {
+auto PPU::Object::setFirstSprite() -> void {
   r.firstSprite = !ppu.r.oamPriority ? 0 : (ppu.r.oamAddress >> 2) & 127;
 }
 
-auto PPU::OAM::reset() -> void {
+auto PPU::Object::reset() -> void {
   t.itemCount = 0;
   t.tileCount = 0;
 

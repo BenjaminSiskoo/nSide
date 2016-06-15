@@ -9,9 +9,9 @@ VRAMViewer::VRAMViewer() {
 
   layout.setMargin(5);
   modeLabel.setText("Mode:");
-  modeSelection.append(ComboButtonItem().setText("2bpp"));
-  modeSelection.append(ComboButtonItem().setText("4bpp"));
-  modeSelection.append(ComboButtonItem().setText("8bpp"));
+  modeSelection.append(ComboButtonItem().setText("2BPP"));
+  modeSelection.append(ComboButtonItem().setText("4BPP"));
+  modeSelection.append(ComboButtonItem().setText("8BPP"));
   modeSelection.append(ComboButtonItem().setText("Mode 7"));
   paletteLabel.setText("Palette:");
   autoUpdate.setText("Auto");
@@ -30,32 +30,45 @@ VRAMViewer::VRAMViewer() {
     if((x >= 128 && mode >= 3)) { statusBar.setText(""); return; }
     string output = { x, ", ", y, ", " };
     x /= 8, y /= 8;
-    uint tile = 0;
-    if(mode == 0) tile = y * 64 + x;
-    if(mode == 1) tile = y * 32 + x;
-    if(mode == 2) tile = y * 32 + x;
-    if(mode == 3) tile = y * 16 + x;
-    output.append("Tile: 0x", hex(tile, 4L), ", Address: 0x", hex(tile * (16 << mode), 4L));
+    uint tile = 0, address = 0;
+    switch(mode) {
+    case SuperFamicom::PPU::Background::Mode::BPP2:
+      tile = y * 64 + x;
+      address = tile * 16;
+      break;
+    case SuperFamicom::PPU::Background::Mode::BPP4:
+      tile = y * 32 + x;
+      address = tile * 32;
+      break;
+    case SuperFamicom::PPU::Background::Mode::BPP8:
+      tile = y * 32 + x;
+      address = tile * 64;
+      break;
+    case SuperFamicom::PPU::Background::Mode::Mode7:
+      tile = y * 16 + x;
+      address = tile * 128 + 1;
+      break;
+    }
+    output.append("Tile: 0x", hex(tile, 4L), ", Address: 0x", hex(address, 4L));
     statusBar.setText(output);
   });
 
   modeChanged();
 
   setGeometry({{128, 128}, layout.minimumSize()});
-  windowManager->append(this, "VRAMViewer");
 }
 
 auto VRAMViewer::modeChanged() -> void {
   paletteSelection.reset();
   switch(modeSelection.selected().offset()) {
-  case 0: // 2BPP
+  case SuperFamicom::PPU::Background::Mode::BPP2:
     for(uint bg = 0; bg < 4; bg++) {
       for(uint palette = 0; palette < 8; palette++) {
         paletteSelection.append(ComboButtonItem().setText({"BG", bg, " ", palette}));
       }
     }
     break;
-  case 1: // 4BPP
+  case SuperFamicom::PPU::Background::Mode::BPP4:
     for(uint palette = 0; palette < 8; palette++) {
       paletteSelection.append(ComboButtonItem().setText({"BG ", palette}));
     }
@@ -63,8 +76,8 @@ auto VRAMViewer::modeChanged() -> void {
       paletteSelection.append(ComboButtonItem().setText({"SP ", palette}));
     }
     break;
-  case 2: // 8BPP
-  case 3: // Mode 7
+  case SuperFamicom::PPU::Background::Mode::BPP8:
+  case SuperFamicom::PPU::Background::Mode::Mode7:
     paletteSelection.append(ComboButtonItem().setText("BG"));
     break;
   }
@@ -83,23 +96,21 @@ auto VRAMViewer::updateTiles() -> void {
     }
   }
   dp = canvas.data();
-  const uint8* sp = SuperFamicom::ppu.memory.vram;
+  const uint8* sp = SuperFamicom::ppu.vram;
 
   switch(modeSelection.selected().offset()) {
-  case 0: // 2BPP
-    for(uint tileY = 0; tileY < 64; tileY++) {
-      for(uint tileX = 0; tileX < 64; tileX++) {
-        for(uint y = 0; y < 8; y++) {
+  case SuperFamicom::PPU::Background::Mode::BPP2:
+    for(uint tileY : range(64)) {
+      for(uint tileX : range(64)) {
+        for(uint y : range(8)) {
           uint8 d[] = { sp[0], sp[1] };
-          for(uint x = 0; x < 8; x++) {
+          for(uint x : range(8)) {
             uint color = 0;
             color += d[0] & 0x80 ? 1 : 0;
             color += d[1] & 0x80 ? 2 : 0;
             for(auto& b : d) b <<= 1;
-            //color *= 0x55;
-            //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color += paletteSelection.selected().offset() << 2;
-            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -112,22 +123,20 @@ auto VRAMViewer::updateTiles() -> void {
     }
     break;
 
-  case 1: // 4BPP
-    for(uint tileY = 0; tileY < 64; tileY++) {
-      for(uint tileX = 0; tileX < 32; tileX++) {
-        for(uint y = 0; y < 8; y++) {
+  case SuperFamicom::PPU::Background::Mode::BPP4:
+    for(uint tileY : range(64)) {
+      for(uint tileX : range(32)) {
+        for(uint y : range(8)) {
           uint8 d[] = { sp[0], sp[1], sp[16], sp[17] };
-          for(uint x = 0; x < 8; x++) {
+          for(uint x : range(8)) {
             uint color = 0;
             color += d[0] & 0x80 ? 1 : 0;
             color += d[1] & 0x80 ? 2 : 0;
             color += d[2] & 0x80 ? 4 : 0;
             color += d[3] & 0x80 ? 8 : 0;
             for(auto& b : d) b <<= 1;
-            //color *= 0x11;
-            //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
             color += paletteSelection.selected().offset() << 4;
-            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -141,12 +150,12 @@ auto VRAMViewer::updateTiles() -> void {
     }
     break;
 
-  case 2: // 8BPP
-    for(uint tileY = 0; tileY < 32; tileY++) {
-      for(uint tileX = 0; tileX < 32; tileX++) {
-        for(uint y = 0; y < 8; y++) {
+  case SuperFamicom::PPU::Background::Mode::BPP8:
+    for(uint tileY : range(32)) {
+      for(uint tileX : range(32)) {
+        for(uint y : range(8)) {
           uint8 d[] = { sp[0], sp[1], sp[16], sp[17], sp[32], sp[33], sp[48], sp[49] };
-          for(uint x = 0; x < 8; x++) {
+          for(uint x : range(8)) {
             uint color = 0;
             color += d[0] & 0x80 ?   1 : 0;
             color += d[1] & 0x80 ?   2 : 0;
@@ -157,8 +166,7 @@ auto VRAMViewer::updateTiles() -> void {
             color += d[6] & 0x80 ?  64 : 0;
             color += d[7] & 0x80 ? 128 : 0;
             for(auto& b : d) b <<= 1;
-            //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
-            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -172,15 +180,14 @@ auto VRAMViewer::updateTiles() -> void {
     }
     break;
 
-  case 3: // Mode 7
-    for(uint tileY = 0; tileY < 32; tileY++) {
-      for(uint tileX = 0; tileX < 16; tileX++) {
-        for(uint y = 0; y < 8; y++) {
-          for(uint x = 0; x < 8; x++) {
+  case SuperFamicom::PPU::Background::Mode::Mode7:
+    for(uint tileY : range(32)) {
+      for(uint tileX : range(16)) {
+        for(uint y : range(8)) {
+          for(uint x : range(8)) {
             uint color = 0;
             color += sp[x << 1 | 1];
-            //color = (255u << 24) + (color << 16) + (color << 8) + (color << 0);
-            color = SuperFamicom::ppu.memory.cgram[color << 1] | SuperFamicom::ppu.memory.cgram[color << 1 | 1] << 8;
+            color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
