@@ -1,28 +1,28 @@
 struct TaitoTC : Board {
-  TaitoTC(Markup::Node& board_node) : Board(board_node), tc(*this, board_node) {
+  TaitoTC(Markup::Node& boardNode) : Board(boardNode), tc(*this, boardNode) {
   }
 
   auto main() -> void {
     tc.main();
   }
 
-  auto prg_read(uint addr) -> uint8 {
-    if(addr & 0x8000) return read(prgrom, tc.prg_addr(addr));
+  auto prgRead(uint addr) -> uint8 {
+    if(addr & 0x8000) return read(prgrom, tc.prgAddress(addr));
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
-    if(addr & 0x8000) return tc.reg_write(addr, data);
+  auto prgWrite(uint addr, uint8 data) -> void {
+    if(addr & 0x8000) return tc.regWrite(addr, data);
   }
 
-  auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(tc.ciram_addr(addr));
-    return Board::chr_read(tc.chr_addr(addr));
+  auto chrRead(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciramRead(tc.ciramAddress(addr));
+    return Board::chrRead(tc.chrAddress(addr));
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(tc.ciram_addr(addr), data);
-    return Board::chr_write(tc.chr_addr(addr), data);
+  auto chrWrite(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciramWrite(tc.ciramAddress(addr), data);
+    return Board::chrWrite(tc.chrAddress(addr), data);
   }
 
   auto power() -> void {

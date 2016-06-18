@@ -1,5 +1,5 @@
 struct Namco163 : Board {
-  Namco163(Markup::Node& board_node) : Board(board_node), n163(*this, board_node) {
+  Namco163(Markup::Node& boardNode) : Board(boardNode), n163(*this, boardNode) {
     chip = &n163;
   }
 
@@ -7,20 +7,20 @@ struct Namco163 : Board {
     n163.main();
   }
 
-  auto prg_read(uint addr) -> uint8 {
-    n163.prg_read(addr);
+  auto prgRead(uint addr) -> uint8 {
+    n163.prgRead(addr);
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
-    n163.prg_write(addr, data);
+  auto prgWrite(uint addr, uint8 data) -> void {
+    n163.prgWrite(addr, data);
   }
 
-  auto chr_read(uint addr) -> uint8 {
-    n163.chr_read(addr);
+  auto chrRead(uint addr) -> uint8 {
+    n163.chrRead(addr);
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
-    n163.chr_write(addr, data);
+  auto chrWrite(uint addr, uint8 data) -> void {
+    n163.chrWrite(addr, data);
   }
 
   auto serialize(serializer& s) -> void {

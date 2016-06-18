@@ -1,4 +1,4 @@
-auto CPU::cpuPortRead(uint16 addr, uint8 data) -> uint8 {
+auto CPU::readCPU(uint16 addr, uint8 data) -> uint8 {
   if(!system.vs()) {
     if(addr == 0x4016) {
       return (mdr() & 0xe0) | Famicom::peripherals.controllerPort1->data() | (Famicom::peripherals.expansionPort->data1() << 1);
@@ -14,10 +14,10 @@ auto CPU::cpuPortRead(uint16 addr, uint8 data) -> uint8 {
   return apu.read(addr);
 }
 
-auto CPU::cpuPortWrite(uint16 addr, uint8 data) -> void {
+auto CPU::writeCPU(uint16 addr, uint8 data) -> void {
   if(addr == 0x4014) {
-    status.oam_dma_page = data;
-    status.oam_dma_pending = true;
+    status.oamDMAPage = data;
+    status.oamDMAPending = true;
   }
 
   if(!system.vs()) {

@@ -1,27 +1,27 @@
 //VS
 
 struct VS : Board {
-  VS(Markup::Node& board_node) : Board(board_node),
-  mmc1(*this, board_node),
-  n108(*this, board_node) {
-    chip_type = ChipType::None;
-    string type = board_node["chip/type"].text();
-    if(type.match("74HC32")) chip_type = ChipType::_74HC32;
-    if(type.match("MMC1*" )) chip_type = ChipType::MMC1;
-    if(type.match("108"   )) chip_type = ChipType::N108;
-    if(type.match("109"   )) chip_type = ChipType::N108;
-    if(type.match("118"   )) chip_type = ChipType::N108;
-    if(type.match("119"   )) chip_type = ChipType::N108;
+  VS(Markup::Node& boardNode) : Board(boardNode),
+  mmc1(*this, boardNode),
+  n108(*this, boardNode) {
+    chipType = ChipType::None;
+    string type = boardNode["chip/type"].text();
+    if(type.match("74HC32")) chipType = ChipType::_74HC32;
+    if(type.match("MMC1*" )) chipType = ChipType::MMC1;
+    if(type.match("108"   )) chipType = ChipType::N108;
+    if(type.match("109"   )) chipType = ChipType::N108;
+    if(type.match("118"   )) chipType = ChipType::N108;
+    if(type.match("119"   )) chipType = ChipType::N108;
   }
 
   auto main() -> void {
-    if(chip_type == ChipType::MMC1) return mmc1.main();
+    if(chipType == ChipType::MMC1) return mmc1.main();
     tick();
   }
 
-  auto prg_read(uint addr) -> uint8 {
-    switch(chip_type) {
-    case ChipType::None:
+  auto prgRead(uint addr) -> uint8 {
+    switch(chipType) {
+    case ChipType::None: {
       if(addr & 0x8000) {
         if(addr < 0xe000 && prgrom.size() < 0x2000) return cpu.mdr();
         if(addr < 0xc000 && prgrom.size() < 0x4000) return cpu.mdr();
@@ -33,7 +33,9 @@ struct VS : Board {
         return read(prgrom, addr);
       }
       break;
-    case ChipType::_74HC32:
+    }
+
+    case ChipType::_74HC32: {
       if(addr & 0x8000) {
         if((addr & 0xc000) == 0x8000)
           return read(prgrom, (bank << 14) | (addr & 0x3fff));
@@ -41,15 +43,21 @@ struct VS : Board {
           return read(prgrom, (0x0f << 14) | (addr & 0x3fff));
       }
       break;
-    case ChipType::MMC1:
-      if(addr & 0x8000) return read(prgrom, mmc1.prg_addr(addr));
+    }
+
+    case ChipType::MMC1: {
+      if(addr & 0x8000) return read(prgrom, mmc1.prgAddress(addr));
       //if(revision == Revision::SUROM || revision == Revision::SXROM) {
-      //  addr |= ((mmc1.chr_bank[last_chr_bank] & 0x10) >> 4) << 18;
+      //  addr |= ((mmc1.chrBank[lastCHRBank] & 0x10) >> 4) << 18;
       //}
       break;
-    case ChipType::N108:
-      if(addr & 0x8000) return read(prgrom, n108.prg_addr(addr));
+    }
+
+    case ChipType::N108: {
+      if(addr & 0x8000) return read(prgrom, n108.prgAddress(addr));
       break;
+    }
+
     }
     if((addr & 0xe000) == 0x6000) {
       if(prgram.size() == 0) return vssystem.read(cpu.side, addr, cpu.mdr());
@@ -58,21 +66,21 @@ struct VS : Board {
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
-    switch(chip_type) {
+  auto prgWrite(uint addr, uint8 data) -> void {
+    switch(chipType) {
     case ChipType::None:
       if(addr == 0x4016) bank = (data & 0x04) >> 2;
       break;
     case ChipType::_74HC32:
       //TODO: Check if VS. UNROM has bus conflicts
-      //data &= prg_read(addr);
+      //data &= prgRead(addr);
       if(addr & 0x8000) bank = data & 0x0f;
       break;
     case ChipType::MMC1:
-      if(addr & 0x8000) return mmc1.mmio_write(addr, data);
+      if(addr & 0x8000) return mmc1.mmioWrite(addr, data);
       break;
     case ChipType::N108:
-      if(addr & 0x8000) return n108.reg_write(addr, data);
+      if(addr & 0x8000) return n108.regWrite(addr, data);
       break;
     }
     if((addr & 0xe000) == 0x6000) {
@@ -81,37 +89,37 @@ struct VS : Board {
     }
   }
 
-  auto chr_read(uint addr) -> uint8 {
+  auto chrRead(uint addr) -> uint8 {
     if(addr & 0x2000) return ppu.ciramRead(addr);
-    switch(chip_type) {
+    switch(chipType) {
     case ChipType::None:
       if(chrrom.size() < bank << 13) return ppu.status.mdr;
       return read(chrrom, ((bank << 13) + (addr & 0x1fff)));
     case ChipType::_74HC32:
-      return Board::chr_read(addr);
+      return Board::chrRead(addr);
     case ChipType::MMC1:
-      return Board::chr_read(mmc1.chr_addr(addr));
+      return Board::chrRead(mmc1.chrAddress(addr));
     case ChipType::N108:
-      return Board::chr_read(n108.chr_addr(addr));
+      return Board::chrRead(n108.chrAddress(addr));
     }
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
+  auto chrWrite(uint addr, uint8 data) -> void {
     if(addr & 0x2000) return ppu.ciramWrite(addr, data);
-    switch(chip_type) {
+    switch(chipType) {
     case ChipType::None:
       break;
     case ChipType::_74HC32:
-      return Board::chr_write(addr, data);
+      return Board::chrWrite(addr, data);
     case ChipType::MMC1:
-      return Board::chr_write(mmc1.chr_addr(addr), data);
+      return Board::chrWrite(mmc1.chrAddress(addr), data);
     case ChipType::N108:
-      return Board::chr_write(n108.chr_addr(addr), data);
+      return Board::chrWrite(n108.chrAddress(addr), data);
     }
   }
 
   auto power() -> void {
-    switch(chip_type) {
+    switch(chipType) {
     case ChipType::MMC1: mmc1.power(); break;
     case ChipType::N108: n108.power(); break;
     }
@@ -119,7 +127,7 @@ struct VS : Board {
 
   auto reset() -> void {
     bank = 0;
-    switch(chip_type) {
+    switch(chipType) {
     case ChipType::MMC1: mmc1.reset(); break;
     case ChipType::N108: n108.reset(); break;
     }
@@ -128,7 +136,7 @@ struct VS : Board {
   auto serialize(serializer& s) -> void {
     Board::serialize(s);
     s.integer(bank);
-    switch(chip_type) {
+    switch(chipType) {
     case ChipType::MMC1: mmc1.serialize(s); break;
     case ChipType::N108: n108.serialize(s); break;
     }
@@ -139,7 +147,7 @@ struct VS : Board {
     _74HC32,
     MMC1,
     N108,
-  } chip_type;
+  } chipType;
 
   uint4 bank;
   MMC1 mmc1;

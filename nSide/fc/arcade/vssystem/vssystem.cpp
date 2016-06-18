@@ -21,7 +21,7 @@ auto VSSystem::main() -> void {
 }
 
 auto VSSystem::init() -> void {
-  forceSubRam = false;
+  forceSubRAM = false;
 }
 
 auto VSSystem::load() -> void {
@@ -45,7 +45,7 @@ auto VSSystem::reset() -> void {
   bus.map(reader, writer, "4020-5fff", 0, 0, 0x0020);
   bus.map(reader, writer, "6000-7fff");
 
-  ramSide = forceSubRam ? 1 : 0;
+  ramSide = forceSubRAM ? 1 : 0;
   resetButtons();
 }
 
@@ -97,7 +97,7 @@ auto VSSystem::write(bool side, uint16 addr, uint8 data) -> void {
     peripherals.controllerPort2->latch(data & 1);
     peripherals.expansionPort->latch(data & 1);
     latch(side, data & 1);
-    if(side == 0 && !forceSubRam) ramSide = data & 2 ^ 2;
+    if(side == 0 && !forceSubRAM) ramSide = data & 2 ^ 2;
   }
 
   if(addr >= 0x4020 && addr <= 0x5fff) {

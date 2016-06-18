@@ -1,7 +1,7 @@
 struct HVC_ExROM : Board {
-  HVC_ExROM(Markup::Node& board_node) : Board(board_node), mmc5(*this, board_node) {
+  HVC_ExROM(Markup::Node& boardNode) : Board(boardNode), mmc5(*this, boardNode) {
     chip = &mmc5;
-    string type = board_node["id"].text();
+    string type = boardNode["id"].text();
     if(type.match("*EKROM*")) revision = Revision::EKROM;
     if(type.match("*ELROM*")) revision = Revision::ELROM;
     if(type.match("*ETROM*")) revision = Revision::ETROM;
@@ -12,20 +12,20 @@ struct HVC_ExROM : Board {
     mmc5.main();
   }
 
-  auto prg_read(uint addr) -> uint8 {
-    return mmc5.prg_read(addr);
+  auto prgRead(uint addr) -> uint8 {
+    return mmc5.prgRead(addr);
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
-    mmc5.prg_write(addr, data);
+  auto prgWrite(uint addr, uint8 data) -> void {
+    mmc5.prgWrite(addr, data);
   }
 
-  auto chr_read(uint addr) -> uint8 {
-    return mmc5.chr_read(addr);
+  auto chrRead(uint addr) -> uint8 {
+    return mmc5.chrRead(addr);
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
-    mmc5.chr_write(addr, data);
+  auto chrWrite(uint addr, uint8 data) -> void {
+    mmc5.chrWrite(addr, data);
   }
 
   auto scanline(uint y) -> void {

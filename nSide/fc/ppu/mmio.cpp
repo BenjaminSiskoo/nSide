@@ -9,11 +9,11 @@ auto PPU::read(uint16 addr, uint8 data) -> uint8 {
   //PPUSTATUS
   case 2: {
     data = 0x00;
-    data |= status.nmi_flag << 7;
-    data |= status.sprite_zero_hit << 6;
+    data |= status.nmiFlag << 7;
+    data |= status.spriteZeroHit << 6;
     switch(revision) {
     default:
-      data |= status.sprite_overflow << 5;
+      data |= status.spriteOverflow << 5;
       data |= status.mdr & 0x1f;
       break;
     case Revision::RC2C05_01:
@@ -21,9 +21,9 @@ auto PPU::read(uint16 addr, uint8 data) -> uint8 {
     case Revision::RC2C05_02: data |= 0x3d; break;
     case Revision::RC2C05_03: data |= 0x1c; break;
     }
-    status.address_latch = 0;
-    status.nmi_hold = 0;
-    cpu.set_nmi_line(status.nmi_flag = 0);
+    status.addressLatch = 0;
+    status.nmiHold = 0;
+    cpu.setNMILine(status.nmiFlag = 0);
     return data;
   }
 
@@ -33,8 +33,8 @@ auto PPU::read(uint16 addr, uint8 data) -> uint8 {
     case Revision::RP2C02C:
       return status.mdr;
     default:
-      status.mdr = oamRead(status.oam_addr);
-      for(uint i = 0; i < 8; i++) status.mdr_decay[i] = 3221591;
+      status.mdr = oamRead(status.oamAddress);
+      for(uint i = 0; i < 8; i++) status.mdrDecay[i] = 3221591;
       break;
     }
     return status.mdr;
@@ -42,19 +42,19 @@ auto PPU::read(uint16 addr, uint8 data) -> uint8 {
 
   //PPUDATA
   case 7: {
-    if(raster_enable() && (vcounter() <= 240 || vcounter() == (system.region() == System::Region::NTSC ? 261 : 311))) {
+    if(rasterEnable() && (vcounter() <= 240 || vcounter() == (system.region() == System::Region::NTSC ? 261 : 311))) {
       return 0x00;
     }
 
     addr = status.vaddr & 0x3fff;
     if(addr <= 0x3eff) {
-      status.mdr = status.bus_data;
+      status.mdr = status.busData;
     } else if(addr <= 0x3fff) {
       status.mdr = (status.mdr & 0xc0) | cgramRead(addr);
     }
-    status.bus_data = cartridge.chr_read(status.chr_abus = addr);
-    status.vaddr += status.vram_increment;
-    status.chr_abus = status.vaddr;
+    status.busData = cartridge.chrRead(status.chrAddressBus = addr);
+    status.vaddr += status.vramIncrement;
+    status.chrAddressBus = status.vaddr;
     return status.mdr;
   }
 
@@ -67,7 +67,7 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
   status.mdr = data;
   // Decay rate can vary depending on the system and temperature.
   // Value used here is PPU's NTSC clock rate * 0.6 rounded to nearest integer.
-  for(uint i = 0; i < 8; i++) status.mdr_decay[i] = 3221591;
+  for(uint i = 0; i < 8; i++) status.mdrDecay[i] = 3221591;
 
   switch(revision) {
   case Revision::RC2C05_01:
@@ -81,25 +81,25 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
 
   //PPUCTRL
   case 0: {
-    status.nmi_enable     = data.bit(7);
-    status.master_select  = data.bit(6);
-    status.sprite_size    = data.bit(5);
-    status.bg_addr        = data.bit(4) ? 0x1000 : 0x0000;
-    status.sprite_addr    = data.bit(3) ? 0x1000 : 0x0000;
-    status.vram_increment = data.bit(2) ? 32 : 1;
+    status.nmiEnable     = data.bit(7);
+    status.masterSelect  = data.bit(6);
+    status.spriteSize    = data.bit(5);
+    status.bgAddress     = data.bit(4) ? 0x1000 : 0x0000;
+    status.objAddress    = data.bit(3) ? 0x1000 : 0x0000;
+    status.vramIncrement = data.bit(2) ? 32 : 1;
     status.taddr = (status.taddr & 0x73ff) | (data.bits(1,0) << 10);
-    cpu.set_nmi_line(status.nmi_enable && status.nmi_hold && status.nmi_flag);
+    cpu.setNMILine(status.nmiEnable && status.nmiHold && status.nmiFlag);
     return;
   }
 
   //PPUMASK
   case 1: {
-    status.emphasis = data.bits(7,5);
-    status.sprite_enable      = data.bit(4);
-    status.bg_enable          = data.bit(3);
-    status.sprite_edge_enable = data.bit(2);
-    status.bg_edge_enable     = data.bit(1);
-    status.grayscale          = data.bit(0);
+    status.emphasis      = data.bits(7,5);
+    status.spriteEnable  = data.bit(4);
+    status.bgEnable      = data.bit(3);
+    status.objEdgeEnable = data.bit(2);
+    status.bgEdgeEnable  = data.bit(1);
+    status.grayscale     = data.bit(0);
     return;
   }
 
@@ -115,57 +115,57 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
       // on an actual Famicom/NES, waiting a while after writing to OAM will
       // make this corruption happen because the OAM will have decayed at the
       // spot being written to.
-      for(int i = 0; i < 8; i++) oam[((addr & 0xf800) >> 8) + i] = oam[(status.oam_addr & 0xf8) + i];
+      for(int i = 0; i < 8; i++) oam[((addr & 0xf800) >> 8) + i] = oam[(status.oamAddress & 0xf8) + i];
     }
-    status.oam_addr = data;
+    status.oamAddress = data;
     return;
   }
 
   //OAMDATA
   case 4: {
-    oamWrite(status.oam_addr++, data);
+    oamWrite(status.oamAddress++, data);
     return;
   }
 
   //PPUSCROLL
   case 5: {
-    if(status.address_latch == 0) {
+    if(status.addressLatch == 0) {
       status.xaddr = data.bits(2,0);
       status.taddr = (status.taddr & 0x7fe0) | data.bits(7,3);
     } else {
       status.taddr = (status.taddr & 0x0c1f) | (data.bits(2,0) << 12) | (data.bits(7,3) << 5);
     }
-    status.address_latch ^= 1;
+    status.addressLatch ^= 1;
     return;
   }
 
   //PPUADDR
   case 6: {
-    if(status.address_latch == 0) {
+    if(status.addressLatch == 0) {
       status.taddr = (status.taddr & 0x00ff) | (data.bits(5,0) << 8);
     } else {
       status.taddr = (status.taddr & 0x7f00) | data;
       status.vaddr = status.taddr;
-      status.chr_abus = status.vaddr;
+      status.chrAddressBus = status.vaddr;
     }
-    status.address_latch ^= 1;
+    status.addressLatch ^= 1;
     return;
   }
 
   //PPUDATA
   case 7: {
-    if(raster_enable() && (vcounter() <= 240 || vcounter() == (system.region() != System::Region::PAL ? 261 : 311))) {
+    if(rasterEnable() && (vcounter() <= 240 || vcounter() == (system.region() != System::Region::PAL ? 261 : 311))) {
       return;
     }
 
     addr = status.vaddr & 0x3fff;
     if(addr <= 0x3eff) {
-      cartridge.chr_write(status.chr_abus = addr, data);
+      cartridge.chrWrite(status.chrAddressBus = addr, data);
     } else if(addr <= 0x3fff) {
       cgramWrite(addr, data);
     }
-    status.vaddr += status.vram_increment;
-    status.chr_abus = status.vaddr;
+    status.vaddr += status.vramIncrement;
+    status.chrAddressBus = status.vaddr;
     return;
   }
 

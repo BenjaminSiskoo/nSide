@@ -42,22 +42,22 @@ struct PPU : Thread, PPUcounter {
   auto origin_x() -> uint;
   auto origin_y() -> uint;
 
-  auto raster_enable() const -> bool;
-  auto nametable_addr() const -> uint;
-  auto scrollx() const -> uint;
-  auto scrolly() const -> uint;
-  auto sprite_height() const -> uint;
+  auto rasterEnable() const -> bool;
+  auto nametableAddress() const -> uint;
+  auto scrollX() const -> uint;
+  auto scrollY() const -> uint;
+  auto spriteHeight() const -> uint;
 
-  auto chr_load(uint14 addr) -> uint8;
+  auto chrLoad(uint14 addr) -> uint8;
 
-  auto scrollx_increment() -> void;
-  auto scrolly_increment() -> void;
+  auto scrollXIncrement() -> void;
+  auto scrollYIncrement() -> void;
 
   auto ext() -> uint4;
 
-  auto raster_pixel() -> void;
-  auto raster_sprite() -> void;
-  auto raster_scanline() -> void;
+  auto rasterPixel() -> void;
+  auto rasterSprite() -> void;
+  auto rasterScanline() -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -85,57 +85,54 @@ struct PPU : Thread, PPUcounter {
   static const uint9 RP2C04_0003[16 * 4];
   static const uint9 RP2C04_0004[16 * 4];
 
-  //debugger functions
-  auto exportRegisters(string &markup) -> void;
-
   struct Status {
-    uint14 chr_abus;
+    uint14 chrAddressBus;
     uint8 mdr;
-    uint mdr_decay[8];
+    uint mdrDecay[8];
 
-    uint8 bus_data;
+    uint8 busData;
 
-    bool address_latch;
+    bool addressLatch;
 
     uint15 vaddr;
     uint15 taddr;
     uint8 xaddr;
 
-    bool nmi_hold;
-    bool nmi_flag;
+    bool nmiHold;
+    bool nmiFlag;
 
     //$2000
-    bool nmi_enable;
-    bool master_select;
-    bool sprite_size;
-    uint bg_addr;
-    uint sprite_addr;
-    uint vram_increment;
+    bool nmiEnable;
+    bool masterSelect;
+    bool spriteSize;
+    uint bgAddress;
+    uint objAddress;
+    uint vramIncrement;
 
     //$2001
     uint3 emphasis;
-    bool sprite_enable;
-    bool bg_enable;
-    bool sprite_edge_enable;
-    bool bg_edge_enable;
+    bool spriteEnable;
+    bool bgEnable;
+    bool objEdgeEnable;
+    bool bgEdgeEnable;
     bool grayscale;
 
     //$2002
-    bool sprite_zero_hit;
-    bool sprite_overflow;
+    bool spriteZeroHit;
+    bool spriteOverflow;
 
     //$2003
-    uint8 oam_addr;
+    uint8 oamAddress;
   } status;
 
   struct Raster {
     uint16 nametable;
     uint16 attribute;
-    uint16 tiledatalo;
-    uint16 tiledatahi;
+    uint16 tiledataLo;
+    uint16 tiledataHi;
 
-    uint oam_iterator;
-    uint oam_counter;
+    uint oamIterator;
+    uint oamCounter;
 
     struct OAM {
       uint8 id;
@@ -144,8 +141,8 @@ struct PPU : Thread, PPUcounter {
       uint8 attr;
       uint8 x;
 
-      uint8 tiledatalo;
-      uint8 tiledatahi;
+      uint8 tiledataLo;
+      uint8 tiledataHi;
     } oam[8], soam[8];
   } raster;
 

@@ -64,7 +64,7 @@ auto System::load(Revision revision) -> void {
 
   switch(revision) {
 
-  case Revision::Famicom:
+  case Revision::Famicom: {
     apu.revision = APU::Revision::RP2A03G;
     // most Famicoms use a PPU with open bus OAMDATA (read).
     // For now, we use an NES PPU where OAMDATA (read) is defined.
@@ -76,15 +76,17 @@ auto System::load(Revision revision) -> void {
     if(region() != Region::NTSC) interface->information.aspectRatio = 2'950'000.0 / 2'128'137.0;
     peripherals.connect(Port::Arcade, Device::None);
     break;
+  }
 
-  case Revision::VSSystem:
+  case Revision::VSSystem: {
     apu.revision = APU::Revision::RP2A03;
     // VS. System PPU is set within cartridge.load().
     vssystem.load();
     peripherals.connect(Port::Arcade, Device::VSPanel);
     break;
+  }
 
-  case Revision::PlayChoice10:
+  case Revision::PlayChoice10: {
     apu.revision = APU::Revision::RP2A03G;
     ppu.revision = PPU::Revision::RP2C03B;
     playchoice10.screenConfig = min(max(document["system/pc10/screen/mode"].integer(), 1), 2);
@@ -92,13 +94,15 @@ auto System::load(Revision revision) -> void {
     interface->information.canvasHeight = playchoice10.screenConfig * 240;
     peripherals.connect(Port::Arcade, Device::None);
     break;
+  }
 
-  case Revision::FamicomBox:
+  case Revision::FamicomBox: {
     apu.revision = APU::Revision::RP2A03E;
     ppu.revision = PPU::Revision::RP2C02C;
     famicombox.load();
     peripherals.connect(Port::Arcade, Device::None);
     break;
+  }
 
   }
 

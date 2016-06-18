@@ -5,8 +5,8 @@
 //BANDAI-LZ93D50
 
 struct BandaiFCG : Board {
-  BandaiFCG(Markup::Node& board_node) : Board(board_node), fcg(*this, board_node) {
-    string type = board_node["id"].text();
+  BandaiFCG(Markup::Node& boardNode) : Board(boardNode), fcg(*this, boardNode) {
+    string type = boardNode["id"].text();
     revision = Revision::FCGAll;
     if(type.match("*FCG-1*"  )) revision = Revision::FCG1;
     if(type.match("*FCG-2*"  )) revision = Revision::FCG2;
@@ -18,37 +18,37 @@ struct BandaiFCG : Board {
     fcg.main();
   }
 
-  auto prg_read(uint addr) -> uint8 {
+  auto prgRead(uint addr) -> uint8 {
     if((addr & 0xe000) == 0x6000) {
       switch(revision) {
       case Revision::LZ93D50:
         //TODO: serial EEPROM support
         return 0x00 | (cpu.mdr() & 0xef);
       case Revision::JUMP2:
-        return fcg.eeprom_i2c_scl ? fcg.ram_read(addr) : cpu.mdr();
+        return fcg.eepromI2C_SCL ? fcg.ramRead(addr) : cpu.mdr();
       }
     }
     if((addr & 0x8000) == 0x8000) {
       if(revision != Revision::JUMP2)
-        return read(prgrom, fcg.prg_addr(addr));
+        return read(prgrom, fcg.prgAddress(addr));
       else
-        return read(prgrom, fcg.prg_addr(addr) | ((fcg.chr_bank[(ppu.status.chr_abus >> 10) & 3] & 1) << 18));
+        return read(prgrom, fcg.prgAddress(addr) | ((fcg.chrBank[(ppu.status.chrAddressBus >> 10) & 3] & 1) << 18));
     }
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
+  auto prgWrite(uint addr, uint8 data) -> void {
     if((addr & 0xe000) == 0x6000) {
       switch(revision) {
       case Revision::FCGAll:
       case Revision::FCG1:
       case Revision::FCG2:
-        return fcg.reg_write(addr, data);
+        return fcg.regWrite(addr, data);
       case Revision::LZ93D50:
         //TODO: serial EEPROM support
         break;
       case Revision::JUMP2:
-        if(fcg.eeprom_i2c_scl) return fcg.ram_write(addr, data);
+        if(fcg.eepromI2C_SCL) return fcg.ramWrite(addr, data);
         else                   break;
       }
     }
@@ -57,20 +57,20 @@ struct BandaiFCG : Board {
       case Revision::FCGAll:
       case Revision::LZ93D50:
       case Revision::JUMP2:
-        return fcg.reg_write(addr, data);
+        return fcg.regWrite(addr, data);
       }
     }
   }
 
-  auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(fcg.ciram_addr(addr));
-    if(chrrom.size()) return Board::chr_read(fcg.chr_addr(addr));
-    if(chrram.size()) return Board::chr_read(addr);
+  auto chrRead(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciramRead(fcg.ciramAddress(addr));
+    if(chrrom.size()) return Board::chrRead(fcg.chrAddress(addr));
+    if(chrram.size()) return Board::chrRead(addr);
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(fcg.ciram_addr(addr), data);
-    if(chrram.size()) Board::chr_write(addr, data);
+  auto chrWrite(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciramWrite(fcg.ciramAddress(addr), data);
+    if(chrram.size()) Board::chrWrite(addr, data);
   }
 
   auto power() -> void {

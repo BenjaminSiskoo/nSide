@@ -1,24 +1,24 @@
 struct KonamiVRC1 : Board {
-  KonamiVRC1(Markup::Node& board_node) : Board(board_node), vrc1(*this) {
+  KonamiVRC1(Markup::Node& boardNode) : Board(boardNode), vrc1(*this) {
   }
 
-  auto prg_read(uint addr) -> uint8 {
-    if(addr & 0x8000) return read(prgrom, vrc1.prg_addr(addr));
+  auto prgRead(uint addr) -> uint8 {
+    if(addr & 0x8000) return read(prgrom, vrc1.prgAddress(addr));
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
-    if(addr & 0x8000) return vrc1.reg_write(addr, data);
+  auto prgWrite(uint addr, uint8 data) -> void {
+    if(addr & 0x8000) return vrc1.regWrite(addr, data);
   }
 
-  auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(vrc1.ciram_addr(addr));
-    return Board::chr_read(vrc1.chr_addr(addr));
+  auto chrRead(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciramRead(vrc1.ciramAddress(addr));
+    return Board::chrRead(vrc1.chrAddress(addr));
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(vrc1.ciram_addr(addr), data);
-    return Board::chr_write(vrc1.chr_addr(addr), data);
+  auto chrWrite(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciramWrite(vrc1.ciramAddress(addr), data);
+    return Board::chrWrite(vrc1.chrAddress(addr), data);
   }
 
   auto power() -> void {

@@ -89,14 +89,14 @@ auto PlayChoice10::portRead(uint8 addr) -> uint8 {
   bool coin1         = false;
   switch(addr & 0x03) {
   case 0x00:
-    data |= channelSelect       << 0;
-    data |= enter               << 1;
-    data |= reset               << 2;
-    data |= cpu.status.nmi_line << 3;
-    data |= 0                   << 4;
-    data |= coin2               << 5;
-    data |= service             << 6;
-    data |= coin1               << 7;
+    data |= channelSelect      << 0;
+    data |= enter              << 1;
+    data |= reset              << 2;
+    data |= cpu.status.nmiLine << 3;
+    data |= 0                  << 4;
+    data |= coin2              << 5;
+    data |= service            << 6;
+    data |= coin1              << 7;
     break;
   case 0x01: data = (dip >> 0) & 0xff; break;
   case 0x02: data = (dip >> 8) & 0xff; break;
@@ -118,10 +118,10 @@ auto PlayChoice10::portWrite(uint8 addr, uint8 data) -> void {
   case 0x08: z80NMI     = data; break;
   case 0x09: watchdog   = data; break;
   case 0x0a: ppuReset   = data; break;
-  case 0x0b: channel = (channel & 0xe) | (data << 0); break;
-  case 0x0c: channel = (channel & 0xd) | (data << 1); break;
-  case 0x0d: channel = (channel & 0xb) | (data << 2); break;
-  case 0x0e: channel = (channel & 0x7) | (data << 3); break;
+  case 0x0b: channel    = (channel & 0xe) | (data << 0); break;
+  case 0x0c: channel    = (channel & 0xd) | (data << 1); break;
+  case 0x0d: channel    = (channel & 0xb) | (data << 2); break;
+  case 0x0e: channel    = (channel & 0x7) | (data << 3); break;
   case 0x0f: sramBank   = data; break;
   }
   switch(addr & 0x13) {

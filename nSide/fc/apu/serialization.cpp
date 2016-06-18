@@ -9,18 +9,18 @@ auto APU::serialize(serializer& s) -> void {
   dmc.serialize(s);
   frame.serialize(s);
 
-  s.integer(enabled_channels);
-  s.integer(cartridge_sample);
+  s.integer(enabledChannels);
+  s.integer(cartridgeSample);
 }
 
 auto APU::Filter::serialize(serializer& s) -> void {
-  s.integer(hipass_strong);
-  s.integer(hipass_weak);
+  s.integer(hipassStrong);
+  s.integer(hipassWeak);
   s.integer(lopass);
 }
 
 auto APU::FrameCounter::serialize(serializer& s) -> void {
-  s.integer(irq_pending);
+  s.integer(irqPending);
 
   s.integer(mode);
   s.integer(counter);

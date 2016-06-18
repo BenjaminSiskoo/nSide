@@ -18,7 +18,7 @@ struct VSSystem : Cothread {
 
   auto serialize(serializer& s) -> void;
 
-  bool forceSubRam;
+  bool forceSubRAM;
 
 private:
   uint8 ram[0x800];

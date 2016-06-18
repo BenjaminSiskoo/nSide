@@ -1,6 +1,6 @@
 struct HVC_TxROM : Board {
-  HVC_TxROM(Markup::Node& board_node) : Board(board_node), mmc3(*this, board_node) {
-    string type = board_node["id"].text();
+  HVC_TxROM(Markup::Node& boardNode) : Board(boardNode), mmc3(*this, boardNode) {
+    string type = boardNode["id"].text();
     if(type.match("*TBROM"  )) revision = Revision::TBROM;
     if(type.match("*TEROM"  )) revision = Revision::TEROM;
     if(type.match("*TFROM"  )) revision = Revision::TFROM;
@@ -24,48 +24,48 @@ struct HVC_TxROM : Board {
     mmc3.main();
   }
 
-  auto prg_read(uint addr) -> uint8 {
-    if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return mmc3.ram_read(addr);
-    if(addr & 0x8000) return read(prgrom, mmc3.prg_addr(addr));
+  auto prgRead(uint addr) -> uint8 {
+    if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return mmc3.ramRead(addr);
+    if(addr & 0x8000) return read(prgrom, mmc3.prgAddress(addr));
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
-    if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return mmc3.ram_write(addr, data);
-    if(addr & 0x8000) return mmc3.reg_write(addr, data);
+  auto prgWrite(uint addr, uint8 data) -> void {
+    if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return mmc3.ramWrite(addr, data);
+    if(addr & 0x8000) return mmc3.regWrite(addr, data);
   }
 
-  auto chr_read(uint addr) -> uint8 {
+  auto chrRead(uint addr) -> uint8 {
     if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
       if(addr & 0x2000) return read(chrram, addr);
-      return read(chrrom, mmc3.chr_addr(addr));
+      return read(chrrom, mmc3.chrAddress(addr));
     }
-    if(addr & 0x2000) return ppu.ciramRead(ciram_addr(addr));
+    if(addr & 0x2000) return ppu.ciramRead(ciramAddress(addr));
     if(revision == Revision::TQROM) {
-      if(mmc3.chr_addr(addr) & (0x40 << 10))
-        return read(chrram, mmc3.chr_addr(addr));
+      if(mmc3.chrAddress(addr) & (0x40 << 10))
+        return read(chrram, mmc3.chrAddress(addr));
       else
-        return read(chrrom, mmc3.chr_addr(addr));
+        return read(chrrom, mmc3.chrAddress(addr));
     }
-    return Board::chr_read(mmc3.chr_addr(addr));
+    return Board::chrRead(mmc3.chrAddress(addr));
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
+  auto chrWrite(uint addr, uint8 data) -> void {
     if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
       if(addr & 0x2000) write(chrram, addr, data);
       return;
     }
-    if(addr & 0x2000) return ppu.ciramWrite(ciram_addr(addr), data);
-    return Board::chr_write(mmc3.chr_addr(addr), data);
+    if(addr & 0x2000) return ppu.ciramWrite(ciramAddress(addr), data);
+    return Board::chrWrite(mmc3.chrAddress(addr), data);
   }
 
-  auto ciram_addr(uint addr) -> uint {
+  auto ciramAddress(uint addr) -> uint {
     switch(revision) {
     default:
-      return mmc3.ciram_addr(addr);
+      return mmc3.ciramAddress(addr);
     case Revision::TKSROM:
     case Revision::TLSROM:
-      return ((mmc3.chr_addr(addr & 0xfff) & 0x20000) >> 7) | (addr & 0x3ff);
+      return ((mmc3.chrAddress(addr & 0xfff) & 0x20000) >> 7) | (addr & 0x3ff);
     }
   }
 

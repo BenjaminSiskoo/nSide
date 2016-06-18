@@ -1,7 +1,7 @@
 #include "chip/chip.hpp"
 #include "board/board.hpp"
 
-struct Cartridge : Thread, property<Cartridge> {
+struct Cartridge : Thread {
   enum class Region : uint { NTSC, PAL, Dendy };
 
   static void Enter();
@@ -42,11 +42,11 @@ struct Cartridge : Thread, property<Cartridge> {
 //privileged:
   Board* board;
 
-  auto prg_read(uint addr) -> uint8;
-  auto prg_write(uint addr, uint8 data) -> void;
+  auto prgRead(uint addr) -> uint8;
+  auto prgWrite(uint addr, uint8 data) -> void;
 
-  auto chr_read(uint addr) -> uint8;
-  auto chr_write(uint addr, uint8 data) -> void;
+  auto chrRead(uint addr) -> uint8;
+  auto chrWrite(uint addr, uint8 data) -> void;
 
   //scanline() is for debugging purposes only:
   //boards must detect scanline edges on their own

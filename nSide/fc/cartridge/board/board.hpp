@@ -1,5 +1,5 @@
 struct Board {
-  Board(Markup::Node& board_node);
+  Board(Markup::Node& boardNode);
   virtual ~Board();
 
   static auto read(MappedRAM& memory, uint addr) -> uint8;
@@ -9,11 +9,11 @@ struct Board {
   virtual auto main() -> void;
   virtual auto tick() -> void;
 
-  virtual uint8 prg_read(uint addr) = 0;
-  virtual void prg_write(uint addr, uint8 data) = 0;
+  virtual uint8 prgRead(uint addr) = 0;
+  virtual void prgWrite(uint addr, uint8 data) = 0;
 
-  virtual auto chr_read(uint addr) -> uint8;
-  virtual auto chr_write(uint addr, uint8 data) -> void;
+  virtual auto chrRead(uint addr) -> uint8;
+  virtual auto chrWrite(uint addr, uint8 data) -> void;
 
   virtual inline auto scanline(uint y) -> void {}
 
@@ -22,7 +22,7 @@ struct Board {
 
   virtual auto serialize(serializer&) -> void;
 
-  static Board* load(Markup::Node board_node);
+  static Board* load(Markup::Node boardNode);
 
   Chip* chip = nullptr;
 

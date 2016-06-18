@@ -96,22 +96,22 @@ auto BeamGun::data2() -> uint5 {
 
 auto BeamGun::readLight() -> bool {
   if(offscreen) return false;
-  uint32 palette_index = ppu.output[y * 256 + x];
+  uint32 paletteIndex = ppu.output[y * 256 + x];
   uint color;
   switch(ppu.revision) {
   default:
-    return ((palette_index & 0x20) && ((palette_index & 0x0f) < 0x0d));
+    return ((paletteIndex & 0x20) && ((paletteIndex & 0x0f) < 0x0d));
   case PPU::Revision::RP2C04_0001:
-    color = PPU::RP2C04_0001[palette_index & 63];
+    color = PPU::RP2C04_0001[paletteIndex & 63];
     break;
   case PPU::Revision::RP2C04_0002:
-    color = PPU::RP2C04_0002[palette_index & 63];
+    color = PPU::RP2C04_0002[paletteIndex & 63];
     break;
   case PPU::Revision::RP2C04_0003:
-    color = PPU::RP2C04_0003[palette_index & 63];
+    color = PPU::RP2C04_0003[paletteIndex & 63];
     break;
   case PPU::Revision::RP2C04_0004:
-    color = PPU::RP2C04_0004[palette_index & 63];
+    color = PPU::RP2C04_0004[paletteIndex & 63];
     break;
   }
   if((color & 0xf00) > 0x600) return true;

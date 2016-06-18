@@ -259,17 +259,6 @@ auto Interface::exportMemory() -> void {
 
   file::write({pathname, "i-work.ram"}, (uint8_t*)cpu.iwram, 32 * 1024);
   file::write({pathname, "e-work.ram"}, (uint8_t*)cpu.ewram, 256 * 1024);
-  file::write({pathname, "video.ram"}, (uint8_t*)ppu.vram, 96 * 1024);
-  uint8_t obj_data[128 * 8];
-  for(uint addr = 0; addr < 128 * 8; addr++) {
-    obj_data[addr] = ppu.oam_read(Byte, addr | 0x0700'0000);
-  }
-  file::write({pathname, "sprite.ram"}, obj_data, 128 * 8);
-  uint8_t pal_data[256 * 2 * 2];
-  for(uint addr = 0; addr < 256 * 2 * 2; addr++) {
-    pal_data[addr] = ppu.pram_read(Byte, addr | 0x0500'0000);
-  }
-  file::write({pathname, "palette.ram"}, pal_data, 256 * 2 * 2);
   if(cartridge.sram.size) saveRequest(ID::SRAM, "debug/save-static.ram");
   if(cartridge.eeprom.size) saveRequest(ID::EEPROM, "debug/save-eeprom.ram");
   if(cartridge.flash.size) saveRequest(ID::FLASH, "debug/save-flash.ram");

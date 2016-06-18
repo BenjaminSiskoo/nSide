@@ -1,6 +1,6 @@
 struct TC : Chip {
-  TC(Board& board, Markup::Node& board_node) : Chip(board) {
-    auto chip = board_node.find("chip");
+  TC(Board& board, Markup::Node& boardNode) : Chip(board) {
+    auto chip = boardNode.find("chip");
     string type = chip(0)["type"].text();
     if(type == "TC0190FMC") revision = Revision::TC0190FMC;
     if(type == "TC0350FMR") revision = Revision::TC0350FMR;
@@ -10,90 +10,90 @@ struct TC : Chip {
 
   auto main() -> void {
     if(revision != Revision::TC0190FMC) {
-      if(irq_delay) irq_delay--;
-      irq_test(ppu.status.chr_abus);
-      cpu.set_irq_line(irq_line);
+      if(irqDelay) irqDelay--;
+      irqTest(ppu.status.chrAddressBus);
+      cpu.setIRQLine(irqLine);
     }
     tick();
   }
 
-  auto irq_test(uint addr) -> void {
+  auto irqTest(uint addr) -> void {
     bool edge;
     // IRQs occur a little after they would on the MMC3.
     // Do they use the MC-ACC's behavior instead?
-    edge = (chr_abus & 0x1000) && !(addr & 0x1000);
+    edge = (chrAddressBus & 0x1000) && !(addr & 0x1000);
     if(edge) {
-      if(irq_delay == 0) {
-        if(irq_counter == 0xff) {
-          irq_counter = irq_latch;
-        } else if(++irq_counter == 0xff) {
-          if(irq_enable) irq_line = 1;
+      if(irqDelay == 0) {
+        if(irqCounter == 0xff) {
+          irqCounter = irqLatch;
+        } else if(++irqCounter == 0xff) {
+          if(irqEnable) irqLine = 1;
         }
       }
-      irq_delay = 6;
+      irqDelay = 6;
     }
-    chr_abus = addr;
+    chrAddressBus = addr;
   }
 
-  auto prg_addr(uint addr) const -> uint {
+  auto prgAddress(uint addr) const -> uint {
     switch((addr >> 13) & 3) {
-    case 0: return (prg_bank[0] << 13) | (addr & 0x1fff);
-    case 1: return (prg_bank[1] << 13) | (addr & 0x1fff);
+    case 0: return (prgBank[0] << 13) | (addr & 0x1fff);
+    case 1: return (prgBank[1] << 13) | (addr & 0x1fff);
     case 2: return (0x3e << 13) | (addr & 0x1fff);
     case 3: return (0x3f << 13) | (addr & 0x1fff);
     }
   }
 
-  auto chr_addr(uint addr) const -> uint {
-    if(addr <= 0x07ff) return (chr_bank[0] << 11) | (addr & 0x07ff);
-    if(addr <= 0x0fff) return (chr_bank[1] << 11) | (addr & 0x07ff);
-    if(addr <= 0x13ff) return (chr_bank[2] << 10) | (addr & 0x03ff);
-    if(addr <= 0x17ff) return (chr_bank[3] << 10) | (addr & 0x03ff);
-    if(addr <= 0x1bff) return (chr_bank[4] << 10) | (addr & 0x03ff);
-    if(addr <= 0x1fff) return (chr_bank[5] << 10) | (addr & 0x03ff);
+  auto chrAddress(uint addr) const -> uint {
+    if(addr <= 0x07ff) return (chrBank[0] << 11) | (addr & 0x07ff);
+    if(addr <= 0x0fff) return (chrBank[1] << 11) | (addr & 0x07ff);
+    if(addr <= 0x13ff) return (chrBank[2] << 10) | (addr & 0x03ff);
+    if(addr <= 0x17ff) return (chrBank[3] << 10) | (addr & 0x03ff);
+    if(addr <= 0x1bff) return (chrBank[4] << 10) | (addr & 0x03ff);
+    if(addr <= 0x1fff) return (chrBank[5] << 10) | (addr & 0x03ff);
   }
 
-  auto ciram_addr(uint addr) const -> uint {
+  auto ciramAddress(uint addr) const -> uint {
     if(mirror == 0) return ((addr & 0x0400) >> 0) | (addr & 0x03ff);
     if(mirror == 1) return ((addr & 0x0800) >> 1) | (addr & 0x03ff);
   }
 
-  auto reg_write(uint addr, uint8 data) -> void {
+  auto regWrite(uint addr, uint8 data) -> void {
     switch(addr & 0xe003) {
     case 0x8000:
-      prg_bank[0] = data & 0x3f;
+      prgBank[0] = data & 0x3f;
       if(revision != Revision::TC0690FMR && !settings.pal16r4) mirror = data & 0x40;
       break;
     case 0x8001:
-      prg_bank[1] = data & 0x3f;
+      prgBank[1] = data & 0x3f;
       break;
 
-    case 0x8002: chr_bank[0] = data; break;
-    case 0x8003: chr_bank[1] = data; break;
-    case 0xa000: chr_bank[2] = data; break;
-    case 0xa001: chr_bank[3] = data; break;
-    case 0xa002: chr_bank[4] = data; break;
-    case 0xa003: chr_bank[5] = data; break;
+    case 0x8002: chrBank[0] = data; break;
+    case 0x8003: chrBank[1] = data; break;
+    case 0xa000: chrBank[2] = data; break;
+    case 0xa001: chrBank[3] = data; break;
+    case 0xa002: chrBank[4] = data; break;
+    case 0xa003: chrBank[5] = data; break;
 
     case 0xc000:
       if(revision != Revision::TC0190FMC) break;
-      irq_latch = data;
+      irqLatch = data;
       break;
 
     case 0xc001:
       if(revision != Revision::TC0190FMC) break;
-      irq_counter = 0xff;
+      irqCounter = 0xff;
       break;
 
     case 0xc002:
       if(revision != Revision::TC0190FMC) break;
-      irq_enable = true;
+      irqEnable = true;
       break;
 
     case 0xc003:
       if(revision != Revision::TC0190FMC) break;
-      irq_enable = false;
-      irq_line = 0;
+      irqEnable = false;
+      irqLine = 0;
       break;
 
     case 0xe000:
@@ -106,35 +106,35 @@ struct TC : Chip {
   }
 
   auto reset() -> void {
-    prg_bank[0] = 0;
-    prg_bank[1] = 0;
-    chr_bank[0] = 0;
-    chr_bank[1] = 0;
-    chr_bank[2] = 0;
-    chr_bank[3] = 0;
-    chr_bank[4] = 0;
-    chr_bank[5] = 0;
+    prgBank[0] = 0;
+    prgBank[1] = 0;
+    chrBank[0] = 0;
+    chrBank[1] = 0;
+    chrBank[2] = 0;
+    chrBank[3] = 0;
+    chrBank[4] = 0;
+    chrBank[5] = 0;
     mirror = 0;
-    irq_latch = 0;
-    irq_counter = 0;
-    irq_enable = false;
-    irq_delay = 0;
-    irq_line = 0;
+    irqLatch = 0;
+    irqCounter = 0;
+    irqEnable = false;
+    irqDelay = 0;
+    irqLine = 0;
 
-    chr_abus = 0;
+    chrAddressBus = 0;
   }
 
   auto serialize(serializer& s) -> void {
-    s.array(prg_bank);
-    s.array(chr_bank);
+    s.array(prgBank);
+    s.array(chrBank);
     s.integer(mirror);
-    s.integer(irq_latch);
-    s.integer(irq_counter);
-    s.integer(irq_enable);
-    s.integer(irq_delay);
-    s.integer(irq_line);
+    s.integer(irqLatch);
+    s.integer(irqCounter);
+    s.integer(irqEnable);
+    s.integer(irqDelay);
+    s.integer(irqLine);
 
-    s.integer(chr_abus);
+    s.integer(chrAddressBus);
   }
 
   enum class Revision : uint {
@@ -147,14 +147,14 @@ struct TC : Chip {
     bool pal16r4;
   } settings;
 
-  uint8 prg_bank[2];
-  uint8 chr_bank[6];
+  uint8 prgBank[2];
+  uint8 chrBank[6];
   bool mirror;
-  uint8 irq_latch;
-  uint8 irq_counter;
-  bool irq_enable;
-  uint irq_delay;
-  bool irq_line;
+  uint8 irqLatch;
+  uint8 irqCounter;
+  bool irqEnable;
+  uint irqDelay;
+  bool irqLine;
 
-  uint16 chr_abus;
+  uint16 chrAddressBus;
 };

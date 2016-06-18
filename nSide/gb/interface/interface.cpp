@@ -276,13 +276,6 @@ auto Interface::exportMemory() -> void {
 
   file::write({pathname, "work.ram"}, (uint8_t*)cpu.wram, !system.cgb() ? 8192 : 32768);
   file::write({pathname, "internal.ram"}, (uint8_t*)cpu.hram, 128);
-  file::write({pathname, "video.ram"}, (uint8_t*)ppu.vram, !system.cgb() ? 8192 : 16384);
-  file::write({pathname, "sprite.ram"}, (uint8_t*)ppu.oam, 160);
-  if(system.cgb()) {
-    filestream stream{{pathname, "palette.ram"}, file::mode::write};
-    stream.write((uint8_t*)ppu.bgpd, 64);
-    stream.write((uint8_t*)ppu.obpd, 64);
-  }
   if(cartridge.ramsize) saveRequest(ID::RAM, "debug/program-save.ram");
 }
 

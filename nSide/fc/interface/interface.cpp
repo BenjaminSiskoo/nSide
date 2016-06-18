@@ -659,14 +659,7 @@ auto Interface::exportMemory() -> void {
   directory::create(pathname);
 
   // Registers
-  string markup = "";
-  ppu.exportRegisters(markup);
-  file::write({pathname, "registers.bml"}, markup);
-
   file::write({pathname, "work.ram"}, (uint8_t*)cpu.ram, 0x0800);
-  file::write({pathname, "video.ram"}, (uint8_t*)ppu.ciram, !system.vs() ? 2048 : 4096);
-  file::write({pathname, "sprite.ram"}, (uint8_t*)ppu.oam, 256);
-  file::write({pathname, "palette.ram"}, (uint8_t*)ppu.cgram, 32);
   if(cartridge.board->prgram.size()) saveRequest(ID::ProgramRAM, "debug/program.ram");
   if(cartridge.board->chrram.size()) saveRequest(ID::CharacterRAM, "debug/character.ram");
   if(cartridge.board->chip && cartridge.board->chip->ram.size()) {

@@ -1,22 +1,22 @@
 struct SingleChip : Board {
-  SingleChip(Markup::Node& board_node) : Board(board_node) {
-    settings.va10 = board_node["va10"].natural();
+  SingleChip(Markup::Node& boardNode) : Board(boardNode) {
+    settings.va10 = boardNode["va10"].natural();
   }
 
-  auto prg_read(uint addr) -> uint8 {
+  auto prgRead(uint addr) -> uint8 {
     if(addr & 0x8000) return read(prgrom, addr);
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
+  auto prgWrite(uint addr, uint8 data) -> void {
   }
 
-  auto chr_read(uint addr) -> uint8 {
+  auto chrRead(uint addr) -> uint8 {
     addr = ((addr & (1 << settings.va10)) >> (settings.va10 - 10)) | (addr & 0x03ff);
     return ppu.ciramRead(addr);
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
+  auto chrWrite(uint addr, uint8 data) -> void {
     addr = ((addr & (1 << settings.va10)) >> (settings.va10 - 10)) | (addr & 0x03ff);
     return ppu.ciramWrite(addr, data);
   }

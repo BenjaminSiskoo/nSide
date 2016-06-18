@@ -101,19 +101,15 @@ Interface::Interface() {
     devices.append(device);
   }
 
-  { Device device{7, ID::ControllerPort1, "Serial USART"};
+  { Device device{7, ID::ExpansionPort, "Satellaview"};
     devices.append(device);
   }
 
-  { Device device{8, ID::ExpansionPort, "Satellaview"};
+  { Device device{8, ID::ExpansionPort, "Super Disc"};
     devices.append(device);
   }
 
-  { Device device{9, ID::ExpansionPort, "Super Disc"};
-    devices.append(device);
-  }
-
-  { Device device{10, ID::ExpansionPort, "21fx"};
+  { Device device{9, ID::ExpansionPort, "21fx"};
     devices.append(device);
   }
 
@@ -463,14 +459,14 @@ auto Interface::run() -> void {
 }
 
 auto Interface::rtc() -> bool {
-  if(cartridge.hasEpsonRTC()) return true;
-  if(cartridge.hasSharpRTC()) return true;
+  if(cartridge.hasEpsonRTC) return true;
+  if(cartridge.hasSharpRTC) return true;
   return false;
 }
 
 auto Interface::rtcsync() -> void {
-  if(cartridge.hasEpsonRTC()) epsonrtc.sync();
-  if(cartridge.hasSharpRTC()) sharprtc.sync();
+  if(cartridge.hasEpsonRTC) epsonrtc.sync();
+  if(cartridge.hasSharpRTC) sharprtc.sync();
 }
 
 auto Interface::serialize() -> serializer {
@@ -486,7 +482,7 @@ auto Interface::cheatSet(const lstring& list) -> void {
   cheat.reset();
 
   #if defined(SFC_SUPERGAMEBOY)
-  if(cartridge.hasICD2()) {
+  if(cartridge.hasICD2) {
     GameBoy::cheat.reset();
     for(auto& codeset : list) {
       lstring codes = codeset.split("+");
@@ -549,36 +545,36 @@ auto Interface::exportMemory() -> void {
 
   file::write({pathname, "work.ram"}, (uint8_t*)cpu.wram, 128 * 1024);
   if(cartridge.ram.size()) saveRequest(ID::RAM, "debug/program-save.ram");
-  if(cartridge.hasEvent()) saveRequest(ID::EventRAM, "debug/event.ram");
-  if(cartridge.hasSA1()) {
+  if(cartridge.hasEvent) saveRequest(ID::EventRAM, "debug/event.ram");
+  if(cartridge.hasSA1) {
     saveRequest(ID::SA1IRAM, "debug/sa1.internal.ram");
     saveRequest(ID::SA1BWRAM, "debug/sa1.bitmap-work.ram");
   }
-  if(cartridge.hasSuperFX()) saveRequest(ID::SuperFXRAM, "debug/superfx.ram");
-  if(cartridge.hasARMDSP()) saveRequest(ID::ArmDSPRAM, "debug/st018.program.ram");
-  if(cartridge.hasHitachiDSP()) {
+  if(cartridge.hasSuperFX) saveRequest(ID::SuperFXRAM, "debug/superfx.ram");
+  if(cartridge.hasARMDSP) saveRequest(ID::ArmDSPRAM, "debug/st018.program.ram");
+  if(cartridge.hasHitachiDSP) {
     if(hitachidsp.ram.size()) saveRequest(ID::HitachiDSPRAM, "debug/cx4.program.ram");
     saveRequest(ID::HitachiDSPDRAM, "debug/cx4.data.ram");
   }
-  if(cartridge.hasNECDSP()) {
+  if(cartridge.hasNECDSP) {
     if(necdsp.revision == NECDSP::Revision::uPD7725) {
       saveRequest(ID::Nec7725DSPRAM, "debug/dsp.data.ram");
     } else if(necdsp.revision == NECDSP::Revision::uPD96050) {
       saveRequest(ID::Nec96050DSPRAM, "debug/dsp.data.ram");
     }
   }
-  if(cartridge.hasSPC7110()) saveRequest(ID::SPC7110RAM, "debug/spc7110.ram");
-  if(cartridge.hasSDD1()) saveRequest(ID::SDD1RAM, "debug/sdd1.ram");
-  if(cartridge.hasOBC1()) saveRequest(ID::OBC1RAM, "debug/obc1.ram");
-  if(cartridge.hasMCC()) {
+  if(cartridge.hasSPC7110) saveRequest(ID::SPC7110RAM, "debug/spc7110.ram");
+  if(cartridge.hasSDD1) saveRequest(ID::SDD1RAM, "debug/sdd1.ram");
+  if(cartridge.hasOBC1) saveRequest(ID::OBC1RAM, "debug/obc1.ram");
+  if(cartridge.hasMCC) {
     saveRequest(ID::MCCRAM, "debug/mcc.save.ram");
   }
   #if defined(SFC_SUPERGAMEBOY)
-  if(cartridge.hasICD2() && GameBoy::cartridge.ramsize) {
+  if(cartridge.hasICD2 && GameBoy::cartridge.ramsize) {
     saveRequest(ID::GameBoyRAM, "debug/gameboy.save.ram");
   }
   #endif
-  if(cartridge.hasSufamiTurboSlots()) {
+  if(cartridge.hasSufamiTurboSlots) {
     saveRequest(ID::SufamiTurboSlotARAM, "debug/sufamiturbo.slota.ram");
     saveRequest(ID::SufamiTurboSlotBRAM, "debug/sufamiturbo.slotb.ram");
   }

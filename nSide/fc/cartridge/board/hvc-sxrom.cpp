@@ -1,6 +1,6 @@
 struct HVC_SxROM : Board {
-  HVC_SxROM(Markup::Node& board_node) : Board(board_node), mmc1(*this, board_node) {
-    string type = board_node["id"].text();
+  HVC_SxROM(Markup::Node& boardNode) : Board(boardNode), mmc1(*this, boardNode) {
+    string type = boardNode["id"].text();
     if(type.match("*SAROM"   )) revision = Revision::SAROM;
     if(type.match("*SBROM"   )) revision = Revision::SBROM;
     if(type.match("*SCROM"   )) revision = Revision::SCROM;
@@ -32,28 +32,28 @@ struct HVC_SxROM : Board {
     mmc1.main();
   }
 
-  auto ram_addr(uint addr) -> uint {
+  auto ramAddress(uint addr) -> uint {
     uint bank = 0;
-    if(revision == Revision::SOROM) bank = (mmc1.chr_bank[0] & 0x08) >> 3;
-    if(revision == Revision::SXROM) bank = (mmc1.chr_bank[0] & 0x0c) >> 2;
+    if(revision == Revision::SOROM) bank = (mmc1.chrBank[0] & 0x08) >> 3;
+    if(revision == Revision::SXROM) bank = (mmc1.chrBank[0] & 0x0c) >> 2;
     return (bank << 13) | (addr & 0x1fff);
   }
 
-  auto prg_read(uint addr) -> uint8 {
+  auto prgRead(uint addr) -> uint8 {
     if((addr & 0xe000) == 0x6000) {
       if(revision == Revision::SNROM) {
-        if((mmc1.chr_addr(ppu.status.chr_abus) >> 16) & 1) return cpu.mdr();
+        if((mmc1.chrAddress(ppu.status.chrAddressBus) >> 16) & 1) return cpu.mdr();
       }
-      if(mmc1.ram_disable) return cpu.mdr();
-      if(prgram.size() > 0) return read(prgram, ram_addr(addr));
+      if(mmc1.ramDisable) return cpu.mdr();
+      if(prgram.size() > 0) return read(prgram, ramAddress(addr));
     }
 
     if(addr & 0x8000) {
       switch(revision) {
       default:
-        addr = mmc1.prg_addr(addr);
+        addr = mmc1.prgAddress(addr);
         if(revision == Revision::SUROM || revision == Revision::SXROM) {
-          addr |= ((mmc1.chr_addr(ppu.status.chr_abus) >> 16) & 1) << 18;
+          addr |= ((mmc1.chrAddress(ppu.status.chrAddressBus) >> 16) & 1) << 18;
         }
         break;
       case Revision::SEROM:
@@ -61,8 +61,8 @@ struct HVC_SxROM : Board {
       case Revision::SH1ROM:
         break;
       case Revision::SFEXPROM:
-        addr = mmc1.prg_addr(addr);
-        if((exp_lock & 0x20) && (addr & 0x7fff) == 0x0180) return 0x05;
+        addr = mmc1.prgAddress(addr);
+        if((expLock & 0x20) && (addr & 0x7fff) == 0x0180) return 0x05;
         break;
       }
       return read(prgrom, addr);
@@ -71,28 +71,28 @@ struct HVC_SxROM : Board {
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
+  auto prgWrite(uint addr, uint8 data) -> void {
     if((addr & 0xe000) == 0x6000) {
       if(revision == Revision::SNROM) {
-        if(mmc1.chr_bank[0] & 0x10) return;
+        if(mmc1.chrBank[0] & 0x10) return;
       } else if(revision == Revision::SFEXPROM) {
-        exp_lock = data;
+        expLock = data;
       }
-      if(mmc1.ram_disable) return;
-      if(prgram.size() > 0) return write(prgram, ram_addr(addr), data);
+      if(mmc1.ramDisable) return;
+      if(prgram.size() > 0) return write(prgram, ramAddress(addr), data);
     }
 
-    if(addr & 0x8000) return mmc1.mmio_write(addr, data);
+    if(addr & 0x8000) return mmc1.mmioWrite(addr, data);
   }
 
-  auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(mmc1.ciram_addr(addr));
-    return Board::chr_read(mmc1.chr_addr(addr));
+  auto chrRead(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciramRead(mmc1.ciramAddress(addr));
+    return Board::chrRead(mmc1.chrAddress(addr));
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(mmc1.ciram_addr(addr), data);
-    return Board::chr_write(mmc1.chr_addr(addr), data);
+  auto chrWrite(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciramWrite(mmc1.ciramAddress(addr), data);
+    return Board::chrWrite(mmc1.chrAddress(addr), data);
   }
 
   auto power() -> void {
@@ -101,14 +101,14 @@ struct HVC_SxROM : Board {
 
   auto reset() -> void {
     mmc1.reset();
-    exp_lock = 0x00;
+    expLock = 0x00;
   }
 
   auto serialize(serializer& s) -> void {
     Board::serialize(s);
     mmc1.serialize(s);
     if(revision == Revision::SFEXPROM) {
-      s.integer(exp_lock);
+      s.integer(expLock);
     }
   }
 
@@ -141,5 +141,5 @@ struct HVC_SxROM : Board {
   } revision;
 
   MMC1 mmc1;
-  uint8 exp_lock;
+  uint8 expLock;
 };

@@ -1,67 +1,67 @@
 //MMC4
 
 struct HVC_FxROM : Board {
-  HVC_FxROM(Markup::Node& board_node) : Board(board_node) {
-    string type = board_node["id"].text();
+  HVC_FxROM(Markup::Node& boardNode) : Board(boardNode) {
+    string type = boardNode["id"].text();
     if(type.match("*FJROM*" )) revision = Revision::FJROM;
     if(type.match("*FKROM*" )) revision = Revision::FKROM;
   }
 
-  auto prg_read(uint addr) -> uint8 {
+  auto prgRead(uint addr) -> uint8 {
     if(addr < 0x6000) return cpu.mdr();
     if(addr < 0x8000) return read(prgram, addr);
-    uint bank = addr < 0xc000 ? prg_bank : (uint4)0x0f;
+    uint bank = addr < 0xc000 ? prgBank : (uint4)0x0f;
     return read(prgrom, (bank * 0x4000) | (addr & 0x3fff));
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
+  auto prgWrite(uint addr, uint8 data) -> void {
     if(addr < 0x6000) return;
     if(addr < 0x8000) return write(prgram, addr, data);
 
     switch(addr & 0xf000) {
-    case 0xa000: prg_bank = data & 0x0f; break;
-    case 0xb000: chr_bank[0][0] = data & 0x1f; break;
-    case 0xc000: chr_bank[0][1] = data & 0x1f; break;
-    case 0xd000: chr_bank[1][0] = data & 0x1f; break;
-    case 0xe000: chr_bank[1][1] = data & 0x1f; break;
+    case 0xa000: prgBank = data & 0x0f; break;
+    case 0xb000: chrBank[0][0] = data & 0x1f; break;
+    case 0xc000: chrBank[0][1] = data & 0x1f; break;
+    case 0xd000: chrBank[1][0] = data & 0x1f; break;
+    case 0xe000: chrBank[1][1] = data & 0x1f; break;
     case 0xf000: mirror = data & 0x01; break;
     }
   }
 
-  auto ciram_addr(uint addr) const -> uint {
+  auto ciramAddress(uint addr) const -> uint {
     switch(mirror) {
     case 0: return ((addr & 0x0400) >> 0) | (addr & 0x03ff);  //vertical mirroring
     case 1: return ((addr & 0x0800) >> 1) | (addr & 0x03ff);  //horizontal mirroring
     }
   }
 
-  auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(ciram_addr(addr));
+  auto chrRead(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciramRead(ciramAddress(addr));
     bool region = addr & 0x1000;
-    uint bank = chr_bank[region][latch[region]];
+    uint bank = chrBank[region][latch[region]];
     if((addr & 0x0ff8) == 0x0fd8) latch[region] = 0;
     if((addr & 0x0ff8) == 0x0fe8) latch[region] = 1;
-    return Board::chr_read((bank * 0x1000) | (addr & 0x0fff));
+    return Board::chrRead((bank * 0x1000) | (addr & 0x0fff));
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(ciram_addr(addr), data);
+  auto chrWrite(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciramWrite(ciramAddress(addr), data);
     bool region = addr & 0x1000;
-    uint bank = chr_bank[region][latch[region]];
+    uint bank = chrBank[region][latch[region]];
     if((addr & 0x0ff8) == 0x0fd8) latch[region] = 0;
     if((addr & 0x0ff8) == 0x0fe8) latch[region] = 1;
-    return Board::chr_write((bank * 0x1000) | (addr & 0x0fff), data);
+    return Board::chrWrite((bank * 0x1000) | (addr & 0x0fff), data);
   }
 
   auto power() -> void {
   }
 
   auto reset() -> void {
-    prg_bank = 0;
-    chr_bank[0][0] = 0;
-    chr_bank[0][1] = 0;
-    chr_bank[1][0] = 0;
-    chr_bank[1][1] = 0;
+    prgBank = 0;
+    chrBank[0][0] = 0;
+    chrBank[0][1] = 0;
+    chrBank[1][0] = 0;
+    chrBank[1][1] = 0;
     mirror = 0;
     latch[0] = 0;
     latch[1] = 0;
@@ -70,11 +70,11 @@ struct HVC_FxROM : Board {
   auto serialize(serializer& s) -> void {
     Board::serialize(s);
 
-    s.integer(prg_bank);
-    s.integer(chr_bank[0][0]);
-    s.integer(chr_bank[0][1]);
-    s.integer(chr_bank[1][0]);
-    s.integer(chr_bank[1][1]);
+    s.integer(prgBank);
+    s.integer(chrBank[0][0]);
+    s.integer(chrBank[0][1]);
+    s.integer(chrBank[1][0]);
+    s.integer(chrBank[1][1]);
     s.integer(mirror);
     s.array(latch);
   }
@@ -84,8 +84,8 @@ struct HVC_FxROM : Board {
     FKROM,
   } revision;
 
-  uint4 prg_bank;
-  uint5 chr_bank[2][2];
+  uint4 prgBank;
+  uint5 chrBank[2][2];
   bool mirror;
   bool latch[2];
 };

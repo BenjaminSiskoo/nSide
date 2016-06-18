@@ -75,20 +75,20 @@ auto Cartridge::reset() -> void {
   board->reset();
 }
 
-auto Cartridge::prg_read(uint addr) -> uint8 {
-  return board->prg_read(addr);
+auto Cartridge::prgRead(uint addr) -> uint8 {
+  return board->prgRead(addr);
 }
 
-auto Cartridge::prg_write(uint addr, uint8 data) -> void {
-  return board->prg_write(addr, data);
+auto Cartridge::prgWrite(uint addr, uint8 data) -> void {
+  return board->prgWrite(addr, data);
 }
 
-auto Cartridge::chr_read(uint addr) -> uint8 {
-  return board->chr_read(addr);
+auto Cartridge::chrRead(uint addr) -> uint8 {
+  return board->chrRead(addr);
 }
 
-auto Cartridge::chr_write(uint addr, uint8 data) -> void {
-  return board->chr_write(addr, data);
+auto Cartridge::chrWrite(uint addr, uint8 data) -> void {
+  return board->chrWrite(addr, data);
 }
 
 auto Cartridge::scanline(uint y) -> void {

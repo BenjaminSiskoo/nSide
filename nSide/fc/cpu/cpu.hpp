@@ -8,9 +8,6 @@ struct CPU : Processor::R6502, Thread {
   auto synchronizeCoprocessors() -> void;
   auto synchronizePeripherals() -> void;
 
-  auto ram_read(uint16 addr) -> uint8;
-  auto ram_write(uint16 addr, uint8 data) -> void;
-
   static auto Enter() -> void;
   auto main() -> void;
   auto power() -> void;
@@ -22,22 +19,22 @@ struct CPU : Processor::R6502, Thread {
   auto disassemblerRead(uint16 addr) -> uint8 override;
 
   //mmio.cpp
-  auto cpuPortRead(uint16 addr, uint8 data) -> uint8;
-  auto cpuPortWrite(uint16 addr, uint8 data) -> void;
+  auto readCPU(uint16 addr, uint8 data) -> uint8;
+  auto writeCPU(uint16 addr, uint8 data) -> void;
 
   //timing.cpp
   auto addClocks(uint clocks) -> void;
   auto lastCycle() -> void;
   auto nmi(uint16 &vector) -> void;
 
-  auto oam_dma() -> void;
+  auto oamDMA() -> void;
 
-  auto set_nmi_line(bool) -> void;
-  auto set_irq_line(bool) -> void;
-  auto set_irq_apu_line(bool) -> void;
+  auto setNMILine(bool) -> void;
+  auto setIRQLine(bool) -> void;
+  auto setIRQAPULine(bool) -> void;
 
-  auto set_rdy_line(bool) -> void;
-  auto set_rdy_addr(bool valid, uint16 value = 0) -> void;
+  auto setRDYLine(bool) -> void;
+  auto setRDYAddress(bool valid, uint16 value = 0) -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
@@ -50,18 +47,18 @@ struct CPU : Processor::R6502, Thread {
 
 //privileged:
   struct Status {
-    bool interrupt_pending;
-    bool nmi_pending;
-    bool nmi_line;
-    bool irq_line;
-    bool irq_apu_line;
+    bool interruptPending;
+    bool nmiPending;
+    bool nmiLine;
+    bool irqLine;
+    bool irqAPULine;
 
-    bool rdy_line;
-    bool rdy_addr_valid;
-    uint16 rdy_addr_value;
+    bool rdyLine;
+    bool rdyAddressValid;
+    uint16 rdyAddressValue;
 
-    bool oam_dma_pending;
-    uint8 oam_dma_page;
+    bool oamDMAPending;
+    uint8 oamDMAPage;
   } status;
 };
 

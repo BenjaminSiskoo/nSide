@@ -2,79 +2,89 @@
 //NES-CPROM
 
 struct HVC_CxROM : Board {
-  HVC_CxROM(Markup::Node& board_node) : Board(board_node) {
-    string type = board_node["id"].text();
+  HVC_CxROM(Markup::Node& boardNode) : Board(boardNode) {
+    string type = boardNode["id"].text();
     if(type.match("*CNROM" )) revision = Revision::CNROM;
     if(type.match("*CPROM" )) revision = Revision::CPROM;
     if(type.match("*PT-554")) revision = Revision::CNROM;
     if(type == "TENGEN-800008") revision = Revision::CNROM;
 
-    settings.mirror = board_node["mirror/mode"].text() == "horizontal";
-    settings.security = (bool)board_node["security"];
+    settings.mirror = boardNode["mirror/mode"].text() == "horizontal";
+    settings.security = (bool)boardNode["security"];
     if(settings.security) {
-      settings.pass = board_node["security/pass"].natural();
+      settings.pass = boardNode["security/pass"].natural();
     }
   }
 
-  auto prg_read(uint addr) -> uint8 {
+  auto prgRead(uint addr) -> uint8 {
     if(addr & 0x8000) return read(prgrom, addr & 0x7fff);
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
+  auto prgWrite(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
-      data &= prg_read(addr); // Bus conflicts
-      chr_bank = data & 0x03;
+      data &= prgRead(addr); // Bus conflicts
+      chrBank = data & 0x03;
     }
   }
 
-  auto chr_read(uint addr) -> uint8 {
+  auto chrRead(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
       return ppu.ciramRead(addr);
     }
     if(settings.security) {
-      if(chr_bank != settings.pass) return ppu.status.mdr;
+      if(chrBank != settings.pass) return ppu.status.mdr;
     }
     switch(revision) {
-    case Revision::CNROM:
-      addr = (chr_bank * 0x2000) + (addr & 0x1fff);
-      break;
-    case Revision::CPROM:
-      if(addr < 0x1000) addr = addr & 0x1fff;
-      else              addr = (chr_bank * 0x1000) + (addr & 0x0fff);
+    case Revision::CNROM: {
+      addr = (chrBank * 0x2000) + (addr & 0x1fff);
       break;
     }
-    return Board::chr_read(addr);
+
+    case Revision::CPROM: {
+      if(addr < 0x1000) addr = addr & 0x1fff;
+      else              addr = (chrBank * 0x1000) + (addr & 0x0fff);
+      break;
+    }
+
+    }
+
+    return Board::chrRead(addr);
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
+  auto chrWrite(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
       return ppu.ciramWrite(addr, data);
     }
+
     switch(revision) {
-    case Revision::CNROM:
-      addr = (chr_bank * 0x2000) + (addr & 0x1fff);
-      break;
-    case Revision::CPROM:
-      if(addr < 0x1000) addr = addr & 0x1fff;
-      else              addr = (chr_bank * 0x1000) + (addr & 0x0fff);
+    case Revision::CNROM: {
+      addr = (chrBank * 0x2000) + (addr & 0x1fff);
       break;
     }
-    Board::chr_write(addr, data);
+
+    case Revision::CPROM: {
+      if(addr < 0x1000) addr = addr & 0x1fff;
+      else              addr = (chrBank * 0x1000) + (addr & 0x0fff);
+      break;
+    }
+
+    }
+    Board::chrWrite(addr, data);
   }
 
   auto power() -> void {
   }
 
   auto reset() -> void {
-    chr_bank = 0;
+    chrBank = 0;
   }
 
   auto serialize(serializer& s) -> void {
     Board::serialize(s);
-    s.integer(chr_bank);
+    s.integer(chrBank);
   }
 
   enum class Revision : uint {
@@ -88,5 +98,5 @@ struct HVC_CxROM : Board {
     uint2 pass;
   } settings;
 
-  uint2 chr_bank;
+  uint2 chrBank;
 };

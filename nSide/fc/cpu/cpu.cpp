@@ -59,7 +59,7 @@ auto CPU::Enter() -> void {
 }
 
 auto CPU::main() -> void {
-  if(status.interrupt_pending) return interrupt();
+  if(status.interruptPending) return interrupt();
   instruction();
 }
 
@@ -84,34 +84,26 @@ auto CPU::reset() -> void {
   writer = [](uint16 addr, uint8 data) -> void { cpu.ram[addr] = data; };
   bus.map(reader, writer, "0000-1fff", 0x800);
 
-  reader = {&CPU::cpuPortRead, this};
-  writer = {&CPU::cpuPortWrite, this};
+  reader = {&CPU::readCPU, this};
+  writer = {&CPU::writeCPU, this};
   bus.map(reader, writer, "4000-4017");
 
   //CPU
   r.pc  = bus.read(0xfffc, r.mdr) << 0;
   r.pc |= bus.read(0xfffd, r.mdr) << 8;
 
-  status.interrupt_pending = false;
-  status.nmi_pending = false;
-  status.nmi_line = 0;
-  status.irq_line = 0;
-  status.irq_apu_line = 0;
+  status.interruptPending = false;
+  status.nmiPending = false;
+  status.nmiLine = 0;
+  status.irqLine = 0;
+  status.irqAPULine = 0;
 
-  status.rdy_line = 1;
-  status.rdy_addr_valid = false;
-  status.rdy_addr_value = 0x0000;
+  status.rdyLine = 1;
+  status.rdyAddressValid = false;
+  status.rdyAddressValue = 0x0000;
 
-  status.oam_dma_pending = false;
-  status.oam_dma_page = 0x00;
-}
-
-auto CPU::ram_read(uint16 addr) -> uint8 {
-  return ram[addr & 0x07ff];
-}
-
-auto CPU::ram_write(uint16 addr, uint8 data) -> void {
-  ram[addr & 0x07ff] = data;
+  status.oamDMAPending = false;
+  status.oamDMAPage = 0x00;
 }
 
 }

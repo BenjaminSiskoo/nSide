@@ -1,16 +1,16 @@
 struct KonamiVRC7 : Board {
-  KonamiVRC7(Markup::Node& board_node) : Board(board_node), vrc7(*this) {
-    settings.pinout.a0 = 1 << board_node["chip/pinout/a0"].natural();
-    settings.pinout.a1 = 1 << board_node["chip/pinout/a1"].natural();
+  KonamiVRC7(Markup::Node& boardNode) : Board(boardNode), vrc7(*this) {
+    settings.pinout.a0 = 1 << boardNode["chip/pinout/a0"].natural();
+    settings.pinout.a1 = 1 << boardNode["chip/pinout/a1"].natural();
   }
 
-  auto prg_read(uint addr) -> uint8 {
+  auto prgRead(uint addr) -> uint8 {
     if(addr < 0x6000) return cpu.mdr();
     if(addr < 0x8000) return read(prgram, addr);
-    return read(prgrom, vrc7.prg_addr(addr));
+    return read(prgrom, vrc7.prgAddress(addr));
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
+  auto prgWrite(uint addr, uint8 data) -> void {
     if(addr < 0x6000) return;
     if(addr < 0x8000) return write(prgram, addr, data);
 
@@ -18,17 +18,17 @@ struct KonamiVRC7 : Board {
     bool a1 = (addr & settings.pinout.a1);
     addr &= 0xf000;
     addr |= (a1 << 1) | (a0 << 0);
-    return vrc7.reg_write(addr, data);
+    return vrc7.regWrite(addr, data);
   }
 
-  auto chr_read(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(vrc7.ciram_addr(addr));
-    return Board::chr_read(vrc7.chr_addr(addr));
+  auto chrRead(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.ciramRead(vrc7.ciramAddress(addr));
+    return Board::chrRead(vrc7.chrAddress(addr));
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(vrc7.ciram_addr(addr), data);
-    return Board::chr_write(vrc7.chr_addr(addr), data);
+  auto chrWrite(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.ciramWrite(vrc7.ciramAddress(addr), data);
+    return Board::chrWrite(vrc7.chrAddress(addr), data);
   }
 
   auto serialize(serializer& s) -> void {

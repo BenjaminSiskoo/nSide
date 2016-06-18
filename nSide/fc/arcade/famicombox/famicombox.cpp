@@ -86,7 +86,7 @@ auto FamicomBox::trap(Exception exceptionId) -> void {
 auto FamicomBox::wramRead(uint16 addr, uint8 data) -> uint8 {
   if(addr >= 0x0800 && addr <= 0x1fff) print("read  $", hex(addr, 4U), "\n");
   switch(addr & 0xf800) {
-  case 0x0000: data = cpu.ram_read(addr); break;
+  case 0x0000: data = cpu.ram[addr]; break;
   case 0x0800:
   case 0x1000:
   case 0x1800: data = bios_ram[addr - 0x800]; break;
@@ -97,7 +97,7 @@ auto FamicomBox::portRead(uint16 addr, uint8 data) -> uint8 {
   if((addr & 0xf000) == 0x5000) print("read  $", hex(addr, 4U), "\n");
 
   if(addr == 0x4016 || addr == 0x4017) {
-    data = cpu.cpuPortRead(addr, data);
+    data = cpu.readCPU(addr, data);
     if(data == 0x4017 && !dip.bit(9)) data.bits(4,3) = 0;
     watchdog.bits(13,10) = 0;
     trap(Exception::ControllerRead);
@@ -165,7 +165,7 @@ auto FamicomBox::cartridgeRead(uint16 addr, uint8 data) -> uint8 {
     break;
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.prg_read(addr);
+    case  1: return cartridge.prgRead(addr);
     case  2: return data;
     case  3: return data;
     case  4: return data;
@@ -197,7 +197,7 @@ auto FamicomBox::cartridgeRead(uint16 addr, uint8 data) -> uint8 {
 auto FamicomBox::portWrite(uint16 addr, uint8 data) -> void {
   if((addr & 0xf000) == 0x5000) print("write $", hex(addr, 4U), " 0x", hex(data, 2U), "\n");
 
-  if(addr >= 0x4016 && addr <= 0x4017) return cpu.cpuPortWrite(addr, data);
+  if(addr >= 0x4016 && addr <= 0x4017) return cpu.writeCPU(addr, data);
 
   if(!registerLock) {
     switch(addr & 0xf007) {
@@ -255,18 +255,26 @@ auto FamicomBox::portWrite(uint16 addr, uint8 data) -> void {
 auto FamicomBox::wramWrite(uint16 addr, uint8 data) -> void {
   if(addr >= 0x0800 && addr <= 0x1fff) print("write $", hex(addr, 4U), " 0x", hex(data, 2U), "\n");
   switch(addr & 0xf800) {
-  case 0x0000:
-    if(ramProtect >= 1) cpu.ram_write(addr, data);
+  case 0x0000: {
+    if(ramProtect >= 1) cpu.ram[addr] = data;
     return;
-  case 0x0800:
+  }
+
+  case 0x0800: {
     if(ramProtect >= 2) bios_ram[addr - 0x800] = data;
     return;
-  case 0x1000:
+  }
+
+  case 0x1000: {
     if(ramProtect >= 3) bios_ram[addr - 0x800] = data;
     return;
-  case 0x1800:
+  }
+
+  case 0x1800: {
     if(ramProtect >= 4) bios_ram[addr - 0x800] = data;
     return;
+  }
+
   }
 }
 
@@ -278,7 +286,7 @@ auto FamicomBox::cartridgeWrite(uint16 addr, uint8 data) -> void {
   switch(cartridgeRowSelect) {
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.prg_write(addr, data);
+    case  1: return cartridge.prgWrite(addr, data);
     case  2: return;
     case  3: return;
     case  4: return;
@@ -313,7 +321,7 @@ auto FamicomBox::chrRead(uint14 addr) -> uint8 {
   switch(cartridgeRowSelect) {
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.chr_read(addr);
+    case  1: return cartridge.chrRead(addr);
     case  2: break;
     case  3: break;
     case  4: break;
@@ -346,7 +354,7 @@ auto FamicomBox::chrWrite(uint14 addr, uint8 data) -> void {
   switch(cartridgeRowSelect) {
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.chr_write(addr, data);
+    case  1: return cartridge.chrWrite(addr, data);
     case  2: break;
     case  3: break;
     case  4: break;

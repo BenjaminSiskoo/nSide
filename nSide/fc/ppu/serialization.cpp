@@ -8,47 +8,47 @@ auto PPU::serialize(serializer& s) -> void {
   Thread::serialize(s);
   PPUcounter::serialize(s);
 
-  s.integer(status.chr_abus);
+  s.integer(status.chrAddressBus);
   s.integer(status.mdr);
-  s.array(status.mdr_decay);
+  s.array(status.mdrDecay);
 
-  s.integer(status.bus_data);
+  s.integer(status.busData);
 
-  s.integer(status.address_latch);
+  s.integer(status.addressLatch);
 
   s.integer(status.vaddr);
   s.integer(status.taddr);
   s.integer(status.xaddr);
 
-  s.integer(status.nmi_hold);
-  s.integer(status.nmi_flag);
+  s.integer(status.nmiHold);
+  s.integer(status.nmiFlag);
 
-  s.integer(status.nmi_enable);
-  s.integer(status.master_select);
-  s.integer(status.sprite_size);
-  s.integer(status.bg_addr);
-  s.integer(status.sprite_addr);
-  s.integer(status.vram_increment);
+  s.integer(status.nmiEnable);
+  s.integer(status.masterSelect);
+  s.integer(status.spriteSize);
+  s.integer(status.bgAddress);
+  s.integer(status.objAddress);
+  s.integer(status.vramIncrement);
 
   s.integer(status.emphasis);
-  s.integer(status.sprite_enable);
-  s.integer(status.bg_enable);
-  s.integer(status.sprite_edge_enable);
-  s.integer(status.bg_edge_enable);
+  s.integer(status.spriteEnable);
+  s.integer(status.bgEnable);
+  s.integer(status.objEdgeEnable);
+  s.integer(status.bgEdgeEnable);
   s.integer(status.grayscale);
 
-  s.integer(status.sprite_zero_hit);
-  s.integer(status.sprite_overflow);
+  s.integer(status.spriteZeroHit);
+  s.integer(status.spriteOverflow);
 
-  s.integer(status.oam_addr);
+  s.integer(status.oamAddress);
 
   s.integer(raster.nametable);
   s.integer(raster.attribute);
-  s.integer(raster.tiledatalo);
-  s.integer(raster.tiledatahi);
+  s.integer(raster.tiledataLo);
+  s.integer(raster.tiledataHi);
 
-  s.integer(raster.oam_iterator);
-  s.integer(raster.oam_counter);
+  s.integer(raster.oamIterator);
+  s.integer(raster.oamCounter);
 
   for(uint n = 0; n < 8; n++) {
     s.integer(raster.oam[n].id);
@@ -57,8 +57,8 @@ auto PPU::serialize(serializer& s) -> void {
     s.integer(raster.oam[n].attr);
     s.integer(raster.oam[n].x);
 
-    s.integer(raster.oam[n].tiledatalo);
-    s.integer(raster.oam[n].tiledatahi);
+    s.integer(raster.oam[n].tiledataLo);
+    s.integer(raster.oam[n].tiledataHi);
   }
 
   for(uint n = 0; n < 8; n++) {
@@ -68,8 +68,8 @@ auto PPU::serialize(serializer& s) -> void {
     s.integer(raster.soam[n].attr);
     s.integer(raster.soam[n].x);
 
-    s.integer(raster.soam[n].tiledatalo);
-    s.integer(raster.soam[n].tiledatahi);
+    s.integer(raster.soam[n].tiledataLo);
+    s.integer(raster.soam[n].tiledataHi);
   }
 
   s.array(ciram, !system.vs() ? 0x0800 : 0x1000);

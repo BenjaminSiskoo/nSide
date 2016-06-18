@@ -1,48 +1,59 @@
 struct FDS : Board {
-  FDS(Markup::Node& board_node) : Board(board_node) {
+  FDS(Markup::Node& boardNode) : Board(boardNode) {
   }
 
   auto main() -> void {
-    if(irq_enable && irq_counter > 0 && --irq_counter == 0) {
-      cpu.set_irq_line(1);
-      if(irq_repeat) irq_counter = irq_latch;
-      else           irq_enable = false;
-      irq_latch = 0; // for Kaettekita Mario Bros.?
+    if(irqEnable && irqCounter > 0 && --irqCounter == 0) {
+      cpu.setIRQLine(1);
+      if(irqRepeat) irqCounter = irqLatch;
+      else           irqEnable = false;
+      irqLatch = 0; // for Kaettekita Mario Bros.?
     } else {
       //TODO: Drive timer emulation
     }
     tick();
   }
 
-  auto prg_read(uint addr) -> uint8 {
+  auto prgRead(uint addr) -> uint8 {
     switch(addr) {
-    case 0x4030:
-      {
-        uint8 data = (irq_pending | (byte_transferred << 1));
-        irq_pending = false;
-        byte_transferred = false;
-        // 0x10: CRC 0=pass; 1=fail
-        // 0x40: End of disk head
-        // 0x80: Disk read/write enable
-        cpu.set_irq_line(0);
-        return 0;
-      }
-    case 0x4031:
-      return data_register;
-    case 0x4032:
+    case 0x4030: {
+      uint8 data = (irqPending | (byteTransferred << 1));
+      irqPending = false;
+      byteTransferred = false;
+      // 0x10: CRC 0=pass; 1=fail
+      // 0x40: End of disk head
+      // 0x80: Disk read/write enable
+      cpu.setIRQLine(0);
+      return 0;
+    }
+
+    case 0x4031: {
+      return dataRegister;
+    }
+
+    case 0x4032: {
       return (
-        (disk_slot_empty      << 0) |
-        (disk_not_ready       << 1) |
-        (disk_write_protected << 2)
+        (diskSlotEmpty      << 0) |
+        (diskNotReady       << 1) |
+        (diskWriteProtected << 2)
       );
-    case 0x4033:
+    }
+
+    case 0x4033: {
       // 7-bit expansion input; 0x80 means low battery
       return 0x00;
-    case 0x4090:
-      return cpu.mdr() & 0xc0;
-    case 0x4092:
+    }
+
+    case 0x4090: {
       return cpu.mdr() & 0xc0;
     }
+
+    case 0x4092: {
+      return cpu.mdr() & 0xc0;
+    }
+
+    }
+
     if((addr & 0xffc0) == 0x4040) {
       return wavetable[addr & 0x3f] | (cpu.mdr() & 0xc0);
     }
@@ -56,32 +67,42 @@ struct FDS : Board {
     return cpu.mdr();
   }
 
-  auto prg_write(uint addr, uint8 data) -> void {
+  auto prgWrite(uint addr, uint8 data) -> void {
     switch(addr) {
-    case 0x4020: irq_latch = (irq_latch & 0xff00) | (data << 0); break;
-    case 0x4021: irq_latch = (irq_latch & 0x00ff) | (data << 8); break;
-    case 0x4022:
-      irq_repeat = data & 0x01;
-      irq_enable = data & 0x02;
-      irq_counter = irq_latch;
-      byte_transferred = false;
-      cpu.set_irq_line(0); // if pending IRQ flag is clear
+    case 0x4020: irqLatch = (irqLatch & 0xff00) | (data << 0); break;
+    case 0x4021: irqLatch = (irqLatch & 0x00ff) | (data << 8); break;
+    case 0x4022: {
+      irqRepeat = data & 0x01;
+      irqEnable = data & 0x02;
+      irqCounter = irqLatch;
+      byteTransferred = false;
+      cpu.setIRQLine(0); // if pending IRQ flag is clear
       break;
-    case 0x4023:
-      disk_io_enable = data & 0x01;
-      sound_io_enable = data & 0x02;
+    }
+
+    case 0x4023: {
+      diskIOEnable = data & 0x01;
+      soundIOEnable = data & 0x02;
       break;
-    case 0x4024:
+    }
+
+    case 0x4024: {
       // clear pending IRQ flag
-      if(!byte_transferred) cpu.set_irq_line(0);
+      if(!byteTransferred) cpu.setIRQLine(0);
       break;
-    case 0x4025:
-      fds_control = data & 0xf7;
+    }
+
+    case 0x4025: {
+      fdsControl = data & 0xf7;
       mirror = data & 0x08;
       break;
-    case 0x4026:
+    }
+
+    case 0x4026: {
       // 7-bit expansion output
       break;
+    }
+
     case 0x4080: break;
     case 0x4082: break;
     case 0x4083: break;
@@ -90,14 +111,19 @@ struct FDS : Board {
     case 0x4086: break;
     case 0x4087: break;
     case 0x4088: break;
-    case 0x4089:
-      wavetable_write_enable = data & 0x80;
+    case 0x4089: {
+      wavetableWriteEnable = data & 0x80;
       break;
+    }
+
     case 0x408a: break;
+
     }
+
     if((addr & 0xffc0) == 0x4040) {
-      if(wavetable_write_enable) wavetable[addr & 0x3f] = data & 0x3f;
+      if(wavetableWriteEnable) wavetable[addr & 0x3f] = data & 0x3f;
     }
+
     switch(addr & 0xe000) {
     case 0x6000:
     case 0x8000:
@@ -106,20 +132,20 @@ struct FDS : Board {
     }
   }
 
-  auto chr_read(uint addr) -> uint8 {
+  auto chrRead(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(mirror) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
       return ppu.ciramRead(addr);
     }
-    return Board::chr_read(addr);
+    return Board::chrRead(addr);
   }
 
-  auto chr_write(uint addr, uint8 data) -> void {
+  auto chrWrite(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(mirror) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
       return ppu.ciramWrite(addr, data);
     }
-    return Board::chr_write(addr, data);
+    return Board::chrWrite(addr, data);
   }
 
   auto power() -> void {
@@ -127,78 +153,78 @@ struct FDS : Board {
   }
 
   auto reset() -> void {
-    irq_counter = 0;
-    irq_latch = 0;
-    irq_repeat = false;
-    irq_enable = false;
+    irqCounter = 0;
+    irqLatch = 0;
+    irqRepeat = false;
+    irqEnable = false;
 
-    disk_io_enable = false;
-    sound_io_enable = false;
+    diskIOEnable = false;
+    soundIOEnable = false;
 
-    fds_control = 0x26;
+    fdsControl = 0x26;
     mirror = false;
 
-    irq_pending = false;
-    byte_transferred = false;
+    irqPending = false;
+    byteTransferred = false;
 
-    data_register = 0x00;
+    dataRegister = 0x00;
 
-    disk_slot_empty = true;
-    disk_not_ready = true;
-    disk_write_protected = true;
+    diskSlotEmpty = true;
+    diskNotReady = true;
+    diskWriteProtected = true;
 
     for(auto& n : wavetable) n = 0x00;
-    wavetable_write_enable = false;
+    wavetableWriteEnable = false;
   }
 
   auto serialize(serializer& s) -> void {
     Board::serialize(s);
 
-    s.integer(irq_counter);
-    s.integer(irq_latch);
-    s.integer(irq_repeat);
-    s.integer(irq_enable);
+    s.integer(irqCounter);
+    s.integer(irqLatch);
+    s.integer(irqRepeat);
+    s.integer(irqEnable);
 
-    s.integer(disk_io_enable);
-    s.integer(sound_io_enable);
+    s.integer(diskIOEnable);
+    s.integer(soundIOEnable);
 
-    s.integer(fds_control);
+    s.integer(fdsControl);
     s.integer(mirror);
 
-    s.integer(irq_pending);
-    s.integer(byte_transferred);
+    s.integer(irqPending);
+    s.integer(byteTransferred);
 
-    s.integer(data_register);
+    s.integer(dataRegister);
 
-    s.integer(disk_slot_empty);
-    s.integer(disk_not_ready);
-    s.integer(disk_write_protected);
+    s.integer(diskSlotEmpty);
+    s.integer(diskNotReady);
+    s.integer(diskWriteProtected);
 
     s.array(wavetable);
-    s.integer(wavetable_write_enable);
+    s.integer(wavetableWriteEnable);
   }
 
-  uint16 irq_counter;
-  uint16 irq_latch;
-  bool irq_repeat;
-  bool irq_enable;
+  uint16 irqCounter;
+  uint16 irqLatch;
+  bool irqRepeat;
+  bool irqEnable;
 
-  bool disk_io_enable;
-  bool sound_io_enable;
+  bool diskIOEnable;
+  bool soundIOEnable;
 
-  uint8 fds_control;
+  uint8 fdsControl;
   bool mirror;
 
-  bool irq_pending;
-  bool byte_transferred;
+  bool irqPending;
+  bool byteTransferred;
 
-  uint8 data_register;
+  uint8 dataRegister;
 
-  bool disk_slot_empty;
-  bool disk_not_ready;
-  bool disk_write_protected;
+  bool diskSlotEmpty;
+  bool diskNotReady;
+  bool diskWriteProtected;
 
   uint6 wavetable[0x40];
-  bool wavetable_write_enable;
+  bool wavetableWriteEnable;
 
 };
