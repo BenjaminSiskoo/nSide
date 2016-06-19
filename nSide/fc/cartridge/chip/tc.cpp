@@ -12,7 +12,7 @@ struct TC : Chip {
     if(revision != Revision::TC0190FMC) {
       if(irqDelay) irqDelay--;
       irqTest(ppu.status.chrAddressBus);
-      cpu.setIRQLine(irqLine);
+      cpu.irqLine(irqLine);
     }
     tick();
   }

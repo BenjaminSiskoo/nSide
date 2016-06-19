@@ -155,6 +155,7 @@ privileged:
   auto frame() -> void;
   auto refresh() -> void;
 
+  friend class Zapper;
   friend class BeamGun;
   friend class Scheduler;
 };

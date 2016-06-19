@@ -1,11 +1,11 @@
-FourScore::FourScore(uint port) : Controller(port, Device::FourScore) {
+FourScore::FourScore(bool port, uint index) : Controller(port, index) {
   latched = 0;
   counter = 0;
 }
 
-auto FourScore::data() -> uint5 {
+auto FourScore::data() -> uint3 {
   if(counter >= 24) return 1;
-  if(latched) return poll(A);
+  if(latched) return interface->inputPoll(port, index, A);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -42,21 +42,21 @@ auto FourScore::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    aL      = poll(A + 0);
-    bL      = poll(B + 0);
-    selectL = poll(Select + 0);
-    startL  = poll(Start + 0);
-    upL     = poll(Up + 0);
-    downL   = poll(Down + 0);
-    leftL   = poll(Left + 0);
-    rightL  = poll(Right + 0);
-    aR      = poll(A + 8);
-    bR      = poll(B + 8);
-    selectR = poll(Select + 8);
-    startR  = poll(Start + 8);
-    upR     = poll(Up + 8);
-    downR   = poll(Down + 8);
-    leftR   = poll(Left + 8);
-    rightR  = poll(Right + 8);
+    aL      = interface->inputPoll(port, index, A      + 0);
+    bL      = interface->inputPoll(port, index, B      + 0);
+    selectL = interface->inputPoll(port, index, Select + 0);
+    startL  = interface->inputPoll(port, index, Start  + 0);
+    upL     = interface->inputPoll(port, index, Up     + 0);
+    downL   = interface->inputPoll(port, index, Down   + 0);
+    leftL   = interface->inputPoll(port, index, Left   + 0);
+    rightL  = interface->inputPoll(port, index, Right  + 0);
+    aR      = interface->inputPoll(port, index, A      + 8);
+    bR      = interface->inputPoll(port, index, B      + 8);
+    selectR = interface->inputPoll(port, index, Select + 8);
+    startR  = interface->inputPoll(port, index, Start  + 8);
+    upR     = interface->inputPoll(port, index, Up     + 8);
+    downR   = interface->inputPoll(port, index, Down   + 8);
+    leftR   = interface->inputPoll(port, index, Left   + 8);
+    rightR  = interface->inputPoll(port, index, Right  + 8);
   }
 }

@@ -10,15 +10,23 @@ struct Device { enum : uint {
 
   //licensed peripherals
   Gamepad,
-  FourPlayers,
-  FourScore,
-  BeamGun,
-  FamilyTrainer,
+  FourScore13,
+  FourScore24,
+  Zapper,
+  PowerPad,
   Vaus,
 
+  GamepadE,
+  FourPlayers,
+  BeamGun,
+  FamilyTrainer,
+  VausE,
+
   //unlicensed peripherals
-  SFCGamepad,
+  SNESGamepad,
   Mouse,
+  SFCGamepad,
+  MouseE,
 
   //arcade panels
   VSPanel,
@@ -31,7 +39,7 @@ struct Peripherals {
 
   Controller* controllerPort1 = nullptr;
   Controller* controllerPort2 = nullptr;
-  Controller* expansionPort = nullptr;
+  Expansion* expansionPort = nullptr;
 };
 
 extern Peripherals peripherals;

@@ -96,14 +96,14 @@ auto CPU::reset() -> void {
   status.nmiPending = false;
   status.nmiLine = 0;
   status.irqLine = 0;
-  status.irqAPULine = 0;
+  status.apuLine = 0;
 
   status.rdyLine = 1;
-  status.rdyAddressValid = false;
-  status.rdyAddressValue = 0x0000;
+  status.rdyAddrValid = false;
+  status.rdyAddrValue = 0x0000;
 
-  status.oamDMAPending = false;
-  status.oamDMAPage = 0x00;
+  status.oamdmaPending = false;
+  status.oamdmaPage = 0x00;
 }
 
 }

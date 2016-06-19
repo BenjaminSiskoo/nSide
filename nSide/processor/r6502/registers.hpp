@@ -38,8 +38,8 @@ struct Reg16 {
 };
 
 struct Registers {
-  uint8  mdr;
+  uint8 mdr;
   Reg16 pc;
-  uint8  a, x, y, s;
-  Flags  p;
+  uint8 a, x, y, s;
+  Flags p;
 };

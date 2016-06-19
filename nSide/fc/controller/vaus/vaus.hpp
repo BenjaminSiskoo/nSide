@@ -3,12 +3,10 @@ struct Vaus : Controller {
     Control, Fire,
   };
 
-  Vaus(uint port);
+  Vaus(bool port, uint index);
 
   auto main() -> void;
-  auto data() -> uint5;
-  auto data1() -> bool;
-  auto data2() -> uint5;
+  auto data() -> uint3;
   auto latch(bool data) -> void;
 
 private:

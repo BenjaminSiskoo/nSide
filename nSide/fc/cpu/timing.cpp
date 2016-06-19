@@ -3,7 +3,7 @@ auto CPU::addClocks(uint clocks) -> void {
 }
 
 auto CPU::lastCycle() -> void {
-  status.interruptPending = ((status.irqLine | status.irqAPULine) & ~r.p.i) | status.nmiPending;
+  status.interruptPending = ((status.irqLine | status.apuLine) & ~r.p.i) | status.nmiPending;
 }
 
 auto CPU::nmi(uint16 &vector) -> void {
@@ -13,34 +13,34 @@ auto CPU::nmi(uint16 &vector) -> void {
   }
 }
 
-auto CPU::oamDMA() -> void {
+auto CPU::oamdma() -> void {
   for(uint n = 0; n < 256; n++) {
-    uint8 data = read((status.oamDMAPage << 8) + n);
+    uint8 data = read((status.oamdmaPage << 8) + n);
     write(0x2004, data);
   }
 }
 
-auto CPU::setNMILine(bool line) -> void {
+auto CPU::nmiLine(bool line) -> void {
   //edge-sensitive (0->1)
   if(!status.nmiLine && line) status.nmiPending = true;
   status.nmiLine = line;
 }
 
-auto CPU::setIRQLine(bool line) -> void {
+auto CPU::irqLine(bool line) -> void {
   //level-sensitive
   status.irqLine = line;
 }
 
-auto CPU::setIRQAPULine(bool line) -> void {
+auto CPU::apuLine(bool line) -> void {
   //level-sensitive
-  status.irqAPULine = line;
+  status.apuLine = line;
 }
 
-auto CPU::setRDYLine(bool line) -> void {
+auto CPU::rdyLine(bool line) -> void {
   status.rdyLine = line;
 }
 
-auto CPU::setRDYAddress(bool valid, uint16 value) -> void {
-  status.rdyAddressValid = valid;
-  status.rdyAddressValue = value;
+auto CPU::rdyAddr(bool valid, uint16 value) -> void {
+  status.rdyAddrValid = valid;
+  status.rdyAddrValue = value;
 }

@@ -1,4 +1,4 @@
-Mouse::Mouse(uint port) : Controller(port, Device::Mouse) {
+Mouse::Mouse(bool port, uint index) : Controller(port, index) {
   latched = 0;
   counter = 0;
 
@@ -11,7 +11,7 @@ Mouse::Mouse(uint port) : Controller(port, Device::Mouse) {
   r = 0;
 }
 
-auto Mouse::data() -> uint5 {
+auto Mouse::data() -> uint3 {
   if(latched == 1) {
     speed = (speed + 1) % 3;
     return 0;
@@ -59,23 +59,15 @@ auto Mouse::data() -> uint5 {
   }
 }
 
-auto Mouse::data1() -> bool {
-  return data().bit(0);
-}
-
-auto Mouse::data2() -> uint5 {
-  return 0;
-}
-
 auto Mouse::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
   counter = 0;
 
-  x = poll(X);  //-n = left, 0 = center, +n = right
-  y = poll(Y);  //-n = up,   0 = center, +n = down
-  l = poll(Left);
-  r = poll(Right);
+  x = interface->inputPoll(port, index, X);  //-n = left, 0 = center, +n = right
+  y = interface->inputPoll(port, index, Y);  //-n = up,   0 = center, +n = down
+  l = interface->inputPoll(port, index, Left);
+  r = interface->inputPoll(port, index, Right);
 
   dx = x < 0;  //0 = right, 1 = left
   dy = y < 0;  //0 = down,  1 = up

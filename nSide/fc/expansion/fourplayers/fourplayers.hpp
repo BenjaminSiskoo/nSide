@@ -1,9 +1,9 @@
-struct FourPlayers : Controller {
+struct FourPlayers : Expansion {
   enum : uint {
     Up, Down, Left, Right, B, A, Select, Start,
   };
 
-  FourPlayers(uint port);
+  FourPlayers(uint index);
 
   auto data1() -> bool;
   auto data2() -> uint5;

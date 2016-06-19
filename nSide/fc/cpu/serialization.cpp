@@ -8,12 +8,12 @@ auto CPU::serialize(serializer& s) -> void {
   s.integer(status.nmiPending);
   s.integer(status.nmiLine);
   s.integer(status.irqLine);
-  s.integer(status.irqAPULine);
+  s.integer(status.apuLine);
 
   s.integer(status.rdyLine);
-  s.integer(status.rdyAddressValid);
-  s.integer(status.rdyAddressValue);
+  s.integer(status.rdyAddrValid);
+  s.integer(status.rdyAddrValue);
 
-  s.integer(status.oamDMAPending);
-  s.integer(status.oamDMAPage);
+  s.integer(status.oamdmaPending);
+  s.integer(status.oamdmaPage);
 }

@@ -3,9 +3,9 @@ struct FourScore : Controller {
     Up, Down, Left, Right, B, A, Select, Start,
   };
 
-  FourScore(uint port);
+  FourScore(bool port, uint index);
 
-  auto data() -> uint5;
+  auto data() -> uint3;
   auto latch(bool data) -> void;
 
 private:

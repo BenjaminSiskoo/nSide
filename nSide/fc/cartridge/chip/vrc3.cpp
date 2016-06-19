@@ -20,7 +20,7 @@ struct VRC3 : Chip {
       }
     }
 
-    cpu.setIRQLine(irqLine);
+    cpu.irqLine(irqLine);
     tick();
   }
 

@@ -41,13 +41,13 @@ auto PPU::addClocks(uint clocks) -> void {
 
     if(vcounter() == vbl && hcounter() ==   0) status.chrAddressBus = status.vaddr & 0x3fff;
     if(vcounter() == vbl && hcounter() ==   0) status.nmiFlag = status.nmiHold;
-    if(vcounter() == vbl && hcounter() ==   2) cpu.setNMILine(status.nmiEnable && status.nmiFlag);
+    if(vcounter() == vbl && hcounter() ==   2) cpu.nmiLine(status.nmiEnable && status.nmiFlag);
 
 
     if(vcounter() == pre - 1 && hcounter() == 340) status.nmiHold = 0;
     if(vcounter() == pre     && hcounter() ==   0) status.nmiFlag = status.nmiHold;
     if(vcounter() == pre     && hcounter() ==   1) status.spriteZeroHit = 0, status.spriteOverflow = 0;
-    if(vcounter() == pre     && hcounter() ==   2) cpu.setNMILine(status.nmiEnable && status.nmiFlag);
+    if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(status.nmiEnable && status.nmiFlag);
 
     step(system.region() == System::Region::NTSC ? 4 : 5);
     synchronizeCPU();

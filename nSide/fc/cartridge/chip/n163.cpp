@@ -59,14 +59,14 @@ struct N163 : Chip {
     case 0x5000: // IRQ Low
       if(revision == Revision::N129 || revision == Revision::N163) {
         irqCounter = (irqCounter & 0xff00) | data;
-        cpu.setIRQLine(0);
+        cpu.irqLine(0);
       }
       break;
     case 0x5800: // IRQ High
       if(revision == Revision::N129 || revision == Revision::N163) {
         irqCounter = (irqCounter & 0x00ff) | ((data & 0x7f) << 8);
         irqEnable = data & 0x80;
-        cpu.setIRQLine(0);
+        cpu.irqLine(0);
       }
       break;
     case 0x8000: case 0x8800: case 0x9000: case 0x9800: // CHR Select

@@ -4,7 +4,7 @@ struct IFH3001 : Chip {
 
   auto main() -> void {
     if(irqEnable && irqCounter) {
-      if(--irqCounter == 0) cpu.setIRQLine(1);
+      if(--irqCounter == 0) cpu.irqLine(1);
     }
     tick();
   }
@@ -42,11 +42,11 @@ struct IFH3001 : Chip {
     case 0x9001: mirror = data & 0x80; break;
     case 0x9003:
       irqEnable = data & 0x80;
-      cpu.setIRQLine(0);
+      cpu.irqLine(0);
       break;
     case 0x9004:
       irqCounter = irqLatch;
-      cpu.setIRQLine(0);
+      cpu.irqLine(0);
       break;
     case 0x9005: irqLatch = (irqLatch & 0x00ff) | (data << 8); break;
     case 0x9006: irqLatch = (irqLatch & 0xff00) | (data << 0); break;

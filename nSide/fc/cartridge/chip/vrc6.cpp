@@ -100,7 +100,7 @@ struct VRC6 : Chip {
         }
       }
     }
-    cpu.setIRQLine(irqLine);
+    cpu.irqLine(irqLine);
 
     pulse1.clock();
     pulse2.clock();

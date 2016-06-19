@@ -8,8 +8,8 @@ auto APU::DMC::start() -> void {
 auto APU::DMC::stop() -> void {
   lengthCounter = 0;
   dmaDelayCounter = 0;
-  cpu.setRDYLine(1);
-  cpu.setRDYAddress(false);
+  cpu.rdyLine(1);
+  cpu.rdyAddr(false);
 }
 
 auto APU::DMC::clock() -> uint8 {
@@ -19,10 +19,10 @@ auto APU::DMC::clock() -> uint8 {
     dmaDelayCounter--;
 
     if(dmaDelayCounter == 1) {
-      cpu.setRDYAddress(true, 0x8000 | readAddress);
+      cpu.rdyAddr(true, 0x8000 | readAddress);
     } else if(dmaDelayCounter == 0) {
-      cpu.setRDYLine(1);
-      cpu.setRDYAddress(false);
+      cpu.rdyLine(1);
+      cpu.rdyAddr(false);
 
       dmaBuffer = cpu.mdr();
       haveDMABuffer = true;
@@ -34,7 +34,7 @@ auto APU::DMC::clock() -> uint8 {
           start();
         } else if(irqEnable) {
           irqPending = true;
-          apu.setIRQLine();
+          apu.irqLine();
         }
       }
     }
@@ -64,7 +64,7 @@ auto APU::DMC::clock() -> uint8 {
   }
 
   if(lengthCounter > 0 && haveDMABuffer == false && dmaDelayCounter == 0) {
-    cpu.setRDYLine(0);
+    cpu.rdyLine(0);
     dmaDelayCounter = 4;
   }
 
@@ -121,3 +121,11 @@ auto APU::DMC::serialize(serializer& s) -> void {
   s.integer(haveSample);
   s.integer(sample);
 }
+
+const uint16 APU::ntscDMCPeriodTable[16] = {
+  428, 380, 340, 320, 286, 254, 226, 214, 190, 160, 142, 128, 106, 84, 72, 54,
+};
+
+const uint16 APU::palDMCPeriodTable[16] = {
+  398, 354, 316, 298, 276, 236, 210, 198, 176, 148, 132, 118,  98, 78, 66, 50,
+};

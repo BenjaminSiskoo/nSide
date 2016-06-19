@@ -1,13 +1,11 @@
-struct SFCGamepad : Controller {
+struct SNESGamepad : Controller {
   enum : uint {
     Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
   };
 
-  SFCGamepad(uint port);
+  SNESGamepad(bool port, uint index);
 
-  auto data() -> uint5;
-  auto data1() -> bool;
-  auto data2() -> uint5;
+  auto data() -> uint3;
   auto latch(bool data) -> void;
 
 private:

@@ -16,14 +16,14 @@ struct APU : Thread {
   static auto Enter() -> void;
   auto main() -> void;
   auto tick() -> void;
-  auto setIRQLine() -> void;
+  auto irqLine() -> void;
   auto setSample(int16 sample) -> void;
 
   auto power() -> void;
   auto reset() -> void;
 
-  auto read(uint16 addr) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
+  auto readIO(uint16 addr) -> uint8;
+  auto writeIO(uint16 addr, uint8 data) -> void;
 
   auto serialize(serializer&) -> void;
 

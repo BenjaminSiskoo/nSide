@@ -4,7 +4,7 @@ struct FDS : Board {
 
   auto main() -> void {
     if(irqEnable && irqCounter > 0 && --irqCounter == 0) {
-      cpu.setIRQLine(1);
+      cpu.irqLine(1);
       if(irqRepeat) irqCounter = irqLatch;
       else           irqEnable = false;
       irqLatch = 0; // for Kaettekita Mario Bros.?
@@ -23,7 +23,7 @@ struct FDS : Board {
       // 0x10: CRC 0=pass; 1=fail
       // 0x40: End of disk head
       // 0x80: Disk read/write enable
-      cpu.setIRQLine(0);
+      cpu.irqLine(0);
       return 0;
     }
 
@@ -76,7 +76,7 @@ struct FDS : Board {
       irqEnable = data & 0x02;
       irqCounter = irqLatch;
       byteTransferred = false;
-      cpu.setIRQLine(0); // if pending IRQ flag is clear
+      cpu.irqLine(0); // if pending IRQ flag is clear
       break;
     }
 
@@ -88,7 +88,7 @@ struct FDS : Board {
 
     case 0x4024: {
       // clear pending IRQ flag
-      if(!byteTransferred) cpu.setIRQLine(0);
+      if(!byteTransferred) cpu.irqLine(0);
       break;
     }
 

@@ -56,3 +56,11 @@ auto APU::Noise::serialize(serializer& s) -> void {
   s.integer(shortMode);
   s.integer(lfsr);
 }
+
+const uint16 APU::ntscNoisePeriodTable[16] = {
+  4, 8, 16, 32, 64, 96, 128, 160, 202, 254, 380, 508, 762, 1016, 2034, 4068,
+};
+
+const uint16 APU::palNoisePeriodTable[16] = {
+  4, 8, 14, 30, 60, 88, 118, 148, 188, 236, 354, 472, 708,  944, 1890, 3778,
+};

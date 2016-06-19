@@ -29,11 +29,11 @@ struct NES_Event : Board {
       if((mmc1.chrBank[0] & 0x10) == 0x00) irqCounter++;
       if((mmc1.chrBank[0] & 0x10) == 0x10) {
         irqCounter = 0x00000000;
-        cpu.setIRQLine(0);
+        cpu.irqLine(0);
       }
       break;
     }
-    if(irqCounter == (0x20000000 | (dip << 25))) cpu.setIRQLine(1);
+    if(irqCounter == (0x20000000 | (dip << 25))) cpu.irqLine(1);
     mmc1.main();
   }
 

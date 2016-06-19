@@ -27,14 +27,14 @@ struct CPU : Processor::R6502, Thread {
   auto lastCycle() -> void;
   auto nmi(uint16 &vector) -> void;
 
-  auto oamDMA() -> void;
+  auto oamdma() -> void;
 
-  auto setNMILine(bool) -> void;
-  auto setIRQLine(bool) -> void;
-  auto setIRQAPULine(bool) -> void;
+  auto nmiLine(bool) -> void;
+  auto irqLine(bool) -> void;
+  auto apuLine(bool) -> void;
 
-  auto setRDYLine(bool) -> void;
-  auto setRDYAddress(bool valid, uint16 value = 0) -> void;
+  auto rdyLine(bool) -> void;
+  auto rdyAddr(bool valid, uint16 value = 0) -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
@@ -51,14 +51,14 @@ struct CPU : Processor::R6502, Thread {
     bool nmiPending;
     bool nmiLine;
     bool irqLine;
-    bool irqAPULine;
+    bool apuLine;
 
     bool rdyLine;
-    bool rdyAddressValid;
-    uint16 rdyAddressValue;
+    bool rdyAddrValid;
+    uint16 rdyAddrValue;
 
-    bool oamDMAPending;
-    uint8 oamDMAPage;
+    bool oamdmaPending;
+    uint8 oamdmaPage;
   } status;
 };
 

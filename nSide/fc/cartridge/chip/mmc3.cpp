@@ -11,7 +11,7 @@ struct MMC3 : Chip {
   auto main() -> void {
     if(irqDelay) irqDelay--;
     irqTest(ppu.status.chrAddressBus);
-    cpu.setIRQLine(irqLine);
+    cpu.irqLine(irqLine);
     tick();
   }
 

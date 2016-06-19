@@ -1,12 +1,12 @@
 auto CPU::read(uint16 addr) -> uint8 {
-  if(status.oamDMAPending) {
-    status.oamDMAPending = false;
+  if(status.oamdmaPending) {
+    status.oamdmaPending = false;
     read(addr);
-    oamDMA();
+    oamdma();
   }
 
   while(status.rdyLine == 0) {
-    r.mdr = bus.read(status.rdyAddressValid ? status.rdyAddressValue : addr, r.mdr);
+    r.mdr = bus.read(status.rdyAddrValid ? status.rdyAddrValue : addr, r.mdr);
     addClocks(system.region() == System::Region::NTSC ? 12 : system.region() == System::Region::PAL ? 16 : 15);
   }
 

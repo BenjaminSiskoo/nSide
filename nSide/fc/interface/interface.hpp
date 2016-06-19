@@ -71,14 +71,7 @@ struct Interface : Emulator::Interface {
   //debugger functions
   auto exportMemory() -> void;
 
-  struct DeviceRef {
-    uint id;
-    uint port[4];
-  };
-  vector<DeviceRef> deviceRefs;
-
-private:
-  auto addDevice(Device device) -> void;
+  vector<Device> devices;
 };
 
 struct Settings {

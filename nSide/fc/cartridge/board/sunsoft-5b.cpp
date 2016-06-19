@@ -46,7 +46,7 @@ struct Sunsoft5B : Board {
   auto main() -> void {
     if(irqCounterEnable) {
       if(--irqCounter == 0xffff) {
-        cpu.setIRQLine(irqEnable);
+        cpu.irqLine(irqEnable);
       }
     }
 
@@ -107,7 +107,7 @@ struct Sunsoft5B : Board {
       case 13:
         irqEnable = data & 0x80;
         irqCounterEnable = data & 0x01;
-        if(irqEnable == 0) cpu.setIRQLine(0);
+        if(irqEnable == 0) cpu.irqLine(0);
         break;
       case 14: irqCounter = (irqCounter & 0xff00) | (data << 0); break;
       case 15: irqCounter = (irqCounter & 0x00ff) | (data << 8); break;

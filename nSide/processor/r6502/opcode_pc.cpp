@@ -1,32 +1,33 @@
 auto R6502::op_branch(bool flag, bool value) {
   if(flag != value) {
-L   rd = readPCi();
+L   rd = readPC();
   } else {
-    rd = readPCi();
+    rd = readPC();
     aa = r.pc + (int8)rd;
-    page(r.pc, aa);
-L   readPC();
+    ioPage(r.pc, aa);
+L   io();
     r.pc = aa;
   }
 }
+
 auto R6502::op_jmp_absolute() {
-  abs.l = readPCi();
-L abs.h = readPCi();
+  abs.l = readPC();
+L abs.h = readPC();
   r.pc = abs.w;
 }
 
 auto R6502::op_jmp_indirect_absolute() {
-  abs.l = readPCi();
-  abs.h = readPCi();
+  abs.l = readPC();
+  abs.h = readPC();
   iabs.l = read(abs.w); abs.l++;
 L iabs.h = read(abs.w); abs.l++;
   r.pc = iabs.w;
 }
 
 auto R6502::op_jsr_absolute() {
-  abs.l = readPCi();
-  abs.h = readPCi();
-  readPC();
+  abs.l = readPC();
+  abs.h = readPC();
+  io();
   r.pc.w--;
   writeSP(r.pc >> 8);
 L writeSP(r.pc >> 0);
@@ -34,8 +35,8 @@ L writeSP(r.pc >> 0);
 }
 
 auto R6502::op_rti() {
-  readPC();
-  readPC();
+  io();
+  io();
   r.p = readSP();
   abs.l = readSP();
 L abs.h = readSP();
@@ -43,10 +44,10 @@ L abs.h = readSP();
 }
 
 auto R6502::op_rts() {
-  readPC();
-  readPC();
+  io();
+  io();
   abs.l = readSP();
   abs.h = readSP();
-L readPC();
+L io();
   r.pc = ++abs.w;
 }

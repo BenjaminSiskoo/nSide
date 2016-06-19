@@ -23,7 +23,7 @@ auto PPU::read(uint16 addr, uint8 data) -> uint8 {
     }
     status.addressLatch = 0;
     status.nmiHold = 0;
-    cpu.setNMILine(status.nmiFlag = 0);
+    cpu.nmiLine(status.nmiFlag = 0);
     return data;
   }
 
@@ -88,7 +88,7 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
     status.objAddress    = data.bit(3) ? 0x1000 : 0x0000;
     status.vramIncrement = data.bit(2) ? 32 : 1;
     status.taddr = (status.taddr & 0x73ff) | (data.bits(1,0) << 10);
-    cpu.setNMILine(status.nmiEnable && status.nmiHold && status.nmiFlag);
+    cpu.nmiLine(status.nmiEnable && status.nmiHold && status.nmiFlag);
     return;
   }
 

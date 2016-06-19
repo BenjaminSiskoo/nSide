@@ -29,7 +29,7 @@ struct VRC7 : Chip {
         }
       }
     }
-    cpu.setIRQLine(irqLine);
+    cpu.irqLine(irqLine);
 
     tick();
   }

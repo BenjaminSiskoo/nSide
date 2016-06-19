@@ -1,34 +1,47 @@
 auto CPU::readCPU(uint16 addr, uint8 data) -> uint8 {
-  if(!system.vs()) {
-    if(addr == 0x4016) {
-      return (mdr() & 0xe0) | Famicom::peripherals.controllerPort1->data() | (Famicom::peripherals.expansionPort->data1() << 1);
-    }
+  switch(addr) {
 
-    if(addr == 0x4017) {
-      return (mdr() & 0xe0) | Famicom::peripherals.controllerPort2->data() | Famicom::peripherals.expansionPort->data2();
-    }
-  } else { // if using VS. System
-    if(addr >= 0x4016 && addr <= 0x5fff) return vssystem.read(side, addr, data);
+  case 0x4016: {
+    if(system.vs()) return vssystem.read(side, addr, data);
+    uint8 data = Famicom::peripherals.controllerPort1->data();
+    data = data.bit(2) << 4 | data.bit(1) << 3 | data.bit(0) << 0;
+    return (mdr() & 0xe0) | data | (Famicom::peripherals.expansionPort->data1() << 1);
   }
 
-  return apu.read(addr);
+  case 0x4017: {
+    if(system.vs()) return vssystem.read(side, addr, data);
+    uint8 data = Famicom::peripherals.controllerPort2->data();
+    data = data.bit(2) << 4 | data.bit(1) << 3 | data.bit(0) << 0;
+    return (mdr() & 0xe0) | data | Famicom::peripherals.expansionPort->data2();
+  }
+
+  }
+
+  if(system.vs() && addr >= 0x4018 && addr <= 0x5fff) return vssystem.read(side, addr, data);
+
+  return apu.readIO(addr);
 }
 
 auto CPU::writeCPU(uint16 addr, uint8 data) -> void {
-  if(addr == 0x4014) {
-    status.oamDMAPage = data;
-    status.oamDMAPending = true;
+  switch(addr) {
+
+  case 0x4014: {
+    status.oamdmaPage = data;
+    status.oamdmaPending = true;
+    return;
   }
 
-  if(!system.vs()) {
-    if(addr == 0x4016) {
-      Famicom::peripherals.controllerPort1->latch(data & 1);
-      Famicom::peripherals.controllerPort2->latch(data & 1);
-      Famicom::peripherals.expansionPort->latch(data & 1);
-    }
-  } else { // if using VS. System
-    if(addr >= 0x4016 && addr <= 0x5fff) vssystem.write(side, addr, data);
+  case 0x4016: {
+    if(system.vs()) return vssystem.write(side, addr, data);
+    Famicom::peripherals.controllerPort1->latch(data.bit(0));
+    Famicom::peripherals.controllerPort2->latch(data.bit(0));
+    Famicom::peripherals.expansionPort->latch(data.bit(0));
+    return;
   }
 
-  return apu.write(addr, data);
+  }
+
+  if(system.vs() && addr >= 0x4017 && addr <= 0x5fff) vssystem.write(side, addr, data);
+
+  return apu.writeIO(addr, data);
 }

@@ -14,7 +14,7 @@ struct FCG : Chip {
   auto main() -> void {
     if(irqCounterEnable) {
       if(--irqCounter == 0xffff) {
-        cpu.setIRQLine(1);
+        cpu.irqLine(1);
         irqCounterEnable = false;
       }
     }
@@ -61,7 +61,7 @@ struct FCG : Chip {
       mirror = data & 0x03;
       break;
     case 0x0a:
-      cpu.setIRQLine(0);
+      cpu.irqLine(0);
       irqCounterEnable = data & 0x01;
       irqCounter = irqLatch;
       break;

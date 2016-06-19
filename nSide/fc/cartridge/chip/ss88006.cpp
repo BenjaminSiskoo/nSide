@@ -5,7 +5,7 @@ struct SS88006 : Chip {
   auto main() -> void {
     if(irqEnable) {
       irqCounter = (irqCounter & ~irqMask) | ((irqCounter - 1) & irqMask);
-      if((irqCounter & irqMask) == irqMask) cpu.setIRQLine(1);
+      if((irqCounter & irqMask) == irqMask) cpu.irqLine(1);
     }
     tick();
   }
@@ -74,11 +74,11 @@ struct SS88006 : Chip {
     case 0xe002: irqLatch = (irqLatch & 0xf0ff) | (data << 0x8); break;
     case 0xe003: irqLatch = (irqLatch & 0x0fff) | (data << 0xc); break;
     case 0xf000:
-      cpu.setIRQLine(0);
+      cpu.irqLine(0);
       irqCounter = irqLatch;
       break;
     case 0xf001:
-      cpu.setIRQLine(0);
+      cpu.irqLine(0);
       irqEnable = data & 0x01;
       irqMask = data & 0x08 ? 0x000f : (data & 0x04 ? 0x00ff : (data & 0x02 ? 0x0fff : 0xffff));
       break;

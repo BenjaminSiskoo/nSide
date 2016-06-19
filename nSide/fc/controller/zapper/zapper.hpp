@@ -1,17 +1,15 @@
-struct BeamGun : Controller {
+struct Zapper : Controller {
   shared_pointer<Emulator::Sprite> sprite;
 
   enum : uint {
     X, Y, Trigger,
   };
 
-  BeamGun(uint port);
-  ~BeamGun();
+  Zapper(bool port, uint index);
+  ~Zapper();
 
   auto main() -> void;
-  auto data() -> uint5;
-  auto data1() -> bool;
-  auto data2() -> uint5;
+  auto data() -> uint3;
   auto readLight() -> bool;
   auto latch(bool data) -> void;
 

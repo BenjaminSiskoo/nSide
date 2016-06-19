@@ -1,8 +1,8 @@
-alwaysinline auto readPC() -> uint8 {
+alwaysinline auto io() -> uint8 {
   return read(r.pc);
 }
 
-alwaysinline auto readPCi() -> uint8 {
+alwaysinline auto readPC() -> uint8 {
   return read(r.pc.w++);
 }
 
@@ -22,10 +22,10 @@ alwaysinline auto writeZP(uint8 addr, uint8 data) -> void {
   write(addr, data);
 }
 
-alwaysinline auto page(uint16 x, uint16 y) -> void {
+alwaysinline auto ioPage(uint16 x, uint16 y) -> void {
   if((x & 0xff00) != (y & 0xff00)) read((x & 0xff00) | (y & 0x00ff));
 }
 
-alwaysinline auto pageAlways(uint16 x, uint16 y) -> void {
+alwaysinline auto ioPageAlways(uint16 x, uint16 y) -> void {
   read((x & 0xff00) | (y & 0x00ff));
 }

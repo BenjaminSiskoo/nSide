@@ -1,7 +1,7 @@
-BeamGun::BeamGun(uint port) : Controller(port, Device::BeamGun) {
-  create(Controller::Enter, system.cpuFrequency());
+BeamGun::BeamGun(uint index) : Expansion(index) {
+  create(Expansion::Enter, system.cpuFrequency());
   sprite = Emulator::video.createSprite(16, 16);
-  sprite->setPixels(port == Port::Expansion ? Resource::Sprite::CrosshairGreenSmall : Resource::Sprite::CrosshairRedSmall);
+  sprite->setPixels(Resource::Sprite::CrosshairGreenSmall);
 
   latched = 0;
   counter = 0;
@@ -44,8 +44,8 @@ auto BeamGun::main() -> void {
   if(next < prev) {
     if(triggertime > 0) triggertime -= 1;
     //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
-    int nx = poll(X);
-    int ny = poll(Y);
+    int nx = interface->inputPoll(Port::Expansion, index, X);
+    int ny = interface->inputPoll(Port::Expansion, index, Y);
     nx += x;
     ny += y;
     x = max(-16, min(256 + 16, nx));
@@ -59,39 +59,38 @@ auto BeamGun::main() -> void {
   step(3);
 }
 
-auto BeamGun::data() -> uint5 {
-  if(!system.vs()) return data2();
-  if(counter >= 8) return 1;
-  if(latched == 1) return 0;
-
-  switch(counter++) {
-  case 0: return 0;
-  case 1: return 0;
-  case 2: return 0;
-  case 3: return 0;
-  case 4: return 1; // connected
-  case 5: return 0;
-  case 6: return light;
-  case 7: return trigger;
-  }
-}
-
 auto BeamGun::data1() -> bool {
   return 0;
 }
 
 auto BeamGun::data2() -> uint5 {
-  bool newtrigger = poll(Trigger);
-  if(newtrigger && !triggerlock) {
-    triggertime = 2;
-    triggerlock = true;
-  } else if(!newtrigger) {
-    triggerlock = false;
-  }
-  light = lighttime > 0;
-  trigger = triggertime > 0;
+  if(!system.vs()) {
+    bool newtrigger = interface->inputPoll(Port::Expansion, index, Trigger);
+    if(newtrigger && !triggerlock) {
+      triggertime = 2;
+      triggerlock = true;
+    } else if(!newtrigger) {
+      triggerlock = false;
+    }
+    light = lighttime > 0;
+    trigger = triggertime > 0;
 
-  return (trigger << 4) | ((!light) << 3);
+    return (trigger << 4) | ((!light) << 3);
+  } else {
+    if(counter >= 8) return 1;
+    if(latched == 1) return 0;
+
+    switch(counter++) {
+    case 0: return 0;
+    case 1: return 0;
+    case 2: return 0;
+    case 3: return 0;
+    case 4: return 1; // connected
+    case 5: return 0;
+    case 6: return light;
+    case 7: return trigger;
+    }
+  }
 }
 
 auto BeamGun::readLight() -> bool {
@@ -125,7 +124,7 @@ auto BeamGun::latch(bool data) -> void {
   latched = data;
   if(system.vs() && latched == 0) {
     counter = 0;
-    trigger = poll(Trigger);
+    trigger = interface->inputPoll(Port::Expansion, index, Trigger);
     light = lighttime > 0;
   }
 }

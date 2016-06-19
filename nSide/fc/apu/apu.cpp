@@ -72,8 +72,8 @@ auto APU::tick() -> void {
   if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
 }
 
-auto APU::setIRQLine() -> void {
-  cpu.setIRQAPULine(frame.irqPending || dmc.irqPending);
+auto APU::irqLine() -> void {
+  cpu.apuLine(frame.irqPending || dmc.irqPending);
 }
 
 auto APU::setSample(int16 sample) -> void {
@@ -117,10 +117,10 @@ auto APU::reset() -> void {
   enabledChannels = 0;
   cartridgeSample = 0;
 
-  setIRQLine();
+  irqLine();
 }
 
-auto APU::read(uint16 addr) -> uint8 {
+auto APU::readIO(uint16 addr) -> uint8 {
   if(addr == 0x4015) {
     uint8 result = 0x00;
     result |= pulse[0].lengthCounter ? 0x01 : 0;
@@ -132,7 +132,7 @@ auto APU::read(uint16 addr) -> uint8 {
     result |=         dmc.irqPending ? 0x80 : 0;
 
     frame.irqPending = false;
-    setIRQLine();
+    irqLine();
 
     return result;
   }
@@ -140,7 +140,7 @@ auto APU::read(uint16 addr) -> uint8 {
   return cpu.mdr();
 }
 
-auto APU::write(uint16 addr, uint8 data) -> void {
+auto APU::writeIO(uint16 addr, uint8 data) -> void {
   const uint n = addr.bit(2);  //pulse#
 
   switch(addr) {
@@ -228,7 +228,7 @@ auto APU::write(uint16 addr, uint8 data) -> void {
     dmc.period = data.bits(0,3);
 
     dmc.irqPending = dmc.irqPending && dmc.irqEnable && !dmc.loopMode;
-    setIRQLine();
+    irqLine();
     break;
   }
 
@@ -256,7 +256,7 @@ auto APU::write(uint16 addr, uint8 data) -> void {
     data.bit(4) ? dmc.start() : dmc.stop();
     dmc.irqPending = false;
 
-    setIRQLine();
+    irqLine();
     enabledChannels = data.bits(0,4);
     break;
   }
@@ -268,7 +268,7 @@ auto APU::write(uint16 addr, uint8 data) -> void {
     if(frame.mode.bit(1)) clockFrameCounter();
     if(frame.mode.bit(0)) {
       frame.irqPending = false;
-      setIRQLine();
+      irqLine();
     }
     frame.divider = system.region() == System::Region::NTSC ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
     break;
@@ -318,7 +318,7 @@ auto APU::clockFrameCounter() -> void {
     }
     if(frame.mode == 0) {
       frame.irqPending = true;
-      setIRQLine();
+      irqLine();
     }
   }
 }
@@ -337,22 +337,6 @@ auto APU::clockFrameCounterDivider() -> void {
 const uint8 APU::lengthCounterTable[32] = {
   0x0a, 0xfe, 0x14, 0x02, 0x28, 0x04, 0x50, 0x06, 0xa0, 0x08, 0x3c, 0x0a, 0x0e, 0x0c, 0x1a, 0x0e,
   0x0c, 0x10, 0x18, 0x12, 0x30, 0x14, 0x60, 0x16, 0xc0, 0x18, 0x48, 0x1a, 0x10, 0x1c, 0x20, 0x1e,
-};
-
-const uint16 APU::ntscNoisePeriodTable[16] = {
-  4, 8, 16, 32, 64, 96, 128, 160, 202, 254, 380, 508, 762, 1016, 2034, 4068,
-};
-
-const uint16 APU::palNoisePeriodTable[16] = {
-  4, 7, 14, 30, 60, 88, 118, 148, 188, 236, 354, 472, 708,  944, 1890, 3778,
-};
-
-const uint16 APU::ntscDMCPeriodTable[16] = {
-  428, 380, 340, 320, 286, 254, 226, 214, 190, 160, 142, 128, 106, 84, 72, 54,
-};
-
-const uint16 APU::palDMCPeriodTable[16] = {
-  398, 354, 316, 298, 276, 236, 210, 198, 176, 148, 132, 118,  98, 78, 66, 50,
 };
 
 }

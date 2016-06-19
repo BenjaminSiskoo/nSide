@@ -63,6 +63,7 @@ namespace Famicom {
   #include <fc/ppu/ppu.hpp>
 
   #include <fc/controller/controller.hpp>
+  #include <fc/expansion/expansion.hpp>
   #include <fc/system/system.hpp>
   #include <fc/scheduler/scheduler.hpp>
   #include <fc/arcade/arcade.hpp>
