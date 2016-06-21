@@ -91,20 +91,20 @@ auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
   if(presentation->focused() == false) return 0;
 
   if(port == SuperFamicom::Port::Controller1) {
-    if(device == SuperFamicom::Device::Gamepad) {
+    if(device == SuperFamicom::Peripheral::ControllerPort1::Gamepad) {
       switch(input) {
-      case SuperFamicom::Gamepad::B:      return hiro::Keyboard::pressed("Z");
-      case SuperFamicom::Gamepad::Y:      return hiro::Keyboard::pressed("A");
-      case SuperFamicom::Gamepad::Select: return hiro::Keyboard::pressed("Apostrophe");
-      case SuperFamicom::Gamepad::Start:  return hiro::Keyboard::pressed("Enter");
       case SuperFamicom::Gamepad::Up:     return hiro::Keyboard::pressed("Up");
       case SuperFamicom::Gamepad::Down:   return hiro::Keyboard::pressed("Down");
       case SuperFamicom::Gamepad::Left:   return hiro::Keyboard::pressed("Left");
       case SuperFamicom::Gamepad::Right:  return hiro::Keyboard::pressed("Right");
+      case SuperFamicom::Gamepad::B:      return hiro::Keyboard::pressed("Z");
       case SuperFamicom::Gamepad::A:      return hiro::Keyboard::pressed("X");
+      case SuperFamicom::Gamepad::Y:      return hiro::Keyboard::pressed("A");
       case SuperFamicom::Gamepad::X:      return hiro::Keyboard::pressed("S");
       case SuperFamicom::Gamepad::L:      return hiro::Keyboard::pressed("D");
       case SuperFamicom::Gamepad::R:      return hiro::Keyboard::pressed("C");
+      case SuperFamicom::Gamepad::Select: return hiro::Keyboard::pressed("Apostrophe");
+      case SuperFamicom::Gamepad::Start:  return hiro::Keyboard::pressed("Enter");
       }
     }
   }

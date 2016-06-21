@@ -86,7 +86,7 @@ vs sha256:020284464fed5b7f1649c463149c810ad36ac8b6478c26620c858e1ce4078f88
 vs sha256:0626ec9afc5e244bc8b699006a2f1d827d7ab6fb21a183a53aa3c5319d364ba1
   :side
   :  ppu revision=RC2C03B
-  :  controller port=2 device=beamgun
+  :  controller port=2 device=zapper
   :  controller port=1 device=none
   :  prg
   :    rom name=program.rom size=0x8000
@@ -125,7 +125,7 @@ vs sha256:0626ec9afc5e244bc8b699006a2f1d827d7ab6fb21a183a53aa3c5319d364ba1
 vs sha256:84c3f0d51a935bf478aa657f4728bb6a51112024913860e389f6710321ca5fbd
   :side
   :  ppu revision=RC2C05-03
-  :  controller port=2 device=beamgun
+  :  controller port=2 device=zapper
   :  controller port=1 device=none
   :  prg
   :    // ROM chip order:

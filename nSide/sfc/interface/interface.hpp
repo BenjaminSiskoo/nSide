@@ -126,8 +126,6 @@ struct Interface : Emulator::Interface {
 
   //debugger functions
   auto exportMemory() -> void;
-
-  vector<Device> devices;
 };
 
 struct Settings {

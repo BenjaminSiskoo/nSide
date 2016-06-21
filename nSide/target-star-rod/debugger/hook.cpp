@@ -1,7 +1,7 @@
 //S-CPU
 //=====
 
-auto Debugger::cpu_op_exec(uint24 addr) -> void {
+auto Debugger::cpu_execute(uint24 addr) -> void {
   cpuUsage.data[addr] |= Usage::Exec;
   cpuDebugger->opcodePC = addr;
   bool breakpointHit = breakpointEditor->testExecCPU(addr);
@@ -29,7 +29,7 @@ auto Debugger::cpu_op_exec(uint24 addr) -> void {
   }
 }
 
-auto Debugger::cpu_op_read(uint24 addr, uint8 data) -> void {
+auto Debugger::cpu_read(uint24 addr, uint8 data) -> void {
   cpuUsage.data[addr] |= Usage::Read;
   bool breakpointHit = breakpointEditor->testReadCPU(addr);
 
@@ -41,7 +41,7 @@ auto Debugger::cpu_op_read(uint24 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::cpu_op_write(uint24 addr, uint8 data) -> void {
+auto Debugger::cpu_write(uint24 addr, uint8 data) -> void {
   cpuUsage.data[addr] |= Usage::Write;
   bool breakpointHit = breakpointEditor->testWriteCPU(addr, data);
 
@@ -53,14 +53,14 @@ auto Debugger::cpu_op_write(uint24 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::cpu_op_nmi() -> void {
+auto Debugger::cpu_nmi() -> void {
   if(flags.cpu.nmi) {
     print("CPU NMI\n");  //, text, "\n");
     flags.cpu.stepInto = true;
   }
 }
 
-auto Debugger::cpu_op_irq() -> void {
+auto Debugger::cpu_irq() -> void {
   if(flags.cpu.irq) {
     print("CPU IRQ\n");
     flags.cpu.stepInto = true;
@@ -70,7 +70,7 @@ auto Debugger::cpu_op_irq() -> void {
 //S-SMP
 //=====
 
-auto Debugger::smp_op_exec(uint16 addr) -> void {
+auto Debugger::smp_execute(uint16 addr) -> void {
   apuUsage.data[addr] |= Usage::Exec;
   smpDebugger->opcodePC = addr;
   bool breakpointHit = breakpointEditor->testExecSMP(addr);
@@ -98,7 +98,7 @@ auto Debugger::smp_op_exec(uint16 addr) -> void {
   }
 }
 
-auto Debugger::smp_op_read(uint16 addr, uint8 data) -> void {
+auto Debugger::smp_read(uint16 addr, uint8 data) -> void {
   apuUsage.data[addr] |= Usage::Read;
   bool breakpointHit = breakpointEditor->testReadSMP(addr);
 
@@ -109,7 +109,7 @@ auto Debugger::smp_op_read(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::smp_op_write(uint16 addr, uint8 data) -> void {
+auto Debugger::smp_write(uint16 addr, uint8 data) -> void {
   apuUsage.data[addr] |= Usage::Write;
   bool breakpointHit = breakpointEditor->testWriteSMP(addr, data);
 

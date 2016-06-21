@@ -23,8 +23,10 @@ Interface::Interface() {
   media.append({ID::GameBoy,      "Game Boy",       "gb" , true});
   media.append({ID::GameBoyColor, "Game Boy Color", "gbc", true});
 
+  ports.append({0, "Device", false});
+
   {
-    Device device{0, ID::Device, "Controller"};
+    Device device{"Controller"};
     device.inputs.append({0, 0, "Up"    });
     device.inputs.append({1, 0, "Down"  });
     device.inputs.append({2, 0, "Left"  });
@@ -33,10 +35,8 @@ Interface::Interface() {
     device.inputs.append({5, 0, "A"     });
     device.inputs.append({6, 0, "Select"});
     device.inputs.append({7, 0, "Start" });
-    devices.append(device);
+    ports[0].devices.append(device);
   }
-
-  ports.append({0, "Device", {devices[0]}});
 }
 
 auto Interface::manifest() -> string {

@@ -15,46 +15,46 @@ auto Peripherals::reset() -> void {
   connect(2, settings.expansionPort);
 }
 
-auto Peripherals::connect(uint port, uint id) -> void {
+auto Peripherals::connect(uint port, uint index) -> void {
   if(port == Port::Controller1) {
-    settings.controllerPort1 = id;
+    settings.controllerPort1 = index;
     if(!system.loaded()) return;
 
     delete controllerPort1;
-    switch(id) { default:
-    case Device::None:     controllerPort1 = new Controller(0); break;
-    case Device::Gamepad:  controllerPort1 = new Gamepad(0); break;
-    case Device::Multitap: controllerPort1 = new Multitap(0); break;
-    case Device::Mouse:    controllerPort1 = new Mouse(0); break;
+    switch(index) { default:
+    case Peripheral::ControllerPort1::None:     controllerPort1 = new Controller(0, index); break;
+    case Peripheral::ControllerPort1::Gamepad:  controllerPort1 = new Gamepad(0, index); break;
+    case Peripheral::ControllerPort1::Multitap: controllerPort1 = new Multitap(0, index); break;
+    case Peripheral::ControllerPort1::Mouse:    controllerPort1 = new Mouse(0, index); break;
     }
   }
 
   if(port == Port::Controller2) {
-    settings.controllerPort2 = id;
+    settings.controllerPort2 = index;
     if(!system.loaded()) return;
 
     delete controllerPort2;
-    switch(id) { default:
-    case Device::None:       controllerPort2 = new Controller(1); break;
-    case Device::Gamepad:    controllerPort2 = new Gamepad(1); break;
-    case Device::Multitap:   controllerPort2 = new Multitap(1); break;
-    case Device::Mouse:      controllerPort2 = new Mouse(1); break;
-    case Device::SuperScope: controllerPort2 = new SuperScope(1); break;
-    case Device::Justifier:  controllerPort2 = new Justifier(1, false); break;
-    case Device::Justifiers: controllerPort2 = new Justifier(1, true); break;
+    switch(index) { default:
+    case Peripheral::ControllerPort2::None:       controllerPort2 = new Controller(1, index); break;
+    case Peripheral::ControllerPort2::Gamepad:    controllerPort2 = new Gamepad(1, index); break;
+    case Peripheral::ControllerPort2::Multitap:   controllerPort2 = new Multitap(1, index); break;
+    case Peripheral::ControllerPort2::Mouse:      controllerPort2 = new Mouse(1, index); break;
+    case Peripheral::ControllerPort2::SuperScope: controllerPort2 = new SuperScope(1, index); break;
+    case Peripheral::ControllerPort2::Justifier:  controllerPort2 = new Justifier(1, index, false); break;
+    case Peripheral::ControllerPort2::Justifiers: controllerPort2 = new Justifier(1, index, true); break;
     }
   }
 
   if(port == Port::Expansion) {
-    settings.expansionPort = id;
+    settings.expansionPort = index;
     if(!system.loaded()) return;
 
     delete expansionPort;
-    switch(id) { default:
-    case Device::None:        expansionPort = new Expansion; break;
-    case Device::Satellaview: expansionPort = new Satellaview; break;
-    case Device::SuperDisc:   expansionPort = new SuperDisc; break;
-    case Device::S21FX:       expansionPort = new S21FX; break;
+    switch(index) { default:
+    case Peripheral::ExpansionPort::None:        expansionPort = new Expansion; break;
+    case Peripheral::ExpansionPort::Satellaview: expansionPort = new Satellaview; break;
+    case Peripheral::ExpansionPort::SuperDisc:   expansionPort = new SuperDisc; break;
+    case Peripheral::ExpansionPort::S21FX:       expansionPort = new S21FX; break;
     }
   }
 

@@ -55,9 +55,9 @@ auto MemoryEditor::write(uint addr, uint8_t data) -> void {
   if(!SuperFamicom::system.loaded()) return;
   switch(source.selected().offset()) {
   case 0:
-    SuperFamicom::cartridge.rom.write_protect(false);
+    SuperFamicom::cartridge.rom.writeProtect(false);
     cpuDebugger->write(addr, data);
-    SuperFamicom::cartridge.rom.write_protect(true);
+    SuperFamicom::cartridge.rom.writeProtect(true);
     break;
   case 1:
     smpDebugger->write(addr, data);

@@ -74,7 +74,7 @@ auto System::load(Revision revision) -> void {
     case Region::Dendy: ppu.revision = PPU::Revision::UA6538;  break;
     }
     if(region() != Region::NTSC) interface->information.aspectRatio = 2'950'000.0 / 2'128'137.0;
-    peripherals.connect(Port::Arcade, Device::None);
+    peripherals.connect(Port::Arcade, Peripheral::ArcadePanel::None);
     break;
   }
 
@@ -82,7 +82,7 @@ auto System::load(Revision revision) -> void {
     apu.revision = APU::Revision::RP2A03;
     // VS. System PPU is set within cartridge.load().
     vssystem.load();
-    peripherals.connect(Port::Arcade, Device::VSPanel);
+    peripherals.connect(Port::Arcade, Peripheral::ArcadePanel::VSPanel);
     break;
   }
 
@@ -92,7 +92,7 @@ auto System::load(Revision revision) -> void {
     playchoice10.screenConfig = min(max(document["system/pc10/screen/mode"].integer(), 1), 2);
     playchoice10.load();
     interface->information.canvasHeight = playchoice10.screenConfig * 240;
-    peripherals.connect(Port::Arcade, Device::None);
+    peripherals.connect(Port::Arcade, Peripheral::ArcadePanel::None);
     break;
   }
 
@@ -100,7 +100,7 @@ auto System::load(Revision revision) -> void {
     apu.revision = APU::Revision::RP2A03E;
     ppu.revision = PPU::Revision::RP2C02C;
     famicombox.load();
-    peripherals.connect(Port::Arcade, Device::None);
+    peripherals.connect(Port::Arcade, Peripheral::ArcadePanel::None);
     break;
   }
 
@@ -131,15 +131,6 @@ auto System::unload() -> void {
 }
 
 auto System::power() -> void {
-  Emulator::video.reset();
-  Emulator::video.setInterface(interface);
-  //Emulator::video.resize() is called in configureVideoEffects()
-  configureVideoPalette();
-  configureVideoEffects();
-
-  Emulator::audio.reset();
-  Emulator::audio.setInterface(interface);
-
   cartridge.power();
   cpu.power();
   apu.power();
@@ -156,6 +147,15 @@ auto System::power() -> void {
 }
 
 auto System::reset() -> void {
+  Emulator::video.reset();
+  Emulator::video.setInterface(interface);
+  //Emulator::video.resize() is called in configureVideoEffects()
+  configureVideoPalette();
+  configureVideoEffects();
+
+  Emulator::audio.reset();
+  Emulator::audio.setInterface(interface);
+
   cartridge.reset();
   cpu.reset();
   apu.reset();

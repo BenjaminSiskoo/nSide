@@ -44,6 +44,7 @@ struct Interface : Emulator::Interface {
   auto save(uint id, const stream& stream) -> void override;
   auto unload() -> void override;
 
+  auto connect(uint port, uint device) -> void;
   auto power() -> void override;
   auto run() -> void override;
   auto rotate() -> void override;
@@ -56,9 +57,6 @@ struct Interface : Emulator::Interface {
   auto cap(const string& name) -> bool override;
   auto get(const string& name) -> any override;
   auto set(const string& name, const any& value) -> bool override;
-
-private:
-  vector<Device> devices;
 };
 
 struct Settings {

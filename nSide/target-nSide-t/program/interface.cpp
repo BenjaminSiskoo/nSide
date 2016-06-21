@@ -127,12 +127,7 @@ auto Program::deviceChanged(uint port, uint device) -> void {
     port == 2 ? presentation->inputPort3 :
                 presentation->inputPort4
   );
-  uint index;
-  for(auto& _device : emulator->ports[port].devices) {
-    if(_device.id == device) break;
-    index++;
-  }
-  ((MenuRadioItem)portMenu.action(index)).setChecked();
+  ((MenuRadioItem)portMenu.action(device)).setChecked();
 }
 
 auto Program::notify(string text) -> void {

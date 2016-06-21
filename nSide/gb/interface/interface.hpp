@@ -70,9 +70,6 @@ struct Interface : Emulator::Interface {
 
   //debugger functions
   void exportMemory();
-
-private:
-  vector<Device> devices;
 };
 
 struct Settings {

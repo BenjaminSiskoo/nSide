@@ -96,17 +96,17 @@ auto System::runToSave() -> void {
 }
 
 auto System::pollKeypad() -> void {
-  keypad.y1 = interface->inputPoll(_orientation, 0, 0);
-  keypad.y2 = interface->inputPoll(_orientation, 0, 1);
-  keypad.y3 = interface->inputPoll(_orientation, 0, 2);
-  keypad.y4 = interface->inputPoll(_orientation, 0, 3);
-  keypad.x1 = interface->inputPoll(_orientation, 0, 4);
-  keypad.x2 = interface->inputPoll(_orientation, 0, 5);
-  keypad.x3 = interface->inputPoll(_orientation, 0, 6);
-  keypad.x4 = interface->inputPoll(_orientation, 0, 7);
-  keypad.b = interface->inputPoll(_orientation, 0, 8);
-  keypad.a = interface->inputPoll(_orientation, 0, 9);
-  keypad.start = interface->inputPoll(_orientation, 0, 10);
+  keypad.y1 = interface->inputPoll(0, _orientation, 0);
+  keypad.y2 = interface->inputPoll(0, _orientation, 1);
+  keypad.y3 = interface->inputPoll(0, _orientation, 2);
+  keypad.y4 = interface->inputPoll(0, _orientation, 3);
+  keypad.x1 = interface->inputPoll(0, _orientation, 4);
+  keypad.x2 = interface->inputPoll(0, _orientation, 5);
+  keypad.x3 = interface->inputPoll(0, _orientation, 6);
+  keypad.x4 = interface->inputPoll(0, _orientation, 7);
+  keypad.b = interface->inputPoll(0, _orientation, 8);
+  keypad.a = interface->inputPoll(0, _orientation, 9);
+  keypad.start = interface->inputPoll(0, _orientation, 10);
 
   if(keypad.y1 || keypad.y2 || keypad.y3 || keypad.y4
   || keypad.x1 || keypad.x2 || keypad.x3 || keypad.x4

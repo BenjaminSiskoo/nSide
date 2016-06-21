@@ -3,7 +3,7 @@ struct Justifier : Controller {
     X, Y, Trigger, Start,
   };
 
-  Justifier(bool port, bool chained);
+  Justifier(bool port, uint index, bool chained);
   ~Justifier();
 
   auto main() -> void;
@@ -12,7 +12,6 @@ struct Justifier : Controller {
 
 //private:
   const bool chained;  //true if the second justifier is attached to the first
-  const uint device;
   bool latched;
   uint counter;
   uint prev;

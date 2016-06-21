@@ -25,11 +25,21 @@ Interface::Interface() {
   media.append({ID::SuperFamicom, "BS Memory",     "bs",  false});
   media.append({ID::SuperFamicom, "Sufami Turbo",  "st",  false});
 
-  { Device device{0, ID::ControllerPort1 | ID::ControllerPort2 | ID::ExpansionPort, "None"};
-    devices.append(device);
+  ports.append({0, "Controller Port 1", true});
+  ports.append({1, "Controller Port 2", true});
+  ports.append({2, "Expansion Port",    true});
+
+  auto& controllerPort1 = ports[0].devices;
+  auto& controllerPort2 = ports[1].devices;
+  auto& expansionPort   = ports[2].devices;
+
+  { Device device{"None"};
+    controllerPort1.append(device);
+    controllerPort2.append(device);
+    expansionPort.append(device);
   }
 
-  { Device device{1, ID::ControllerPort1 | ID::ControllerPort2, "Gamepad"};
+  { Device device{"Gamepad"};
     device.inputs.append({ 0, 0, "Up"    });
     device.inputs.append({ 1, 0, "Down"  });
     device.inputs.append({ 2, 0, "Left"  });
@@ -42,10 +52,11 @@ Interface::Interface() {
     device.inputs.append({ 9, 0, "R"     });
     device.inputs.append({10, 0, "Select"});
     device.inputs.append({11, 0, "Start" });
-    devices.append(device);
+    controllerPort1.append(device);
+    controllerPort2.append(device);
   }
 
-  { Device device{2, ID::ControllerPort1 | ID::ControllerPort2, "Multitap"};
+  { Device device{"Multitap"};
     for(uint p = 1, n = 0; p <= 4; p++, n += 12) {
       device.inputs.append({n +  0, 0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({n +  1, 0, {"Port ", p, " - ", "Down"  }});
@@ -60,36 +71,38 @@ Interface::Interface() {
       device.inputs.append({n + 10, 0, {"Port ", p, " - ", "Select"}});
       device.inputs.append({n + 11, 0, {"Port ", p, " - ", "Start" }});
     }
-    devices.append(device);
+    controllerPort1.append(device);
+    controllerPort2.append(device);
   }
 
-  { Device device{3, ID::ControllerPort1 | ID::ControllerPort2, "Mouse"};
+  { Device device{"Mouse"};
     device.inputs.append({0, 1, "X-axis"});
     device.inputs.append({1, 1, "Y-axis"});
     device.inputs.append({2, 0, "Left"  });
     device.inputs.append({3, 0, "Right" });
-    devices.append(device);
+    controllerPort1.append(device);
+    controllerPort2.append(device);
   }
 
-  { Device device{4, ID::ControllerPort2, "Super Scope"};
+  { Device device{"Super Scope"};
     device.inputs.append({0, 1, "X-axis" });
     device.inputs.append({1, 1, "Y-axis" });
     device.inputs.append({2, 0, "Trigger"});
     device.inputs.append({3, 0, "Cursor" });
     device.inputs.append({4, 0, "Turbo"  });
     device.inputs.append({5, 0, "Pause"  });
-    devices.append(device);
+    controllerPort2.append(device);
   }
 
-  { Device device{5, ID::ControllerPort2, "Justifier"};
+  { Device device{"Justifier"};
     device.inputs.append({0, 1, "X-axis" });
     device.inputs.append({1, 1, "Y-axis" });
     device.inputs.append({2, 0, "Trigger"});
     device.inputs.append({3, 0, "Start"  });
-    devices.append(device);
+    controllerPort2.append(device);
   }
 
-  { Device device{6, ID::ControllerPort2, "Justifiers"};
+  { Device device{"Justifiers"};
     device.inputs.append({0, 1, "Port 1 - X-axis" });
     device.inputs.append({1, 1, "Port 1 - Y-axis" });
     device.inputs.append({2, 0, "Port 1 - Trigger"});
@@ -98,31 +111,19 @@ Interface::Interface() {
     device.inputs.append({5, 1, "Port 2 - Y-axis" });
     device.inputs.append({6, 0, "Port 2 - Trigger"});
     device.inputs.append({7, 0, "Port 2 - Start"  });
-    devices.append(device);
+    controllerPort2.append(device);
   }
 
-  { Device device{7, ID::ExpansionPort, "Satellaview"};
-    devices.append(device);
+  { Device device{"Satellaview"};
+    expansionPort.append(device);
   }
 
-  { Device device{8, ID::ExpansionPort, "Super Disc"};
-    devices.append(device);
+  { Device device{"Super Disc"};
+    expansionPort.append(device);
   }
 
-  { Device device{9, ID::ExpansionPort, "21fx"};
-    devices.append(device);
-  }
-
-  ports.append({0, "Controller Port 1"});
-  ports.append({1, "Controller Port 2"});
-  ports.append({2, "Expansion Port"});
-
-  for(auto& device : devices) {
-    for(auto& port : ports) {
-      if(device.portmask & (1 << port.id)) {
-        port.devices.append(device);
-      }
-    }
+  { Device device{"21fx"};
+    expansionPort.append(device);
   }
 }
 

@@ -195,6 +195,7 @@ auto Presentation::updateEmulator() -> void {
   for(auto n : range(emulator->ports)) {
     if(n >= 4) break;
     auto& port = emulator->ports[n];
+    if(!port.plugAndPlay) continue;
     auto& menu = (
     n == 0 ? inputPort1 :
     n == 1 ? inputPort2 :
@@ -204,12 +205,13 @@ auto Presentation::updateEmulator() -> void {
     menu.setText(port.name);
 
     Group devices;
-    for(auto& device : port.devices) {
+    for(uint index : range(port.devices.size())) {
+      auto& device = port.devices[index];
       MenuRadioItem item{&menu};
       item.setText(device.name).onActivate([=] {
         auto path = string{emulator->information.name, "/", port.name}.replace(" ", "");
         settings[path].setValue(device.name);
-        emulator->connect(port.id, device.id);
+        emulator->connect(port.id, index);
       });
       devices.append(item);
     }

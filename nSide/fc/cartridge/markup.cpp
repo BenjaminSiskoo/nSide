@@ -50,16 +50,16 @@ auto Cartridge::parseMarkupVS(Markup::Node& document, Markup::Node& boardNode) -
   string device1 = boardNode.find("controller(port=1)/device")(0).text();
   string device2 = boardNode.find("controller(port=2)/device")(0).text();
   if(device1 == "gamepad") {
-    peripherals.connect(0, Device::Gamepad);
+    peripherals.connect(Port::Controller1, Peripheral::ControllerPort1::Gamepad);
   } else if(device1 == "none") {
-    peripherals.connect(0, Device::None);
+    peripherals.connect(Port::Controller1, Peripheral::ControllerPort1::None);
   }
   if(device2 == "gamepad") {
-    peripherals.connect(1, Device::Gamepad);
-  } else if(device2 == "beamgun") {
-    peripherals.connect(1, Device::BeamGun);
+    peripherals.connect(Port::Controller2, Peripheral::ControllerPort2::Gamepad);
+  } else if(device2 == "zapper") {
+    peripherals.connect(Port::Controller2, Peripheral::ControllerPort2::Zapper);
   } else if(device2 == "none") {
-    peripherals.connect(1, Device::None);
+    peripherals.connect(Port::Controller2, Peripheral::ControllerPort2::None);
   }
   vssystem.setDip(primarySide, interface->dipSettings(boardNode));
 

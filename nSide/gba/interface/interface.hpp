@@ -41,6 +41,7 @@ struct Interface : Emulator::Interface {
   auto save(uint id, const stream& stream) -> void;
   auto unload() -> void;
 
+  auto connect(uint port, uint device) -> void;
   auto power() -> void;
   auto reset() -> void;
   auto run() -> void;
@@ -57,9 +58,6 @@ struct Interface : Emulator::Interface {
 
   //debugger functions
   auto exportMemory() -> void;
-
-private:
-  vector<Device> devices;
 };
 
 struct Settings {

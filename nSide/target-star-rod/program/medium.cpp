@@ -8,8 +8,8 @@ auto Program::loadMedium(string location) -> bool {
   directory::create({folderPaths(0), "debug/"});
 
   Emulator::audio.reset(2, audio->get(Audio::Frequency).get<uint>(44100));
-  emulator->connect(SuperFamicom::Port::Controller1, SuperFamicom::Device::Gamepad);
-  emulator->connect(SuperFamicom::Port::Controller2, SuperFamicom::Device::None);
+  emulator->connect(SuperFamicom::Port::Controller1, SuperFamicom::Peripheral::ControllerPort1::Gamepad);
+  emulator->connect(SuperFamicom::Port::Controller2, SuperFamicom::Peripheral::ControllerPort2::None);
   emulator->load(SuperFamicom::ID::SuperFamicom);
   emulator->set("Blur Emulation", false);
   emulator->set("Color Emulation", false);

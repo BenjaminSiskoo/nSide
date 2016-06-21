@@ -21,7 +21,9 @@ Interface::Interface() {
 
   media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", true});
 
-  { Device device{0, ID::DeviceHorizontal, "Controller"};
+  ports.append({0, "Orientation", true});
+
+  { Device device{"Horizontal"};
     device.inputs.append({ 0, 0, "Up"    });
     device.inputs.append({ 1, 0, "Down"  });
     device.inputs.append({ 2, 0, "Left"  });
@@ -33,10 +35,10 @@ Interface::Interface() {
     device.inputs.append({ 8, 0, "Select"});
     device.inputs.append({ 9, 0, "Start" });
     device.inputs.append({10, 2, "Rumble"});
-    devices.append(device);
+    ports[0].devices.append(device);
   }
 
-  { Device device{1, ID::DeviceVertical, "Controller"};
+  { Device device{"Vertical"};
     device.inputs.append({ 0, 0, "Up"    });
     device.inputs.append({ 1, 0, "Down"  });
     device.inputs.append({ 2, 0, "Left"  });
@@ -48,11 +50,8 @@ Interface::Interface() {
     device.inputs.append({ 8, 0, "Select"});
     device.inputs.append({ 9, 0, "Start" });
     device.inputs.append({10, 2, "Rumble"});
-    devices.append(device);
+    ports[0].devices.append(device);
   }
-
-  ports.append({0, "Horizontal Orientation", {devices[0]}});
-  ports.append({1, "Vertical Orientation",   {devices[1]}});
 }
 
 auto Interface::manifest() -> string {
@@ -176,6 +175,10 @@ auto Interface::unload() -> void {
   system.unload();
 }
 
+auto Interface::connect(uint port, uint device) -> void {
+  if(port == 0 && system.orientation() != device) system.rotate();
+}
+
 auto Interface::power() -> void {
   system.power();
 }
@@ -190,6 +193,7 @@ auto Interface::run() -> void {
 
 auto Interface::rotate() -> void {
   system.rotate();
+  deviceChanged(0, system.orientation());
 }
 
 auto Interface::serialize() -> serializer {

@@ -22,7 +22,9 @@ Interface::Interface() {
   media.append({ID::WonderSwan, "WonderSwan", "ws", true});
   media.append({ID::WonderSwanColor, "WonderSwan Color", "wsc", true});
 
-  { Device device{0, ID::DeviceHorizontal, "Controller"};
+  ports.append({0, "Orientation", true});
+
+  { Device device{"Horizontal"};
     device.inputs.append({ 0, 0, "Y1"});
     device.inputs.append({ 1, 0, "Y2"});
     device.inputs.append({ 2, 0, "Y3"});
@@ -34,10 +36,10 @@ Interface::Interface() {
     device.inputs.append({ 8, 0, "B"});
     device.inputs.append({ 9, 0, "A"});
     device.inputs.append({10, 0, "Start"});
-    devices.append(device);
+    ports[0].devices.append(device);
   }
 
-  { Device device{1, ID::DeviceVertical, "Controller"};
+  { Device device{"Vertical"};
     device.inputs.append({ 0, 0, "Y1"});
     device.inputs.append({ 1, 0, "Y2"});
     device.inputs.append({ 2, 0, "Y3"});
@@ -49,11 +51,8 @@ Interface::Interface() {
     device.inputs.append({ 8, 0, "B"});
     device.inputs.append({ 9, 0, "A"});
     device.inputs.append({10, 0, "Start"});
-    devices.append(device);
+    ports[0].devices.append(device);
   }
-
-  ports.append({0, "Horizontal Orientation", {devices[0]}});
-  ports.append({1, "Vertical Orientation", {devices[1]}});
 }
 
 auto Interface::manifest() -> string {
@@ -193,6 +192,10 @@ auto Interface::unload() -> void {
   save();
 }
 
+auto Interface::connect(uint port, uint device) -> void {
+  if(port == 0 && system.orientation() != device) system.rotate();
+}
+
 auto Interface::power() -> void {
   system.power();
 }
@@ -203,6 +206,7 @@ auto Interface::run() -> void {
 
 auto Interface::rotate() -> void {
   system.rotate();
+  deviceChanged(0, system.orientation());
 }
 
 auto Interface::serialize() -> serializer {

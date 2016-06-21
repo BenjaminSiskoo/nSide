@@ -4,27 +4,34 @@ struct Port { enum : uint {
   Expansion,
 };};
 
-struct Device { enum : uint {
-  None,
-
-  //controller port peripherals
-  Gamepad,
-  Multitap,
-  Mouse,
-  SuperScope,
-  Justifier,
-  Justifiers,
-
-  //expansion port peripherals
-  Satellaview,
-  SuperDisc,
-  S21FX,
-};};
+struct Peripheral {
+  struct ControllerPort1 { enum : uint {
+    None,
+    Gamepad,
+    Multitap,
+    Mouse,
+  };};
+  struct ControllerPort2 { enum : uint {
+    None,
+    Gamepad,
+    Multitap,
+    Mouse,
+    SuperScope,
+    Justifier,
+    Justifiers,
+  };};
+  struct ExpansionPort { enum : uint {
+    None,
+    Satellaview,
+    SuperDisc,
+    S21FX,
+  };};
+};
 
 struct Peripherals {
   auto unload() -> void;
   auto reset() -> void;
-  auto connect(uint port, uint id) -> void;
+  auto connect(uint port, uint index) -> void;
 
   Controller* controllerPort1 = nullptr;
   Controller* controllerPort2 = nullptr;

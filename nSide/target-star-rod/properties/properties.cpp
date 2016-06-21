@@ -157,38 +157,38 @@ auto PropertiesViewer::updateProperties() -> void {
     for(uint c : range(8)) {
       output.append("$43", c, "0  DMAP", c, "\n"
         "  Direction        = ", SuperFamicom::cpu.channel[c].direction ? "decrement" : "increment", "\n",
-        "  (HDMA) Indirect  = ", SuperFamicom::cpu.channel[c].indirect,         "\n",
-        "  Reverse Transfer = ", SuperFamicom::cpu.channel[c].reverse_transfer, "\n",
-        "  Fixed Transfer   = ", SuperFamicom::cpu.channel[c].fixed_transfer,   "\n",
-        "  Transfer Mode    = ", SuperFamicom::cpu.channel[c].transfer_mode,    "\n",
+        "  (HDMA) Indirect  = ", SuperFamicom::cpu.channel[c].indirect,        "\n",
+        "  Reverse Transfer = ", SuperFamicom::cpu.channel[c].reverseTransfer, "\n",
+        "  Fixed Transfer   = ", SuperFamicom::cpu.channel[c].fixedTransfer,   "\n",
+        "  Transfer Mode    = ", SuperFamicom::cpu.channel[c].transferMode,    "\n",
         "\n"
       );
 
       output.append("$43", c, "1  DDBAD", c, "\n"
-        "  Bus B Address = $", hex(SuperFamicom::cpu.channel[c].dest_addr, 2L), "\n",
+        "  Bus B Address = $", hex(SuperFamicom::cpu.channel[c].targetAddress, 2L), "\n",
         "\n"
       );
 
       output.append("$43", c, "2  A1T", c, "L\n"
                     "$43", c, "3  A1T", c, "H\n"
-        "  Bus A Address = $", hex(SuperFamicom::cpu.channel[c].source_addr, 4L), "\n",
+        "  Bus A Address = $", hex(SuperFamicom::cpu.channel[c].sourceAddress, 4L), "\n",
         "\n"
       );
 
       output.append("$43", c, "4  A1B", c, "\n"
-        "  Bus A Bank = $", hex(SuperFamicom::cpu.channel[c].source_bank, 2L), "\n",
+        "  Bus A Bank = $", hex(SuperFamicom::cpu.channel[c].sourceBank, 2L), "\n",
         "\n"
       );
 
       output.append("$43", c, "5  DAS", c, "L\n"
                     "$43", c, "6  DAS", c, "H\n"
-        "  (DMA) Transfer Size     = $", hex((SuperFamicom::cpu.channel[c].transfer_size - 1) % 65536 + 1, 4L), "\n",
-        "  (HDMA) Indirect Address = $", hex( SuperFamicom::cpu.channel[c].indirect_addr,                  4L), "\n",
+        "  (DMA) Transfer Size     = $", hex((SuperFamicom::cpu.channel[c].transferSize - 1) % 65536 + 1, 4L), "\n",
+        "  (HDMA) Indirect Address = $", hex( SuperFamicom::cpu.channel[c].indirectAddress,               4L), "\n",
         "\n"
       );
 
       output.append("$43", c, "7  DASB", c, "\n"
-        "  (HDMA) Indirect Bank = $", hex(SuperFamicom::cpu.channel[c].indirect_bank, 2L), "\n",
+        "  (HDMA) Indirect Bank = $", hex(SuperFamicom::cpu.channel[c].indirectBank, 2L), "\n",
         "\n"
       );
     }

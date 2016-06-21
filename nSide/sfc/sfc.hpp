@@ -9,7 +9,7 @@
 // _Demo_
 // Derrick Sobodash
 // DMV27
-// Dr. Decapitator   (DSP-1,2,3,4, ST-010,011,018 ROM dumps)
+// Dr. Decapitator   (DSP-1,2,3,4, ST-010,011 ROM dumps)
 // FirebrandX
 // FitzRoy
 // GIGO

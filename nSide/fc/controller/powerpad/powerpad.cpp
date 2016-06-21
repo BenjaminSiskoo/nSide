@@ -8,7 +8,7 @@ PowerPad::PowerPad(bool port, uint index) : Controller(port, index) {
 }
 
 auto PowerPad::data() -> uint3 {
-  if(counter >= 8) return 0x18;
+  if(counter >= 8) return 0x6;
   if(latched == 1) return (b2 << 1) | (b4 << 2);
 
   switch(counter++) {
@@ -16,10 +16,10 @@ auto PowerPad::data() -> uint3 {
   case  1: return (b1  << 1) | (b3  << 2);
   case  2: return (b5  << 1) | (b12 << 2);
   case  3: return (b9  << 1) | (b8  << 2);
-  case  4: return (b6  << 1) | 0x10;
-  case  5: return (b10 << 1) | 0x10;
-  case  6: return (b11 << 1) | 0x10;
-  case  7: return (b7  << 1) | 0x10;
+  case  4: return (b6  << 1) | (1   << 2);
+  case  5: return (b10 << 1) | (1   << 2);
+  case  6: return (b11 << 1) | (1   << 2);
+  case  7: return (b7  << 1) | (1   << 2);
   }
 }
 

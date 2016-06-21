@@ -28,18 +28,7 @@ auto Vaus::data() -> uint3 {
   if(latched == 1) return fire << 1 | control.bit(7) << 2;
   if(counter >= 8) return 0;
 
-  bool controlData;
-  switch(counter++) { default:
-  case 0: controlData = control.bit(7); break;
-  case 1: controlData = control.bit(6); break;
-  case 2: controlData = control.bit(5); break;
-  case 3: controlData = control.bit(4); break;
-  case 4: controlData = control.bit(3); break;
-  case 5: controlData = control.bit(2); break;
-  case 6: controlData = control.bit(1); break;
-  case 7: controlData = control.bit(0); break;
-  }
-  return fire << 1 | controlData << 2;
+  return fire << 1 | control.bit(7 - counter++) << 2;
 }
 
 auto Vaus::latch(bool data) -> void {

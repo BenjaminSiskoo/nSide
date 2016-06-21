@@ -31,18 +31,7 @@ auto VausE::data2() -> uint5 {
   if(latched == 1) return control.bit(7) << 1;
   if(counter >= 8) return 0;
 
-  bool controlData;
-  switch(counter++) { default:
-  case 0: controlData = control.bit(7); break;
-  case 1: controlData = control.bit(6); break;
-  case 2: controlData = control.bit(5); break;
-  case 3: controlData = control.bit(4); break;
-  case 4: controlData = control.bit(3); break;
-  case 5: controlData = control.bit(2); break;
-  case 6: controlData = control.bit(1); break;
-  case 7: controlData = control.bit(0); break;
-  }
-  return controlData << 1;
+  return control.bit(7 - counter++) << 1;
 }
 
 auto VausE::latch(bool data) -> void {

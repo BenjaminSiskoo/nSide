@@ -26,8 +26,6 @@ struct Interface {
   vector<Medium> media;
 
   struct Device {
-    uint id;
-    uint portmask;
     string name;
     struct Input {
       uint id;
@@ -41,6 +39,7 @@ struct Interface {
   struct Port {
     uint id;
     string name;
+    bool plugAndPlay;
     vector<Device> devices;
   };
   vector<Port> ports;

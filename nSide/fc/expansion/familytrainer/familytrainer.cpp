@@ -20,10 +20,10 @@ auto FamilyTrainer::data2() -> uint5 {
   case  1: return (b1  << 3) | (b3  << 4);
   case  2: return (b5  << 3) | (b12 << 4);
   case  3: return (b9  << 3) | (b8  << 4);
-  case  4: return (b6  << 3) | 0x10;
-  case  5: return (b10 << 3) | 0x10;
-  case  6: return (b11 << 3) | 0x10;
-  case  7: return (b7  << 3) | 0x10;
+  case  4: return (b6  << 3) | (1   << 4);
+  case  5: return (b10 << 3) | (1   << 4);
+  case  6: return (b11 << 3) | (1   << 4);
+  case  7: return (b7  << 3) | (1   << 4);
   }
 }
 
