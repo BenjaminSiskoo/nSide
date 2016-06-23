@@ -2,29 +2,22 @@
 
 namespace Famicom {
 
-#include "markup.cpp"
+#include "load.cpp"
+#include "save.cpp"
 #include "chip/chip.cpp"
 #include "board/board.cpp"
+#include "serialization.cpp"
 Cartridge cartridge;
 
-auto Cartridge::manifest() -> string {
-  string manifest = information.markup.cartridge;
-
-  //if(information.markup.famicomDiskSystem) {
-  //  manifest.append("\n[[Famicom Disk System]]\n\n");
-  //  manifest.append(information.markup.famicomDiskSystem);
-  //}
-
+auto Cartridge::manifest() const -> string {
+  string manifest = information.manifest.cartridge;
+  if(information.manifest.famicomDiskSystem) manifest.append("\n[[Famicom Disk System]]\n\n", information.manifest.famicomDiskSystem);
   return manifest;
 }
 
-auto Cartridge::title() -> string {
+auto Cartridge::title() const -> string {
   string title = information.title.cartridge;
-
-  //if(information.title.famicomDiskSystem) {
-  //  title.append(" + ", information.title.famicomDiskSystem);
-  //}
-
+  if(information.title.famicomDiskSystem) title.append(" + ", information.title.famicomDiskSystem);
   return title;
 }
 
@@ -36,26 +29,36 @@ auto Cartridge::main() -> void {
   board->main();
 }
 
-auto Cartridge::load() -> void {
+auto Cartridge::load() -> bool {
+  information = Information();
+  _sha256 = "";
   _region = Region::NTSC;
 
-  information.markup.cartridge         = "";
-  //information.markup.famicomDiskSystem = "";
+  if(auto fp = interface->open((uint)system.revision() + 1, "manifest.bml", File::Read, File::Required)) {
+    information.manifest.cartridge = fp->reads();
+  } else return false;
+  auto document = BML::unserialize(information.manifest.cartridge);
+  loadCartridge(document);
+  if(board == nullptr) return false;
 
-  information.title.cartridge         = "";
-  //information.title.famicomDiskSystem = "";
+  if(false/*Famicom Disk System*/) {
 
-  interface->loadRequest(ID::Manifest, "manifest.bml", true);
-  parseMarkup(information.markup.cartridge);
+  } else {
+    Hash::SHA256 sha;
+    //hash each ROM image that exists; any with size() == 0 is ignored by sha256_chunk()
+    sha.data(board->prgrom.data(), board->prgrom.size());
+    sha.data(board->chrrom.data(), board->chrrom.size());
+    sha.data(board->instrom.data(), board->instrom.size());
+    sha.data(board->keyrom.data(), board->keyrom.size());
+    //finalize hash
+    _sha256 = sha.digest();
+  }
 
-  if(board == nullptr) return;
+  return true;
+}
 
-  Hash::SHA256 sha;
-  sha.data(board->prgrom.data(), board->prgrom.size());
-  sha.data(board->chrrom.data(), board->chrrom.size());
-  sha.data(board->instrom.data(), board->instrom.size());
-  sha.data(board->keyrom.data(), board->keyrom.size());
-  _sha256 = sha.digest();
+auto Cartridge::save() -> void {
+  saveCartridge(BML::unserialize(information.manifest.cartridge));
 }
 
 auto Cartridge::unload() -> void {
@@ -63,7 +66,6 @@ auto Cartridge::unload() -> void {
   board->chrrom.reset();
   board->instrom.reset();
   board->keyrom.reset();
-  memory.reset();
 }
 
 auto Cartridge::power() -> void {
@@ -93,11 +95,6 @@ auto Cartridge::chrWrite(uint addr, uint8 data) -> void {
 
 auto Cartridge::scanline(uint y) -> void {
   return board->scanline(y);
-}
-
-auto Cartridge::serialize(serializer& s) -> void {
-  Thread::serialize(s);
-  return board->serialize(s);
 }
 
 }

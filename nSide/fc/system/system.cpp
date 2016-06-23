@@ -36,22 +36,44 @@ auto System::init() -> void {
 auto System::term() -> void {
 }
 
-auto System::load(Revision revision) -> void {
+auto System::load(Revision revision) -> bool {
   bus.reset();
 
   _revision = revision;
-  interface->loadRequest(ID::SystemManifest, "manifest.bml", true);
+
+  if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {
+    information.manifest = fp->reads();
+  } else return false;
+
   auto document = BML::unserialize(information.manifest);
 
   if(pc10()) {
     auto firmware = document["system/pc10/cpu/rom/name"].text();
-    interface->loadRequest(ID::PC10BIOS, firmware, true);
+    if(auto fp = interface->open(ID::System, firmware, File::Read, File::Required)) {
+      fp->read(playchoice10.bios, 16384);
+    } else return false;
 
     auto character = document["system/pc10/video-circuit/vrom/name"].text();
-    interface->loadRequest(ID::PC10CharacterROM, character, true);
+    if(auto fp = interface->open(ID::System, character, File::Read, File::Required)) {
+      fp->read(playchoice10.videoCircuit.chrrom, 24576);
+    } else return false;
 
     auto palette = document["system/pc10/video-circuit/cgrom/name"].text();
-    interface->loadRequest(ID::PC10PaletteROM, palette, true);
+    if(auto fp = interface->open(ID::System, palette, File::Read, File::Required)) {
+      fp->read(playchoice10.videoCircuit.cgrom, 768);
+    } else return false;
+  }
+
+  if(fcb()) {
+    auto bios_prg = document["system/prg/rom/name"].text();
+    if(auto fp = interface->open(ID::System, bios_prg, File::Read, File::Required)) {
+      fp->read(famicombox.bios_prg, 32768);
+    } else return false;
+
+    auto bios_chr = document["system/prg/rom/name"].text();
+    if(auto fp = interface->open(ID::System, bios_chr, File::Read, File::Required)) {
+      fp->read(famicombox.bios_chr, 8192);
+    } else return false;
   }
 
   cartridge.load();
@@ -108,12 +130,17 @@ auto System::load(Revision revision) -> void {
 
   if(fc()) {
     //Force use of the RGB PPU if a "pc10" node is found in a Famicom manifest
-    auto game_manifest = BML::unserialize(cartridge.information.markup.cartridge);
-    if(game_manifest["board/pc10"]) ppu.revision = PPU::Revision::RP2C03B;
+    auto node = BML::unserialize(cartridge.information.manifest.cartridge);
+    if(node["board/pc10"]) ppu.revision = PPU::Revision::RP2C03B;
   }
 
   serializeInit();
-  _loaded = true;
+  return _loaded = true;
+}
+
+auto System::save() -> void {
+  if(!loaded()) return;
+  cartridge.save();
 }
 
 auto System::unload() -> void {

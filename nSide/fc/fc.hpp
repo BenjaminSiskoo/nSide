@@ -27,6 +27,12 @@ namespace Famicom {
 #include <libco/libco.h>
 
 namespace Famicom {
+  struct File {
+    static const vfs::file::mode Read = vfs::file::mode::read;
+    static const vfs::file::mode Write = vfs::file::mode::write;
+    static const bool Required = true;
+  };
+
   struct Thread {
     virtual ~Thread() {
       if(thread) co_delete(thread);

@@ -2,31 +2,14 @@ namespace Famicom {
 
 struct ID {
   enum : uint {
-    //cartridges (folders)
     System,
     Famicom,
     VSSystem,
     PlayChoice10,
     FamicomBox,
+  };
 
-    //memory (files)
-    SystemManifest,
-    PC10BIOS,
-    PC10CharacterROM,
-    PC10PaletteROM,
-    FamicomBoxPRG,
-    FamicomBoxCHR,
-
-    Manifest,
-    ProgramROM,
-    ProgramRAM,
-    CharacterROM,
-    CharacterRAM,
-    ChipRAM,
-
-    InstructionROM,
-    KeyROM,
-
+  enum : uint {
     //device ports (bitmask)
     ControllerPort1 = 1,
     ControllerPort2 = 2,
@@ -47,11 +30,8 @@ struct Interface : Emulator::Interface {
 
   auto loaded() -> bool;
   auto sha256() -> string;
-  auto group(uint id) -> uint;
   auto load(uint id) -> void;
   auto save() -> void;
-  auto load(uint id, const stream& stream) -> void;
-  auto save(uint id, const stream& stream) -> void;
   auto unload() -> void;
 
   auto connect(uint port, uint device) -> void;

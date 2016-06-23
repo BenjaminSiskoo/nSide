@@ -1,3 +1,17 @@
+auto Program::path(uint id) -> string {
+  return mediumPaths(id);
+}
+
+auto Program::open(uint id, string name, vfs::file::mode mode, bool required) -> vfs::shared::file {
+  if(auto result = vfs::fs::file::open({path(id), name}, mode)) return result;
+  if(name == "manifest.bml") {
+    if(auto manifest = execute("cart-pal", "--manifest", path(id))) {
+      return vfs::memory::file::open(manifest.output.data<uint8_t>(), manifest.output.size());
+    }
+  }
+  return {};
+}
+
 //request from emulation core to load non-volatile media file
 auto Program::loadRequest(uint id, string filename, bool required) -> void {
   string pathname = mediumPaths(emulator->group(id));

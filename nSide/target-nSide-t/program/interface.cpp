@@ -1,3 +1,17 @@
+auto Program::path(uint id) -> string {
+  return mediumPaths(id);
+}
+
+auto Program::open(uint id, string name, vfs::file::mode mode, bool required) -> vfs::shared::file {
+  if(auto result = vfs::fs::file::open({path(id), name}, mode)) return result;
+  if(name == "manifest.bml") {
+    if(auto manifest = execute("cart-pal", "--manifest", path(id))) {
+      return vfs::memory::file::open(manifest.output.data<uint8_t>(), manifest.output.size());
+    }
+  }
+  return {};
+}
+
 //request from emulation core to load non-volatile media folder
 auto Program::loadRequest(uint id, string name, string type, bool required) -> void {
   string location = BrowserDialog()
@@ -112,14 +126,6 @@ auto Program::inputRumble(uint port, uint device, uint input, bool enable) -> vo
   }
 }
 
-auto Program::dipSettings(const Markup::Node& node) -> uint {
-  return dipSwitches->run(node);
-}
-
-auto Program::path(uint group) -> string {
-  return mediumPaths(group);
-}
-
 auto Program::deviceChanged(uint port, uint device) -> void {
   Menu& portMenu = (
     port == 0 ? presentation->inputPort1 :
@@ -128,6 +134,10 @@ auto Program::deviceChanged(uint port, uint device) -> void {
                 presentation->inputPort4
   );
   ((MenuRadioItem)portMenu.action(device)).setChecked();
+}
+
+auto Program::dipSettings(const Markup::Node& node) -> uint {
+  return dipSwitches->run(node);
 }
 
 auto Program::notify(string text) -> void {

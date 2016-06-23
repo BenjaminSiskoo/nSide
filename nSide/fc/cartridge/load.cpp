@@ -1,33 +1,30 @@
-auto Cartridge::parseMarkup(const char* markup) -> void {
-  auto document = BML::unserialize(markup);
-  auto information = document["information"];
-  auto boardNode = document["board"];
-
-  this->information.title.cartridge = information["title"].text();
+auto Cartridge::loadCartridge(Markup::Node node) -> void {
+  information.title.cartridge = node["information/title"].text();
+  auto boardNode = node["board"];
   if(boardNode["region"].text() == "ntsc")  _region = Region::NTSC;
   if(boardNode["region"].text() == "pal")   _region = Region::PAL;
   if(boardNode["region"].text() == "dendy") _region = Region::Dendy;
 
-  if(system.revision() == System::Revision::VSSystem) parseMarkupVS(document, boardNode);
+  if(system.revision() == System::Revision::VSSystem) setupVS(node, boardNode);
 
+  uint id = (uint)system.revision() + 1;  //Adjust for ID::System
   Board::load(boardNode);  //this call will set Cartridge::board if successful
-  parseMarkupMemory(board->prgrom, boardNode["prg/rom"], ID::ProgramROM, false);
-  parseMarkupMemory(board->prgram, boardNode["prg/ram"], ID::ProgramRAM, true);
-  parseMarkupMemory(board->chrrom, boardNode["chr/rom"], ID::CharacterROM, false);
-  parseMarkupMemory(board->chrram, boardNode["chr/ram"], ID::CharacterRAM, true);
-  if(board->chip) {
-    parseMarkupMemory(board->chip->ram, boardNode["chip/ram"], ID::ChipRAM, true);
-  }
+  if(auto node = boardNode["prg/rom"]) loadMemory(board->prgrom, node, false, id);
+  if(auto node = boardNode["prg/ram"]) loadMemory(board->prgram, node, true, id);
+  if(auto node = boardNode["chr/rom"]) loadMemory(board->chrrom, node, false, id);
+  if(auto node = boardNode["chr/ram"]) loadMemory(board->chrram, node, true, id);
+  if(board->chip) if(auto node = boardNode["chip/ram"]) loadMemory(board->chip->ram, node, true, id);
+
   if(system.pc10()) {
     auto rom = boardNode["pc10"].find("rom");
-    parseMarkupMemory(board->instrom, rom(0), ID::InstructionROM, false);
-    parseMarkupMemory(board->keyrom, rom(1), ID::KeyROM, false);
+    loadMemory(board->instrom, rom(0), false, ID::PlayChoice10);
+    loadMemory(board->keyrom, rom(1), false, ID::PlayChoice10);
   }
 }
 
-auto Cartridge::parseMarkupVS(Markup::Node& document, Markup::Node& boardNode) -> void {
+auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
   uint ppus = 0;
-  auto side = document.find("side");
+  auto side = node.find("side");
   bool primarySide;
   if(side(0)["ppu"]) {
     primarySide = 2 - side.size();
@@ -88,13 +85,11 @@ auto Cartridge::parseMarkupVS(Markup::Node& document, Markup::Node& boardNode) -
 
 //
 
-auto Cartridge::parseMarkupMemory(MappedRAM& ram, Markup::Node node, uint id, bool writable) -> void {
+auto Cartridge::loadMemory(MappedRAM& ram, Markup::Node node, bool writable, uint id) -> void {
   string name = node["name"].text();
   uint size = node["size"].natural();
-  bool save = !(bool)node["volatile"];
-  ram.map(allocate<uint8>(size, 0xff), size);
-  if(name) {
-    interface->loadRequest(id, name, !writable);
-    if(writable && save) memory.append({id, name});
+  ram.allocate(size);
+  if(auto fp = interface->open(id, name, File::Read, !writable)) {  //treat ROM as required; RAM as optional
+    fp->read(ram.data(), ram.size());
   }
 }

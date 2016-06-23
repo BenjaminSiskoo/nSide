@@ -5,6 +5,8 @@ struct Program : Emulator::Interface::Bind {
   auto quit() -> void;
 
   //interface.cpp
+  auto path(uint id) -> string override;
+  auto open(uint id, string name, vfs::file::mode mode, bool required) -> vfs::shared::file override;
   //auto loadRequest(uint id, string name, string type, bool required) -> void override;
   auto loadRequest(uint id, string path, bool required) -> void override;
   auto saveRequest(uint id, string path) -> void override;

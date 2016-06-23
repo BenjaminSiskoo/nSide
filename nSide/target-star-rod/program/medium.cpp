@@ -17,7 +17,7 @@ auto Program::loadMedium(string location) -> bool {
   emulator->power();
 
   presentation->setTitle(basename(folderPaths(0)).trimRight("/"));
-  debugger->print(SuperFamicom::cartridge.information.markup.cartridge, "\n");
+  debugger->print(SuperFamicom::cartridge.information.manifest.cartridge, "\n");
   debugger->suspend();
   return true;
 }

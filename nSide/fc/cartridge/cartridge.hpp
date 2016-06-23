@@ -9,33 +9,27 @@ struct Cartridge : Thread {
 
   auto sha256() const -> string { return _sha256; }
   auto region() const -> Region { return _region; }
+  auto manifest() const -> string;
+  auto title() const -> string;
 
   auto power() -> void;
   auto reset() -> void;
 
-  auto manifest() -> string;
-  auto title() -> string;
-
-  auto load() -> void;
+  auto load() -> bool;
+  auto save() -> void;
   auto unload() -> void;
 
   auto serialize(serializer&) -> void;
 
-  struct Memory {
-    uint id;
-    string name;
-  };
-  vector<Memory> memory;
-
   struct Information {
-    struct Markup {
+    struct Manifest {
       string cartridge;
-      //string famicomDiskSystem;
-    } markup;
+      string famicomDiskSystem;
+    } manifest;
 
     struct Title {
       string cartridge;
-      //string famicomDiskSystem;
+      string famicomDiskSystem;
     } title;
   } information;
 
@@ -53,15 +47,21 @@ struct Cartridge : Thread {
   auto scanline(uint y) -> void;
 
 private:
-  friend class Interface;
+  //load.cpp
+  auto loadCartridge(Markup::Node) -> void;
+  auto setupVS(Markup::Node&, Markup::Node&) -> void;
 
-  //markup.cpp
-  auto parseMarkup(const char*) -> void;
-  auto parseMarkupVS(Markup::Node&, Markup::Node&) -> void;
-  auto parseMarkupMemory(MappedRAM&, Markup::Node, uint id, bool writable) -> void;
+  auto loadMemory(MappedRAM&, Markup::Node, bool writable, uint id = 1) -> void;
+
+  //save.cpp
+  auto saveCartridge(Markup::Node) -> void;
+
+  auto saveMemory(MappedRAM&, Markup::Node, uint = 1) -> void;
 
   string _sha256;
   Region _region = Region::NTSC;
+
+  friend class Interface;
 };
 
 extern Cartridge cartridge;

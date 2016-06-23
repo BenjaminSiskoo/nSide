@@ -441,6 +441,7 @@ auto Interface::sha256() -> string {
   return cartridge.sha256();
 }
 
+/*
 auto Interface::group(uint id) -> uint {
   switch(id) {
   case ID::SystemManifest:
@@ -469,6 +470,7 @@ auto Interface::group(uint id) -> uint {
 
   throw;
 }
+*/
 
 auto Interface::load(uint id) -> void {
   information.canvasWidth  = 256;
@@ -481,56 +483,7 @@ auto Interface::load(uint id) -> void {
 }
 
 auto Interface::save() -> void {
-  for(auto& memory : cartridge.memory) {
-    saveRequest(memory.id, memory.name);
-  }
-}
-
-auto Interface::load(uint id, const stream& stream) -> void {
-  switch(id) {
-  case ID::SystemManifest:
-    system.information.manifest = stream.text();
-    break;
-  case ID::PC10BIOS:
-    stream.read((uint8_t*)playchoice10.bios, min(16384u, stream.size()));
-    break;
-  case ID::PC10CharacterROM:
-    stream.read((uint8_t*)playchoice10.videoCircuit.chrrom, min(24576u, stream.size()));
-    break;
-  case ID::PC10PaletteROM:
-    stream.read((uint8_t*)playchoice10.videoCircuit.cgrom, min(768u, stream.size()));
-    break;
-  case ID::FamicomBoxPRG:
-    stream.read((uint8_t*)famicombox.bios_prg, min(32768u, stream.size()));
-    break;
-  case ID::FamicomBoxCHR:
-    stream.read((uint8_t*)famicombox.bios_chr, min(8192u, stream.size()));
-    break;
-  }
-
-  if(id == ID::Manifest) cartridge.information.markup.cartridge = stream.text();
-  if(id == ID::ProgramROM) cartridge.board->prgrom.read(stream);
-  if(id == ID::ProgramRAM) cartridge.board->prgram.read(stream);
-  if(id == ID::CharacterROM) cartridge.board->chrrom.read(stream);
-  if(id == ID::CharacterRAM) cartridge.board->chrram.read(stream);
-  if(id == ID::ChipRAM) cartridge.board->chip->ram.read(stream);
-
-  if(id == ID::InstructionROM) cartridge.board->instrom.read(stream);
-  if(id == ID::KeyROM) cartridge.board->keyrom.read(stream);
-}
-
-auto Interface::save(uint id, const stream& stream) -> void {
-  if(id == ID::ProgramRAM) {
-    stream.write((uint8_t*)cartridge.board->prgram.data(), cartridge.board->prgram.size());
-  }
-
-  if(id == ID::CharacterRAM) {
-    stream.write((uint8_t*)cartridge.board->chrram.data(), cartridge.board->chrram.size());
-  }
-
-  if(id == ID::ChipRAM) {
-    stream.write((uint8_t*)cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
-  }
+  system.save();
 }
 
 auto Interface::unload() -> void {
@@ -628,15 +581,19 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
-  string pathname = {path(group(ID::ProgramROM)), "debug/"};
+  string pathname = {path(1), "debug/"};
   directory::create(pathname);
 
-  // Registers
-  file::write({pathname, "work.ram"}, (uint8_t*)cpu.ram, 0x0800);
-  if(cartridge.board->prgram.size()) saveRequest(ID::ProgramRAM, "debug/program.ram");
-  if(cartridge.board->chrram.size()) saveRequest(ID::CharacterRAM, "debug/character.ram");
-  if(cartridge.board->chip && cartridge.board->chip->ram.size()) {
-    saveRequest(ID::ChipRAM, "debug/chip.ram");
+  if(auto fp = interface->open(1, "debug/work.ram", File::Write)) fp->write(cpu.ram, 0x800);
+  if(cartridge.board->prgram.size()) if(auto fp = interface->open(1, "debug/program.ram", File::Write)) {
+    fp->write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
+  }
+  if(cartridge.board->chrram.size()) if(auto fp = interface->open(1, "debug/character.ram", File::Write)) {
+    fp->write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
+  }
+  if(!cartridge.board->chip) return;
+  if(cartridge.board->chip->ram.size()) if(auto fp = interface->open(1, "debug/chip.ram", File::Write)) {
+    fp->write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
   }
 }
 
