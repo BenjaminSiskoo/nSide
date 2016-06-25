@@ -9,14 +9,8 @@
 #include <processor/lr35902/lr35902.hpp>
 
 namespace GameBoy {
-  namespace Info {
-    static const uint SerializerVersion = 5;
-  }
-}
+  using File = Emulator::File;
 
-#include <libco/libco.h>
-
-namespace GameBoy {
   struct Thread {
     ~Thread() {
       if(thread) co_delete(thread);

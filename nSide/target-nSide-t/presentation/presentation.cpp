@@ -6,19 +6,11 @@ Presentation::Presentation() {
 
   libraryMenu.setText("Library");
   for(auto& emulator : program->emulators) {
-    for(auto& media : emulator->media) {
-      if(!media.bootable) continue;
+    for(auto& medium : emulator->media) {
+      if(!medium.bootable) continue;
       auto item = new MenuItem{&libraryMenu};
-      item->setText({media.name, " ..."}).onActivate([=] {
-        directory::create({settings["Library/Location"].text(), media.name});
-        auto location = BrowserDialog()
-        .setTitle({"Load ", media.name})
-        .setPath({settings["Library/Location"].text(), media.name})
-        .setFilters(string{media.name, "|*.", media.type})
-        .openFolder();
-        if(directory::exists(location)) {
-          program->loadMedium(location);
-        }
+      item->setText({medium.name, " ..."}).onActivate([=] {
+        program->loadMedium(*emulator, medium);
       });
       loadBootableMedia.append(item);
     }
@@ -26,10 +18,10 @@ Presentation::Presentation() {
   //add cart-pal menu options -- but only if cart-pal binary is present
   if(execute("cart-pal", "--name").output.strip() == "cart-pal") {
     libraryMenu.append(MenuSeparator());
-    libraryMenu.append(MenuItem().setText("Load ROM File ...").onActivate([&] {
+    libraryMenu.append(MenuItem().setText("Import ROM File ...").onActivate([&] {
       audio->clear();
       if(auto location = execute("cart-pal", "--import")) {
-        program->loadMedium(location.output.strip());
+        //program->loadMedium(location.output.strip());
       }
     }));
     libraryMenu.append(MenuItem().setText("Import ROM Files ...").onActivate([&] {
@@ -40,7 +32,7 @@ Presentation::Presentation() {
   systemMenu.setText("System").setVisible(false);
   powerSystem.setText("Power").onActivate([&] { program->powerCycle(); });
   resetSystem.setText("Reset").onActivate([&] { program->softReset(); });
-  unloadSystem.setText("Unload").onActivate([&] { program->unloadMedium(); drawSplashScreen(); });
+  unloadSystem.setText("Unload").onActivate([&] { program->unloadMedium(); });
 
   settingsMenu.setText("Settings");
   videoScaleMenu.setText("Video Scale");
@@ -159,7 +151,7 @@ Presentation::Presentation() {
   statusBar.setFont(Font().setBold());
   statusBar.setVisible(settings["UserInterface/ShowStatusBar"].boolean());
 
-  viewport.setDroppable().onDrop([&](auto locations) { program->load(locations(0)); });
+  //viewport.setDroppable().onDrop([&](auto locations) { program->load(locations(0)); });
 
   onClose([&] { program->quit(); });
 
@@ -205,13 +197,12 @@ auto Presentation::updateEmulator() -> void {
     menu.setText(port.name);
 
     Group devices;
-    for(uint index : range(port.devices.size())) {
-      auto& device = port.devices[index];
+    for(auto& device : port.devices) {
       MenuRadioItem item{&menu};
       item.setText(device.name).onActivate([=] {
         auto path = string{emulator->information.name, "/", port.name}.replace(" ", "");
         settings[path].setValue(device.name);
-        emulator->connect(port.id, index);
+        emulator->connect(port.id, device.id);
       });
       devices.append(item);
     }

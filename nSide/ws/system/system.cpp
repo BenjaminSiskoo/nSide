@@ -7,14 +7,6 @@ System system;
 #include "video.cpp"
 #include "serialization.cpp"
 
-auto System::loaded() const -> bool { return _loaded; }
-auto System::model() const -> Model { return _model; }
-auto System::orientation() const -> bool { return _orientation; }
-auto System::color() const -> bool { return r.color; }
-auto System::planar() const -> bool { return r.format == 0; }
-auto System::packed() const -> bool { return r.format == 1; }
-auto System::depth() const -> bool { return r.color && r.depth == 1; }
-
 auto System::init() -> void {
   assert(interface != nullptr);
 }
@@ -22,10 +14,13 @@ auto System::init() -> void {
 auto System::term() -> void {
 }
 
-auto System::load(Model model) -> void {
+auto System::load(Model model) -> bool {
   _model = model;
 
-  interface->loadRequest(ID::SystemManifest, "manifest.bml", true);
+  if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {
+    information.manifest = fp->reads();
+  } else return false;
+
   auto document = BML::unserialize(information.manifest);
 
   //note: IPLROM is currently undumped; otherwise we'd load it here ...
@@ -36,13 +31,21 @@ auto System::load(Model model) -> void {
     eeprom.erase();
     //initialize user-data section
     for(uint addr = 0x0030; addr <= 0x003a; addr++) eeprom[addr] = 0x0000;
-    interface->loadRequest(ID::SystemEEPROM, eeprom.name(), false);
+    if(auto fp = interface->open(ID::System, eeprom.name(), File::Read)) {
+      fp->read(eeprom.data(), eeprom.size());
+    }
   }
 
-  cartridge.load();
+  if(!cartridge.load()) return false;
   serializeInit();
   _orientation = cartridge.information.orientation;
-  _loaded = true;
+  return _loaded = true;
+}
+
+auto System::save() -> void {
+  if(!loaded()) return;
+
+  cartridge.save();
 }
 
 auto System::unload() -> void {
@@ -58,7 +61,6 @@ auto System::unload() -> void {
 auto System::power() -> void {
   Emulator::video.reset();
   Emulator::video.setInterface(interface);
-  Emulator::video.resize(224, 224);
   configureVideoPalette();
   configureVideoEffects();
 
@@ -96,17 +98,20 @@ auto System::runToSave() -> void {
 }
 
 auto System::pollKeypad() -> void {
-  keypad.y1 = interface->inputPoll(0, _orientation, 0);
-  keypad.y2 = interface->inputPoll(0, _orientation, 1);
-  keypad.y3 = interface->inputPoll(0, _orientation, 2);
-  keypad.y4 = interface->inputPoll(0, _orientation, 3);
-  keypad.x1 = interface->inputPoll(0, _orientation, 4);
-  keypad.x2 = interface->inputPoll(0, _orientation, 5);
-  keypad.x3 = interface->inputPoll(0, _orientation, 6);
-  keypad.x4 = interface->inputPoll(0, _orientation, 7);
-  keypad.b = interface->inputPoll(0, _orientation, 8);
-  keypad.a = interface->inputPoll(0, _orientation, 9);
-  keypad.start = interface->inputPoll(0, _orientation, 10);
+  uint port = ID::Port::Hardware;
+  uint device = !_orientation ? ID::Device::HorizontalControls : ID::Device::VerticalControls;
+
+  keypad.y1 = interface->inputPoll(port, device, 0);
+  keypad.y2 = interface->inputPoll(port, device, 1);
+  keypad.y3 = interface->inputPoll(port, device, 2);
+  keypad.y4 = interface->inputPoll(port, device, 3);
+  keypad.x1 = interface->inputPoll(port, device, 4);
+  keypad.x2 = interface->inputPoll(port, device, 5);
+  keypad.x3 = interface->inputPoll(port, device, 6);
+  keypad.x4 = interface->inputPoll(port, device, 7);
+  keypad.b = interface->inputPoll(port, device, 8);
+  keypad.a = interface->inputPoll(port, device, 9);
+  keypad.start = interface->inputPoll(port, device, 10);
 
   if(keypad.y1 || keypad.y2 || keypad.y3 || keypad.y4
   || keypad.x1 || keypad.x2 || keypad.x3 || keypad.x4

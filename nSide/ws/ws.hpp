@@ -9,14 +9,8 @@
 #include <processor/v30mz/v30mz.hpp>
 
 namespace WonderSwan {
-  namespace Info {
-    static const uint SerializerVersion = 2;
-  }
-}
+  using File = Emulator::File;
 
-#include <libco/libco.h>
-
-namespace WonderSwan {
   enum class Model : uint {
     WonderSwan,       //SW-001  (ASWAN)
     WonderSwanColor,  //WSC-001 (SPHINX)

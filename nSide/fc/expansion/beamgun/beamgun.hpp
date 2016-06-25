@@ -5,7 +5,7 @@ struct BeamGun : Expansion {
     X, Y, Trigger,
   };
 
-  BeamGun(uint index);
+  BeamGun();
   ~BeamGun();
 
   auto main() -> void;

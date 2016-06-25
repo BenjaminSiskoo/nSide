@@ -18,7 +18,7 @@
 struct Controller : Cothread {
   enum : uint { Port1 = 0, Port2 = 1 };
 
-  Controller(bool port, uint index);
+  Controller(bool port);
   virtual ~Controller();
   static auto Enter() -> void;
 
@@ -27,7 +27,6 @@ struct Controller : Cothread {
   virtual auto latch(bool data) -> void {}
 
   const bool port;
-  const uint index;
 };
 
 #include "gamepad/gamepad.hpp"

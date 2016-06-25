@@ -1,4 +1,4 @@
-MouseE::MouseE(uint index) : Expansion(index) {
+MouseE::MouseE() {
   latched = 0;
   counter = 0;
 
@@ -68,10 +68,10 @@ auto MouseE::latch(bool data) -> void {
   latched = data;
   counter = 0;
 
-  x = interface->inputPoll(Port::Expansion, index, X);  //-n = left, 0 = center, +n = right
-  y = interface->inputPoll(Port::Expansion, index, Y);  //-n = up,   0 = center, +n = down
-  l = interface->inputPoll(Port::Expansion, index, Left);
-  r = interface->inputPoll(Port::Expansion, index, Right);
+  x = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, X);  //-n = left, 0 = center, +n = right
+  y = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Y);  //-n = up,   0 = center, +n = down
+  l = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Left);
+  r = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Right);
 
   dx = x < 0;  //0 = right, 1 = left
   dy = y < 0;  //0 = down,  1 = up

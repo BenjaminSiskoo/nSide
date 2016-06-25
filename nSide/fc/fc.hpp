@@ -14,23 +14,11 @@
 #include <processor/z80/z80.hpp>
 
 namespace Famicom {
-  namespace Info {
-    // If you import nSide's changes into another fork of higan, please do not
-    // import the serializer version ID unless you intend to import all of
-    // nSide-fc simultaneously.
-    // This is required to avoid errors in case a save state created in one
-    // higan fork is loaded into another.
-    static const uint SerializerVersion = 2;
-  }
-}
-
-#include <libco/libco.h>
-
-namespace Famicom {
   struct File {
-    static const vfs::file::mode Read = vfs::file::mode::read;
-    static const vfs::file::mode Write = vfs::file::mode::write;
-    static const bool Required = true;
+    static const auto Read = vfs::file::mode::read;
+    static const auto Write = vfs::file::mode::write;
+    static const auto Optional = false;
+    static const auto Required = true;
   };
 
   struct Thread {

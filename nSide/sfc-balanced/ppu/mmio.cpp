@@ -50,12 +50,11 @@ auto PPU::read(uint24 addr, uint8 data) -> uint8 {
 
   //VMDATALREAD
   case 0x2139: {
-    uint16 address = getVramAddress() + 0;
+    auto address = getVramAddress();
     ppu1.mdr = latch.vram >> 0;
     if(r.vramIncrementMode == 0) {
-      address &= ~1;
-      latch.vram.byte(0) = vramRead(address + 0);
-      latch.vram.byte(1) = vramRead(address + 1);
+      latch.vram.byte(0) = vramRead(0, address);
+      latch.vram.byte(1) = vramRead(1, address);
       r.vramAddress += r.vramIncrementSize;
     }
     return ppu1.mdr;
@@ -63,12 +62,11 @@ auto PPU::read(uint24 addr, uint8 data) -> uint8 {
 
   //VMDATAHREAD
   case 0x213a: {
-    uint16 address = getVramAddress() + 1;
+    auto address = getVramAddress();
     ppu1.mdr = latch.vram >> 8;
     if(r.vramIncrementMode == 1) {
-      address &= ~1;
-      latch.vram.byte(0) = vramRead(address + 0);
-      latch.vram.byte(1) = vramRead(address + 1);
+      latch.vram.byte(0) = vramRead(0, address);
+      latch.vram.byte(1) = vramRead(1, address);
       r.vramAddress += r.vramIncrementSize;
     }
     return ppu1.mdr;
@@ -162,7 +160,7 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
 
   //OBSEL
   case 0x2101: {
-    obj.r.tiledataAddress = data.bits(0,1) << 14;
+    obj.r.tiledataAddress = data.bits(0,2) << 13;
     obj.r.nameSelect      = data.bits(3,4);
     obj.r.baseSize        = data.bits(5,7);
     return;
@@ -225,42 +223,42 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   //BG1SC
   case 0x2107: {
     bg1.r.screenSize    = data.bits(0,1);
-    bg1.r.screenAddress = data.bits(2,6) << 11;
+    bg1.r.screenAddress = data.bits(2,7) << 10;
     return;
   }
 
   //BG2SC
   case 0x2108: {
     bg2.r.screenSize    = data.bits(0,1);
-    bg2.r.screenAddress = data.bits(2,6) << 11;
+    bg2.r.screenAddress = data.bits(2,7) << 10;
     return;
   }
 
   //BG3SC
   case 0x2109: {
     bg3.r.screenSize    = data.bits(0,1);
-    bg3.r.screenAddress = data.bits(2,6) << 11;
+    bg3.r.screenAddress = data.bits(2,7) << 10;
     return;
   }
 
   //BG4SC
   case 0x210a: {
     bg4.r.screenSize    = data.bits(0,1);
-    bg4.r.screenAddress = data.bits(2,6) << 11;
+    bg4.r.screenAddress = data.bits(2,7) << 10;
     return;
   }
 
   //BG12NBA
   case 0x210b: {
-    bg1.r.tiledataAddress = data.bits(0,2) << 13;
-    bg2.r.tiledataAddress = data.bits(4,6) << 13;
+    bg1.r.tiledataAddress = data.bits(0,3) << 12;
+    bg2.r.tiledataAddress = data.bits(4,7) << 12;
     return;
   }
 
   //BG34NBA
   case 0x210c: {
-    bg3.r.tiledataAddress = data.bits(0,2) << 13;
-    bg4.r.tiledataAddress = data.bits(4,6) << 13;
+    bg3.r.tiledataAddress = data.bits(0,3) << 12;
+    bg4.r.tiledataAddress = data.bits(4,7) << 12;
     return;
   }
 
@@ -343,9 +341,9 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   case 0x2116: {
     r.vramAddress &= 0xff00;
     r.vramAddress |= (data << 0);
-    uint16 address = getVramAddress();
-    latch.vram.byte(0) = vramRead(address + 0);
-    latch.vram.byte(1) = vramRead(address + 1);
+    auto address = getVramAddress();
+    latch.vram.byte(0) = vramRead(0, address);
+    latch.vram.byte(1) = vramRead(1, address);
     return;
   }
 
@@ -353,19 +351,19 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   case 0x2117: {
     r.vramAddress &= 0x00ff;
     r.vramAddress |= (data << 8);
-    uint16 address = getVramAddress();
-    latch.vram.byte(0) = vramRead(address + 0);
-    latch.vram.byte(1) = vramRead(address + 1);
+    auto address = getVramAddress();
+    latch.vram.byte(0) = vramRead(0, address);
+    latch.vram.byte(1) = vramRead(1, address);
     return;
   }
 
   //VMDATAL
   case 0x2118: {
-    uint16 address = getVramAddress() + 0;
-    vramWrite(address, data);
-    tiledataCache.tiledataState[Background::Mode::BPP2][address >> 4] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP4][address >> 5] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP8][address >> 6] = 1;
+    auto address = getVramAddress();
+    vramWrite(0, address, data);
+    tiledataCache.tiledataState[Background::Mode::BPP2][address >> 3] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP4][address >> 4] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP8][address >> 5] = 1;
 
     if(r.vramIncrementMode == 0) r.vramAddress += r.vramIncrementSize;
     return;
@@ -373,11 +371,11 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
 
   //VMDATAH
   case 0x2119: {
-    uint16 address = getVramAddress() + 1;
-    vramWrite(address, data);
-    tiledataCache.tiledataState[Background::Mode::BPP2][address >> 4] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP4][address >> 5] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP8][address >> 6] = 1;
+    auto address = getVramAddress();
+    vramWrite(1, address, data);
+    tiledataCache.tiledataState[Background::Mode::BPP2][address >> 3] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP4][address >> 4] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP8][address >> 5] = 1;
 
     if(r.vramIncrementMode == 1) r.vramAddress += r.vramIncrementSize;
     return;

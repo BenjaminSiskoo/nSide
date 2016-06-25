@@ -1,4 +1,4 @@
-PowerPad::PowerPad(bool port, uint index) : Controller(port, index) {
+PowerPad::PowerPad(bool port) : Controller(port) {
   latched = 0;
   counter = 0;
 
@@ -9,7 +9,7 @@ PowerPad::PowerPad(bool port, uint index) : Controller(port, index) {
 
 auto PowerPad::data() -> uint3 {
   if(counter >= 8) return 0x6;
-  if(latched == 1) return (b2 << 1) | (b4 << 2);
+  if(latched == 1) return (interface->inputPoll(port, ID::Device::PowerPad, 1) << 1) | (interface->inputPoll(port, ID::Device::PowerPad, 3) << 2);
 
   switch(counter++) {
   case  0: return (b2  << 1) | (b4  << 2);
@@ -29,17 +29,18 @@ auto PowerPad::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    b1  = interface->inputPoll(port, index,  0);
-    b2  = interface->inputPoll(port, index,  1);
-    b3  = interface->inputPoll(port, index,  2);
-    b4  = interface->inputPoll(port, index,  3);
-    b5  = interface->inputPoll(port, index,  4);
-    b6  = interface->inputPoll(port, index,  5);
-    b7  = interface->inputPoll(port, index,  6);
-    b8  = interface->inputPoll(port, index,  7);
-    b9  = interface->inputPoll(port, index,  8);
-    b10 = interface->inputPoll(port, index,  9);
-    b11 = interface->inputPoll(port, index, 10);
-    b12 = interface->inputPoll(port, index, 11);
+    auto id = ID::Device::PowerPad;
+    b1  = interface->inputPoll(port, id,  0);
+    b2  = interface->inputPoll(port, id,  1);
+    b3  = interface->inputPoll(port, id,  2);
+    b4  = interface->inputPoll(port, id,  3);
+    b5  = interface->inputPoll(port, id,  4);
+    b6  = interface->inputPoll(port, id,  5);
+    b7  = interface->inputPoll(port, id,  6);
+    b8  = interface->inputPoll(port, id,  7);
+    b9  = interface->inputPoll(port, id,  8);
+    b10 = interface->inputPoll(port, id,  9);
+    b11 = interface->inputPoll(port, id, 10);
+    b12 = interface->inputPoll(port, id, 11);
   }
 }

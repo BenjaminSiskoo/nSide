@@ -15,12 +15,13 @@ struct BIOS : Memory {
 };
 
 struct System {
-  auto loaded() const -> bool;
-  auto orientation() const -> bool;
+  auto loaded() const -> bool { return _loaded; }
+  auto orientation() const -> bool { return _orientation; }
 
   auto init() -> void;
   auto term() -> void;
-  auto load() -> void;
+  auto load() -> bool;
+  auto save() -> void;
   auto unload() -> void;
   auto power() -> void;
   auto run() -> void;

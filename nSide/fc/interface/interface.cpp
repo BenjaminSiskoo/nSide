@@ -25,169 +25,190 @@ Interface::Interface() {
   media.append({ID::PlayChoice10, "PlayChoice-10", "pc10", true});
   //media.append({ID::FamicomBox,   "FamicomBox",    "fcb",  true});
 
-  ports.append({0, "Controller Port 1", true});
-  ports.append({1, "Controller Port 2", true});
-  ports.append({2, "Expansion Port",    true});
-  ports.append({3, "Arcade Panel",      false});
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", true};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", true};
+  Port expansionPort{ID::Port::Expansion, "Expansion Port", true};
+  Port arcadePanel{ID::Port::Arcade, "Arcade Panel", false};
 
-  auto& controllerPort1 = ports[0].devices;
-  auto& controllerPort2 = ports[1].devices;
-  auto& expansionPort   = ports[2].devices;
-  auto& arcadePanel     = ports[3].devices;
-
-  { Device device{"None"};
-    controllerPort1.append(device);
-    controllerPort2.append(device);
-    expansionPort.append(device);
-    arcadePanel.append(device);
+  { Device device{ID::Device::None, "None"};
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
+    expansionPort.devices.append(device);
+    arcadePanel.devices.append(device);
   }
 
-  { Device device{"Gamepad"};
-    device.inputs.append({0, 0, "Up"    });
-    device.inputs.append({1, 0, "Down"  });
-    device.inputs.append({2, 0, "Left"  });
-    device.inputs.append({3, 0, "Right" });
-    device.inputs.append({4, 0, "B"     });
-    device.inputs.append({5, 0, "A"     });
-    device.inputs.append({6, 0, "Select"});
-    device.inputs.append({7, 0, "Start" });
-    controllerPort1.append(device);
-    controllerPort2.append(device);
-    expansionPort.append(device);
+  { Device device{ID::Device::Gamepad, "Gamepad"};
+    device.inputs.append({0, "Up"    });
+    device.inputs.append({0, "Down"  });
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "B"     });
+    device.inputs.append({0, "A"     });
+    device.inputs.append({0, "Select"});
+    device.inputs.append({0, "Start" });
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
   }
 
-  { Device device{"4-Players Adaptor"};
-    for(uint p = 3, n = 0; p <= 4; p += 1, n += 8) {
-      device.inputs.append({n + 0, 0, {"Port ", p, " - ", "Up"    }});
-      device.inputs.append({n + 1, 0, {"Port ", p, " - ", "Down"  }});
-      device.inputs.append({n + 2, 0, {"Port ", p, " - ", "Left"  }});
-      device.inputs.append({n + 3, 0, {"Port ", p, " - ", "Right" }});
-      device.inputs.append({n + 4, 0, {"Port ", p, " - ", "B"     }});
-      device.inputs.append({n + 5, 0, {"Port ", p, " - ", "A"     }});
-      device.inputs.append({n + 6, 0, {"Port ", p, " - ", "Select"}});
-      device.inputs.append({n + 7, 0, {"Port ", p, " - ", "Start" }});
-    }
-    expansionPort.append(device);
-  }
-
-  { Device device{"Four Score"};
+  { Device device{ID::Device::FourScore, "Four Score"};
     for(uint p = 1, n = 0; p <= 4; p += 2, n += 8) {
-      device.inputs.append({n + 0, 0, {"Port ", p, " - ", "Up"    }});
-      device.inputs.append({n + 1, 0, {"Port ", p, " - ", "Down"  }});
-      device.inputs.append({n + 2, 0, {"Port ", p, " - ", "Left"  }});
-      device.inputs.append({n + 3, 0, {"Port ", p, " - ", "Right" }});
-      device.inputs.append({n + 4, 0, {"Port ", p, " - ", "B"     }});
-      device.inputs.append({n + 5, 0, {"Port ", p, " - ", "A"     }});
-      device.inputs.append({n + 6, 0, {"Port ", p, " - ", "Select"}});
-      device.inputs.append({n + 7, 0, {"Port ", p, " - ", "Start" }});
+      device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Right" }});
+      device.inputs.append({0, {"Port ", p, " - ", "B"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "A"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "Select"}});
+      device.inputs.append({0, {"Port ", p, " - ", "Start" }});
     }
-    controllerPort1.append(device);
+    controllerPort1.devices.append(device);
   }
 
-  { Device device{"Four Score"};
+  { Device device{ID::Device::FourScore, "Four Score"};
     for(uint p = 2, n = 0; p <= 4; p += 2, n += 8) {
-      device.inputs.append({n + 0, 0, {"Port ", p, " - ", "Up"    }});
-      device.inputs.append({n + 1, 0, {"Port ", p, " - ", "Down"  }});
-      device.inputs.append({n + 2, 0, {"Port ", p, " - ", "Left"  }});
-      device.inputs.append({n + 3, 0, {"Port ", p, " - ", "Right" }});
-      device.inputs.append({n + 4, 0, {"Port ", p, " - ", "B"     }});
-      device.inputs.append({n + 5, 0, {"Port ", p, " - ", "A"     }});
-      device.inputs.append({n + 6, 0, {"Port ", p, " - ", "Select"}});
-      device.inputs.append({n + 7, 0, {"Port ", p, " - ", "Start" }});
+      device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Right" }});
+      device.inputs.append({0, {"Port ", p, " - ", "B"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "A"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "Select"}});
+      device.inputs.append({0, {"Port ", p, " - ", "Start" }});
     }
-    controllerPort2.append(device);
+    controllerPort2.devices.append(device);
   }
 
-  { Device device{"Beam Gun"};
-    device.inputs.append({0, 1, "X-axis" });
-    device.inputs.append({1, 1, "Y-axis" });
-    device.inputs.append({2, 0, "Trigger"});
-    expansionPort.append(device);
+  { Device device{ID::Device::Zapper, "Zapper"};
+    device.inputs.append({1, "X-axis" });
+    device.inputs.append({1, "Y-axis" });
+    device.inputs.append({0, "Trigger"});
+    controllerPort2.devices.append(device);
   }
 
-  { Device device{"Zapper"};
-    device.inputs.append({0, 1, "X-axis" });
-    device.inputs.append({1, 1, "Y-axis" });
-    device.inputs.append({2, 0, "Trigger"});
-    controllerPort2.append(device);
-  }
-
-  { Device device{"Family Trainer"};
-    for(uint n = 0; n <= 11; n++) {
-      device.inputs.append({n, 0, {"Button ", n + 1}});
+  { Device device{ID::Device::PowerPad, "Power Pad"};
+    for(uint n : range(12)) {
+      device.inputs.append({0, {"Button ", n + 1}});
     }
-    expansionPort.append(device);
+    controllerPort2.devices.append(device);
   }
 
-  { Device device{"Power Pad"};
-    for(uint n = 0; n <= 11; n++) {
-      device.inputs.append({n, 0, {"Button ", n + 1}});
+  { Device device{ID::Device::Vaus, "Arkanoid Vaus"};
+    device.inputs.append({1, "Control Knob"});
+    device.inputs.append({0, "Fire Button" });
+    controllerPort2.devices.append(device);
+  }
+
+  { Device device{ID::Device::SNESGamepad, "SNES Gamepad"};
+    device.inputs.append({0, "Up"    });
+    device.inputs.append({0, "Down"  });
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "B"     });
+    device.inputs.append({0, "A"     });
+    device.inputs.append({0, "Y"     });
+    device.inputs.append({0, "X"     });
+    device.inputs.append({0, "L"     });
+    device.inputs.append({0, "R"     });
+    device.inputs.append({0, "Select"});
+    device.inputs.append({0, "Start" });
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
+  }
+
+  { Device device{ID::Device::Mouse, "Mouse"};
+    device.inputs.append({1, "X-axis"});
+    device.inputs.append({1, "Y-axis"});
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
+  }
+
+  { Device device{ID::Device::GamepadE, "Gamepad"};
+    device.inputs.append({0, "Up"    });
+    device.inputs.append({0, "Down"  });
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "B"     });
+    device.inputs.append({0, "A"     });
+    device.inputs.append({0, "Select"});
+    device.inputs.append({0, "Start" });
+    expansionPort.devices.append(device);
+  }
+
+  { Device device{ID::Device::FourPlayers, "4-Players Adaptor"};
+    for(uint p = 3, n = 0; p <= 4; p += 1, n += 8) {
+      device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Right" }});
+      device.inputs.append({0, {"Port ", p, " - ", "B"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "A"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "Select"}});
+      device.inputs.append({0, {"Port ", p, " - ", "Start" }});
     }
-    controllerPort2.append(device);
+    expansionPort.devices.append(device);
   }
 
-  { Device device{"Arkanoid Vaus"};
-    device.inputs.append({0, 1, "Control Knob"});
-    device.inputs.append({1, 0, "Fire Button" });
-    controllerPort2.append(device);
-    expansionPort.append(device);
+  { Device device{ID::Device::BeamGun, "Beam Gun"};
+    device.inputs.append({1, "X-axis" });
+    device.inputs.append({1, "Y-axis" });
+    device.inputs.append({0, "Trigger"});
+    expansionPort.devices.append(device);
   }
 
-  //unlicensed devices
-  { Device device{"SFC Gamepad"};
-    device.inputs.append({ 0, 0, "Up"    });
-    device.inputs.append({ 1, 0, "Down"  });
-    device.inputs.append({ 2, 0, "Left"  });
-    device.inputs.append({ 3, 0, "Right" });
-    device.inputs.append({ 4, 0, "B"     });
-    device.inputs.append({ 5, 0, "A"     });
-    device.inputs.append({ 6, 0, "Y"     });
-    device.inputs.append({ 7, 0, "X"     });
-    device.inputs.append({ 8, 0, "L"     });
-    device.inputs.append({ 9, 0, "R"     });
-    device.inputs.append({10, 0, "Select"});
-    device.inputs.append({11, 0, "Start" });
-    expansionPort.append(device);
+  { Device device{ID::Device::FamilyTrainer, "Family Trainer"};
+    for(uint n : range(12)) {
+      device.inputs.append({0, {"Button ", n + 1}});
+    }
+    expansionPort.devices.append(device);
   }
 
-  { Device device{"SNES Gamepad"};
-    device.inputs.append({ 0, 0, "Up"    });
-    device.inputs.append({ 1, 0, "Down"  });
-    device.inputs.append({ 2, 0, "Left"  });
-    device.inputs.append({ 3, 0, "Right" });
-    device.inputs.append({ 4, 0, "B"     });
-    device.inputs.append({ 5, 0, "A"     });
-    device.inputs.append({ 6, 0, "Y"     });
-    device.inputs.append({ 7, 0, "X"     });
-    device.inputs.append({ 8, 0, "L"     });
-    device.inputs.append({ 9, 0, "R"     });
-    device.inputs.append({10, 0, "Select"});
-    device.inputs.append({11, 0, "Start" });
-    controllerPort1.append(device);
-    controllerPort2.append(device);
+  { Device device{ID::Device::VausE, "Arkanoid Vaus"};
+    device.inputs.append({1, "Control Knob"});
+    device.inputs.append({0, "Fire Button" });
+    expansionPort.devices.append(device);
   }
 
-  { Device device{"Mouse"};
-    device.inputs.append({0, 1, "X-axis"});
-    device.inputs.append({1, 1, "Y-axis"});
-    device.inputs.append({2, 0, "Left"  });
-    device.inputs.append({3, 0, "Right" });
-    controllerPort1.append(device);
-    controllerPort2.append(device);
-    expansionPort.append(device);
+  { Device device{ID::Device::SFCGamepad, "SFC Gamepad"};
+    device.inputs.append({0, "Up"    });
+    device.inputs.append({0, "Down"  });
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "B"     });
+    device.inputs.append({0, "A"     });
+    device.inputs.append({0, "Y"     });
+    device.inputs.append({0, "X"     });
+    device.inputs.append({0, "L"     });
+    device.inputs.append({0, "R"     });
+    device.inputs.append({0, "Select"});
+    device.inputs.append({0, "Start" });
+    expansionPort.devices.append(device);
   }
 
-  //arcade panels
-  { Device device{"VS. Panel"};
-    device.inputs.append({0, 0, "Button 1"      });
-    device.inputs.append({1, 0, "Button 2"      });
-    device.inputs.append({2, 0, "Button 3"      });
-    device.inputs.append({3, 0, "Button 4"      });
-    device.inputs.append({4, 0, "Service Button"});
-    device.inputs.append({5, 0, "Coin 1"        });
-    device.inputs.append({6, 0, "Coin 2"        });
-    arcadePanel.append(device);
+  { Device device{ID::Device::MouseE, "Mouse"};
+    device.inputs.append({1, "X-axis"});
+    device.inputs.append({1, "Y-axis"});
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    expansionPort.devices.append(device);
   }
+
+  { Device device{ID::Device::VSPanel, "VS. Panel"};
+    device.inputs.append({0, "Button 1"      });
+    device.inputs.append({0, "Button 2"      });
+    device.inputs.append({0, "Button 3"      });
+    device.inputs.append({0, "Button 4"      });
+    device.inputs.append({0, "Service Button"});
+    device.inputs.append({0, "Coin 1"        });
+    device.inputs.append({0, "Coin 2"        });
+    arcadePanel.devices.append(device);
+  }
+
+  ports.append(move(controllerPort1));
+  ports.append(move(controllerPort2));
+  ports.append(move(expansionPort));
+  ports.append(move(arcadePanel));
 }
 
 auto Interface::manifest() -> string {
@@ -441,45 +462,11 @@ auto Interface::sha256() -> string {
   return cartridge.sha256();
 }
 
-/*
-auto Interface::group(uint id) -> uint {
-  switch(id) {
-  case ID::SystemManifest:
-  case ID::PC10BIOS:
-  case ID::PC10CharacterROM:
-  case ID::PC10PaletteROM:
-  case ID::FamicomBoxPRG:
-  case ID::FamicomBoxCHR:
-    return ID::System;
-  case ID::Manifest:
-  case ID::ProgramROM:
-  case ID::ProgramRAM:
-  case ID::CharacterROM:
-  case ID::CharacterRAM:
-  case ID::ChipRAM:
-    switch(system.revision()) {
-    case System::Revision::Famicom:      return ID::Famicom;
-    case System::Revision::VSSystem:     return ID::VSSystem;
-    case System::Revision::PlayChoice10: return ID::PlayChoice10;
-    case System::Revision::FamicomBox:   return ID::FamicomBox;
-    }
-  case ID::InstructionROM:
-  case ID::KeyROM:
-    return ID::PlayChoice10;
-  }
-
-  throw;
-}
-*/
-
-auto Interface::load(uint id) -> void {
-  information.canvasWidth  = 256;
-  information.canvasHeight = 240;
-  information.aspectRatio = 8.0 / 7.0;
-  if(id == ID::Famicom)      system.load(System::Revision::Famicom);
-  if(id == ID::VSSystem)     system.load(System::Revision::VSSystem); 
-  if(id == ID::PlayChoice10) system.load(System::Revision::PlayChoice10);
-  if(id == ID::FamicomBox)   system.load(System::Revision::FamicomBox);
+auto Interface::load(uint id) -> bool {
+  if(id == ID::Famicom) return system.load(System::Revision::Famicom);
+  if(id == ID::VSSystem) return system.load(System::Revision::VSSystem); 
+  if(id == ID::PlayChoice10) return system.load(System::Revision::PlayChoice10);
+  if(id == ID::FamicomBox) return system.load(System::Revision::FamicomBox);
 }
 
 auto Interface::save() -> void {
@@ -492,29 +479,29 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  if(system.vs() || port == Famicom::Port::Arcade) return;
+  if(system.vs() || port == ID::Port::Arcade) return;
 
-  if((port == Famicom::Port::Controller1 && settings.controllerPort1 == Peripheral::ControllerPort1::FourScore)
-  || (port == Famicom::Port::Controller2 && settings.controllerPort2 == Peripheral::ControllerPort2::FourScore)) {
+  if((port == ID::Port::Controller1 && settings.controllerPort1 == ID::Device::FourScore)
+  || (port == ID::Port::Controller2 && settings.controllerPort2 == ID::Device::FourScore)) {
     switch(port) {
-    case Famicom::Port::Controller1:
-      interface->deviceChanged(Famicom::Port::Controller2, Peripheral::ControllerPort2::None);
+    case ID::Port::Controller1:
+      interface->deviceChanged(ID::Port::Controller2, ID::Device::None);
       break;
-    case Famicom::Port::Controller2:
-      interface->deviceChanged(Famicom::Port::Controller1, Peripheral::ControllerPort1::None);
+    case ID::Port::Controller2:
+      interface->deviceChanged(ID::Port::Controller1, ID::Device::None);
       break;
     }
   }
 
   Famicom::peripherals.connect(port, device);
 
-  if(device == Peripheral::ControllerPort1::FourScore || device == Peripheral::ControllerPort2::FourScore) {
+  if(device == ID::Device::FourScore || device == ID::Device::FourScore) {
     switch(port) {
-    case Famicom::Port::Controller1:
-      interface->deviceChanged(Famicom::Port::Controller2, Peripheral::ControllerPort2::FourScore);
+    case ID::Port::Controller1:
+      interface->deviceChanged(ID::Port::Controller2, ID::Device::FourScore);
       break;
-    case Famicom::Port::Controller2:
-      interface->deviceChanged(Famicom::Port::Controller1, Peripheral::ControllerPort1::FourScore);
+    case ID::Port::Controller2:
+      interface->deviceChanged(ID::Port::Controller1, ID::Device::FourScore);
       break;
     }
   }
@@ -581,18 +568,18 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
-  string pathname = {path(1), "debug/"};
+  string pathname = {path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 
-  if(auto fp = interface->open(1, "debug/work.ram", File::Write)) fp->write(cpu.ram, 0x800);
-  if(cartridge.board->prgram.size()) if(auto fp = interface->open(1, "debug/program.ram", File::Write)) {
+  if(auto fp = interface->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.ram, 0x800);
+  if(cartridge.board->prgram.size()) if(auto fp = interface->open(cartridge.pathID(), "debug/program.ram", File::Write)) {
     fp->write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
   }
-  if(cartridge.board->chrram.size()) if(auto fp = interface->open(1, "debug/character.ram", File::Write)) {
+  if(cartridge.board->chrram.size()) if(auto fp = interface->open(cartridge.pathID(), "debug/character.ram", File::Write)) {
     fp->write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
   }
   if(!cartridge.board->chip) return;
-  if(cartridge.board->chip->ram.size()) if(auto fp = interface->open(1, "debug/chip.ram", File::Write)) {
+  if(cartridge.board->chip->ram.size()) if(auto fp = interface->open(cartridge.pathID(), "debug/chip.ram", File::Write)) {
     fp->write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
   }
 }

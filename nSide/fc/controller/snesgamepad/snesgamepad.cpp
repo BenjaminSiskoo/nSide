@@ -1,4 +1,4 @@
-SNESGamepad::SNESGamepad(bool port, uint index) : Controller(port, index) {
+SNESGamepad::SNESGamepad(bool port) : Controller(port) {
   latched = 0;
   counter = 0;
 
@@ -9,7 +9,7 @@ SNESGamepad::SNESGamepad(bool port, uint index) : Controller(port, index) {
 
 auto SNESGamepad::data() -> uint3 {
   if(counter >= 16) return 1;
-  if(latched == 1) return interface->inputPoll(port, index, B);
+  if(latched == 1) return interface->inputPoll(port, ID::Device::SNESGamepad, B);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -36,17 +36,18 @@ auto SNESGamepad::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    b      = interface->inputPoll(port, index, B);
-    y      = interface->inputPoll(port, index, Y);
-    select = interface->inputPoll(port, index, Select);
-    start  = interface->inputPoll(port, index, Start);
-    up     = interface->inputPoll(port, index, Up);
-    down   = interface->inputPoll(port, index, Down);
-    left   = interface->inputPoll(port, index, Left);
-    right  = interface->inputPoll(port, index, Right);
-    a      = interface->inputPoll(port, index, A);
-    x      = interface->inputPoll(port, index, X);
-    l      = interface->inputPoll(port, index, L);
-    r      = interface->inputPoll(port, index, R);
+    auto id = ID::Device::SNESGamepad;
+    b      = interface->inputPoll(port, id, B);
+    y      = interface->inputPoll(port, id, Y);
+    select = interface->inputPoll(port, id, Select);
+    start  = interface->inputPoll(port, id, Start);
+    up     = interface->inputPoll(port, id, Up);
+    down   = interface->inputPoll(port, id, Down);
+    left   = interface->inputPoll(port, id, Left);
+    right  = interface->inputPoll(port, id, Right);
+    a      = interface->inputPoll(port, id, A);
+    x      = interface->inputPoll(port, id, X);
+    l      = interface->inputPoll(port, id, L);
+    r      = interface->inputPoll(port, id, R);
   }
 }

@@ -1,4 +1,4 @@
-SFCGamepad::SFCGamepad(uint index) : Expansion(index) {
+SFCGamepad::SFCGamepad() {
   latched = 0;
   counter = 0;
 
@@ -9,7 +9,7 @@ SFCGamepad::SFCGamepad(uint index) : Expansion(index) {
 
 auto SFCGamepad::data1() -> bool {
   if(counter >= 16) return 1;
-  if(latched == 1) return interface->inputPoll(Port::Expansion, index, 0);
+  if(latched == 1) return interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, 0);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -40,17 +40,18 @@ auto SFCGamepad::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    b      = interface->inputPoll(Port::Expansion, index, B);
-    y      = interface->inputPoll(Port::Expansion, index, Y);
-    select = interface->inputPoll(Port::Expansion, index, Select);
-    start  = interface->inputPoll(Port::Expansion, index, Start);
-    up     = interface->inputPoll(Port::Expansion, index, Up);
-    down   = interface->inputPoll(Port::Expansion, index, Down);
-    left   = interface->inputPoll(Port::Expansion, index, Left);
-    right  = interface->inputPoll(Port::Expansion, index, Right);
-    a      = interface->inputPoll(Port::Expansion, index, A);
-    x      = interface->inputPoll(Port::Expansion, index, X);
-    l      = interface->inputPoll(Port::Expansion, index, L);
-    r      = interface->inputPoll(Port::Expansion, index, R);
+    auto id = ID::Device::SFCGamepad;
+    b      = interface->inputPoll(ID::Port::Expansion, id, B);
+    y      = interface->inputPoll(ID::Port::Expansion, id, Y);
+    select = interface->inputPoll(ID::Port::Expansion, id, Select);
+    start  = interface->inputPoll(ID::Port::Expansion, id, Start);
+    up     = interface->inputPoll(ID::Port::Expansion, id, Up);
+    down   = interface->inputPoll(ID::Port::Expansion, id, Down);
+    left   = interface->inputPoll(ID::Port::Expansion, id, Left);
+    right  = interface->inputPoll(ID::Port::Expansion, id, Right);
+    a      = interface->inputPoll(ID::Port::Expansion, id, A);
+    x      = interface->inputPoll(ID::Port::Expansion, id, X);
+    l      = interface->inputPoll(ID::Port::Expansion, id, L);
+    r      = interface->inputPoll(ID::Port::Expansion, id, R);
   }
 }

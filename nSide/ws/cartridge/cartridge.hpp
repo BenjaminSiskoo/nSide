@@ -1,10 +1,13 @@
 struct Cartridge : Thread, IO {
+  auto pathID() const -> uint { return information.pathID; }
+
   static auto Enter() -> void;
   auto main() -> void;
   auto step(uint clocks) -> void;
   auto power() -> void;
 
-  auto load() -> void;
+  auto load() -> bool;
+  auto save() -> void;
   auto unload() -> void;
 
   //memory.cpp
@@ -32,10 +35,11 @@ struct Cartridge : Thread, IO {
   auto serialize(serializer&) -> void;
 
   struct Information {
+    uint pathID = 0;
+    string sha256;
     string manifest;
     string title;
-    bool orientation;  //0 = horizontal; 1 = vertical
-    string sha256;
+    boolean orientation;  //0 = horizontal; 1 = vertical
   } information;
 
   struct Registers {

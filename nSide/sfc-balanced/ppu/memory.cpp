@@ -1,12 +1,12 @@
 auto PPU::getVramAddress() -> uint16 {
-  uint16 addr = r.vramAddress;
+  uint16 address = r.vramAddress;
   switch(r.vramMapping) {
-    case 0: break;  //direct mapping
-    case 1: addr = (addr & 0xff00) | ((addr & 0x001f) << 3) | ((addr >> 5) & 7); break;
-    case 2: addr = (addr & 0xfe00) | ((addr & 0x003f) << 3) | ((addr >> 6) & 7); break;
-    case 3: addr = (addr & 0xfc00) | ((addr & 0x007f) << 3) | ((addr >> 7) & 7); break;
+  case 0: return (address);
+  case 1: return (address & 0xff00) | ((address & 0x001f) << 3) | ((address >> 5) & 7);
+  case 2: return (address & 0xfe00) | ((address & 0x003f) << 3) | ((address >> 6) & 7);
+  case 3: return (address & 0xfc00) | ((address & 0x007f) << 3) | ((address >> 7) & 7);
   }
-  return (addr << 1);
+  unreachable;
 }
 
 //NOTE: all VRAM writes during active display are invalid. Unlike OAM and CGRAM, they will
@@ -14,11 +14,11 @@ auto PPU::getVramAddress() -> uint16 {
 //been validated on hardware, as has the edge case where the S-CPU MDR can be written if the
 //write occurs during the very last clock cycle of vblank.
 
-auto PPU::vramRead(uint addr) -> uint8 {
+auto PPU::vramRead(bool chip, uint15 addr) -> uint8 {
   uint8 data;
 
   if(r.displayDisable) {
-    data = vram[addr];
+    data = vram[addr].byte(chip);
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
@@ -31,29 +31,29 @@ auto PPU::vramRead(uint addr) -> uint8 {
       data = 0x00;
     } else if(v == vdisp() - 1) {
       if(h == 1362) {
-        data = vram[addr];
+        data = vram[addr].byte(chip);
       } else {
         data = 0x00;
       }
     } else {
-      data = vram[addr];
+      data = vram[addr].byte(chip);
     }
   }
 
   return data;
 }
 
-auto PPU::vramWrite(uint addr, uint8 data) -> void {
+auto PPU::vramWrite(bool chip, uint15 addr, uint8 data) -> void {
   if(r.displayDisable) {
-    vram[addr] = data;
+    vram[addr].byte(chip) = data;
   } else {
     uint16 v = cpu.vcounter();
     uint16 h = cpu.hcounter();
     if(v == 0) {
       if(h <= 4) {
-        vram[addr] = data;
+        vram[addr].byte(chip) = data;
       } else if(h == 6) {
-        vram[addr] = cpu.r.mdr;
+        vram[addr].byte(chip) = cpu.r.mdr;
       } else {
         //no write
       }
@@ -63,10 +63,10 @@ auto PPU::vramWrite(uint addr, uint8 data) -> void {
       if(h <= 4) {
         //no write
       } else {
-        vram[addr] = data;
+        vram[addr].byte(chip) = data;
       }
     } else {
-      vram[addr] = data;
+      vram[addr].byte(chip) = data;
     }
   }
 }

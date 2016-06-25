@@ -12,45 +12,6 @@ auto Program::open(uint id, string name, vfs::file::mode mode, bool required) ->
   return {};
 }
 
-//request from emulation core to load non-volatile media file
-auto Program::loadRequest(uint id, string filename, bool required) -> void {
-  string pathname = mediumPaths(emulator->group(id));
-  string location = {pathname, filename};
-
-  if(filename == "manifest.bml" && pathname && !pathname.endsWith("sys/")) {
-    if(!file::exists(location)) {
-      //As a debugger, star-rod will never ignore manifests.
-      //Only call cart-pal if the manifest is missing.
-      if(auto manifest = execute("cart-pal", "--manifest", pathname)) {
-        memorystream stream{manifest.output.data<uint8_t>(), manifest.output.size()};
-        return emulator->load(id, stream);
-      }
-    }
-  }
-
-  if(file::exists(location)) {
-    mmapstream stream{location};
-    debugger->print("Loaded ", location, "\n");
-    return emulator->load(id, stream);
-  }
-
-  if(required) debugger->print(
-    "Missing required file: ", filename, "\n",
-    "From location:\n", this->path(emulator->group(id)), "\n"
-  );
-}
-
-//request from emulation core to save non-volatile media file
-auto Program::saveRequest(uint id, string filename) -> void {
-  string pathname = mediumPaths(emulator->group(id));
-  string location = {pathname, filename};
-  filestream stream(location, file::mode::write);
-  debugger->print("Saved ", location, "\n");
-  return emulator->save(id, stream);
-}
-
-//hires is always true for accuracy core
-//overscan is ignored for the debugger port
 auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint height) -> void {
   uint32_t* output;
   uint length;

@@ -5,7 +5,7 @@ struct SuperScope : Controller {
     X, Y, Trigger, Cursor, Turbo, Pause,
   };
 
-  SuperScope(bool port, uint index);
+  SuperScope(bool port);
   ~SuperScope();
 
   auto main() -> void;

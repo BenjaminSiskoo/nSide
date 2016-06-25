@@ -1,5 +1,5 @@
 struct FamilyTrainer : Expansion {
-  FamilyTrainer(uint index);
+  FamilyTrainer();
 
   auto data1() -> bool;
   auto data2() -> uint5;

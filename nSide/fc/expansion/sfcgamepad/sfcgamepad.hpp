@@ -3,7 +3,7 @@ struct SFCGamepad : Expansion {
     Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
   };
 
-  SFCGamepad(uint index);
+  SFCGamepad();
 
   auto data1() -> bool;
   auto data2() -> uint5;

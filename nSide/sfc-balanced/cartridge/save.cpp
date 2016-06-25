@@ -23,11 +23,11 @@ auto Cartridge::saveBSMemory(Markup::Node node) -> void {
 }
 
 auto Cartridge::saveSufamiTurboA(Markup::Node node) -> void {
-  saveMemory(sufamiturboA.ram, node["board/ram"], ID::SufamiTurboA);
+  saveMemory(sufamiturboA.ram, node["board/ram"], sufamiturboA.pathID);
 }
 
 auto Cartridge::saveSufamiTurboB(Markup::Node node) -> void {
-  saveMemory(sufamiturboB.ram, node["board/ram"], ID::SufamiTurboB);
+  saveMemory(sufamiturboB.ram, node["board/ram"], sufamiturboB.pathID);
 }
 
 //
@@ -54,8 +54,7 @@ auto Cartridge::saveSuperFX(Markup::Node node) -> void {
 }
 
 auto Cartridge::saveARMDSP(Markup::Node node) -> void {
-  if(node["ram/volatile"]) return;
-  if(auto name = node["ram/name"].text()) {
+  if(auto name = node["ram"]["name"].text()) {
     if(auto fp = interface->open(ID::SuperFamicom, name, File::Write)) {
       for(auto n : range(16 * 1024)) fp->write(armdsp.programRAM[n]);
     }
@@ -64,8 +63,7 @@ auto Cartridge::saveARMDSP(Markup::Node node) -> void {
 
 auto Cartridge::saveHitachiDSP(Markup::Node node) -> void {
   saveMemory(hitachidsp.ram, node["ram"]);
-  if(node["ram/volatile"]) return;
-  if(auto name = node["dram/name"].text()) {
+  if(auto name = node["dram"]["name"].text()) {
     if(auto fp = interface->open(ID::SuperFamicom, name, File::Write)) {
       for(auto n : range(3 * 1024)) fp->write(hitachidsp.dataRAM[n]);
     }
@@ -73,9 +71,8 @@ auto Cartridge::saveHitachiDSP(Markup::Node node) -> void {
 }
 
 auto Cartridge::saveNECDSP(Markup::Node node) -> void {
-  if(node["ram/volatile"]) return;
   uint size = necdsp.revision == NECDSP::Revision::uPD7725 ? 256 : 2048;
-  if(auto name = node["dram/name"].text()) {
+  if(auto name = node["dram"]["name"].text()) {
     if(auto fp = interface->open(ID::SuperFamicom, name, File::Write)) {
       for(auto n : range(size)) fp->writel(necdsp.dataRAM[n], 2);
     }
@@ -83,8 +80,7 @@ auto Cartridge::saveNECDSP(Markup::Node node) -> void {
 }
 
 auto Cartridge::saveEpsonRTC(Markup::Node node) -> void {
-  if(node["ram/volatile"]) return;
-  if(auto name = node["ram/name"].text()) {
+  if(auto name = node["ram"]["name"].text()) {
     if(auto fp = interface->open(ID::SuperFamicom, name, File::Write)) {
       uint8 data[16] = {0};
       epsonrtc.save(data);
@@ -94,8 +90,7 @@ auto Cartridge::saveEpsonRTC(Markup::Node node) -> void {
 }
 
 auto Cartridge::saveSharpRTC(Markup::Node node) -> void {
-  if(node["ram/volatile"]) return;
-  if(auto name = node["ram/name"].text()) {
+  if(auto name = node["ram"]["name"].text()) {
     if(auto fp = interface->open(ID::SuperFamicom, name, File::Write)) {
       uint8 data[16] = {0};
       sharprtc.save(data);
@@ -118,11 +113,12 @@ auto Cartridge::saveOBC1(Markup::Node node) -> void {
 
 //
 
-auto Cartridge::saveMemory(MappedRAM& memory, Markup::Node node, uint id) -> void {
+auto Cartridge::saveMemory(MappedRAM& memory, Markup::Node node, maybe<uint> id) -> void {
+  if(!id) id = pathID();
   if(!node || node["volatile"]) return;
   auto name = node["name"].text();
   auto size = node["size"].natural();
-  if(auto fp = interface->open(id, name, File::Write)) {
+  if(auto fp = interface->open(id(), name, File::Write)) {
     fp->write(memory.data(), memory.size());
   }
 }

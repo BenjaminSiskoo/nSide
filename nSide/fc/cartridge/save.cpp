@@ -10,11 +10,12 @@ auto Cartridge::saveCartridge(Markup::Node node) -> void {
 
 //
 
-auto Cartridge::saveMemory(MappedRAM& memory, Markup::Node node, uint id) -> void {
+auto Cartridge::saveMemory(MappedRAM& memory, Markup::Node node, maybe<uint> id) -> void {
+  if(!id) id = pathID();
   if(!node || node["volatile"]) return;
   auto name = node["name"].text();
   auto size = node["size"].natural();
-  if(auto fp = interface->open(id, name, File::Write)) {
+  if(auto fp = interface->open(id(), name, File::Write)) {
     fp->write(memory.data(), memory.size());
   }
 }

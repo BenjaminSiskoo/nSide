@@ -10,7 +10,7 @@ namespace Famicom {
 #include "sfcgamepad/sfcgamepad.cpp"
 #include "mouse/mouse.cpp"
 
-Expansion::Expansion(uint index) : index(index) {
+Expansion::Expansion() {
   if(!thread) create(Expansion::Enter, 1);
 }
 

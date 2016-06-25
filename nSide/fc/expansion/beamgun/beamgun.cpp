@@ -1,4 +1,4 @@
-BeamGun::BeamGun(uint index) : Expansion(index) {
+BeamGun::BeamGun() {
   create(Expansion::Enter, system.cpuFrequency());
   sprite = Emulator::video.createSprite(16, 16);
   sprite->setPixels(Resource::Sprite::CrosshairGreenSmall);
@@ -44,8 +44,8 @@ auto BeamGun::main() -> void {
   if(next < prev) {
     if(triggertime > 0) triggertime -= 1;
     //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
-    int nx = interface->inputPoll(Port::Expansion, index, X);
-    int ny = interface->inputPoll(Port::Expansion, index, Y);
+    int nx = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, X);
+    int ny = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Y);
     nx += x;
     ny += y;
     x = max(-16, min(256 + 16, nx));
@@ -65,7 +65,7 @@ auto BeamGun::data1() -> bool {
 
 auto BeamGun::data2() -> uint5 {
   if(!system.vs()) {
-    bool newtrigger = interface->inputPoll(Port::Expansion, index, Trigger);
+    bool newtrigger = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
     if(newtrigger && !triggerlock) {
       triggertime = 2;
       triggerlock = true;
@@ -124,7 +124,7 @@ auto BeamGun::latch(bool data) -> void {
   latched = data;
   if(system.vs() && latched == 0) {
     counter = 0;
-    trigger = interface->inputPoll(Port::Expansion, index, Trigger);
+    trigger = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
     light = lighttime > 0;
   }
 }

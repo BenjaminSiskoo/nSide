@@ -9,14 +9,8 @@
 #include <processor/arm/arm.hpp>
 
 namespace GameBoyAdvance {
-  namespace Info {
-    static const uint SerializerVersion = 4;
-  }
-}
+  using File = Emulator::File;
 
-#include <libco/libco.h>
-
-namespace GameBoyAdvance {
   enum : uint {           //mode flags for bus read, write:
     Nonsequential =   1,  //N cycle
     Sequential    =   2,  //S cycle

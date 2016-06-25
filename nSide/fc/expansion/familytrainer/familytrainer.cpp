@@ -1,4 +1,4 @@
-FamilyTrainer::FamilyTrainer(uint index) : Expansion(index) {
+FamilyTrainer::FamilyTrainer() {
   latched = 0;
   counter = 0;
 
@@ -13,7 +13,7 @@ auto FamilyTrainer::data1() -> bool {
 
 auto FamilyTrainer::data2() -> uint5 {
   if(counter >= 8) return 0x18;
-  if(latched == 1) return (b2 << 3) | (b4 << 4);
+  if(latched == 1) return (interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 1) << 1) | (interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 3) << 2);
 
   switch(counter++) {
   case  0: return (b2  << 3) | (b4  << 4);
@@ -33,17 +33,18 @@ auto FamilyTrainer::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    b1  = interface->inputPoll(Port::Expansion, index,  0);
-    b2  = interface->inputPoll(Port::Expansion, index,  1);
-    b3  = interface->inputPoll(Port::Expansion, index,  2);
-    b4  = interface->inputPoll(Port::Expansion, index,  3);
-    b5  = interface->inputPoll(Port::Expansion, index,  4);
-    b6  = interface->inputPoll(Port::Expansion, index,  5);
-    b7  = interface->inputPoll(Port::Expansion, index,  6);
-    b8  = interface->inputPoll(Port::Expansion, index,  7);
-    b9  = interface->inputPoll(Port::Expansion, index,  8);
-    b10 = interface->inputPoll(Port::Expansion, index,  9);
-    b11 = interface->inputPoll(Port::Expansion, index, 10);
-    b12 = interface->inputPoll(Port::Expansion, index, 11);
+    auto id = ID::Device::FamilyTrainer;
+    b1  = interface->inputPoll(ID::Port::Expansion, id,  0);
+    b2  = interface->inputPoll(ID::Port::Expansion, id,  1);
+    b3  = interface->inputPoll(ID::Port::Expansion, id,  2);
+    b4  = interface->inputPoll(ID::Port::Expansion, id,  3);
+    b5  = interface->inputPoll(ID::Port::Expansion, id,  4);
+    b6  = interface->inputPoll(ID::Port::Expansion, id,  5);
+    b7  = interface->inputPoll(ID::Port::Expansion, id,  6);
+    b8  = interface->inputPoll(ID::Port::Expansion, id,  7);
+    b9  = interface->inputPoll(ID::Port::Expansion, id,  8);
+    b10 = interface->inputPoll(ID::Port::Expansion, id,  9);
+    b11 = interface->inputPoll(ID::Port::Expansion, id, 10);
+    b12 = interface->inputPoll(ID::Port::Expansion, id, 11);
   }
 }

@@ -10,7 +10,7 @@ namespace Famicom {
 #include "snesgamepad/snesgamepad.cpp"
 #include "mouse/mouse.cpp"
 
-Controller::Controller(bool port, uint index) : port(port), index(index) {
+Controller::Controller(bool port) : port(port) {
   if(!thread) create(Controller::Enter, 1);
 }
 

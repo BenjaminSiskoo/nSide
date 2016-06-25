@@ -3,7 +3,7 @@ struct Background {
 
   auto reset() -> void;
 
-  auto getTile(uint x, uint y) -> uint;
+  auto getTile(uint x, uint y) -> uint16;
 
   auto serialize(serializer&) -> void;
 

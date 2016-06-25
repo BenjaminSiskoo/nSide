@@ -1,6 +1,6 @@
 auto Program::stateName(uint slot, bool manager) -> string {
   return {
-    folderPaths[0], "nSide/states/",
+    mediumPaths(1), "nSide/states/",
     manager ? "managed/" : "quick/",
     "slot-", natural(slot, 2L), ".bst"
   };

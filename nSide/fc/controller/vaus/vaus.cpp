@@ -1,4 +1,4 @@
-Vaus::Vaus(bool port, uint index) : Controller(port, index) {
+Vaus::Vaus(bool port) : Controller(port) {
   create(Controller::Enter, system.cpuFrequency());
   latched = 0;
   counter = 0;
@@ -14,7 +14,7 @@ auto Vaus::main() -> void {
 
   if(next < prev) {
     //Vcounter wrapped back to zero; update control knob for start of new frame
-    int nx = interface->inputPoll(port, index, Control) * 160 / 256;
+    int nx = interface->inputPoll(port, ID::Device::Vaus, Control) * 160 / 256;
     const uint8_t trimpot = 0x0d;
     x = max(trimpot, min(trimpot + 0xa0, x - nx));
   }
@@ -24,7 +24,7 @@ auto Vaus::main() -> void {
 }
 
 auto Vaus::data() -> uint3 {
-  bool fire = interface->inputPoll(port, index, Fire);
+  bool fire = interface->inputPoll(port, ID::Device::Vaus, Fire);
   if(latched == 1) return fire << 1 | control.bit(7) << 2;
   if(counter >= 8) return 0;
 

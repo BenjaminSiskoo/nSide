@@ -3,7 +3,7 @@ struct FourPlayers : Expansion {
     Up, Down, Left, Right, B, A, Select, Start,
   };
 
-  FourPlayers(uint index);
+  FourPlayers();
 
   auto data1() -> bool;
   auto data2() -> uint5;

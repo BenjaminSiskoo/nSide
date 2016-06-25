@@ -89,7 +89,7 @@ auto PPU::addClocks(uint clocks) -> void {
 }
 
 auto PPU::power() -> void {
-  for(auto& n : vram) n = 0x00;
+  for(auto& n : vram) n = 0x0000;
   for(auto& n : oam) n = 0x00;
   for(auto& n : cgram) n = 0x00;
   tiledataCache.flush();

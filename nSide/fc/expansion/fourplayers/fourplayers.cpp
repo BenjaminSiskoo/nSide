@@ -1,4 +1,4 @@
-FourPlayers::FourPlayers(uint index) : Expansion(index) {
+FourPlayers::FourPlayers() {
   latched = 0;
   counter1 = 0;
   counter2 = 0;
@@ -6,7 +6,7 @@ FourPlayers::FourPlayers(uint index) : Expansion(index) {
 
 auto FourPlayers::data1() -> bool {
   if(counter1 >= 8) return 1;
-  if(latched) return interface->inputPoll(Port::Expansion, index, A + 0);
+  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, A + 0);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter1++) {
@@ -23,7 +23,7 @@ auto FourPlayers::data1() -> bool {
 
 auto FourPlayers::data2() -> uint5 {
   if(counter2 >= 8) return 2;
-  if(latched) return interface->inputPoll(Port::Expansion, index, A + 8) << 1;
+  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, A + 8) << 1;
 
   switch(counter2++) {
   case 0: return a4 << 1;
@@ -44,21 +44,22 @@ auto FourPlayers::latch(bool data) -> void {
   counter2 = 0;
 
   if(latched == 0) {
-    a3      = interface->inputPoll(Port::Expansion, index, A      + 0);
-    b3      = interface->inputPoll(Port::Expansion, index, B      + 0);
-    select3 = interface->inputPoll(Port::Expansion, index, Select + 0);
-    start3  = interface->inputPoll(Port::Expansion, index, Start  + 0);
-    up3     = interface->inputPoll(Port::Expansion, index, Up     + 0);
-    down3   = interface->inputPoll(Port::Expansion, index, Down   + 0);
-    left3   = interface->inputPoll(Port::Expansion, index, Left   + 0);
-    right3  = interface->inputPoll(Port::Expansion, index, Right  + 0);
-    a4      = interface->inputPoll(Port::Expansion, index, A      + 8);
-    b4      = interface->inputPoll(Port::Expansion, index, B      + 8);
-    select4 = interface->inputPoll(Port::Expansion, index, Select + 8);
-    start4  = interface->inputPoll(Port::Expansion, index, Start  + 8);
-    up4     = interface->inputPoll(Port::Expansion, index, Up     + 8);
-    down4   = interface->inputPoll(Port::Expansion, index, Down   + 8);
-    left4   = interface->inputPoll(Port::Expansion, index, Left   + 8);
-    right4  = interface->inputPoll(Port::Expansion, index, Right  + 8);
+    auto id = ID::Device::FourPlayers;
+    a3      = interface->inputPoll(ID::Port::Expansion, id, A      + 0);
+    b3      = interface->inputPoll(ID::Port::Expansion, id, B      + 0);
+    select3 = interface->inputPoll(ID::Port::Expansion, id, Select + 0);
+    start3  = interface->inputPoll(ID::Port::Expansion, id, Start  + 0);
+    up3     = interface->inputPoll(ID::Port::Expansion, id, Up     + 0);
+    down3   = interface->inputPoll(ID::Port::Expansion, id, Down   + 0);
+    left3   = interface->inputPoll(ID::Port::Expansion, id, Left   + 0);
+    right3  = interface->inputPoll(ID::Port::Expansion, id, Right  + 0);
+    a4      = interface->inputPoll(ID::Port::Expansion, id, A      + 8);
+    b4      = interface->inputPoll(ID::Port::Expansion, id, B      + 8);
+    select4 = interface->inputPoll(ID::Port::Expansion, id, Select + 8);
+    start4  = interface->inputPoll(ID::Port::Expansion, id, Start  + 8);
+    up4     = interface->inputPoll(ID::Port::Expansion, id, Up     + 8);
+    down4   = interface->inputPoll(ID::Port::Expansion, id, Down   + 8);
+    left4   = interface->inputPoll(ID::Port::Expansion, id, Left   + 8);
+    right4  = interface->inputPoll(ID::Port::Expansion, id, Right  + 8);
   }
 }

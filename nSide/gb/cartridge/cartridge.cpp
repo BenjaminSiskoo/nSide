@@ -14,28 +14,32 @@ namespace GameBoy {
 #include "serialization.cpp"
 Cartridge cartridge;
 
-auto Cartridge::manifest() const -> string {
-  return information.markup;
-}
+auto Cartridge::load(System::Revision revision) -> bool {
+  information = Information();
 
-auto Cartridge::title() const -> string {
-  return information.title;
-}
+  switch(revision) {
+  case System::Revision::GameBoy:
+    if(auto pathID = interface->load(ID::GameBoy, "Game Boy", "gb", true)) {
+      information.pathID = pathID();
+    } else return false;
+    break;
+  case System::Revision::SuperGameBoy:
+    if(auto pathID = interface->load(ID::SuperGameBoy, "Game Boy", "gb", true)) {
+      information.pathID = pathID();
+    } else return false;
+    break;
+  case System::Revision::GameBoyColor:
+    if(auto pathID = interface->load(ID::GameBoyColor, "Game Boy Color", "gbc", true)) {
+      information.pathID = pathID();
+    } else return false;
+    break;
+  }
 
-auto Cartridge::load(System::Revision revision) -> void {
-  information.markup = "";
-  interface->loadRequest(ID::Manifest, "manifest.bml", !system.sgb());
+  if(auto fp = interface->open(pathID(), "manifest.bml", File::Read, File::Required)) {
+    information.manifest = fp->reads();
+  } else return false;
 
-  information.mapper = Mapper::Unknown;
-  information.ram = false;
-  information.battery = false;
-  information.rtc = false;
-  information.rumble = false;
-
-  information.romsize = 0;
-  information.ramsize = 0;
-
-  auto document = BML::unserialize(information.markup);
+  auto document = BML::unserialize(information.manifest);
   information.title = document["information/title"].text();
 
   auto mapperid = document["board/mapper"].text();
@@ -61,9 +65,16 @@ auto Cartridge::load(System::Revision revision) -> void {
   ramsize = ram["size"].natural();
   ramdata = allocate<uint8>(ramsize, 0xff);
 
-  if(auto name = rom["name"].text()) interface->loadRequest(ID::ROM, name, !system.sgb());
-  if(auto name = ram["name"].text()) interface->loadRequest(ID::RAM, name, false);
-  if(auto name = ram["name"].text()) memory.append({ID::RAM, name});
+  if(auto name = rom["name"].text()) {
+    if(auto fp = interface->open(pathID(), name, File::Read, File::Required)) {
+      fp->read(romdata, min(romsize, fp->size()));
+    }
+  }
+  if(auto name = ram["name"].text()) {
+    if(auto fp = interface->open(pathID(), name, File::Read, File::Optional)) {
+      fp->read(ramdata, min(ramsize, fp->size()));
+    }
+  }
 
   information.romsize = romsize;
   information.ramsize = ramsize;
@@ -82,6 +93,17 @@ auto Cartridge::load(System::Revision revision) -> void {
   }
 
   sha256 = Hash::SHA256(romdata, romsize).digest();
+  return true;
+}
+
+auto Cartridge::save() -> void {
+  auto document = BML::unserialize(information.manifest);
+
+  if(auto name = document["board/ram/name"].text()) {
+    if(auto fp = interface->open(pathID(), name, File::Write)) {
+      fp->write(ramdata, ramsize);
+    }
+  }
 }
 
 auto Cartridge::unload() -> void {

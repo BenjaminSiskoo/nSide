@@ -48,41 +48,50 @@ auto System::load(Revision revision) -> bool {
   auto document = BML::unserialize(information.manifest);
 
   if(pc10()) {
-    auto firmware = document["system/pc10/cpu/rom/name"].text();
-    if(auto fp = interface->open(ID::System, firmware, File::Read, File::Required)) {
-      fp->read(playchoice10.bios, 16384);
-    } else return false;
+    if(auto firmware = document["system/pc10/cpu/rom/name"].text()) {
+      if(auto fp = interface->open(ID::System, firmware, File::Read, File::Required)) {
+        fp->read(playchoice10.bios, 16384);
+      } else return false;
+    }
 
-    auto character = document["system/pc10/video-circuit/vrom/name"].text();
-    if(auto fp = interface->open(ID::System, character, File::Read, File::Required)) {
-      fp->read(playchoice10.videoCircuit.chrrom, 24576);
-    } else return false;
+    if(auto character = document["system/pc10/video-circuit/vrom/name"].text()) {
+      if(auto fp = interface->open(ID::System, character, File::Read, File::Required)) {
+        fp->read(playchoice10.videoCircuit.chrrom, 24576);
+      } else return false;
+    }
 
-    auto palette = document["system/pc10/video-circuit/cgrom/name"].text();
-    if(auto fp = interface->open(ID::System, palette, File::Read, File::Required)) {
-      fp->read(playchoice10.videoCircuit.cgrom, 768);
-    } else return false;
+    if(auto palette = document["system/pc10/video-circuit/cgrom/name"].text()) {
+      if(auto fp = interface->open(ID::System, palette, File::Read, File::Required)) {
+        fp->read(playchoice10.videoCircuit.cgrom, 768);
+      } else return false;
+    }
   }
 
   if(fcb()) {
-    auto bios_prg = document["system/prg/rom/name"].text();
-    if(auto fp = interface->open(ID::System, bios_prg, File::Read, File::Required)) {
-      fp->read(famicombox.bios_prg, 32768);
-    } else return false;
+    if(auto bios_prg = document["system/prg/rom/name"].text()) {
+      if(auto fp = interface->open(ID::System, bios_prg, File::Read, File::Required)) {
+        fp->read(famicombox.bios_prg, 32768);
+      } else return false;
+    }
 
-    auto bios_chr = document["system/prg/rom/name"].text();
-    if(auto fp = interface->open(ID::System, bios_chr, File::Read, File::Required)) {
-      fp->read(famicombox.bios_chr, 8192);
-    } else return false;
+    if(auto bios_chr = document["system/prg/rom/name"].text()) {
+      if(auto fp = interface->open(ID::System, bios_chr, File::Read, File::Required)) {
+        fp->read(famicombox.bios_chr, 8192);
+      } else return false;
+    }
   }
 
-  cartridge.load();
+  if(!cartridge.load()) return false;
   switch(cartridge.region()) {
   case Cartridge::Region::NTSC:  _region = Region::NTSC;  break;
   case Cartridge::Region::PAL:   _region = Region::PAL;   break;
   case Cartridge::Region::Dendy: _region = Region::Dendy; break;
   }
   _cpuFrequency = region() == Region::NTSC ? 21'477'272 : 26'601'712;
+
+  interface->information.canvasWidth  = 256;
+  interface->information.canvasHeight = 240;
+  interface->information.aspectRatio = 8.0 / 7.0;
 
   switch(revision) {
 
@@ -96,7 +105,7 @@ auto System::load(Revision revision) -> bool {
     case Region::Dendy: ppu.revision = PPU::Revision::UA6538;  break;
     }
     if(region() != Region::NTSC) interface->information.aspectRatio = 2'950'000.0 / 2'128'137.0;
-    peripherals.connect(Port::Arcade, Peripheral::ArcadePanel::None);
+    peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
 
@@ -104,7 +113,7 @@ auto System::load(Revision revision) -> bool {
     apu.revision = APU::Revision::RP2A03;
     // VS. System PPU is set within cartridge.load().
     vssystem.load();
-    peripherals.connect(Port::Arcade, Peripheral::ArcadePanel::VSPanel);
+    peripherals.connect(ID::Port::Arcade, ID::Device::VSPanel);
     break;
   }
 
@@ -114,7 +123,7 @@ auto System::load(Revision revision) -> bool {
     playchoice10.screenConfig = min(max(document["system/pc10/screen/mode"].integer(), 1), 2);
     playchoice10.load();
     interface->information.canvasHeight = playchoice10.screenConfig * 240;
-    peripherals.connect(Port::Arcade, Peripheral::ArcadePanel::None);
+    peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
 
@@ -122,7 +131,7 @@ auto System::load(Revision revision) -> bool {
     apu.revision = APU::Revision::RP2A03E;
     ppu.revision = PPU::Revision::RP2C02C;
     famicombox.load();
-    peripherals.connect(Port::Arcade, Peripheral::ArcadePanel::None);
+    peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
 

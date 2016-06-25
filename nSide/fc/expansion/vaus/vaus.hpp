@@ -3,7 +3,7 @@ struct VausE : Expansion {
     Control, Fire,
   };
 
-  VausE(uint index);
+  VausE();
 
   auto main() -> void;
   auto data1() -> bool;

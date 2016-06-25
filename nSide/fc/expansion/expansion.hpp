@@ -22,7 +22,7 @@
 // 15:    +5v
 
 struct Expansion : Cothread {
-  Expansion(uint index);
+  Expansion();
   virtual ~Expansion();
   static auto Enter() -> void;
 
@@ -30,8 +30,6 @@ struct Expansion : Cothread {
   virtual auto data1() -> bool { return 0; }
   virtual auto data2() -> uint5 { return 0; }
   virtual auto latch(bool data) -> void {}
-
-  const uint index;
 };
 
 #include "gamepad/gamepad.hpp"

@@ -1,11 +1,35 @@
 #pragma once
 
-//clone of higan's Super Famicom emulator's balanced profile.
-//Credits for all components excpet for PPU and DSP are available in <sfc/sfc.hpp>.
-// blargg            (Balanced/Performance DSP)
-// hex_usr           (clean-up of Balanced PPU code)
+//based on higan's Super Famicom emulator by byuu,
+//with contributions from:
+// Andreas Naive     (S-DD1 decompression algorithm)
+// anomie
+// AWJ               (PPUcounter NTSC/PAL timing)
+// Cydrak            (ST-018 discoveries and bug fixes)
+// _Demo_
+// Derrick Sobodash
+// DMV27
+// Dr. Decapitator   (DSP-1,2,3,4, ST-010,011 ROM dumps)
+// FirebrandX
+// FitzRoy
+// GIGO
+// Jonas Quinn       (DSP fixes, Game Boy fixes)
+// kode54
+// krom
+// LostTemplar       (ST-018 program ROM analysis)
+// Matthew Callis
+// Nach
+// neviksti          (SPC7110 decompression algorithm)
+// Overload          (Cx4 data ROM dump)
+// RedDwarf
+// Richard Bannister
+// segher            (Cx4 reverse engineering)
+// tetsuo55
+// TRAC
+// zones
+// hex_usr           (exportMemory PPU register/expansion chip support, Super Scope turbo cursor)
 //license: GPLv3
-//maintained since: 2016-04-05
+//original project started: 2004-10-14
 
 #include <emulator/emulator.hpp>
 #include <processor/arm/arm.hpp>
@@ -15,24 +39,12 @@
 #include <processor/spc700/spc700.hpp>
 #include <processor/upd96050/upd96050.hpp>
 
-namespace SuperFamicom {
-  namespace Info {
-    static const uint SerializerVersion = 30 + 0x80000000;
-  }
-}
-
-#include <libco/libco.h>
-
 #if defined(SFC_SUPERGAMEBOY)
   #include <gb/gb.hpp>
 #endif
 
 namespace SuperFamicom {
-  struct File {
-    static const vfs::file::mode Read = vfs::file::mode::read;
-    static const vfs::file::mode Write = vfs::file::mode::write;
-    static const bool Required = true;
-  };
+  using File = Emulator::File;
 
   struct Thread {
     virtual ~Thread() {

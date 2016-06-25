@@ -7,8 +7,9 @@ struct Cartridge : Thread {
   static void Enter();
   void main();
 
-  auto sha256() const -> string { return _sha256; }
-  auto region() const -> Region { return _region; }
+  auto pathID() const -> uint { return information.pathID; }
+  auto sha256() const -> string { return information.sha256; }
+  auto region() const -> Region { return information.region; }
   auto manifest() const -> string;
   auto title() const -> string;
 
@@ -22,6 +23,10 @@ struct Cartridge : Thread {
   auto serialize(serializer&) -> void;
 
   struct Information {
+    uint pathID = 0;
+    string sha256;
+    Region region = Region::NTSC;
+
     struct Manifest {
       string cartridge;
       string famicomDiskSystem;
@@ -51,15 +56,12 @@ private:
   auto loadCartridge(Markup::Node) -> void;
   auto setupVS(Markup::Node&, Markup::Node&) -> void;
 
-  auto loadMemory(MappedRAM&, Markup::Node, bool writable, uint id = 1) -> void;
+  auto loadMemory(MappedRAM&, Markup::Node, bool required, maybe<uint> id = nothing) -> void;
 
   //save.cpp
   auto saveCartridge(Markup::Node) -> void;
 
-  auto saveMemory(MappedRAM&, Markup::Node, uint = 1) -> void;
-
-  string _sha256;
-  Region _region = Region::NTSC;
+  auto saveMemory(MappedRAM&, Markup::Node, maybe<uint> = nothing) -> void;
 
   friend class Interface;
 };

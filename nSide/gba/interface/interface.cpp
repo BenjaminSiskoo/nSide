@@ -21,37 +21,39 @@ Interface::Interface() {
 
   media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", true});
 
-  ports.append({0, "Orientation", true});
+  Port hardwarePort{ID::Port::Hardware, "Hardware", true};
 
-  { Device device{"Horizontal"};
-    device.inputs.append({ 0, 0, "Up"    });
-    device.inputs.append({ 1, 0, "Down"  });
-    device.inputs.append({ 2, 0, "Left"  });
-    device.inputs.append({ 3, 0, "Right" });
-    device.inputs.append({ 4, 0, "B"     });
-    device.inputs.append({ 5, 0, "A"     });
-    device.inputs.append({ 6, 0, "L"     });
-    device.inputs.append({ 7, 0, "R"     });
-    device.inputs.append({ 8, 0, "Select"});
-    device.inputs.append({ 9, 0, "Start" });
-    device.inputs.append({10, 2, "Rumble"});
-    ports[0].devices.append(device);
+  { Device device{ID::Device::HorizontalControls, "Horizontal Controls"};
+    device.inputs.append({0, "Up"    });
+    device.inputs.append({0, "Down"  });
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "B"     });
+    device.inputs.append({0, "A"     });
+    device.inputs.append({0, "L"     });
+    device.inputs.append({0, "R"     });
+    device.inputs.append({0, "Select"});
+    device.inputs.append({0, "Start" });
+    device.inputs.append({2, "Rumble"});
+    hardwarePort.devices.append(device);
   }
 
-  { Device device{"Vertical"};
-    device.inputs.append({ 0, 0, "Up"    });
-    device.inputs.append({ 1, 0, "Down"  });
-    device.inputs.append({ 2, 0, "Left"  });
-    device.inputs.append({ 3, 0, "Right" });
-    device.inputs.append({ 4, 0, "B"     });
-    device.inputs.append({ 5, 0, "A"     });
-    device.inputs.append({ 6, 0, "L"     });
-    device.inputs.append({ 7, 0, "R"     });
-    device.inputs.append({ 8, 0, "Select"});
-    device.inputs.append({ 9, 0, "Start" });
-    device.inputs.append({10, 2, "Rumble"});
-    ports[0].devices.append(device);
+  { Device device{ID::Device::VerticalControls, "Vertical Controls"};
+    device.inputs.append({0, "Up"    });
+    device.inputs.append({0, "Down"  });
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "B"     });
+    device.inputs.append({0, "A"     });
+    device.inputs.append({0, "L"     });
+    device.inputs.append({0, "R"     });
+    device.inputs.append({0, "Select"});
+    device.inputs.append({0, "Start" });
+    device.inputs.append({2, "Rumble"});
+    hardwarePort.devices.append(device);
   }
+
+  ports.append(move(hardwarePort));
 }
 
 auto Interface::manifest() -> string {
@@ -100,74 +102,12 @@ auto Interface::loaded() -> bool {
   return system.loaded();
 }
 
-auto Interface::group(uint id) -> uint {
-  switch(id) {
-  case ID::SystemManifest:
-  case ID::BIOS:
-    return ID::System;
-  case ID::Manifest:
-  case ID::MROM:
-  case ID::SRAM:
-  case ID::EEPROM:
-  case ID::FLASH:
-    return ID::GameBoyAdvance;
-  }
-
-  throw;
-}
-
-auto Interface::load(uint id) -> void {
-  system.load();
+auto Interface::load(uint id) -> bool {
+  return system.load();
 }
 
 auto Interface::save() -> void {
-  for(auto& memory : cartridge.memory) {
-    interface->saveRequest(memory.id, memory.name);
-  }
-}
-
-auto Interface::load(uint id, const stream& stream) -> void {
-  if(id == ID::SystemManifest) {
-    system.information.manifest = stream.text();
-  }
-
-  if(id == ID::BIOS) {
-    stream.read((uint8_t*)bios.data, min(bios.size, stream.size()));
-  }
-
-  if(id == ID::Manifest) {
-    cartridge.information.markup = stream.text();
-  }
-
-  if(id == ID::MROM) {
-    stream.read((uint8_t*)cartridge.mrom.data, min(cartridge.mrom.size, stream.size()));
-  }
-
-  if(id == ID::SRAM) {
-    stream.read((uint8_t*)cartridge.sram.data, min(cartridge.sram.size, stream.size()));
-  }
-
-  if(id == ID::EEPROM) {
-    stream.read((uint8_t*)cartridge.eeprom.data, min(cartridge.eeprom.size, stream.size()));
-  }
-
-  if(id == ID::FLASH) {
-    stream.read((uint8_t*)cartridge.flash.data, min(cartridge.flash.size, stream.size()));
-  }
-}
-
-auto Interface::save(uint id, const stream& stream) -> void {
-  if(id == ID::SRAM) {
-    stream.write((uint8_t*)cartridge.sram.data, cartridge.sram.size);
-  }
-
-  if(id == ID::EEPROM) {
-    stream.write((uint8_t*)cartridge.eeprom.data, cartridge.eeprom.size);
-  }
-
-  if(id == ID::FLASH) {
-    stream.write((uint8_t*)cartridge.flash.data, cartridge.flash.size);
-  }
+  system.save();
 }
 
 auto Interface::unload() -> void {
@@ -258,14 +198,20 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
-  string pathname = {path(group(ID::MROM)), "debug/"};
+  string pathname = {path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 
-  file::write({pathname, "i-work.ram"}, (uint8_t*)cpu.iwram, 32 * 1024);
-  file::write({pathname, "e-work.ram"}, (uint8_t*)cpu.ewram, 256 * 1024);
-  if(cartridge.sram.size) saveRequest(ID::SRAM, "debug/save-static.ram");
-  if(cartridge.eeprom.size) saveRequest(ID::EEPROM, "debug/save-eeprom.ram");
-  if(cartridge.flash.size) saveRequest(ID::FLASH, "debug/save-flash.ram");
+  if(auto fp = interface->open(cartridge.pathID(), "debug/i-work.ram", File::Write)) fp->write(cpu.iwram, 32 * 1024);
+  if(auto fp = interface->open(cartridge.pathID(), "debug/e-work.ram", File::Write)) fp->write(cpu.ewram, 256 * 1024);
+  if(cartridge.sram.size) if(auto fp = interface->open(cartridge.pathID(), "debug/save-static.ram", File::Write)) {
+    fp->write(cartridge.sram.data, cartridge.sram.size);
+  }
+  if(cartridge.eeprom.size) if(auto fp = interface->open(cartridge.pathID(), "debug/save-eeprom.ram", File::Write)) {
+    fp->write(cartridge.eeprom.data, cartridge.eeprom.size);
+  }
+  if(cartridge.flash.size) if(auto fp = interface->open(cartridge.pathID(), "debug/save-flash.ram", File::Write)) {
+    fp->write(cartridge.flash.data, cartridge.flash.size);
+  }
 }
 
 }

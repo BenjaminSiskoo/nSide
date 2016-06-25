@@ -1,4 +1,4 @@
-Gamepad::Gamepad(bool port, uint index) : Controller(port, index) {
+Gamepad::Gamepad(bool port) : Controller(port) {
   latched = 0;
   counter = 0;
 
@@ -8,7 +8,7 @@ Gamepad::Gamepad(bool port, uint index) : Controller(port, index) {
 
 auto Gamepad::data() -> uint3 {
   if(counter >= 8) return 1;
-  if(latched == 1) return interface->inputPoll(port, index, A);
+  if(latched == 1) return interface->inputPoll(port, ID::Device::Gamepad, A);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -29,13 +29,14 @@ auto Gamepad::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    a      = interface->inputPoll(port, index, A);
-    b      = interface->inputPoll(port, index, B);
-    select = interface->inputPoll(port, index, Select);
-    start  = interface->inputPoll(port, index, Start);
-    up     = interface->inputPoll(port, index, Up);
-    down   = interface->inputPoll(port, index, Down);
-    left   = interface->inputPoll(port, index, Left);
-    right  = interface->inputPoll(port, index, Right);
+    auto id = ID::Device::Gamepad;
+    a      = interface->inputPoll(port, id, A);
+    b      = interface->inputPoll(port, id, B);
+    select = interface->inputPoll(port, id, Select);
+    start  = interface->inputPoll(port, id, Start);
+    up     = interface->inputPoll(port, id, Up);
+    down   = interface->inputPoll(port, id, Down);
+    left   = interface->inputPoll(port, id, Left);
+    right  = interface->inputPoll(port, id, Right);
   }
 }

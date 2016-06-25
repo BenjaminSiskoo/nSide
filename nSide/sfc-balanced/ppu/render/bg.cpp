@@ -48,7 +48,7 @@ auto PPU::bg_renderLine() -> void {
   const uint16 tile_mask = 0x0fff >> bg.r.mode;  //0x0fff, 0x07ff, 0x03ff
   //4 + bg.r.mode = >>(4-6) -- / {16, 32, 64 } bytes/tile
   //index is a tile number count to add to base tile number
-  const uint tiledata_index = bg.r.tiledataAddress >> (4 + bg.r.mode);
+  const uint tiledata_index = bg.r.tiledataAddress >> (3 + bg.r.mode);
 
   const uint8* bg_tiledata  = tiledataCache.tiledata[bg.r.mode];
   const uint8* bg_tilestate = tiledataCache.tiledataState[bg.r.mode];
@@ -270,44 +270,38 @@ auto PPU::bg_renderLineMode7() -> void {
     py >>= 8;
 
     switch(r.repeatMode7) {
-    case 0:    //screen repetition outside of screen area
-    case 1: {  //same as case 0
+    //screen repetition outside of screen area
+    case 0:
+    case 1:
       px &= 1023;
       py &= 1023;
-      tx = ((px >> 3) & 127);
-      ty = ((py >> 3) & 127);
-      tile    = vram[(ty * 128 + tx) << 1];
-      palette = vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+      tile = vram[(py >> 3) * 128 + (px >> 3)].byte(0);
+      palette = vram[(tile << 6) + ((py & 7) << 3) + (px & 7)].byte(1);
       break;
-    }
 
-    case 2: {  //palette color 0 outside of screen area
+    //palette color 0 outside of screen area
+    case 2: 
       if((px | py) & ~1023) {
         palette = 0;
       } else {
         px &= 1023;
         py &= 1023;
-        tx = ((px >> 3) & 127);
-        ty = ((py >> 3) & 127);
-        tile    = vram[(ty * 128 + tx) << 1];
-        palette = vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+        tile = vram[(py >> 3) * 128 + (px >> 3)].byte(0);
+        palette = vram[(tile << 6) + ((py & 7) << 3) + (px & 7)].byte(1);
       }
       break;
-    }
 
-    case 3: {  //character 0 repetition outside of screen area
+    //character 0 repetition outside of screen area
+    case 3:
       if((px | py) & ~1023) {
         tile = 0;
       } else {
         px &= 1023;
         py &= 1023;
-        tx = ((px >> 3) & 127);
-        ty = ((py >> 3) & 127);
-        tile = vram[(ty * 128 + tx) << 1];
+        tile = vram[(py >> 3) * 128 + (px >> 3)].byte(0);
       }
-      palette = vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+      palette = vram[(tile << 6) + ((py & 7) << 3) + (px & 7)].byte(1);
       break;
-    }
 
     }
 

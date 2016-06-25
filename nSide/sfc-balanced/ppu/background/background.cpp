@@ -1,13 +1,13 @@
-auto PPU::Background::getTile(uint x, uint y) -> uint {
+auto PPU::Background::getTile(uint x, uint y) -> uint16 {
   x = (x & ppu.bg_info[id].mx) >> ppu.bg_info[id].tw;
   y = (y & ppu.bg_info[id].my) >> ppu.bg_info[id].th;
 
-  uint16 pos = ((y & 0x1f) << 5) + (x & 0x1f);
-  if(y & 0x20) pos += ppu.bg_info[id].scy;
-  if(x & 0x20) pos += ppu.bg_info[id].scx;
+  uint16 offset = ((y & 0x1f) << 5) + (x & 0x1f);
+  if(y & 0x20) offset += ppu.bg_info[id].scy;
+  if(x & 0x20) offset += ppu.bg_info[id].scx;
 
-  const uint16 addr = r.screenAddress + (pos << 1);
-  return ppu.vram[addr] + (ppu.vram[addr + 1] << 8);
+  const uint16 address = r.screenAddress + offset;
+  return ppu.vram[address];
 }
 
 auto PPU::Background::reset() -> void {

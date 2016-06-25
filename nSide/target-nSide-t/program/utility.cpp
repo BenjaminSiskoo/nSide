@@ -16,9 +16,9 @@ auto Program::connectDevices() -> void {
   for(auto& port : emulator->ports) {
     auto path = string{emulator->information.name, "/", port.name}.replace(" ", "");
     auto name = settings(path).text();
-    for(uint index : range(port.devices.size())) {
-      if(port.devices[index].name == name) {
-        emulator->connect(port.id, index);
+    for(auto& device : port.devices) {
+      if(device.name == name) {
+        emulator->connect(port.id, device.id);
         break;
       }
     }

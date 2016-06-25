@@ -103,7 +103,7 @@ auto PPU::obj_loadTiles() -> void {
   uint16 chrx   = (spr->character     ) & 15;
   uint16 chry   = (spr->character >> 4) & 15;
   if(spr->nameSelect) {
-    tdaddr += (256 * 32) + (cache.obj_nameSelect << 13);
+    tdaddr += (256 * 16) + (cache.obj_nameSelect << 12);
   }
   chry  += (y >> 3);
   chry  &= 15;
@@ -123,8 +123,8 @@ auto PPU::obj_loadTiles() -> void {
     obj_tileList[n].hflip    = spr->hflip;
 
     uint mx  = !spr->hflip ? tx : (tile_width - 1) - tx;
-    uint pos = tdaddr + ((chry + ((chrx + mx) & 15)) << 5);
-    obj_tileList[n].tile = (pos >> 5) & 0x07ff;
+    uint pos = tdaddr + ((chry + ((chrx + mx) & 15)) << 4);
+    obj_tileList[n].tile = (pos >> 4) & 0x07ff;
   }
 }
 

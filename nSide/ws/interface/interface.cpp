@@ -19,40 +19,42 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::WonderSwan, "WonderSwan", "ws", true});
+  media.append({ID::WonderSwan,      "WonderSwan",       "ws",  true});
   media.append({ID::WonderSwanColor, "WonderSwan Color", "wsc", true});
 
-  ports.append({0, "Orientation", true});
+  Port hardwarePort{ID::Port::Hardware, "Hardware", true};
 
-  { Device device{"Horizontal"};
-    device.inputs.append({ 0, 0, "Y1"});
-    device.inputs.append({ 1, 0, "Y2"});
-    device.inputs.append({ 2, 0, "Y3"});
-    device.inputs.append({ 3, 0, "Y4"});
-    device.inputs.append({ 4, 0, "X1"});
-    device.inputs.append({ 5, 0, "X2"});
-    device.inputs.append({ 6, 0, "X3"});
-    device.inputs.append({ 7, 0, "X4"});
-    device.inputs.append({ 8, 0, "B"});
-    device.inputs.append({ 9, 0, "A"});
-    device.inputs.append({10, 0, "Start"});
-    ports[0].devices.append(device);
+  { Device device{ID::Device::HorizontalControls, "Horizontal Controls"};
+    device.inputs.append({0, "Y1"});
+    device.inputs.append({0, "Y2"});
+    device.inputs.append({0, "Y3"});
+    device.inputs.append({0, "Y4"});
+    device.inputs.append({0, "X1"});
+    device.inputs.append({0, "X2"});
+    device.inputs.append({0, "X3"});
+    device.inputs.append({0, "X4"});
+    device.inputs.append({0, "B"});
+    device.inputs.append({0, "A"});
+    device.inputs.append({0, "Start"});
+    hardwarePort.devices.append(device);
   }
 
-  { Device device{"Vertical"};
-    device.inputs.append({ 0, 0, "Y1"});
-    device.inputs.append({ 1, 0, "Y2"});
-    device.inputs.append({ 2, 0, "Y3"});
-    device.inputs.append({ 3, 0, "Y4"});
-    device.inputs.append({ 4, 0, "X1"});
-    device.inputs.append({ 5, 0, "X2"});
-    device.inputs.append({ 6, 0, "X3"});
-    device.inputs.append({ 7, 0, "X4"});
-    device.inputs.append({ 8, 0, "B"});
-    device.inputs.append({ 9, 0, "A"});
-    device.inputs.append({10, 0, "Start"});
-    ports[0].devices.append(device);
+  { Device device{ID::Device::VerticalControls, "Vertical Controls"};
+    device.inputs.append({0, "Y1"});
+    device.inputs.append({0, "Y2"});
+    device.inputs.append({0, "Y3"});
+    device.inputs.append({0, "Y4"});
+    device.inputs.append({0, "X1"});
+    device.inputs.append({0, "X2"});
+    device.inputs.append({0, "X3"});
+    device.inputs.append({0, "X4"});
+    device.inputs.append({0, "B"});
+    device.inputs.append({0, "A"});
+    device.inputs.append({0, "Start"});
+    hardwarePort.devices.append(device);
   }
+
+  ports.append(move(hardwarePort));
 }
 
 auto Interface::manifest() -> string {
@@ -104,92 +106,19 @@ auto Interface::sha256() -> string {
   return cartridge.information.sha256;
 }
 
-auto Interface::group(uint id) -> uint {
-  switch(id) {
-  case ID::SystemManifest:
-  case ID::SystemIPLROM:
-  case ID::SystemEEPROM:
-    return 0;
-  case ID::Manifest:
-  case ID::ROM:
-  case ID::RAM:
-  case ID::EEPROM:
-  case ID::RTC:
-    switch(system.model()) {
-    case Model::WonderSwan:
-      return ID::WonderSwan;
-    case Model::WonderSwanColor:
-    case Model::SwanCrystal:
-      return ID::WonderSwanColor;
-    }
-  }
-  throw;
-}
-
-auto Interface::load(uint id) -> void {
-  if(id == ID::WonderSwan) system.load(Model::WonderSwan);
-  if(id == ID::WonderSwanColor) system.load(Model::WonderSwanColor);
+auto Interface::load(uint id) -> bool {
+  if(id == ID::WonderSwan) return system.load(Model::WonderSwan);
+  if(id == ID::WonderSwanColor) return system.load(Model::WonderSwanColor);
+  return false;
 }
 
 auto Interface::save() -> void {
-  if(auto name = system.eeprom.name()) interface->saveRequest(ID::SystemEEPROM, name);
-  if(auto name = cartridge.ram.name) interface->saveRequest(ID::RAM, name);
-  if(auto name = cartridge.eeprom.name()) interface->saveRequest(ID::EEPROM, name);
-  if(auto name = cartridge.rtc.name) interface->saveRequest(ID::RTC, name);
-}
-
-auto Interface::load(uint id, const stream& stream) -> void {
-  if(id == ID::SystemManifest) {
-    system.information.manifest = stream.text();
-  }
-
-  if(id == ID::SystemEEPROM) {
-    stream.read((uint8_t*)system.eeprom.data(), min(system.eeprom.size() * sizeof(uint16), stream.size()));
-  }
-
-  if(id == ID::Manifest) {
-    cartridge.information.manifest = stream.text();
-  }
-
-  if(id == ID::ROM) {
-    stream.read((uint8_t*)cartridge.rom.data, min(cartridge.rom.size, stream.size()));
-  }
-
-  if(id == ID::RAM) {
-    stream.read((uint8_t*)cartridge.ram.data, min(cartridge.ram.size, stream.size()));
-  }
-
-  if(id == ID::EEPROM) {
-    stream.read((uint8_t*)cartridge.eeprom.data(), min(cartridge.eeprom.size() * sizeof(uint16), stream.size()));
-  }
-
-  if(id == ID::RTC) {
-    stream.read((uint8_t*)cartridge.rtc.data, min(cartridge.rtc.size, stream.size()));
-    cartridge.rtcLoad();
-  }
-}
-
-auto Interface::save(uint id, const stream& stream) -> void {
-  if(id == ID::SystemEEPROM) {
-    stream.write((uint8_t*)system.eeprom.data(), system.eeprom.size() * sizeof(uint16));
-  }
-
-  if(id == ID::RAM) {
-    stream.write((uint8_t*)cartridge.ram.data, cartridge.ram.size);
-  }
-
-  if(id == ID::EEPROM) {
-    stream.write((uint8_t*)cartridge.eeprom.data(), cartridge.eeprom.size() * sizeof(uint16));
-  }
-
-  if(id == ID::RTC) {
-    cartridge.rtcSave();
-    stream.write((uint8_t*)cartridge.rtc.data, cartridge.rtc.size);
-  }
+  system.save();
 }
 
 auto Interface::unload() -> void {
   save();
+  system.unload();
 }
 
 auto Interface::connect(uint port, uint device) -> void {

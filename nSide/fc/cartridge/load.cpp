@@ -1,24 +1,23 @@
 auto Cartridge::loadCartridge(Markup::Node node) -> void {
   information.title.cartridge = node["information/title"].text();
   auto boardNode = node["board"];
-  if(boardNode["region"].text() == "ntsc")  _region = Region::NTSC;
-  if(boardNode["region"].text() == "pal")   _region = Region::PAL;
-  if(boardNode["region"].text() == "dendy") _region = Region::Dendy;
+  if(boardNode["region"].text() == "ntsc")  information.region = Region::NTSC;
+  if(boardNode["region"].text() == "pal")   information.region = Region::PAL;
+  if(boardNode["region"].text() == "dendy") information.region = Region::Dendy;
 
   if(system.revision() == System::Revision::VSSystem) setupVS(node, boardNode);
 
-  uint id = (uint)system.revision() + 1;  //Adjust for ID::System
   Board::load(boardNode);  //this call will set Cartridge::board if successful
-  if(auto node = boardNode["prg/rom"]) loadMemory(board->prgrom, node, false, id);
-  if(auto node = boardNode["prg/ram"]) loadMemory(board->prgram, node, true, id);
-  if(auto node = boardNode["chr/rom"]) loadMemory(board->chrrom, node, false, id);
-  if(auto node = boardNode["chr/ram"]) loadMemory(board->chrram, node, true, id);
-  if(board->chip) if(auto node = boardNode["chip/ram"]) loadMemory(board->chip->ram, node, true, id);
+  if(auto node = boardNode["prg/rom"]) loadMemory(board->prgrom, node, File::Required, pathID());
+  if(auto node = boardNode["prg/ram"]) loadMemory(board->prgram, node, File::Optional, pathID());
+  if(auto node = boardNode["chr/rom"]) loadMemory(board->chrrom, node, File::Required, pathID());
+  if(auto node = boardNode["chr/ram"]) loadMemory(board->chrram, node, File::Optional, pathID());
+  if(board->chip) if(auto node = boardNode["chip/ram"]) loadMemory(board->chip->ram, node, File::Optional, pathID());
 
   if(system.pc10()) {
     auto rom = boardNode["pc10"].find("rom");
-    loadMemory(board->instrom, rom(0), false, ID::PlayChoice10);
-    loadMemory(board->keyrom, rom(1), false, ID::PlayChoice10);
+    loadMemory(board->instrom, rom(0), File::Required, ID::PlayChoice10);
+    loadMemory(board->keyrom,  rom(1), File::Required, ID::PlayChoice10);
   }
 }
 
@@ -47,16 +46,16 @@ auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
   string device1 = boardNode.find("controller(port=1)/device")(0).text();
   string device2 = boardNode.find("controller(port=2)/device")(0).text();
   if(device1 == "gamepad") {
-    peripherals.connect(Port::Controller1, Peripheral::ControllerPort1::Gamepad);
+    peripherals.connect(ID::Port::Controller1, ID::Device::Gamepad);
   } else if(device1 == "none") {
-    peripherals.connect(Port::Controller1, Peripheral::ControllerPort1::None);
+    peripherals.connect(ID::Port::Controller1, ID::Device::None);
   }
   if(device2 == "gamepad") {
-    peripherals.connect(Port::Controller2, Peripheral::ControllerPort2::Gamepad);
+    peripherals.connect(ID::Port::Controller2, ID::Device::Gamepad);
   } else if(device2 == "zapper") {
-    peripherals.connect(Port::Controller2, Peripheral::ControllerPort2::Zapper);
+    peripherals.connect(ID::Port::Controller2, ID::Device::Zapper);
   } else if(device2 == "none") {
-    peripherals.connect(Port::Controller2, Peripheral::ControllerPort2::None);
+    peripherals.connect(ID::Port::Controller2, ID::Device::None);
   }
   vssystem.setDip(primarySide, interface->dipSettings(boardNode));
 
@@ -85,11 +84,11 @@ auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
 
 //
 
-auto Cartridge::loadMemory(MappedRAM& ram, Markup::Node node, bool writable, uint id) -> void {
+auto Cartridge::loadMemory(MappedRAM& ram, Markup::Node node, bool required, maybe<uint> id) -> void {
   string name = node["name"].text();
   uint size = node["size"].natural();
   ram.allocate(size);
-  if(auto fp = interface->open(id, name, File::Read, !writable)) {  //treat ROM as required; RAM as optional
+  if(auto fp = interface->open(id(), name, File::Read, required)) {
     fp->read(ram.data(), ram.size());
   }
 }

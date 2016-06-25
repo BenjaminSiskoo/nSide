@@ -12,53 +12,17 @@ auto Program::open(uint id, string name, vfs::file::mode mode, bool required) ->
   return {};
 }
 
-//request from emulation core to load non-volatile media folder
-auto Program::loadRequest(uint id, string name, string type, bool required) -> void {
+auto Program::load(uint id, string name, string type, bool required) -> maybe<uint> {
   string location = BrowserDialog()
   .setTitle({"Load ", name})
   .setPath({settings["Library/Location"].text(), name})
   .setFilters({string{name, "|*.", type}, "All|*.*"})
   .openFolder();
-  if(!directory::exists(location)) return;
+  if(!directory::exists(location)) return nothing;
 
-  mediumPaths(id) = location;
-  folderPaths.append(location);
-  emulator->load(id);
-}
-
-//request from emulation core to load non-volatile media file
-auto Program::loadRequest(uint id, string filename, bool required) -> void {
-  string pathname = mediumPaths(emulator->group(id));
-  string location = {pathname, filename};
-
-  if(filename == "manifest.bml" && pathname && !pathname.endsWith(".sys/")) {
-    if(!file::exists(location) || settings["Library/IgnoreManifests"].boolean()) {
-      if(auto manifest = execute("cart-pal", "--manifest", pathname)) {
-        memorystream stream{manifest.output.data<uint8_t>(), manifest.output.size()};
-        return emulator->load(id, stream);
-      }
-    }
-  }
-
-  if(file::exists(location)) {
-    mmapstream stream{location};
-    return emulator->load(id, stream);
-  }
-
-  if(required) MessageDialog().setTitle("nSide").setText({
-    "Missing required file: ", nall::filename(location), "\n\n",
-    "From location:\n", nall::pathname(location)
-  }).error();
-}
-
-//request from emulation core to save non-volatile media file
-auto Program::saveRequest(uint id, string filename) -> void {
-  string pathname = mediumPaths(emulator->group(id));
-  string location = {pathname, filename};
-  if(!pathname) return;  //should never occur
-
-  filestream stream{location, file::mode::write};
-  return emulator->save(id, stream);
+  uint pathID = mediumPaths.size();
+  mediumPaths.append(location);
+  return pathID;
 }
 
 auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint height) -> void {
@@ -111,8 +75,8 @@ auto Program::audioSample(const double* samples, uint channels) -> void {
 
 auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
   if(presentation->focused() || settings["Input/FocusLoss/AllowInput"].boolean()) {
-    auto guid = emulator->ports[port].devices[device].inputs[input].guid;
-    auto mapping = (InputMapping*)guid;
+    auto userData = emulator->ports[port].devices[device].inputs[input].userData;
+    auto mapping = (InputMapping*)userData;
     if(mapping) return mapping->poll();
   }
   return 0;
@@ -120,8 +84,8 @@ auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
 
 auto Program::inputRumble(uint port, uint device, uint input, bool enable) -> void {
   if(presentation->focused() || settings["Input/FocusLoss/AllowInput"].boolean() || !enable) {
-    auto guid = emulator->ports[port].devices[device].inputs[input].guid;
-    auto mapping = (InputMapping*)guid;
+    auto userData = emulator->ports[port].devices[device].inputs[input].userData;
+    auto mapping = (InputMapping*)userData;
     if(mapping) return mapping->rumble(enable);
   }
 }

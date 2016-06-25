@@ -3,7 +3,7 @@ struct GamepadE : Expansion {
     Up, Down, Left, Right, B, A, Select, Start,
   };
 
-  GamepadE(uint index);
+  GamepadE();
 
   auto data1() -> bool;
   auto data2() -> uint5;

@@ -3,7 +3,7 @@ struct MouseE : Expansion {
     X, Y, Left, Right,
   };
 
-  MouseE(uint index);
+  MouseE();
 
   auto data1() -> bool;
   auto data2() -> uint5;

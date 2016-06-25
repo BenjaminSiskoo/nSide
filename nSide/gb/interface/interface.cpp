@@ -23,20 +23,21 @@ Interface::Interface() {
   media.append({ID::GameBoy,      "Game Boy",       "gb" , true});
   media.append({ID::GameBoyColor, "Game Boy Color", "gbc", true});
 
-  ports.append({0, "Device", false});
+  Port hardwarePort{ID::Port::Hardware, "Hardware", false};
 
-  {
-    Device device{"Controller"};
-    device.inputs.append({0, 0, "Up"    });
-    device.inputs.append({1, 0, "Down"  });
-    device.inputs.append({2, 0, "Left"  });
-    device.inputs.append({3, 0, "Right" });
-    device.inputs.append({4, 0, "B"     });
-    device.inputs.append({5, 0, "A"     });
-    device.inputs.append({6, 0, "Select"});
-    device.inputs.append({7, 0, "Start" });
-    ports[0].devices.append(device);
+  { Device device{ID::Device::Controls, "Controls"};
+    device.inputs.append({0, "Up"    });
+    device.inputs.append({0, "Down"  });
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "B"     });
+    device.inputs.append({0, "A"     });
+    device.inputs.append({0, "Select"});
+    device.inputs.append({0, "Start" });
+    hardwarePort.devices.append(device);
   }
+
+  ports.append(move(hardwarePort));
 }
 
 auto Interface::manifest() -> string {
@@ -124,72 +125,15 @@ auto Interface::sha256() -> string {
   return cartridge.sha256();
 }
 
-auto Interface::group(uint id) -> uint {
-  switch(id) {
-  case ID::SystemManifest:
-  case ID::GameBoyBootROM:
-  case ID::SuperGameBoyBootROM:
-  case ID::GameBoyColorBootROM:
-    return 0;
-  case ID::Manifest:
-  case ID::ROM:
-  case ID::RAM:
-    switch(system.revision()) {
-    case System::Revision::GameBoy: return ID::GameBoy;
-    case System::Revision::SuperGameBoy: return ID::SuperGameBoy;
-    case System::Revision::GameBoyColor: return ID::GameBoyColor;
-    }
-    throw;
-  }
-  throw;
-}
-
-auto Interface::load(uint id) -> void {
-  if(id == ID::GameBoy) system.load(System::Revision::GameBoy);
-  if(id == ID::SuperGameBoy) system.load(System::Revision::SuperGameBoy);
-  if(id == ID::GameBoyColor) system.load(System::Revision::GameBoyColor);
+auto Interface::load(uint id) -> bool {
+  if(id == ID::GameBoy) return system.load(System::Revision::GameBoy);
+  if(id == ID::SuperGameBoy) return system.load(System::Revision::SuperGameBoy);
+  if(id == ID::GameBoyColor) return system.load(System::Revision::GameBoyColor);
+  return false;
 }
 
 auto Interface::save() -> void {
-  for(auto& memory : cartridge.memory) {
-    interface->saveRequest(memory.id, memory.name);
-  }
-}
-
-auto Interface::load(uint id, const stream& stream) -> void {
-  if(id == ID::SystemManifest) {
-    system.information.manifest = stream.text();
-  }
-
-  if(id == ID::GameBoyBootROM) {
-    stream.read((uint8_t*)system.bootROM.dmg, min( 256u, stream.size()));
-  }
-
-  if(id == ID::SuperGameBoyBootROM) {
-    stream.read((uint8_t*)system.bootROM.sgb, min( 256u, stream.size()));
-  }
-
-  if(id == ID::GameBoyColorBootROM) {
-    stream.read((uint8_t*)system.bootROM.cgb, min(2048u, stream.size()));
-  }
-
-  if(id == ID::Manifest) {
-    cartridge.information.markup = stream.text();
-  }
-
-  if(id == ID::ROM) {
-    stream.read((uint8_t*)cartridge.romdata, min(cartridge.romsize, stream.size()));
-  }
-
-  if(id == ID::RAM) {
-    stream.read((uint8_t*)cartridge.ramdata, min(stream.size(), cartridge.ramsize));
-  }
-}
-
-auto Interface::save(uint id, const stream& stream) -> void {
-  if(id == ID::RAM) {
-    stream.write((uint8_t*)cartridge.ramdata, cartridge.ramsize);
-  }
+  system.save();
 }
 
 auto Interface::unload() -> void {
@@ -271,12 +215,14 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
-  string pathname = {path(group(ID::ROM)), "debug/"};
+  string pathname = {path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 
-  file::write({pathname, "work.ram"}, (uint8_t*)cpu.wram, !system.cgb() ? 8192 : 32768);
-  file::write({pathname, "internal.ram"}, (uint8_t*)cpu.hram, 128);
-  if(cartridge.ramsize) saveRequest(ID::RAM, "debug/program-save.ram");
+  if(auto fp = interface->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.wram, !system.cgb() ? 8192 : 32768);
+  if(auto fp = interface->open(cartridge.pathID(), "debug/internal.ram", File::Write)) fp->write(cpu.hram, 128);
+  if(cartridge.ramsize) if(auto fp = interface->open(cartridge.pathID(), "debug/program-save.ram", File::Write)) {
+    fp->write(cartridge.ramdata, cartridge.ramsize);
+  }
 }
 
 }

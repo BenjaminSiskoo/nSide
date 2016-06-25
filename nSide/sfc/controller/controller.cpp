@@ -8,7 +8,7 @@ namespace SuperFamicom {
 #include "superscope/superscope.cpp"
 #include "justifier/justifier.cpp"
 
-Controller::Controller(bool port, uint index) : port(port), index(index) {
+Controller::Controller(bool port) : port(port) {
   if(!thread) create(Controller::Enter, 1);
 }
 

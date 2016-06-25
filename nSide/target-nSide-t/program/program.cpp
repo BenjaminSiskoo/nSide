@@ -61,28 +61,6 @@ Program::Program(lstring args) {
   for(auto& argument : args) {
     if(argument == "--fullscreen") {
       presentation->toggleFullScreen();
-    } else {
-      load(argument);
-    }
-  }
-}
-
-auto Program::load(string location) -> void {
-  if(directory::exists(location)) {
-    loadMedium(location);
-  } else if(file::exists(location)) {
-    //special handling to allow importing the Game Boy Advance BIOS
-    if(file::size(location) == 16384 && file::sha256(location).beginsWith("fd2547724b505f48")) {
-      auto target = locateSystem("Game Boy Advance.sys/");
-      if(file::copy(location, {target, "bios.rom"})) {
-        MessageDialog().setTitle(Emulator::Name).setText("Game Boy Advance BIOS imported successfully!").information();
-      }
-      return;
-    }
-
-    //ask cart-pal to import the game; and play it upon success
-    if(auto result = execute("cart-pal", "--import", location)) {
-      loadMedium(result.output.strip());
     }
   }
 }

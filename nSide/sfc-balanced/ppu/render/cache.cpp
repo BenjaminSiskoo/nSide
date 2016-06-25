@@ -1,7 +1,7 @@
 auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
   uint8 col, d0, d1, d2, d3, d4, d5, d6, d7;
 
-  uint8* dest = (uint8*)tiledataCache.tiledata[color_depth] + tile_num * 64;
+  uint8* dest = (uint8*)tiledataCache.tiledata[color_depth] + tile_num * (8 * 8);
   uint y = 8;
 
   #define renderBGTile_line_2bpp(mask) \
@@ -28,10 +28,10 @@ auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
     *dest++ = col
 
   if(color_depth == Background::Mode::BPP2) {
-    uint pos = tile_num * 16;
+    uint pos = tile_num * 8;
     while(y--) {
-      d0 = vram[pos +  0];
-      d1 = vram[pos +  1];
+      d0 = vram[pos +  0].byte(0);
+      d1 = vram[pos +  0].byte(1);
       renderBGTile_line_2bpp(0x80);
       renderBGTile_line_2bpp(0x40);
       renderBGTile_line_2bpp(0x20);
@@ -40,17 +40,17 @@ auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
       renderBGTile_line_2bpp(0x04);
       renderBGTile_line_2bpp(0x02);
       renderBGTile_line_2bpp(0x01);
-      pos += 2;
+      pos += 1;
     }
   }
 
   if(color_depth == Background::Mode::BPP4) {
-    uint pos = tile_num * 32;
+    uint pos = tile_num * 16;
     while(y--) {
-      d0 = vram[pos +  0];
-      d1 = vram[pos +  1];
-      d2 = vram[pos + 16];
-      d3 = vram[pos + 17];
+      d0 = vram[pos +  0].byte(0);
+      d1 = vram[pos +  0].byte(1);
+      d2 = vram[pos +  8].byte(0);
+      d3 = vram[pos +  8].byte(1);
       renderBGTile_line_4bpp(0x80);
       renderBGTile_line_4bpp(0x40);
       renderBGTile_line_4bpp(0x20);
@@ -59,21 +59,21 @@ auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
       renderBGTile_line_4bpp(0x04);
       renderBGTile_line_4bpp(0x02);
       renderBGTile_line_4bpp(0x01);
-      pos += 2;
+      pos += 1;
     }
   }
 
   if(color_depth == Background::Mode::BPP8) {
-    uint pos = tile_num * 64;
+    uint pos = tile_num * 32;
     while(y--) {
-      d0 = vram[pos +  0];
-      d1 = vram[pos +  1];
-      d2 = vram[pos + 16];
-      d3 = vram[pos + 17];
-      d4 = vram[pos + 32];
-      d5 = vram[pos + 33];
-      d6 = vram[pos + 48];
-      d7 = vram[pos + 49];
+      d0 = vram[pos +  0].byte(0);
+      d1 = vram[pos +  0].byte(1);
+      d2 = vram[pos +  8].byte(0);
+      d3 = vram[pos +  8].byte(1);
+      d4 = vram[pos + 16].byte(0);
+      d5 = vram[pos + 16].byte(1);
+      d6 = vram[pos + 24].byte(0);
+      d7 = vram[pos + 24].byte(1);
       renderBGTile_line_8bpp(0x80);
       renderBGTile_line_8bpp(0x40);
       renderBGTile_line_8bpp(0x20);
@@ -82,7 +82,7 @@ auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
       renderBGTile_line_8bpp(0x04);
       renderBGTile_line_8bpp(0x02);
       renderBGTile_line_8bpp(0x01);
-      pos += 2;
+      pos += 1;
     }
   }
 

@@ -1,5 +1,5 @@
 struct Multitap : Controller {
-  Multitap(bool port, uint index);
+  Multitap(bool port);
 
   auto data() -> uint2;
   auto latch(bool data) -> void;
