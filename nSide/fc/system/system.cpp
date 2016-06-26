@@ -37,15 +37,16 @@ auto System::term() -> void {
 }
 
 auto System::load(Revision revision) -> bool {
-  bus.reset();
+  information = Information();
 
-  _revision = revision;
+  information.revision = revision;
 
   if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
   } else return false;
 
   auto document = BML::unserialize(information.manifest);
+  auto system = document["system"];
 
   if(pc10()) {
     if(auto firmware = document["system/pc10/cpu/rom/name"].text()) {
@@ -81,13 +82,13 @@ auto System::load(Revision revision) -> bool {
     }
   }
 
+  bus.reset();
+  if(!cpu.load(system)) return false;
+  if(!apu.load(system)) return false;
+  if(!ppu.load(system)) return false;
   if(!cartridge.load()) return false;
-  switch(cartridge.region()) {
-  case Cartridge::Region::NTSC:  _region = Region::NTSC;  break;
-  case Cartridge::Region::PAL:   _region = Region::PAL;   break;
-  case Cartridge::Region::Dendy: _region = Region::Dendy; break;
-  }
-  _cpuFrequency = region() == Region::NTSC ? 21'477'272 : 26'601'712;
+
+  information.cpuFrequency = region() == Region::NTSC ? 21'477'272 : 26'601'712;
 
   interface->information.canvasWidth  = 256;
   interface->information.canvasHeight = 240;
@@ -106,6 +107,15 @@ auto System::load(Revision revision) -> bool {
     }
     if(region() != Region::NTSC) interface->information.aspectRatio = 2'950'000.0 / 2'128'137.0;
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
+
+    switch(cartridge.region()) {
+    case Cartridge::Region::NTSC:  information.region = Region::NTSC;  break;
+    case Cartridge::Region::PAL:   information.region = Region::PAL;   break;
+    case Cartridge::Region::Dendy: information.region = Region::Dendy; break;
+    }
+    if(system["region"].text() == "NTSC" ) information.region = Region::NTSC;
+    if(system["region"].text() == "PAL"  ) information.region = Region::PAL;
+    if(system["region"].text() == "Dendy") information.region = Region::Dendy;
     break;
   }
 
@@ -144,7 +154,7 @@ auto System::load(Revision revision) -> bool {
   }
 
   serializeInit();
-  return _loaded = true;
+  return information.loaded = true;
 }
 
 auto System::save() -> void {
@@ -163,7 +173,7 @@ auto System::unload() -> void {
   }
 
   cartridge.unload();
-  _loaded = false;
+  information.loaded = false;
 }
 
 auto System::power() -> void {

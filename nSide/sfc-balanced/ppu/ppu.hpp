@@ -11,6 +11,7 @@ struct PPU : Thread, PPUcounter {
 
   static auto Enter() -> void;
   auto main() -> void;
+  auto load(Markup::Node) -> bool;
   auto power() -> void;
   auto reset() -> void;
 
@@ -32,7 +33,11 @@ struct PPU : Thread, PPUcounter {
   auto updateVideoMode() -> void;
 
 privileged:
-  uint16 vram[32 * 1024];
+  struct VRAM {
+    auto& operator[](uint offset) { return data[offset & mask]; }
+    uint16 data[64 * 1024];
+    uint mask = 0x7fff;
+  } vram;
   uint8 oam[544];
   uint8 cgram[512];
 

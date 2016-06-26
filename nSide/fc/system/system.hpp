@@ -1,7 +1,5 @@
 struct Interface;
 
-#include "peripherals.hpp"
-
 struct System {
   enum class Region : uint { NTSC = 0, PAL = 1, Dendy = 2 };
 
@@ -12,15 +10,15 @@ struct System {
     FamicomBox,
   };
 
-  inline auto loaded() const -> bool { return _loaded; }
-  inline auto revision() const -> Revision { return _revision; }
-  inline auto region() const -> Region { return _region; }
-  inline auto cpuFrequency() const -> uint { return _cpuFrequency; }
+  inline auto loaded() const -> bool { return information.loaded; }
+  inline auto revision() const -> Revision { return information.revision; }
+  inline auto region() const -> Region { return information.region; }
+  inline auto cpuFrequency() const -> uint { return information.cpuFrequency; }
 
-  inline auto fc()   const { return _revision == Revision::Famicom; }
-  inline auto vs()   const { return _revision == Revision::VSSystem; }
-  inline auto pc10() const { return _revision == Revision::PlayChoice10; }
-  inline auto fcb()  const { return _revision == Revision::FamicomBox; }
+  inline auto fc()   const { return information.revision == Revision::Famicom; }
+  inline auto vs()   const { return information.revision == Revision::VSSystem; }
+  inline auto pc10() const { return information.revision == Revision::PlayChoice10; }
+  inline auto fcb()  const { return information.revision == Revision::FamicomBox; }
 
   auto run() -> void;
   auto runToSave() -> void;
@@ -38,26 +36,36 @@ struct System {
   auto configureVideoEffects() -> void;
 
   //serialization.cpp
-  serializer serialize();
-  bool unserialize(serializer&);
-
-  struct Information {
-    string manifest;
-  } information;
+  auto serialize() -> serializer;
+  auto unserialize(serializer&) -> bool;
 
 private:
-  void serialize(serializer&);
-  void serializeAll(serializer&);
-  void serializeInit();
+  struct Information {
+    string manifest;
+    bool loaded = false;
+    Revision revision = Revision::Famicom;
+    Region region = Region::NTSC;
+    uint cpuFrequency = 0;
+  } information;
 
-  bool _loaded = false;
-  Revision _revision = Revision::Famicom;
-  Region _region = Region::NTSC;
-  uint _cpuFrequency = 0;
-  uint _serializeSize = 0;
+  uint serializeSize = 0;
+
+  auto serialize(serializer&) -> void;
+  auto serializeAll(serializer&) -> void;
+  auto serializeInit() -> void;
 
   friend class Cartridge;
-  friend class Device;
+};
+
+struct Peripherals {
+  auto unload() -> void;
+  auto reset() -> void;
+  auto connect(uint port, uint device) -> void;
+
+  Controller* controllerPort1 = nullptr;
+  Controller* controllerPort2 = nullptr;
+  Expansion* expansionPort = nullptr;
 };
 
 extern System system;
+extern Peripherals peripherals;

@@ -42,6 +42,10 @@ auto DSP::write(uint8 addr, uint8 data) -> void {
   spc_dsp.write(addr, data);
 }
 
+auto DSP::load(Markup::Node node) -> bool {
+  return true;
+}
+
 auto DSP::power() -> void {
   spc_dsp.init(smp.apuram);
   spc_dsp.reset();

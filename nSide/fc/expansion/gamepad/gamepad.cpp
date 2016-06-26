@@ -1,9 +1,6 @@
 GamepadE::GamepadE() {
   latched = 0;
   counter = 0;
-
-  a = b = select = start = 0;
-  up = down = left = right = 0;
 }
 
 auto GamepadE::data1() -> bool {
@@ -21,6 +18,7 @@ auto GamepadE::data1() -> bool {
   case 6: return left & !right;
   case 7: return right & !left;
   }
+  unreachable;
 }
 
 auto GamepadE::data2() -> uint5 {

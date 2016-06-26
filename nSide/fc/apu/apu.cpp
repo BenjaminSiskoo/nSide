@@ -80,6 +80,10 @@ auto APU::setSample(int16 sample) -> void {
   cartridgeSample = sample;
 }
 
+auto APU::load(Markup::Node node) -> bool {
+  return true;
+}
+
 auto APU::power() -> void {
   filter.hipassStrong = 0;
   filter.hipassWeak = 0;

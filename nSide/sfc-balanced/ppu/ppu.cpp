@@ -88,8 +88,16 @@ auto PPU::addClocks(uint clocks) -> void {
   synchronizeCPU();
 }
 
+auto PPU::load(Markup::Node node) -> bool {
+  ppu1.version = max(1, min(1, node["ppu1/version"].natural()));
+  ppu2.version = max(1, min(3, node["ppu2/version"].natural()));
+  ppu.vram.mask = node["ppu1/ram/size"].natural() - 1;
+  if(ppu.vram.mask != 0xffff) ppu.vram.mask = 0x7fff;
+  return true;
+}
+
 auto PPU::power() -> void {
-  for(auto& n : vram) n = 0x0000;
+  for(auto& n : vram.data) n = 0x0000;
   for(auto& n : oam) n = 0x00;
   for(auto& n : cgram) n = 0x00;
   tiledataCache.flush();

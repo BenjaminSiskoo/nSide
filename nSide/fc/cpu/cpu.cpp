@@ -63,6 +63,10 @@ auto CPU::main() -> void {
   instruction();
 }
 
+auto CPU::load(Markup::Node node) -> bool {
+  return true;
+}
+
 auto CPU::power() -> void {
   R6502::power();
 

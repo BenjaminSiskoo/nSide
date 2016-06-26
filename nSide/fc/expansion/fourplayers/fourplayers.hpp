@@ -14,8 +14,8 @@ private:
   uint counter1;
   uint counter2;
 
-  bool a3, b3, select3, start3;
-  bool up3, down3, left3, right3;
-  bool a4, b4, select4, start4;
-  bool up4, down4, left4, right4;
+  struct Gamepad {
+    boolean a, b, select, start;
+    boolean up, down, left, right;
+  } gamepads[2];
 };

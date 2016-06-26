@@ -1,10 +1,6 @@
 SNESGamepad::SNESGamepad(bool port) : Controller(port) {
   latched = 0;
   counter = 0;
-
-  b = y = select = start = 0;
-  up = down = left = right = 0;
-  a = x = l = r = 0;
 }
 
 auto SNESGamepad::data() -> uint3 {
@@ -36,18 +32,17 @@ auto SNESGamepad::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    auto id = ID::Device::SNESGamepad;
-    b      = interface->inputPoll(port, id, B);
-    y      = interface->inputPoll(port, id, Y);
-    select = interface->inputPoll(port, id, Select);
-    start  = interface->inputPoll(port, id, Start);
-    up     = interface->inputPoll(port, id, Up);
-    down   = interface->inputPoll(port, id, Down);
-    left   = interface->inputPoll(port, id, Left);
-    right  = interface->inputPoll(port, id, Right);
-    a      = interface->inputPoll(port, id, A);
-    x      = interface->inputPoll(port, id, X);
-    l      = interface->inputPoll(port, id, L);
-    r      = interface->inputPoll(port, id, R);
+    b      = interface->inputPoll(port, ID::Device::SNESGamepad, B);
+    y      = interface->inputPoll(port, ID::Device::SNESGamepad, Y);
+    select = interface->inputPoll(port, ID::Device::SNESGamepad, Select);
+    start  = interface->inputPoll(port, ID::Device::SNESGamepad, Start);
+    up     = interface->inputPoll(port, ID::Device::SNESGamepad, Up);
+    down   = interface->inputPoll(port, ID::Device::SNESGamepad, Down);
+    left   = interface->inputPoll(port, ID::Device::SNESGamepad, Left);
+    right  = interface->inputPoll(port, ID::Device::SNESGamepad, Right);
+    a      = interface->inputPoll(port, ID::Device::SNESGamepad, A);
+    x      = interface->inputPoll(port, ID::Device::SNESGamepad, X);
+    l      = interface->inputPoll(port, ID::Device::SNESGamepad, L);
+    r      = interface->inputPoll(port, ID::Device::SNESGamepad, R);
   }
 }

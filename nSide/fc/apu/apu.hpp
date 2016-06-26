@@ -19,6 +19,7 @@ struct APU : Thread {
   auto irqLine() -> void;
   auto setSample(int16 sample) -> void;
 
+  auto load(Markup::Node) -> bool;
   auto power() -> void;
   auto reset() -> void;
 
@@ -43,6 +44,7 @@ struct APU : Thread {
     int64 lopass;
   };
 
+  //envelope.cpp
   struct Envelope {
     auto volume() const -> uint;
     auto clock() -> void;
@@ -61,6 +63,7 @@ struct APU : Thread {
     uint4 decayVolume;
   };
 
+  //sweep.cpp
   struct Sweep {
     auto checkPeriod() -> bool;
     auto clock(uint channel) -> void;
@@ -79,6 +82,7 @@ struct APU : Thread {
     uint11 pulsePeriod;
   };
 
+  //pulse.cpp
   struct Pulse {
     auto clockLength() -> void;
     auto checkPeriod() -> bool;
@@ -101,6 +105,7 @@ struct APU : Thread {
     uint periodCounter;
   } pulse[2];
 
+  //triangle.cpp
   struct Triangle {
     auto clockLength() -> void;
     auto clockLinearLength() -> void;
@@ -124,6 +129,7 @@ struct APU : Thread {
     bool reloadLinear;
   } triangle;
 
+  //noise.cpp
   struct Noise {
     auto clockLength() -> void;
     auto clock() -> uint8;
@@ -144,6 +150,7 @@ struct APU : Thread {
     uint15 lfsr;
   } noise;
 
+  //dmc.cpp
   struct DMC {
     auto start() -> void;
     auto stop() -> void;

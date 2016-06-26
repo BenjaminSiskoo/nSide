@@ -6,34 +6,37 @@ FourPlayers::FourPlayers() {
 
 auto FourPlayers::data1() -> bool {
   if(counter1 >= 8) return 1;
-  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, A + 0);
+  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, 0 + A);
 
-  //note: D-pad physically prevents up+down and left+right from being pressed at the same time
+  auto& A = gamepads[0];
+
   switch(counter1++) {
-  case 0: return a3;
-  case 1: return b3;
-  case 2: return select3;
-  case 3: return start3;
-  case 4: return up3 & !down3;
-  case 5: return down3 & !up3;
-  case 6: return left3 & !right3;
-  case 7: return right3 & !left3;
+  case 0: return A.a;
+  case 1: return A.b;
+  case 2: return A.select;
+  case 3: return A.start;
+  case 4: return A.up & !A.down;
+  case 5: return A.down & !A.up;
+  case 6: return A.left & !A.right;
+  case 7: return A.right & !A.left;
   }
 }
 
 auto FourPlayers::data2() -> uint5 {
   if(counter2 >= 8) return 2;
-  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, A + 8) << 1;
+  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, 8 + A) << 1;
+
+  auto& B = gamepads[1];
 
   switch(counter2++) {
-  case 0: return a4 << 1;
-  case 1: return b4 << 1;
-  case 2: return select4 << 1;
-  case 3: return start4 << 1;
-  case 4: return (up4 & !down4) << 1;
-  case 5: return (down4 & !up4) << 1;
-  case 6: return (left4 & !right4) << 1;
-  case 7: return (right4 & !left4) << 1;
+  case 0: return B.a << 1;
+  case 1: return B.b << 1;
+  case 2: return B.select << 1;
+  case 3: return B.start << 1;
+  case 4: return (B.up & !B.down) << 1;
+  case 5: return (B.down & !B.up) << 1;
+  case 6: return (B.left & !B.right) << 1;
+  case 7: return (B.right & !B.left) << 1;
   }
 }
 
@@ -44,22 +47,16 @@ auto FourPlayers::latch(bool data) -> void {
   counter2 = 0;
 
   if(latched == 0) {
-    auto id = ID::Device::FourPlayers;
-    a3      = interface->inputPoll(ID::Port::Expansion, id, A      + 0);
-    b3      = interface->inputPoll(ID::Port::Expansion, id, B      + 0);
-    select3 = interface->inputPoll(ID::Port::Expansion, id, Select + 0);
-    start3  = interface->inputPoll(ID::Port::Expansion, id, Start  + 0);
-    up3     = interface->inputPoll(ID::Port::Expansion, id, Up     + 0);
-    down3   = interface->inputPoll(ID::Port::Expansion, id, Down   + 0);
-    left3   = interface->inputPoll(ID::Port::Expansion, id, Left   + 0);
-    right3  = interface->inputPoll(ID::Port::Expansion, id, Right  + 0);
-    a4      = interface->inputPoll(ID::Port::Expansion, id, A      + 8);
-    b4      = interface->inputPoll(ID::Port::Expansion, id, B      + 8);
-    select4 = interface->inputPoll(ID::Port::Expansion, id, Select + 8);
-    start4  = interface->inputPoll(ID::Port::Expansion, id, Start  + 8);
-    up4     = interface->inputPoll(ID::Port::Expansion, id, Up     + 8);
-    down4   = interface->inputPoll(ID::Port::Expansion, id, Down   + 8);
-    left4   = interface->inputPoll(ID::Port::Expansion, id, Left   + 8);
-    right4  = interface->inputPoll(ID::Port::Expansion, id, Right  + 8);
+    for(uint id : range(2)) {
+      auto& gamepad = gamepads[id];
+      gamepad.a      = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + A);
+      gamepad.b      = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + B);
+      gamepad.select = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Select);
+      gamepad.start  = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Start);
+      gamepad.up     = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Up);
+      gamepad.down   = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Down);
+      gamepad.left   = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Left);
+      gamepad.right  = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Right);
+    }
   }
 }

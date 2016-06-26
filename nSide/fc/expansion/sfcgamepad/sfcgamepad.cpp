@@ -1,10 +1,6 @@
 SFCGamepad::SFCGamepad() {
   latched = 0;
   counter = 0;
-
-  b = y = select = start = 0;
-  up = down = left = right = 0;
-  a = x = l = r = 0;
 }
 
 auto SFCGamepad::data1() -> bool {
@@ -40,18 +36,17 @@ auto SFCGamepad::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    auto id = ID::Device::SFCGamepad;
-    b      = interface->inputPoll(ID::Port::Expansion, id, B);
-    y      = interface->inputPoll(ID::Port::Expansion, id, Y);
-    select = interface->inputPoll(ID::Port::Expansion, id, Select);
-    start  = interface->inputPoll(ID::Port::Expansion, id, Start);
-    up     = interface->inputPoll(ID::Port::Expansion, id, Up);
-    down   = interface->inputPoll(ID::Port::Expansion, id, Down);
-    left   = interface->inputPoll(ID::Port::Expansion, id, Left);
-    right  = interface->inputPoll(ID::Port::Expansion, id, Right);
-    a      = interface->inputPoll(ID::Port::Expansion, id, A);
-    x      = interface->inputPoll(ID::Port::Expansion, id, X);
-    l      = interface->inputPoll(ID::Port::Expansion, id, L);
-    r      = interface->inputPoll(ID::Port::Expansion, id, R);
+    b      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, B);
+    y      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Y);
+    select = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Select);
+    start  = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Start);
+    up     = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Up);
+    down   = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Down);
+    left   = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Left);
+    right  = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Right);
+    a      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, A);
+    x      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, X);
+    l      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, L);
+    r      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, R);
   }
 }

@@ -14,7 +14,8 @@ auto PPU::serialize(serializer& s) -> void {
   Thread::serialize(s);
   PPUcounter::serialize(s);
 
-  s.array(vram);
+  s.integer(vram.mask);
+  s.array(vram.data, vram.mask + 1);
   s.array(oam);
   s.array(cgram);
 

@@ -7,7 +7,6 @@ Presentation::Presentation() {
   libraryMenu.setText("Library");
   for(auto& emulator : program->emulators) {
     for(auto& medium : emulator->media) {
-      if(!medium.bootable) continue;
       auto item = new MenuItem{&libraryMenu};
       item->setText({medium.name, " ..."}).onActivate([=] {
         program->loadMedium(*emulator, medium);
@@ -150,8 +149,6 @@ Presentation::Presentation() {
 
   statusBar.setFont(Font().setBold());
   statusBar.setVisible(settings["UserInterface/ShowStatusBar"].boolean());
-
-  //viewport.setDroppable().onDrop([&](auto locations) { program->load(locations(0)); });
 
   onClose([&] { program->quit(); });
 

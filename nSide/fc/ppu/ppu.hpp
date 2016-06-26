@@ -36,6 +36,7 @@ struct PPU : Thread, PPUcounter {
 
   static auto Enter() -> void;
   auto main() -> void;
+  auto load(Markup::Node) -> bool;
   auto power() -> void;
   auto reset() -> void;
 
@@ -73,11 +74,11 @@ struct PPU : Thread, PPUcounter {
   auto read(uint16 addr, uint8 data) -> uint8;
   auto write(uint16 addr, uint8 data) -> void;
 
-  uint8 ciram[4096]; // 2048 in Famicom and PlayChoice-10
+  uint8 ciram[4096];  //2048 in Famicom and PlayChoice-10
   uint8 cgram[32];
   uint8 oam[256];
 
-  bool side; // VS. System; 0: main, 1: sub
+  bool side;  //VS. System; 0: main, 1: sub
 
   static const uint9 RP2C03[16 * 4];
   static const uint9 RP2C04_0001[16 * 4];

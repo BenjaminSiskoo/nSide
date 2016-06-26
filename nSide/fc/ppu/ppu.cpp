@@ -60,6 +60,10 @@ auto PPU::addClocks(uint clocks) -> void {
   }
 }
 
+auto PPU::load(Markup::Node node) -> bool {
+  return true;
+}
+
 auto PPU::power() -> void {
   status.vaddr = 0x0000;
 

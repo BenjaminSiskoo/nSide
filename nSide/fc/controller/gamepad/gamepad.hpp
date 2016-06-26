@@ -12,6 +12,6 @@ private:
   bool latched;
   uint counter;
 
-  bool a, b, select, start;
-  bool up, down, left, right;
+  boolean a, b, select, start;
+  boolean up, down, left, right;
 };

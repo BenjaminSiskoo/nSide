@@ -20,10 +20,10 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::Famicom,      "Famicom",       "fc",   true});
-  media.append({ID::VSSystem,     "VS. System",    "vs",   true});
-  media.append({ID::PlayChoice10, "PlayChoice-10", "pc10", true});
-  //media.append({ID::FamicomBox,   "FamicomBox",    "fcb",  true});
+  media.append({ID::Famicom,      "Famicom",       "fc"});
+  media.append({ID::VSSystem,     "VS. System",    "vs"});
+  media.append({ID::PlayChoice10, "PlayChoice-10", "pc10"});
+  //media.append({ID::FamicomBox,   "FamicomBox",    "fcb"});
 
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", true};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", true};
@@ -51,7 +51,7 @@ Interface::Interface() {
   }
 
   { Device device{ID::Device::FourScore, "Four Score"};
-    for(uint p = 1, n = 0; p <= 4; p += 2, n += 8) {
+    for(uint p = 1; p <= 4; p += 2) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
       device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
@@ -65,7 +65,7 @@ Interface::Interface() {
   }
 
   { Device device{ID::Device::FourScore, "Four Score"};
-    for(uint p = 2, n = 0; p <= 4; p += 2, n += 8) {
+    for(uint p = 2; p <= 4; p += 2) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
       device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
@@ -137,7 +137,7 @@ Interface::Interface() {
   }
 
   { Device device{ID::Device::FourPlayers, "4-Players Adaptor"};
-    for(uint p = 3, n = 0; p <= 4; p += 1, n += 8) {
+    for(uint p = 3; p <= 4; p += 1) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
       device.inputs.append({0, {"Port ", p, " - ", "Left"  }});

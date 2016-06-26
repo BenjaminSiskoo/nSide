@@ -12,8 +12,8 @@ private:
   bool latched;
   uint counter;
 
-  bool aL, bL, selectL, startL;
-  bool upL, downL, leftL, rightL;
-  bool aR, bR, selectR, startR;
-  bool upR, downR, leftR, rightR;
+  struct Gamepad {
+    boolean a, b, select, start;
+    boolean up, down, left, right;
+  } gamepads[2];
 };

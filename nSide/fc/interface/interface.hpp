@@ -9,6 +9,13 @@ struct ID {
     FamicomBox,
   };
 
+  struct Port { enum : uint {
+    Controller1,
+    Controller2,
+    Expansion,
+    Arcade,
+  };};
+
   struct Device { enum : uint {
     None,
     Gamepad,
@@ -28,13 +35,6 @@ struct ID {
     MouseE,
 
     VSPanel,
-  };};
-
-  struct Port { enum : uint {
-    Controller1,
-    Controller2,
-    Expansion,
-    Arcade,
   };};
 };
 
