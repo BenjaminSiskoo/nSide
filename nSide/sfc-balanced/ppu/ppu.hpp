@@ -27,8 +27,8 @@ struct PPU : Thread, PPUcounter {
   alwaysinline auto cgramWrite(uint addr, uint8 data) -> void;
 
   //mmio.cpp
-  auto read(uint24 addr, uint8 data) -> uint8;
-  auto write(uint24 addr, uint8 data) -> void;
+  auto readIO(uint24 addr, uint8 data) -> uint8;
+  auto writeIO(uint24 addr, uint8 data) -> void;
   auto latchCounters() -> void;
   auto updateVideoMode() -> void;
 

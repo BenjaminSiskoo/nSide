@@ -40,12 +40,12 @@ auto PPU::addClocks(uint clocks) -> void {
   while(clocks--) {
     if(vcounter() == vbl - 1 && hcounter() == 340) r.nmiHold = 1;
 
-    if(vcounter() == vbl && hcounter() ==   0) r.chrAddressBus = r.vaddr & 0x3fff;
-    if(vcounter() == vbl && hcounter() ==   0) r.nmiFlag = r.nmiHold;
+    if(vcounter() == vbl && hcounter() ==   0) r.chrAddressBus = (uint12)r.v.address;
+    if(vcounter() == vbl && hcounter() ==   1) r.nmiFlag = r.nmiHold;
     if(vcounter() == vbl && hcounter() ==   2) cpu.nmiLine(r.nmiEnable && r.nmiFlag);
 
     if(vcounter() == pre - 1 && hcounter() == 340) r.nmiHold = 0;
-    if(vcounter() == pre     && hcounter() ==   0) r.nmiFlag = r.nmiHold;
+    if(vcounter() == pre     && hcounter() ==   1) r.nmiFlag = r.nmiHold;
     if(vcounter() == pre     && hcounter() ==   1) r.spriteZeroHit = 0, r.spriteOverflow = 0;
     if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(r.nmiEnable && r.nmiFlag);
 
@@ -65,13 +65,10 @@ auto PPU::load(Markup::Node node) -> bool {
 
   string versionString;
   if(system.fc()) {
-    print("Famicom\n");
-    print("Region ID: ", (uint)system.region(), "\n");
     if(system.region() == System::Region::NTSC)  versionString = node["ppu/ntsc-version"].text();
     if(system.region() == System::Region::PAL)   versionString = node["ppu/pal-version"].text();
     if(system.region() == System::Region::Dendy) versionString = node["ppu/dendy-version"].text();
   } else {
-    print("VS. System, PlayChoice-10, or FamicomBox\n");
     versionString = node["ppu/version"].text();
   }
   print("Version: ", versionString, "\n");
@@ -103,7 +100,7 @@ auto PPU::load(Markup::Node node) -> bool {
 }
 
 auto PPU::power() -> void {
-  r.vaddr = 0x0000;
+  r.v.address = 0x0000;
 
   r.nmiHold = 0;
   r.nmiFlag = 1;
@@ -119,16 +116,18 @@ auto PPU::reset() -> void {
   PPUcounter::reset();
   memory::fill(output, 256 * 312 * sizeof(uint32));
 
-  function<auto (uint16, uint8) -> uint8> reader{&PPU::read, this};
-  function<auto (uint16, uint8) -> void> writer{&PPU::write, this};
+  function<auto (uint16, uint8) -> uint8> reader{&PPU::readIO, this};
+  function<auto (uint16, uint8) -> void> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "2000-3fff");
 
   r.mdr = 0x00;
   r.busData = 0x00;
-  r.addressLatch = 0;
-
-  r.taddr = 0x0000;
-  r.xaddr = 0x00;
+  r.v.latch = 0;
+  r.v.fineX = 0;
+  r.t.tileX = 0;
+  r.t.fineY = 0;
+  r.t.tileY = 0;
+  r.t.address = 0x0000;
 
   //$2000  PPUCTRL
   r.nmiEnable = false;
@@ -167,11 +166,11 @@ auto PPU::frame() -> void {
   //TODO: Verify whether putting the scheduler exit event at vcounter() == 241 reduces lag as opposed to here
 }
 
-auto PPU::origin_x() -> uint {
+auto PPU::originX() -> uint {
   return (system.vs() && interface->information.canvasWidth == 512) ? side * 256 : 0;
 }
 
-auto PPU::origin_y() -> uint {
+auto PPU::originY() -> uint {
   if(system.pc10()) {
     switch(playchoice10.screenConfig) {
     case PlayChoice10::ScreenConfig::Dual:   return 240;
@@ -184,7 +183,7 @@ auto PPU::origin_y() -> uint {
 
 auto PPU::refresh() -> void {
   auto output = this->output;
-  Emulator::video.refreshRegion(output, 256 * sizeof(uint32), origin_x(), origin_y(), 256, 240);
+  Emulator::video.refreshRegion(output, 256 * sizeof(uint32), originX(), originY(), 256, 240);
 }
 
 //

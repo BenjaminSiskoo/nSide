@@ -42,17 +42,3 @@ auto APU::Triangle::reset() -> void {
   linearLengthCounter = 0;
   reloadLinear = 0;
 }
-
-auto APU::Triangle::serialize(serializer& s) -> void {
-  s.integer(lengthCounter);
-
-  s.integer(linearLength);
-  s.integer(haltLengthCounter);
-
-  s.integer(period);
-  s.integer(periodCounter);
-
-  s.integer(stepCounter);
-  s.integer(linearLengthCounter);
-  s.integer(reloadLinear);
-}

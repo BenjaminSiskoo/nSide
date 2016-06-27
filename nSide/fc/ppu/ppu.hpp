@@ -40,16 +40,14 @@ struct PPU : Thread, PPUcounter {
   auto power() -> void;
   auto reset() -> void;
 
-  auto origin_x() -> uint;
-  auto origin_y() -> uint;
+  alwaysinline auto originX() -> uint;
+  alwaysinline auto originY() -> uint;
 
   auto ext() -> uint4;
 
-  auto serialize(serializer&) -> void;
-
   //memory.cpp
-  auto readCIRAM(uint14 addr) -> uint8;
-  auto writeCIRAM(uint14 addr, uint8 data) -> void;
+  auto readCIRAM(uint12 addr) -> uint8;
+  auto writeCIRAM(uint12 addr, uint8 data) -> void;
 
   alwaysinline auto readCGRAM(uint5 addr) -> uint8;
   alwaysinline auto writeCGRAM(uint5 addr, uint8 data) -> void;
@@ -58,8 +56,8 @@ struct PPU : Thread, PPUcounter {
   alwaysinline auto writeOAM(uint8 addr, uint8 data) -> void;
 
   //mmio.cpp
-  auto read(uint16 addr, uint8 data) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
+  auto readIO(uint16 addr, uint8 data) -> uint8;
+  auto writeIO(uint16 addr, uint8 data) -> void;
 
   //render.cpp
   auto enable() const -> bool;
@@ -75,6 +73,9 @@ struct PPU : Thread, PPUcounter {
   auto renderPixel() -> void;
   auto renderSprite() -> void;
   auto renderScanline() -> void;
+
+  //serialization.cpp
+  auto serialize(serializer&) -> void;
 
   uint8 ciram[4096];  //2048 in Famicom and PlayChoice-10
   uint8 cgram[32];
@@ -95,11 +96,20 @@ struct PPU : Thread, PPUcounter {
 
     uint8 busData;
 
-    bool addressLatch;
-
-    uint15 vaddr;
-    uint15 taddr;
-    uint8 xaddr;
+    union {
+      uint value;
+      BitField<uint, 0, 4> tileX;
+      BitField<uint, 5, 9> tileY;
+      BitField<uint,10,11> nametable;
+      BitField<uint,   10> nametableX;
+      BitField<uint,   11> nametableY;
+      BitField<uint,12,14> fineY;
+      BitField<uint, 0,14> address;
+      BitField<uint, 0, 7> addressLo;
+      BitField<uint, 8,14> addressHi;
+      BitField<uint,   15> latch;
+      BitField<uint,16,18> fineX;
+    } v, t;
 
     bool nmiHold;
     bool nmiFlag;
@@ -129,14 +139,17 @@ struct PPU : Thread, PPUcounter {
   } r;
 
   struct OAM {
-    uint8 id;
-    uint8 y;
-    uint8 tile;
-    uint8 attr;
-    uint8 x;
+    //serialization.cpp
+    auto serialize(serializer&) -> void;
 
-    uint8 tiledataLo;
-    uint8 tiledataHi;
+    uint8 id = 64;
+    uint8 y = 0xff;
+    uint8 tile = 0xff;
+    uint8 attr = 0xff;
+    uint8 x = 0xff;
+
+    uint8 tiledataLo = 0;
+    uint8 tiledataHi = 0;
   };
 
   struct Latches {

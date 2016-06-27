@@ -1,5 +1,5 @@
-auto PPU::read(uint16 addr, uint8 data) -> uint8 {
-  switch(addr & 7) {
+auto PPU::readIO(uint16 addr, uint8 data) -> uint8 {
+  switch(addr.bits(0,2)) {
 
   case 0: case 1: case 3:
   case 5: case 6: {
@@ -9,19 +9,19 @@ auto PPU::read(uint16 addr, uint8 data) -> uint8 {
   //PPUSTATUS
   case 2: {
     data = 0x00;
-    data |= r.nmiFlag << 7;
-    data |= r.spriteZeroHit << 6;
     switch(version) {
     default:
+      data |= r.mdr.bits(0,4);
       data |= r.spriteOverflow << 5;
-      data |= r.mdr & 0x1f;
       break;
     case Version::RC2C05_01:
     case Version::RC2C05_04: data |= 0x1b; break;
     case Version::RC2C05_02: data |= 0x3d; break;
     case Version::RC2C05_03: data |= 0x1c; break;
     }
-    r.addressLatch = 0;
+    data |= r.spriteZeroHit << 6;
+    data |= r.nmiFlag << 7;
+    r.v.latch = 0;
     r.nmiHold = 0;
     cpu.nmiLine(r.nmiFlag = 0);
     return data;
@@ -42,19 +42,17 @@ auto PPU::read(uint16 addr, uint8 data) -> uint8 {
 
   //PPUDATA
   case 7: {
-    if(enable() && (vcounter() <= 240 || vcounter() == (system.region() == System::Region::NTSC ? 261 : 311))) {
-      return 0x00;
-    }
+    if(enable() && (vcounter() <= 240 || vcounter() == (system.region() == System::Region::NTSC ? 261 : 311))) return 0x00;
 
-    addr = r.vaddr & 0x3fff;
+    addr = (uint14)r.v.address;
     if(addr <= 0x3eff) {
       r.mdr = r.busData;
     } else if(addr <= 0x3fff) {
       r.mdr = (r.mdr & 0xc0) | readCGRAM(addr);
     }
     r.busData = cartridge.readCHR(r.chrAddressBus = addr);
-    r.vaddr += r.vramIncrement;
-    r.chrAddressBus = r.vaddr;
+    r.v.address += r.vramIncrement;
+    r.chrAddressBus = r.v.address;
     return r.mdr;
   }
 
@@ -63,7 +61,7 @@ auto PPU::read(uint16 addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto PPU::write(uint16 addr, uint8 data) -> void {
+auto PPU::writeIO(uint16 addr, uint8 data) -> void {
   r.mdr = data;
   // Decay rate can vary depending on the system and temperature.
   // Value used here is PPU's NTSC clock rate * 0.6 rounded to nearest integer.
@@ -74,32 +72,32 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
   case Version::RC2C05_02:
   case Version::RC2C05_03:
   case Version::RC2C05_04:
-  case Version::RC2C05_05: if((addr & 6) == 0) addr ^= 1; break;
+  case Version::RC2C05_05: if(addr.bits(1,2) == 0) addr ^= 1; break;
   }
 
-  switch(addr & 7) {
+  switch(addr.bits(0,2)) {
 
   //PPUCTRL
   case 0: {
-    r.nmiEnable     = data.bit(7);
-    r.masterSelect  = data.bit(6);
-    r.spriteHeight  = data.bit(5) ? 16 : 8;
-    r.bgAddress     = data.bit(4) ? 0x1000 : 0x0000;
-    r.objAddress    = data.bit(3) ? 0x1000 : 0x0000;
-    r.vramIncrement = data.bit(2) ? 32 : 1;
-    r.taddr = (r.taddr & 0x73ff) | (data.bits(1,0) << 10);
+    r.t.nametable   = data.bits(0,1);
+    r.vramIncrement = data.bit (2) ? 32 : 1;
+    r.objAddress    = data.bit (3) ? 0x1000 : 0x0000;
+    r.bgAddress     = data.bit (4) ? 0x1000 : 0x0000;
+    r.spriteHeight  = data.bit (5) ? 16 : 8;
+    r.masterSelect  = data.bit (6);
+    r.nmiEnable     = data.bit (7);
     cpu.nmiLine(r.nmiEnable && r.nmiHold && r.nmiFlag);
     return;
   }
 
   //PPUMASK
   case 1: {
-    r.emphasis      = data.bits(7,5);
-    r.objEnable     = data.bit(4);
-    r.bgEnable      = data.bit(3);
-    r.objEdgeEnable = data.bit(2);
-    r.bgEdgeEnable  = data.bit(1);
-    r.grayscale     = data.bit(0);
+    r.grayscale     = data.bit (0);
+    r.bgEdgeEnable  = data.bit (1);
+    r.objEdgeEnable = data.bit (2);
+    r.bgEnable      = data.bit (3);
+    r.objEnable     = data.bit (4);
+    r.emphasis      = data.bits(5,7);
     return;
   }
 
@@ -129,43 +127,41 @@ auto PPU::write(uint16 addr, uint8 data) -> void {
 
   //PPUSCROLL
   case 5: {
-    if(r.addressLatch == 0) {
-      r.xaddr = data.bits(2,0);
-      r.taddr = (r.taddr & 0x7fe0) | data.bits(7,3);
+    if(!r.v.latch) {
+      r.v.fineX = data.bits(0,2);
+      r.t.tileX = data.bits(3,7);
     } else {
-      r.taddr = (r.taddr & 0x0c1f) | (data.bits(2,0) << 12) | (data.bits(7,3) << 5);
+      r.t.fineY = data.bits(0,2);
+      r.t.tileY = data.bits(3,7);
     }
-    r.addressLatch ^= 1;
+    r.v.latch ^= 1;
     return;
   }
 
   //PPUADDR
   case 6: {
-    if(r.addressLatch == 0) {
-      r.taddr = (r.taddr & 0x00ff) | (data.bits(5,0) << 8);
+    if(!r.v.latch) {
+      r.t.addressHi = data.bits(0,5);
     } else {
-      r.taddr = (r.taddr & 0x7f00) | data;
-      r.vaddr = r.taddr;
-      r.chrAddressBus = r.vaddr;
+      r.t.addressLo = data.bits(0,7);
+      r.chrAddressBus = r.v.address = r.t.address;
     }
-    r.addressLatch ^= 1;
+    r.v.latch ^= 1;
     return;
   }
 
   //PPUDATA
   case 7: {
-    if(enable() && (vcounter() <= 240 || vcounter() == (system.region() != System::Region::PAL ? 261 : 311))) {
-      return;
-    }
+    if(enable() && (vcounter() <= 240 || vcounter() == (system.region() != System::Region::PAL ? 261 : 311))) return;
 
-    addr = r.vaddr & 0x3fff;
+    addr = (uint14)r.v.address;
     if(addr <= 0x3eff) {
       cartridge.writeCHR(r.chrAddressBus = addr, data);
     } else if(addr <= 0x3fff) {
       writeCGRAM(addr, data);
     }
-    r.vaddr += r.vramIncrement;
-    r.chrAddressBus = r.vaddr;
+    r.v.address += r.vramIncrement;
+    r.chrAddressBus = r.v.address;
     return;
   }
 

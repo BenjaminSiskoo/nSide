@@ -141,9 +141,9 @@ Presentation::Presentation() {
       "Based on ", Emulator::OriginalName, " v", Emulator::FromVersion, "\n\n",
       "Original Author: ", Emulator::OriginalAuthor, "\n",
       "Fork Author: ", Emulator::Author, "\n",
-      "Contributors: ", Emulator::Contributors, "\n",
       "License: ", Emulator::License, "\n",
-      "Website of ", Emulator::OriginalName, ": ", Emulator::Website
+      "Website of ", Emulator::OriginalName, ": ", Emulator::Website, "\n",
+      "Contributors:\n", Emulator::Contributors.merge("\n"),
     }).information();
   });
 

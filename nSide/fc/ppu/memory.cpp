@@ -1,21 +1,23 @@
-auto PPU::readCIRAM(uint14 addr) -> uint8 {
-  return ciram[addr & (!system.vs() ? 0x07ff : 0x0fff)];
+auto PPU::readCIRAM(uint12 addr) -> uint8 {
+  if(!system.vs()) addr &= 0x7ff;
+  return ciram[addr];
 }
 
-auto PPU::writeCIRAM(uint14 addr, uint8 data) -> void {
-  ciram[addr & (!system.vs() ? 0x07ff : 0x0fff)] = data;
+auto PPU::writeCIRAM(uint12 addr, uint8 data) -> void {
+  if(!system.vs()) addr &= 0x7ff;
+  ciram[addr] = data;
 }
 
 auto PPU::readCGRAM(uint5 addr) -> uint8 {
   if((addr & 0x13) == 0x10) addr &= ~0x10;
-  uint8 data = cgram[addr & 0x1f];
+  uint8 data = cgram[addr];
   if(r.grayscale) data &= 0x30;
   return data;
 }
 
 auto PPU::writeCGRAM(uint5 addr, uint8 data) -> void {
   if((addr & 0x13) == 0x10) addr &= ~0x10;
-  cgram[addr & 0x1f] = data;
+  cgram[addr] = data;
 }
 
 auto PPU::readOAM(uint8 addr) -> uint8 {

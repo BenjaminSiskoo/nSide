@@ -41,13 +41,3 @@ auto APU::Sweep::power() -> void {
 
 auto APU::Sweep::reset() -> void {
 }
-
-auto APU::Sweep::serialize(serializer& s) -> void {
-  s.integer(shift);
-  s.integer(decrement);
-  s.integer(period);
-  s.integer(counter);
-  s.integer(enable);
-  s.integer(reload);
-  s.integer(pulsePeriod);
-}

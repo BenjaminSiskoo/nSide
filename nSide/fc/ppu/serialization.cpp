@@ -14,31 +14,28 @@ auto PPU::serialize(serializer& s) -> void {
 
   s.integer(r.busData);
 
-  s.integer(r.addressLatch);
-
-  s.integer(r.vaddr);
-  s.integer(r.taddr);
-  s.integer(r.xaddr);
+  s.integer(r.v.value);
+  s.integer(r.t.value);
 
   s.integer(r.nmiHold);
   s.integer(r.nmiFlag);
 
-  s.integer(r.nmiEnable);
-  s.integer(r.masterSelect);
-  s.integer(r.spriteHeight);
-  s.integer(r.bgAddress);
-  s.integer(r.objAddress);
   s.integer(r.vramIncrement);
+  s.integer(r.objAddress);
+  s.integer(r.bgAddress);
+  s.integer(r.spriteHeight);
+  s.integer(r.masterSelect);
+  s.integer(r.nmiEnable);
 
-  s.integer(r.emphasis);
-  s.integer(r.objEnable);
-  s.integer(r.bgEnable);
-  s.integer(r.objEdgeEnable);
-  s.integer(r.bgEdgeEnable);
   s.integer(r.grayscale);
+  s.integer(r.bgEdgeEnable);
+  s.integer(r.objEdgeEnable);
+  s.integer(r.bgEnable);
+  s.integer(r.objEnable);
+  s.integer(r.emphasis);
 
-  s.integer(r.spriteZeroHit);
   s.integer(r.spriteOverflow);
+  s.integer(r.spriteZeroHit);
 
   s.integer(r.oamAddress);
 
@@ -50,29 +47,21 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(l.oamIterator);
   s.integer(l.oamCounter);
 
-  for(uint n = 0; n < 8; n++) {
-    s.integer(l.oam[n].id);
-    s.integer(l.oam[n].y);
-    s.integer(l.oam[n].tile);
-    s.integer(l.oam[n].attr);
-    s.integer(l.oam[n].x);
-
-    s.integer(l.oam[n].tiledataLo);
-    s.integer(l.oam[n].tiledataHi);
-  }
-
-  for(uint n = 0; n < 8; n++) {
-    s.integer(l.soam[n].id);
-    s.integer(l.soam[n].y);
-    s.integer(l.soam[n].tile);
-    s.integer(l.soam[n].attr);
-    s.integer(l.soam[n].x);
-
-    s.integer(l.soam[n].tiledataLo);
-    s.integer(l.soam[n].tiledataHi);
-  }
+  for(auto& o : l.oam) o.serialize(s);
+  for(auto& o : l.soam) o.serialize(s);
 
   s.array(ciram, !system.vs() ? 0x0800 : 0x1000);
   s.array(cgram);
   s.array(oam);
+}
+
+auto PPU::OAM::serialize(serializer& s) -> void {
+  s.integer(id);
+  s.integer(y);
+  s.integer(tile);
+  s.integer(attr);
+  s.integer(x);
+
+  s.integer(tiledataLo);
+  s.integer(tiledataHi);
 }

@@ -5,7 +5,7 @@ auto APU::Pulse::clockLength() -> void {
 }
 
 auto APU::Pulse::clock() -> uint8 {
-  if(sweep.checkPeriod() == false) return 0;
+  if(!sweep.checkPeriod()) return 0;
   if(lengthCounter == 0) return 0;
 
   static const uint dutyTable[] = {1, 2, 4, 6};
@@ -37,17 +37,4 @@ auto APU::Pulse::reset() -> void {
   dutyCounter = 0;
   period = 0;
   periodCounter = 1;
-}
-
-auto APU::Pulse::serialize(serializer& s) -> void {
-  s.integer(lengthCounter);
-
-  envelope.serialize(s);
-  sweep.serialize(s);
-
-  s.integer(duty);
-  s.integer(dutyCounter);
-
-  s.integer(period);
-  s.integer(periodCounter);
 }

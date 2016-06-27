@@ -27,13 +27,3 @@ auto APU::Envelope::reset() -> void {
   decayCounter = 0;
   decayVolume = 0;
 }
-
-auto APU::Envelope::serialize(serializer& s) -> void {
-  s.integer(speed);
-  s.integer(useSpeedAsVolume);
-  s.integer(loopMode);
-
-  s.integer(reloadDecay);
-  s.integer(decayCounter);
-  s.integer(decayVolume);
-}

@@ -1,4 +1,4 @@
-auto PPU::read(uint24 addr, uint8 data) -> uint8 {
+auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
   cpu.synchronizePPU();
 
   switch((uint16)addr) {
@@ -147,7 +147,7 @@ auto PPU::read(uint24 addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto PPU::write(uint24 addr, uint8 data) -> void {
+auto PPU::writeIO(uint24 addr, uint8 data) -> void {
   cpu.synchronizePPU();
 
   switch((uint16)addr) {

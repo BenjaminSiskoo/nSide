@@ -22,7 +22,6 @@ auto Cheat::find(uint addr, uint comp) -> maybe<uint> {
       return code.data;
     }
   }
-
   return nothing;
 }
 

@@ -106,8 +106,8 @@ auto PPU::reset() -> void {
   PPUcounter::reset();
   memory::fill(output, 512 * 480 * sizeof(uint32));
 
-  function<auto (uint24, uint8) -> uint8> reader{&PPU::read, this};
-  function<auto (uint24, uint8) -> void> writer{&PPU::write, this};
+  function<auto (uint24, uint8) -> uint8> reader{&PPU::readIO, this};
+  function<auto (uint24, uint8) -> void> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
   ppu1.mdr = random(0xff);

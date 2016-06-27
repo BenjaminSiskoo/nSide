@@ -83,7 +83,11 @@ auto Board::main() -> void {
 }
 
 auto Board::tick() -> void {
-  cartridge.clock += (system.region() == System::Region::NTSC ? 12 : 16);
+  switch(system.region()) {
+  case System::Region::NTSC:  cartridge.clock += 12; break;
+  case System::Region::PAL:   cartridge.clock += 16; break;
+  case System::Region::Dendy: cartridge.clock += 15; break;
+  }
   if(cartridge.clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
 }
 

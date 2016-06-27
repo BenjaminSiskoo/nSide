@@ -1,35 +1,11 @@
 #pragma once
 
-//based on higan's Super Famicom emulator by byuu,
-//with contributions from:
-// Andreas Naive     (S-DD1 decompression algorithm)
-// anomie
-// AWJ               (PPUcounter NTSC/PAL timing)
-// Cydrak            (ST-018 discoveries and bug fixes)
-// _Demo_
-// Derrick Sobodash
-// DMV27
-// Dr. Decapitator   (DSP-1,2,3,4, ST-010,011 ROM dumps)
-// FirebrandX
-// FitzRoy
-// GIGO
-// Jonas Quinn       (DSP fixes, Game Boy fixes)
-// kode54
-// krom
-// LostTemplar       (ST-018 program ROM analysis)
-// Matthew Callis
-// Nach
-// neviksti          (SPC7110 decompression algorithm)
-// Overload          (Cx4 data ROM dump)
-// RedDwarf
-// Richard Bannister
-// segher            (Cx4 reverse engineering)
-// tetsuo55
-// TRAC
-// zones
-// hex_usr           (exportMemory PPU register/expansion chip support, Super Scope turbo cursor)
+//clone of higan's Super Famicom emulator's balanced profile.
+//Credits for all components excpet for PPU and DSP are available in <sfc/sfc.hpp>.
+// blargg            (Balanced/Performance DSP)
+// hex_usr           (clean-up of Balanced PPU code)
 //license: GPLv3
-//original project started: 2004-10-14
+//maintained since: 2016-04-05
 
 #include <emulator/emulator.hpp>
 #include <processor/arm/arm.hpp>

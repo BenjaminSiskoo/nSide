@@ -1,7 +1,7 @@
 #pragma once
 
 //based on higan's Game Boy emulator by byuu,
-//with contributions from Jonas Quinn.
+//with contributions from Jonas Quinn, gekkio, and endrift.
 //license: GPLv3
 //original project started: 2010-12-27
 

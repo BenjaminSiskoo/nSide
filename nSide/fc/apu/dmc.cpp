@@ -1,6 +1,6 @@
 auto APU::DMC::start() -> void {
   if(lengthCounter == 0) {
-    readAddress = 0x4000 + (addrLatch << 6);
+    readAddr = 0x4000 + (addrLatch << 6);
     lengthCounter = (lengthLatch << 4) + 1;
   }
 }
@@ -19,49 +19,49 @@ auto APU::DMC::clock() -> uint8 {
     dmaDelayCounter--;
 
     if(dmaDelayCounter == 1) {
-      cpu.rdyAddr(true, 0x8000 | readAddress);
+      cpu.rdyAddr(true, 0x8000 | readAddr);
     } else if(dmaDelayCounter == 0) {
       cpu.rdyLine(1);
       cpu.rdyAddr(false);
 
       dmaBuffer = cpu.mdr();
-      haveDMABuffer = true;
+      dmaBufferValid = true;
       lengthCounter--;
-      readAddress++;
+      readAddr++;
 
       if(lengthCounter == 0) {
         if(loopMode) {
           start();
         } else if(irqEnable) {
           irqPending = true;
-          apu.irqLine();
+          apu.setIRQ();
         }
       }
     }
   }
 
   if(--periodCounter == 0) {
-    if(haveSample) {
+    if(sampleValid) {
       int delta = (((sample >> bitCounter) & 1) << 2) - 2;
       uint data = dacLatch + delta;
       if((data & 0x80) == 0) dacLatch = data;
     }
 
     if(++bitCounter == 0) {
-      if(haveDMABuffer) {
-        haveSample = true;
+      if(dmaBufferValid) {
+        sampleValid = true;
         sample = dmaBuffer;
-        haveDMABuffer = false;
+        dmaBufferValid = false;
       } else {
-        haveSample = false;
+        sampleValid = false;
       }
     }
 
-    if(system.region() != System::Region::PAL) periodCounter = ntscDMCPeriodTable[period];
-    else                                       periodCounter = palDMCPeriodTable[period];
+    if(system.region() != System::Region::PAL) periodCounter = dmcPeriodTableNTSC[period];
+    else                                       periodCounter = dmcPeriodTablePAL[period];
   }
 
-  if(lengthCounter > 0 && haveDMABuffer == false && dmaDelayCounter == 0) {
+  if(lengthCounter > 0 && !dmaBufferValid && dmaDelayCounter == 0) {
     cpu.rdyLine(0);
     dmaDelayCounter = 4;
   }
@@ -77,51 +77,18 @@ auto APU::DMC::reset() -> void {
   irqPending = 0;
 
   period = 0;
-  if(system.region() != System::Region::PAL) periodCounter = ntscDMCPeriodTable[0];
-  else                                       periodCounter = palDMCPeriodTable[0];
+  if(system.region() != System::Region::PAL) periodCounter = dmcPeriodTableNTSC[0];
+  else                                       periodCounter = dmcPeriodTablePAL[0];
   irqEnable = 0;
   loopMode = 0;
   dacLatch = 0;
   addrLatch = 0;
   lengthLatch = 0;
-  readAddress = 0;
+  readAddr = 0;
   dmaDelayCounter = 0;
   bitCounter = 0;
-  haveDMABuffer = 0;
+  dmaBufferValid = 0;
   dmaBuffer = 0;
-  haveSample = 0;
+  sampleValid = 0;
   sample = 0;
 }
-
-auto APU::DMC::serialize(serializer& s) -> void {
-  s.integer(lengthCounter);
-  s.integer(irqPending);
-
-  s.integer(period);
-  s.integer(periodCounter);
-
-  s.integer(irqEnable);
-  s.integer(loopMode);
-
-  s.integer(dacLatch);
-  s.integer(addrLatch);
-  s.integer(lengthLatch);
-
-  s.integer(readAddress);
-  s.integer(dmaDelayCounter);
-
-  s.integer(bitCounter);
-  s.integer(haveDMABuffer);
-  s.integer(dmaBuffer);
-
-  s.integer(haveSample);
-  s.integer(sample);
-}
-
-const uint16 APU::ntscDMCPeriodTable[16] = {
-  428, 380, 340, 320, 286, 254, 226, 214, 190, 160, 142, 128, 106, 84, 72, 54,
-};
-
-const uint16 APU::palDMCPeriodTable[16] = {
-  398, 354, 316, 298, 276, 236, 210, 198, 176, 148, 132, 118,  98, 78, 66, 50,
-};

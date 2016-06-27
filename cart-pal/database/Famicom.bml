@@ -3467,6 +3467,20 @@ cartridge sha256:07dd16464d769429c651bd203ac2e74c7aa5852824482ca8877959d643bc868
   :  name:     Donkey Kong Jr. Math
   :  title:    Donkey Kong Jr. Math
 
+cartridge sha256:56cb5897c539b6874e311a314767df85186184690f10d9982b02cb90ff606537
+  :board region=ntsc id:NES-AOROM
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-2D-USA
+  :  board:    NES-AOROM-03
+  :  revision: 1.0
+  :  name:     Double Dare
+  :  title:    Double Dare
+
 cartridge sha256:5860e217030f9da957d487b3ca59000d5f4d79bf23486bad08205c5aa4d992ea
   :board region=ntsc id:NES-SFROM
   :  chip type=MMC1A
@@ -5415,6 +5429,62 @@ cartridge sha256:c12771e8155b030eff0081bfabd98e57a162d6592899f29dd16f141f0e6e08a
   :  revision: 1.0
   :  name:     Wario's Woods
   :  title:    Wario's Woods
+
+cartridge sha256:88691067f122467f2dae85e40b927013b91fe848f88d694616ed2f26ab1f3f4d
+  :board region=ntsc id:NES-AOROM
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-WF-USA
+  :  board:    NES-AOROM-01
+  :  revision: 1.0
+  :  name:     Wheel of Fortune
+  :  title:    Wheel of Fortune
+
+cartridge sha256:7157801d42484e58b81387c95f24d6e8acaa513fa588828398f5b7a69f2c14bd
+  :board region=ntsc id:NES-AOROM
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-WF-USA
+  :  board:    NES-AOROM-03
+  :  revision: 1.1
+  :  name:     Wheel of Fortune
+  :  title:    Wheel of Fortune
+
+cartridge sha256:9178fba5cbb412cc6d437f301ab93ba8c897235a5c8f2985756d3441061ecbe2
+  :board region=ntsc id:NES-ANROM
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-W3-USA
+  :  board:    NES-ANROM-03
+  :  revision: 1.0
+  :  name:     Wheel of Fortune - Family Edition
+  :  title:    Wheel of Fortune: Family Edition
+
+cartridge sha256:84e3a018cbaaf2311d7e9414112cb05cf3b43608de0b9f8a2f77bc4da33ce8e6
+  :board region=ntsc id:NES-ANROM
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-WJ-USA
+  :  board:    NES-ANROM-02
+  :  revision: 1.0
+  :  name:     Wheel of Fortune - Junior Edition
+  :  title:    Wheel of Fortune: Junior Edition
 
 cartridge sha256:700ebc3c2dd27420bbdcccb987ba60d3f0680469101353de15a1b2bd565ac701
   :board region=ntsc id:NES-ANROM

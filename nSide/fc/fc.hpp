@@ -3,7 +3,7 @@
 //based on higan's Famicom emulator by byuu and Ryphecha,
 //with contributions from:
 // Bisqwit (PPU color generation for NTSC systems)
-// FitzRoy
+// FitzRoy (Bug-testing)
 // kevtris (PPU voltage levels in Bisqwit's color formula)
 // hex_usr (Many code organization changes, PPU timing fixes, mapper implementations, controllers, etc.)
 //license: GPLv3

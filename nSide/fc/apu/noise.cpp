@@ -20,7 +20,7 @@ auto APU::Noise::clock() -> uint8 {
     }
 
     lfsr = (lfsr >> 1) | (feedback << 14);
-    periodCounter = system.region() != System::Region::PAL ? apu.ntscNoisePeriodTable[period] : apu.palNoisePeriodTable[period];
+    periodCounter = system.region() != System::Region::PAL ? apu.noisePeriodTableNTSC[period] : apu.noisePeriodTablePAL[period];
   }
 
   return result;
@@ -44,23 +44,3 @@ auto APU::Noise::reset() -> void {
   shortMode = 0;
   lfsr = 1;
 }
-
-auto APU::Noise::serialize(serializer& s) -> void {
-  s.integer(lengthCounter);
-
-  envelope.serialize(s);
-
-  s.integer(period);
-  s.integer(periodCounter);
-
-  s.integer(shortMode);
-  s.integer(lfsr);
-}
-
-const uint16 APU::ntscNoisePeriodTable[16] = {
-  4, 8, 16, 32, 64, 96, 128, 160, 202, 254, 380, 508, 762, 1016, 2034, 4068,
-};
-
-const uint16 APU::palNoisePeriodTable[16] = {
-  4, 8, 14, 30, 60, 88, 118, 148, 188, 236, 354, 472, 708,  944, 1890, 3778,
-};
