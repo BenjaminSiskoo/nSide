@@ -93,19 +93,19 @@ auto Zapper::readLight() -> bool {
   if(offscreen) return false;
   uint32 paletteIndex = ppu.output[y * 256 + x];
   uint color;
-  switch(ppu.revision) {
+  switch(ppu.version) {
   default:
     return ((paletteIndex & 0x20) && ((paletteIndex & 0x0f) < 0x0d));
-  case PPU::Revision::RP2C04_0001:
+  case PPU::Version::RP2C04_0001:
     color = PPU::RP2C04_0001[paletteIndex & 63];
     break;
-  case PPU::Revision::RP2C04_0002:
+  case PPU::Version::RP2C04_0002:
     color = PPU::RP2C04_0002[paletteIndex & 63];
     break;
-  case PPU::Revision::RP2C04_0003:
+  case PPU::Version::RP2C04_0003:
     color = PPU::RP2C04_0003[paletteIndex & 63];
     break;
-  case PPU::Revision::RP2C04_0004:
+  case PPU::Version::RP2C04_0004:
     color = PPU::RP2C04_0004[paletteIndex & 63];
     break;
   }

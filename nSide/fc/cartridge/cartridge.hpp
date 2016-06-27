@@ -13,12 +13,12 @@ struct Cartridge : Thread {
   auto manifest() const -> string;
   auto title() const -> string;
 
-  auto power() -> void;
-  auto reset() -> void;
-
   auto load() -> bool;
   auto save() -> void;
   auto unload() -> void;
+
+  auto power() -> void;
+  auto reset() -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -41,11 +41,11 @@ struct Cartridge : Thread {
 //privileged:
   Board* board;
 
-  auto prgRead(uint addr) -> uint8;
-  auto prgWrite(uint addr, uint8 data) -> void;
+  auto readPRG(uint addr) -> uint8;
+  auto writePRG(uint addr, uint8 data) -> void;
 
-  auto chrRead(uint addr) -> uint8;
-  auto chrWrite(uint addr, uint8 data) -> void;
+  auto readCHR(uint addr) -> uint8;
+  auto writeCHR(uint addr, uint8 data) -> void;
 
   //scanline() is for debugging purposes only:
   //boards must detect scanline edges on their own

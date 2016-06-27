@@ -10,7 +10,7 @@ struct Camerica : Board {
     settings.mirror = boardNode["mirror/mode"].text() == "horizontal";
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0x8000) == 0x0000) return cpu.mdr();
     if((addr & 0xc000) == 0x8000) {
       return read(prgrom, (prgBlock << 16) | (prgBank << 14) | (addr & 0x3fff));
@@ -22,7 +22,7 @@ struct Camerica : Board {
     }
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     switch(revision) {
     case Revision::ALGQ:
     case Revision::BF9096:
@@ -47,14 +47,14 @@ struct Camerica : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(ciramAddress(addr));
-    return Board::chrRead(addr);
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
+    return Board::readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(ciramAddress(addr), data);
-    return Board::chrWrite(addr, data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM(ciramAddress(addr), data);
+    return Board::writeCHR(addr, data);
   }
 
   auto ciramAddress(uint addr) const -> uint {

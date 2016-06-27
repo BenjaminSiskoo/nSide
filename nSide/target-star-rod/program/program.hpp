@@ -7,14 +7,15 @@ struct Program : Emulator::Interface::Bind {
   //interface.cpp
   auto path(uint id) -> string override;
   auto open(uint id, string name, vfs::file::mode mode, bool required) -> vfs::shared::file override;
-  //auto load(uint id, string name, string type, bool required) -> void override;
+  auto load(uint id, string name, string type) -> maybe<uint> override;
   auto videoRefresh(const uint32* data, uint pitch, uint width, uint height) -> void override;
   auto audioSample(const double* samples, uint channels) -> void override;
   auto inputPoll(uint port, uint device, uint index) -> int16 override;
   auto dipSettings(const Markup::Node& node) -> uint override { return 0u; }
 
   //medium.cpp
-  auto loadMedium(string foldername) -> bool;
+  auto loadMedium() -> void;
+  auto loadMedium(Emulator::Interface& interface, const Emulator::Interface::Medium& medium) -> void;
   auto unloadMedium() -> void;
 
   //state.cpp
@@ -24,8 +25,8 @@ struct Program : Emulator::Interface::Bind {
   //utility.cpp
   auto message(const string& text) -> void;
 
-  vector<string> mediumPaths;
-  vector<string> folderPaths;
+  vector<string> mediumQueue;  //for command-line and drag-and-drop loading
+  vector<string> mediumPaths;  //for keeping track of loaded folder locations
 
   Markup::Node higan_settings;
 };

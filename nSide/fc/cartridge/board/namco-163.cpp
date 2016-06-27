@@ -7,20 +7,20 @@ struct Namco163 : Board {
     n163.main();
   }
 
-  auto prgRead(uint addr) -> uint8 {
-    n163.prgRead(addr);
+  auto readPRG(uint addr) -> uint8 {
+    n163.readPRG(addr);
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
-    n163.prgWrite(addr, data);
+  auto writePRG(uint addr, uint8 data) -> void {
+    n163.writePRG(addr, data);
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    n163.chrRead(addr);
+  auto readCHR(uint addr) -> uint8 {
+    n163.readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    n163.chrWrite(addr, data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    n163.writeCHR(addr, data);
   }
 
   auto serialize(serializer& s) -> void {

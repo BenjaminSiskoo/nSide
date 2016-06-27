@@ -96,18 +96,18 @@ auto VRAMViewer::updateTiles() -> void {
     }
   }
   dp = canvas.data();
-  const uint8* sp = SuperFamicom::ppu.vram;
+  const uint16* sp = SuperFamicom::ppu.vram.data;
 
   switch(modeSelection.selected().offset()) {
   case SuperFamicom::PPU::Background::Mode::BPP2:
     for(uint tileY : range(64)) {
       for(uint tileX : range(64)) {
         for(uint y : range(8)) {
-          uint8 d[] = { sp[0], sp[1] };
+          uint16 d[] = { sp[0] };
           for(uint x : range(8)) {
             uint color = 0;
-            color += d[0] & 0x80 ? 1 : 0;
-            color += d[1] & 0x80 ? 2 : 0;
+            color += d[0] & 0x0080 ? 1 : 0;
+            color += d[0] & 0x8000 ? 2 : 0;
             for(auto& b : d) b <<= 1;
             color += paletteSelection.selected().offset() << 2;
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
@@ -117,7 +117,7 @@ auto VRAMViewer::updateTiles() -> void {
               (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
           }
-          sp += 2;
+          sp++;
         }
       }
     }
@@ -127,13 +127,13 @@ auto VRAMViewer::updateTiles() -> void {
     for(uint tileY : range(64)) {
       for(uint tileX : range(32)) {
         for(uint y : range(8)) {
-          uint8 d[] = { sp[0], sp[1], sp[16], sp[17] };
+          uint16 d[] = { sp[0], sp[8] };
           for(uint x : range(8)) {
             uint color = 0;
-            color += d[0] & 0x80 ? 1 : 0;
-            color += d[1] & 0x80 ? 2 : 0;
-            color += d[2] & 0x80 ? 4 : 0;
-            color += d[3] & 0x80 ? 8 : 0;
+            color += d[0] & 0x0080 ? 1 : 0;
+            color += d[0] & 0x8000 ? 2 : 0;
+            color += d[1] & 0x0080 ? 4 : 0;
+            color += d[1] & 0x8000 ? 8 : 0;
             for(auto& b : d) b <<= 1;
             color += paletteSelection.selected().offset() << 4;
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
@@ -143,9 +143,9 @@ auto VRAMViewer::updateTiles() -> void {
               (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
           }
-          sp += 2;
+          sp++;
         }
-        sp += 16;
+        sp += 8;
       }
     }
     break;
@@ -154,17 +154,17 @@ auto VRAMViewer::updateTiles() -> void {
     for(uint tileY : range(32)) {
       for(uint tileX : range(32)) {
         for(uint y : range(8)) {
-          uint8 d[] = { sp[0], sp[1], sp[16], sp[17], sp[32], sp[33], sp[48], sp[49] };
+          uint16 d[] = { sp[0], sp[8], sp[16], sp[24] };
           for(uint x : range(8)) {
             uint color = 0;
-            color += d[0] & 0x80 ?   1 : 0;
-            color += d[1] & 0x80 ?   2 : 0;
-            color += d[2] & 0x80 ?   4 : 0;
-            color += d[3] & 0x80 ?   8 : 0;
-            color += d[4] & 0x80 ?  16 : 0;
-            color += d[5] & 0x80 ?  32 : 0;
-            color += d[6] & 0x80 ?  64 : 0;
-            color += d[7] & 0x80 ? 128 : 0;
+            color += d[0] & 0x0080 ?   1 : 0;
+            color += d[0] & 0x8000 ?   2 : 0;
+            color += d[1] & 0x0080 ?   4 : 0;
+            color += d[1] & 0x8000 ?   8 : 0;
+            color += d[2] & 0x0080 ?  16 : 0;
+            color += d[2] & 0x8000 ?  32 : 0;
+            color += d[3] & 0x0080 ?  64 : 0;
+            color += d[3] & 0x8000 ? 128 : 0;
             for(auto& b : d) b <<= 1;
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
@@ -173,9 +173,9 @@ auto VRAMViewer::updateTiles() -> void {
               (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
           }
-          sp += 2;
+          sp++;
         }
-        sp += 48;
+        sp += 24;
       }
     }
     break;
@@ -186,7 +186,8 @@ auto VRAMViewer::updateTiles() -> void {
         for(uint y : range(8)) {
           for(uint x : range(8)) {
             uint color = 0;
-            color += sp[x << 1 | 1];
+            uint16 d = sp[x];
+            color += d.byte(1);
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
@@ -194,7 +195,7 @@ auto VRAMViewer::updateTiles() -> void {
               (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
           }
-          sp += 16;
+          sp += 8;
         }
       }
     }

@@ -37,7 +37,7 @@ BGViewer::BGViewer() {
       address = bg->r.tiledataAddress + tile * (16 << mode);
     } else {
       x /= 8, y /= 8;
-      tile = SuperFamicom::ppu.vram[(y * 128 + x) << 1 | 0] & 0x03ff;
+      tile = SuperFamicom::ppu.vram[y * 128 + x].byte(0) & 0x03ff;
       address = tile * 8 * 8 * 2 + 1;
     }
     string output = { x, ", ", y, ", " };
@@ -70,7 +70,7 @@ auto BGViewer::updateTiles() -> void {
   }
   dp = canvas.data();
   uint16 tiledata;
-  const uint8* sp = SuperFamicom::ppu.vram;
+  const uint16* sp = SuperFamicom::ppu.vram.data;
   SuperFamicom::PPU::Background* bg;
   switch(bgSelection.selected().offset()) {
   case 0: bg = &SuperFamicom::ppu.bg1; break;
@@ -79,7 +79,7 @@ auto BGViewer::updateTiles() -> void {
   case 3: bg = &SuperFamicom::ppu.bg4; break;
   }
   uint16 screenAddress = bg->r.screenAddress;
-  uint pitch = 16 << bg->r.mode;
+  uint pitch = 8 << bg->r.mode;
   bool hires = SuperFamicom::ppu.r.bgMode == 5 || SuperFamicom::ppu.r.bgMode == 6;
   bool tileSize = bg->r.tileSize;
   bool tileSize_x = tileSize || hires;
@@ -105,15 +105,15 @@ auto BGViewer::updateTiles() -> void {
         mirror_y = tiledata.bit(15);
         if(tileSize_x && (tileX & 1) ^ mirror_x) tile_id += 1;
         if(tileSize_y && (tileY & 1) ^ mirror_y) tile_id += 16;
-        sp = SuperFamicom::ppu.vram + (bg->r.tiledataAddress + tile_id * pitch);
+        sp = SuperFamicom::ppu.vram.data + (bg->r.tiledataAddress + tile_id * pitch);
         switch(bg->r.mode) {
         case SuperFamicom::PPU::Background::Mode::BPP2:
           for(uint y : (!mirror_y ? range(8) : rrange(8))) {
-            uint8 d[] = { sp[0], sp[1] };
+            uint16 d[] = { sp[0] };
             for(uint x : (!mirror_x ? range(8) : rrange(8))) {
               uint color = 0;
-              color += d[0] & 0x80 ? 1 : 0;
-              color += d[1] & 0x80 ? 2 : 0;
+              color += d[0] & 0x0080 ? 1 : 0;
+              color += d[0] & 0x8000 ? 2 : 0;
               for(auto& b : d) b <<= 1;
               color += palette << 2;
               color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
@@ -123,19 +123,19 @@ auto BGViewer::updateTiles() -> void {
                 (image::normalize(color >> 10 & 31, 5, 8) <<  0);
               dp[(canvasTileY * 8 + y) * 1024 + (tileX * 8 + x)] = color;
             }
-            sp += 2;
+            sp++;
           }
           break;
 
         case SuperFamicom::PPU::Background::Mode::BPP4:
           for(uint y : (!mirror_y ? range(8) : rrange(8))) {
-            uint8 d[] = { sp[0], sp[1], sp[16], sp[17] };
+            uint16 d[] = { sp[0], sp[8] };
             for(uint x : (!mirror_x ? range(8) : rrange(8))) {
               uint color = 0;
-              color += d[0] & 0x80 ? 1 : 0;
-              color += d[1] & 0x80 ? 2 : 0;
-              color += d[2] & 0x80 ? 4 : 0;
-              color += d[3] & 0x80 ? 8 : 0;
+              color += d[0] & 0x0080 ? 1 : 0;
+              color += d[0] & 0x8000 ? 2 : 0;
+              color += d[1] & 0x0080 ? 4 : 0;
+              color += d[1] & 0x8000 ? 8 : 0;
               for(auto& b : d) b <<= 1;
               color += palette << 4;
               color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
@@ -145,23 +145,23 @@ auto BGViewer::updateTiles() -> void {
                 (image::normalize(color >> 10 & 31, 5, 8) <<  0);
               dp[(canvasTileY * 8 + y) * 1024 + (tileX * 8 + x)] = color;
             }
-            sp += 2;
+            sp++;
           }
           break;
 
         case SuperFamicom::PPU::Background::Mode::BPP8:
           for(uint y : (!mirror_y ? range(8) : rrange(8))) {
-            uint8 d[] = { sp[0], sp[1], sp[16], sp[17], sp[32], sp[33], sp[48], sp[49] };
+            uint16 d[] = { sp[0], sp[8], sp[16], sp[24] };
             for(uint x : (!mirror_x ? range(8) : rrange(8))) {
               uint color = 0;
-              color += d[0] & 0x80 ?   1 : 0;
-              color += d[1] & 0x80 ?   2 : 0;
-              color += d[2] & 0x80 ?   4 : 0;
-              color += d[3] & 0x80 ?   8 : 0;
-              color += d[4] & 0x80 ?  16 : 0;
-              color += d[5] & 0x80 ?  32 : 0;
-              color += d[6] & 0x80 ?  64 : 0;
-              color += d[7] & 0x80 ? 128 : 0;
+              color += d[0] & 0x0080 ?   1 : 0;
+              color += d[0] & 0x8000 ?   2 : 0;
+              color += d[1] & 0x0080 ?   4 : 0;
+              color += d[1] & 0x8000 ?   8 : 0;
+              color += d[2] & 0x0080 ?  16 : 0;
+              color += d[2] & 0x8000 ?  32 : 0;
+              color += d[3] & 0x0080 ?  64 : 0;
+              color += d[3] & 0x8000 ? 128 : 0;
               for(auto& b : d) b <<= 1;
               color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
               color = (255u << 24) |
@@ -170,7 +170,7 @@ auto BGViewer::updateTiles() -> void {
                 (image::normalize(color >> 10 & 31, 5, 8) <<  0);
               dp[(canvasTileY * 8 + y) * 1024 + (tileX * 8 + x)] = color;
             }
-            sp += 2;
+            sp++;
           }
           break;
 
@@ -182,12 +182,13 @@ auto BGViewer::updateTiles() -> void {
     for(uint tileY : range(scroll.position(), scroll.position() + 64)) {
       canvasTileY = tileY - scroll.position();
       for(uint tileX : range(128)) {
-        tile_id = SuperFamicom::ppu.vram[(tileY * 128 + tileX) << 1 | 0];
-        sp = SuperFamicom::ppu.vram + (tile_id * 8 * 8 * 2);
+        tile_id = SuperFamicom::ppu.vram[tileY * 128 + tileX].byte(0);
+        sp = SuperFamicom::ppu.vram.data + (tile_id * 8 * 8);
         for(uint y : range(8)) {
           for(uint x : range(8)) {
             uint color = 0;
-            color += sp[x << 1 | 1];
+            uint16 d = sp[x];
+            color += d.byte(1);
             color = SuperFamicom::ppu.cgram[color << 1] | SuperFamicom::ppu.cgram[color << 1 | 1] << 8;
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
@@ -195,7 +196,7 @@ auto BGViewer::updateTiles() -> void {
               (image::normalize(color >> 10 & 31, 5, 8) <<  0);
             dp[(canvasTileY * 8 + y) * 1024 + (tileX * 8 + x)] = color;
           }
-          sp += 16;
+          sp += 8;
         }
       }
     }

@@ -17,7 +17,7 @@ struct N163 : Chip {
     tick();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     switch(addr & 0xf800) {
     case 0x4800:
       if(revision == Revision::N129 || revision == Revision::N163) {
@@ -40,7 +40,7 @@ struct N163 : Chip {
     }
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0xe000) == 0x6000) {
       if(ramEnable) {
         board.write(board.prgram, addr & 0x1fff, data);
@@ -117,10 +117,10 @@ struct N163 : Chip {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(revision == Revision::N175 || revision == Revision::N340) {
-        return ppu.ciramRead(ciramAddress(addr));
+        return ppu.readCIRAM(ciramAddress(addr));
       }
       addr &= 0x2fff;
     }
@@ -128,14 +128,14 @@ struct N163 : Chip {
     if(bank >= 0xe0 && ((addr & 0x2000) | !(chrramDisable & (1 << ((addr & 0x1000) >> 12))))) {
       addr = (addr & 0x03ff) | (bank << 10);
       if(board.chrram.size()) return board.read(board.chrram, addr);
-      else                    return ppu.ciramRead(addr);
+      else                    return ppu.readCIRAM(addr);
     } else return board.read(board.chrrom, ((bank << 10) | (addr & 0x3ff)));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(revision == Revision::N175 || revision == Revision::N340) {
-        return ppu.ciramWrite(ciramAddress(addr), data);
+        return ppu.writeCIRAM(ciramAddress(addr), data);
       }
       addr &= 0x2fff;
     }
@@ -143,7 +143,7 @@ struct N163 : Chip {
     if(bank >= 0xe0 && ((addr & 0x2000) | !(chrramDisable & (1 << ((addr & 0x1000) >> 12))))) {
       addr = (addr & 0x03ff) | (bank << 10);
       if(board.chrram.size()) return board.write(board.chrram, addr, data);
-      else                    return ppu.ciramWrite(addr, data);
+      else                    return ppu.writeCIRAM(addr, data);
     }
   }
 

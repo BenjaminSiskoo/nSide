@@ -1,7 +1,8 @@
 struct APU : Thread {
   shared_pointer<Emulator::Stream> stream;
 
-  enum class Revision : uint {
+  enum class Version : uint {
+    //NTSC
     RP2A03,
     RP2A03A,
     RP2A03C,
@@ -9,7 +10,14 @@ struct APU : Thread {
     RP2A03F,
     RP2A03G,
     RP2A03H,
-  } revision;
+
+    //PAL
+    RP2A07G,
+
+    //Dendy
+    UA6527P,
+    TA_03NP1_6527P,
+  } version;
 
   APU();
 

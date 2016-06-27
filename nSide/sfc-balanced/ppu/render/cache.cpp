@@ -1,7 +1,7 @@
-auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
+auto PPU::renderBGTile(uint colorDepth, uint16 tile_num) -> void {
   uint8 col, d0, d1, d2, d3, d4, d5, d6, d7;
 
-  uint8* dest = (uint8*)tiledataCache.tiledata[color_depth] + tile_num * (8 * 8);
+  uint8* dest = (uint8*)tiledataCache.tiledata[colorDepth] + tile_num * (8 * 8);
   uint y = 8;
 
   #define renderBGTile_line_2bpp(mask) \
@@ -27,7 +27,7 @@ auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
     col += !!(d7 & mask) << 7; \
     *dest++ = col
 
-  if(color_depth == Background::Mode::BPP2) {
+  if(colorDepth == Background::Mode::BPP2) {
     uint pos = tile_num * 8;
     while(y--) {
       d0 = vram[pos +  0].byte(0);
@@ -40,11 +40,11 @@ auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
       renderBGTile_line_2bpp(0x04);
       renderBGTile_line_2bpp(0x02);
       renderBGTile_line_2bpp(0x01);
-      pos += 1;
+      pos++;
     }
   }
 
-  if(color_depth == Background::Mode::BPP4) {
+  if(colorDepth == Background::Mode::BPP4) {
     uint pos = tile_num * 16;
     while(y--) {
       d0 = vram[pos +  0].byte(0);
@@ -59,11 +59,11 @@ auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
       renderBGTile_line_4bpp(0x04);
       renderBGTile_line_4bpp(0x02);
       renderBGTile_line_4bpp(0x01);
-      pos += 1;
+      pos++;
     }
   }
 
-  if(color_depth == Background::Mode::BPP8) {
+  if(colorDepth == Background::Mode::BPP8) {
     uint pos = tile_num * 32;
     while(y--) {
       d0 = vram[pos +  0].byte(0);
@@ -82,11 +82,11 @@ auto PPU::renderBGTile(uint color_depth, uint16 tile_num) -> void {
       renderBGTile_line_8bpp(0x04);
       renderBGTile_line_8bpp(0x02);
       renderBGTile_line_8bpp(0x01);
-      pos += 1;
+      pos++;
     }
   }
 
-  tiledataCache.tiledataState[color_depth][tile_num] = 0;
+  tiledataCache.tiledataState[colorDepth][tile_num] = 0;
 
   #undef renderBGTile_line_2bpp
   #undef renderBGTile_line_4bpp
@@ -111,19 +111,19 @@ auto PPU::flushPixelCache() -> void {
 }
 
 auto PPU::TiledataCache::allocate() -> void {
-  tiledata[Background::Mode::BPP2]      = new uint8[262144];
-  tiledata[Background::Mode::BPP4]      = new uint8[131072];
-  tiledata[Background::Mode::BPP8]      = new uint8[ 65536];
-  tiledataState[Background::Mode::BPP2] = new uint8[  4096];
-  tiledataState[Background::Mode::BPP4] = new uint8[  2048];
-  tiledataState[Background::Mode::BPP8] = new uint8[  1024];
+  tiledata[Background::Mode::BPP2]      = new uint8[8192 * 64];
+  tiledata[Background::Mode::BPP4]      = new uint8[4096 * 64];
+  tiledata[Background::Mode::BPP8]      = new uint8[2048 * 64];
+  tiledataState[Background::Mode::BPP2] = new uint8[8192];
+  tiledataState[Background::Mode::BPP4] = new uint8[4096];
+  tiledataState[Background::Mode::BPP8] = new uint8[2048];
 }
 
 //marks all tiledata cache entries as dirty
 auto PPU::TiledataCache::flush() -> void {
-  for(uint i : range(4096)) tiledataState[Background::Mode::BPP2][i] = 1;
-  for(uint i : range(2048)) tiledataState[Background::Mode::BPP4][i] = 1;
-  for(uint i : range(1024)) tiledataState[Background::Mode::BPP8][i] = 1;
+  for(uint i : range(8192)) tiledataState[Background::Mode::BPP2][i] = 1;
+  for(uint i : range(4096)) tiledataState[Background::Mode::BPP4][i] = 1;
+  for(uint i : range(2048)) tiledataState[Background::Mode::BPP8][i] = 1;
 }
 
 auto PPU::TiledataCache::free() -> void {

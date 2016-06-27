@@ -67,7 +67,7 @@ struct MMC5 : Chip {
     }
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0xfc00) == 0x5c00) {
       if(exramMode >= 2) return ram.read(addr & 0x03ff);
       return cpu.mdr();
@@ -88,7 +88,7 @@ struct MMC5 : Chip {
     }
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0xfc00) == 0x5c00) {
       //writes 0x00 *during* Vblank (not during screen rendering ...)
       if(exramMode == 0 || exramMode == 1) ram.write(addr & 0x03ff, inFrame ? data : (uint8)0x00);
@@ -288,14 +288,14 @@ struct MMC5 : Chip {
     if(vsFetch && (hcounter & 2) != 0) return ram.read(vsVPos / 32 * 8 + vsHPos / 32 + 0x03c0);
 
     switch(nametableMode[(addr >> 10) & 3]) {
-    case 0: return ppu.ciramRead(0x0000 | (addr & 0x03ff));
-    case 1: return ppu.ciramRead(0x0400 | (addr & 0x03ff));
+    case 0: return ppu.readCIRAM(0x0000 | (addr & 0x03ff));
+    case 1: return ppu.readCIRAM(0x0400 | (addr & 0x03ff));
     case 2: return exramMode < 2 ? ram.read(addr & 0x03ff) : (uint8)0x00;
     case 3: return (hcounter & 2) == 0 ? fillmodeTile : fillmodeColor;
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     chrAccess[0] = chrAccess[1];
     chrAccess[1] = chrAccess[2];
     chrAccess[2] = chrAccess[3];
@@ -343,11 +343,11 @@ struct MMC5 : Chip {
     return result;
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       switch(nametableMode[(addr >> 10) & 3]) {
-      case 0: return ppu.ciramWrite(0x0000 | (addr & 0x03ff), data);
-      case 1: return ppu.ciramWrite(0x0400 | (addr & 0x03ff), data);
+      case 0: return ppu.writeCIRAM(0x0000 | (addr & 0x03ff), data);
+      case 1: return ppu.writeCIRAM(0x0400 | (addr & 0x03ff), data);
       case 2: ram.write(addr & 0x03ff, data); break;
       }
     }

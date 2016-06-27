@@ -83,10 +83,21 @@ auto System::load(Revision revision) -> bool {
   }
 
   bus.reset();
+  if(!cartridge.load()) return false;
+
+  if(region() != Region::NTSC) interface->information.aspectRatio = 2'950'000.0 / 2'128'137.0;
+  switch(cartridge.region()) {
+  case Cartridge::Region::NTSC:  information.region = Region::NTSC;  break;
+  case Cartridge::Region::PAL:   information.region = Region::PAL;   break;
+  case Cartridge::Region::Dendy: information.region = Region::Dendy; break;
+  }
+  if(system["region"].text() == "NTSC" ) information.region = Region::NTSC;
+  if(system["region"].text() == "PAL"  ) information.region = Region::PAL;
+  if(system["region"].text() == "Dendy") information.region = Region::Dendy;
+
   if(!cpu.load(system)) return false;
   if(!apu.load(system)) return false;
   if(!ppu.load(system)) return false;
-  if(!cartridge.load()) return false;
 
   information.cpuFrequency = region() == Region::NTSC ? 21'477'272 : 26'601'712;
 
@@ -97,39 +108,18 @@ auto System::load(Revision revision) -> bool {
   switch(revision) {
 
   case Revision::Famicom: {
-    apu.revision = APU::Revision::RP2A03G;
-    // most Famicoms use a PPU with open bus OAMDATA (read).
-    // For now, we use an NES PPU where OAMDATA (read) is defined.
-    switch(region()) {
-    case Region::NTSC:  ppu.revision = PPU::Revision::RP2C02G; break;
-    case Region::PAL:   ppu.revision = PPU::Revision::RP2C07;  break;
-    case Region::Dendy: ppu.revision = PPU::Revision::UA6538;  break;
-    }
-    if(region() != Region::NTSC) interface->information.aspectRatio = 2'950'000.0 / 2'128'137.0;
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
 
-    switch(cartridge.region()) {
-    case Cartridge::Region::NTSC:  information.region = Region::NTSC;  break;
-    case Cartridge::Region::PAL:   information.region = Region::PAL;   break;
-    case Cartridge::Region::Dendy: information.region = Region::Dendy; break;
-    }
-    if(system["region"].text() == "NTSC" ) information.region = Region::NTSC;
-    if(system["region"].text() == "PAL"  ) information.region = Region::PAL;
-    if(system["region"].text() == "Dendy") information.region = Region::Dendy;
     break;
   }
 
   case Revision::VSSystem: {
-    apu.revision = APU::Revision::RP2A03;
-    // VS. System PPU is set within cartridge.load().
     vssystem.load();
     peripherals.connect(ID::Port::Arcade, ID::Device::VSPanel);
     break;
   }
 
   case Revision::PlayChoice10: {
-    apu.revision = APU::Revision::RP2A03G;
-    ppu.revision = PPU::Revision::RP2C03B;
     playchoice10.screenConfig = min(max(document["system/pc10/screen/mode"].integer(), 1), 2);
     playchoice10.load();
     interface->information.canvasHeight = playchoice10.screenConfig * 240;
@@ -138,19 +128,11 @@ auto System::load(Revision revision) -> bool {
   }
 
   case Revision::FamicomBox: {
-    apu.revision = APU::Revision::RP2A03E;
-    ppu.revision = PPU::Revision::RP2C02C;
     famicombox.load();
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
 
-  }
-
-  if(fc()) {
-    //Force use of the RGB PPU if a "pc10" node is found in a Famicom manifest
-    auto node = BML::unserialize(cartridge.information.manifest.cartridge);
-    if(node["board/pc10"]) ppu.revision = PPU::Revision::RP2C03B;
   }
 
   serializeInit();

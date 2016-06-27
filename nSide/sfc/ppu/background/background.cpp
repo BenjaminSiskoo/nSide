@@ -55,7 +55,7 @@ auto PPU::Background::getTile() -> void {
   uint colorDepth = (r.mode == Mode::BPP2 ? 0 : r.mode == Mode::BPP4 ? 1 : 2);
   uint paletteOffset = (ppu.r.bgMode == 0 ? id << 5 : 0);
   uint paletteSize = 2 << colorDepth;
-  uint tileMask = 0x0fff >> colorDepth;
+  uint tileMask = (ppu.vram.mask) >> (3 + colorDepth);
   uint tiledataIndex = r.tiledataAddress >> (3 + colorDepth);
 
   uint tileHeight = (r.tileSize == TileSize::Size8x8 ? 3 : 4);

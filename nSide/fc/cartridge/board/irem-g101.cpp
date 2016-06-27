@@ -9,33 +9,33 @@ struct IremG101 : Board {
     }
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0x8000) == 0x8000) return read(prgrom, g101.prgAddress(addr));
     if((addr & 0xe000) == 0x6000) return read(prgram, addr & 0x1fff);
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0x8000) == 0x8000) return g101.regWrite(addr, data);
     if((addr & 0xe000) == 0x6000) return write(prgram, addr & 0x1fff, data);
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) switch(settings.mirror) {
-    case 0: return ppu.ciramRead(g101.ciramAddress(addr));
-    case 1: return ppu.ciramRead((addr & 0x03ff) | 0x0400);
-    case 2: return ppu.ciramRead((addr & 0x03ff) | 0x0800);
+    case 0: return ppu.readCIRAM(g101.ciramAddress(addr));
+    case 1: return ppu.readCIRAM((addr & 0x03ff) | 0x0400);
+    case 2: return ppu.readCIRAM((addr & 0x03ff) | 0x0800);
     }
-    return Board::chrRead(g101.chrAddress(addr));
+    return Board::readCHR(g101.chrAddress(addr));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) switch(settings.mirror) {
-    case 0: return ppu.ciramWrite(g101.ciramAddress(addr), data);
-    case 1: return ppu.ciramWrite((addr & 0x03ff) | 0x0400, data);
-    case 2: return ppu.ciramWrite((addr & 0x03ff) | 0x0800, data);
+    case 0: return ppu.writeCIRAM(g101.ciramAddress(addr), data);
+    case 1: return ppu.writeCIRAM((addr & 0x03ff) | 0x0400, data);
+    case 2: return ppu.writeCIRAM((addr & 0x03ff) | 0x0800, data);
     }
-    return Board::chrWrite(g101.chrAddress(addr), data);
+    return Board::writeCHR(g101.chrAddress(addr), data);
   }
 
   auto power() -> void {

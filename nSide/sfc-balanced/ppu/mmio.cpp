@@ -361,9 +361,9 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   case 0x2118: {
     auto address = getVramAddress();
     vramWrite(0, address, data);
-    tiledataCache.tiledataState[Background::Mode::BPP2][address >> 3] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP4][address >> 4] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP8][address >> 5] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP2][(address & vram.mask) >> 3] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP4][(address & vram.mask) >> 4] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP8][(address & vram.mask) >> 5] = 1;
 
     if(r.vramIncrementMode == 0) r.vramAddress += r.vramIncrementSize;
     return;
@@ -373,9 +373,9 @@ auto PPU::write(uint24 addr, uint8 data) -> void {
   case 0x2119: {
     auto address = getVramAddress();
     vramWrite(1, address, data);
-    tiledataCache.tiledataState[Background::Mode::BPP2][address >> 3] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP4][address >> 4] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP8][address >> 5] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP2][(address & vram.mask) >> 3] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP4][(address & vram.mask) >> 4] = 1;
+    tiledataCache.tiledataState[Background::Mode::BPP8][(address & vram.mask) >> 5] = 1;
 
     if(r.vramIncrementMode == 1) r.vramAddress += r.vramIncrementSize;
     return;

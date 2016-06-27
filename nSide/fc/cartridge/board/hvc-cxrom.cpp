@@ -16,25 +16,25 @@ struct HVC_CxROM : Board {
     }
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if(addr & 0x8000) return read(prgrom, addr & 0x7fff);
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
-      data &= prgRead(addr); // Bus conflicts
+      data &= readPRG(addr); // Bus conflicts
       chrBank = data & 0x03;
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramRead(addr);
+      return ppu.readCIRAM(addr);
     }
     if(settings.security) {
-      if(chrBank != settings.pass) return ppu.status.mdr;
+      if(chrBank != settings.pass) return ppu.r.mdr;
     }
     switch(revision) {
     case Revision::CNROM: {
@@ -50,13 +50,13 @@ struct HVC_CxROM : Board {
 
     }
 
-    return Board::chrRead(addr);
+    return Board::readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramWrite(addr, data);
+      return ppu.writeCIRAM(addr, data);
     }
 
     switch(revision) {
@@ -72,7 +72,7 @@ struct HVC_CxROM : Board {
     }
 
     }
-    Board::chrWrite(addr, data);
+    Board::writeCHR(addr, data);
   }
 
   auto power() -> void {

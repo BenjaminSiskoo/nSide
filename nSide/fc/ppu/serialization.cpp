@@ -8,68 +8,68 @@ auto PPU::serialize(serializer& s) -> void {
   Thread::serialize(s);
   PPUcounter::serialize(s);
 
-  s.integer(status.chrAddressBus);
-  s.integer(status.mdr);
-  s.array(status.mdrDecay);
+  s.integer(r.chrAddressBus);
+  s.integer(r.mdr);
+  s.array(r.mdrDecay);
 
-  s.integer(status.busData);
+  s.integer(r.busData);
 
-  s.integer(status.addressLatch);
+  s.integer(r.addressLatch);
 
-  s.integer(status.vaddr);
-  s.integer(status.taddr);
-  s.integer(status.xaddr);
+  s.integer(r.vaddr);
+  s.integer(r.taddr);
+  s.integer(r.xaddr);
 
-  s.integer(status.nmiHold);
-  s.integer(status.nmiFlag);
+  s.integer(r.nmiHold);
+  s.integer(r.nmiFlag);
 
-  s.integer(status.nmiEnable);
-  s.integer(status.masterSelect);
-  s.integer(status.spriteSize);
-  s.integer(status.bgAddress);
-  s.integer(status.objAddress);
-  s.integer(status.vramIncrement);
+  s.integer(r.nmiEnable);
+  s.integer(r.masterSelect);
+  s.integer(r.spriteHeight);
+  s.integer(r.bgAddress);
+  s.integer(r.objAddress);
+  s.integer(r.vramIncrement);
 
-  s.integer(status.emphasis);
-  s.integer(status.spriteEnable);
-  s.integer(status.bgEnable);
-  s.integer(status.objEdgeEnable);
-  s.integer(status.bgEdgeEnable);
-  s.integer(status.grayscale);
+  s.integer(r.emphasis);
+  s.integer(r.objEnable);
+  s.integer(r.bgEnable);
+  s.integer(r.objEdgeEnable);
+  s.integer(r.bgEdgeEnable);
+  s.integer(r.grayscale);
 
-  s.integer(status.spriteZeroHit);
-  s.integer(status.spriteOverflow);
+  s.integer(r.spriteZeroHit);
+  s.integer(r.spriteOverflow);
 
-  s.integer(status.oamAddress);
+  s.integer(r.oamAddress);
 
-  s.integer(raster.nametable);
-  s.integer(raster.attribute);
-  s.integer(raster.tiledataLo);
-  s.integer(raster.tiledataHi);
+  s.integer(l.nametable);
+  s.integer(l.attribute);
+  s.integer(l.tiledataLo);
+  s.integer(l.tiledataHi);
 
-  s.integer(raster.oamIterator);
-  s.integer(raster.oamCounter);
+  s.integer(l.oamIterator);
+  s.integer(l.oamCounter);
 
   for(uint n = 0; n < 8; n++) {
-    s.integer(raster.oam[n].id);
-    s.integer(raster.oam[n].y);
-    s.integer(raster.oam[n].tile);
-    s.integer(raster.oam[n].attr);
-    s.integer(raster.oam[n].x);
+    s.integer(l.oam[n].id);
+    s.integer(l.oam[n].y);
+    s.integer(l.oam[n].tile);
+    s.integer(l.oam[n].attr);
+    s.integer(l.oam[n].x);
 
-    s.integer(raster.oam[n].tiledataLo);
-    s.integer(raster.oam[n].tiledataHi);
+    s.integer(l.oam[n].tiledataLo);
+    s.integer(l.oam[n].tiledataHi);
   }
 
   for(uint n = 0; n < 8; n++) {
-    s.integer(raster.soam[n].id);
-    s.integer(raster.soam[n].y);
-    s.integer(raster.soam[n].tile);
-    s.integer(raster.soam[n].attr);
-    s.integer(raster.soam[n].x);
+    s.integer(l.soam[n].id);
+    s.integer(l.soam[n].y);
+    s.integer(l.soam[n].tile);
+    s.integer(l.soam[n].attr);
+    s.integer(l.soam[n].x);
 
-    s.integer(raster.soam[n].tiledataLo);
-    s.integer(raster.soam[n].tiledataHi);
+    s.integer(l.soam[n].tiledataLo);
+    s.integer(l.soam[n].tiledataHi);
   }
 
   s.array(ciram, !system.vs() ? 0x0800 : 0x1000);

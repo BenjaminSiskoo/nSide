@@ -17,25 +17,25 @@ struct JalecoJF2x : Board {
     ss88006.main();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0x8000) == 0x8000) return read(prgrom, ss88006.prgAddress(addr));
     if((addr & 0xe000) == 0x6000) return ss88006.ramRead(addr);
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0x8000) == 0x8000) return ss88006.regWrite(addr, data);
     if((addr & 0xe000) == 0x6000) return ss88006.ramWrite(addr, data);
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(ss88006.ciramAddress(addr));
-    return Board::chrRead(ss88006.chrAddress(addr));
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM(ss88006.ciramAddress(addr));
+    return Board::readCHR(ss88006.chrAddress(addr));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(ss88006.ciramAddress(addr), data);
-    return Board::chrWrite(ss88006.chrAddress(addr), data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM(ss88006.ciramAddress(addr), data);
+    return Board::writeCHR(ss88006.chrAddress(addr), data);
   }
 
   auto power() -> void {

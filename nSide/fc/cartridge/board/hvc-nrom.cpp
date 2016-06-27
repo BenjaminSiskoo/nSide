@@ -13,40 +13,42 @@ struct HVC_NROM : Board {
     string type = boardNode["id"].text();
     if(type.match("*FAMILYBASIC*")) revision = Revision::FAMILYBASIC;
     if(type.match("*HROM*"       )) revision = Revision::HROM;
+    if(type.match("*NROM*"       )) revision = Revision::NROM;
     if(type.match("*RROM*"       )) revision = Revision::RROM;
+    if(type.match("*RTROM*"      )) revision = Revision::RTROM;
     if(type.match("*SROM*"       )) revision = Revision::SROM;
-    if(revision == Revision::HROM)
+    if(type.match("*STROM*"      )) revision = Revision::STROM;
+    if(revision == Revision::HROM) {
       settings.mirror = 0;
-    else
+    } else {
       settings.mirror = boardNode["mirror/mode"].text() == "horizontal";
+    }
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0x8000) == 0x8000) return read(prgrom, addr);
-    if(revision == Revision::FAMILYBASIC && (addr & 0xe000) == 0x6000)
-      return read(prgram, addr);
+    if(revision == Revision::FAMILYBASIC && (addr & 0xe000) == 0x6000) return read(prgram, addr);
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
-    if(revision == Revision::FAMILYBASIC && (addr & 0xe000) == 0x6000)
-      write(prgram, addr, data);
+  auto writePRG(uint addr, uint8 data) -> void {
+    if(revision == Revision::FAMILYBASIC && (addr & 0xe000) == 0x6000) write(prgram, addr, data);
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramRead(addr & 0x07ff);
+      return ppu.readCIRAM(addr & 0x07ff);
     }
-    return Board::chrRead(addr);
+    return Board::readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramWrite(addr, data);
+      return ppu.writeCIRAM(addr, data);
     }
-    return Board::chrWrite(addr, data);
+    return Board::writeCHR(addr, data);
   }
 
   auto serialize(serializer& s) -> void {

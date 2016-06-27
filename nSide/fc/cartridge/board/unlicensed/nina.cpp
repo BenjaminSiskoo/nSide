@@ -18,7 +18,7 @@ struct Nina : Board {
     }
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if(addr & 0x8000) return read(prgrom, (prgBank << 15) | (addr & 0x7fff));
     if((addr & 0xe000) == 0x6000) {
       if(prgram.size() > 0) return read(prgram, addr);
@@ -26,7 +26,7 @@ struct Nina : Board {
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     switch(revision) {
     case  1:
     case  2:
@@ -48,20 +48,20 @@ struct Nina : Board {
     if((addr & 0xe000) == 0x6000 && prgram.size() > 0) write(prgram, addr, data);
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramRead(addr);
+      return ppu.readCIRAM(addr);
     }
-    return Board::chrRead((addr & 0x0fff) | (chrBank[(addr & 0x1000) >> 12] << 12));
+    return Board::readCHR((addr & 0x0fff) | (chrBank[(addr & 0x1000) >> 12] << 12));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramWrite(addr, data);
+      return ppu.writeCIRAM(addr, data);
     }
-    return Board::chrWrite((addr & 0x0fff) | (chrBank[(addr & 0x1000) >> 12] << 12), data);
+    return Board::writeCHR((addr & 0x0fff) | (chrBank[(addr & 0x1000) >> 12] << 12), data);
   }
 
   auto power() -> void {

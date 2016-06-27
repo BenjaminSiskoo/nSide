@@ -71,7 +71,7 @@ ConsoleWindow::ConsoleWindow() {
   });
 
   menuEmulationReloadCartridge.onActivate([&] {
-    program->loadMedium(program->folderPaths(0));
+    program->loadMedium(*emulator, emulator->media[0]);
   });
 
   menuEmulationPowerCycle.onActivate([&] {

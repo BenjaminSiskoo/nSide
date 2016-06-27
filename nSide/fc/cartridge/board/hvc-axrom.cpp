@@ -12,28 +12,28 @@ struct HVC_AxROM : Board {
     if(type.match("*AOROM" )) revision = Revision::AOROM;
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if(addr & 0x8000) return read(prgrom, (prgBank << 15) | (addr & 0x7fff));
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
       // Bus conflicts
-      if(revision == Revision::AMROM) data &= prgRead(addr);
+      if(revision == Revision::AMROM) data &= readPRG(addr);
       prgBank = data & 0x0f;
       mirrorSelect = data & 0x10;
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead((mirrorSelect << 10) | (addr & 0x03ff));
-    return Board::chrRead(addr);
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM((mirrorSelect << 10) | (addr & 0x03ff));
+    return Board::readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite((mirrorSelect << 10) | (addr & 0x03ff), data);
-    return Board::chrWrite(addr, data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM((mirrorSelect << 10) | (addr & 0x03ff), data);
+    return Board::writeCHR(addr, data);
   }
 
   auto power() -> void {

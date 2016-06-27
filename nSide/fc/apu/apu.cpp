@@ -81,6 +81,33 @@ auto APU::setSample(int16 sample) -> void {
 }
 
 auto APU::load(Markup::Node node) -> bool {
+  if(system.vs()) return true;
+
+  string versionString;
+  if(system.fc()) {
+    if(system.region() == System::Region::NTSC)  versionString = node["apu/ntsc-version"].text();
+    if(system.region() == System::Region::PAL)   versionString = node["apu/pal-version"].text();
+    if(system.region() == System::Region::Dendy) versionString = node["apu/dendy-version"].text();
+  } else {
+    versionString = node["apu/version"].text();
+  }
+
+  //NTSC
+  if(versionString == "RP2A03")         version = Version::RP2A03;
+  if(versionString == "RP2A03A")        version = Version::RP2A03A;
+  if(versionString == "RP2A03C")        version = Version::RP2A03C;
+  if(versionString == "RP2A03E")        version = Version::RP2A03E;
+  if(versionString == "RP2A03F")        version = Version::RP2A03F;
+  if(versionString == "RP2A03G")        version = Version::RP2A03G;
+  if(versionString == "RP2A03H")        version = Version::RP2A03H;
+
+  //PAL
+  if(versionString == "RP2A07G")        version = Version::RP2A07G;
+
+  //Dendy
+  if(versionString == "UA6527P")        version = Version::UA6527P;
+  if(versionString == "TA-03NP1-6527P") version = Version::TA_03NP1_6527P;
+
   return true;
 }
 
@@ -212,9 +239,9 @@ auto APU::writeIO(uint16 addr, uint8 data) -> void {
   }
 
   case 0x400e: {
-    //TODO: Check if the RP2A03E and prior revisions support short mode.
+    //TODO: Check if the RP2A03E and prior versions support short mode.
     //Currently assuming that the RP2A03F is bugged. See noise.cpp for bug implementation.
-    if(revision != Revision::RP2A03) noise.shortMode = data.bit(7);
+    if(version != Version::RP2A03) noise.shortMode = data.bit(7);
     noise.period = data.bits(0,3);
     break;
   }

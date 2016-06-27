@@ -14,7 +14,7 @@ auto PPU::getVramAddress() -> uint16 {
 //been validated on hardware, as has the edge case where the S-CPU MDR can be written if the
 //write occurs during the very last clock cycle of vblank.
 
-auto PPU::vramRead(bool chip, uint15 addr) -> uint8 {
+auto PPU::vramRead(bool chip, uint addr) -> uint8 {
   uint8 data;
 
   if(r.displayDisable) {
@@ -43,7 +43,7 @@ auto PPU::vramRead(bool chip, uint15 addr) -> uint8 {
   return data;
 }
 
-auto PPU::vramWrite(bool chip, uint15 addr, uint8 data) -> void {
+auto PPU::vramWrite(bool chip, uint addr, uint8 data) -> void {
   if(r.displayDisable) {
     vram[addr].byte(chip) = data;
   } else {

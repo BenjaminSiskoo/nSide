@@ -4,13 +4,13 @@ struct Sunsoft4 : Board {
   Sunsoft4(Markup::Node& boardNode) : Board(boardNode) {
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0xc000) == 0x8000) return read(prgrom, (prgBank << 14) | (addr & 0x3fff));
     if((addr & 0xc000) == 0xc000) return read(prgrom, (    0xff << 14) | (addr & 0x3fff));
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     switch(addr & 0xf000) {
     case 0x8000: chrBank[0] = data; break;
     case 0x9000: chrBank[1] = data; break;
@@ -35,21 +35,21 @@ struct Sunsoft4 : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) {
       addr = ciramAddress(addr);
-      if(nametableMode) return Board::chrRead(((ntromBank[(addr & 0x0400) >> 10] | 0x80) << 10) | (addr & 0x03FF));
-      else              return ppu.ciramRead(addr);
+      if(nametableMode) return Board::readCHR(((ntromBank[(addr & 0x0400) >> 10] | 0x80) << 10) | (addr & 0x03FF));
+      else              return ppu.readCIRAM(addr);
     }
     addr = (chrBank[(addr & 0x1800) >> 11] << 11) | (addr & 0x07ff);
-    return Board::chrRead(addr);
+    return Board::readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
-      if(nametableMode == 0) return ppu.ciramWrite(ciramAddress(addr), data);
+      if(nametableMode == 0) return ppu.writeCIRAM(ciramAddress(addr), data);
     } else {
-      return Board::chrWrite(addr, data);
+      return Board::writeCHR(addr, data);
     }
   }
 

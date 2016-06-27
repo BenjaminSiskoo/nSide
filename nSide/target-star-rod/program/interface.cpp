@@ -3,13 +3,42 @@ auto Program::path(uint id) -> string {
 }
 
 auto Program::open(uint id, string name, vfs::file::mode mode, bool required) -> vfs::shared::file {
-  if(auto result = vfs::fs::file::open({path(id), name}, mode)) return result;
-  if(name == "manifest.bml") {
-    if(auto manifest = execute("cart-pal", "--manifest", path(id))) {
-      return vfs::memory::file::open(manifest.output.data<uint8_t>(), manifest.output.size());
+  if(name == "manifest.bml" && !path(id).endsWith(".sys/")) {
+    if(!file::exists({path(id), name})) {
+      if(auto manifest = execute("cart-pal", "--manifest", path(id))) {
+        return vfs::memory::file::open(manifest.output.data<uint8_t>(), manifest.output.size());
+      }
     }
   }
+
+  if(auto result = vfs::fs::file::open({path(id), name}, mode)) return result;
+
+  if(required) {
+    debugger->print("Error: missing required file:\n", path(id), name, "\n\n");
+  }
+
   return {};
+}
+
+auto Program::load(uint id, string name, string type) -> maybe<uint> {
+  string location;
+  if(mediumQueue) {
+    location = mediumQueue.takeLeft().transform("\\", "/");
+    if(!location.endsWith("/")) location.append("/");
+  } else {
+    location = BrowserDialog()
+    .setTitle({"Load ", name})
+    .setPath({higan_settings["Library/Location"].text(), name})
+    .setFilters({string{name, "|*.", type}, "All|*.*"})
+    .openFolder();
+  }
+  if(!directory::exists(location)) return mediumQueue.reset(), nothing;
+
+  directory::create({location, "debug/"});
+
+  uint pathID = mediumPaths.size();
+  mediumPaths.append(location);
+  return pathID;
 }
 
 auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint height) -> void {
@@ -65,8 +94,8 @@ auto Program::audioSample(const double* samples, uint channels) -> void {
 auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
   if(presentation->focused() == false) return 0;
 
-  if(port == SuperFamicom::Port::Controller1) {
-    if(device == SuperFamicom::Peripheral::ControllerPort1::Gamepad) {
+  if(port == SuperFamicom::ID::Port::Controller1) {
+    if(device == SuperFamicom::ID::Device::Gamepad) {
       switch(input) {
       case SuperFamicom::Gamepad::Up:     return hiro::Keyboard::pressed("Up");
       case SuperFamicom::Gamepad::Down:   return hiro::Keyboard::pressed("Down");

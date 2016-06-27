@@ -59,7 +59,7 @@ struct Sunsoft5B : Board {
     tick();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if(addr < 0x6000) return cpu.mdr();
 
     uint8 bank = 0x3f;  //((addr & 0xe000) == 0xe000
@@ -80,7 +80,7 @@ struct Sunsoft5B : Board {
     return read(prgrom, (bank << 13) | (addr & 0x1fff));
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0xe000) == 0x6000) {
       write(prgram, addr & 0x1fff, data);
     }
@@ -152,14 +152,14 @@ struct Sunsoft5B : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(ciramAddress(addr));
-    return Board::chrRead(chrAddress(addr));
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
+    return Board::readCHR(chrAddress(addr));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(ciramAddress(addr), data);
-    return Board::chrWrite(chrAddress(addr), data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM(ciramAddress(addr), data);
+    return Board::writeCHR(chrAddress(addr), data);
   }
 
   auto power() -> void {

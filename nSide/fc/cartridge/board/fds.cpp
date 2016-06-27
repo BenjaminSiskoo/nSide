@@ -14,7 +14,7 @@ struct FDS : Board {
     tick();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     switch(addr) {
     case 0x4030: {
       uint8 data = (irqPending | (byteTransferred << 1));
@@ -67,7 +67,7 @@ struct FDS : Board {
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     switch(addr) {
     case 0x4020: irqLatch = (irqLatch & 0xff00) | (data << 0); break;
     case 0x4021: irqLatch = (irqLatch & 0x00ff) | (data << 8); break;
@@ -132,20 +132,20 @@ struct FDS : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(mirror) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramRead(addr);
+      return ppu.readCIRAM(addr);
     }
-    return Board::chrRead(addr);
+    return Board::readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(mirror) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramWrite(addr, data);
+      return ppu.writeCIRAM(addr, data);
     }
-    return Board::chrWrite(addr, data);
+    return Board::writeCHR(addr, data);
   }
 
   auto power() -> void {

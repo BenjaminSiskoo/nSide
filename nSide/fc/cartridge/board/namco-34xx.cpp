@@ -47,12 +47,12 @@ struct Namco34xx : Board {
     else return addr & 0x7fff;
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if(addr & 0x8000) return read(prgrom, prgAddress(addr));
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
       n108.regWrite(addr, data);
       if(revision == Revision::Namco3453) nametable = data & 0x40;
@@ -74,28 +74,28 @@ struct Namco34xx : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(revision == Revision::DRROM) {
       if(addr & 0x2000) {
-        if(!(addr & 0x0800)) return ppu.ciramRead(addr & 0x07ff);
+        if(!(addr & 0x0800)) return ppu.readCIRAM(addr & 0x07ff);
         else                 return read(chrram, addr & 0x07ff);
       }
       return read(chrrom, n108.chrAddress(addr));
     }
-    if(addr & 0x2000) return ppu.ciramRead(ciramAddress(addr));
-    return Board::chrRead(chrAddress(addr));
+    if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
+    return Board::readCHR(chrAddress(addr));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(revision == Revision::DRROM) {
       if(addr & 0x2000) {
-        if(!(addr & 0x0800)) ppu.ciramWrite(addr & 0x07ff, data);
+        if(!(addr & 0x0800)) ppu.writeCIRAM(addr & 0x07ff, data);
         else                 write(chrram, addr & 0x07ff, data);
       }
       return;
     }
-    if(addr & 0x2000) return ppu.ciramWrite(ciramAddress(addr), data);
-    return Board::chrWrite(chrAddress(addr), data);
+    if(addr & 0x2000) return ppu.writeCIRAM(ciramAddress(addr), data);
+    return Board::writeCHR(chrAddress(addr), data);
   }
 
   auto ciramAddress(uint addr) const -> uint {

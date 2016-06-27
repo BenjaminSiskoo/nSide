@@ -11,7 +11,7 @@ struct TC : Chip {
   auto main() -> void {
     if(revision != Revision::TC0190FMC) {
       if(irqDelay) irqDelay--;
-      irqTest(ppu.status.chrAddressBus);
+      irqTest(ppu.r.chrAddressBus);
       cpu.irqLine(irqLine);
     }
     tick();

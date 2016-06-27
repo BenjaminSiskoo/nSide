@@ -5,18 +5,18 @@ struct Bandai74_161_02_74 : Board {
   }
 
   auto main() -> void {
-    chrAddressBusTest(ppu.status.chrAddressBus);
+    chrAddressBusTest(ppu.r.chrAddressBus);
     tick();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if(addr & 0x8000) return read(prgrom, (prgBank << 15) | (addr & 0x7fff));
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
-      data &= prgRead(addr);
+      data &= readPRG(addr);
       prgBank = (data & 0x03) >> 0;
       chrPlane = (data & 0x04) >> 2;
     }
@@ -29,16 +29,16 @@ struct Bandai74_161_02_74 : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     chrAddressBusTest(addr);
-    if(addr & 0x2000) return ppu.ciramRead(addr & 0x07ff);
-    return Board::chrRead(chrAddress(addr));
+    if(addr & 0x2000) return ppu.readCIRAM(addr & 0x07ff);
+    return Board::readCHR(chrAddress(addr));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     chrAddressBusTest(addr);
-    if(addr & 0x2000) return ppu.ciramWrite(addr & 0x07ff, data);
-    Board::chrWrite(chrAddress(addr), data);
+    if(addr & 0x2000) return ppu.writeCIRAM(addr & 0x07ff, data);
+    Board::writeCHR(chrAddress(addr), data);
   }
 
   auto chrAddressBusTest(uint addr) -> void {

@@ -24,39 +24,39 @@ struct HVC_TxROM : Board {
     mmc3.main();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return mmc3.ramRead(addr);
     if(addr & 0x8000) return read(prgrom, mmc3.prgAddress(addr));
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return mmc3.ramWrite(addr, data);
     if(addr & 0x8000) return mmc3.regWrite(addr, data);
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
       if(addr & 0x2000) return read(chrram, addr);
       return read(chrrom, mmc3.chrAddress(addr));
     }
-    if(addr & 0x2000) return ppu.ciramRead(ciramAddress(addr));
+    if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
     if(revision == Revision::TQROM) {
       if(mmc3.chrAddress(addr) & (0x40 << 10))
         return read(chrram, mmc3.chrAddress(addr));
       else
         return read(chrrom, mmc3.chrAddress(addr));
     }
-    return Board::chrRead(mmc3.chrAddress(addr));
+    return Board::readCHR(mmc3.chrAddress(addr));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
       if(addr & 0x2000) write(chrram, addr, data);
       return;
     }
-    if(addr & 0x2000) return ppu.ciramWrite(ciramAddress(addr), data);
-    return Board::chrWrite(mmc3.chrAddress(addr), data);
+    if(addr & 0x2000) return ppu.writeCIRAM(ciramAddress(addr), data);
+    return Board::writeCHR(mmc3.chrAddress(addr), data);
   }
 
   auto ciramAddress(uint addr) -> uint {

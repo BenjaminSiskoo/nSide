@@ -1,5 +1,5 @@
 struct PPU : Thread, PPUcounter {
-  enum class Revision : uint {
+  enum class Version : uint {
     //YIQ
     RP2C02C,
     RP2C02G,
@@ -22,11 +22,11 @@ struct PPU : Thread, PPUcounter {
     //YUV
     RP2C07,
     UA6538,
-  } revision;
+  } version;
 
-  alwaysinline auto ntsc() const -> bool { return revision >= Revision::RP2C02C && revision <= Revision::RP2C02G; }
-  alwaysinline auto pal()  const -> bool { return revision >= Revision::RP2C07  && revision <= Revision::UA6538;  }
-  alwaysinline auto rgb()  const -> bool { return revision >= Revision::RP2C03B && revision <= Revision::RC2C05_05; }
+  alwaysinline auto ntsc() const -> bool { return version >= Version::RP2C02C && version <= Version::RP2C02G; }
+  alwaysinline auto pal()  const -> bool { return version >= Version::RP2C07  && version <= Version::UA6538;  }
+  alwaysinline auto rgb()  const -> bool { return version >= Version::RP2C03B && version <= Version::RC2C05_05; }
 
   PPU();
   ~PPU();
@@ -43,36 +43,38 @@ struct PPU : Thread, PPUcounter {
   auto origin_x() -> uint;
   auto origin_y() -> uint;
 
-  auto rasterEnable() const -> bool;
-  auto nametableAddress() const -> uint;
-  auto scrollX() const -> uint;
-  auto scrollY() const -> uint;
-  auto spriteHeight() const -> uint;
-
-  auto chrLoad(uint14 addr) -> uint8;
-
-  auto scrollXIncrement() -> void;
-  auto scrollYIncrement() -> void;
-
   auto ext() -> uint4;
-
-  auto rasterPixel() -> void;
-  auto rasterSprite() -> void;
-  auto rasterScanline() -> void;
 
   auto serialize(serializer&) -> void;
 
   //memory.cpp
-  auto ciramRead(uint14 addr) -> uint8;
-  auto ciramWrite(uint14 addr, uint8 data) -> void;
-  alwaysinline auto cgramRead(uint14 addr) -> uint8;
-  alwaysinline auto cgramWrite(uint14 addr, uint8 data) -> void;
-  alwaysinline auto oamRead(uint8 addr) -> uint8;
-  alwaysinline auto oamWrite(uint8 addr, uint8 data) -> void;
+  auto readCIRAM(uint14 addr) -> uint8;
+  auto writeCIRAM(uint14 addr, uint8 data) -> void;
+
+  alwaysinline auto readCGRAM(uint5 addr) -> uint8;
+  alwaysinline auto writeCGRAM(uint5 addr, uint8 data) -> void;
+
+  alwaysinline auto readOAM(uint8 addr) -> uint8;
+  alwaysinline auto writeOAM(uint8 addr, uint8 data) -> void;
 
   //mmio.cpp
   auto read(uint16 addr, uint8 data) -> uint8;
   auto write(uint16 addr, uint8 data) -> void;
+
+  //render.cpp
+  auto enable() const -> bool;
+  auto nametableAddress() const -> uint;
+  auto scrollX() const -> uint;
+  auto scrollY() const -> uint;
+
+  auto loadCHR(uint14 addr) -> uint8;
+
+  auto scrollX_increment() -> void;
+  auto scrollY_increment() -> void;
+
+  auto renderPixel() -> void;
+  auto renderSprite() -> void;
+  auto renderScanline() -> void;
 
   uint8 ciram[4096];  //2048 in Famicom and PlayChoice-10
   uint8 cgram[32];
@@ -86,7 +88,7 @@ struct PPU : Thread, PPUcounter {
   static const uint9 RP2C04_0003[16 * 4];
   static const uint9 RP2C04_0004[16 * 4];
 
-  struct Status {
+  struct Registers {
     uint14 chrAddressBus;
     uint8 mdr;
     uint mdrDecay[8];
@@ -102,31 +104,42 @@ struct PPU : Thread, PPUcounter {
     bool nmiHold;
     bool nmiFlag;
 
-    //$2000
+    //$2000  PPUCTRL
     bool nmiEnable;
     bool masterSelect;
-    bool spriteSize;
+    uint spriteHeight;
     uint bgAddress;
     uint objAddress;
     uint vramIncrement;
 
-    //$2001
+    //$2001  PPUMASK
     uint3 emphasis;
-    bool spriteEnable;
+    bool objEnable;
     bool bgEnable;
     bool objEdgeEnable;
     bool bgEdgeEnable;
     bool grayscale;
 
-    //$2002
+    //$2002  PPUSTATUS
     bool spriteZeroHit;
     bool spriteOverflow;
 
-    //$2003
+    //$2003  OAMADDR
     uint8 oamAddress;
-  } status;
+  } r;
 
-  struct Raster {
+  struct OAM {
+    uint8 id;
+    uint8 y;
+    uint8 tile;
+    uint8 attr;
+    uint8 x;
+
+    uint8 tiledataLo;
+    uint8 tiledataHi;
+  };
+
+  struct Latches {
     uint16 nametable;
     uint16 attribute;
     uint16 tiledataLo;
@@ -135,17 +148,9 @@ struct PPU : Thread, PPUcounter {
     uint oamIterator;
     uint oamCounter;
 
-    struct OAM {
-      uint8 id;
-      uint8 y;
-      uint8 tile;
-      uint8 attr;
-      uint8 x;
-
-      uint8 tiledataLo;
-      uint8 tiledataHi;
-    } oam[8], soam[8];
-  } raster;
+    OAM oam[8];   //primary
+    OAM soam[8];  //secondary
+  } l;
 
 privileged:
   uint32* output = nullptr;

@@ -19,7 +19,7 @@ struct VS : Board {
     tick();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     switch(chipType) {
     case ChipType::None: {
       if(addr & 0x8000) {
@@ -66,14 +66,14 @@ struct VS : Board {
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     switch(chipType) {
     case ChipType::None:
       if(addr == 0x4016) bank = (data & 0x04) >> 2;
       break;
     case ChipType::_74HC32:
       //TODO: Check if VS. UNROM has bus conflicts
-      //data &= prgRead(addr);
+      //data &= readPRG(addr);
       if(addr & 0x8000) bank = data & 0x0f;
       break;
     case ChipType::MMC1:
@@ -89,32 +89,32 @@ struct VS : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(addr);
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM(addr);
     switch(chipType) {
     case ChipType::None:
-      if(chrrom.size() < bank << 13) return ppu.status.mdr;
+      if(chrrom.size() < bank << 13) return ppu.r.mdr;
       return read(chrrom, ((bank << 13) + (addr & 0x1fff)));
     case ChipType::_74HC32:
-      return Board::chrRead(addr);
+      return Board::readCHR(addr);
     case ChipType::MMC1:
-      return Board::chrRead(mmc1.chrAddress(addr));
+      return Board::readCHR(mmc1.chrAddress(addr));
     case ChipType::N108:
-      return Board::chrRead(n108.chrAddress(addr));
+      return Board::readCHR(n108.chrAddress(addr));
     }
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(addr, data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM(addr, data);
     switch(chipType) {
     case ChipType::None:
       break;
     case ChipType::_74HC32:
-      return Board::chrWrite(addr, data);
+      return Board::writeCHR(addr, data);
     case ChipType::MMC1:
-      return Board::chrWrite(mmc1.chrAddress(addr), data);
+      return Board::writeCHR(mmc1.chrAddress(addr), data);
     case ChipType::N108:
-      return Board::chrWrite(n108.chrAddress(addr), data);
+      return Board::writeCHR(n108.chrAddress(addr), data);
     }
   }
 

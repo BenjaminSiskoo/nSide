@@ -79,8 +79,8 @@ auto InputManager::appendHotkeys() -> void {
   { auto hotkey = new InputHotkey;
     hotkey->name = "Export Memory";
     hotkey->press = [] {
-      if(!emulator) return;
-      emulator->exportMemory();
+      if(!::emulator) return;
+      ::emulator->exportMemory();
       program->showMessage("Memory exported");
     };
     hotkeys.append(hotkey);

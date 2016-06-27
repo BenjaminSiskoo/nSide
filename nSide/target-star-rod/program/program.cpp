@@ -33,28 +33,6 @@ Program::Program(lstring args) {
 
   settings->load();
 
-  string path = higan_settings["Library/Location"].text().transform("\\", "/");
-  if(!path) path = {Path::user(), "Emulation/"};
-  if(!path.endsWith("/")) path.append("/");
-  path.append("Super Famicom/");
-
-  string location;
-  args.takeLeft();  //ignore program location in argument parsing
-  for(auto& argument : args) {
-    location = argument.transform("\\", "/").trimRight("/").append("/");
-  }
-  if(!directory::exists(location)) location = BrowserDialog()
-  .setTitle("Load Super Famicom")
-  .setPath({higan_settings["Library/Location"].text(), "Super Famicom"})
-  .setFilters("Super Famicom|*.sfc")
-  .openFolder();
-  if(!location.endsWith(".sfc/")) return;
-  if(!directory::exists(location)) return;
-
-  consoleWindow->setVisible();
-  presentation->setVisible();
-  consoleWindow->setFocused();
-
   video = Video::create();
   video->set(Video::Handle, presentation->viewport.handle());
   if(!video->init()) video = Video::create("None");
@@ -72,9 +50,17 @@ Program::Program(lstring args) {
   input->set(Input::Handle, presentation->viewport.handle());
   if(!input->init()) input = Input::create("None");
 
+  args.takeLeft();  //ignore program location in argument parsing
+  for(auto& argument : args) {
+    if(directory::exists(argument)) mediumQueue.append(argument);
+  }
+  loadMedium(*emulator, emulator->media[0]);
+
+  consoleWindow->setVisible();
+  presentation->setVisible();
+  consoleWindow->setFocused();
   presentation->drawSplashScreen();
 
-  if(loadMedium(location) == false) return;
   cpuDebugger->updateDisassembly();
   smpDebugger->updateDisassembly();
   memoryEditor->selectSource();

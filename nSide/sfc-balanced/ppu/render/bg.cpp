@@ -41,14 +41,12 @@ auto PPU::bg_renderLine() -> void {
   if(bg.r.priority[0] + bg.r.priority[1] == 0) return;
   if(!bg.r.aboveEnable && !bg.r.belowEnable) return;
 
-  const uint16 opt_valid_bit = bg_id == Background::ID::BG1 ? 0x2000 : bg_id == Background::ID::BG2 ? 0x4000 : 0x0000;
-  const uint8  bgpal_index   = r.bgMode == 0 ? bg_id << 5 : 0;
+  const uint16 validMask = bg_id == Background::ID::BG1 ? 0x2000 : 0x4000;
 
-  const uint8  pal_size  = 2 << bg.r.mode;       //<<2 (*4), <<4 (*16), <<8 (*256)
-  const uint16 tile_mask = 0x0fff >> bg.r.mode;  //0x0fff, 0x07ff, 0x03ff
-  //4 + bg.r.mode = >>(4-6) -- / {16, 32, 64 } bytes/tile
-  //index is a tile number count to add to base tile number
-  const uint tiledata_index = bg.r.tiledataAddress >> (3 + bg.r.mode);
+  const uint paletteOffset = (r.bgMode == 0 ? bg_id << 5 : 0);
+  const uint paletteSize = 2 << bg.r.mode;
+  const uint tileMask = ppu.vram.mask >> (3 + bg.r.mode);
+  const uint tiledataIndex = bg.r.tiledataAddress >> (3 + bg.r.mode);
 
   const uint8* bg_tiledata  = tiledataCache.tiledata[bg.r.mode];
   const uint8* bg_tilestate = tiledataCache.tiledataState[bg.r.mode];
@@ -63,7 +61,7 @@ auto PPU::bg_renderLine() -> void {
   uint16 vscroll = bg.r.voffset;
 
   const uint hires = r.bgMode == 5 || r.bgMode == 6;
-  const uint width = !hires ? 256 : 512;
+  const uint width = 256 << hires;
 
   if(hires) {
     hscroll <<= 1;
@@ -73,7 +71,7 @@ auto PPU::bg_renderLine() -> void {
   uint16 hval, vval;
   uint16 tile_pri, tile_num;
   uint8  pal_index, pal_num;
-  uint16 hoffset, voffset, opt_x, col;
+  uint16 hoffset, voffset, offsetX, col;
   bool   mirror_x, mirror_y;
 
   const uint8*  tile_ptr;
@@ -91,33 +89,34 @@ auto PPU::bg_renderLine() -> void {
     voffset = y + vscroll;
 
     if(isOPTMode) {
-      opt_x = x + (hscroll & 7);
+      offsetX = (x + (hscroll & 7));
 
       //tile 0 is unaffected by offset-per-tile mode...
-      if(opt_x >= 8) {
-        //cache tile data in hval, vval if possible
-        if((opt_x >> 3) != (prev_optx >> 3)) {
-          prev_optx = opt_x;
+      if(offsetX >= 8) {
 
-          hval = bg3.getTile((opt_x - 8) + (bg3.r.hoffset & ~7), bg3.r.voffset);
+        //cache tile data in hval, vval if possible
+        if((offsetX >> 3) != (prev_optx >> 3)) {
+          prev_optx = offsetX;
+
+          hval = bg3.getTile((offsetX - 8) + (bg3.r.hoffset & ~7), bg3.r.voffset);
           if(r.bgMode != 4) {
-            vval = bg3.getTile((opt_x - 8) + (bg3.r.hoffset & ~7), bg3.r.voffset + 8);
+            vval = bg3.getTile((offsetX - 8) + (bg3.r.hoffset & ~7), bg3.r.voffset + 8);
           }
         }
 
         if(r.bgMode == 4) {
-          if(hval & opt_valid_bit) {
+          if(hval & validMask) {
             if(!(hval & 0x8000)) {
-              hoffset = opt_x + (hval & ~7);
+              hoffset = offsetX + (hval & ~7);
             } else {
               voffset = y + hval;
             }
           }
         } else {
-          if(hval & opt_valid_bit) {
-            hoffset = opt_x + (hval & ~7);
+          if(hval & validMask) {
+            hoffset = offsetX + (hval & ~7);
           }
-          if(vval & opt_valid_bit) {
+          if(vval & validMask) {
             voffset = y + vval;
           }
         }
@@ -136,7 +135,7 @@ auto PPU::bg_renderLine() -> void {
       mirror_x  = tile_num & 0x4000;
       tile_pri  = bg.r.priority[(tile_num & 0x2000) >> 13];
       pal_num   = (tile_num >> 10) & 7;
-      pal_index = bgpal_index + (pal_num << pal_size);
+      pal_index = paletteOffset + (pal_num << paletteSize);
 
       if(tile_width  == 4) {  //16x16 horizontal tile mirroring
         if((bool)(hoffset & 8) != mirror_x) tile_num++;
@@ -147,8 +146,8 @@ auto PPU::bg_renderLine() -> void {
       }
 
       tile_num &= 0x03ff;
-      tile_num += tiledata_index;
-      tile_num &= tile_mask;
+      tile_num += tiledataIndex;
+      tile_num &= tileMask;
 
       if(bg_tilestate[tile_num] == 1) {
         renderBGTile(bg.r.mode, tile_num);

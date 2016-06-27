@@ -1,30 +1,39 @@
-auto Program::loadMedium(string location) -> bool {
+auto Program::loadMedium() -> void {
+  if(!mediumQueue) return;
+
+  string location = mediumQueue.left();
+  string type = suffixname(location).trimLeft(".", 1L);
+
+  for(auto& medium : emulator->media) {
+    if(medium.type != type) continue;
+    return loadMedium(*emulator, medium);
+  }
+
+  mediumQueue.reset();
+}
+
+auto Program::loadMedium(Emulator::Interface& interface, const Emulator::Interface::Medium& medium) -> void {
   unloadMedium();
 
-  mediumPaths(0) = locateSystem("Super Famicom.sys/");
-  mediumPaths(1) = location;
-  folderPaths.append(location);
-
-  directory::create({folderPaths(0), "debug/"});
+  mediumPaths.append(locateSystem({medium.name, ".sys/"}));
+  debugger->print(medium.name, "\n");
 
   Emulator::audio.reset(2, audio->get(Audio::Frequency).get<uint>(44100));
-  emulator->connect(SuperFamicom::Port::Controller1, SuperFamicom::Peripheral::ControllerPort1::Gamepad);
-  emulator->connect(SuperFamicom::Port::Controller2, SuperFamicom::Peripheral::ControllerPort2::None);
-  emulator->load(SuperFamicom::ID::SuperFamicom);
+  emulator->connect(SuperFamicom::ID::Port::Controller1, SuperFamicom::ID::Device::Gamepad);
+  emulator->connect(SuperFamicom::ID::Port::Controller2, SuperFamicom::ID::Device::None);
+  emulator->load(medium.id);
   emulator->set("Blur Emulation", false);
   emulator->set("Color Emulation", false);
   emulator->set("Scanline Emulation", false);
   emulator->power();
 
-  presentation->setTitle(basename(folderPaths(0)).trimRight("/"));
+  presentation->setTitle(basename(mediumPaths(1)).trimRight("/"));
   debugger->print(SuperFamicom::cartridge.information.manifest.cartridge, "\n");
   debugger->suspend();
-  return true;
 }
 
 auto Program::unloadMedium() -> void {
   emulator->unload();
   debugger->print("Cartridge unloaded\n");
   mediumPaths.reset();
-  folderPaths.reset();
 }

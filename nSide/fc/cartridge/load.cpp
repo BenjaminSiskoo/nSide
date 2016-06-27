@@ -16,8 +16,8 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
 
   if(system.pc10()) {
     auto rom = boardNode["pc10"].find("rom");
-    loadMemory(board->instrom, rom(0), File::Required, ID::PlayChoice10);
-    loadMemory(board->keyrom,  rom(1), File::Required, ID::PlayChoice10);
+    loadMemory(board->instrom, rom(0), File::Required, pathID());
+    loadMemory(board->keyrom,  rom(1), File::Required, pathID());
   }
 }
 
@@ -59,25 +59,25 @@ auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
   }
   vssystem.setDip(primarySide, interface->dipSettings(boardNode));
 
-  string cpuRevision = side(0)["cpu/revision"].text();
-  vssystem.forceSubRAM = cpuRevision == "RP2A04";
+  string cpuVersion = side(0)["cpu/version"].text();
+  vssystem.forceSubRAM = cpuVersion == "RP2A04";
 
-  string ppuRevision = boardNode["ppu/revision"].text();
-  if(ppuRevision == "RP2C02C")     ppu.revision = PPU::Revision::RP2C02C;
-  if(ppuRevision == "RP2C02G")     ppu.revision = PPU::Revision::RP2C02G;
-  if(ppuRevision == "RP2C03B")     ppu.revision = PPU::Revision::RP2C03B;
-  if(ppuRevision == "RP2C03G")     ppu.revision = PPU::Revision::RP2C03G;
-  if(ppuRevision == "RP2C04-0001") ppu.revision = PPU::Revision::RP2C04_0001;
-  if(ppuRevision == "RP2C04-0002") ppu.revision = PPU::Revision::RP2C04_0002;
-  if(ppuRevision == "RP2C04-0003") ppu.revision = PPU::Revision::RP2C04_0003;
-  if(ppuRevision == "RP2C04-0004") ppu.revision = PPU::Revision::RP2C04_0004;
-  if(ppuRevision == "RC2C03B")     ppu.revision = PPU::Revision::RC2C03B;
-  if(ppuRevision == "RC2C03C")     ppu.revision = PPU::Revision::RC2C03C;
-  if(ppuRevision == "RC2C05-01")   ppu.revision = PPU::Revision::RC2C05_01;
-  if(ppuRevision == "RC2C05-02")   ppu.revision = PPU::Revision::RC2C05_02;
-  if(ppuRevision == "RC2C05-03")   ppu.revision = PPU::Revision::RC2C05_03;
-  if(ppuRevision == "RC2C05-04")   ppu.revision = PPU::Revision::RC2C05_04;
-  if(ppuRevision == "RC2C05-05")   ppu.revision = PPU::Revision::RC2C05_05;
+  string ppuVersion = boardNode["ppu/version"].text();
+  if(ppuVersion == "RP2C02C")     ppu.version = PPU::Version::RP2C02C;
+  if(ppuVersion == "RP2C02G")     ppu.version = PPU::Version::RP2C02G;
+  if(ppuVersion == "RP2C03B")     ppu.version = PPU::Version::RP2C03B;
+  if(ppuVersion == "RP2C03G")     ppu.version = PPU::Version::RP2C03G;
+  if(ppuVersion == "RP2C04-0001") ppu.version = PPU::Version::RP2C04_0001;
+  if(ppuVersion == "RP2C04-0002") ppu.version = PPU::Version::RP2C04_0002;
+  if(ppuVersion == "RP2C04-0003") ppu.version = PPU::Version::RP2C04_0003;
+  if(ppuVersion == "RP2C04-0004") ppu.version = PPU::Version::RP2C04_0004;
+  if(ppuVersion == "RC2C03B")     ppu.version = PPU::Version::RC2C03B;
+  if(ppuVersion == "RC2C03C")     ppu.version = PPU::Version::RC2C03C;
+  if(ppuVersion == "RC2C05-01")   ppu.version = PPU::Version::RC2C05_01;
+  if(ppuVersion == "RC2C05-02")   ppu.version = PPU::Version::RC2C05_02;
+  if(ppuVersion == "RC2C05-03")   ppu.version = PPU::Version::RC2C05_03;
+  if(ppuVersion == "RC2C05-04")   ppu.version = PPU::Version::RC2C05_04;
+  if(ppuVersion == "RC2C05-05")   ppu.version = PPU::Version::RC2C05_05;
 
   if(ppus == 2) interface->information.canvasWidth = 512;
 }

@@ -1,11 +1,11 @@
 system name:FamicomBox
   cpu
     ram name=work.ram size=0x2000 volatile
-  ppu
+  ppu version=RP2C02C
     ram name=nametable.ram size=0x800 volatile
     ram name=object.ram size=256 volatile
     ram name=palette.ram size=28 volatile
-  apu
+  apu version=RP2A03E
   prg
     rom name=bios.program.rom size=0x8000
   chr

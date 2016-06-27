@@ -4,37 +4,37 @@ struct IremHolyDiver : Board {
   IremHolyDiver(Markup::Node& boardNode) : Board(boardNode) {
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     switch(addr & 0xc000) {
     case 0x8000: return read(prgrom, (prgBank << 14) | (addr & 0x3fff));
     case 0xc000: return read(prgrom, (   0x07 << 14) | (addr & 0x3fff));
     }
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
       // Bus conflicts
-      data &= prgRead(addr);
+      data &= readPRG(addr);
       prgBank = (data & 0x07) >> 0;
       mirror = data & 0x08;
       chrBank = (data & 0xf0) >> 4;
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) {
       if(mirror == 0) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramRead(addr);
+      return ppu.readCIRAM(addr);
     }
-    return Board::chrRead((chrBank * 0x2000) + (addr & 0x1fff));
+    return Board::readCHR((chrBank * 0x2000) + (addr & 0x1fff));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       if(mirror == 0) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
-      return ppu.ciramWrite(addr, data);
+      return ppu.writeCIRAM(addr, data);
     }
-    Board::chrWrite((chrBank * 0x2000) + (addr & 0x1fff), data);
+    Board::writeCHR((chrBank * 0x2000) + (addr & 0x1fff), data);
   }
 
   auto power() -> void {

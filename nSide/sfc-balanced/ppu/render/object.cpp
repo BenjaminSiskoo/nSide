@@ -124,7 +124,7 @@ auto PPU::obj_loadTiles() -> void {
 
     uint mx  = !spr->hflip ? tx : (tile_width - 1) - tx;
     uint pos = tdaddr + ((chry + ((chrx + mx) & 15)) << 4);
-    obj_tileList[n].tile = (pos >> 4) & 0x07ff;
+    obj_tileList[n].tile = (pos >> 4) & (ppu.vram.mask >> 4);
   }
 }
 

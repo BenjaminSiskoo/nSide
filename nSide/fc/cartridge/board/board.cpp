@@ -87,13 +87,13 @@ auto Board::tick() -> void {
   if(cartridge.clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
 }
 
-auto Board::chrRead(uint addr) -> uint8 {
+auto Board::readCHR(uint addr) -> uint8 {
   if(chrram.size()) return read(chrram, addr);
   if(chrrom.size()) return read(chrrom, addr);
-  return ppu.status.mdr;
+  return ppu.r.mdr;
 }
 
-auto Board::chrWrite(uint addr, uint8 data) -> void {
+auto Board::writeCHR(uint addr, uint8 data) -> void {
   if(chrram.size()) write(chrram, addr, data);
 }
 

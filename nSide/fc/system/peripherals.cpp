@@ -61,7 +61,6 @@ auto Peripherals::connect(uint port, uint device) -> void {
   }
 
   if(port == ID::Port::Expansion) {
-    print("Expansion Port Device ID: ", device, "\n");
     settings.expansionPort = device;
     if(!system.loaded()) return;
 

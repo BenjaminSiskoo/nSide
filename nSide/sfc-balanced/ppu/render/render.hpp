@@ -19,7 +19,7 @@ struct TiledataCache {
   auto free() -> void;
 } tiledataCache;
 
-auto renderBGTile(uint color_depth, uint16 tile_num) -> void;
+auto renderBGTile(uint colorDepth, uint16 tile_num) -> void;
 inline auto flushPixelCache() -> void;
 
 //windows.cpp

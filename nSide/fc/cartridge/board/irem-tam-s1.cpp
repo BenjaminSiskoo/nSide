@@ -4,7 +4,7 @@ struct IremTamS1 : Board {
   IremTamS1(Markup::Node& boardNode) : Board(boardNode) {
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0x8000) == 0x0000) return cpu.mdr();
     switch(addr & 0xc000) {
     case 0x8000: return read(prgrom, (   0x0f << 14) | (addr & 0x3fff));
@@ -12,16 +12,16 @@ struct IremTamS1 : Board {
     }
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
       //TODO: check for bus conflicts
-      //data &= prgRead(addr);
+      //data &= readPRG(addr);
       prgBank = data & 0x0f;
       mirror = (data & 0xc0) >> 6;
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
+  auto readCHR(uint addr) -> uint8 {
     if(addr & 0x2000) {
       switch(mirror) {
       case 0: addr = (0x0000              ) | (addr & 0x03ff); break;
@@ -29,12 +29,12 @@ struct IremTamS1 : Board {
       case 2: addr = ((addr & 0x0400) >> 0) | (addr & 0x03ff); break;
       case 3: addr = (0x0400              ) | (addr & 0x03ff); break;
       }
-      return ppu.ciramRead(addr);
+      return ppu.readCIRAM(addr);
     }
-    return Board::chrRead(addr);
+    return Board::readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
+  auto writeCHR(uint addr, uint8 data) -> void {
     if(addr & 0x2000) {
       switch(mirror) {
       case 0: addr = (0x0000              ) | (addr & 0x03ff); break;
@@ -42,9 +42,9 @@ struct IremTamS1 : Board {
       case 2: addr = ((addr & 0x0400) >> 0) | (addr & 0x03ff); break;
       case 3: addr = (0x0400              ) | (addr & 0x03ff); break;
       }
-      return ppu.ciramWrite(addr, data);
+      return ppu.writeCIRAM(addr, data);
     }
-    return Board::chrWrite(addr, data);
+    return Board::writeCHR(addr, data);
   }
 
   auto power() -> void {

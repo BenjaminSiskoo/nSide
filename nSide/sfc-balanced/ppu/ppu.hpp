@@ -19,8 +19,8 @@ struct PPU : Thread, PPUcounter {
 
   //memory.cpp
   alwaysinline auto getVramAddress() -> uint16;
-  alwaysinline auto vramRead(bool chip, uint15 addr) -> uint8;
-  alwaysinline auto vramWrite(bool chip, uint15 addr, uint8 data) -> void;
+  alwaysinline auto vramRead(bool chip, uint addr) -> uint8;
+  alwaysinline auto vramWrite(bool chip, uint addr, uint8 data) -> void;
   alwaysinline auto oamRead(uint addr) -> uint8;
   alwaysinline auto oamWrite(uint addr, uint8 data) -> void;
   alwaysinline auto cgramRead(uint addr) -> uint8;

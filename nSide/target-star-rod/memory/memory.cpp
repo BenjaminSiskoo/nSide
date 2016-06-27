@@ -88,7 +88,7 @@ auto MemoryEditor::selectSource() -> void {
 }
 
 auto MemoryEditor::exportMemoryToDisk() -> void {
-  string filename = {program->folderPaths(0), "debug/"};
+  string filename = {program->mediumPaths(1), "debug/"};
   switch(source.selected().offset()) {
   case 0: filename.append("work.ram"); break;
   case 1: filename.append("apu.ram"); break;

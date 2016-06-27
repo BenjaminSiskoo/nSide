@@ -27,11 +27,9 @@ struct Interface {
   struct Device {
     uint id;
     string name;
-    bool plugAndPlay;
     struct Input {
       uint type;  //0 = digital, 1 = analog (relative), 2 = rumble
       string name;
-      uintptr userData;
     };
     vector<Input> inputs;
   };

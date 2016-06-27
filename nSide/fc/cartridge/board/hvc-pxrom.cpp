@@ -7,7 +7,7 @@ struct HVC_PxROM : Board {
     if(type.match("*PNROM*"  )) revision = Revision::PNROM;
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if(addr < 0x6000) return cpu.mdr();
     if(addr < 0x8000) return read(prgram, addr);
     uint bank = 0;
@@ -20,7 +20,7 @@ struct HVC_PxROM : Board {
     return read(prgrom, (bank * 0x2000) | (addr & 0x1fff));
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if(addr < 0x6000) return;
     if(addr < 0x8000) return write(prgram, addr, data);
 
@@ -41,22 +41,22 @@ struct HVC_PxROM : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(ciramAddress(addr));
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
     bool region = addr & 0x1000;
     uint bank = chrBank[region][latch[region]];
     if((addr & 0x0ff8) == 0x0fd8) latch[region] = 0;
     if((addr & 0x0ff8) == 0x0fe8) latch[region] = 1;
-    return Board::chrRead((bank * 0x1000) | (addr & 0x0fff));
+    return Board::readCHR((bank * 0x1000) | (addr & 0x0fff));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(ciramAddress(addr), data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM(ciramAddress(addr), data);
     bool region = addr & 0x1000;
     uint bank = chrBank[region][latch[region]];
     if((addr & 0x0ff8) == 0x0fd8) latch[region] = 0;
     if((addr & 0x0ff8) == 0x0fe8) latch[region] = 1;
-    return Board::chrWrite((bank * 0x1000) | (addr & 0x0fff), data);
+    return Board::writeCHR((bank * 0x1000) | (addr & 0x0fff), data);
   }
 
   auto power() -> void {

@@ -165,7 +165,7 @@ auto FamicomBox::cartridgeRead(uint16 addr, uint8 data) -> uint8 {
     break;
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.prgRead(addr);
+    case  1: return cartridge.readPRG(addr);
     case  2: return data;
     case  3: return data;
     case  4: return data;
@@ -286,7 +286,7 @@ auto FamicomBox::cartridgeWrite(uint16 addr, uint8 data) -> void {
   switch(cartridgeRowSelect) {
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.prgWrite(addr, data);
+    case  1: return cartridge.writePRG(addr, data);
     case  2: return;
     case  3: return;
     case  4: return;
@@ -321,7 +321,7 @@ auto FamicomBox::chrRead(uint14 addr) -> uint8 {
   switch(cartridgeRowSelect) {
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.chrRead(addr);
+    case  1: return cartridge.readCHR(addr);
     case  2: break;
     case  3: break;
     case  4: break;
@@ -347,14 +347,14 @@ auto FamicomBox::chrRead(uint14 addr) -> uint8 {
     }
     break;
   }
-  return ppu.status.mdr;
+  return ppu.r.mdr;
 }
 
 auto FamicomBox::chrWrite(uint14 addr, uint8 data) -> void {
   switch(cartridgeRowSelect) {
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.chrWrite(addr, data);
+    case  1: return cartridge.writeCHR(addr, data);
     case  2: break;
     case  3: break;
     case  4: break;

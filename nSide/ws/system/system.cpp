@@ -61,6 +61,7 @@ auto System::unload() -> void {
 auto System::power() -> void {
   Emulator::video.reset();
   Emulator::video.setInterface(interface);
+  Emulator::video.resize(224, 224);
   configureVideoPalette();
   configureVideoEffects();
 

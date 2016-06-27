@@ -18,7 +18,7 @@ struct BandaiFCG : Board {
     fcg.main();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0xe000) == 0x6000) {
       switch(revision) {
       case Revision::LZ93D50:
@@ -32,12 +32,12 @@ struct BandaiFCG : Board {
       if(revision != Revision::JUMP2)
         return read(prgrom, fcg.prgAddress(addr));
       else
-        return read(prgrom, fcg.prgAddress(addr) | ((fcg.chrBank[(ppu.status.chrAddressBus >> 10) & 3] & 1) << 18));
+        return read(prgrom, fcg.prgAddress(addr) | ((fcg.chrBank[(ppu.r.chrAddressBus >> 10) & 3] & 1) << 18));
     }
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0xe000) == 0x6000) {
       switch(revision) {
       case Revision::FCGAll:
@@ -62,15 +62,15 @@ struct BandaiFCG : Board {
     }
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(fcg.ciramAddress(addr));
-    if(chrrom.size()) return Board::chrRead(fcg.chrAddress(addr));
-    if(chrram.size()) return Board::chrRead(addr);
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM(fcg.ciramAddress(addr));
+    if(chrrom.size()) return Board::readCHR(fcg.chrAddress(addr));
+    if(chrram.size()) return Board::readCHR(addr);
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(fcg.ciramAddress(addr), data);
-    if(chrram.size()) Board::chrWrite(addr, data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM(fcg.ciramAddress(addr), data);
+    if(chrram.size()) Board::writeCHR(addr, data);
   }
 
   auto power() -> void {

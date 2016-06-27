@@ -39,10 +39,10 @@ struct HVC_SxROM : Board {
     return (bank << 13) | (addr & 0x1fff);
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0xe000) == 0x6000) {
       if(revision == Revision::SNROM) {
-        if((mmc1.chrAddress(ppu.status.chrAddressBus) >> 16) & 1) return cpu.mdr();
+        if((mmc1.chrAddress(ppu.r.chrAddressBus) >> 16) & 1) return cpu.mdr();
       }
       if(mmc1.ramDisable) return cpu.mdr();
       if(prgram.size() > 0) return read(prgram, ramAddress(addr));
@@ -53,7 +53,7 @@ struct HVC_SxROM : Board {
       default:
         addr = mmc1.prgAddress(addr);
         if(revision == Revision::SUROM || revision == Revision::SXROM) {
-          addr |= ((mmc1.chrAddress(ppu.status.chrAddressBus) >> 16) & 1) << 18;
+          addr |= ((mmc1.chrAddress(ppu.r.chrAddressBus) >> 16) & 1) << 18;
         }
         break;
       case Revision::SEROM:
@@ -71,7 +71,7 @@ struct HVC_SxROM : Board {
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0xe000) == 0x6000) {
       if(revision == Revision::SNROM) {
         if(mmc1.chrBank[0] & 0x10) return;
@@ -85,14 +85,14 @@ struct HVC_SxROM : Board {
     if(addr & 0x8000) return mmc1.mmioWrite(addr, data);
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(mmc1.ciramAddress(addr));
-    return Board::chrRead(mmc1.chrAddress(addr));
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM(mmc1.ciramAddress(addr));
+    return Board::readCHR(mmc1.chrAddress(addr));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(mmc1.ciramAddress(addr), data);
-    return Board::chrWrite(mmc1.chrAddress(addr), data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM(mmc1.ciramAddress(addr), data);
+    return Board::writeCHR(mmc1.chrAddress(addr), data);
   }
 
   auto power() -> void {

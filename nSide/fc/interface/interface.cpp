@@ -414,28 +414,28 @@ auto Interface::videoColor(uint32 n) -> uint64 {
 
     } else if(ppu.rgb()) { //Arcade
       const uint9* palette = nullptr;
-      switch(ppu.revision) {
-      case PPU::Revision::RP2C03B:
-      case PPU::Revision::RP2C03G:
-      case PPU::Revision::RC2C03B:
-      case PPU::Revision::RC2C03C:
-      case PPU::Revision::RC2C05_01:
-      case PPU::Revision::RC2C05_02:
-      case PPU::Revision::RC2C05_03:
-      case PPU::Revision::RC2C05_04:
-      case PPU::Revision::RC2C05_05:
+      switch(ppu.version) {
+      case PPU::Version::RP2C03B:
+      case PPU::Version::RP2C03G:
+      case PPU::Version::RC2C03B:
+      case PPU::Version::RC2C03C:
+      case PPU::Version::RC2C05_01:
+      case PPU::Version::RC2C05_02:
+      case PPU::Version::RC2C05_03:
+      case PPU::Version::RC2C05_04:
+      case PPU::Version::RC2C05_05:
         palette = PPU::RP2C03;
         break;
-      case PPU::Revision::RP2C04_0001:
+      case PPU::Version::RP2C04_0001:
         palette = PPU::RP2C04_0001;
         break;
-      case PPU::Revision::RP2C04_0002:
+      case PPU::Version::RP2C04_0002:
         palette = PPU::RP2C04_0002;
         break;
-      case PPU::Revision::RP2C04_0003:
+      case PPU::Version::RP2C04_0003:
         palette = PPU::RP2C04_0003;
         break;
-      case PPU::Revision::RP2C04_0004:
+      case PPU::Version::RP2C04_0004:
         palette = PPU::RP2C04_0004;
         break;
       }

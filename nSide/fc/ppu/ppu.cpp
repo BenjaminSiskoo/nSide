@@ -6,6 +6,7 @@ PPU ppu;
 
 #include "memory.cpp"
 #include "mmio.cpp"
+#include "render.cpp"
 #include "serialization.cpp"
 
 PPU::PPU() {
@@ -29,7 +30,7 @@ auto PPU::Enter() -> void {
 }
 
 auto PPU::main() -> void {
-  rasterScanline();
+  renderScanline();
 }
 
 auto PPU::addClocks(uint clocks) -> void {
@@ -37,23 +38,22 @@ auto PPU::addClocks(uint clocks) -> void {
   uint pre = system.region() == System::Region::NTSC ? 261 : 311;
 
   while(clocks--) {
-    if(vcounter() == vbl - 1 && hcounter() == 340) status.nmiHold = 1;
+    if(vcounter() == vbl - 1 && hcounter() == 340) r.nmiHold = 1;
 
-    if(vcounter() == vbl && hcounter() ==   0) status.chrAddressBus = status.vaddr & 0x3fff;
-    if(vcounter() == vbl && hcounter() ==   0) status.nmiFlag = status.nmiHold;
-    if(vcounter() == vbl && hcounter() ==   2) cpu.nmiLine(status.nmiEnable && status.nmiFlag);
+    if(vcounter() == vbl && hcounter() ==   0) r.chrAddressBus = r.vaddr & 0x3fff;
+    if(vcounter() == vbl && hcounter() ==   0) r.nmiFlag = r.nmiHold;
+    if(vcounter() == vbl && hcounter() ==   2) cpu.nmiLine(r.nmiEnable && r.nmiFlag);
 
-
-    if(vcounter() == pre - 1 && hcounter() == 340) status.nmiHold = 0;
-    if(vcounter() == pre     && hcounter() ==   0) status.nmiFlag = status.nmiHold;
-    if(vcounter() == pre     && hcounter() ==   1) status.spriteZeroHit = 0, status.spriteOverflow = 0;
-    if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(status.nmiEnable && status.nmiFlag);
+    if(vcounter() == pre - 1 && hcounter() == 340) r.nmiHold = 0;
+    if(vcounter() == pre     && hcounter() ==   0) r.nmiFlag = r.nmiHold;
+    if(vcounter() == pre     && hcounter() ==   1) r.spriteZeroHit = 0, r.spriteOverflow = 0;
+    if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(r.nmiEnable && r.nmiFlag);
 
     step(system.region() == System::Region::NTSC ? 4 : 5);
     synchronizeCPU();
 
     for(uint i = 0; i < 8; i++) {
-      if(--status.mdrDecay[i] == 0) status.mdr &= ~(1 << i);
+      if(--r.mdrDecay[i] == 0) r.mdr &= ~(1 << i);
     }
 
     tick(1);
@@ -61,17 +61,55 @@ auto PPU::addClocks(uint clocks) -> void {
 }
 
 auto PPU::load(Markup::Node node) -> bool {
+  if(system.vs()) return true;
+
+  string versionString;
+  if(system.fc()) {
+    print("Famicom\n");
+    print("Region ID: ", (uint)system.region(), "\n");
+    if(system.region() == System::Region::NTSC)  versionString = node["ppu/ntsc-version"].text();
+    if(system.region() == System::Region::PAL)   versionString = node["ppu/pal-version"].text();
+    if(system.region() == System::Region::Dendy) versionString = node["ppu/dendy-version"].text();
+  } else {
+    print("VS. System, PlayChoice-10, or FamicomBox\n");
+    versionString = node["ppu/version"].text();
+  }
+  print("Version: ", versionString, "\n");
+
+  //YIQ
+  if(versionString == "RP2C02C")     version = Version::RP2C02C;
+  if(versionString == "RP2C02G")     version = Version::RP2C02G;
+
+  //RGB
+  if(versionString == "RP2C03B")     version = Version::RP2C03B;
+  if(versionString == "RP2C03G")     version = Version::RP2C03G;
+  if(versionString == "RP2C04-0001") version = Version::RP2C04_0001;
+  if(versionString == "RP2C04-0002") version = Version::RP2C04_0002;
+  if(versionString == "RP2C04-0003") version = Version::RP2C04_0003;
+  if(versionString == "RP2C04-0004") version = Version::RP2C04_0004;
+  if(versionString == "RC2C03B")     version = Version::RC2C03B;
+  if(versionString == "RC2C03C")     version = Version::RC2C03C;
+  if(versionString == "RC2C05-01")   version = Version::RC2C05_01;
+  if(versionString == "RC2C05-02")   version = Version::RC2C05_02;
+  if(versionString == "RC2C05-03")   version = Version::RC2C05_03;
+  if(versionString == "RC2C05-04")   version = Version::RC2C05_04;
+  if(versionString == "RC2C05-05")   version = Version::RC2C05_05;
+
+  //YUV
+  if(versionString == "RP2C07")      version = Version::RP2C07;
+  if(versionString == "UA6538")      version = Version::UA6538;
+
   return true;
 }
 
 auto PPU::power() -> void {
-  status.vaddr = 0x0000;
+  r.vaddr = 0x0000;
 
-  status.nmiHold = 0;
-  status.nmiFlag = 1;
+  r.nmiHold = 0;
+  r.nmiFlag = 1;
 
-  //$2003
-  status.oamAddress = 0x00;
+  //$2003  OAMADDR
+  r.oamAddress = 0x00;
 
   for(auto& n : ciram) n = 0xff;
 }
@@ -85,32 +123,32 @@ auto PPU::reset() -> void {
   function<auto (uint16, uint8) -> void> writer{&PPU::write, this};
   bus.map(reader, writer, "2000-3fff");
 
-  status.mdr = 0x00;
-  status.busData = 0x00;
-  status.addressLatch = 0;
+  r.mdr = 0x00;
+  r.busData = 0x00;
+  r.addressLatch = 0;
 
-  status.taddr = 0x0000;
-  status.xaddr = 0x00;
+  r.taddr = 0x0000;
+  r.xaddr = 0x00;
 
-  //$2000
-  status.nmiEnable = false;
-  status.masterSelect = 0;
-  status.spriteSize = 0;
-  status.bgAddress = 0x0000;
-  status.objAddress = 0x0000;
-  status.vramIncrement = 1;
+  //$2000  PPUCTRL
+  r.nmiEnable = false;
+  r.masterSelect = 0;
+  r.spriteHeight = 8;
+  r.bgAddress = 0x0000;
+  r.objAddress = 0x0000;
+  r.vramIncrement = 1;
 
-  //$2001
-  status.emphasis = 0;
-  status.spriteEnable = false;
-  status.bgEnable = false;
-  status.objEdgeEnable = false;
-  status.bgEdgeEnable = false;
-  status.grayscale = false;
+  //$2001  PPUMASK
+  r.emphasis = 0;
+  r.objEnable = false;
+  r.bgEnable = false;
+  r.objEdgeEnable = false;
+  r.bgEdgeEnable = false;
+  r.grayscale = false;
 
-  //$2002
-  status.spriteZeroHit = false;
-  status.spriteOverflow = false;
+  //$2002  PPUSTATUS
+  r.spriteZeroHit = false;
+  r.spriteOverflow = false;
 
   for(auto& n : cgram) n = 0;
   for(auto& n : oam) n = 0;
@@ -151,272 +189,8 @@ auto PPU::refresh() -> void {
 
 //
 
-//vaddr = 0yyy VHYY  YYYX XXXX
-//yyy = fine Yscroll (y:d0-d2)
-//V = V nametable (y:d8)
-//H = H nametable (x:d8)
-//YYYYY = Y nametable (y:d3-d7)
-//XXXXX = X nametable (x:d3-d7)
-
-auto PPU::rasterEnable() const -> bool {
-  return (status.bgEnable || status.spriteEnable);
-}
-
-auto PPU::nametableAddress() const -> uint {
-  return 0x2000 + (status.vaddr & 0x0c00);
-}
-
-auto PPU::scrollX() const -> uint {
-  return ((status.vaddr & 0x1f) << 3) | status.xaddr;
-}
-
-auto PPU::scrollY() const -> uint {
-  return (((status.vaddr >> 5) & 0x1f) << 3) | ((status.vaddr >> 12) & 7);
-}
-
-auto PPU::spriteHeight() const -> uint {
-  return status.spriteSize == 0 ? 8 : 16;
-}
-
-//
-
-auto PPU::chrLoad(uint14 addr) -> uint8 {
-  if(rasterEnable() == false) return 0x00;
-  return cartridge.chrRead(status.chrAddressBus = addr);
-}
-
-//
-
-auto PPU::scrollXIncrement() -> void {
-  if(rasterEnable() == false) return;
-  status.vaddr = (status.vaddr & 0x7fe0) | ((status.vaddr + 0x0001) & 0x001f);
-  if((status.vaddr & 0x001f) == 0x0000) {
-    status.vaddr ^= 0x0400;
-  }
-}
-
-auto PPU::scrollYIncrement() -> void {
-  if(rasterEnable() == false) return;
-  status.vaddr = (status.vaddr & 0x0fff) | ((status.vaddr + 0x1000) & 0x7000);
-  if((status.vaddr & 0x7000) == 0x0000) {
-    status.vaddr = (status.vaddr & 0x7c1f) | ((status.vaddr + 0x0020) & 0x03e0);
-    if((status.vaddr & 0x03e0) == 0x03c0) {  //0x03c0 == 30 << 5; 30 * 8 = 240
-      status.vaddr &= 0x7c1f;
-      status.vaddr ^= 0x0800;
-    }
-  }
-}
-
-//
-
 auto PPU::ext() -> uint4 {
   return 0; //EXT pins are tied to ground
-}
-
-//
-
-auto PPU::rasterPixel() -> void {
-  uint lx = hcounter() - 1;
-  uint16 mask = 0x8000 >> (status.xaddr + (lx & 7));
-  uint8 palette = 0, objectPalette = 0;
-  bool objectPriority = 0;
-  palette |= (raster.tiledataLo & mask) ? 1 : 0;
-  palette |= (raster.tiledataHi & mask) ? 2 : 0;
-  if(palette) {
-    uint16 attr = raster.attribute;
-    if(mask >= 256) attr >>= 2;
-    palette |= attr.bits(0,1) << 2;
-  }
-
-  if(status.bgEnable == false) palette = 0;
-  if(status.bgEdgeEnable == false && lx < 8) palette = 0;
-
-  if(status.spriteEnable == true) for(int sprite = 7; sprite >= 0; sprite--) {
-    if(status.objEdgeEnable == false && lx < 8) continue;
-    if(raster.oam[sprite].id == 64) continue;
-
-    uint spritex = lx - raster.oam[sprite].x;
-    if(spritex >= 8) continue;
-
-    if(raster.oam[sprite].attr & 0x40) spritex ^= 7;
-    uint mask = 0x80 >> spritex;
-    uint spritePalette = 0;
-    spritePalette |= (raster.oam[sprite].tiledataLo & mask) ? 1 : 0;
-    spritePalette |= (raster.oam[sprite].tiledataHi & mask) ? 2 : 0;
-    if(spritePalette == 0) continue;
-
-    if(raster.oam[sprite].id == 0 && palette && lx != 255) status.spriteZeroHit = 1;
-    spritePalette |= (raster.oam[sprite].attr & 3) << 2;
-
-    objectPriority = raster.oam[sprite].attr & 0x20;
-    objectPalette = 16 + spritePalette;
-  }
-
-  if(objectPalette) {
-    if(palette == 0 || objectPriority == 0) palette = objectPalette;
-  }
-
-  if(revision >= Revision::RP2C07 && (lx < 2 || lx >= 254 || vcounter() <= 0)) {
-    output[vcounter() * 256 + lx] = (status.emphasis << 6) | 0x1d;
-    return;
-  } else if(!rasterEnable()) {
-    if((status.vaddr & 0x3f00) != 0x3f00) palette = ext();
-    else palette = status.vaddr;
-  } else {
-    if(!palette) palette = ext();
-  }
-  output[vcounter() * 256 + lx] = (status.emphasis << 6) | cgramRead(palette);
-}
-
-auto PPU::rasterSprite() -> void {
-  if(rasterEnable() == false) return;
-
-  uint n = raster.oamIterator++;
-  uint lastScanline = system.region() == System::Region::NTSC ? 261 : 311;
-  int ly = vcounter() == lastScanline ? -1 : (int)vcounter();
-  uint y = ly - oam[(n * 4) + 0];
-
-  if(y >= spriteHeight()) return;
-  if(raster.oamCounter == 8) {
-    status.spriteOverflow = 1;
-    return;
-  }
-
-  raster.soam[raster.oamCounter].id   = n;
-  raster.soam[raster.oamCounter].y    = oam[(n * 4) + 0];
-  raster.soam[raster.oamCounter].tile = oam[(n * 4) + 1];
-  raster.soam[raster.oamCounter].attr = oam[(n * 4) + 2];
-  raster.soam[raster.oamCounter].x    = oam[(n * 4) + 3];
-  raster.oamCounter++;
-}
-
-auto PPU::rasterScanline() -> void {
-  uint lastScanline = system.region() == System::Region::NTSC ? 261 : 311;
-  if((vcounter() >= 240 && vcounter() < lastScanline)) {
-    addClocks(341);
-    return scanline();
-  }
-
-  raster.oamIterator = 0;
-  raster.oamCounter = 0;
-
-  for(uint n = 0; n < 8; n++) {
-    raster.soam[n].id   = 64;
-    raster.soam[n].y    = 0xff;
-    raster.soam[n].tile = 0xff;
-    raster.soam[n].attr = 0xff;
-    raster.soam[n].x    = 0xff;
-    raster.soam[n].tiledataLo = 0;
-    raster.soam[n].tiledataHi = 0;
-  }
-
-  //  0
-  addClocks(1);
-
-  for(uint tile = 0; tile < 32; tile++) {  //  1-256
-    uint nametable = chrLoad(0x2000 | (status.vaddr & 0x0fff));
-    uint tileaddr = status.bgAddress + (nametable << 4) + (scrollY() & 7);
-    rasterPixel();
-    addClocks(1);
-
-    rasterPixel();
-    addClocks(1);
-
-    uint attribute = chrLoad(0x23c0 | (status.vaddr & 0x0fc0) | ((scrollY() >> 5) << 3) | (scrollX() >> 5));
-    if(scrollY() & 16) attribute >>= 4;
-    if(scrollX() & 16) attribute >>= 2;
-    rasterPixel();
-    addClocks(1);
-
-    scrollXIncrement();
-    if(tile == 31) scrollYIncrement();
-    rasterPixel();
-    rasterSprite();
-    addClocks(1);
-
-    uint tiledataLo = chrLoad(tileaddr + 0);
-    rasterPixel();
-    addClocks(1);
-
-    rasterPixel();
-    addClocks(1);
-
-    uint tiledataHi = chrLoad(tileaddr + 8);
-    rasterPixel();
-    addClocks(1);
-
-    rasterPixel();
-    rasterSprite();
-    addClocks(1);
-
-    raster.nametable = (raster.nametable << 8) | nametable;
-    raster.attribute = (raster.attribute << 2) | (attribute & 3);
-    raster.tiledataLo = (raster.tiledataLo << 8) | tiledataLo;
-    raster.tiledataHi = (raster.tiledataHi << 8) | tiledataHi;
-  }
-
-  for(uint n = 0; n < 8; n++) raster.oam[n] = raster.soam[n];
-
-  for(uint sprite = 0; sprite < 8; sprite++) {  //257-320
-    uint nametable = chrLoad(0x2000 | (status.vaddr & 0x0fff));
-    addClocks(1);
-
-    if(rasterEnable() && sprite == 0) status.vaddr = (status.vaddr & 0x7be0) | (status.taddr & 0x041f);  //257
-    addClocks(1);
-
-    uint attribute = chrLoad(0x23c0 | (status.vaddr & 0x0fc0) | ((scrollY() >> 5) << 3) | (scrollX() >> 5));
-    uint tileaddr = (spriteHeight() == 8)
-    ? status.objAddress + raster.oam[sprite].tile * 16
-    : ((raster.oam[sprite].tile & ~1) * 16) + ((raster.oam[sprite].tile & 1) * 0x1000);
-    addClocks(2);
-
-    uint spritey = (vcounter() - raster.oam[sprite].y) & (spriteHeight() - 1);
-    if(raster.oam[sprite].attr & 0x80) spritey ^= (spriteHeight() - 1);
-    tileaddr += spritey + (spritey & 8);
-
-    raster.oam[sprite].tiledataLo = chrLoad(tileaddr + 0);
-    addClocks(2);
-
-    raster.oam[sprite].tiledataHi = chrLoad(tileaddr + 8);
-    addClocks(2);
-
-    if(rasterEnable() && sprite == 6 && vcounter() == lastScanline) status.vaddr = status.taddr;  //304
-  }
-
-  for(uint tile = 0; tile < 2; tile++) {  //321-336
-    uint nametable = chrLoad(0x2000 | (status.vaddr & 0x0fff));
-    uint tileaddr = status.bgAddress + (nametable << 4) + (scrollY() & 7);
-    addClocks(2);
-
-    uint attribute = chrLoad(0x23c0 | (status.vaddr & 0x0fc0) | ((scrollY() >> 5) << 3) | (scrollX() >> 5));
-    if(scrollY() & 16) attribute >>= 4;
-    if(scrollX() & 16) attribute >>= 2;
-    addClocks(1);
-
-    scrollXIncrement();
-    addClocks(1);
-
-    uint tiledataLo = chrLoad(tileaddr + 0);
-    addClocks(2);
-
-    uint tiledataHi = chrLoad(tileaddr + 8);
-    addClocks(2);
-
-    raster.nametable = (raster.nametable << 8) | nametable;
-    raster.attribute = (raster.attribute << 2) | (attribute & 3);
-    raster.tiledataLo = (raster.tiledataLo << 8) | tiledataLo;
-    raster.tiledataHi = (raster.tiledataHi << 8) | tiledataHi;
-  }
-
-  //337-340
-  chrLoad(0x2000 | (status.vaddr & 0x0fff));
-  addClocks(2);
-
-  chrLoad(0x2000 | (status.vaddr & 0x0fff));
-  addClocks(1);
-  if(hcounter() > 0) addClocks(1);
-
-  return scanline();
 }
 
 // Arcade RGB palettes

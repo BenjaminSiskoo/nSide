@@ -6,25 +6,25 @@ struct IremH3001 : Board {
     ifh3001.main();
   }
 
-  auto prgRead(uint addr) -> uint8 {
+  auto readPRG(uint addr) -> uint8 {
     if((addr & 0x8000) == 0x8000) return read(prgrom, ifh3001.prgAddress(addr));
     if((addr & 0xe000) == 0x6000) return read(prgram, addr & 0x1fff);
     return cpu.mdr();
   }
 
-  auto prgWrite(uint addr, uint8 data) -> void {
+  auto writePRG(uint addr, uint8 data) -> void {
     if((addr & 0x8000) == 0x8000) return ifh3001.regWrite(addr, data);
     if((addr & 0xe000) == 0x6000) return write(prgram, addr & 0x1fff, data);
   }
 
-  auto chrRead(uint addr) -> uint8 {
-    if(addr & 0x2000) return ppu.ciramRead(ifh3001.ciramAddress(addr));
-    return Board::chrRead(ifh3001.chrAddress(addr));
+  auto readCHR(uint addr) -> uint8 {
+    if(addr & 0x2000) return ppu.readCIRAM(ifh3001.ciramAddress(addr));
+    return Board::readCHR(ifh3001.chrAddress(addr));
   }
 
-  auto chrWrite(uint addr, uint8 data) -> void {
-    if(addr & 0x2000) return ppu.ciramWrite(ifh3001.ciramAddress(addr), data);
-    return Board::chrWrite(ifh3001.chrAddress(addr), data);
+  auto writeCHR(uint addr, uint8 data) -> void {
+    if(addr & 0x2000) return ppu.writeCIRAM(ifh3001.ciramAddress(addr), data);
+    return Board::writeCHR(ifh3001.chrAddress(addr), data);
   }
 
   auto power() -> void {
