@@ -119,9 +119,9 @@ auto BeamGun::readLight() -> bool {
   return false;
 }
 
-auto BeamGun::latch(bool data) -> void {
-  if(latched == data) return;
-  latched = data;
+auto BeamGun::write(uint3 data) -> void {
+  if(latched == data.bit(0)) return;
+  latched = data.bit(0);
   if(system.vs() && latched == 0) {
     counter = 0;
     trigger = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);

@@ -69,6 +69,7 @@ auto Peripherals::connect(uint port, uint device) -> void {
     switch(device) { default:
     case ID::Device::None:          expansionPort = new Expansion; break;
     case ID::Device::GamepadE:      expansionPort = new GamepadE; break;
+    case ID::Device::JoyPair:       expansionPort = new JoyPair; break;
     case ID::Device::FourPlayers:   expansionPort = new FourPlayers; break;
     case ID::Device::BeamGun:       expansionPort = new BeamGun; break;
     case ID::Device::FamilyTrainer: expansionPort = new FamilyTrainer; break;

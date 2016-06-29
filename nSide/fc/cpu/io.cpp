@@ -38,7 +38,7 @@ auto CPU::writeCPU(uint16 addr, uint8 data) -> void {
     if(system.vs()) return vssystem.write(side, addr, data);
     Famicom::peripherals.controllerPort1->latch(data.bit(0));
     Famicom::peripherals.controllerPort2->latch(data.bit(0));
-    Famicom::peripherals.expansionPort->latch(data.bit(0));
+    Famicom::peripherals.expansionPort->write(data.bits(0,2));
     return;
   }
 

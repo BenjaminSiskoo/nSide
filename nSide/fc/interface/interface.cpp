@@ -147,8 +147,22 @@ Interface::Interface() {
     expansionPort.devices.append(device);
   }
 
-  { Device device{ID::Device::FourPlayers, "4-Players Adaptor"};
+  { Device device{ID::Device::JoyPair, "JoyPair"};
     for(uint p = 3; p <= 4; p += 1) {
+      device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Right" }});
+      device.inputs.append({0, {"Port ", p, " - ", "B"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "A"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "Select"}});
+      device.inputs.append({0, {"Port ", p, " - ", "Start" }});
+    }
+    expansionPort.devices.append(device);
+  }
+
+  { Device device{ID::Device::FourPlayers, "4-Players Adaptor"};
+    for(uint p = 1; p <= 4; p += 1) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
       device.inputs.append({0, {"Port ", p, " - ", "Left"  }});

@@ -29,10 +29,11 @@ struct Expansion : Cothread {
   virtual auto main() -> void;
   virtual auto data1() -> bool { return 0; }
   virtual auto data2() -> uint5 { return 0; }
-  virtual auto latch(bool data) -> void {}
+  virtual auto write(uint3 data) -> void {}
 };
 
 #include "gamepad/gamepad.hpp"
+#include "joypair/joypair.hpp"
 #include "fourplayers/fourplayers.hpp"
 #include "beamgun/beamgun.hpp"
 #include "familytrainer/familytrainer.hpp"

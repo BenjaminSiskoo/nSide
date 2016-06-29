@@ -28,6 +28,7 @@ struct ID {
     Mouse,
 
     GamepadE,
+    JoyPair,
     FourPlayers,
     BeamGun,
     FamilyTrainer,

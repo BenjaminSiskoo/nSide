@@ -34,9 +34,9 @@ auto VausE::data2() -> uint5 {
   return control.bit(7 - counter++) << 1;
 }
 
-auto VausE::latch(bool data) -> void {
-  if(latched == data) return;
-  latched = data;
+auto VausE::write(uint3 data) -> void {
+  if(latched == data.bit(0)) return;
+  latched = data.bit(0);
   counter = 0;
 
   control = x & 0xff;

@@ -25,9 +25,9 @@ auto GamepadE::data2() -> uint5 {
   return 0;
 }
 
-auto GamepadE::latch(bool data) -> void {
-  if(latched == data) return;
-  latched = data;
+auto GamepadE::write(uint3 data) -> void {
+  if(latched == data.bit(0)) return;
+  latched = data.bit(0);
   counter = 0;
 
   if(latched == 0) {

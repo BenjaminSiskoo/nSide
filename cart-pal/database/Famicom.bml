@@ -586,6 +586,22 @@ cartridge sha256:7bd2caf4a42f7d5c391433d2bec37bb2130e3a39dce55ee597ec14703cefc76
   :  name:     Door Door
   :  title:    ドアドア
 
+cartridge sha256:71ca865ba15da47e7002d02886ae9548ee935e2b1f8623b78c4975f3ce30cfa6
+  :board region=ntsc id:HVC-TLROM
+  :  chip type=MMC3B
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   TJC-UH
+  :  board:    HVC-TLROM-04
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Downtown - Nekketsu Koushin Kyoku - Soreyuke Daiundoukai
+  :  title:    ダウンタウン 熱血行進曲 それゆけ大運動会
+ 
 cartridge sha256:d36b8989cbaf9ceafd91d15edd7b990dce6f9aede1bf9ac696ea8d288ec53d44
   :board region=ntsc id:BANDAI-FCG-1
   :  chip type=FCG-1

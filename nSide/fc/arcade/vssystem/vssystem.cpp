@@ -93,11 +93,11 @@ auto VSSystem::read(bool side, uint16 addr, uint8 data) -> uint8 {
 
 auto VSSystem::write(bool side, uint16 addr, uint8 data) -> void {
   if(addr == 0x4016) {
-    peripherals.controllerPort1->latch(data & 1);
-    peripherals.controllerPort2->latch(data & 1);
-    peripherals.expansionPort->latch(data & 1);
+    peripherals.controllerPort1->latch(data.bit(0));
+    peripherals.controllerPort2->latch(data.bit(0));
+    peripherals.expansionPort->write(data.bit(0));
     latch(side, data & 1);
-    if(side == 0 && !forceSubRAM) ramSide = data & 2 ^ 2;
+    if(side == 0 && !forceSubRAM) ramSide = !data.bit(1);
   }
 
   if(addr >= 0x4020 && addr <= 0x5fff) {

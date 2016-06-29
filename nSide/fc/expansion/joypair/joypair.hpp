@@ -1,9 +1,9 @@
-struct FourPlayers : Expansion {
+struct JoyPair : Expansion {
   enum : uint {
     Up, Down, Left, Right, B, A, Select, Start,
   };
 
-  FourPlayers();
+  JoyPair();
 
   auto data1() -> bool;
   auto data2() -> uint5;
@@ -17,5 +17,5 @@ private:
   struct Gamepad {
     boolean a, b, select, start;
     boolean up, down, left, right;
-  } gamepads[4];
+  } gamepads[2];
 };

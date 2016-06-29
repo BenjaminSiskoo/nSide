@@ -63,9 +63,9 @@ auto MouseE::data2() -> uint5 {
   return 0;
 }
 
-auto MouseE::latch(bool data) -> void {
-  if(latched == data) return;
-  latched = data;
+auto MouseE::write(uint3 data) -> void {
+  if(latched == data.bit(0)) return;
+  latched = data.bit(0);
   counter = 0;
 
   x = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, X);  //-n = left, 0 = center, +n = right

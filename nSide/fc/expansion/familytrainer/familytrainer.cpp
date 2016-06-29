@@ -24,9 +24,9 @@ auto FamilyTrainer::data2() -> uint5 {
   unreachable;
 }
 
-auto FamilyTrainer::latch(bool data) -> void {
-  if(latched == data) return;
-  latched = data;
+auto FamilyTrainer::write(uint3 data) -> void {
+  if(latched == data.bit(0)) return;
+  latched = data.bit(0);
   counter = 0;
 
   if(latched == 0) {

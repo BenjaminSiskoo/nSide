@@ -3,7 +3,7 @@ struct FamilyTrainer : Expansion {
 
   auto data1() -> bool;
   auto data2() -> uint5;
-  auto latch(bool data) -> void;
+  auto write(uint3 data) -> void;
 
 private:
   bool latched;
