@@ -5,24 +5,24 @@ auto R6502::disassemble() -> string {
 auto R6502::disassemble(uint16 addr) -> string {
   string output = {hex(addr, 4L), "  "};
 
-  auto abs = [&]() -> string { return {"$", hex(disassemblerRead(addr + 2), 2L), hex(disassemblerRead(addr + 1), 2L)}; };
-  auto abx = [&]() -> string { return {"$", hex(disassemblerRead(addr + 2), 2L), hex(disassemblerRead(addr + 1), 2L), ",x"}; };
-  auto aby = [&]() -> string { return {"$", hex(disassemblerRead(addr + 2), 2L), hex(disassemblerRead(addr + 1), 2L), ",y"}; };
-  auto iab = [&]() -> string { return {"($", hex(disassemblerRead(addr + 2), 2L), hex(disassemblerRead(addr + 1), 2L), ")"}; };
-  auto imm = [&]() -> string { return {"#$", hex(disassemblerRead(addr + 1), 2L)}; };
+  auto abs = [&]() -> string { return {"$", hex(readDisassembler(addr + 2), 2L), hex(readDisassembler(addr + 1), 2L)}; };
+  auto abx = [&]() -> string { return {"$", hex(readDisassembler(addr + 2), 2L), hex(readDisassembler(addr + 1), 2L), ",x"}; };
+  auto aby = [&]() -> string { return {"$", hex(readDisassembler(addr + 2), 2L), hex(readDisassembler(addr + 1), 2L), ",y"}; };
+  auto iab = [&]() -> string { return {"($", hex(readDisassembler(addr + 2), 2L), hex(readDisassembler(addr + 1), 2L), ")"}; };
+  auto imm = [&]() -> string { return {"#$", hex(readDisassembler(addr + 1), 2L)}; };
   auto imp = [&]() -> string { return {""}; };
-  auto izx = [&]() -> string { return {"($", hex(disassemblerRead(addr + 1), 2L), ",x)"}; };
-  auto izy = [&]() -> string { return {"($", hex(disassemblerRead(addr + 1), 2L), "),y"}; };
-  auto rel = [&]() -> string { return {"$", hex((addr + 2) + (int8)disassemblerRead(addr + 1), 4L)}; };
-  auto zpg = [&]() -> string { return {"$", hex(disassemblerRead(addr + 1), 2L)}; };
-  auto zpx = [&]() -> string { return {"$", hex(disassemblerRead(addr + 1), 2L), ",x"}; };
-  auto zpy = [&]() -> string { return {"$", hex(disassemblerRead(addr + 1), 2L), ",y"}; };
+  auto izx = [&]() -> string { return {"($", hex(readDisassembler(addr + 1), 2L), ",x)"}; };
+  auto izy = [&]() -> string { return {"($", hex(readDisassembler(addr + 1), 2L), "),y"}; };
+  auto rel = [&]() -> string { return {"$", hex((addr + 2) + (int8)readDisassembler(addr + 1), 4L)}; };
+  auto zpg = [&]() -> string { return {"$", hex(readDisassembler(addr + 1), 2L)}; };
+  auto zpx = [&]() -> string { return {"$", hex(readDisassembler(addr + 1), 2L), ",x"}; };
+  auto zpy = [&]() -> string { return {"$", hex(readDisassembler(addr + 1), 2L), ",y"}; };
 
   #define op(byte, prefix, mode) \
     case byte: output.append(#prefix, " ", mode()); \
     break
 
-  uint8 opcode = disassemblerRead(addr);
+  uint8 opcode = readDisassembler(addr);
   switch(opcode) {
     op(0x00, brk, imm);
     op(0x01, ora, izx);

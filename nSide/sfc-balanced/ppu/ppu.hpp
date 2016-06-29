@@ -17,16 +17,10 @@ struct PPU : Thread, PPUcounter {
 
   auto serialize(serializer&) -> void;
 
-  //memory.cpp
-  alwaysinline auto getVramAddress() -> uint16;
-  alwaysinline auto vramRead(bool chip, uint addr) -> uint8;
-  alwaysinline auto vramWrite(bool chip, uint addr, uint8 data) -> void;
-  alwaysinline auto oamRead(uint addr) -> uint8;
-  alwaysinline auto oamWrite(uint addr, uint8 data) -> void;
-  alwaysinline auto cgramRead(uint addr) -> uint8;
-  alwaysinline auto cgramWrite(uint addr, uint8 data) -> void;
-
   //mmio.cpp
+  alwaysinline auto getVramAddress() -> uint16;
+  alwaysinline auto vramAccessible() const -> bool;
+  alwaysinline auto oamWrite(uint addr, uint8 data) -> void;
   auto readIO(uint24 addr, uint8 data) -> uint8;
   auto writeIO(uint24 addr, uint8 data) -> void;
   auto latchCounters() -> void;
@@ -38,8 +32,16 @@ privileged:
     uint16 data[64 * 1024];
     uint mask = 0x7fff;
   } vram;
-  uint8 oam[544];
-  uint8 cgram[512];
+
+  struct OAM {
+    auto& operator[](uint offset) { return data[offset]; }
+    uint8 data[544];
+  } oam;
+
+  struct CGRAM {
+    auto& operator[](uint8 offset) { return data[offset]; }
+    uint15 data[256];
+  } cgram;
 
   uint32* output = nullptr;
 
@@ -73,7 +75,7 @@ privileged:
     bool vcounter;
 
     uint10 oamAddress;
-    uint9 cgramAddress;
+    uint8 cgramAddress;
   } latch;
 
   struct Registers {
@@ -136,7 +138,8 @@ privileged:
     uint16 m7y;
 
     //$2121  CGADD
-    uint9 cgramAddress;
+    uint8 cgramAddress;
+    uint1 cgramAddressLatch;
 
     //$2132  COLDATA
     uint16 color_rgb;

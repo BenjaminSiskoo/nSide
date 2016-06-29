@@ -33,11 +33,11 @@ auto Zapper::main() -> void {
   }
 
   if(!offscreen) {
-    uint target = y * 341 + x + (!system.vs() ? 8 : 8);
+    uint target = y * 341 + x + 8;
     if(next >= target && prev < target) {
       //CRT raster detected
       //light remains in the gun for 10-25 scanlines
-      if(readLight()) lighttime = (!system.vs() ? 341 * 16 : 341 * 262);
+      if(readLight()) lighttime = 341 * 16;
     }
   }
 

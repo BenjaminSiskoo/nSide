@@ -296,10 +296,9 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     };
 
     double ys[2] = {0.0, 0.0}, us[2] = {0.0, 0.0}, vs[2] = {0.0, 0.0};
-    //Add 12 to work around C++ modulus implementation,
-    //then 4 to compensate for reversed hue direction (cause unknown)
-    auto wave0 = [](int phase, int color) -> bool { return (color + 6 - phase + 16) % 12 < 6; };
-    auto wave1 = [](int phase, int color) -> bool { return (color + 9 - phase + 16) % 12 < 6; };
+    //Add 12 to work around C++ modulus implementation
+    auto wave0 = [](int phase, int color) -> bool { return (color + 10 - phase + 12) % 12 < 6; };
+    auto wave1 = [](int phase, int color) -> bool { return (color +  1 + phase +  0) % 12 < 6; };
     for(int phase : range(12)) {
       double spot[] = {lo_and_hi[wave0(phase, color)], lo_and_hi[wave1(phase, color)]};
 
@@ -328,7 +327,7 @@ auto Interface::videoColor(uint32 n) -> uint64 {
       }
     }
 
-    double y = (ys[0] + ys[1]) / 2.0, u = (us[0] + us[1]) / 2.0, v = (vs[0] + vs[1]) / 2.0;
+    double y = (ys[0] + ys[1]) / 2.0, u = (us[0] + us[1]) / 2.0, v = (vs[0] - vs[1]) / 2.0;
 
     u *= saturation;
     v *= saturation;

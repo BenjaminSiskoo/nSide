@@ -163,7 +163,7 @@ auto PPU::bg_renderLine() -> void {
       if(isDirectColorMode) {
         col = getDirectColor(pal_num, col);
       } else {
-        col = getPalette(col + pal_index);
+        col = cgram[col + pal_index];
       }
 
       #define setpixel_above(x) \
@@ -320,7 +320,7 @@ auto PPU::bg_renderLineMode7() -> void {
       //direct color mode does not apply to bg2, as it is only 128 colors...
       col = getDirectColor(0, palette);
     } else {
-      col = getPalette(palette);
+      col = cgram[palette];
     }
 
     if(bg.r.aboveEnable && !wt_above[_x]) {

@@ -16,8 +16,8 @@ auto PPU::serialize(serializer& s) -> void {
 
   s.integer(vram.mask);
   s.array(vram.data, vram.mask + 1);
-  s.array(oam);
-  s.array(cgram);
+  s.array(oam.data);
+  s.array(cgram.data);
 
   s.integer(ppu1.version);
   s.integer(ppu1.mdr);
@@ -82,6 +82,7 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(r.m7y);
 
   s.integer(r.cgramAddress);
+  s.integer(r.cgramAddressLatch);
 
   s.integer(r.color_rgb);
 

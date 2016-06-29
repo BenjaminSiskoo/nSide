@@ -17,7 +17,7 @@ struct R6502 {
   virtual auto lastCycle() -> void = 0;
   virtual auto nmi(uint16& vector) -> void = 0;
 
-  virtual auto disassemblerRead(uint16 addr) -> uint8 { return 0u; }
+  virtual auto readDisassembler(uint16 addr) -> uint8 { return 0u; }
 
   auto mdr() const -> uint8;
   auto power() -> void;

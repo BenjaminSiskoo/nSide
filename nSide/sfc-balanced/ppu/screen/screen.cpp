@@ -1,6 +1,6 @@
 //color addition / subtraction
 //thanks go to blargg for the optimized algorithms
-auto PPU::Screen::blend(uint x, uint y) const -> uint16 {
+auto PPU::Screen::blend(uint x, uint y) const -> uint15 {
   if(!r.colorMode) {
     if(!math.colorHalve) {
       uint sum = x + y;

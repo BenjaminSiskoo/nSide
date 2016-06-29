@@ -220,8 +220,8 @@ auto Interface::exportMemory() -> void {
 
   if(auto fp = interface->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.wram, !system.cgb() ? 8192 : 32768);
   if(auto fp = interface->open(cartridge.pathID(), "debug/internal.ram", File::Write)) fp->write(cpu.hram, 128);
-  if(cartridge.ramsize) if(auto fp = interface->open(cartridge.pathID(), "debug/program-save.ram", File::Write)) {
-    fp->write(cartridge.ramdata, cartridge.ramsize);
+  if(cartridge.ram.size) if(auto fp = interface->open(cartridge.pathID(), "debug/program-save.ram", File::Write)) {
+    fp->write(cartridge.ram.data, cartridge.ram.size);
   }
 }
 

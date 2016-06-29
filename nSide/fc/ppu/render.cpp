@@ -7,6 +7,7 @@ auto PPU::loadCHR(uint14 addr) -> uint8 {
 }
 
 auto PPU::renderPixel() -> void {
+  if(vcounter() >= 240) return;
   uint x = hcounter() - 1;
   uint mask = 0x8000 >> (r.v.fineX + (x & 7));
   uint palette = 0;

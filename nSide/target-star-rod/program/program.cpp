@@ -9,7 +9,7 @@ Program::Program(lstring args) {
   program = this;
   Application::onMain({&Program::main, this});
 
-  emulator = new SuperFamicom::Interface;
+  emulator = new SFC::Interface;
   emulator->bind = this;
 
   new Settings;

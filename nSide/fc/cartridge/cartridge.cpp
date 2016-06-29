@@ -60,7 +60,7 @@ auto Cartridge::load() -> bool {
   } else return false;
   auto document = BML::unserialize(information.manifest.cartridge);
   loadCartridge(document);
-  if(board == nullptr) return false;
+  if(!board) return false;
 
   //Famicom Disk System
   if(false) {

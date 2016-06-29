@@ -4,13 +4,12 @@ namespace Famicom {
 
 PPU ppu;
 
-#include "memory.cpp"
 #include "mmio.cpp"
 #include "render.cpp"
 #include "serialization.cpp"
 
 PPU::PPU() {
-  output = new uint32[256 * 312];
+  output = new uint32[256 * 240];
 }
 
 PPU::~PPU() {
@@ -71,7 +70,6 @@ auto PPU::load(Markup::Node node) -> bool {
   } else {
     versionString = node["ppu/version"].text();
   }
-  print("Version: ", versionString, "\n");
 
   //YIQ
   if(versionString == "RP2C02C")     version = Version::RP2C02C;
@@ -114,7 +112,7 @@ auto PPU::power() -> void {
 auto PPU::reset() -> void {
   create(PPU::Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memory::fill(output, 256 * 312 * sizeof(uint32));
+  memory::fill(output, 256 * 240 * sizeof(uint32));
 
   function<auto (uint16, uint8) -> uint8> reader{&PPU::readIO, this};
   function<auto (uint16, uint8) -> void> writer{&PPU::writeIO, this};
@@ -146,8 +144,8 @@ auto PPU::reset() -> void {
   r.grayscale = false;
 
   //$2002  PPUSTATUS
-  r.spriteZeroHit = false;
-  r.spriteOverflow = false;
+  r.spriteZeroHit = 0;
+  r.spriteOverflow = 0;
 
   for(auto& n : cgram) n = 0;
   for(auto& n : oam) n = 0;

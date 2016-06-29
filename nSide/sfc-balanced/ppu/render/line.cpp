@@ -1,12 +1,7 @@
-inline auto PPU::getPalette(uint8 index) -> uint16 {
-  const uint addr = index << 1;
-  return cgram[addr] + (cgram[addr + 1] << 8);
-}
-
 //p = 00000bgr <palette data>
 //t = BBGGGRRR <tilemap data>
 //r = 0BBb00GGGg0RRRr0 <return data>
-inline auto PPU::getDirectColor(uint8 p, uint8 t) -> uint16 {
+inline auto PPU::getDirectColor(uint8 p, uint8 t) -> uint15 {
   return ((t & 7) << 2) | ((p & 1) << 1) |
     (((t >> 3) & 7) << 7) | (((p >> 1) & 1) << 6) |
     ((t >> 6) << 13) | ((p >> 2) << 12);
@@ -14,7 +9,7 @@ inline auto PPU::getDirectColor(uint8 p, uint8 t) -> uint16 {
 
 inline auto PPU::get_pixel_normal(uint32 x) -> uint16 {
   CachePixel& p = pixelCache[x];
-  uint16 aboveColor, belowColor;
+  uint15 aboveColor, belowColor;
   uint8 belowLayer;
 
   aboveColor = p.aboveColor;
@@ -59,7 +54,7 @@ inline auto PPU::get_pixel_normal(uint32 x) -> uint16 {
 
 inline auto PPU::get_pixel_swap(uint32 x) -> uint16 {
   CachePixel& p = pixelCache[x];
-  uint16 aboveColor, belowColor;
+  uint15 aboveColor, belowColor;
   uint8 belowLayer;
 
   aboveColor = p.belowColor;

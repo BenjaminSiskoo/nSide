@@ -19,8 +19,8 @@ auto Program::loadMedium(Emulator::Interface& interface, const Emulator::Interfa
   debugger->print(medium.name, "\n");
 
   Emulator::audio.reset(2, audio->get(Audio::Frequency).get<uint>(44100));
-  emulator->connect(SuperFamicom::ID::Port::Controller1, SuperFamicom::ID::Device::Gamepad);
-  emulator->connect(SuperFamicom::ID::Port::Controller2, SuperFamicom::ID::Device::None);
+  emulator->connect(SFC::ID::Port::Controller1, SFC::ID::Device::Gamepad);
+  emulator->connect(SFC::ID::Port::Controller2, SFC::ID::Device::None);
   emulator->load(medium.id);
   emulator->set("Blur Emulation", false);
   emulator->set("Color Emulation", false);
@@ -28,7 +28,7 @@ auto Program::loadMedium(Emulator::Interface& interface, const Emulator::Interfa
   emulator->power();
 
   presentation->setTitle(basename(mediumPaths(1)).trimRight("/"));
-  debugger->print(SuperFamicom::cartridge.information.manifest.cartridge, "\n");
+  debugger->print(SFC::cartridge.information.manifest.cartridge, "\n");
   debugger->suspend();
 }
 

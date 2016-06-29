@@ -43,6 +43,6 @@ auto CPU::speed(uint24 addr) const -> uint {
   return 12;
 }
 
-auto CPU::disassemblerRead(uint24 addr) -> uint8 {
+auto CPU::readDisassembler(uint24 addr) -> uint8 {
   return bus.read(addr, r.mdr);
 }

@@ -1,3 +1,28 @@
+auto PPU::getVramAddress() -> uint16 {
+  uint16 address = r.vramAddress;
+  switch(r.vramMapping) {
+  case 0: return (address);
+  case 1: return (address & 0xff00) | ((address & 0x001f) << 3) | ((address >> 5) & 7);
+  case 2: return (address & 0xfe00) | ((address & 0x003f) << 3) | ((address >> 6) & 7);
+  case 3: return (address & 0xfc00) | ((address & 0x007f) << 3) | ((address >> 7) & 7);
+  }
+  unreachable;
+}
+
+auto PPU::vramAccessible() const -> bool {
+  //NOTE: all VRAM writes during active display are invalid. Unlike OAM and CGRAM, they will
+  //not be written anywhere at all. The below address ranges for where writes are invalid have
+  //been validated on hardware, as has the edge case where the S-CPU MDR can be written if the
+  //write occurs during the very last clock cycle of vblank.
+  return r.displayDisable || vcounter() >= vdisp();
+}
+
+auto PPU::oamWrite(uint addr, uint8 data) -> void {
+  spriteListValid = false;
+  oam[addr] = data;
+  obj.update(addr, data);
+}
+
 auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
   cpu.synchronizePPU();
 
@@ -13,21 +38,21 @@ auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
 
   //MPYL
   case 0x2134: {
-    uint result = ((int16)r.m7a * (int8)(r.m7b >> 8));
+    uint result = (int16)r.m7a * (int8)(r.m7b >> 8);
     ppu1.mdr = (result >>  0);
     return ppu1.mdr;
   }
 
   //MPYM
   case 0x2135: {
-    uint result = ((int16)r.m7a * (int8)(r.m7b >> 8));
+    uint result = (int16)r.m7a * (int8)(r.m7b >> 8);
     ppu1.mdr = (result >>  8);
     return ppu1.mdr;
   }
 
   //MPYH
   case 0x2136: {
-    uint result = ((int16)r.m7a * (int8)(r.m7b >> 8));
+    uint result = (int16)r.m7a * (int8)(r.m7b >> 8);
     ppu1.mdr = (result >> 16);
     return ppu1.mdr;
   }
@@ -41,20 +66,19 @@ auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
   //OAMDATAREAD
   case 0x2138: {
     uint10 address = r.oamAddress++;
+    if(!r.displayDisable && vcounter() < vdisp()) address = latch.oamAddress;
     if(address & 0x0200) address &= 0x021f;
 
-    ppu1.mdr = oamRead(address);
+    ppu1.mdr = oam[address];
     obj.setFirstSprite();
     return ppu1.mdr;
   }
 
   //VMDATALREAD
   case 0x2139: {
-    auto address = getVramAddress();
     ppu1.mdr = latch.vram >> 0;
     if(r.vramIncrementMode == 0) {
-      latch.vram.byte(0) = vramRead(0, address);
-      latch.vram.byte(1) = vramRead(1, address);
+      latch.vram = vramAccessible() ? vram[getVramAddress()] : (uint16)0;
       r.vramAddress += r.vramIncrementSize;
     }
     return ppu1.mdr;
@@ -62,29 +86,30 @@ auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
 
   //VMDATAHREAD
   case 0x213a: {
-    auto address = getVramAddress();
     ppu1.mdr = latch.vram >> 8;
     if(r.vramIncrementMode == 1) {
-      latch.vram.byte(0) = vramRead(0, address);
-      latch.vram.byte(1) = vramRead(1, address);
+      latch.vram = vramAccessible() ? vram[getVramAddress()] : (uint16)0;
       r.vramAddress += r.vramIncrementSize;
     }
     return ppu1.mdr;
   }
 
   //CGDATAREAD
-  //note: CGRAM palette data is 15-bits (0,bbbbb,ggggg,rrrrr)
-  //therefore, the high byte read from each color does not
-  //update bit 7 of the PPU2 MDR.
   case 0x213b: {
-    bool l = r.cgramAddress & 1;
-    uint9 address = r.cgramAddress++;
+    //note: CGRAM palette data is 15-bits (0,bbbbb,ggggg,rrrrr)
+    //therefore, the high byte read from each color does not
+    //update bit 7 of the PPU2 MDR.
+    auto address = r.cgramAddress;
+    if(!r.displayDisable
+    && cpu.vcounter() > 0 && cpu.vcounter() < vdisp()
+    && cpu.hcounter() >= 88 && cpu.hcounter() < 1096
+    ) address = latch.cgramAddress;
 
-    if(l == 0) {
-      ppu2.mdr  = cgramRead(address);
+    if(r.cgramAddressLatch++) {
+      ppu2.mdr  = cgram[address].byte(0);
     } else {
       ppu2.mdr &= 0x80;
-      ppu2.mdr |= cgramRead(address);
+      ppu2.mdr |= cgram[address].byte(1);
     }
     return ppu2.mdr;
   }
@@ -185,6 +210,7 @@ auto PPU::writeIO(uint24 addr, uint8 data) -> void {
   case 0x2104: {
     bool l = r.oamAddress & 1;
     uint10 address = r.oamAddress++;
+    if(!r.displayDisable && cpu.vcounter() < vdisp()) address = latch.oamAddress;
     if(address & 0x0200) address &= 0x021f;
 
     if(l == 0) latch.oam = data;
@@ -339,44 +365,40 @@ auto PPU::writeIO(uint24 addr, uint8 data) -> void {
 
   //VMADDL
   case 0x2116: {
-    r.vramAddress &= 0xff00;
-    r.vramAddress |= (data << 0);
-    auto address = getVramAddress();
-    latch.vram.byte(0) = vramRead(0, address);
-    latch.vram.byte(1) = vramRead(1, address);
+    r.vramAddress.byte(0) = data;
+    latch.vram = vramAccessible() ? vram[getVramAddress()] : (uint16)0;
     return;
   }
 
   //VMADDH
   case 0x2117: {
-    r.vramAddress &= 0x00ff;
-    r.vramAddress |= (data << 8);
-    auto address = getVramAddress();
-    latch.vram.byte(0) = vramRead(0, address);
-    latch.vram.byte(1) = vramRead(1, address);
+    r.vramAddress.byte(1) = data;
+    latch.vram = vramAccessible() ? vram[getVramAddress()] : (uint16)0;
     return;
   }
 
   //VMDATAL
   case 0x2118: {
-    auto address = getVramAddress();
-    vramWrite(0, address, data);
-    tiledataCache.tiledataState[Background::Mode::BPP2][(address & vram.mask) >> 3] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP4][(address & vram.mask) >> 4] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP8][(address & vram.mask) >> 5] = 1;
-
+    if(vramAccessible()) {
+      auto address = getVramAddress();
+      vram[address].byte(0) = data;
+      tiledataCache.tiledataState[Background::Mode::BPP2][(address & vram.mask) >> 3] = 1;
+      tiledataCache.tiledataState[Background::Mode::BPP4][(address & vram.mask) >> 4] = 1;
+      tiledataCache.tiledataState[Background::Mode::BPP8][(address & vram.mask) >> 5] = 1;
+    }
     if(r.vramIncrementMode == 0) r.vramAddress += r.vramIncrementSize;
     return;
   }
 
   //VMDATAH
   case 0x2119: {
-    auto address = getVramAddress();
-    vramWrite(1, address, data);
-    tiledataCache.tiledataState[Background::Mode::BPP2][(address & vram.mask) >> 3] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP4][(address & vram.mask) >> 4] = 1;
-    tiledataCache.tiledataState[Background::Mode::BPP8][(address & vram.mask) >> 5] = 1;
-
+    if(vramAccessible()) {
+      auto address = getVramAddress();
+      vram[address].byte(1) = data;
+      tiledataCache.tiledataState[Background::Mode::BPP2][(address & vram.mask) >> 3] = 1;
+      tiledataCache.tiledataState[Background::Mode::BPP4][(address & vram.mask) >> 4] = 1;
+      tiledataCache.tiledataState[Background::Mode::BPP8][(address & vram.mask) >> 5] = 1;
+    }
     if(r.vramIncrementMode == 1) r.vramAddress += r.vramIncrementSize;
     return;
   }
@@ -433,27 +455,27 @@ auto PPU::writeIO(uint24 addr, uint8 data) -> void {
 
   //CGADD
   case 0x2121: {
-    r.cgramAddress = data << 1;
+    r.cgramAddress = data;
+    r.cgramAddressLatch = 0;
     return;
   }
 
   //CGDATA
-  //note: CGRAM palette data format is 15-bits
-  //(0,bbbbb,ggggg,rrrrr). Highest bit is ignored,
-  //as evidenced by $213b CGRAM data reads.
-  //
-  //anomie indicates writes to CGDATA work the same
-  //as writes to OAMDATA's low table. need to verify
-  //this on hardware.
   case 0x2122: {
-    bool l = r.cgramAddress & 1;
-    uint9 address = r.cgramAddress++;
+    //note: CGRAM palette data format is 15-bits
+    //(0,bbbbb,ggggg,rrrrr). Highest bit is ignored,
+    //as evidenced by $213b CGRAM data reads.
+    auto address = r.cgramAddress;
+    if(!r.displayDisable
+    && cpu.vcounter() > 0 && cpu.vcounter() < vdisp()
+    && cpu.hcounter() >= 88 && cpu.hcounter() < 1096
+    ) address = latch.cgramAddress;
 
-    if(l == 0) {
+    if(r.cgramAddressLatch++ == 0) {
       latch.cgram = data;
     } else {
-      cgramWrite((address & ~1) + 0, latch.cgram);
-      cgramWrite((address & ~1) + 1, data & 0x7f);
+      cgram[address] = data.bits(0,6) << 8 | latch.cgram;
+      r.cgramAddress++;
     }
     return;
   }

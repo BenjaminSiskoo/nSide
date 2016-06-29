@@ -45,17 +45,13 @@ struct PPU : Thread, PPUcounter {
 
   auto ext() -> uint4;
 
-  //memory.cpp
+  //mmio.cpp
   auto readCIRAM(uint12 addr) -> uint8;
   auto writeCIRAM(uint12 addr, uint8 data) -> void;
 
   alwaysinline auto readCGRAM(uint5 addr) -> uint8;
   alwaysinline auto writeCGRAM(uint5 addr, uint8 data) -> void;
 
-  alwaysinline auto readOAM(uint8 addr) -> uint8;
-  alwaysinline auto writeOAM(uint8 addr, uint8 data) -> void;
-
-  //mmio.cpp
   auto readIO(uint16 addr, uint8 data) -> uint8;
   auto writeIO(uint16 addr, uint8 data) -> void;
 
@@ -98,17 +94,17 @@ struct PPU : Thread, PPUcounter {
 
     union {
       uint value;
-      BitField<uint, 0, 4> tileX;
-      BitField<uint, 5, 9> tileY;
-      BitField<uint,10,11> nametable;
-      BitField<uint,   10> nametableX;
-      BitField<uint,   11> nametableY;
-      BitField<uint,12,14> fineY;
-      BitField<uint, 0,14> address;
-      BitField<uint, 0, 7> addressLo;
-      BitField<uint, 8,14> addressHi;
-      BitField<uint,   15> latch;
-      BitField<uint,16,18> fineX;
+      NaturalBitField<uint, 0, 4> tileX;
+      NaturalBitField<uint, 5, 9> tileY;
+      NaturalBitField<uint,10,11> nametable;
+      NaturalBitField<uint,10,10> nametableX;
+      NaturalBitField<uint,11,11> nametableY;
+      NaturalBitField<uint,12,14> fineY;
+      NaturalBitField<uint, 0,14> address;
+      NaturalBitField<uint, 0, 7> addressLo;
+      NaturalBitField<uint, 8,14> addressHi;
+      NaturalBitField<uint,15,15> latch;
+      NaturalBitField<uint,16,18> fineX;
     } v, t;
 
     bool nmiHold;

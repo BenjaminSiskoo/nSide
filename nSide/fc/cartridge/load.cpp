@@ -8,6 +8,7 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
   if(system.revision() == System::Revision::VSSystem) setupVS(node, boardNode);
 
   Board::load(boardNode);  //this call will set Cartridge::board if successful
+  if(!board) return;
   if(auto node = boardNode["prg/rom"]) loadMemory(board->prgrom, node, File::Required, pathID());
   if(auto node = boardNode["prg/ram"]) loadMemory(board->prgram, node, File::Optional, pathID());
   if(auto node = boardNode["chr/rom"]) loadMemory(board->chrrom, node, File::Required, pathID());

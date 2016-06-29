@@ -5,6 +5,9 @@ struct Object {
 
   struct Sprite;
 
+  //list.cpp
+  auto update(uint addr, uint8 data) -> void;
+
   auto serialize(serializer&) -> void;
 
   struct ID { enum : uint { OBJ = 4 }; };

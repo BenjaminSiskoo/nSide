@@ -20,25 +20,25 @@ Debugger::Debugger() {
   cpuUsage.allocate(16 * 1024 * 1024);
   apuUsage.allocate(64 * 1024);
 
-  SuperFamicom::cpu.debugger.execute = {&Debugger::cpu_execute, this};
-  SuperFamicom::cpu.debugger.read = {&Debugger::cpu_read, this};
-  SuperFamicom::cpu.debugger.write = {&Debugger::cpu_write, this};
+  SFC::cpu.debugger.execute = {&Debugger::cpu_execute, this};
+  SFC::cpu.debugger.read = {&Debugger::cpu_read, this};
+  SFC::cpu.debugger.write = {&Debugger::cpu_write, this};
 
-  SuperFamicom::cpu.debugger.nmi = {&Debugger::cpu_nmi, this};
-  SuperFamicom::cpu.debugger.irq = {&Debugger::cpu_irq, this};
+  SFC::cpu.debugger.nmi = {&Debugger::cpu_nmi, this};
+  SFC::cpu.debugger.irq = {&Debugger::cpu_irq, this};
 
-  SuperFamicom::smp.debugger.execute = {&Debugger::smp_execute, this};
-  SuperFamicom::smp.debugger.read = {&Debugger::smp_read, this};
-  SuperFamicom::smp.debugger.write = {&Debugger::smp_write, this};
+  SFC::smp.debugger.execute = {&Debugger::smp_execute, this};
+  SFC::smp.debugger.read = {&Debugger::smp_read, this};
+  SFC::smp.debugger.write = {&Debugger::smp_write, this};
 
-  SuperFamicom::ppu.debugger.vramRead = {&Debugger::ppu_vramRead, this};
-  SuperFamicom::ppu.debugger.vramWrite = {&Debugger::ppu_vramWrite, this};
+  SFC::ppu.debugger.vramRead = {&Debugger::ppu_vramRead, this};
+  SFC::ppu.debugger.vramWrite = {&Debugger::ppu_vramWrite, this};
 
-  SuperFamicom::ppu.debugger.oamRead = {&Debugger::ppu_oamRead, this};
-  SuperFamicom::ppu.debugger.oamWrite = {&Debugger::ppu_oamWrite, this};
+  SFC::ppu.debugger.oamRead = {&Debugger::ppu_oamRead, this};
+  SFC::ppu.debugger.oamWrite = {&Debugger::ppu_oamWrite, this};
 
-  SuperFamicom::ppu.debugger.cgramRead = {&Debugger::ppu_cgramRead, this};
-  SuperFamicom::ppu.debugger.cgramWrite = {&Debugger::ppu_cgramWrite, this};
+  SFC::ppu.debugger.cgramRead = {&Debugger::ppu_cgramRead, this};
+  SFC::ppu.debugger.cgramWrite = {&Debugger::ppu_cgramWrite, this};
 }
 
 auto Debugger::run() -> void {

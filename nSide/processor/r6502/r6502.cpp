@@ -10,12 +10,12 @@ namespace Processor {
 #define L lastCycle();
 #define call(op) (this->*op)()
 
-#include "opcode_read.cpp"
-#include "opcode_write.cpp"
-#include "opcode_rmw.cpp"
-#include "opcode_pc.cpp"
-#include "opcode_misc.cpp"
-#include "opcode_illegal.cpp"
+#include "instructions-read.cpp"
+#include "instructions-write.cpp"
+#include "instructions-rmw.cpp"
+#include "instructions-pc.cpp"
+#include "instructions-misc.cpp"
+#include "instructions-illegal.cpp"
 #include "switch.cpp"
 
 auto R6502::mdr() const -> uint8 {

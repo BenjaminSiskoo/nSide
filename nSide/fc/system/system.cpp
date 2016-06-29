@@ -13,9 +13,9 @@ auto System::run() -> void {
 }
 
 auto System::runToSave() -> void {
-  scheduler.synchronize(ppu.thread);
   scheduler.synchronize(cpu.thread);
   scheduler.synchronize(apu.thread);
+  scheduler.synchronize(ppu.thread);
   scheduler.synchronize(cartridge.thread);
   for(auto coprocessor : cpu.coprocessors) {
     scheduler.synchronize(coprocessor->thread);

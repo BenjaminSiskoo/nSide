@@ -4,7 +4,6 @@ namespace SuperFamicom {
 
 PPU ppu;
 
-#include "memory.cpp"
 #include "mmio.cpp"
 #include "background/background.cpp"
 #include "screen/screen.cpp"
@@ -98,8 +97,8 @@ auto PPU::load(Markup::Node node) -> bool {
 
 auto PPU::power() -> void {
   for(auto& n : vram.data) n = 0x0000;
-  for(auto& n : oam) n = 0x00;
-  for(auto& n : cgram) n = 0x00;
+  for(auto& n : oam.data) n = 0x00;
+  for(auto& n : cgram.data) n = 0x0000;
   tiledataCache.flush();
 }
 
@@ -190,7 +189,8 @@ auto PPU::reset() -> void {
   r.m7y = 0x0000;
 
   //$2121  CGADD
-  r.cgramAddress = 0x0000;
+  r.cgramAddress = 0x00;
+  r.cgramAddressLatch = random(0);
 
   //$2132  COLDATA
   r.color_rgb = 0x0000;

@@ -94,21 +94,21 @@ auto Program::audioSample(const double* samples, uint channels) -> void {
 auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
   if(presentation->focused() == false) return 0;
 
-  if(port == SuperFamicom::ID::Port::Controller1) {
-    if(device == SuperFamicom::ID::Device::Gamepad) {
+  if(port == SFC::ID::Port::Controller1) {
+    if(device == SFC::ID::Device::Gamepad) {
       switch(input) {
-      case SuperFamicom::Gamepad::Up:     return hiro::Keyboard::pressed("Up");
-      case SuperFamicom::Gamepad::Down:   return hiro::Keyboard::pressed("Down");
-      case SuperFamicom::Gamepad::Left:   return hiro::Keyboard::pressed("Left");
-      case SuperFamicom::Gamepad::Right:  return hiro::Keyboard::pressed("Right");
-      case SuperFamicom::Gamepad::B:      return hiro::Keyboard::pressed("Z");
-      case SuperFamicom::Gamepad::A:      return hiro::Keyboard::pressed("X");
-      case SuperFamicom::Gamepad::Y:      return hiro::Keyboard::pressed("A");
-      case SuperFamicom::Gamepad::X:      return hiro::Keyboard::pressed("S");
-      case SuperFamicom::Gamepad::L:      return hiro::Keyboard::pressed("D");
-      case SuperFamicom::Gamepad::R:      return hiro::Keyboard::pressed("C");
-      case SuperFamicom::Gamepad::Select: return hiro::Keyboard::pressed("Apostrophe");
-      case SuperFamicom::Gamepad::Start:  return hiro::Keyboard::pressed("Enter");
+      case SFC::Gamepad::Up:     return hiro::Keyboard::pressed("Up");
+      case SFC::Gamepad::Down:   return hiro::Keyboard::pressed("Down");
+      case SFC::Gamepad::Left:   return hiro::Keyboard::pressed("Left");
+      case SFC::Gamepad::Right:  return hiro::Keyboard::pressed("Right");
+      case SFC::Gamepad::B:      return hiro::Keyboard::pressed("Z");
+      case SFC::Gamepad::A:      return hiro::Keyboard::pressed("X");
+      case SFC::Gamepad::Y:      return hiro::Keyboard::pressed("A");
+      case SFC::Gamepad::X:      return hiro::Keyboard::pressed("S");
+      case SFC::Gamepad::L:      return hiro::Keyboard::pressed("D");
+      case SFC::Gamepad::R:      return hiro::Keyboard::pressed("C");
+      case SFC::Gamepad::Select: return hiro::Keyboard::pressed("Apostrophe");
+      case SFC::Gamepad::Start:  return hiro::Keyboard::pressed("Enter");
       }
     }
   }

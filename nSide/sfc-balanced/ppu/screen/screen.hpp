@@ -1,7 +1,7 @@
 struct Screen {
   auto reset() -> void;
 
-  auto blend(uint x, uint y) const -> uint16;
+  auto blend(uint x, uint y) const -> uint15;
 
   auto serialize(serializer&) -> void;
 
@@ -24,7 +24,7 @@ struct Screen {
 
   struct Math {
     //struct Screen {
-    //  uint16 color;
+    //  uint15 color;
     //  bool colorEnable;
     //} above, below;
     //bool transparent;

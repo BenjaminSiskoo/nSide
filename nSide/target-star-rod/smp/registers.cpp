@@ -58,31 +58,31 @@ SMPRegisterEditor::SMPRegisterEditor() {
 }
 
 auto SMPRegisterEditor::loadRegisters() -> void {
-  regAValue.setText(hex(SuperFamicom::smp.regs.a, 2L));
-  regXValue.setText(hex(SuperFamicom::smp.regs.x, 2L));
-  regYValue.setText(hex(SuperFamicom::smp.regs.y, 2L));
-  regSValue.setText(hex(SuperFamicom::smp.regs.s, 2L));
-  flagN.setChecked(SuperFamicom::smp.regs.p.n);
-  flagV.setChecked(SuperFamicom::smp.regs.p.v);
-  flagP.setChecked(SuperFamicom::smp.regs.p.p);
-  flagB.setChecked(SuperFamicom::smp.regs.p.b);
-  flagH.setChecked(SuperFamicom::smp.regs.p.h);
-  flagI.setChecked(SuperFamicom::smp.regs.p.i);
-  flagZ.setChecked(SuperFamicom::smp.regs.p.z);
-  flagC.setChecked(SuperFamicom::smp.regs.p.c);
+  regAValue.setText(hex(SFC::smp.regs.a, 2L));
+  regXValue.setText(hex(SFC::smp.regs.x, 2L));
+  regYValue.setText(hex(SFC::smp.regs.y, 2L));
+  regSValue.setText(hex(SFC::smp.regs.s, 2L));
+  flagN.setChecked(SFC::smp.regs.p.n);
+  flagV.setChecked(SFC::smp.regs.p.v);
+  flagP.setChecked(SFC::smp.regs.p.p);
+  flagB.setChecked(SFC::smp.regs.p.b);
+  flagH.setChecked(SFC::smp.regs.p.h);
+  flagI.setChecked(SFC::smp.regs.p.i);
+  flagZ.setChecked(SFC::smp.regs.p.z);
+  flagC.setChecked(SFC::smp.regs.p.c);
 }
 
 auto SMPRegisterEditor::saveRegisters() -> void {
-  SuperFamicom::smp.regs.a = hex(regAValue.text());
-  SuperFamicom::smp.regs.x = hex(regXValue.text());
-  SuperFamicom::smp.regs.y = hex(regYValue.text());
-  SuperFamicom::smp.regs.s = hex(regSValue.text());
-  SuperFamicom::smp.regs.p.n = flagN.checked();
-  SuperFamicom::smp.regs.p.v = flagV.checked();
-  SuperFamicom::smp.regs.p.p = flagP.checked();
-  SuperFamicom::smp.regs.p.b = flagB.checked();
-  SuperFamicom::smp.regs.p.h = flagH.checked();
-  SuperFamicom::smp.regs.p.i = flagI.checked();
-  SuperFamicom::smp.regs.p.z = flagZ.checked();
-  SuperFamicom::smp.regs.p.c = flagC.checked();
+  SFC::smp.regs.a = hex(regAValue.text());
+  SFC::smp.regs.x = hex(regXValue.text());
+  SFC::smp.regs.y = hex(regYValue.text());
+  SFC::smp.regs.s = hex(regSValue.text());
+  SFC::smp.regs.p.n = flagN.checked();
+  SFC::smp.regs.p.v = flagV.checked();
+  SFC::smp.regs.p.p = flagP.checked();
+  SFC::smp.regs.p.b = flagB.checked();
+  SFC::smp.regs.p.h = flagH.checked();
+  SFC::smp.regs.p.i = flagI.checked();
+  SFC::smp.regs.p.z = flagZ.checked();
+  SFC::smp.regs.p.c = flagC.checked();
 }

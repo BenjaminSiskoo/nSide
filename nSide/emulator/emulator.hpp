@@ -13,7 +13,7 @@ namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.09";
-  static const string FromVersion = "099.11";
+  static const string FromVersion = "099.12";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const lstring Contributors = {
@@ -30,7 +30,7 @@ namespace Emulator {
     "endrift (Game Boy, Game Boy Advance fixes)",
     "FirebrandX",
     "FitzRoy (Famicom bug-testing)",
-    "gekkio (Game Boy fixes)",
+    "gekkio (Game Boy STAT IRQ and other fixes)",
     "GIGO",
     "jchadwick (Game Boy Advance fixes)",
     "Jonas Quinn (Super Famicom DSP, Game Boy, Game Boy Advance fixes)",

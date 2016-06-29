@@ -1,3 +1,25 @@
+auto PPU::readCIRAM(uint12 addr) -> uint8 {
+  if(!system.vs()) addr &= 0x7ff;
+  return ciram[addr];
+}
+
+auto PPU::writeCIRAM(uint12 addr, uint8 data) -> void {
+  if(!system.vs()) addr &= 0x7ff;
+  ciram[addr] = data;
+}
+
+auto PPU::readCGRAM(uint5 addr) -> uint8 {
+  if((addr & 0x13) == 0x10) addr &= ~0x10;
+  uint8 data = cgram[addr];
+  if(r.grayscale) data &= 0x30;
+  return data;
+}
+
+auto PPU::writeCGRAM(uint5 addr, uint8 data) -> void {
+  if((addr & 0x13) == 0x10) addr &= ~0x10;
+  cgram[addr] = data;
+}
+
 auto PPU::readIO(uint16 addr, uint8 data) -> uint8 {
   switch(addr.bits(0,2)) {
 
@@ -33,7 +55,7 @@ auto PPU::readIO(uint16 addr, uint8 data) -> uint8 {
     case Version::RP2C02C:
       return r.mdr;
     default:
-      r.mdr = readOAM(r.oamAddress);
+      r.mdr = oam[r.oamAddress];
       for(uint i = 0; i < 8; i++) r.mdrDecay[i] = 3221591;
       break;
     }
@@ -121,7 +143,8 @@ auto PPU::writeIO(uint16 addr, uint8 data) -> void {
 
   //OAMDATA
   case 4: {
-    writeOAM(r.oamAddress++, data);
+    if(r.oamAddress.bits(0,1) == 2) data.bits(2,4) = 0;  //clear non-existent bits (always read back as 0)
+    oam[r.oamAddress++] = data;
     return;
   }
 

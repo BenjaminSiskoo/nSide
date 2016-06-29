@@ -2,7 +2,7 @@
 rem For use with Windows
 
 rem Accuracy profile
-mingw32-make -j4 profile=accuracy
+mingw32-make -j4
 if not exist "out\nSide.exe" (pause)
 
 rem Balanced profile

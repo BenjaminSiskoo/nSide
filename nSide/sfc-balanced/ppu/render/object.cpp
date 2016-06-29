@@ -1,29 +1,3 @@
-auto PPU::updateSpriteList(uint addr, uint8 data) -> void {
-  if(addr < 0x0200) {
-    uint i = addr >> 2;
-    switch(addr & 3) {
-    case 0: obj.list[i].x = (obj.list[i].x & 0x0100) | data; break;
-    case 1: obj.list[i].y = (data + 1) & 0xff; break;
-    case 2: obj.list[i].character = data; break;
-    case 3: obj.list[i].vflip = data & 0x80;
-            obj.list[i].hflip = data & 0x40;
-            obj.list[i].priority = (data >> 4) & 3;
-            obj.list[i].palette = (data >> 1) & 7;
-            obj.list[i].nameSelect = data & 0x01;
-    }
-  } else {
-    uint i = (addr & 0x1f) << 2;
-    obj.list[i + 0].x = ((data & 0x01) << 8) | (obj.list[i + 0].x & 0xff);
-    obj.list[i + 0].size = data & 0x02;
-    obj.list[i + 1].x = ((data & 0x04) << 6) | (obj.list[i + 1].x & 0xff);
-    obj.list[i + 1].size = data & 0x08;
-    obj.list[i + 2].x = ((data & 0x10) << 4) | (obj.list[i + 2].x & 0xff);
-    obj.list[i + 2].size = data & 0x20;
-    obj.list[i + 3].x = ((data & 0x40) << 2) | (obj.list[i + 3].x & 0xff);
-    obj.list[i + 3].size = data & 0x80;
-  }
-}
-
 auto PPU::buildSpriteList() -> void {
   if(spriteListValid) return;
   spriteListValid = true;
@@ -201,14 +175,14 @@ auto PPU::obj_renderLine() -> void {
     if(pixelCache[x].abovePriority < pri) { \
       pixelCache[x].abovePriority = pri; \
       pixelCache[x].aboveLayer = Object::ID::OBJ; \
-      pixelCache[x].aboveColor = getPalette(obj_linePalette[x]); \
+      pixelCache[x].aboveColor = cgram[obj_linePalette[x]]; \
       pixelCache[x].aboveColorExemption = obj_linePalette[x] < 192; \
     }
   #define setpixel_below(x) \
     if(pixelCache[x].belowPriority < pri) { \
       pixelCache[x].belowPriority = pri; \
       pixelCache[x].belowLayer = Object::ID::OBJ; \
-      pixelCache[x].belowColor = getPalette(obj_linePalette[x]); \
+      pixelCache[x].belowColor = cgram[obj_linePalette[x]]; \
       pixelCache[x].belowColorExemption = obj_linePalette[x] < 192; \
     }
   for(int x : range(256)) {

@@ -1,7 +1,7 @@
 struct CachePixel {
   //bgr555 color data for main/subscreen pixels: 0x0000 = transparent / use palette color # 0
   //needs to be bgr555 instead of palette index for direct color mode ($2130 bit 0) to work
-  uint16 aboveColor, belowColor;
+  uint15 aboveColor, belowColor;
   //indicates source of palette # for main/subscreen (BG1-4, OBJ, or back)
   uint8  aboveLayer, belowLayer;
   //color_exemption -- true when bg == OBJ && palette index >= 192, disables color blend effects
@@ -67,8 +67,7 @@ auto obj_renderLine_rto() -> void;
 auto obj_renderLine() -> void;
 
 //line.cpp
-inline auto getPalette(uint8 index) -> uint16;
-inline auto getDirectColor(uint8 p, uint8 t) -> uint16;
+inline auto getDirectColor(uint8 p, uint8 t) -> uint15;
 inline auto get_pixel_normal(uint32 x) -> uint16;
 inline auto get_pixel_swap(uint32 x) -> uint16;
 auto renderLine_output() -> void;

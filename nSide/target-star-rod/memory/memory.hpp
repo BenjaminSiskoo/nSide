@@ -10,6 +10,8 @@ struct MemoryEditor : Window {
       Button update{&controlLayout, Size{80, 0}};
     HexEdit editor{&layout, Size{~0, ~0}};
 
+  enum : uint { CPU, APU, VRAM, OAM, CGRAM };
+
   auto read(uint addr) -> uint8_t;
   auto write(uint addr, uint8_t data) -> void;
   auto selectSource() -> void;
