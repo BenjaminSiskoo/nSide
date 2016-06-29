@@ -25,12 +25,14 @@ struct Controller : Cothread {
 
   virtual auto main() -> void;
   virtual auto data() -> uint3 { return 0; }
+  virtual auto mic() -> bool { return 0; }
   virtual auto latch(bool data) -> void {}
 
   const bool port;
 };
 
 #include "gamepad/gamepad.hpp"
+#include "gamepad-mic/gamepad-mic.hpp"
 #include "fourscore/fourscore.hpp"
 #include "zapper/zapper.hpp"
 #include "powerpad/powerpad.hpp"

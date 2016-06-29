@@ -3,6 +3,7 @@
 namespace Famicom {
 
 #include "gamepad/gamepad.cpp"
+#include "gamepad-mic/gamepad-mic.cpp"
 #include "fourscore/fourscore.cpp"
 #include "zapper/zapper.cpp"
 #include "powerpad/powerpad.cpp"

@@ -4,7 +4,7 @@ namespace Famicom {
 
 CPU cpu;
 #include "memory.cpp"
-#include "mmio.cpp"
+#include "io.cpp"
 #include "timing.cpp"
 #include "serialization.cpp"
 

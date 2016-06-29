@@ -50,6 +50,17 @@ Interface::Interface() {
     controllerPort2.devices.append(device);
   }
 
+  { Device device{ID::Device::GamepadMic, "Gamepad Mic"};
+    device.inputs.append({0, "Up"    });
+    device.inputs.append({0, "Down"  });
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "B"     });
+    device.inputs.append({0, "A"     });
+    device.inputs.append({0, "Mic"   });
+    controllerPort2.devices.append(device);
+  }
+
   { Device device{ID::Device::FourScore, "Four Score"};
     for(uint p = 1; p <= 4; p += 2) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});

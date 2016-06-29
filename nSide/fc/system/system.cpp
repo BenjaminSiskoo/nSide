@@ -85,7 +85,6 @@ auto System::load(Revision revision) -> bool {
   bus.reset();
   if(!cartridge.load()) return false;
 
-  if(region() != Region::NTSC) interface->information.aspectRatio = 2'950'000.0 / 2'128'137.0;
   switch(cartridge.region()) {
   case Cartridge::Region::NTSC:  information.region = Region::NTSC;  break;
   case Cartridge::Region::PAL:   information.region = Region::PAL;   break;
@@ -103,13 +102,12 @@ auto System::load(Revision revision) -> bool {
 
   interface->information.canvasWidth  = 256;
   interface->information.canvasHeight = 240;
-  interface->information.aspectRatio = 8.0 / 7.0;
+  interface->information.aspectRatio = region() == Region::NTSC ? 8.0 / 7.0 : 2'950'000.0 / 2'128'137.0;
 
   switch(revision) {
 
   case Revision::Famicom: {
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
-
     break;
   }
 

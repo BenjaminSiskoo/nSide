@@ -20,6 +20,7 @@ auto FourPlayers::data1() -> bool {
   case 6: return A.left & !A.right;
   case 7: return A.right & !A.left;
   }
+  unreachable;
 }
 
 auto FourPlayers::data2() -> uint5 {
@@ -38,6 +39,7 @@ auto FourPlayers::data2() -> uint5 {
   case 6: return (B.left & !B.right) << 1;
   case 7: return (B.right & !B.left) << 1;
   }
+  unreachable;
 }
 
 auto FourPlayers::latch(bool data) -> void {

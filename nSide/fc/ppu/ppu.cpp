@@ -4,7 +4,7 @@ namespace Famicom {
 
 PPU ppu;
 
-#include "mmio.cpp"
+#include "io.cpp"
 #include "render.cpp"
 #include "serialization.cpp"
 

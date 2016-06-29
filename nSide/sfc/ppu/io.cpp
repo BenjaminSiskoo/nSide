@@ -16,7 +16,6 @@ auto PPU::vramAccessible() const -> bool {
 auto PPU::oamWrite(uint addr, uint8 data) -> void {
   oam[addr] = data;
   obj.update(addr, data);
-  debugger.oamWrite(addr, data);
 }
 
 auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
@@ -66,7 +65,6 @@ auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
     if(address & 0x0200) address &= 0x021f;
 
     ppu1.mdr = oam[address];
-    debugger.oamRead(address, ppu1.mdr);
     obj.setFirstSprite();
     return ppu1.mdr;
   }
@@ -76,7 +74,6 @@ auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
     ppu1.mdr = latch.vram >> 0;
     if(r.vramIncrementMode == 0) {
       latch.vram = vramAccessible() ? vram[getVramAddress()] : (uint16)0;
-      if(vramAccessible()) debugger.vramRead(getVramAddress() << 1 | 0, latch.vram.byte(0));
       r.vramAddress += r.vramIncrementSize;
     }
     return ppu1.mdr;
@@ -87,7 +84,6 @@ auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
     ppu1.mdr = latch.vram >> 8;
     if(r.vramIncrementMode == 1) {
       latch.vram = vramAccessible() ? vram[getVramAddress()] : (uint16)0;
-      if(vramAccessible()) debugger.vramRead(getVramAddress() << 1 | 1, latch.vram.byte(1));
       r.vramAddress += r.vramIncrementSize;
     }
     return ppu1.mdr;
@@ -103,11 +99,9 @@ auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {
 
     if(r.cgramAddressLatch++) {
       ppu2.mdr  = cgram[address].byte(0);
-      debugger.cgramRead(address << 1 | 0, ppu2.mdr);
     } else {
       ppu2.mdr &= 0x80;
       ppu2.mdr |= cgram[address].byte(1);
-      debugger.cgramRead(address << 1 | 1, ppu2.mdr);
     }
     return ppu2.mdr;
   }
@@ -378,7 +372,6 @@ auto PPU::writeIO(uint24 addr, uint8 data) -> void {
   //VMDATAL
   case 0x2118: {
     if(vramAccessible()) vram[getVramAddress()].byte(0) = data;
-    if(vramAccessible()) debugger.vramWrite(getVramAddress() << 1 | 0, data);
     if(r.vramIncrementMode == 0) r.vramAddress += r.vramIncrementSize;
     return;
   }
@@ -386,7 +379,6 @@ auto PPU::writeIO(uint24 addr, uint8 data) -> void {
   //VMDATAH
   case 0x2119: {
     if(vramAccessible()) vram[getVramAddress()].byte(1) = data;
-    if(vramAccessible()) debugger.vramWrite(getVramAddress() << 1 | 1, data);
     if(r.vramIncrementMode == 1) r.vramAddress += r.vramIncrementSize;
     return;
   }
@@ -460,8 +452,6 @@ auto PPU::writeIO(uint24 addr, uint8 data) -> void {
       latch.cgram = data;
     } else {
       cgram[address] = data.bits(0,6) << 8 | latch.cgram;
-      debugger.cgramWrite(address << 1 | 0, latch.cgram);
-      debugger.cgramWrite(address << 1 | 1, data);
       r.cgramAddress++;
     }
     return;

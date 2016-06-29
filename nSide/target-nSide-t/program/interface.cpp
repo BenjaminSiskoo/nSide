@@ -112,7 +112,12 @@ auto Program::deviceChanged(uint port, uint device) -> void {
     port == 2 ? presentation->inputPort3 :
                 presentation->inputPort4
   );
-  ((MenuRadioItem)portMenu.action(device)).setChecked();
+  uint localDevice = 0;
+  for(uint i : range(device)) {
+    //Check if device is available for this port by checking its name's length
+    if(inputManager->emulator->ports[port].devices[i].name) localDevice++;
+  }
+  ((MenuRadioItem)portMenu.action(localDevice)).setChecked();
 }
 
 auto Program::dipSettings(const Markup::Node& node) -> uint {

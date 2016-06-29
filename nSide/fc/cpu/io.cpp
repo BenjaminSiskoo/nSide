@@ -3,16 +3,19 @@ auto CPU::readCPU(uint16 addr, uint8 data) -> uint8 {
 
   case 0x4016: {
     if(system.vs()) return vssystem.read(side, addr, data);
-    uint8 data = Famicom::peripherals.controllerPort1->data();
-    data = data.bit(2) << 4 | data.bit(1) << 3 | data.bit(0) << 0;
-    return (mdr() & 0xe0) | data | (Famicom::peripherals.expansionPort->data1() << 1);
+    uint8 data1 = Famicom::peripherals.controllerPort1->data();
+    uint8 data2 = Famicom::peripherals.controllerPort2->mic() << 2;
+    uint8 data3 = Famicom::peripherals.expansionPort->data1() << 1;
+    data1 = data1.bit(2) << 4 | data1.bit(1) << 3 | data1.bit(0) << 0;
+    return (mdr() & 0xe0) | data1 | data2 | data3;
   }
 
   case 0x4017: {
     if(system.vs()) return vssystem.read(side, addr, data);
-    uint8 data = Famicom::peripherals.controllerPort2->data();
-    data = data.bit(2) << 4 | data.bit(1) << 3 | data.bit(0) << 0;
-    return (mdr() & 0xe0) | data | Famicom::peripherals.expansionPort->data2();
+    uint8 data2 = Famicom::peripherals.controllerPort2->data();
+    uint8 data3 = Famicom::peripherals.expansionPort->data2();
+    data2 = data2.bit(2) << 4 | data2.bit(1) << 3 | data2.bit(0) << 0;
+    return (mdr() & 0xe0)         | data2 | data3;
   }
 
   }

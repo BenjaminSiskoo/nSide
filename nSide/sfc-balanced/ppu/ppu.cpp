@@ -4,7 +4,7 @@ namespace SuperFamicom {
 
 PPU ppu;
 
-#include "mmio.cpp"
+#include "io.cpp"
 #include "background/background.cpp"
 #include "screen/screen.cpp"
 #include "object/object.cpp"

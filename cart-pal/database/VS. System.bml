@@ -175,6 +175,45 @@ vs sha256:84c3f0d51a935bf478aa657f4728bb6a51112024913860e389f6710321ca5fbd
   :  name:     Gumshoe
   :  title:    Gumshoe
 
+vs sha256:e4a21bd0b502594f72fd0cefab023a15db5f7813791d1737bafac46986b01868
+  :side
+  :  ppu version=RP2C04-0001
+  :  controller port=2 device=zapper
+  :  controller port=1 device=none
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x4000
+  :  setting name:Price
+  :    option value=0x00 name:1 Coin - 1 Credit
+  :    option value=0x06 name:2 Coins - 1 Credit
+  :    option value=0x01 name:3 Coins - 1 Credit
+  :    option value=0x05 name:4 Coins - 1 Credit
+  :    option value=0x03 name:5 Coins - 1 Credit
+  :    option value=0x04 name:1 Coin - 2 Credits
+  :    option value=0x02 name:1 Coin - 3 Credits
+  :    option value=0x07 name:Free Play
+  :  setting name:Difficulty
+  :    option value=0x08 name:Normal
+  :    option value=0x00 name:Easy
+  :    option value=0x10 name:Hard
+  :    option value=0x18 name:Very Hard
+  :  setting name:Misses
+  :    option value=0x20 name:5 Misses
+  :    option value=0x00 name:3 Misses
+  :  setting name:Bonus Miss Award
+  :    option value=0x00 name:30000
+  :    option value=0x40 name:50000
+  :    option value=0x80 name:80000
+  :    option value=0xc0 name:100000
+
+information
+  serial:   MDS-HA
+  region:   USA
+  revision: 1.0
+  name:     Hogan's Alley
+  title:    VS. Hogan's Alley
+
 vs sha256:90087521b810c3d90af8aed726d19804d82cc5af4f1a52b34dcd551332d284bd
   :side
   :  ppu version=RP2C04-0004
