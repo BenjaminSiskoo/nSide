@@ -1,7 +1,7 @@
 //color addition / subtraction
 //thanks go to blargg for the optimized algorithms
 auto PPU::Screen::blend(uint x, uint y) const -> uint15 {
-  if(!r.colorMode) {
+  if(!io.colorMode) {
     if(!math.colorHalve) {
       uint sum = x + y;
       uint carry = (sum - ((x ^ y) & 0x0421)) & 0x8420;
@@ -20,18 +20,27 @@ auto PPU::Screen::blend(uint x, uint y) const -> uint15 {
   }
 }
 
+auto PPU::Screen::directColor(uint8 palette, uint16 tile) const -> uint15 {
+  //palette = -------- BBGGGRRR
+  //tile    = ---bgr-- --------
+  //output  = 0BBb00GG Gg0RRRr0
+  return ((palette << 7) & 0x6000) | ((tile << 10) & 0x1000)
+       | ((palette << 4) & 0x0380) | ((tile <<  5) & 0x0040)
+       | ((palette << 2) & 0x001c) | ((tile <<  1) & 0x0002);
+}
+
 auto PPU::Screen::reset() -> void {
-  r.blendMode = false;
-  r.directColor = false;
-  r.colorMode = false;
-  r.colorHalve = false;
-  r.bg1.colorEnable = false;
-  r.bg2.colorEnable = false;
-  r.bg3.colorEnable = false;
-  r.bg4.colorEnable = false;
-  r.obj.colorEnable = false;
-  r.back.colorEnable = false;
-  r.colorBlue = 0;
-  r.colorGreen = 0;
-  r.colorRed = 0;
+  io.blendMode = false;
+  io.directColor = false;
+  io.colorMode = false;
+  io.colorHalve = false;
+  io.bg1.colorEnable = false;
+  io.bg2.colorEnable = false;
+  io.bg3.colorEnable = false;
+  io.bg4.colorEnable = false;
+  io.obj.colorEnable = false;
+  io.back.colorEnable = false;
+  io.colorBlue = 0;
+  io.colorGreen = 0;
+  io.colorRed = 0;
 }

@@ -156,14 +156,14 @@ auto Interface::cheatSet(const lstring& list) -> void {
         if(part[1].size() == 2) mode = Byte;
         if(part[1].size() == 4) mode = Half;
         if(part[1].size() == 8) mode = Word;
-        cheat.append(hex(part[0]), hex(part[1]), mode);
+        cheat.append(part[0].hex(), part[1].hex(), mode);
       }
       if(part.size() == 3) {
         if(part[1].size() != part[2].size()) continue;
         if(part[2].size() == 2) mode = Byte;
         if(part[2].size() == 4) mode = Half;
         if(part[2].size() == 8) mode = Word;
-        cheat.append(hex(part[0]), hex(part[1]), hex(part[2]), mode);
+        cheat.append(part[0].hex(), part[1].hex(), part[2].hex(), mode);
       }
     }
   }

@@ -17,13 +17,13 @@ struct R6502 {
   virtual auto lastCycle() -> void = 0;
   virtual auto nmi(uint16& vector) -> void = 0;
 
-  virtual auto readDisassembler(uint16 addr) -> uint8 { return 0u; }
+  virtual auto readDisassembler(uint16 addr) -> uint8 { return 0; }
 
+  //r6502.cpp
   auto mdr() const -> uint8;
   auto power() -> void;
   auto reset() -> void;
   auto interrupt() -> void;
-  auto instruction() -> void;
 
   //algorithms.cpp
   auto fp_asl();
@@ -129,6 +129,9 @@ struct R6502 {
   auto op_shy_absolute_x();
   auto op_tas_absolute_y();
   auto op_xaa_immediate();
+
+  //switch.cpp
+  auto instruction() -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;

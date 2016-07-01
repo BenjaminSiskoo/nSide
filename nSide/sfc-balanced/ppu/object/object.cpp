@@ -1,29 +1,41 @@
-#include "list.cpp"
+#include "oam.cpp"
 
 auto PPU::Object::addressReset() -> void {
-  ppu.r.oamAddress = ppu.r.oamBaseAddress;
+  ppu.io.oamAddress = ppu.io.oamBaseAddress;
   setFirstSprite();
 }
 
 auto PPU::Object::setFirstSprite() -> void {
-  r.firstSprite = !ppu.r.oamPriority ? 0 : (ppu.r.oamAddress >> 2) & 127;
+  io.firstSprite = !ppu.io.oamPriority ? 0 : (ppu.io.oamAddress >> 2) & 127;
 }
 
 auto PPU::Object::reset() -> void {
+  for(auto& object : oam.object) {
+    object.x = 0;
+    object.y = 0;
+    object.character = 0;
+    object.nameselect = 0;
+    object.vflip = 0;
+    object.hflip = 0;
+    object.priority = 0;
+    object.palette = 0;
+    object.size = 0;
+  }
+
   t.itemCount = 0;
   t.tileCount = 0;
 
-  r.aboveEnable = false;
-  r.belowEnable = false;
-  r.interlace = false;
+  io.aboveEnable = false;
+  io.belowEnable = false;
+  io.interlace = false;
 
-  r.baseSize = 0;
-  r.nameSelect = 0;
-  r.tiledataAddress = 0x0000;
-  r.firstSprite = 0;
+  io.baseSize = 0;
+  io.nameselect = 0;
+  io.tiledataAddress = 0x0000;
+  io.firstSprite = 0;
 
-  for(auto& p : r.priority) p = 0;
+  for(auto& p : io.priority) p = 0;
 
-  r.timeOver = false;
-  r.rangeOver = false;
+  io.timeOver = false;
+  io.rangeOver = false;
 }

@@ -13,7 +13,7 @@ struct Program : Emulator::Interface::Bind {
   auto inputPoll(uint port, uint device, uint input) -> int16 override;
   auto inputRumble(uint port, uint device, uint input, bool enable) -> void override;
   auto deviceChanged(uint port, uint device) -> void override;
-  auto dipSettings(const Markup::Node& node) -> uint override;
+  auto dipSettings(Markup::Node node) -> uint override;
   auto notify(string text) -> void override;
 
   //medium.cpp

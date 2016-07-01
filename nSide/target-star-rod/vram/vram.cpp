@@ -98,6 +98,8 @@ auto VRAMViewer::updateTiles() -> void {
   dp = canvas.data();
   const uint16* sp = SFC::ppu.vram.data;
 
+  uint color;
+
   switch(modeSelection.selected().offset()) {
   case SFC::PPU::Background::Mode::BPP2:
     for(uint tileY : range(64)) {
@@ -105,12 +107,12 @@ auto VRAMViewer::updateTiles() -> void {
         for(uint y : range(8)) {
           uint16 d[] = { sp[0] };
           for(uint x : range(8)) {
-            uint color = 0;
+            color = 0;
             color += d[0] & 0x0080 ? 1 : 0;
             color += d[0] & 0x8000 ? 2 : 0;
             for(auto& b : d) b <<= 1;
             color += paletteSelection.selected().offset() << 2;
-            color = SFC::ppu.cgram[color];
+            color = SFC::ppu.screen.cgram[color];
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -129,14 +131,14 @@ auto VRAMViewer::updateTiles() -> void {
         for(uint y : range(8)) {
           uint16 d[] = { sp[0], sp[8] };
           for(uint x : range(8)) {
-            uint color = 0;
+            color = 0;
             color += d[0] & 0x0080 ? 1 : 0;
             color += d[0] & 0x8000 ? 2 : 0;
             color += d[1] & 0x0080 ? 4 : 0;
             color += d[1] & 0x8000 ? 8 : 0;
             for(auto& b : d) b <<= 1;
             color += paletteSelection.selected().offset() << 4;
-            color = SFC::ppu.cgram[color];
+            color = SFC::ppu.screen.cgram[color];
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -156,7 +158,7 @@ auto VRAMViewer::updateTiles() -> void {
         for(uint y : range(8)) {
           uint16 d[] = { sp[0], sp[8], sp[16], sp[24] };
           for(uint x : range(8)) {
-            uint color = 0;
+            color = 0;
             color += d[0] & 0x0080 ?   1 : 0;
             color += d[0] & 0x8000 ?   2 : 0;
             color += d[1] & 0x0080 ?   4 : 0;
@@ -166,7 +168,7 @@ auto VRAMViewer::updateTiles() -> void {
             color += d[3] & 0x0080 ?  64 : 0;
             color += d[3] & 0x8000 ? 128 : 0;
             for(auto& b : d) b <<= 1;
-            color = SFC::ppu.cgram[color];
+            color = SFC::ppu.screen.cgram[color];
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
@@ -185,7 +187,7 @@ auto VRAMViewer::updateTiles() -> void {
       for(uint tileX : range(16)) {
         for(uint y : range(8)) {
           for(uint x : range(8)) {
-            uint color = SFC::ppu.cgram[sp[x] >> 8];
+            color = SFC::ppu.screen.cgram[sp[x] >> 8];
             color = (255u << 24) |
               (image::normalize(color >>  0 & 31, 5, 8) << 16) |
               (image::normalize(color >>  5 & 31, 5, 8) <<  8) |

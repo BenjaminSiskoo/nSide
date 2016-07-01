@@ -5,7 +5,7 @@ L   rd = readPC();
     rd = readPC();
     aa = r.pc + (int8)rd;
     ioPage(r.pc, aa);
-L   io();
+L   idle();
     r.pc = aa;
   }
 }
@@ -27,7 +27,7 @@ L iabs.h = read(abs.w); abs.l++;
 auto R6502::op_jsr_absolute() {
   abs.l = readPC();
   abs.h = readPC();
-  io();
+  idle();
   r.pc.w--;
   writeSP(r.pc >> 8);
 L writeSP(r.pc >> 0);
@@ -35,8 +35,8 @@ L writeSP(r.pc >> 0);
 }
 
 auto R6502::op_rti() {
-  io();
-  io();
+  idle();
+  idle();
   r.p = readSP();
   abs.l = readSP();
 L abs.h = readSP();
@@ -44,10 +44,10 @@ L abs.h = readSP();
 }
 
 auto R6502::op_rts() {
-  io();
-  io();
+  idle();
+  idle();
   abs.l = readSP();
   abs.h = readSP();
-L io();
+L idle();
   r.pc = ++abs.w;
 }

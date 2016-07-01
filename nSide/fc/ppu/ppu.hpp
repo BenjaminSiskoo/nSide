@@ -164,8 +164,6 @@ struct PPU : Thread, PPUcounter {
 privileged:
   uint32* output = nullptr;
 
-  alwaysinline auto addClocks(uint) -> void;
-
   auto scanline() -> void;
   auto frame() -> void;
   auto refresh() -> void;

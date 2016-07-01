@@ -33,16 +33,6 @@ privileged:
     uint mask = 0x7fff;
   } vram;
 
-  struct OAM {
-    auto& operator[](uint offset) { return data[offset]; }
-    uint8 data[544];
-  } oam;
-
-  struct CGRAM {
-    auto& operator[](uint8 offset) { return data[offset]; }
-    uint15 data[256];
-  } cgram;
-
   uint32* output = nullptr;
 
   struct {
@@ -50,10 +40,7 @@ privileged:
     bool overscan;
   } display;
 
-  alwaysinline auto addClocks(uint) -> void;
-
   auto scanline() -> void;
-  auto renderScanline() -> void;
   auto frame() -> void;
   auto refresh() -> void;
 
@@ -78,7 +65,7 @@ privileged:
     uint8 cgramAddress;
   } latch;
 
-  struct Registers {
+  struct IO {
     uint16 bg_y[4];
 
     //$2100  INIDSP
@@ -159,14 +146,14 @@ privileged:
 
     //$213d  OPVCT
     uint16 vcounter;
-  } r;
+  } io;
 
   uint line;
 
   struct {
     //$2101
     uint8  obj_baseSize;
-    uint8  obj_nameSelect;
+    uint8  obj_nameselect;
     uint16 obj_tiledataAddress;
 
     //$210d-$210e

@@ -16,8 +16,6 @@ auto PPU::serialize(serializer& s) -> void {
 
   s.integer(vram.mask);
   s.array(vram.data, vram.mask + 1);
-  s.array(oam.data);
-  s.array(cgram.data);
 
   s.integer(ppu1.version);
   s.integer(ppu1.mdr);
@@ -31,10 +29,10 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(display.overscan);
 
   s.integer(cache.obj_baseSize);
-  s.integer(cache.obj_nameSelect);
+  s.integer(cache.obj_nameselect);
   s.integer(cache.obj_tiledataAddress);
 
-  for(uint n : range(4)) s.integer(r.bg_y[n]);
+  for(uint n : range(4)) s.integer(io.bg_y[n]);
 
   s.integer(latch.vram);
   s.integer(latch.oam);
@@ -48,51 +46,51 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(latch.oamAddress);
   s.integer(latch.cgramAddress);
 
-  s.integer(r.displayDisable);
-  s.integer(r.displayBrightness);
+  s.integer(io.displayDisable);
+  s.integer(io.displayBrightness);
 
-  s.integer(r.oamBaseAddress);
-  s.integer(r.oamAddress);
-  s.integer(r.oamPriority);
+  s.integer(io.oamBaseAddress);
+  s.integer(io.oamAddress);
+  s.integer(io.oamPriority);
 
-  s.integer(r.bgPriority);
-  s.integer(r.bgMode);
+  s.integer(io.bgPriority);
+  s.integer(io.bgMode);
 
-  s.integer(r.mosaicSize);
-  s.integer(r.mosaicCountdown);
+  s.integer(io.mosaicSize);
+  s.integer(io.mosaicCountdown);
 
-  s.integer(r.hoffsetMode7);
-  s.integer(r.voffsetMode7);
+  s.integer(io.hoffsetMode7);
+  s.integer(io.voffsetMode7);
 
-  s.integer(r.vramIncrementMode);
-  s.integer(r.vramMapping);
-  s.integer(r.vramIncrementSize);
+  s.integer(io.vramIncrementMode);
+  s.integer(io.vramMapping);
+  s.integer(io.vramIncrementSize);
 
-  s.integer(r.vramAddress);
+  s.integer(io.vramAddress);
 
-  s.integer(r.repeatMode7);
-  s.integer(r.vflipMode7);
-  s.integer(r.hflipMode7);
+  s.integer(io.repeatMode7);
+  s.integer(io.vflipMode7);
+  s.integer(io.hflipMode7);
 
-  s.integer(r.m7a);
-  s.integer(r.m7b);
-  s.integer(r.m7c);
-  s.integer(r.m7d);
-  s.integer(r.m7x);
-  s.integer(r.m7y);
+  s.integer(io.m7a);
+  s.integer(io.m7b);
+  s.integer(io.m7c);
+  s.integer(io.m7d);
+  s.integer(io.m7x);
+  s.integer(io.m7y);
 
-  s.integer(r.cgramAddress);
-  s.integer(r.cgramAddressLatch);
+  s.integer(io.cgramAddress);
+  s.integer(io.cgramAddressLatch);
 
-  s.integer(r.color_rgb);
+  s.integer(io.color_rgb);
 
-  s.integer(r.extbg);
-  s.integer(r.pseudoHires);
-  s.integer(r.overscan);
-  s.integer(r.interlace);
+  s.integer(io.extbg);
+  s.integer(io.pseudoHires);
+  s.integer(io.overscan);
+  s.integer(io.interlace);
 
-  s.integer(r.hcounter);
-  s.integer(r.vcounter);
+  s.integer(io.hcounter);
+  s.integer(io.vcounter);
 
   for(uint n : range(256)) {
     s.integer(pixelCache[n].aboveColor);
@@ -113,29 +111,6 @@ auto PPU::serialize(serializer& s) -> void {
     s.array(windowCache[n].below, 256);
   }
 
-  for(uint n : range(4)) {
-    s.integer(bg_info[n].tw);
-    s.integer(bg_info[n].th);
-    s.integer(bg_info[n].mx);
-    s.integer(bg_info[n].my);
-    s.integer(bg_info[n].scx);
-    s.integer(bg_info[n].scy);
-  }
-
-  for(uint n : range(128)) {
-    s.integer(obj.list[n].width);
-    s.integer(obj.list[n].height);
-    s.integer(obj.list[n].x);
-    s.integer(obj.list[n].y);
-    s.integer(obj.list[n].character);
-    s.integer(obj.list[n].nameSelect);
-    s.integer(obj.list[n].vflip);
-    s.integer(obj.list[n].hflip);
-    s.integer(obj.list[n].palette);
-    s.integer(obj.list[n].priority);
-    s.integer(obj.list[n].size);
-  }
-  s.integer(spriteListValid);
   s.integer(activeSprite);
 
   s.array(obj_itemList, 32);
@@ -162,107 +137,121 @@ auto PPU::serialize(serializer& s) -> void {
 }
 
 auto PPU::Background::serialize(serializer& s) -> void {
-  s.integer(r.tiledataAddress);
-  s.integer(r.screenAddress);
-  s.integer(r.screenSize);
-  s.integer(r.mosaicEnabled);
-  s.integer(r.tileSize);
+  s.integer(io.tiledataAddress);
+  s.integer(io.screenAddress);
+  s.integer(io.screenSize);
+  s.integer(io.mosaicEnabled);
+  s.integer(io.tileSize);
 
-  s.integer(r.aboveEnable);
-  s.integer(r.belowEnable);
+  s.integer(io.aboveEnable);
+  s.integer(io.belowEnable);
 
-  s.integer(r.hoffset);
-  s.integer(r.voffset);
+  s.integer(io.hoffset);
+  s.integer(io.voffset);
 }
 
 auto PPU::Object::serialize(serializer& s) -> void {
-  s.integer(r.aboveEnable);
-  s.integer(r.belowEnable);
-  s.integer(r.interlace);
+  for(auto& object : oam.object) {
+    s.integer(object.x);
+    s.integer(object.y);
+    s.integer(object.character);
+    s.integer(object.nameselect);
+    s.integer(object.vflip);
+    s.integer(object.hflip);
+    s.integer(object.priority);
+    s.integer(object.palette);
+    s.integer(object.size);
+  }
 
-  s.integer(r.baseSize);
-  s.integer(r.nameSelect);
-  s.integer(r.tiledataAddress);
-  s.integer(r.firstSprite);
+  s.integer(io.aboveEnable);
+  s.integer(io.belowEnable);
+  s.integer(io.interlace);
 
-  s.integer(r.timeOver);
-  s.integer(r.rangeOver);
+  s.integer(io.baseSize);
+  s.integer(io.nameselect);
+  s.integer(io.tiledataAddress);
+  s.integer(io.firstSprite);
+
+  s.integer(io.timeOver);
+  s.integer(io.rangeOver);
 
   s.integer(t.itemCount);
   s.integer(t.tileCount);
 }
 
 auto PPU::Window::serialize(serializer& s) -> void {
-  s.integer(r.bg1.oneEnable);
-  s.integer(r.bg1.oneInvert);
-  s.integer(r.bg1.twoEnable);
-  s.integer(r.bg1.twoInvert);
-  s.integer(r.bg1.mask);
-  s.integer(r.bg1.aboveEnable);
-  s.integer(r.bg1.belowEnable);
+  s.integer(io.bg1.oneEnable);
+  s.integer(io.bg1.oneInvert);
+  s.integer(io.bg1.twoEnable);
+  s.integer(io.bg1.twoInvert);
+  s.integer(io.bg1.mask);
+  s.integer(io.bg1.aboveEnable);
+  s.integer(io.bg1.belowEnable);
   
-  s.integer(r.bg2.oneEnable);
-  s.integer(r.bg2.oneInvert);
-  s.integer(r.bg2.twoEnable);
-  s.integer(r.bg2.twoInvert);
-  s.integer(r.bg2.mask);
-  s.integer(r.bg2.aboveEnable);
-  s.integer(r.bg2.belowEnable);
+  s.integer(io.bg2.oneEnable);
+  s.integer(io.bg2.oneInvert);
+  s.integer(io.bg2.twoEnable);
+  s.integer(io.bg2.twoInvert);
+  s.integer(io.bg2.mask);
+  s.integer(io.bg2.aboveEnable);
+  s.integer(io.bg2.belowEnable);
 
-  s.integer(r.bg3.oneEnable);
-  s.integer(r.bg3.oneInvert);
-  s.integer(r.bg3.twoEnable);
-  s.integer(r.bg3.twoInvert);
-  s.integer(r.bg3.mask);
-  s.integer(r.bg3.aboveEnable);
-  s.integer(r.bg3.belowEnable);
+  s.integer(io.bg3.oneEnable);
+  s.integer(io.bg3.oneInvert);
+  s.integer(io.bg3.twoEnable);
+  s.integer(io.bg3.twoInvert);
+  s.integer(io.bg3.mask);
+  s.integer(io.bg3.aboveEnable);
+  s.integer(io.bg3.belowEnable);
 
-  s.integer(r.bg4.oneEnable);
-  s.integer(r.bg4.oneInvert);
-  s.integer(r.bg4.twoEnable);
-  s.integer(r.bg4.twoInvert);
-  s.integer(r.bg4.mask);
-  s.integer(r.bg4.aboveEnable);
-  s.integer(r.bg4.belowEnable);
+  s.integer(io.bg4.oneEnable);
+  s.integer(io.bg4.oneInvert);
+  s.integer(io.bg4.twoEnable);
+  s.integer(io.bg4.twoInvert);
+  s.integer(io.bg4.mask);
+  s.integer(io.bg4.aboveEnable);
+  s.integer(io.bg4.belowEnable);
 
-  s.integer(r.obj.oneEnable);
-  s.integer(r.obj.oneInvert);
-  s.integer(r.obj.twoEnable);
-  s.integer(r.obj.twoInvert);
-  s.integer(r.obj.mask);
-  s.integer(r.obj.aboveEnable);
-  s.integer(r.obj.belowEnable);
+  s.integer(io.obj.oneEnable);
+  s.integer(io.obj.oneInvert);
+  s.integer(io.obj.twoEnable);
+  s.integer(io.obj.twoInvert);
+  s.integer(io.obj.mask);
+  s.integer(io.obj.aboveEnable);
+  s.integer(io.obj.belowEnable);
 
-  s.integer(r.col.oneEnable);
-  s.integer(r.col.oneInvert);
-  s.integer(r.col.twoEnable);
-  s.integer(r.col.twoInvert);
-  s.integer(r.col.mask);
-  s.integer(r.col.aboveMask);
-  s.integer(r.col.belowMask);
+  s.integer(io.col.oneEnable);
+  s.integer(io.col.oneInvert);
+  s.integer(io.col.twoEnable);
+  s.integer(io.col.twoInvert);
+  s.integer(io.col.mask);
+  s.integer(io.col.aboveMask);
+  s.integer(io.col.belowMask);
 
-  s.integer(r.oneLeft);
-  s.integer(r.oneRight);
-  s.integer(r.twoLeft);
-  s.integer(r.twoRight);
+  s.integer(io.oneLeft);
+  s.integer(io.oneRight);
+  s.integer(io.twoLeft);
+  s.integer(io.twoRight);
 }
 
 auto PPU::Screen::serialize(serializer& s) -> void {
-  s.integer(r.blendMode);
-  s.integer(r.directColor);
+  s.array(cgram);
 
-  s.integer(r.colorMode);
-  s.integer(r.colorHalve);
-  s.integer(r.bg1.colorEnable);
-  s.integer(r.bg2.colorEnable);
-  s.integer(r.bg3.colorEnable);
-  s.integer(r.bg4.colorEnable);
-  s.integer(r.obj.colorEnable);
-  s.integer(r.back.colorEnable);
+  s.integer(io.blendMode);
+  s.integer(io.directColor);
 
-  s.integer(r.colorBlue);
-  s.integer(r.colorGreen);
-  s.integer(r.colorRed);
+  s.integer(io.colorMode);
+  s.integer(io.colorHalve);
+  s.integer(io.bg1.colorEnable);
+  s.integer(io.bg2.colorEnable);
+  s.integer(io.bg3.colorEnable);
+  s.integer(io.bg4.colorEnable);
+  s.integer(io.obj.colorEnable);
+  s.integer(io.back.colorEnable);
+
+  s.integer(io.colorBlue);
+  s.integer(io.colorGreen);
+  s.integer(io.colorRed);
 
   //Not necessary?
   //s.integer(math.colorHalve);

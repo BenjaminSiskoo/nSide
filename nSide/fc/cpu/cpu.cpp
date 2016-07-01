@@ -11,25 +11,6 @@ CPU cpu;
 CPU::CPU() {
 }
 
-auto CPU::step(uint clocks) -> void {
-  apu.clock -= clocks;
-  if(!scheduler.synchronizing()) synchronizeAPU();
-
-  ppu.clock -= clocks;
-  if(!scheduler.synchronizing()) synchronizePPU();
-
-  cartridge.clock -= clocks;
-  if(!scheduler.synchronizing()) synchronizeCartridge();
-
-  if(system.vs()) vssystem.clock -= clocks;
-  if(!scheduler.synchronizing()) synchronizeCoprocessors();
-
-  for(auto peripheral : peripherals) {
-    peripheral->clock -= clocks * (uint64)peripheral->frequency;
-  }
-  synchronizePeripherals();
-}
-
 auto CPU::synchronizeAPU() -> void {
   if(apu.clock < 0) co_switch(apu.thread);
 }
@@ -106,8 +87,8 @@ auto CPU::reset() -> void {
   status.rdyAddrValid = false;
   status.rdyAddrValue = 0x0000;
 
-  status.oamdmaPending = false;
-  status.oamdmaPage = 0x00;
+  io.oamdmaPending = false;
+  io.oamdmaPage = 0x00;
 }
 
 }

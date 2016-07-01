@@ -1,8 +1,7 @@
 struct CPU : Processor::R6502, Thread {
   CPU();
 
-  alwaysinline auto step(uint clocks) -> void;
-  alwaysinline auto synchronizeAPU() -> void;
+  auto synchronizeAPU() -> void;
   auto synchronizePPU() -> void;
   auto synchronizeCartridge() -> void;
   auto synchronizeCoprocessors() -> void;
@@ -24,7 +23,7 @@ struct CPU : Processor::R6502, Thread {
   auto writeCPU(uint16 addr, uint8 data) -> void;
 
   //timing.cpp
-  auto addClocks(uint clocks) -> void;
+  auto step(uint clocks) -> void;
   auto lastCycle() -> void;
   auto nmi(uint16 &vector) -> void;
 
@@ -57,10 +56,12 @@ struct CPU : Processor::R6502, Thread {
     bool rdyLine;
     bool rdyAddrValid;
     uint16 rdyAddrValue;
+  } status;
 
+  struct IO {
     bool oamdmaPending;
     uint8 oamdmaPage;
-  } status;
+  } io;
 };
 
 extern CPU cpu;

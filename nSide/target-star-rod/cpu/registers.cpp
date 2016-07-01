@@ -86,12 +86,12 @@ void CPURegisterEditor::loadRegisters() {
 }
 
 void CPURegisterEditor::saveRegisters() {
-  SFC::cpu.r.a = hex(regAValue.text());
-  SFC::cpu.r.x = hex(regXValue.text());
-  SFC::cpu.r.y = hex(regYValue.text());
-  SFC::cpu.r.s = hex(regSValue.text());
-  SFC::cpu.r.d = hex(regDValue.text());
-  SFC::cpu.r.db = hex(regDBValue.text());
+  SFC::cpu.r.a = regAValue.text().hex();
+  SFC::cpu.r.x = regXValue.text().hex();
+  SFC::cpu.r.y = regYValue.text().hex();
+  SFC::cpu.r.s = regSValue.text().hex();
+  SFC::cpu.r.d = regDValue.text().hex();
+  SFC::cpu.r.db = regDBValue.text().hex();
   SFC::cpu.r.p.n = flagN.checked();
   SFC::cpu.r.p.v = flagV.checked();
   SFC::cpu.r.p.m = flagM.checked();
@@ -101,5 +101,5 @@ void CPURegisterEditor::saveRegisters() {
   SFC::cpu.r.p.z = flagZ.checked();
   SFC::cpu.r.p.c = flagC.checked();
   SFC::cpu.r.e = flagE.checked();
-  //SFC::cpu.update_table();  //cache E/M/X flags
+  //SFC::cpu.updateTable();  //cache E/M/X flags
 }

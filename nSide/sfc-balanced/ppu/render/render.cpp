@@ -45,8 +45,7 @@
 //  BG2B, OBJ0, BG1n, OBJ1, BG2A, OBJ2, OBJ3
 
 auto PPU::renderLine() -> void {
-  obj_renderLine_rto();
-  if(r.displayDisable || line >= vdisp()) return clearLine();
+  if(io.displayDisable || line >= vdisp()) return clearLine();
 
   flushPixelCache();
   buildWindowTables(Window::ID::COL);
@@ -59,4 +58,6 @@ auto PPU::renderLine() -> void {
   obj_renderLine();
 
   renderLine_output();
+
+  obj_renderLine_rto();
 }

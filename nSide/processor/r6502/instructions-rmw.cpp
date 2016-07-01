@@ -1,19 +1,19 @@
 auto R6502::op_increment(uint8& reg) {
-L io();
+L idle();
   reg++;
   r.p.n = (reg & 0x80);
   r.p.z = (reg == 0);
 }
 
 auto R6502::op_decrement(uint8& reg) {
-L io();
+L idle();
   reg--;
   r.p.n = (reg & 0x80);
   r.p.z = (reg == 0);
 }
 
 auto R6502::op_shift(fp op) {
-L io();
+L idle();
   call(op);
 }
 

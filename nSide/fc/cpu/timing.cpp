@@ -1,5 +1,20 @@
-auto CPU::addClocks(uint clocks) -> void {
-  step(clocks);
+auto CPU::step(uint clocks) -> void {
+  apu.clock -= clocks;
+  if(!scheduler.synchronizing()) synchronizeAPU();
+
+  ppu.clock -= clocks;
+  if(!scheduler.synchronizing()) synchronizePPU();
+
+  cartridge.clock -= clocks;
+  if(!scheduler.synchronizing()) synchronizeCartridge();
+
+  if(system.vs()) vssystem.clock -= clocks;
+  if(!scheduler.synchronizing()) synchronizeCoprocessors();
+
+  for(auto peripheral : peripherals) {
+    peripheral->clock -= clocks * (uint64)peripheral->frequency;
+  }
+  synchronizePeripherals();
 }
 
 auto CPU::lastCycle() -> void {
@@ -15,7 +30,7 @@ auto CPU::nmi(uint16 &vector) -> void {
 
 auto CPU::oamdma() -> void {
   for(uint n = 0; n < 256; n++) {
-    uint8 data = read((status.oamdmaPage << 8) + n);
+    uint8 data = read((io.oamdmaPage << 8) + n);
     write(0x2004, data);
   }
 }

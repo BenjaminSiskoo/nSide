@@ -13,7 +13,7 @@ namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.09";
-  static const string FromVersion = "099.12";
+  static const string FromVersion = "099.14";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const lstring Contributors = {
@@ -56,7 +56,7 @@ namespace Emulator {
   static const string Website = "http://byuu.org/";
 
   //incremented only when serialization format changes
-  static const string SerializerVersion = "009.09(099.07)";
+  static const string SerializerVersion = "009.09(099.14)";
 }
 
 #include "interface.hpp"

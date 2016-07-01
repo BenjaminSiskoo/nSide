@@ -17,24 +17,8 @@ PPU::~PPU() {
 }
 
 auto PPU::step(uint clocks) -> void {
-  clock += clocks;
-}
-
-auto PPU::synchronizeCPU() -> void {
-  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
-}
-
-auto PPU::Enter() -> void {
-  while(true) scheduler.synchronize(), ppu.main();
-}
-
-auto PPU::main() -> void {
-  renderScanline();
-}
-
-auto PPU::addClocks(uint clocks) -> void {
-  uint vbl = system.region() != System::Region::Dendy ? 241 : 291;
-  uint pre = system.region() == System::Region::NTSC ? 261 : 311;
+  const uint vbl = system.region() != System::Region::Dendy ? 241 : 291;
+  const uint pre = system.region() == System::Region::NTSC ? 261 : 311;
 
   while(clocks--) {
     if(vcounter() == vbl - 1 && hcounter() == 340) r.nmiHold = 1;
@@ -48,7 +32,7 @@ auto PPU::addClocks(uint clocks) -> void {
     if(vcounter() == pre     && hcounter() ==   1) r.spriteZeroHit = 0, r.spriteOverflow = 0;
     if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(r.nmiEnable && r.nmiFlag);
 
-    step(system.region() == System::Region::NTSC ? 4 : 5);
+    clock += system.region() == System::Region::NTSC ? 4 : 5;
     synchronizeCPU();
 
     for(uint i = 0; i < 8; i++) {
@@ -57,6 +41,18 @@ auto PPU::addClocks(uint clocks) -> void {
 
     tick(1);
   }
+}
+
+auto PPU::synchronizeCPU() -> void {
+  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
+}
+
+auto PPU::Enter() -> void {
+  while(true) scheduler.synchronize(), ppu.main();
+}
+
+auto PPU::main() -> void {
+  renderScanline();
 }
 
 auto PPU::load(Markup::Node node) -> bool {

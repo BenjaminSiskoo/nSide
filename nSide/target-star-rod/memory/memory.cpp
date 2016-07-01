@@ -23,7 +23,7 @@ MemoryEditor::MemoryEditor() {
   layout.setMargin(5);
 
   gotoAddress.onChange([&] {
-    editor.setAddress(hex(gotoAddress.text()));
+    editor.setAddress(gotoAddress.text().hex());
     editor.update();
   });
 
@@ -45,8 +45,8 @@ auto MemoryEditor::read(uint addr) -> uint8_t {
   case CPU:   return cpuDebugger->read(addr);
   case APU:   return smpDebugger->read(addr);
   case VRAM:  return SFC::ppu.vram[(addr & 0xffff) >> 1].byte(addr & 1);
-  case OAM:   return SFC::ppu.oam[addr % 544];
-  case CGRAM: return SFC::ppu.cgram[(addr & 0xff) >> 1].byte(addr & 1);
+  case OAM:   return SFC::ppu.obj.oam.read(addr % 544);
+  case CGRAM: return SFC::ppu.screen.cgram[(addr & 0xff) >> 1].byte(addr & 1);
   }
   return ~0;
 }
@@ -66,11 +66,10 @@ auto MemoryEditor::write(uint addr, uint8_t data) -> void {
     SFC::ppu.vram[(addr & 0xffff) >> 1].byte(addr & 1) = data;
     break;
   case OAM:
-    SFC::ppu.oam[addr % 544] = data;
-    SFC::ppu.obj.synchronize();  //cache OAM changes internally
+    SFC::ppu.obj.oam.write(addr % 544, data);
     break;
   case CGRAM:
-    SFC::ppu.cgram[(addr & 0xff) >> 1].byte(addr & 1) = data;
+    SFC::ppu.screen.cgram[(addr & 0xff) >> 1].byte(addr & 1) = data;
     break;
   }
 }
@@ -102,8 +101,8 @@ auto MemoryEditor::exportMemoryToDisk() -> void {
   case CPU:   for(uint addr : range(0xffffff)) fp.write(cpuDebugger->read(addr)); break;
   case APU:   for(uint addr : range(0xffff)) fp.write(smpDebugger->read(addr)); break;
   case VRAM:  for(uint addr : range((SFC::ppu.vram.mask + 1) << 1)) fp.write(SFC::ppu.vram[addr]); break;
-  case OAM:   for(uint addr : range(0x021f)) fp.write(SFC::ppu.oam[addr]); break;
-  case CGRAM: for(uint addr : range(0x01ff)) fp.write(SFC::ppu.cgram[addr]); break;
+  case OAM:   for(uint addr : range(0x021f)) fp.write(SFC::ppu.obj.oam.read(addr)); break;
+  case CGRAM: for(uint addr : range(0x01ff)) fp.write(SFC::ppu.screen.cgram[addr]); break;
   }
   debugger->print("Exported memory to ", filename, "\n");
 }

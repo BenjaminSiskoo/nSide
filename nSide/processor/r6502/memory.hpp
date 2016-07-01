@@ -1,4 +1,4 @@
-alwaysinline auto io() -> uint8 {
+alwaysinline auto idle() -> uint8 {
   return read(r.pc);
 }
 

@@ -1760,6 +1760,55 @@ cartridge sha256:3c419e3ecf328c03364afbcf5bd15bf0029a525db9e8f74379ae1cce4062b3c
   :  name:     Nekketsu Kakutou Densetsu
   :  title:    熱血格闘伝説
 
+cartridge sha256:4ab6b5f4d6ce39fff0ef5a3d89e0884f44491fbd7d9028bd1f02a266c2698197
+  :board region=ntsc id:HVC-UNROM
+  :  chip type=74HC32
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   TJC-KN
+  :  board:    HVC-UNROM-02
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Nekketsu Kouha Kunio-kun
+  :  title:    熱血硬派くにおくん
+
+cartridge sha256:3aee07f35644c68301c29e6da1c9a8d9ad1fae19a52bd08303f3973d897ddc65
+  :board region=ntsc id:HVC-SLROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   TJC-ND
+  :  board:    HVC-SLROM-02
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Nekketsu Koukou Dodgeball Bu
+  :  title:    熱血高校ドッジボール部
+
+cartridge sha256:558897a4e2083b95bd77d230e1f2cf932800a01b0ba246f1d84c3aa64b236f21
+  :board region=ntsc id:HVC-TLROM
+  :  chip type=MMC3B
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   TJC-N3
+  :  board:    HVC-TLROM-04
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Nekketsu Koukou Dodgeball Bu - Soccer Hen
+  :  title:    熱血高校ドッジボール部 ソッカー編
+
 cartridge sha256:bf546b0ce7fc60d89020ff7c0fadc7369925ba68a84d25b03de4190a91c46a95
   :board region=ntsc id:JALECO-JF-06
   :  mirror mode=vertical
@@ -4857,6 +4906,37 @@ cartridge sha256:bcc8a24ab99f85933ff2cd0787daab6093710ef04f95b4c7bec842961ee0e3a
   :  name:     Rad Racer II
   :  title:    Rad Racer II
 
+cartridge sha256:b4856061c9310015101c461aef744e9dcf3b158bd13d5d9cb4a76d3ca18a6864
+  :board region=ntsc id:NES-UNROM
+  :  chip type=74HC32
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-RG-USA
+  :  board:    NES-UN-ROM-07
+  :  revision: 1.0
+  :  name:     Renegade
+  :  title:    Renegade
+
+cartridge sha256:54cdc8b6fab804339c44601663585c8e7a8b01ef35b49754eb13a767b57c7d07
+  :board region=ntsc id:NES-TLROM
+  :  chip type=MMC3B
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-DN-USA
+  :  board:    NES-TLROM-02
+  :  revision: 1.0
+  :  name:     River City Ransom
+  :  title:    River City Ransom
+
 cartridge sha256:d04b445ac57cccb3a31a3bf83d002dc9a9765f15313e96f67be077b6114d2411
   :board region=ntsc id:NES-TL1ROM
   :  chip type=MMC3A
@@ -5042,6 +5122,21 @@ cartridge sha256:92aa617d6254a7aa8fdc915770e813b9922100e374fd44f40bf5752f6069c7a
   :  revision: 1.0
   :  name:     Super Cars
   :  title:    Super Cars
+
+cartridge sha256:28ce7c337755f30a99cfbd1ad0bed56c8e43ee18b461b6dfcbbf77b7ddbcd035
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-ND-USA
+  :  board:    NES-SLROM-06
+  :  revision: 1.0
+  :  name:     Super Dodge Ball
+  :  title:    Super Dodge Ball
 
 cartridge sha256:fcb6a0ef3a20c19b356005fbb21dc8009563b1cb5a9aaebc8e9386b4a8c5912e
   :board region=ntsc id:NES-NROM-256

@@ -29,8 +29,8 @@ auto CPU::writeCPU(uint16 addr, uint8 data) -> void {
   switch(addr) {
 
   case 0x4014: {
-    status.oamdmaPage = data;
-    status.oamdmaPending = true;
+    io.oamdmaPage = data;
+    io.oamdmaPending = true;
     return;
   }
 

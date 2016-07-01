@@ -35,7 +35,6 @@ auto Bus::map(
   while(counter[id]) {
     if(++id >= 256) return print("FC error: bus map exhausted\n");
   }
-//print("map[", hex(id, 2), "] => ", addr, "\n");
 
   reader[id] = read;
   writer[id] = write;
@@ -43,8 +42,8 @@ auto Bus::map(
   auto addrs = addr.split(",");
   for(auto& addr : addrs) {
     auto addrRange = addr.split("-", 1L);
-    uint addrLo = hex(addrRange(0));
-    uint addrHi = hex(addrRange(1, addrRange(0)));
+    uint addrLo = addrRange(0).hex();
+    uint addrHi = addrRange(1, addrRange(0)).hex();
 
     for(uint addr = addrLo; addr <= addrHi; addr++) {
       uint pid = lookup[addr];
@@ -66,8 +65,8 @@ auto Bus::unmap(const string& addr) -> void {
   auto addrs = addr.split(",");
   for(auto& addr : addrs) {
     auto addrRange = addr.split("-", 1L);
-    uint addrLo = hex(addrRange(0));
-    uint addrHi = hex(addrRange(1, addrRange(1)));
+    uint addrLo = addrRange(0).hex();
+    uint addrHi = addrRange(1, addrRange(1)).hex();
 
     for(uint addr = addrLo; addr <= addrHi; addr++) {
       uint pid = lookup[addr];

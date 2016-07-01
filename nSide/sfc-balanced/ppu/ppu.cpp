@@ -39,7 +39,9 @@ PPU::~PPU() {
 }
 
 auto PPU::step(uint clocks) -> void {
+  tick(clocks);
   clock += clocks;
+  synchronizeCPU();
 }
 
 auto PPU::synchronizeCPU() -> void {
@@ -53,38 +55,32 @@ auto PPU::Enter() -> void {
 auto PPU::main() -> void {
   //H =    0 (initialize)
   scanline();
-  addClocks(10);
+  step(10);
 
   //H =   10 (cache mode7 registers + OAM address reset)
-  cache.hoffsetMode7 = r.hoffsetMode7;
-  cache.voffsetMode7 = r.voffsetMode7;
-  cache.m7a = r.m7a;
-  cache.m7b = r.m7b;
-  cache.m7c = r.m7c;
-  cache.m7d = r.m7d;
-  cache.m7x = r.m7x;
-  cache.m7y = r.m7y;
-  if(vcounter() == vdisp() && !r.displayDisable) obj.addressReset();
-  addClocks(502);
+  cache.hoffsetMode7 = io.hoffsetMode7;
+  cache.voffsetMode7 = io.voffsetMode7;
+  cache.m7a = io.m7a;
+  cache.m7b = io.m7b;
+  cache.m7c = io.m7c;
+  cache.m7d = io.m7d;
+  cache.m7x = io.m7x;
+  cache.m7y = io.m7y;
+  if(vcounter() == vdisp() && !io.displayDisable) obj.addressReset();
+  step(502);
 
   //H =  512 (render)
-  renderScanline();
-  addClocks(640);
+  if(line == 0) obj_renderLine_rto();
+  if(line >= 1 && line < 240) renderLine();
+  step(640);
 
   //H = 1152 (cache OBSEL)
-  if(cache.obj_baseSize != obj.r.baseSize) {
-    cache.obj_baseSize = obj.r.baseSize;
-    spriteListValid = false;
+  if(cache.obj_baseSize != obj.io.baseSize) {
+    cache.obj_baseSize = obj.io.baseSize;
   }
-  cache.obj_nameSelect = obj.r.nameSelect;
-  cache.obj_tiledataAddress = obj.r.tiledataAddress;
-  addClocks(lineclocks() - 1152);  //seek to start of next scanline
-}
-
-auto PPU::addClocks(uint clocks) -> void {
-  tick(clocks);
-  step(clocks);
-  synchronizeCPU();
+  cache.obj_nameselect = obj.io.nameselect;
+  cache.obj_tiledataAddress = obj.io.tiledataAddress;
+  step(lineclocks() - 1152);  //seek to start of next scanline
 }
 
 auto PPU::load(Markup::Node node) -> bool {
@@ -97,8 +93,6 @@ auto PPU::load(Markup::Node node) -> bool {
 
 auto PPU::power() -> void {
   for(auto& n : vram.data) n = 0x0000;
-  for(auto& n : oam.data) n = 0x00;
-  for(auto& n : cgram.data) n = 0x0000;
   tiledataCache.flush();
 }
 
@@ -128,84 +122,84 @@ auto PPU::reset() -> void {
   latch.cgramAddress = 0x00;
 
   //$2100  INIDISP
-  r.displayDisable = true;
-  r.displayBrightness = 0;
+  io.displayDisable = true;
+  io.displayBrightness = 0;
 
   //$2101
   cache.obj_baseSize = 0;
-  cache.obj_nameSelect = 0;
+  cache.obj_nameselect = 0;
   cache.obj_tiledataAddress = 0x0000;
 
   //$2102  OAMADDL
   //$2103  OAMADDH
-  r.oamBaseAddress = 0x0000;
-  r.oamAddress = 0x0000;
-  r.oamPriority = false;
+  io.oamBaseAddress = 0x0000;
+  io.oamAddress = 0x0000;
+  io.oamPriority = false;
 
   //$2105  BGMODE
-  r.bgPriority = false;
-  r.bgMode = 0;
+  io.bgPriority = false;
+  io.bgMode = 0;
 
   //$2106  MOSAIC
-  r.mosaicSize = 0;
-  r.mosaicCountdown = 0;
+  io.mosaicSize = 0;
+  io.mosaicCountdown = 0;
 
   //$210d  BG1HOFS
-  r.hoffsetMode7 = 0x0000;
+  io.hoffsetMode7 = 0x0000;
 
   //$210e  BG1VOFS
-  r.voffsetMode7 = 0x0000;
+  io.voffsetMode7 = 0x0000;
 
   //$2115  VMAIN
-  r.vramIncrementMode = 1;
-  r.vramMapping = 0;
-  r.vramIncrementSize = 1;
+  io.vramIncrementMode = 1;
+  io.vramMapping = 0;
+  io.vramIncrementSize = 1;
 
   //$2116  VMADDL
   //$2117  VMADDH
-  r.vramAddress = 0x0000;
+  io.vramAddress = 0x0000;
 
   //$211a  M7SEL
-  r.repeatMode7 = 0;
-  r.vflipMode7 = false;
-  r.hflipMode7 = false;
+  io.repeatMode7 = 0;
+  io.vflipMode7 = false;
+  io.hflipMode7 = false;
 
   //$211b  M7A
-  r.m7a = 0x0000;
+  io.m7a = 0x0000;
 
   //$211c  M7B
-  r.m7b = 0x0000;
+  io.m7b = 0x0000;
 
   //$211d  M7C
-  r.m7c = 0x0000;
+  io.m7c = 0x0000;
 
   //$211e  M7D
-  r.m7d = 0x0000;
+  io.m7d = 0x0000;
 
   //$211f  M7X
-  r.m7x = 0x0000;
+  io.m7x = 0x0000;
 
   //$2120  M7Y
-  r.m7y = 0x0000;
+  io.m7y = 0x0000;
 
   //$2121  CGADD
-  r.cgramAddress = 0x00;
-  r.cgramAddressLatch = random(0);
+  io.cgramAddress = 0x00;
+  io.cgramAddressLatch = random(0);
 
   //$2132  COLDATA
-  r.color_rgb = 0x0000;
+  io.color_rgb = 0x0000;
 
   //$2133  SETINI
-  r.extbg = false;
-  r.pseudoHires = false;
-  r.overscan = false;
-  r.interlace = false;
+  io.extbg = false;
+  io.pseudoHires = false;
+  io.overscan = false;
+  io.interlace = false;
 
   //$213c  OPHCT
-  r.hcounter = 0;
+  io.hcounter = 0;
 
   //$213d  OPVCT
-  r.vcounter = 0;
+  io.vcounter = 0;
 
   bg1.reset();
   bg2.reset();
@@ -215,14 +209,11 @@ auto PPU::reset() -> void {
   window.reset();
   screen.reset();
 
-  memset(obj.list, 0, sizeof(obj.list));
-  spriteListValid = false;
-
   //bg line counters
-  r.bg_y[Background::ID::BG1] = 0;
-  r.bg_y[Background::ID::BG2] = 0;
-  r.bg_y[Background::ID::BG3] = 0;
-  r.bg_y[Background::ID::BG4] = 0;
+  io.bg_y[Background::ID::BG1] = 0;
+  io.bg_y[Background::ID::BG2] = 0;
+  io.bg_y[Background::ID::BG3] = 0;
+  io.bg_y[Background::ID::BG4] = 0;
 
   frame();
 }
@@ -234,15 +225,15 @@ auto PPU::scanline() -> void {
     frame();
 
     //RTO flag reset
-    obj.r.timeOver  = false;
-    obj.r.rangeOver = false;
+    obj.io.timeOver  = false;
+    obj.io.rangeOver = false;
   }
 
   if(line == 1) {
     //mosaic reset
-    for(int bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) r.bg_y[bg_id] = 1;
-    r.mosaicCountdown = r.mosaicSize + 1;
-    r.mosaicCountdown--;
+    for(int bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) io.bg_y[bg_id] = 1;
+    io.mosaicCountdown = io.mosaicSize + 1;
+    io.mosaicCountdown--;
   } else {
     for(int bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) {
       auto bg = &bg1;
@@ -252,10 +243,10 @@ auto PPU::scanline() -> void {
       case Background::ID::BG3: bg = &bg3; break;
       case Background::ID::BG4: bg = &bg4; break;
       }
-      if(!bg->r.mosaicEnabled || !r.mosaicCountdown) r.bg_y[bg_id] = line;
+      if(!bg->io.mosaicEnabled || !io.mosaicCountdown) io.bg_y[bg_id] = line;
     }
-    if(!r.mosaicCountdown) r.mosaicCountdown = r.mosaicSize + 1;
-    r.mosaicCountdown--;
+    if(!io.mosaicCountdown) io.mosaicCountdown = io.mosaicSize + 1;
+    io.mosaicCountdown--;
   }
 
   if(line == 241) {
@@ -263,14 +254,8 @@ auto PPU::scanline() -> void {
   }
 }
 
-auto PPU::renderScanline() -> void {
-  if(line >= 1 && line < 240) {
-    renderLine();
-  }
-}
-
 auto PPU::frame() -> void {
-  if(field() == 0) display.interlace = r.interlace;
+  if(field() == 0) display.interlace = io.interlace;
 }
 
 auto PPU::refresh() -> void {

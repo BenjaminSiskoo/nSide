@@ -5,7 +5,7 @@ struct Window {
 
   struct ID { enum : uint { COL = 5 }; };
 
-  struct Registers {
+  struct IO {
     struct Layer {
       bool oneEnable;
       bool oneInvert;
@@ -30,7 +30,7 @@ struct Window {
     uint8 oneRight;
     uint8 twoLeft;
     uint8 twoRight;
-  } r;
+  } io;
 
   friend class PPU;
 };

@@ -14,6 +14,6 @@ auto CPU::serialize(serializer& s) -> void {
   s.integer(status.rdyAddrValid);
   s.integer(status.rdyAddrValue);
 
-  s.integer(status.oamdmaPending);
-  s.integer(status.oamdmaPage);
+  s.integer(io.oamdmaPending);
+  s.integer(io.oamdmaPage);
 }

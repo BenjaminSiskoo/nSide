@@ -31,10 +31,10 @@ auto buildWindowTable(uint bg_id, bool screen) -> void;
 auto buildWindowTables(uint bg_id) -> void;
 
 //bg.cpp
-struct {
-  uint16 tw,  th;  //tile width, height
-  uint16 mx,  my;  //screen mask x, y
-  uint16 scx, scy; //sc index offsets
+struct BGInfo {  //only needed because of offset-per-tile mode
+  uint16 tileWidth, tileHeight;
+  uint16 maskX,     maskY;
+  uint16 screenX,   screenY;
 } bg_info[4];
 auto updateBGInfo() -> void;
 
@@ -42,7 +42,6 @@ template<uint bg_id> auto bg_renderLine() -> void;
 template<uint bg_id> auto bg_renderLineMode7() -> void;
 
 //object.cpp
-bool spriteListValid;
 uint activeSprite;
 
 uint8 obj_itemList[32];
@@ -59,7 +58,6 @@ const uint8 OBJ_PRI_NONE = ~1;
 uint8 obj_linePalette[256], obj_linePriority[256];
 
 auto updateSpriteList(uint addr, uint8 data) -> void;
-auto buildSpriteList() -> void;
 auto isSpriteOnScanline() -> bool;
 auto obj_loadTiles() -> void;
 auto obj_renderTile(int n) -> void;
@@ -67,7 +65,6 @@ auto obj_renderLine_rto() -> void;
 auto obj_renderLine() -> void;
 
 //line.cpp
-inline auto getDirectColor(uint8 p, uint8 t) -> uint15;
 inline auto get_pixel_normal(uint32 x) -> uint16;
 inline auto get_pixel_swap(uint32 x) -> uint16;
 auto renderLine_output() -> void;

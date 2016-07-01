@@ -73,10 +73,10 @@ auto SMPRegisterEditor::loadRegisters() -> void {
 }
 
 auto SMPRegisterEditor::saveRegisters() -> void {
-  SFC::smp.regs.a = hex(regAValue.text());
-  SFC::smp.regs.x = hex(regXValue.text());
-  SFC::smp.regs.y = hex(regYValue.text());
-  SFC::smp.regs.s = hex(regSValue.text());
+  SFC::smp.regs.a = regAValue.text().hex();
+  SFC::smp.regs.x = regXValue.text().hex();
+  SFC::smp.regs.y = regYValue.text().hex();
+  SFC::smp.regs.s = regSValue.text().hex();
   SFC::smp.regs.p.n = flagN.checked();
   SFC::smp.regs.p.v = flagV.checked();
   SFC::smp.regs.p.p = flagP.checked();

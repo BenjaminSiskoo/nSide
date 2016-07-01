@@ -37,8 +37,8 @@ auto R6502::reset() -> void {
 }
 
 auto R6502::interrupt() -> void {
-  io();
-  io();
+  idle();
+  idle();
   writeSP(r.pc >> 8);
   writeSP(r.pc >> 0);
   uint16 vector = 0xfffe;  //IRQ

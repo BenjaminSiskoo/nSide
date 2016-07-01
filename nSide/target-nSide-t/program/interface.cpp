@@ -120,7 +120,7 @@ auto Program::deviceChanged(uint port, uint device) -> void {
   ((MenuRadioItem)portMenu.action(localDevice)).setChecked();
 }
 
-auto Program::dipSettings(const Markup::Node& node) -> uint {
+auto Program::dipSettings(Markup::Node node) -> uint {
   return dipSwitches->run(node);
 }
 

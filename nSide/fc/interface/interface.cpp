@@ -62,7 +62,7 @@ Interface::Interface() {
   }
 
   { Device device{ID::Device::FourScore, "Four Score"};
-    for(uint p = 1; p <= 4; p += 2) {
+    for(uint p : {1,3}) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
       device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
@@ -76,7 +76,7 @@ Interface::Interface() {
   }
 
   { Device device{ID::Device::FourScore, "Four Score"};
-    for(uint p = 2; p <= 4; p += 2) {
+    for(uint p : {2,4}) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
       device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
@@ -148,7 +148,7 @@ Interface::Interface() {
   }
 
   { Device device{ID::Device::JoyPair, "JoyPair"};
-    for(uint p = 3; p <= 4; p += 1) {
+    for(uint p : {3,4}) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
       device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
@@ -162,7 +162,7 @@ Interface::Interface() {
   }
 
   { Device device{ID::Device::FourPlayers, "4-Players Adaptor"};
-    for(uint p = 1; p <= 4; p += 1) {
+    for(uint p : {1,2,3,4}) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
       device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
@@ -559,8 +559,8 @@ auto Interface::cheatSet(const lstring& list) -> void {
     lstring codes = codeset.split("+");
     for(auto& code : codes) {
       lstring part = code.split("/");
-      if(part.size() == 2) cheat.append(hex(part[0]), hex(part[1]));
-      if(part.size() == 3) cheat.append(hex(part[0]), hex(part[1]), hex(part[2]));
+      if(part.size() == 2) cheat.append(part[0].hex(), part[1].hex());
+      if(part.size() == 3) cheat.append(part[0].hex(), part[1].hex(), part[2].hex());
     }
   }
 }

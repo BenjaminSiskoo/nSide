@@ -11,7 +11,7 @@ struct Program : Emulator::Interface::Bind {
   auto videoRefresh(const uint32* data, uint pitch, uint width, uint height) -> void override;
   auto audioSample(const double* samples, uint channels) -> void override;
   auto inputPoll(uint port, uint device, uint index) -> int16 override;
-  auto dipSettings(const Markup::Node& node) -> uint override { return 0u; }
+  auto dipSettings(Markup::Node node) -> uint override { return 0u; }
 
   //medium.cpp
   auto loadMedium() -> void;

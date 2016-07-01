@@ -7,24 +7,24 @@ auto PPU::buildWindowTable(uint bg_id, bool screen) -> void {
     bool window_belowEnable;
     switch(bg_id) {
     case Background::ID::BG1:
-      window_aboveEnable = window.r.bg1.aboveEnable;
-      window_belowEnable = window.r.bg1.belowEnable;
+      window_aboveEnable = window.io.bg1.aboveEnable;
+      window_belowEnable = window.io.bg1.belowEnable;
       break;
     case Background::ID::BG2:
-      window_aboveEnable = window.r.bg2.aboveEnable;
-      window_belowEnable = window.r.bg2.belowEnable;
+      window_aboveEnable = window.io.bg2.aboveEnable;
+      window_belowEnable = window.io.bg2.belowEnable;
       break;
     case Background::ID::BG3:
-      window_aboveEnable = window.r.bg3.aboveEnable;
-      window_belowEnable = window.r.bg3.belowEnable;
+      window_aboveEnable = window.io.bg3.aboveEnable;
+      window_belowEnable = window.io.bg3.belowEnable;
       break;
     case Background::ID::BG4:
-      window_aboveEnable = window.r.bg4.aboveEnable;
-      window_belowEnable = window.r.bg4.belowEnable;
+      window_aboveEnable = window.io.bg4.aboveEnable;
+      window_belowEnable = window.io.bg4.belowEnable;
       break;
     case Object::ID::OBJ:
-      window_aboveEnable = window.r.obj.aboveEnable;
-      window_belowEnable = window.r.obj.belowEnable;
+      window_aboveEnable = window.io.obj.aboveEnable;
+      window_belowEnable = window.io.obj.belowEnable;
       break;
     }
     if(screen == Background::Screen::Above && !window_aboveEnable) {
@@ -36,7 +36,7 @@ auto PPU::buildWindowTable(uint bg_id, bool screen) -> void {
       return;
     }
   } else {
-    switch(screen == Background::Screen::Above ? window.r.col.aboveMask : window.r.col.belowMask) {
+    switch(screen == Background::Screen::Above ? window.io.col.aboveMask : window.io.col.belowMask) {
     case 0: memset(table, 1, 256); return;  //always
     case 3: memset(table, 0, 256); return;  //never
     case 1: set = 1, clr = 0; break;        //inside window only
@@ -51,46 +51,46 @@ auto PPU::buildWindowTable(uint bg_id, bool screen) -> void {
   uint2 window_mask;
   switch(bg_id) {
   case Background::ID::BG1:
-    window_oneEnable = window.r.bg1.oneEnable;
-    window_oneInvert = window.r.bg1.oneInvert;
-    window_twoEnable = window.r.bg1.twoEnable;
-    window_twoInvert = window.r.bg1.twoInvert;
-    window_mask = window.r.bg1.mask;
+    window_oneEnable = window.io.bg1.oneEnable;
+    window_oneInvert = window.io.bg1.oneInvert;
+    window_twoEnable = window.io.bg1.twoEnable;
+    window_twoInvert = window.io.bg1.twoInvert;
+    window_mask = window.io.bg1.mask;
     break;
   case Background::ID::BG2:
-    window_oneEnable = window.r.bg2.oneEnable;
-    window_oneInvert = window.r.bg2.oneInvert;
-    window_twoEnable = window.r.bg2.twoEnable;
-    window_twoInvert = window.r.bg2.twoInvert;
-    window_mask = window.r.bg2.mask;
+    window_oneEnable = window.io.bg2.oneEnable;
+    window_oneInvert = window.io.bg2.oneInvert;
+    window_twoEnable = window.io.bg2.twoEnable;
+    window_twoInvert = window.io.bg2.twoInvert;
+    window_mask = window.io.bg2.mask;
     break;
   case Background::ID::BG3:
-    window_oneEnable = window.r.bg3.oneEnable;
-    window_oneInvert = window.r.bg3.oneInvert;
-    window_twoEnable = window.r.bg3.twoEnable;
-    window_twoInvert = window.r.bg3.twoInvert;
-    window_mask = window.r.bg3.mask;
+    window_oneEnable = window.io.bg3.oneEnable;
+    window_oneInvert = window.io.bg3.oneInvert;
+    window_twoEnable = window.io.bg3.twoEnable;
+    window_twoInvert = window.io.bg3.twoInvert;
+    window_mask = window.io.bg3.mask;
     break;
   case Background::ID::BG4:
-    window_oneEnable = window.r.bg4.oneEnable;
-    window_oneInvert = window.r.bg4.oneInvert;
-    window_twoEnable = window.r.bg4.twoEnable;
-    window_twoInvert = window.r.bg4.twoInvert;
-    window_mask = window.r.bg4.mask;
+    window_oneEnable = window.io.bg4.oneEnable;
+    window_oneInvert = window.io.bg4.oneInvert;
+    window_twoEnable = window.io.bg4.twoEnable;
+    window_twoInvert = window.io.bg4.twoInvert;
+    window_mask = window.io.bg4.mask;
     break;
   case Object::ID::OBJ:
-    window_oneEnable = window.r.obj.oneEnable;
-    window_oneInvert = window.r.obj.oneInvert;
-    window_twoEnable = window.r.obj.twoEnable;
-    window_twoInvert = window.r.obj.twoInvert;
-    window_mask = window.r.obj.mask;
+    window_oneEnable = window.io.obj.oneEnable;
+    window_oneInvert = window.io.obj.oneInvert;
+    window_twoEnable = window.io.obj.twoEnable;
+    window_twoInvert = window.io.obj.twoInvert;
+    window_mask = window.io.obj.mask;
     break;
   case Window::ID::COL:
-    window_oneEnable = window.r.col.oneEnable;
-    window_oneInvert = window.r.col.oneInvert;
-    window_twoEnable = window.r.col.twoEnable;
-    window_twoInvert = window.r.col.twoInvert;
-    window_mask = window.r.col.mask;
+    window_oneEnable = window.io.col.oneEnable;
+    window_oneInvert = window.io.col.oneInvert;
+    window_twoEnable = window.io.col.twoEnable;
+    window_twoInvert = window.io.col.twoInvert;
+    window_mask = window.io.col.mask;
     break;
   }
   if(!window_oneEnable && !window_twoEnable) {
@@ -101,7 +101,7 @@ auto PPU::buildWindowTable(uint bg_id, bool screen) -> void {
   if( window_oneEnable && !window_twoEnable) {
     if(window_oneInvert) set ^= clr ^= set ^= clr;
     for(uint x : range(256)) {
-      table[x] = (x >= window.r.oneLeft && x <= window.r.oneRight) ? set : clr;
+      table[x] = (x >= window.io.oneLeft && x <= window.io.oneRight) ? set : clr;
     }
     return;
   }
@@ -109,14 +109,14 @@ auto PPU::buildWindowTable(uint bg_id, bool screen) -> void {
   if(!window_oneEnable &&  window_twoEnable) {
     if(window_twoInvert) set ^= clr ^= set ^= clr;
     for(uint x : range(256)) {
-      table[x] = (x >= window.r.twoLeft && x <= window.r.twoRight) ? set : clr;
+      table[x] = (x >= window.io.twoLeft && x <= window.io.twoRight) ? set : clr;
     }
     return;
   }
 
   for(uint x : range(256)) {
-    bool w1_mask = (x >= window.r.oneLeft && x <= window.r.oneRight) ^ window_oneInvert;
-    bool w2_mask = (x >= window.r.twoLeft && x <= window.r.twoRight) ^ window_twoInvert;
+    bool w1_mask = (x >= window.io.oneLeft && x <= window.io.oneRight) ^ window_oneInvert;
+    bool w2_mask = (x >= window.io.twoLeft && x <= window.io.twoRight) ^ window_twoInvert;
 
     switch(window_mask) {
     case 0: table[x] = (w1_mask | w2_mask) == 1 ? set : clr; break;  //or

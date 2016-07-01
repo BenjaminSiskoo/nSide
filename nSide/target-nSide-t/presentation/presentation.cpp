@@ -17,10 +17,11 @@ Presentation::Presentation() {
   //add cart-pal menu options -- but only if cart-pal binary is present
   if(execute("cart-pal", "--name").output.strip() == "cart-pal") {
     libraryMenu.append(MenuSeparator());
-    libraryMenu.append(MenuItem().setText("Import ROM File ...").onActivate([&] {
+    libraryMenu.append(MenuItem().setText("Load ROM File ...").onActivate([&] {
       audio->clear();
       if(auto location = execute("cart-pal", "--import")) {
-        //program->loadMedium(location.output.strip());
+        program->mediumQueue.append(location.output.strip());
+        program->loadMedium();
       }
     }));
     libraryMenu.append(MenuItem().setText("Import ROM Files ...").onActivate([&] {
@@ -143,7 +144,7 @@ Presentation::Presentation() {
       "Fork Author: ", Emulator::Author, "\n",
       "License: ", Emulator::License, "\n",
       "Website of ", Emulator::OriginalName, ": ", Emulator::Website, "\n",
-      "Contributors:\n", Emulator::Contributors.merge("\n"),
+      "Contributors (most of these are higan contributors):\n", Emulator::Contributors.merge("\n"),
     }).information();
   });
 

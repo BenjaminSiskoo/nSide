@@ -94,8 +94,8 @@ auto PPU::renderBGTile(uint colorDepth, uint16 tile_num) -> void {
 }
 
 auto PPU::flushPixelCache() -> void {
-  uint16 above = cgram[0];
-  uint16 below = (r.pseudoHires || r.bgMode == 5 || r.bgMode == 6) ? above : r.color_rgb;
+  uint16 above = screen.cgram[0];
+  uint16 below = (io.pseudoHires || io.bgMode == 5 || io.bgMode == 6) ? above : io.color_rgb;
 
   uint i = 255;
   do {

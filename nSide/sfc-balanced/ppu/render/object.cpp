@@ -1,60 +1,21 @@
-auto PPU::buildSpriteList() -> void {
-  if(spriteListValid) return;
-  spriteListValid = true;
-
-  for(uint i : range(128)) {
-    const bool size = obj.list[i].size;
-
-    switch(cache.obj_baseSize) {
-    case 0: obj.list[i].width  = !size ?  8 : 16;
-            obj.list[i].height = !size ?  8 : 16;
-            break;
-    case 1: obj.list[i].width  = !size ?  8 : 32;
-            obj.list[i].height = !size ?  8 : 32;
-            break;
-    case 2: obj.list[i].width  = !size ?  8 : 64;
-            obj.list[i].height = !size ?  8 : 64;
-            break;
-    case 3: obj.list[i].width  = !size ? 16 : 32;
-            obj.list[i].height = !size ? 16 : 32;
-            break;
-    case 4: obj.list[i].width  = !size ? 16 : 64;
-            obj.list[i].height = !size ? 16 : 64;
-            break;
-    case 5: obj.list[i].width  = !size ? 32 : 64;
-            obj.list[i].height = !size ? 32 : 64;
-            break;
-    case 6: obj.list[i].width  = !size ? 16 : 32;
-            obj.list[i].height = !size ? 32 : 64;
-            if(obj.r.interlace && !size) obj.list[i].height = 16;
-            //32x64 height is not affected by obj.r.interlace setting
-            break;
-    case 7: obj.list[i].width  = !size ? 16 : 32;
-            obj.list[i].height = !size ? 32 : 32;
-            if(obj.r.interlace && !size) obj.list[i].height = 16;
-            break;
-    }
-  }
-}
-
 auto PPU::isSpriteOnScanline() -> bool {
   //if sprite is entirely offscreen and doesn't wrap around to the left side of the screen,
   //then it is not counted. this *should* be 256, and not 255, even though dot 256 is offscreen.
-  Object::Sprite* spr = &obj.list[activeSprite];
+  OAM::Object* spr = &obj.oam.object[activeSprite];
   if(spr->x > 256 && (spr->x + spr->width - 1) < 512) return false;
 
-  int spr_height = !obj.r.interlace ? (uint)spr->height : spr->height >> 1;
+  int spr_height = !obj.io.interlace ? (uint)spr->height : spr->height >> 1;
   if(line >= spr->y && line < (spr->y + spr_height)) return true;
   if((spr->y + spr_height) >= 256 && line < ((spr->y + spr_height) & 255)) return true;
   return false;
 }
 
 auto PPU::obj_loadTiles() -> void {
-  Object::Sprite* spr = &obj.list[activeSprite];
+  OAM::Object* spr = &obj.oam.object[activeSprite];
   uint16 tile_width = spr->width >> 3;
   int x = spr->x;
   int y = (line - spr->y) & 0xff;
-  if(obj.r.interlace) {
+  if(obj.io.interlace) {
     y <<= 1;
   }
 
@@ -66,7 +27,7 @@ auto PPU::obj_loadTiles() -> void {
     }
   }
 
-  if(obj.r.interlace) {
+  if(obj.io.interlace) {
     y = !spr->vflip ? y + field() : y - field();
   }
 
@@ -76,8 +37,8 @@ auto PPU::obj_loadTiles() -> void {
   uint16 tdaddr = cache.obj_tiledataAddress;
   uint16 chrx   = (spr->character     ) & 15;
   uint16 chry   = (spr->character >> 4) & 15;
-  if(spr->nameSelect) {
-    tdaddr += (256 * 16) + (cache.obj_nameSelect << 12);
+  if(spr->nameselect) {
+    tdaddr += (256 * 16) + (cache.obj_nameselect << 12);
   }
   chry  += (y >> 3);
   chry  &= 15;
@@ -127,8 +88,6 @@ auto PPU::obj_renderTile(int n) -> void {
 }
 
 auto PPU::obj_renderLine_rto() -> void {
-  buildSpriteList();
-
   obj.t.itemCount = 0;
   obj.t.tileCount = 0;
 
@@ -137,10 +96,10 @@ auto PPU::obj_renderLine_rto() -> void {
   for(int s : range(34)) obj_tileList[s].tile = 0xffff;
 
   for(int s : range(128)) {
-    activeSprite = (s + obj.r.firstSprite) & 127;
+    activeSprite = (s + obj.io.firstSprite) & 127;
     if(!isSpriteOnScanline()) continue;
     if(obj.t.itemCount++ >= 32) break;
-    obj_itemList[obj.t.itemCount - 1] = (s + obj.r.firstSprite) & 127;
+    obj_itemList[obj.t.itemCount - 1] = (s + obj.io.firstSprite) & 127;
   }
 
   if(obj.t.itemCount > 0 && obj_itemList[obj.t.itemCount - 1] != 0xff) {
@@ -153,14 +112,14 @@ auto PPU::obj_renderLine_rto() -> void {
     obj_loadTiles();
   }
 
-  obj.r.timeOver  |= (obj.t.tileCount > 34);
-  obj.r.rangeOver |= (obj.t.itemCount > 32);
+  obj.io.timeOver  |= (obj.t.tileCount > 34);
+  obj.io.rangeOver |= (obj.t.itemCount > 32);
 }
 
 auto PPU::obj_renderLine() -> void {
-  if(obj.r.priority[0] + obj.r.priority[1] + obj.r.priority[2] + obj.r.priority[3] == 0) return;
+  if(obj.io.priority[0] + obj.io.priority[1] + obj.io.priority[2] + obj.io.priority[3] == 0) return;
 
-  if(!obj.r.aboveEnable && !obj.r.belowEnable) return;
+  if(!obj.io.aboveEnable && !obj.io.belowEnable) return;
 
   for(uint s : range(34)) {
     if(obj_tileList[s].tile == 0xffff) continue;
@@ -175,22 +134,22 @@ auto PPU::obj_renderLine() -> void {
     if(pixelCache[x].abovePriority < pri) { \
       pixelCache[x].abovePriority = pri; \
       pixelCache[x].aboveLayer = Object::ID::OBJ; \
-      pixelCache[x].aboveColor = cgram[obj_linePalette[x]]; \
+      pixelCache[x].aboveColor = screen.cgram[obj_linePalette[x]]; \
       pixelCache[x].aboveColorExemption = obj_linePalette[x] < 192; \
     }
   #define setpixel_below(x) \
     if(pixelCache[x].belowPriority < pri) { \
       pixelCache[x].belowPriority = pri; \
       pixelCache[x].belowLayer = Object::ID::OBJ; \
-      pixelCache[x].belowColor = cgram[obj_linePalette[x]]; \
+      pixelCache[x].belowColor = screen.cgram[obj_linePalette[x]]; \
       pixelCache[x].belowColorExemption = obj_linePalette[x] < 192; \
     }
   for(int x : range(256)) {
     if(obj_linePriority[x] == OBJ_PRI_NONE) continue;
 
-    uint pri = obj.r.priority[obj_linePriority[x]];
-    if(obj.r.aboveEnable && !wt_above[x]) { setpixel_above(x); }
-    if(obj.r.belowEnable && !wt_below[x]) { setpixel_below(x); }
+    uint pri = obj.io.priority[obj_linePriority[x]];
+    if(obj.io.aboveEnable && !wt_above[x]) { setpixel_above(x); }
+    if(obj.io.belowEnable && !wt_below[x]) { setpixel_below(x); }
   }
   #undef setpixel_above
   #undef setpixel_below

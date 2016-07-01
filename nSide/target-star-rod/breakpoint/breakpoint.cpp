@@ -49,12 +49,12 @@ auto BreakpointEditor::synchronize() -> void {
   uint id = 0;
   for(auto &entry : breakpointEntry) {
     id++;
-    if(entry.enable.checked() == false) continue;
+    if(!entry.enable.checked()) continue;
     Breakpoint bp;
     bp.id = id;
     bp.compare = entry.data.text().length() > 0;
-    bp.addr = hex(entry.addr.text());
-    bp.data = hex(entry.data.text());
+    bp.addr = entry.addr.text().hex();
+    bp.data = entry.data.text().hex();
     bp.type = entry.type.selected().offset();
     bp.source = entry.source.selected().offset();
     breakpoint.append(bp);
@@ -200,7 +200,7 @@ auto BreakpointEditor::testWriteVRAM(uint16 addr, uint8 data) -> bool {
 auto BreakpointEditor::testReadOAM(uint16 addr) -> bool {
   for(auto &bp : breakpointReadOAM) {
     if(bp.addr == addr) {
-      if(bp.compare && bp.data != SFC::ppu.oam[addr]) continue;
+      if(bp.compare && bp.data != SFC::ppu.obj.oam.read(addr)) continue;
       debugger->print("Breakpoint #", bp.id, " hit\n");
       return true;
     }
@@ -222,7 +222,7 @@ auto BreakpointEditor::testWriteOAM(uint16 addr, uint8 data) -> bool {
 auto BreakpointEditor::testReadCGRAM(uint16 addr) -> bool {
   for(auto &bp : breakpointReadCGRAM) {
     if(bp.addr == addr) {
-      if(bp.compare && bp.data != SFC::ppu.cgram[addr]) continue;
+      if(bp.compare && bp.data != SFC::ppu.screen.cgram[addr]) continue;
       debugger->print("Breakpoint #", bp.id, " hit\n");
       return true;
     }

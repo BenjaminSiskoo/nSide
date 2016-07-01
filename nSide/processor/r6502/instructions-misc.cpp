@@ -1,5 +1,5 @@
 auto R6502::op_nop() {
-L io();
+L idle();
 }
 
 auto R6502::op_brk() {
@@ -16,17 +16,17 @@ L abs.h = read(vector + 1);
 }
 
 auto R6502::op_set_flag(uint bit) {
-L io();
+L idle();
   r.p |= 1 << bit;
 }
 
 auto R6502::op_clear_flag(uint bit) {
-L io();
+L idle();
   r.p &= ~(1 << bit);
 }
 
 auto R6502::op_transfer(uint8& s, uint8& d, bool flag) {
-L io();
+L idle();
   d = s;
   if(flag == false) return;
   r.p.n = (d & 0x80);
@@ -34,25 +34,25 @@ L io();
 }
 
 auto R6502::op_push(uint8& reg) {
-  io();
+  idle();
 L writeSP(reg);
 }
 
 auto R6502::op_php() {
-  io();
+  idle();
 L writeSP(r.p | 0x30);
 }
 
 auto R6502::op_pull(uint8& reg) {
-  io();
-  io();
+  idle();
+  idle();
 L reg = readSP();
   r.p.n = (reg & 0x80);
   r.p.z = (reg == 0);
 }
 
 auto R6502::op_plp() {
-  io();
-  io();
+  idle();
+  idle();
 L r.p = readSP();
 }

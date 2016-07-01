@@ -5,14 +5,14 @@ L rd = readPC();
 auto R6502::op_nop_absolute() {
   abs.l = readPC();
   abs.h = readPC();
-L io();
+L idle();
 }
 
 auto R6502::op_nop_absolute_x() {
   abs.l = readPC();
   abs.h = readPC();
   ioPage(abs.w, abs.w + r.x);
-L io();
+L idle();
 }
 
 auto R6502::op_nop_zero_page() {
@@ -27,7 +27,7 @@ L readZP(zp + r.x);
 }
 
 auto R6502::op_stp() {
-  while(true) io();
+  while(true) idle();
 }
 
 auto R6502::op_rmwr_absolute(fp opw, fp opr) {
