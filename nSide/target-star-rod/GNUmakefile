@@ -66,7 +66,7 @@ obj/star-rod-resource.o:
 
 # targets
 build: $(objects)
-	$(call unique,$(compiler) -o out/$(name) $(objects) $(link))
+	$(strip $(compiler) -o out/$(name) $(objects) $(link))
 ifeq ($(platform),macosx)
 	@if [ -d out/$(name).app ]; then rm -r out/$(name).app; fi
 	mkdir -p out/$(name).app/Contents/MacOS/
@@ -84,7 +84,7 @@ else ifeq ($(platform),macosx)
 	mkdir -p ~/Library/Application\ Support/$(name)/
 	mkdir -p ~/Emulation/System/
 	cp -R out/$(name).app /Applications/$(name).app
-	cp -R profile/* ~/Library/Application\ Support/$(name)/
+	cp -R systems/* ~/Library/Application\ Support/$(name)/
 else ifneq ($(filter $(platform),linux bsd),)
 	mkdir -p $(prefix)/bin/
 	mkdir -p $(prefix)/share/icons/
@@ -92,7 +92,7 @@ else ifneq ($(filter $(platform),linux bsd),)
 	cp out/$(name) $(prefix)/bin/$(name)
 	cp data/$(name).desktop $(prefix)/share/applications/$(name).desktop
 	cp data/$(name).png $(prefix)/share/icons/$(name).png
-	cp -R profile/* $(prefix)/share/$(name)/
+	cp -R systems/* $(prefix)/share/$(name)/
 endif
 
 uninstall:

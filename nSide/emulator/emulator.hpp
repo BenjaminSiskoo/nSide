@@ -13,10 +13,10 @@ namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.09";
-  static const string FromVersion = "099.14";
+  static const string FromVersion = "099.15";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
-  static const lstring Contributors = {
+  static const string_vector Contributors = {
     "Andreas Naive (S-DD1 decompression algorithm)",
     "anomie",
     "AWJ (Super Famicom PPUcounter NTSC/PAL timing)",
@@ -29,7 +29,7 @@ namespace Emulator {
     "Dr. Decapitator (DSP-1,2,3,4, ST-010,011 ROM dumps)",
     "endrift (Game Boy, Game Boy Advance fixes)",
     "FirebrandX",
-    "FitzRoy (Famicom bug-testing)",
+    "FitzRoy (Famicom, Super Famicom bug-testing)",
     "gekkio (Game Boy STAT IRQ and other fixes)",
     "GIGO",
     "jchadwick (Game Boy Advance fixes)",

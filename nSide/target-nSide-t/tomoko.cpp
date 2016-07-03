@@ -46,7 +46,7 @@ auto locateSystem(string name) -> string {
 }
 
 #include <nall/main.hpp>
-auto nall::main(lstring args) -> void {
+auto nall::main(string_vector args) -> void {
   Application::setName("nSide");
   new Program(args);
   Application::run();

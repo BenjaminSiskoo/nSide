@@ -34,9 +34,9 @@ struct Expansion : Cothread {
 
 #include "gamepad/gamepad.hpp"
 #include "joypair/joypair.hpp"
-#include "fourplayers/fourplayers.hpp"
-#include "beamgun/beamgun.hpp"
-#include "familytrainer/familytrainer.hpp"
+#include "four-players/four-players.hpp"
+#include "beam-gun/beam-gun.hpp"
+#include "family-trainer/family-trainer.hpp"
 #include "vaus/vaus.hpp"
-#include "sfcgamepad/sfcgamepad.hpp"
+#include "sfc-gamepad/sfc-gamepad.hpp"
 #include "mouse/mouse.hpp"

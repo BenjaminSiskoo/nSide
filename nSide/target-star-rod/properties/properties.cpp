@@ -61,7 +61,7 @@ auto PropertiesViewer::updateProperties() -> void {
       "\n"
     );
 
-    static lstring screenSizes = {"32x×32y", "64x×32y", "32x×64y", "64x×64y"};
+    static string_vector screenSizes = {"32x×32y", "64x×32y", "32x×64y", "64x×64y"};
 
     output.append("$2107  BG1SC\n"
       "  BG1 Screen Size = ", screenSizes[SFC::ppu.bg1.io.screenSize], "\n",
@@ -99,7 +99,7 @@ auto PropertiesViewer::updateProperties() -> void {
       "\n"
     );
 
-    static lstring vramMappings = {"Direct", "2-bit", "4-bit", "8-bit"};
+    static string_vector vramMappings = {"Direct", "2-bit", "4-bit", "8-bit"};
     output.append("$2115  VMAINC\n"
       "  VRAM Increment Mode = ", SFC::ppu.io.vramIncrementMode ? "high" : "low", "\n",
       "  VRAM Mapping        = ", vramMappings[SFC::ppu.io.vramMapping], "\n",

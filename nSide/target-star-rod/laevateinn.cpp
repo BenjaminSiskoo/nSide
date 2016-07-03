@@ -34,7 +34,7 @@ auto locateSystem(string name) -> string {
 }
 
 #include <nall/main.hpp>
-auto nall::main(lstring args) -> void {
+auto nall::main(string_vector args) -> void {
   Application::setName("star-rod");
   new Program(args);
   Application::run();

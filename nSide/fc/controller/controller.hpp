@@ -33,9 +33,9 @@ struct Controller : Cothread {
 
 #include "gamepad/gamepad.hpp"
 #include "gamepad-mic/gamepad-mic.hpp"
-#include "fourscore/fourscore.hpp"
+#include "four-score/four-score.hpp"
 #include "zapper/zapper.hpp"
-#include "powerpad/powerpad.hpp"
+#include "power-pad/power-pad.hpp"
 #include "vaus/vaus.hpp"
-#include "snesgamepad/snesgamepad.hpp"
+#include "snes-gamepad/snes-gamepad.hpp"
 #include "mouse/mouse.hpp"

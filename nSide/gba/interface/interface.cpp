@@ -145,12 +145,12 @@ auto Interface::unserialize(serializer& s) -> bool {
   return system.unserialize(s);
 }
 
-auto Interface::cheatSet(const lstring& list) -> void {
+auto Interface::cheatSet(const string_vector& list) -> void {
   cheat.reset();
   for(auto& codeset : list) {
-    lstring codes = codeset.split("+");
+    auto codes = codeset.split("+");
     for(auto& code : codes) {
-      lstring part = code.split("/");
+      auto part = code.split("/");
       uint mode;
       if(part.size() == 2) {
         if(part[1].size() == 2) mode = Byte;

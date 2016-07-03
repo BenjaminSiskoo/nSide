@@ -4,11 +4,11 @@ namespace Famicom {
 
 #include "gamepad/gamepad.cpp"
 #include "gamepad-mic/gamepad-mic.cpp"
-#include "fourscore/fourscore.cpp"
+#include "four-score/four-score.cpp"
 #include "zapper/zapper.cpp"
-#include "powerpad/powerpad.cpp"
+#include "power-pad/power-pad.cpp"
 #include "vaus/vaus.cpp"
-#include "snesgamepad/snesgamepad.cpp"
+#include "snes-gamepad/snes-gamepad.cpp"
 #include "mouse/mouse.cpp"
 
 Controller::Controller(bool port) : port(port) {

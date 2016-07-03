@@ -4,11 +4,11 @@ namespace Famicom {
 
 #include "gamepad/gamepad.cpp"
 #include "joypair/joypair.cpp"
-#include "fourplayers/fourplayers.cpp"
-#include "beamgun/beamgun.cpp"
-#include "familytrainer/familytrainer.cpp"
+#include "four-players/four-players.cpp"
+#include "beam-gun/beam-gun.cpp"
+#include "family-trainer/family-trainer.cpp"
 #include "vaus/vaus.cpp"
-#include "sfcgamepad/sfcgamepad.cpp"
+#include "sfc-gamepad/sfc-gamepad.cpp"
 #include "mouse/mouse.cpp"
 
 Expansion::Expansion() {

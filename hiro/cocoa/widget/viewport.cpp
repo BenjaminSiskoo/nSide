@@ -23,7 +23,7 @@
 }
 
 -(BOOL) performDragOperation:(id<NSDraggingInfo>)sender {
-  lstring paths = DropPaths(sender);
+  auto paths = DropPaths(sender);
   if(!paths) return NO;
   viewport->doDrop(paths);
   return YES;
@@ -53,8 +53,8 @@ auto pViewport::destruct() -> void {
   }
 }
 
-auto pViewport::handle() const -> uintptr {
-  return (uintptr)cocoaViewport;
+auto pViewport::handle() const -> uintptr_t {
+  return (uintptr_t)cocoaViewport;
 }
 
 auto pViewport::setDroppable(bool droppable) -> void {
