@@ -22,7 +22,7 @@ auto PropertiesViewer::updateProperties() -> void {
   string output;
 
   switch(sourceSelection.selected().offset()) {
-  case 0: { //PPU
+  case PPU: {
     output.append("$2100  INIDISP\n"
       "  Display Brightness = ", SFC::ppu.io.displayBrightness, "\n",
       "  Display Disable = ", SFC::ppu.io.displayDisable, "\n",
@@ -30,8 +30,8 @@ auto PropertiesViewer::updateProperties() -> void {
     );
 
     output.append("$2101  OBSEL\n"
-      "  OAM Tiledata Address = $", hex(SFC::ppu.obj.io.tiledataAddress, 4L), "\n",
-      "  OAM Name Select = $", hex(SFC::ppu.obj.io.nameselect << 13, 4L), "\n",
+      "  OAM Tiledata Address = $", hex(SFC::ppu.obj.io.tiledataAddress << 1, 4L), "\n",
+      "  OAM Name Select = $", hex(SFC::ppu.obj.io.nameselect << 12 << 1, 4L), "\n",
       "  OAM Base Size = ", SFC::ppu.obj.io.baseSize, "\n",
       "\n"
     );
@@ -65,37 +65,37 @@ auto PropertiesViewer::updateProperties() -> void {
 
     output.append("$2107  BG1SC\n"
       "  BG1 Screen Size = ", screenSizes[SFC::ppu.bg1.io.screenSize], "\n",
-      "  BG1 Screen Address = $", hex(SFC::ppu.bg1.io.screenAddress, 4L), "\n",
+      "  BG1 Screen Address = $", hex(SFC::ppu.bg1.io.screenAddress << 1, 4L), "\n",
       "\n"
     );
 
     output.append("$2108  BG2SC\n"
       "  BG2 Screen Size = ", screenSizes[SFC::ppu.bg2.io.screenSize], "\n",
-      "  BG2 Screen Address = $", hex(SFC::ppu.bg2.io.screenAddress, 4L), "\n",
+      "  BG2 Screen Address = $", hex(SFC::ppu.bg2.io.screenAddress << 1, 4L), "\n",
       "\n"
     );
 
     output.append("$2109  BG3SC\n"
       "  BG3 Screen Size = ", screenSizes[SFC::ppu.bg3.io.screenSize], "\n",
-      "  BG3 Screen Address = $", hex(SFC::ppu.bg3.io.screenAddress, 4L), "\n",
+      "  BG3 Screen Address = $", hex(SFC::ppu.bg3.io.screenAddress << 1, 4L), "\n",
       "\n"
     );
 
     output.append("$210a  BG4SC\n"
       "  BG4 Screen Size = ", screenSizes[SFC::ppu.bg4.io.screenSize], "\n",
-      "  BG4 Screen Address = $", hex(SFC::ppu.bg4.io.screenAddress, 4L), "\n",
+      "  BG4 Screen Address = $", hex(SFC::ppu.bg4.io.screenAddress << 1, 4L), "\n",
       "\n"
     );
 
     output.append("$210b  BG12NBA\n"
-      "  BG1 Tiledata Address = $", hex(SFC::ppu.bg1.io.tiledataAddress, 4L), "\n",
-      "  BG2 Tiledata Address = $", hex(SFC::ppu.bg2.io.tiledataAddress, 4L), "\n",
+      "  BG1 Tiledata Address = $", hex(SFC::ppu.bg1.io.tiledataAddress << 1, 4L), "\n",
+      "  BG2 Tiledata Address = $", hex(SFC::ppu.bg2.io.tiledataAddress << 1, 4L), "\n",
       "\n"
     );
 
     output.append("$210c  BG34NBA\n"
-      "  BG3 Tiledata Address = $", hex(SFC::ppu.bg3.io.tiledataAddress, 4L), "\n",
-      "  BG4 Tiledata Address = $", hex(SFC::ppu.bg4.io.tiledataAddress, 4L), "\n",
+      "  BG3 Tiledata Address = $", hex(SFC::ppu.bg3.io.tiledataAddress << 1, 4L), "\n",
+      "  BG4 Tiledata Address = $", hex(SFC::ppu.bg4.io.tiledataAddress << 1, 4L), "\n",
       "\n"
     );
 
@@ -153,7 +153,7 @@ auto PropertiesViewer::updateProperties() -> void {
     break;
   }
   
-  case 1: { //DMA
+  case DMA: {
     for(uint c : range(8)) {
       output.append("$43", c, "0  DMAP", c, "\n"
         "  Direction        = ", SFC::cpu.channel[c].direction ? "decrement" : "increment", "\n",

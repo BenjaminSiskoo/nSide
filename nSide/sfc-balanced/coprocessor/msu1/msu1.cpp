@@ -25,8 +25,8 @@ auto MSU1::main() -> void {
         }
       } else {
         mmio.audioPlayOffset += 4;
-        left  = (double)audioFile->readl(2) / 32768.0 * (double)mmio.audioVolume / 255.0;
-        right = (double)audioFile->readl(2) / 32768.0 * (double)mmio.audioVolume / 255.0;
+        left  = (double)(int16)audioFile->readl(2) / 32768.0 * (double)mmio.audioVolume / 255.0;
+        right = (double)(int16)audioFile->readl(2) / 32768.0 * (double)mmio.audioVolume / 255.0;
         if(dsp.mute()) left = 0, right = 0;
       }
     } else {

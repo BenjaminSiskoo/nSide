@@ -71,7 +71,7 @@ auto nall::main(string_vector args) -> void {
     .setFilters("ROM Files|*.fc:*.vs:*.pc10:*.nes:*.sfc:*.smc:*.gb:*.gbc:*.gba:*.ws:*.wsc:*.bs:*.st:*.zip")
     .openFile()) {
       if(string target = cart_pal.import(source)) {
-        settings["cart-pal/Path"].setValue(pathname(source));
+        settings["cart-pal/Path"].setValue(Location::path(source));
         return print(target, "\n");
       }
     }

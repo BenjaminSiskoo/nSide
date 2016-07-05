@@ -8,6 +8,8 @@ struct PropertiesViewer : Window {
       Button update{&controlLayout, Size{0, 0}};
     TextEdit properties{&layout, Size{~0, ~0}};
 
+  enum : uint { PPU, DMA };
+
   auto updateProperties() -> void;
   PropertiesViewer();
 };

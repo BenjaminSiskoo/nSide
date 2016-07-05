@@ -26,11 +26,14 @@ Program::Program(string_vector args) {
   for(auto& emulator : emulators) emulator->bind = this;
 
   new Presentation;
+  presentation->setVisible();
 
   video = Video::create(settings["Video/Driver"].text());
   video->set(Video::Handle, presentation->viewport.handle());
   video->set(Video::Synchronize, settings["Video/Synchronize"].boolean());
   if(!video->init()) video = Video::create("None");
+
+  presentation->drawSplashScreen();
 
   audio = Audio::create(settings["Audio/Driver"].text());
   audio->set(Audio::Device, settings["Audio/Device"].text());
@@ -50,8 +53,7 @@ Program::Program(string_vector args) {
   new ToolsManager;
   new DipSwitches;
 
-  presentation->drawSplashScreen();
-  presentation->setVisible();
+  presentation->setFocused();
 
   updateVideoShader();
   updateAudioDriver();
@@ -63,6 +65,10 @@ Program::Program(string_vector args) {
       presentation->toggleFullScreen();
     } else if(directory::exists(argument)) {
       mediumQueue.append(argument);
+    } else if(file::exists(argument)) {
+      if(auto result = execute("cart-pal", "--import", argument)) {
+        mediumQueue.append(result.output.strip());
+      }
     }
   }
   loadMedium();

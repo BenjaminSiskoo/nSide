@@ -30,7 +30,7 @@ auto CartPal::manifest(string location) -> string {
   location.transform("\\", "/").trimRight("/").append("/");
   if(!directory::exists(location)) return "";
 
-  auto type = suffixname(location).downcase();
+  auto type = Location::suffix(location).downcase();
   if(type == ".fc") return famicomManifest(location);
   if(type == ".vs") return vsSystemManifest(location);
   if(type == ".pc10") return playchoice10Manifest(location);
@@ -51,8 +51,8 @@ auto CartPal::import(string location) -> string {
   if(!file::exists(location)) return failure("file does not exist");
   if(!file::readable(location)) return failure("file is unreadable");
 
-  auto name = prefixname(location);
-  auto type = suffixname(location).downcase();
+  auto name = Location::prefix(location);
+  auto type = Location::suffix(location).downcase();
   if(!name || !type) return failure("invalid file name");
 
   auto buffer = file::read(location);
@@ -63,8 +63,8 @@ auto CartPal::import(string location) -> string {
     if(!zip.open(location)) return failure("ZIP archive is invalid");
     if(!zip.file) return failure("ZIP archive is empty");
 
-    name = prefixname(zip.file[0].name);
-    type = suffixname(zip.file[0].name).downcase();
+    name = Location::prefix(zip.file[0].name);
+    type = Location::suffix(zip.file[0].name).downcase();
     buffer = zip.extract(zip.file[0]);
   }
 

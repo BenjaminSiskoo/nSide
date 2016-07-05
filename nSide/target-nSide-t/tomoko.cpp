@@ -16,7 +16,7 @@ auto locate(string name) -> string {
 
   location = {Path::config(), "higan/", name};
   if(inode::exists(location)) {
-    if(suffixname(location) == ".bml" && suffixname(dirname(location)) != ".sys") {
+    if(Location::suffix(location) == ".bml" && Location::suffix(Location::dir(location)) != ".sys") {
       directory::create({Path::config(), "nSide/"});
       file::copy(location, {Path::config(), "nSide/", name});
       return {Path::config(), "nSide/", name};
@@ -26,7 +26,7 @@ auto locate(string name) -> string {
 
   location = {Path::local(), "higan/", name};
   if(inode::exists(location)) {
-    if(suffixname(location) == ".bml" && suffixname(dirname(location)) != ".sys") {
+    if(Location::suffix(location) == ".bml" && Location::suffix(Location::dir(location)) != ".sys") {
       directory::create({Path::local(), "nSide/"});
       file::copy(location, {Path::local(), "nSide/", name});
       return {Path::local(), "nSide/", name};

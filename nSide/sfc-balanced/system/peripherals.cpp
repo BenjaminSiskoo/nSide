@@ -36,8 +36,8 @@ auto Peripherals::connect(uint port, uint device) -> void {
     switch(device) { default:
     case ID::Device::None:          controllerPort2 = new Controller(1); break;
     case ID::Device::Gamepad:       controllerPort2 = new Gamepad(1); break;
-    case ID::Device::SuperMultitap: controllerPort2 = new SuperMultitap(1); break;
     case ID::Device::Mouse:         controllerPort2 = new Mouse(1); break;
+    case ID::Device::SuperMultitap: controllerPort2 = new SuperMultitap(1); break;
     case ID::Device::SuperScope:    controllerPort2 = new SuperScope(1); break;
     case ID::Device::Justifier:     controllerPort2 = new Justifier(1, false); break;
     case ID::Device::Justifiers:    controllerPort2 = new Justifier(1, true); break;

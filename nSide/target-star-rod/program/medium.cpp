@@ -2,7 +2,7 @@ auto Program::loadMedium() -> void {
   if(!mediumQueue) return;
 
   string location = mediumQueue.left();
-  string type = suffixname(location).trimLeft(".", 1L);
+  string type = Location::suffix(location).trimLeft(".", 1L);
 
   for(auto& medium : emulator->media) {
     if(medium.type != type) continue;
@@ -27,7 +27,7 @@ auto Program::loadMedium(Emulator::Interface& interface, const Emulator::Interfa
   emulator->set("Scanline Emulation", false);
   emulator->power();
 
-  presentation->setTitle(basename(mediumPaths(1)).trimRight("/"));
+  presentation->setTitle(Location::base(mediumPaths(1)).trimRight("/"));
   debugger->print(SFC::cartridge.information.manifest.cartridge, "\n");
   debugger->suspend();
 }

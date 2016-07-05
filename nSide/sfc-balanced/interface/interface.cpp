@@ -58,7 +58,7 @@ Interface::Interface() {
     controllerPort2.devices.append(device);
   }
 
-  { Device device{ID::Device::SuperMultitap, "Multitap"};
+  { Device device{ID::Device::SuperMultitap, "Super Multitap"};
     for(uint p = 2; p <= 5; p++) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
