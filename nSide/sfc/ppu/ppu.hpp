@@ -155,15 +155,6 @@ privileged:
   friend class PPU::Window;
   friend class PPU::Screen;
   friend class Scheduler;
-
-  struct Debugger {
-    hook<auto (uint16, uint8) -> void> vramRead;
-    hook<auto (uint16, uint8) -> void> oamRead;
-    hook<auto (uint16, uint8) -> void> cgramRead;
-    hook<auto (uint16, uint8) -> void> vramWrite;
-    hook<auto (uint16, uint8) -> void> oamWrite;
-    hook<auto (uint16, uint8) -> void> cgramWrite;
-  } debugger;
 };
 
 extern PPU ppu;

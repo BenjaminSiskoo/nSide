@@ -244,14 +244,6 @@ privileged:
     uint addr;
     uint8 data;
   } pipe;
-
-  struct Debugger {
-    hook<auto (uint24) -> void> execute;
-    hook<auto (uint24, uint8) -> void> read;
-    hook<auto (uint24, uint8) -> void> write;
-    hook<auto () -> void> nmi;
-    hook<auto () -> void> irq;
-  } debugger;
 };
 
 extern CPU cpu;

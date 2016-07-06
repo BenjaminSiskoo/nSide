@@ -53,12 +53,12 @@ struct Debugger {
   auto smp_write(uint16 addr, uint8 data) -> void;
 
   //S-PPU
-  auto ppu_vramRead(uint16 addr, uint8 data) -> void;
-  auto ppu_oamRead(uint16 addr, uint8 data) -> void;
-  auto ppu_cgramRead(uint16 addr, uint8 data) -> void;
-  auto ppu_vramWrite(uint16 addr, uint8 data) -> void;
-  auto ppu_oamWrite(uint16 addr, uint8 data) -> void;
-  auto ppu_cgramWrite(uint16 addr, uint8 data) -> void;
+  auto ppu_vramRead(uint16 addr, uint16 data) -> void;
+  auto ppu_vramWrite(bool byte, uint16 addr, uint8 data) -> void;
+  auto ppu_oamRead(uint10 addr, uint8 data) -> void;
+  auto ppu_oamWrite(uint10 addr, uint8 data) -> void;
+  auto ppu_cgramRead(bool byte, uint8 addr, uint8 data) -> void;
+  auto ppu_cgramWrite(uint8 addr, uint15 data) -> void;
 
   Debugger();
 

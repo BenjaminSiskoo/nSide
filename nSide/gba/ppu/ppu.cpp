@@ -182,7 +182,7 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::refresh() -> void {
-  Emulator::video.refresh(output, 240 * sizeof(uint32), 240, 160);
+  Emulator::video.refreshRegion(output, 240 * sizeof(uint32), 0, (240 - 160) / 2, 240, 160);
 }
 
 }

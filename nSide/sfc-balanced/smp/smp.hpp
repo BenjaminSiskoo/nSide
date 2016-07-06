@@ -78,12 +78,6 @@ privileged:
 
   alwaysinline auto step(uint clocks) -> void;
   alwaysinline auto cycleEdge() -> void;
-
-  struct Debugger {
-    hook<auto (uint16) -> void> execute;
-    hook<auto (uint16, uint8) -> void> read;
-    hook<auto (uint16, uint8) -> void> write;
-  } debugger;
 };
 
 extern SMP smp;

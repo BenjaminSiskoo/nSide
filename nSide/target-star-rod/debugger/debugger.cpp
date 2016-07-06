@@ -20,29 +20,29 @@ Debugger::Debugger() {
   cpuUsage.allocate(16 * 1024 * 1024);
   apuUsage.allocate(64 * 1024);
 
-  SFC::cpu.debugger.execute = {&Debugger::cpu_execute, this};
-  SFC::cpu.debugger.read = {&Debugger::cpu_read, this};
-  SFC::cpu.debugger.write = {&Debugger::cpu_write, this};
+  SFC::debugger.cpu.execute = {&Debugger::cpu_execute, this};
+  SFC::debugger.cpu.read = {&Debugger::cpu_read, this};
+  SFC::debugger.cpu.write = {&Debugger::cpu_write, this};
 
-  SFC::cpu.debugger.nmi = {&Debugger::cpu_nmi, this};
-  SFC::cpu.debugger.irq = {&Debugger::cpu_irq, this};
+  SFC::debugger.cpu.nmi = {&Debugger::cpu_nmi, this};
+  SFC::debugger.cpu.irq = {&Debugger::cpu_irq, this};
 
-  SFC::smp.debugger.execute = {&Debugger::smp_execute, this};
-  SFC::smp.debugger.read = {&Debugger::smp_read, this};
-  SFC::smp.debugger.write = {&Debugger::smp_write, this};
+  SFC::debugger.smp.execute = {&Debugger::smp_execute, this};
+  SFC::debugger.smp.read = {&Debugger::smp_read, this};
+  SFC::debugger.smp.write = {&Debugger::smp_write, this};
 
-  SFC::ppu.debugger.vramRead = {&Debugger::ppu_vramRead, this};
-  SFC::ppu.debugger.vramWrite = {&Debugger::ppu_vramWrite, this};
+  SFC::debugger.ppu.vram.read = {&Debugger::ppu_vramRead, this};
+  SFC::debugger.ppu.vram.write = {&Debugger::ppu_vramWrite, this};
 
-  SFC::ppu.debugger.oamRead = {&Debugger::ppu_oamRead, this};
-  SFC::ppu.debugger.oamWrite = {&Debugger::ppu_oamWrite, this};
+  SFC::debugger.ppu.oam.read = {&Debugger::ppu_oamRead, this};
+  SFC::debugger.ppu.oam.write = {&Debugger::ppu_oamWrite, this};
 
-  SFC::ppu.debugger.cgramRead = {&Debugger::ppu_cgramRead, this};
-  SFC::ppu.debugger.cgramWrite = {&Debugger::ppu_cgramWrite, this};
+  SFC::debugger.ppu.cgram.read = {&Debugger::ppu_cgramRead, this};
+  SFC::debugger.ppu.cgram.write = {&Debugger::ppu_cgramWrite, this};
 }
 
 auto Debugger::run() -> void {
-  if(paused == true) {
+  if(paused) {
     usleep(2000);
     return;
   }
@@ -62,13 +62,13 @@ auto Debugger::echo(const string& text) -> void {
 }
 
 auto Debugger::resume() -> void {
-  if(paused == false) return;
+  if(!paused) return;
   paused = false;
   consoleWindow->runButton.setText("Stop");
 }
 
 auto Debugger::suspend() -> void {
-  if(paused == true) return;
+  if(paused) return;
   paused = true;
   flags.step = false;
   flags.cpu.stepInto = false;

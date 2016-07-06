@@ -185,5 +185,5 @@ auto ConsoleWindow::print(const string& text) -> void {
   string output = console.text();
   output.append(text);
   console.setText(output);
-  //console.setCursorPosition(~0);
+  console.cursor().setOffset(~0);
 }

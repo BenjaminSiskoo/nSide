@@ -13,7 +13,7 @@ namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.09";
-  static const string FromVersion = "099.15";
+  static const string FromVersion = "099.16";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string_vector Contributors = {
@@ -60,31 +60,7 @@ namespace Emulator {
 }
 
 #include "interface.hpp"
-
-//debugging function hook:
-//no overhead (and no debugger invocation) if not compiled with -DDEBUGGER
-//wraps testing of function to allow invocation without a defined callback
-template<typename T> struct hook;
-template<typename R, typename... P> struct hook<auto (P...) -> R> {
-  function<auto (P...) -> R> callback;
-
-  auto operator()(P... p) const -> R {
-    #if defined(DEBUGGER)
-    if(callback) return callback(forward<P>(p)...);
-    #endif
-    return R();
-  }
-
-  hook() {}
-  hook(const hook& hook) { callback = hook.callback; }
-  hook(void* function) { callback = function; }
-  hook(auto (*function)(P...) -> R) { callback = function; }
-  template<typename C> hook(auto (C::*function)(P...) -> R, C* object) { callback = {function, object}; }
-  template<typename C> hook(auto (C::*function)(P...) const -> R, C* object) { callback = {function, object}; }
-  template<typename L> hook(const L& function) { callback = function; }
-
-  auto operator=(const hook& source) -> hook& { callback = source.callback; return *this; }
-};
+#include "debugger.hpp"
 
 #if defined(DEBUGGER)
   #define privileged public
