@@ -67,7 +67,7 @@ auto BeamGun::data2() -> uint5 {
   if(!system.vs()) {
     bool newtrigger = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
     if(newtrigger && !triggerlock) {
-      triggertime = 2;
+      triggertime = 3;
       triggerlock = true;
     } else if(!newtrigger) {
       triggerlock = false;

@@ -63,7 +63,7 @@ auto Zapper::data() -> uint3 {
   if(!system.vs()) {
     bool newtrigger = interface->inputPoll(port, ID::Device::Zapper, Trigger);
     if(newtrigger && !triggerlock) {
-      triggertime = 2;
+      triggertime = 3;
       triggerlock = true;
     } else if(!newtrigger) {
       triggerlock = false;
