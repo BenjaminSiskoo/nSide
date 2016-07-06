@@ -6,6 +6,7 @@ namespace Famicom {
 #include "joypair/joypair.cpp"
 #include "four-players/four-players.cpp"
 #include "beam-gun/beam-gun.cpp"
+#include "family-keyboard/family-keyboard.cpp"
 #include "family-trainer/family-trainer.cpp"
 #include "vaus/vaus.cpp"
 #include "sfc-gamepad/sfc-gamepad.cpp"

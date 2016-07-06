@@ -67,15 +67,16 @@ auto Peripherals::connect(uint port, uint device) -> void {
 
     delete expansionPort;
     switch(device) { default:
-    case ID::Device::None:          expansionPort = new Expansion; break;
-    case ID::Device::GamepadE:      expansionPort = new GamepadE; break;
-    case ID::Device::JoyPair:       expansionPort = new JoyPair; break;
-    case ID::Device::FourPlayers:   expansionPort = new FourPlayers; break;
-    case ID::Device::BeamGun:       expansionPort = new BeamGun; break;
-    case ID::Device::FamilyTrainer: expansionPort = new FamilyTrainer; break;
-    case ID::Device::VausE:         expansionPort = new VausE; break;
-    case ID::Device::SFCGamepad:    expansionPort = new SFCGamepad; break;
-    case ID::Device::MouseE:        expansionPort = new MouseE; break;
+    case ID::Device::None:           expansionPort = new Expansion; break;
+    case ID::Device::GamepadE:       expansionPort = new GamepadE; break;
+    case ID::Device::JoyPair:        expansionPort = new JoyPair; break;
+    case ID::Device::FourPlayers:    expansionPort = new FourPlayers; break;
+    case ID::Device::BeamGun:        expansionPort = new BeamGun; break;
+    case ID::Device::FamilyKeyboard: expansionPort = new FamilyKeyboard; break;
+    case ID::Device::FamilyTrainer:  expansionPort = new FamilyTrainer; break;
+    case ID::Device::VausE:          expansionPort = new VausE; break;
+    case ID::Device::SFCGamepad:     expansionPort = new SFCGamepad; break;
+    case ID::Device::MouseE:         expansionPort = new MouseE; break;
     }
   }
 

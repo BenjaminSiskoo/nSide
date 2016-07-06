@@ -31,6 +31,7 @@ struct ID {
     JoyPair,
     FourPlayers,
     BeamGun,
+    FamilyKeyboard,
     FamilyTrainer,
     VausE,
     SFCGamepad,
