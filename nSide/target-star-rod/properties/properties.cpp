@@ -150,6 +150,14 @@ auto PropertiesViewer::updateProperties() -> void {
       "\n"
     );
 
+    output.append("$2130  CGWSEL\n"
+      "  Direct Color = ", SFC::ppu.screen.io.directColor ? "Enabled" : "Disabled", "\n",
+      "  Blend Mode   = ", SFC::ppu.screen.io.blendMode   ? "Enabled" : "Disabled", "\n",
+      "  Window Color Below Mask = ", SFC::ppu.window.io.col.belowMask ? "Enabled" : "Disabled", "\n",
+      "  Window Color Above Mask = ", SFC::ppu.window.io.col.aboveMask ? "Enabled" : "Disabled", "\n",
+      "\n"
+    );
+
     break;
   }
   

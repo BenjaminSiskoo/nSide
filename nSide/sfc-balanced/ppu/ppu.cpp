@@ -6,9 +6,9 @@ PPU ppu;
 
 #include "io.cpp"
 #include "background/background.cpp"
-#include "screen/screen.cpp"
 #include "object/object.cpp"
 #include "window/window.cpp"
+#include "screen/screen.cpp"
 #include "render/render.cpp"
 #include "serialization.cpp"
 
@@ -92,7 +92,7 @@ auto PPU::load(Markup::Node node) -> bool {
 }
 
 auto PPU::power() -> void {
-  for(auto& n : vram.data) n = 0x0000;
+  for(auto& n : vram.data) n = random(0x0000);
   tiledataCache.flush();
 }
 
@@ -106,14 +106,14 @@ auto PPU::reset() -> void {
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
   //open bus support
-  ppu1.mdr = 0xff;
-  ppu2.mdr = 0xff;
+  ppu1.mdr = random(0xff);
+  ppu2.mdr = random(0xff);
 
-  latch.vram = 0x0000;
-  latch.oam = 0x00;
-  latch.cgram = 0x00;
-  latch.bgofs = 0x00;
-  latch.mode7 = 0x00;
+  latch.vram = random(0x0000);
+  latch.oam = random(0x00);
+  latch.cgram = random(0x00);
+  latch.bgofs = random(0x00);
+  latch.mode7 = random(0x00);
   latch.counters = false;
   latch.hcounter = 0;
   latch.vcounter = 0;
@@ -132,9 +132,9 @@ auto PPU::reset() -> void {
 
   //$2102  OAMADDL
   //$2103  OAMADDH
-  io.oamBaseAddress = 0x0000;
-  io.oamAddress = 0x0000;
-  io.oamPriority = false;
+  io.oamBaseAddress = random(0x0000);
+  io.oamAddress = random(0x0000);
+  io.oamPriority = random(false);
 
   //$2105  BGMODE
   io.bgPriority = false;
@@ -145,53 +145,53 @@ auto PPU::reset() -> void {
   io.mosaicCountdown = 0;
 
   //$210d  BG1HOFS
-  io.hoffsetMode7 = 0x0000;
+  io.hoffsetMode7 = random(0x0000);
 
   //$210e  BG1VOFS
-  io.voffsetMode7 = 0x0000;
+  io.voffsetMode7 = random(0x0000);
 
   //$2115  VMAIN
-  io.vramIncrementMode = 1;
-  io.vramMapping = 0;
+  io.vramIncrementMode = random(1);
+  io.vramMapping = random(0);
   io.vramIncrementSize = 1;
 
   //$2116  VMADDL
   //$2117  VMADDH
-  io.vramAddress = 0x0000;
+  io.vramAddress = random(0x0000);
 
   //$211a  M7SEL
-  io.repeatMode7 = 0;
-  io.vflipMode7 = false;
-  io.hflipMode7 = false;
+  io.repeatMode7 = random(0);
+  io.vflipMode7 = random(false);
+  io.hflipMode7 = random(false);
 
   //$211b  M7A
-  io.m7a = 0x0000;
+  io.m7a = random(0x0000);
 
   //$211c  M7B
-  io.m7b = 0x0000;
+  io.m7b = random(0x0000);
 
   //$211d  M7C
-  io.m7c = 0x0000;
+  io.m7c = random(0x0000);
 
   //$211e  M7D
-  io.m7d = 0x0000;
+  io.m7d = random(0x0000);
 
   //$211f  M7X
-  io.m7x = 0x0000;
+  io.m7x = random(0x0000);
 
   //$2120  M7Y
-  io.m7y = 0x0000;
+  io.m7y = random(0x0000);
 
   //$2121  CGADD
-  io.cgramAddress = 0x00;
+  io.cgramAddress = random(0x00);
   io.cgramAddressLatch = random(0);
 
   //$2132  COLDATA
   io.color_rgb = 0x0000;
 
   //$2133  SETINI
-  io.extbg = false;
-  io.pseudoHires = false;
+  io.extbg = random(false);
+  io.pseudoHires = random(false);
   io.overscan = false;
   io.interlace = false;
 

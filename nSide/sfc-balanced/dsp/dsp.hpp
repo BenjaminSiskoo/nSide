@@ -17,14 +17,11 @@ struct DSP : Thread {
   auto power() -> void;
   auto reset() -> void;
 
-  auto channel_enable(uint channel, bool enable) -> void;
-
   auto serialize(serializer&) -> void;
 
 private:
   SPC_DSP spc_dsp;
   int16_t samplebuffer[8192];
-  bool channel_enabled[8];
 };
 
 extern DSP dsp;

@@ -161,7 +161,7 @@ auto PPU::bg_renderLine() -> void {
       if(isDirectColorMode) {
         col = screen.directColor(col, bg.tile);
       } else {
-        col = screen.cgram[col + bg.paletteIndex];
+        col = screen.paletteColor(col + bg.paletteIndex);
       }
 
       #define setpixel_above(x) \
@@ -318,7 +318,7 @@ auto PPU::bg_renderLineMode7() -> void {
       //direct color mode does not apply to bg2, as it is only 128 colors...
       col = screen.directColor(palette, 0);
     } else {
-      col = screen.cgram[palette];
+      col = screen.paletteColor(palette);
     }
 
     if(bg.io.aboveEnable && !wt_above[_x]) {

@@ -20,6 +20,11 @@ auto PPU::Screen::blend(uint x, uint y) const -> uint15 {
   }
 }
 
+auto PPU::Screen::paletteColor(uint8 palette) const -> uint15 {
+  ppu.latch.cgramAddress = palette;
+  return cgram[palette];
+}
+
 auto PPU::Screen::directColor(uint8 palette, uint16 tile) const -> uint15 {
   //palette = -------- BBGGGRRR
   //tile    = ---bgr-- --------

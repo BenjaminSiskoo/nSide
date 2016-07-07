@@ -8,7 +8,6 @@ DSP dsp;
 #include "SPC_DSP.cpp"
 
 DSP::DSP() {
-  for(auto i : range(8)) channel_enabled[i] = true;
 }
 
 auto DSP::step(uint clocks) -> void {
@@ -57,15 +56,6 @@ auto DSP::reset() -> void {
   Thread::clock = 0;
   spc_dsp.soft_reset();
   spc_dsp.set_output(samplebuffer, 8192);
-}
-
-auto DSP::channel_enable(uint channel, bool enable) -> void {
-  channel_enabled[channel & 7] = enable;
-  uint mask = 0;
-  for(auto i : range(8)) {
-    if(channel_enabled[i] == false) mask |= 1 << i;
-  }
-  spc_dsp.mute_voices(mask);
 }
 
 }
