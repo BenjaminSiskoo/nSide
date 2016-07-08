@@ -4,6 +4,7 @@ struct Screen {
   auto blend(uint x, uint y) const -> uint15;
   /*alwaysinline*/ auto paletteColor(uint8 palette) const -> uint15;
   /*alwaysinline*/ auto directColor(uint8 palette, uint16 tile) const -> uint15;
+  /*alwaysinline*/ auto fixedColor() const -> uint15;
 
   auto serialize(serializer&) -> void;
 

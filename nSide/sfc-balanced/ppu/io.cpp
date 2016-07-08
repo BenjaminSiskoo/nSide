@@ -614,9 +614,7 @@ auto PPU::writeIO(uint24 addr, uint8 data) -> void {
     if(data.bit(6)) screen.io.colorGreen = data.bits(0,4);
     if(data.bit(7)) screen.io.colorBlue  = data.bits(0,4);
 
-    io.color_rgb = (screen.io.colorRed        )
-                 | (screen.io.colorGreen <<  5)
-                 | (screen.io.colorBlue  << 10);
+    io.color_rgb = screen.fixedColor();
     return;
   }
 

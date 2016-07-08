@@ -29,9 +29,13 @@ auto PPU::Screen::directColor(uint8 palette, uint16 tile) const -> uint15 {
   //palette = -------- BBGGGRRR
   //tile    = ---bgr-- --------
   //output  = 0BBb00GG Gg0RRRr0
-  return ((palette << 7) & 0x6000) | ((tile << 10) & 0x1000)
-       | ((palette << 4) & 0x0380) | ((tile <<  5) & 0x0040)
-       | ((palette << 2) & 0x001c) | ((tile <<  1) & 0x0002);
+  return ((palette << 7) & 0x6000) + ((tile >> 0) & 0x1000)
+       + ((palette << 4) & 0x0380) + ((tile >> 5) & 0x0040)
+       + ((palette << 2) & 0x001c) + ((tile >> 9) & 0x0002);
+}
+
+auto PPU::Screen::fixedColor() const -> uint15 {
+  return io.colorBlue << 10 | io.colorGreen << 5 | io.colorRed << 0;
 }
 
 auto PPU::Screen::reset() -> void {

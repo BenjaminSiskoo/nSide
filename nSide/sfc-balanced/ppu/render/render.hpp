@@ -60,7 +60,7 @@ uint8 obj_linePalette[256], obj_linePriority[256];
 auto updateSpriteList(uint addr, uint8 data) -> void;
 auto isSpriteOnScanline() -> bool;
 auto obj_loadTiles() -> void;
-auto obj_renderTile(int n) -> void;
+auto obj_renderTile(uint n) -> void;
 auto obj_renderLine_rto() -> void;
 auto obj_renderLine() -> void;
 

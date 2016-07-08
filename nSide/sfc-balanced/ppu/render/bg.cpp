@@ -143,16 +143,14 @@ auto PPU::bg_renderLine() -> void {
         if((bool)(voffset & 8) != mirrorY) bg.tile += 16;
       }
 
-      bg.tile &= 0x03ff;
-      bg.tile += tiledataIndex;
-      bg.tile &= tileMask;
+      uint16 character = ((bg.tile & 0x03ff) + tiledataIndex) & tileMask;
 
-      if(bg_tilestate[bg.tile] == 1) {
-        renderBGTile(bg.io.mode, bg.tile);
+      if(bg_tilestate[character] == 1) {
+        renderBGTile(bg.io.mode, character);
       }
 
       if(mirrorY) voffset ^= 7;  //invert y tile pos
-      tile_ptr = bg_tiledata + (bg.tile * 64) + ((voffset & 7) * 8);
+      tile_ptr = bg_tiledata + (character * 64) + ((voffset & 7) * 8);
     }
 
     if(mirrorX) hoffset ^= 7;  //invert x tile pos

@@ -63,7 +63,7 @@ auto PPU::obj_loadTiles() -> void {
   }
 }
 
-auto PPU::obj_renderTile(int n) -> void {
+auto PPU::obj_renderTile(uint n) -> void {
   uint8* obj_tileData      = (uint8*)tiledataCache.tiledata[Background::Mode::BPP4];
   uint8* obj_tileDataState = (uint8*)tiledataCache.tiledataState[Background::Mode::BPP4];
 
