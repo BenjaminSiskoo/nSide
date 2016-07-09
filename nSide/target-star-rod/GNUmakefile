@@ -4,7 +4,13 @@ endif
 
 flags += -DDEBUGGER
 
-include sfc/GNUmakefile
+ifndef profile
+  include sfc/GNUmakefile
+else ifeq ($(profile),accuracy)
+  include sfc/GNUmakefile
+else ifeq ($(profile),balanced)
+  include sfc-balanced/GNUmakefile
+endif
 include processor/GNUmakefile
 
 ui_objects := star-rod-laevateinn star-rod-program star-rod-settings

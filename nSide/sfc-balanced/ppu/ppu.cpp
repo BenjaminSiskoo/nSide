@@ -141,7 +141,6 @@ auto PPU::reset() -> void {
   io.bgMode = 0;
 
   //$2106  MOSAIC
-  io.mosaicSize = 0;
   io.mosaicCountdown = 0;
 
   //$210d  BG1HOFS
@@ -232,7 +231,7 @@ auto PPU::scanline() -> void {
   if(line == 1) {
     //mosaic reset
     for(int bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) io.bg_y[bg_id] = 1;
-    io.mosaicCountdown = io.mosaicSize + 1;
+    io.mosaicCountdown = max(bg1.io.mosaic, bg2.io.mosaic, bg3.io.mosaic, bg4.io.mosaic) + 1;
     io.mosaicCountdown--;
   } else {
     for(int bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) {
@@ -243,9 +242,9 @@ auto PPU::scanline() -> void {
       case Background::ID::BG3: bg = &bg3; break;
       case Background::ID::BG4: bg = &bg4; break;
       }
-      if(!bg->io.mosaicEnabled || !io.mosaicCountdown) io.bg_y[bg_id] = line;
+      if(!bg->io.mosaic || !io.mosaicCountdown) io.bg_y[bg_id] = line;
     }
-    if(!io.mosaicCountdown) io.mosaicCountdown = io.mosaicSize + 1;
+    if(!io.mosaicCountdown) io.mosaicCountdown = max(bg1.io.mosaic, bg2.io.mosaic, bg3.io.mosaic, bg4.io.mosaic) + 1;
     io.mosaicCountdown--;
   }
 

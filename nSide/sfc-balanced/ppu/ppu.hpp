@@ -87,7 +87,6 @@ privileged:
     uint8 bgMode;
 
     //$2106  MOSAIC
-    uint8  mosaicSize;
     uint16 mosaicCountdown;
 
     //$210d  BG1HOFS

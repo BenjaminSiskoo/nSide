@@ -73,7 +73,7 @@ auto PPU::bg_renderLine() -> void {
   bool   mirrorX, mirrorY;
 
   const uint8*  tile_ptr;
-  const uint16* mtable = mosaicTable[bg.io.mosaicEnabled ? (uint)io.mosaicSize : 0];
+  const uint16* mtable = mosaicTable[bg.io.mosaic];
   const bool isOPTMode = io.bgMode == 2 || io.bgMode == 4 || io.bgMode == 6;
   const bool isDirectColorMode = screen.io.directColor && bg_id == Background::ID::BG1 && (io.bgMode == 3 || io.bgMode == 4);
 
@@ -238,13 +238,13 @@ auto PPU::bg_renderLineMode7() -> void {
   uint16* mtable_x;
   uint16* mtable_y;
   if(bg_id == Background::ID::BG1) {
-    mtable_x = (uint16*)mosaicTable[bg1.io.mosaicEnabled ? (uint)io.mosaicSize : 0];
-    mtable_y = (uint16*)mosaicTable[bg1.io.mosaicEnabled ? (uint)io.mosaicSize : 0];
+    mtable_x = (uint16*)mosaicTable[bg1.io.mosaic];
+    mtable_y = (uint16*)mosaicTable[bg1.io.mosaic];
   } else {  //bg_id == Background::ID::BG2
     //Mode7 EXTBG BG2 uses BG1 mosaic enable to control vertical mosaic,
     //and BG2 mosaic enable to control horizontal mosaic...
-    mtable_x = (uint16*)mosaicTable[bg2.io.mosaicEnabled ? (uint)io.mosaicSize : 0];
-    mtable_y = (uint16*)mosaicTable[bg1.io.mosaicEnabled ? (uint)io.mosaicSize : 0];
+    mtable_x = (uint16*)mosaicTable[bg2.io.mosaic];
+    mtable_y = (uint16*)mosaicTable[bg1.io.mosaic];
   }
 
   //13-bit sign extend

@@ -1,6 +1,6 @@
-﻿nSide v009r09 (2016-06-10)
+﻿nSide v009r10 (2016-07-09)
 
-A fork of higan v099 by byuu (http://byuu.org/emulation/higan/), which was
+A fork of higan v100 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
 
 nSide adds new devices to the Famicom emulator's controller ports. The supported
@@ -16,18 +16,20 @@ devices are:
 In addition, it adds the Famicom expansion port for its own devices. The only
 expansion port devices supported are:
 *Gamepad (counts as Player 3)
-*4-Players Adaptor
+*JoyPair
+*4-Players Adaptor (special multitap that may allow 6-player homebrew)
 *Beam Gun (Zapper)
+*Family BASIC Keyboard
 *Family Trainer (Power Pad)
 *Mouse (unlicensed, only supported by homebrew)
 
 Finally, it supports the VS. UniSystem, with its own arcade panel and buttons.
 
 Please be aware that a great majority of Famicom and NES games support the use
-of Player 3 and Player 4 as substitutes for Player 1 and Player 2, including
-ones that use the NES Four Score such as A Nightmare on Elm Street. If the
-expansion slot is set to Gamepad or 4-Players Adapter, this can result in
-Player 3's controller controlling both Player 1 and Player 3.
+of Player 3 and Player 4 (Famicom) as substitutes for Player 1 and Player 2,
+including ones that use the NES Four Score such as A Nightmare on Elm Street. If
+the expansion slot is set to Gamepad, JoyPair, or 4-Players Adaptor, this can
+result in unrelated controller inputs controlling both Player 1 and Player 3.
 
 The Export Memory functions for the Famicom and Super Famicom emulators now
 export a limited selection of PPU registers in BML format and expansion chip
@@ -72,9 +74,6 @@ Known Bugs:
 Famicom:
   *Saving a state while the Zapper or Beam Gun is connected will cause the
   emulator to hang. If the cursor was captured, it can be hard to rescue.
-  *The VS. Zapper with its own separate protocol is badly supported (timing of
-  light sensor is not well understood). VS. Duck Hunt cannot be played because
-  the menu will not recognize light in the VS. Zapper.
 
 Super Famicom:
   *The SA-1 has no bus conflict emulation. Adding bus conflict emulation will
@@ -109,20 +108,17 @@ WonderSwan:
   Many bugs in different spots. higan's WonderSwan emulator is still new and
   full of bugs, all of which affect nSide's version of the emulator.
   *Card Captor Sakura has columns of corruption when characters speak.
-  *Meitantai Conan - Nishi no Meitantei Saidai no Kiki!? will not start because
+  *Meitantei Conan - Nishi no Meitantei Saidai no Kiki!? will not start because
   it relies on correct prefetch emulation.
 
 ===========================
 Changes from higan: General
 ===========================
-   Changed "higan" to "nSide" and added a Contributors field for Ryphecha and
-  Cydrak, which were credited in comments in fc.hpp and gba.hpp, on the
-  Configuration Settings Advanced tab and Cocoa About box.
-  Credited blargg and Jonas Quinn as contributors to higan (blargg wrote the
-  DSP code for the compatibility and performance cores, and Jonas Quinn
-  contributed many fixes for the SFC DSPs and the Game Boy).
-  There may still be more that I am missing, so let me know on byuu's forums if
-  you or someone else needs to be credited.
+   Changed "higan" to "nSide" and added a Contributors field on the
+  Configuration Settings Advanced tab and Cocoa About box. This list has 34
+  names of people who contributed to higan (and whose contributions appear in
+  nSide), but there may still be more that I am missing, so let me know on
+  byuu's forums if you or someone else needs to be credited.
 
    Reformatted the "About" text to show contributors to higan and show which
   program nSide branched from.
@@ -138,10 +134,6 @@ Changes from higan: Famicom
 ===========================
    Revised emulator name and copyright information.
 
-   Replaced fc/input/* with fc/controller/* and fc/system/peripherals.cpp,
-   overhauling the device implementation to depend on controller objects like
-  in the Super Famicom emulator.
-
    The read registers at $4016 and $4017 only have 5 bits each, not 6, so
   cpu.mdr() is ANDed with 0xe0 instead of 0xc0.
 
@@ -150,10 +142,6 @@ Changes from higan: Famicom
   not refreshed after about 600 milliseconds, and reading from the palette will
   put the 2 highest MDR bits into the read value.
 
-   Changed PPU timing to account for the dummy tick in front of every scanline.
-  higan/fc has pixel rendering on ticks 0-255 of every scanline, whereas an
-  actual PPU renders on ticks 1-256.
-
    Added direct color support (when rendering is disabled and PPUADDR points to
   the palette at $3F00-$3FFF, the selected color will render instead of the
   background color).
@@ -161,15 +149,16 @@ Changes from higan: Famicom
    Added PAL support, which reduces games to 50Hz and swaps the red and green
   color emphasis bits.
 
-   Added the ability to change controllers for the Famicom, which required
-  adding an Interface#connect method that calls Input#connect.
    Added Four Score support. It is split into 2 devices, so for best results,
   plug a Four Score into both slots.
    Added support for the Zapper/Beam Gun.
-   Added support for the Power Pad/Family Trainer.
-   Added support for the 4-Players Adaptor.
   Light is defined as any Famicom color with a luma of 0x20 or greater and a
   chroma less than 0x0D, not taking into account emphasis or RGB PPUs.
+   Added support for the Power Pad/Family Trainer.
+   Added support for the Arkanoid Vaus.
+   Added support for the Family BASIC Keyboard.
+   Added support for the JoyPair.
+   Added support for the 4-Players Adaptor.
 
    Added new board types:
     NES-EVENT              // Nintendo World Championships 1990
@@ -375,9 +364,9 @@ Changes from higan: Famicom
   the warning.
   Note that RGB PPUs do not support the Color Emulation option or Display
   Emulation shader. They display the same colors as when both are turned off.
-   Which PPU to use is decided by the presence of the "pc10" node in the
-  cartridge manifest, so if you want to bypass loading the PlayChoice-10 BIOS
-  while still using the RGB PPU, rename a ".pc10" folder to ".fc".
+   In Famicom mode, which PPU to use is decided by the manifest in Famicom.sys.
+  Just edit that file and replace "RP2C02G" with "RP2C03B" to use the RGB PPU
+  in Famicom games.
 
    Prepared the video renderer for dynamic adjustment of screen width for
   VS. DualSystem and PlayChoice-10 games. To set the width to 512 pixels for a
@@ -410,11 +399,8 @@ Changes from higan: Super Famicom
 
    Expanded exportMemory to dump expansion chip-specific memory.
 
-   Added exportRegisters for exporting some PPU registers to a debug report in
-  BML format. Not all registers are supported yet.
-
    Added a second cursor design that will be shown whenever the Super Scope is
-  in Turbo mode.
+  in Turbo mode. This is not just a simple recolor.
 
 ============================================================
 Changes from higan: processor/r65816 (affects Super Famicom)
@@ -455,7 +441,7 @@ Changes from higan: Game Boy Advance
 ==============================
 Changes from higan: WonderSwan
 ==============================
-   Changed video rotation to be emulator-agnostic rotation.
+   Changed video rotation to be emulator-agnostic.
 
 =========================
 Changes from higan: Video
@@ -493,3 +479,6 @@ Changes from higan: cart-pal
    Added preliminary support for NES 2.0. This allows submappers to influence
   purification of Konami VRC games, distinguish between IREM-HOLYDIVER and
   JALECO-JF-16 (Cosmo Carrier), among other things.
+
+No version of nSide will be called "v010" until the Famicom emulator has proper
+sprite priority evaluation.

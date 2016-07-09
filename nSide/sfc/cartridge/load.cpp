@@ -312,7 +312,7 @@ auto Cartridge::loadOBC1(Markup::Node node) -> void {
 auto Cartridge::loadMSU1(Markup::Node node) -> void {
   has.MSU1 = true;
 
-  for(auto leaf : node.find("map")) loadMap(leaf, {&MSU1::read, &msu1}, {&MSU1::write, &msu1});
+  for(auto leaf : node.find("map")) loadMap(leaf, {&MSU1::readIO, &msu1}, {&MSU1::writeIO, &msu1});
 }
 
 //

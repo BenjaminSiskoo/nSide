@@ -123,8 +123,8 @@ auto Debugger::smp_write(uint16 addr, uint8 data) -> void {
 //S-PPU
 //=====
 
-auto Debugger::ppu_vramRead(uint16 addr, uint16 data) -> void {
-  bool breakpointHit = breakpointEditor->testReadVRAM(addr << 1 | 0) || breakpointEditor->testReadVRAM(addr << 1 | 1);
+auto Debugger::ppu_vramRead(uint17 addr, uint8 data) -> void {
+  bool breakpointHit = breakpointEditor->testReadVRAM(addr);
 
   if(breakpointHit) {
     print(SFC::cpu.disassemble(cpuDebugger->opcodePC, SFC::cpu.r.e, SFC::cpu.r.p.m, SFC::cpu.r.p.x), "\n");
@@ -134,8 +134,8 @@ auto Debugger::ppu_vramRead(uint16 addr, uint16 data) -> void {
   }
 }
 
-auto Debugger::ppu_vramWrite(bool byte, uint16 addr, uint8 data) -> void {
-  bool breakpointHit = breakpointEditor->testWriteVRAM(addr << 1 | byte, data);
+auto Debugger::ppu_vramWrite(uint17 addr, uint8 data) -> void {
+  bool breakpointHit = breakpointEditor->testWriteVRAM(addr, data);
 
   if(breakpointHit) {
     print(SFC::cpu.disassemble(cpuDebugger->opcodePC, SFC::cpu.r.e, SFC::cpu.r.p.m, SFC::cpu.r.p.x), "\n");
@@ -167,8 +167,8 @@ auto Debugger::ppu_oamWrite(uint10 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::ppu_cgramRead(bool byte, uint8 addr, uint8 data) -> void {
-  bool breakpointHit = breakpointEditor->testReadCGRAM(addr << 1 | byte);
+auto Debugger::ppu_cgramRead(uint9 addr, uint8 data) -> void {
+  bool breakpointHit = breakpointEditor->testReadCGRAM(addr);
 
   if(breakpointHit) {
     print(SFC::cpu.disassemble(cpuDebugger->opcodePC, SFC::cpu.r.e, SFC::cpu.r.p.m, SFC::cpu.r.p.x), "\n");
@@ -178,8 +178,8 @@ auto Debugger::ppu_cgramRead(bool byte, uint8 addr, uint8 data) -> void {
   }
 }
 
-auto Debugger::ppu_cgramWrite(uint8 addr, uint15 data) -> void {
-  bool breakpointHit = breakpointEditor->testWriteCGRAM(addr << 1 | 0, data.byte(0)) || breakpointEditor->testWriteCGRAM(addr << 1 | 1, data.byte(1));
+auto Debugger::ppu_cgramWrite(uint9 addr, uint8 data) -> void {
+  bool breakpointHit = breakpointEditor->testWriteCGRAM(addr, data);
 
   if(breakpointHit) {
     print(SFC::cpu.disassemble(cpuDebugger->opcodePC, SFC::cpu.r.e, SFC::cpu.r.p.m, SFC::cpu.r.p.x), "\n");

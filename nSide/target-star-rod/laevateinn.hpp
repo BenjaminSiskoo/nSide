@@ -11,7 +11,11 @@ extern unique_pointer<Input> input;
 #include <emulator/emulator.hpp>
 extern Emulator::Interface* emulator;
 
+#if defined(PROFILE_BALANCED)
+#include <sfc-balanced/sfc.hpp>
+#else
 #include <sfc/sfc.hpp>
+#endif
 namespace SFC = SuperFamicom;
 
 auto locate(string name) -> string;

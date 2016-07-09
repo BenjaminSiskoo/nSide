@@ -14,7 +14,7 @@ auto PPU::Background::reset() -> void {
   io.tiledataAddress = 0x0000;
   io.screenAddress = 0x0000;
   io.screenSize = ScreenSize::Size32x32;
-  io.mosaicEnabled = false;
+  io.mosaic = 0;
   io.tileSize = TileSize::Size8x8;
   io.mode = 0;
   for(auto& p : io.priority) p = 0;

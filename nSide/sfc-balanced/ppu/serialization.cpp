@@ -32,7 +32,7 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(cache.obj_nameselect);
   s.integer(cache.obj_tiledataAddress);
 
-  for(uint n : range(4)) s.integer(io.bg_y[n]);
+  s.array(io.bg_y);
 
   s.integer(latch.vram);
   s.integer(latch.oam);
@@ -56,7 +56,6 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(io.bgPriority);
   s.integer(io.bgMode);
 
-  s.integer(io.mosaicSize);
   s.integer(io.mosaicCountdown);
 
   s.integer(io.hoffsetMode7);
@@ -140,14 +139,27 @@ auto PPU::Background::serialize(serializer& s) -> void {
   s.integer(io.tiledataAddress);
   s.integer(io.screenAddress);
   s.integer(io.screenSize);
-  s.integer(io.mosaicEnabled);
+  s.integer(io.mosaic);
   s.integer(io.tileSize);
+
+  s.integer(io.mode);
+  s.array(io.priority);
 
   s.integer(io.aboveEnable);
   s.integer(io.belowEnable);
 
   s.integer(io.hoffset);
   s.integer(io.voffset);
+
+  //s.integer(x);
+  s.integer(y);
+
+  //s.integer(tileCounter);
+  s.integer(tile);
+  s.integer(priority);
+  s.integer(paletteNumber);
+  s.integer(paletteIndex);
+  //s.array(data);
 }
 
 auto PPU::Object::serialize(serializer& s) -> void {
@@ -171,6 +183,8 @@ auto PPU::Object::serialize(serializer& s) -> void {
   s.integer(io.nameselect);
   s.integer(io.tiledataAddress);
   s.integer(io.firstSprite);
+
+  s.array(io.priority);
 
   s.integer(io.timeOver);
   s.integer(io.rangeOver);
@@ -253,6 +267,5 @@ auto PPU::Screen::serialize(serializer& s) -> void {
   s.integer(io.colorGreen);
   s.integer(io.colorRed);
 
-  //Not necessary?
-  //s.integer(math.colorHalve);
+  s.integer(math.colorHalve);
 }

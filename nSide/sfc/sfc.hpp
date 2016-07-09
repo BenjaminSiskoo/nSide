@@ -43,8 +43,6 @@
   #include <gb/gb.hpp>
 #endif
 
-#include "debugger.hpp"
-
 namespace SuperFamicom {
   using File = Emulator::File;
 

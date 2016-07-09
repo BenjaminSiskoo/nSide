@@ -19,7 +19,7 @@ struct Background {
     uint16 tiledataAddress;
     uint16 screenAddress;
     uint2 screenSize;
-    bool mosaicEnabled;
+    uint4 mosaic;
     bool tileSize;
 
     uint mode;

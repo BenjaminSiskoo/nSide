@@ -12,8 +12,8 @@ using namespace nall;
 namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
-  static const string Version = "009.09";
-  static const string FromVersion = "099.16";
+  static const string Version = "009.10";
+  static const string FromVersion = "100.01";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string_vector Contributors = {
@@ -56,14 +56,8 @@ namespace Emulator {
   static const string Website = "http://byuu.org/";
 
   //incremented only when serialization format changes
-  static const string SerializerVersion = "009.09(099.14)";
+  static const string SerializerVersion = "009.10(100)";
 }
 
 #include "interface.hpp"
 #include "debugger.hpp"
-
-#if defined(DEBUGGER)
-  #define privileged public
-#else
-  #define privileged private
-#endif

@@ -1,3 +1,5 @@
+#include <sfc-balanced/debugger.hpp>
+
 namespace SuperFamicom {
 
 struct ID {
