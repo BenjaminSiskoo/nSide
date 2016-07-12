@@ -17,7 +17,7 @@ auto PlayChoice10::PC10CPU::power() -> void {
 }
 
 auto PlayChoice10::PC10CPU::reset() -> void {
-  create(PC10CPU::Enter, system.cpuFrequency());
+  create(PC10CPU::Enter, system.colorburst() * 6.0);
   Z80::reset();
 
   r[PC] = 0x0000;

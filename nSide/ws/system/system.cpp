@@ -3,6 +3,8 @@
 namespace WonderSwan {
 
 System system;
+Scheduler scheduler;
+Cheat cheat;
 #include "io.cpp"
 #include "video.cpp"
 #include "serialization.cpp"
@@ -75,7 +77,7 @@ auto System::power() -> void {
   ppu.power();
   apu.power();
   cartridge.power();
-  scheduler.power();
+  scheduler.reset(cpu.thread);
 
   bus.map(this, 0x0060);
   bus.map(this, 0x00ba, 0x00be);
@@ -87,7 +89,7 @@ auto System::power() -> void {
 }
 
 auto System::run() -> void {
-  scheduler.enter();
+  if(scheduler.enter() == Scheduler::Event::Frame) ppu.refresh();
   pollKeypad();
 }
 

@@ -124,14 +124,14 @@ auto APU::power() -> void {
 }
 
 auto APU::reset() -> void {
-  create(APU::Enter, system.cpuFrequency());
+  create(APU::Enter, system.colorburst() * 6.0);
   double clockDivider;
   switch(system.region()) {
   case System::Region::NTSC:  clockDivider = 12.0; break;
   case System::Region::PAL:   clockDivider = 16.0; break;
   case System::Region::Dendy: clockDivider = 15.0; break;
   }
-  stream = Emulator::audio.createStream(1, system.cpuFrequency() / clockDivider);
+  stream = Emulator::audio.createStream(1, (system.colorburst() * 6.0) / clockDivider);
 
   pulse[0].reset();
   pulse[1].reset();

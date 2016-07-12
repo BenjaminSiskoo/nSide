@@ -7,6 +7,8 @@ namespace GameBoyAdvance {
 #include "serialization.cpp"
 BIOS bios;
 System system;
+Scheduler scheduler;
+Cheat cheat;
 
 auto System::init() -> void {
 }
@@ -30,7 +32,7 @@ auto System::power() -> void {
   ppu.power();
   apu.power();
   cartridge.power();
-  scheduler.power();
+  scheduler.reset(cpu.thread);
 }
 
 auto System::load() -> bool {
@@ -63,7 +65,7 @@ auto System::unload() -> void {
 }
 
 auto System::run() -> void {
-  while(scheduler.enter() != Scheduler::Event::Frame);
+  if(scheduler.enter() == Scheduler::Event::Frame) ppu.refresh();
 }
 
 auto System::runToSave() -> void {

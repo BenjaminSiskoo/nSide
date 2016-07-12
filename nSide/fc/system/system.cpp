@@ -3,13 +3,17 @@
 namespace Famicom {
 
 System system;
-
+Scheduler scheduler;
+Cheat cheat;
 #include "video.cpp"
 #include "peripherals.cpp"
 #include "serialization.cpp"
 
 auto System::run() -> void {
-  scheduler.enter();
+  if(scheduler.enter() == Scheduler::Event::Frame) {
+    ppu.refresh();
+    if(pc10()) playchoice10.videoCircuit.refresh();
+  }
 }
 
 auto System::runToSave() -> void {
@@ -98,7 +102,9 @@ auto System::load(Revision revision) -> bool {
   if(!apu.load(system)) return false;
   if(!ppu.load(system)) return false;
 
-  information.cpuFrequency = region() == Region::NTSC ? 21'477'272 : 26'601'712;
+  information.colorburst = region() == Region::NTSC
+  ? Emulator::Constants::Colorburst::NTSC
+  : Emulator::Constants::Colorburst::PAL;
 
   interface->information.canvasWidth  = 256;
   interface->information.canvasHeight = 240;
@@ -201,7 +207,7 @@ auto System::reset() -> void {
   case Revision::FamicomBox:   cpu.coprocessors.append(&famicombox); break;
   }
 
-  scheduler.reset();
+  scheduler.reset(cpu.thread);
   peripherals.reset();
 }
 

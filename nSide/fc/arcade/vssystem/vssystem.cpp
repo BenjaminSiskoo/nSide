@@ -35,7 +35,7 @@ auto VSSystem::power() -> void {
 }
 
 auto VSSystem::reset() -> void {
-  create(VSSystem::Enter, system.cpuFrequency());
+  create(VSSystem::Enter, system.colorburst() * 6.0);
 
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;

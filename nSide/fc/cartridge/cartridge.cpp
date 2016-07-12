@@ -105,7 +105,7 @@ auto Cartridge::power() -> void {
 }
 
 auto Cartridge::reset() -> void {
-  create(Cartridge::Enter, system.cpuFrequency());
+  create(Cartridge::Enter, system.colorburst() * 6.0);
   board->reset();
 }
 

@@ -1,8 +1,8 @@
 processors += r65816 spc700 arm gsu hg51b upd96050
 
-objects += sfc-balanced-interface sfc-balanced-system sfc-balanced-scheduler sfc-balanced-controller
-objects += sfc-balanced-cartridge sfc-balanced-cheat
-objects += sfc-balanced-memory sfc-balanced-cpu sfc-balanced-smp sfc-balanced-dsp sfc-balanced-ppu
+objects += sfc-balanced-interface sfc-balanced-system sfc-balanced-controller
+objects += sfc-balanced-cartridge sfc-balanced-memory
+objects += sfc-balanced-cpu sfc-balanced-smp sfc-balanced-dsp sfc-balanced-ppu
 objects += sfc-balanced-expansion sfc-balanced-satellaview sfc-balanced-superdisc
 objects += sfc-balanced-21fx
 objects += sfc-balanced-icd2 sfc-balanced-mcc sfc-balanced-nss sfc-balanced-event
@@ -17,10 +17,8 @@ flags += -DPROFILE_BALANCED
 
 obj/sfc-balanced-interface.o:   sfc-balanced/interface/interface.cpp $(call rwildcard,sfc-balanced/interface)
 obj/sfc-balanced-system.o:      sfc-balanced/system/system.cpp $(call rwildcard,sfc-balanced/system/)
-obj/sfc-balanced-scheduler.o:   sfc-balanced/scheduler/scheduler.cpp $(call rwildcard,sfc-balanced/scheduler/)
 obj/sfc-balanced-controller.o:  sfc-balanced/controller/controller.cpp $(call rwildcard,sfc-balanced/controller/)
 obj/sfc-balanced-cartridge.o:   sfc-balanced/cartridge/cartridge.cpp $(call rwildcard,sfc-balanced/cartridge/)
-obj/sfc-balanced-cheat.o:       sfc-balanced/cheat/cheat.cpp $(call rwildcard,sfc-balanced/cheat/)
 obj/sfc-balanced-memory.o:      sfc-balanced/memory/memory.cpp $(call rwildcard,sfc-balanced/memory/)
 
 obj/sfc-balanced-cpu.o:         sfc-balanced/cpu/cpu.cpp $(call rwildcard,sfc-balanced/cpu/)

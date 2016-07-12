@@ -146,27 +146,7 @@ auto Interface::unserialize(serializer& s) -> bool {
 }
 
 auto Interface::cheatSet(const string_vector& list) -> void {
-  cheat.reset();
-  for(auto& codeset : list) {
-    auto codes = codeset.split("+");
-    for(auto& code : codes) {
-      auto part = code.split("/");
-      uint mode;
-      if(part.size() == 2) {
-        if(part[1].size() == 2) mode = Byte;
-        if(part[1].size() == 4) mode = Half;
-        if(part[1].size() == 8) mode = Word;
-        cheat.append(part[0].hex(), part[1].hex(), mode);
-      }
-      if(part.size() == 3) {
-        if(part[1].size() != part[2].size()) continue;
-        if(part[2].size() == 2) mode = Byte;
-        if(part[2].size() == 4) mode = Half;
-        if(part[2].size() == 8) mode = Word;
-        cheat.append(part[0].hex(), part[1].hex(), part[2].hex(), mode);
-      }
-    }
-  }
+  cheat.assign(list);
 }
 
 auto Interface::cap(const string& name) -> bool {

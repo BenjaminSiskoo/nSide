@@ -34,7 +34,7 @@ auto FamicomBox::power() -> void {
 }
 
 auto FamicomBox::reset() -> void {
-  create(FamicomBox::Enter, system.cpuFrequency());
+  create(FamicomBox::Enter, system.colorburst() * 6.0);
 
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;

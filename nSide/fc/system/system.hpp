@@ -13,7 +13,7 @@ struct System {
   inline auto loaded() const -> bool { return information.loaded; }
   inline auto revision() const -> Revision { return information.revision; }
   inline auto region() const -> Region { return information.region; }
-  inline auto cpuFrequency() const -> uint { return information.cpuFrequency; }
+  inline auto colorburst() const -> double { return information.colorburst; }
 
   inline auto fc()   const { return information.revision == Revision::Famicom; }
   inline auto vs()   const { return information.revision == Revision::VSSystem; }
@@ -45,7 +45,7 @@ private:
     bool loaded = false;
     Revision revision = Revision::Famicom;
     Region region = Region::NTSC;
-    uint cpuFrequency = 0;
+    double colorburst = 0.0;
   } information;
 
   uint serializeSize = 0;

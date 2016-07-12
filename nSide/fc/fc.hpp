@@ -10,38 +10,20 @@
 //original project started: 2011-09-05
 
 #include <emulator/emulator.hpp>
+#include <emulator/thread.hpp>
+#include <emulator/scheduler.hpp>
+#include <emulator/cheat.hpp>
+
 #include <processor/r6502/r6502.hpp>
 #include <processor/z80/z80.hpp>
 
 namespace Famicom {
-  struct File {
-    static const auto Read = vfs::file::mode::read;
-    static const auto Write = vfs::file::mode::write;
-    static const auto Optional = false;
-    static const auto Required = true;
-  };
-
-  struct Thread {
-    virtual ~Thread() {
-      if(thread) co_delete(thread);
-    }
-
-    auto create(auto (*entrypoint)() -> void, uint frequency) -> void {
-      if(thread) co_delete(thread);
-      thread = co_create(65'536 * sizeof(void*), entrypoint);
-      this->frequency = frequency;
-      clock = 0;
-    }
-
-    auto serialize(serializer& s) -> void {
-      s.integer(frequency);
-      s.integer(clock);
-    }
-
-    cothread_t thread = nullptr;
-    uint frequency = 0;
-    int64 clock = 0;
-  };
+  using File = Emulator::File;
+  using Thread = Emulator::Thread;
+  using Scheduler = Emulator::Scheduler;
+  using Cheat = Emulator::Cheat;
+  extern Scheduler scheduler;
+  extern Cheat cheat;
 
   //dynamic thread bound to CPU (arcade processors and timers)
   struct Cothread : Thread {
@@ -59,10 +41,8 @@ namespace Famicom {
   #include <fc/controller/controller.hpp>
   #include <fc/expansion/expansion.hpp>
   #include <fc/system/system.hpp>
-  #include <fc/scheduler/scheduler.hpp>
   #include <fc/arcade/arcade.hpp>
   #include <fc/cartridge/cartridge.hpp>
-  #include <fc/cheat/cheat.hpp>
 
   #include <fc/memory/memory-inline.hpp>
   #include <fc/ppu/counter/counter-inline.hpp>

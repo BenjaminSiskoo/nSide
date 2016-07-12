@@ -322,9 +322,9 @@ auto Interface::title() -> string {
 
 auto Interface::videoFrequency() -> double {
   switch(system.region()) { default:
-  case System::Region::NTSC:  return system.cpuFrequency() / (262.0 * 1364.0 - 4.0);
-  case System::Region::PAL:   return system.cpuFrequency() / (312.0 * 1705.0);
-  case System::Region::Dendy: return system.cpuFrequency() / (312.0 * 1705.0);
+  case System::Region::NTSC:  return (system.colorburst() * 6.0) / (262.0 * 1364.0 - 4.0);
+  case System::Region::PAL:   return (system.colorburst() * 6.0) / (312.0 * 1705.0);
+  case System::Region::Dendy: return (system.colorburst() * 6.0) / (312.0 * 1705.0);
   }
 }
 
@@ -548,9 +548,9 @@ auto Interface::videoColor(uint32 n) -> uint64 {
 
 auto Interface::audioFrequency() -> double {
   switch(system.region()) { default:
-  case System::Region::NTSC:  return system.cpuFrequency() / 12.0;
-  case System::Region::PAL:   return system.cpuFrequency() / 16.0;
-  case System::Region::Dendy: return system.cpuFrequency() / 15.0;
+  case System::Region::NTSC:  return (system.colorburst() * 6.0) / 12.0;
+  case System::Region::PAL:   return (system.colorburst() * 6.0) / 16.0;
+  case System::Region::Dendy: return (system.colorburst() * 6.0) / 15.0;
   }
 }
 
@@ -630,15 +630,7 @@ auto Interface::unserialize(serializer& s) -> bool {
 
 auto Interface::cheatSet(const string_vector& list) -> void {
   cheat.reset();
-
-  for(auto& codeset : list) {
-    auto codes = codeset.split("+");
-    for(auto& code : codes) {
-      auto part = code.split("/");
-      if(part.size() == 2) cheat.append(part[0].hex(), part[1].hex());
-      if(part.size() == 3) cheat.append(part[0].hex(), part[1].hex(), part[2].hex());
-    }
-  }
+  cheat.assign(list);
 }
 
 auto Interface::cap(const string& name) -> bool {

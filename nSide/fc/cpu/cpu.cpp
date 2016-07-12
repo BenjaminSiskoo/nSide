@@ -60,7 +60,7 @@ auto CPU::power() -> void {
 
 auto CPU::reset() -> void {
   R6502::reset();
-  create(CPU::Enter, system.cpuFrequency());
+  create(Enter, system.colorburst() * 6.0);
 
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;

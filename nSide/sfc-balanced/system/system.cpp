@@ -3,14 +3,15 @@
 namespace SuperFamicom {
 
 System system;
-
+Scheduler scheduler;
+Cheat cheat;
 #include "video.cpp"
 #include "peripherals.cpp"
 #include "random.cpp"
 #include "serialization.cpp"
 
 auto System::run() -> void {
-  scheduler.enter();
+  if(scheduler.enter() == Scheduler::Event::Frame) ppu.refresh();
 }
 
 auto System::runToSave() -> void {
@@ -72,8 +73,9 @@ auto System::load() -> bool {
   if(system["region"].text() == "NTSC") information.region = Region::NTSC;
   if(system["region"].text() == "PAL" ) information.region = Region::PAL;
 
-  information.cpuFrequency = region() == Region::NTSC ? 21'477'272 : 21'281'370;
-  information.apuFrequency = 24'606'720;
+  information.colorburst = region() == Region::NTSC
+  ? Emulator::Constants::Colorburst::NTSC
+  : Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
 
   interface->information.aspectRatio = region() == Region::NTSC ? 8.0 / 7.0 : 2'950'000.0 / 2'128'137.0;
 
@@ -205,7 +207,7 @@ auto System::reset() -> void {
   if(cartridge.has.SPC7110) cpu.coprocessors.append(&spc7110);
   if(cartridge.has.MSU1) cpu.coprocessors.append(&msu1);
 
-  scheduler.reset();
+  scheduler.reset(cpu.thread);
   peripherals.reset();
 }
 

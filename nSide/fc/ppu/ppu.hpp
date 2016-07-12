@@ -170,7 +170,7 @@ privileged:
 
   friend class Zapper;
   friend class BeamGun;
-  friend class Scheduler;
+  friend class System;
 };
 
 extern PPU ppu;

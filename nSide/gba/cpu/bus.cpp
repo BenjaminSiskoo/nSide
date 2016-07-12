@@ -32,8 +32,10 @@ auto CPU::_read(uint mode, uint32 addr) -> uint32 {
     prefetchStep(1);
   }
 
-  if(cheat.enable()) {
-    if(auto result = cheat.find(addr, word, mode)) return result();
+  if(cheat) {
+    if(mode & Byte) if(auto result = cheat.find<1>(addr, word)) return result();
+    if(mode & Half) if(auto result = cheat.find<2>(addr, word)) return result();
+    if(mode & Word) if(auto result = cheat.find<4>(addr, word)) return result();
   }
 
   return word;

@@ -13,7 +13,7 @@ namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.10";
-  static const string FromVersion = "100.01";
+  static const string FromVersion = "100.03";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string_vector Contributors = {
@@ -57,6 +57,13 @@ namespace Emulator {
 
   //incremented only when serialization format changes
   static const string SerializerVersion = "009.10(100)";
+
+  namespace Constants {
+    namespace Colorburst {
+      static constexpr double NTSC = 315.0 / 88.0 * 1'000'000.0;
+      static constexpr double PAL  = 283.75 * 15'625.0 + 25.0;
+    }
+  }
 }
 
 #include "interface.hpp"
