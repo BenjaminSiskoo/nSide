@@ -1,6 +1,6 @@
 #pragma once
 
-//ZiLOG Z80
+//Zilog Z80
 
 namespace Processor {
 

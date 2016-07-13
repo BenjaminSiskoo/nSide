@@ -20,6 +20,7 @@ Settings settings;
 
 #include "heuristics/famicom.cpp"
 #include "heuristics/super-famicom.cpp"
+#include "heuristics/mega-drive.cpp"
 #include "heuristics/game-boy.cpp"
 #include "heuristics/game-boy-advance.cpp"
 #include "heuristics/wonderswan.cpp"
@@ -32,6 +33,7 @@ Settings settings;
 #include "core/vs-system.cpp"
 #include "core/playchoice-10.cpp"
 #include "core/super-famicom.cpp"
+#include "core/mega-drive.cpp"
 #include "core/game-boy.cpp"
 #include "core/game-boy-color.cpp"
 #include "core/game-boy-advance.cpp"
@@ -68,7 +70,7 @@ auto nall::main(string_vector args) -> void {
     if(string source = BrowserDialog()
     .setTitle("Load ROM Image")
     .setPath(settings["cart-pal/Path"].text())
-    .setFilters("ROM Files|*.fc:*.vs:*.pc10:*.nes:*.sfc:*.smc:*.gb:*.gbc:*.gba:*.ws:*.wsc:*.bs:*.st:*.zip")
+    .setFilters("ROM Files|*.fc:*.vs:*.pc10:*.nes:*.sfc:*.smc:*.md:*.gb:*.gbc:*.gba:*.ws:*.wsc:*.bs:*.st:*.zip")
     .openFile()) {
       if(string target = cart_pal.import(source)) {
         settings["cart-pal/Path"].setValue(Location::path(source));

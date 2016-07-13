@@ -26,7 +26,7 @@ struct R65816 {
   alwaysinline auto idle2() -> void;
   alwaysinline auto idle4(uint16 x, uint16 y) -> void;
   alwaysinline auto idle6(uint16 addr) -> void;
-  auto interrupt() -> void;
+  virtual auto interrupt() -> void;
 
   //algorithms.cpp
   auto op_adc_b();

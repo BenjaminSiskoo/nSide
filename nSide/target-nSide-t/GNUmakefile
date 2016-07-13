@@ -11,6 +11,7 @@ else ifeq ($(profile),accuracy)
 else ifeq ($(profile),balanced)
   include sfc-balanced/GNUmakefile
 endif
+include md/GNUmakefile
 include gb/GNUmakefile
 include gba/GNUmakefile
 include ws/GNUmakefile

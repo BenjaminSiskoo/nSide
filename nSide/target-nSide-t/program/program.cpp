@@ -5,6 +5,7 @@
 #else
 #include <sfc/interface/interface.hpp>
 #endif
+#include <md/interface/interface.hpp>
 #include <gb/interface/interface.hpp>
 #include <gba/interface/interface.hpp>
 #include <ws/interface/interface.hpp>
@@ -20,6 +21,7 @@ Program::Program(string_vector args) {
 
   emulators.append(new Famicom::Interface);
   emulators.append(new SuperFamicom::Interface);
+//emulators.append(new MegaDrive::Interface);
   emulators.append(new GameBoy::Interface);
   emulators.append(new GameBoyAdvance::Interface);
   emulators.append(new WonderSwan::Interface);

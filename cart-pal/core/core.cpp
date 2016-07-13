@@ -3,6 +3,7 @@ CartPal::CartPal() {
   database.vsSystem = BML::unserialize(string::read(locate("Database/VS. System.bml")));
   database.playchoice10 = BML::unserialize(string::read(locate("Database/PlayChoice-10.bml")));
   database.superFamicom = BML::unserialize(string::read(locate("Database/Super Famicom.bml")));
+  database.megaDrive = BML::unserialize(string::read(locate("Database/Mega Drive.bml")));
   database.gameBoy = BML::unserialize(string::read(locate("Database/Game Boy.bml")));
   database.gameBoyColor = BML::unserialize(string::read(locate("Database/Game Boy Color.bml")));
   database.gameBoyAdvance = BML::unserialize(string::read(locate("Database/Game Boy Advance.bml")));
@@ -35,6 +36,7 @@ auto CartPal::manifest(string location) -> string {
   if(type == ".vs") return vsSystemManifest(location);
   if(type == ".pc10") return playchoice10Manifest(location);
   if(type == ".sfc") return superFamicomManifest(location);
+  if(type == ".md") return megaDriveManifest(location);
   if(type == ".gb") return gameBoyManifest(location);
   if(type == ".gbc") return gameBoyColorManifest(location);
   if(type == ".gba") return gameBoyAdvanceManifest(location);
@@ -72,6 +74,7 @@ auto CartPal::import(string location) -> string {
   if(type == ".vs") return vsSystemImport(buffer, location);
   if(type == ".pc10") return playchoice10Import(buffer, location);
   if(type == ".sfc" || type == ".smc") return superFamicomImport(buffer, location);
+  if(type == ".md") return megaDriveImport(buffer, location);
   if(type == ".gb") return gameBoyImport(buffer, location);
   if(type == ".gbc") return gameBoyColorImport(buffer, location);
   if(type == ".gba") return gameBoyAdvanceImport(buffer, location);
