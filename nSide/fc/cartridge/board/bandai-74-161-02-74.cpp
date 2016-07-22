@@ -5,7 +5,7 @@ struct Bandai74_161_02_74 : Board {
   }
 
   auto main() -> void {
-    chrAddressBusTest(ppu.r.chrAddressBus);
+    chrAddressBusTest(ppu.io.chrAddressBus);
     tick();
   }
 

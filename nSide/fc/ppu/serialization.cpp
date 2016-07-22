@@ -8,36 +8,36 @@ auto PPU::serialize(serializer& s) -> void {
   Thread::serialize(s);
   PPUcounter::serialize(s);
 
-  s.integer(r.chrAddressBus);
-  s.integer(r.mdr);
-  s.array(r.mdrDecay);
+  s.integer(io.chrAddressBus);
+  s.integer(io.mdr);
+  s.array(io.mdrDecay);
 
-  s.integer(r.busData);
+  s.integer(io.busData);
 
-  s.integer(r.v.value);
-  s.integer(r.t.value);
+  s.integer(io.v.value);
+  s.integer(io.t.value);
 
-  s.integer(r.nmiHold);
-  s.integer(r.nmiFlag);
+  s.integer(io.nmiHold);
+  s.integer(io.nmiFlag);
 
-  s.integer(r.vramIncrement);
-  s.integer(r.objAddress);
-  s.integer(r.bgAddress);
-  s.integer(r.spriteHeight);
-  s.integer(r.masterSelect);
-  s.integer(r.nmiEnable);
+  s.integer(io.vramIncrement);
+  s.integer(io.objAddress);
+  s.integer(io.bgAddress);
+  s.integer(io.spriteHeight);
+  s.integer(io.masterSelect);
+  s.integer(io.nmiEnable);
 
-  s.integer(r.grayscale);
-  s.integer(r.bgEdgeEnable);
-  s.integer(r.objEdgeEnable);
-  s.integer(r.bgEnable);
-  s.integer(r.objEnable);
-  s.integer(r.emphasis);
+  s.integer(io.grayscale);
+  s.integer(io.bgEdgeEnable);
+  s.integer(io.objEdgeEnable);
+  s.integer(io.bgEnable);
+  s.integer(io.objEnable);
+  s.integer(io.emphasis);
 
-  s.integer(r.spriteOverflow);
-  s.integer(r.spriteZeroHit);
+  s.integer(io.spriteOverflow);
+  s.integer(io.spriteZeroHit);
 
-  s.integer(r.oamAddress);
+  s.integer(io.oamAddress);
 
   s.integer(l.nametable);
   s.integer(l.attribute);

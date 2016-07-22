@@ -43,7 +43,8 @@ struct PPU : Thread, PPUcounter {
   alwaysinline auto originX() -> uint;
   alwaysinline auto originY() -> uint;
 
-  auto ext() -> uint4;
+  auto extIn() -> uint4;
+  auto extOut() -> uint4;
 
   //mmio.cpp
   auto readCIRAM(uint12 addr) -> uint8;
@@ -85,7 +86,7 @@ struct PPU : Thread, PPUcounter {
   static const uint9 RP2C04_0003[16 * 4];
   static const uint9 RP2C04_0004[16 * 4];
 
-  struct Registers {
+  struct IO {
     uint14 chrAddressBus;
     uint8 mdr;
     uint mdrDecay[8];
@@ -132,7 +133,7 @@ struct PPU : Thread, PPUcounter {
 
     //$2003  OAMADDR
     uint8 oamAddress;
-  } r;
+  } io;
 
   struct OAM {
     //serialization.cpp
@@ -163,6 +164,8 @@ struct PPU : Thread, PPUcounter {
 
 privileged:
   uint32* output = nullptr;
+
+  uint4 _extOut;
 
   auto scanline() -> void;
   auto frame() -> void;

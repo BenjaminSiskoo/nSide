@@ -1,15 +1,15 @@
 auto PPU::enable() const -> bool {
-  return r.bgEnable || r.objEnable;
+  return io.bgEnable || io.objEnable;
 }
 
 auto PPU::loadCHR(uint14 addr) -> uint8 {
-  return enable() ? cartridge.readCHR(r.chrAddressBus = addr) : (uint8)0x00;
+  return enable() ? cartridge.readCHR(io.chrAddressBus = addr) : (uint8)0x00;
 }
 
 auto PPU::renderPixel() -> void {
   if(vcounter() >= 240) return;
   uint x = hcounter() - 1;
-  uint mask = 0x8000 >> (r.v.fineX + (x & 7));
+  uint mask = 0x8000 >> (io.v.fineX + (x & 7));
   uint palette = 0;
   uint objectPalette = 0;
   bool objectPriority = 0;
@@ -22,12 +22,12 @@ auto PPU::renderPixel() -> void {
     palette |= (attr & 3) << 2;
   }
 
-  if(!r.bgEnable) palette = 0;
-  if(!r.bgEdgeEnable && x < 8) palette = 0;
+  if(!io.bgEnable) palette = 0;
+  if(!io.bgEdgeEnable && x < 8) palette = 0;
 
-  if(r.objEnable)
+  if(io.objEnable)
   for(int sprite = 7; sprite >= 0; sprite--) {
-    if(!r.objEdgeEnable && x < 8) continue;
+    if(!io.objEdgeEnable && x < 8) continue;
     if(l.oam[sprite].id == 64) continue;
 
     uint spriteX = x - l.oam[sprite].x;
@@ -40,7 +40,7 @@ auto PPU::renderPixel() -> void {
     spritePalette |= l.oam[sprite].tiledataHi & mask ? 2 : 0;
     if(spritePalette == 0) continue;
 
-    if(l.oam[sprite].id == 0 && palette && x != 255) r.spriteZeroHit = 1;
+    if(l.oam[sprite].id == 0 && palette && x != 255) io.spriteZeroHit = 1;
     spritePalette |= (l.oam[sprite].attr & 3) << 2;
 
     objectPriority = l.oam[sprite].attr & 0x20;
@@ -52,15 +52,17 @@ auto PPU::renderPixel() -> void {
   }
 
   if(version >= Version::RP2C07 && (x < 2 || x >= 254 || vcounter() <= 0)) {
-    output[vcounter() * 256 + x] = (r.emphasis << 6) | 0x1d;
+    output[vcounter() * 256 + x] = (io.emphasis << 6) | 0x1d;
     return;
   } else if(!enable()) {
-    if((r.v.addressHi & 0x3f) != 0x3f) palette = ext();
-    else palette = r.v.addressLo;
+    if((io.v.addressHi & 0x3f) != 0x3f) palette = extIn();
+    else palette = io.v.addressLo;
+    _extOut = io.v.addressLo;
   } else {
-    if(!palette) palette = ext();
+    if(!palette) palette = extIn();
+    _extOut = 0;
   }
-  output[vcounter() * 256 + x] = r.emphasis << 6 | readCGRAM(palette);
+  output[vcounter() * 256 + x] = io.emphasis << 6 | readCGRAM(palette);
 }
 
 auto PPU::renderSprite() -> void {
@@ -71,9 +73,9 @@ auto PPU::renderSprite() -> void {
   int ly = vcounter() == lastScanline ? -1 : (int)vcounter();
   uint y = ly - oam[n * 4 + 0];
 
-  if(y >= r.spriteHeight) return;
+  if(y >= io.spriteHeight) return;
   if(l.oamCounter == 8) {
-    r.spriteOverflow = 1;
+    io.spriteOverflow = 1;
     return;
   }
 
@@ -100,22 +102,22 @@ auto PPU::renderScanline() -> void {
 
   //  1-256
   for(uint tile : range(32)) {
-    uint nametable = loadCHR(0x2000 | (uint12)r.v.address);
-    uint tileaddr = r.bgAddress | nametable << 4 | r.v.fineY;
+    uint nametable = loadCHR(0x2000 | (uint12)io.v.address);
+    uint tileaddr = io.bgAddress | nametable << 4 | io.v.fineY;
     renderPixel();
     step(1);
 
     renderPixel();
     step(1);
 
-    uint attribute = loadCHR(0x23c0 | r.v.nametable << 10 | (r.v.tileY >> 2) << 3 | r.v.tileX >> 2);
-    if(r.v.tileY & 2) attribute >>= 4;
-    if(r.v.tileX & 2) attribute >>= 2;
+    uint attribute = loadCHR(0x23c0 | io.v.nametable << 10 | (io.v.tileY >> 2) << 3 | io.v.tileX >> 2);
+    if(io.v.tileY & 2) attribute >>= 4;
+    if(io.v.tileX & 2) attribute >>= 2;
     renderPixel();
     step(1);
 
-    if(enable() && ++r.v.tileX == 0) r.v.nametableX ^= 1;
-    if(enable() && tile == 31 && ++r.v.fineY == 0 && ++r.v.tileY == 30) r.v.nametableY ^= 1, r.v.tileY = 0;
+    if(enable() && ++io.v.tileX == 0) io.v.nametableX ^= 1;
+    if(enable() && tile == 31 && ++io.v.fineY == 0 && ++io.v.tileY == 30) io.v.nametableY ^= 1, io.v.tileY = 0;
     renderPixel();
     renderSprite();
     step(1);
@@ -145,24 +147,24 @@ auto PPU::renderScanline() -> void {
 
   //257-320
   for(uint sprite : range(8)) {
-    uint nametable = loadCHR(0x2000 | (uint12)r.v.address);
+    uint nametable = loadCHR(0x2000 | (uint12)io.v.address);
     step(1);
 
     if(enable() && sprite == 0) {
       //258
-      r.v.nametableX = r.t.nametableX;
-      r.v.tileX = r.t.tileX;
+      io.v.nametableX = io.t.nametableX;
+      io.v.tileX = io.t.tileX;
     }
     step(1);
 
-    uint attribute = loadCHR(0x23c0 | r.v.nametable << 10 | (r.v.tileY >> 2) << 3 | r.v.tileX >> 2);
-    uint tileaddr = r.spriteHeight == 8
-    ? r.objAddress + l.oam[sprite].tile * 16
+    uint attribute = loadCHR(0x23c0 | io.v.nametable << 10 | (io.v.tileY >> 2) << 3 | io.v.tileX >> 2);
+    uint tileaddr = io.spriteHeight == 8
+    ? io.objAddress + l.oam[sprite].tile * 16
     : (l.oam[sprite].tile & ~1) * 16 + (l.oam[sprite].tile & 1) * 0x1000;
     step(2);
 
-    uint spriteY = (vcounter() - l.oam[sprite].y) & (r.spriteHeight - 1);
-    if(l.oam[sprite].attr & 0x80) spriteY ^= r.spriteHeight - 1;
+    uint spriteY = (vcounter() - l.oam[sprite].y) & (io.spriteHeight - 1);
+    if(l.oam[sprite].attr & 0x80) spriteY ^= io.spriteHeight - 1;
     tileaddr += spriteY + (spriteY & 8);
 
     l.oam[sprite].tiledataLo = loadCHR(tileaddr + 0);
@@ -173,22 +175,22 @@ auto PPU::renderScanline() -> void {
 
     if(enable() && sprite == 6 && vcounter() == lastScanline) {
       //305
-      r.v.address = r.t.address;
+      io.v.address = io.t.address;
     }
   }
 
   //321-336
   for(uint tile : range(2)) {
-    uint nametable = loadCHR(0x2000 | (uint12)r.v.address);
-    uint tileaddr = r.bgAddress | nametable << 4 | r.v.fineY;
+    uint nametable = loadCHR(0x2000 | (uint12)io.v.address);
+    uint tileaddr = io.bgAddress | nametable << 4 | io.v.fineY;
     step(2);
 
-    uint attribute = loadCHR(0x23c0 | r.v.nametable << 10 | (r.v.tileY >> 2) << 3 | r.v.tileX >> 2);
-    if(r.v.tileY & 2) attribute >>= 4;
-    if(r.v.tileX & 2) attribute >>= 2;
+    uint attribute = loadCHR(0x23c0 | io.v.nametable << 10 | (io.v.tileY >> 2) << 3 | io.v.tileX >> 2);
+    if(io.v.tileY & 2) attribute >>= 4;
+    if(io.v.tileX & 2) attribute >>= 2;
     step(1);
 
-    if(enable() && ++r.v.tileX == 0) r.v.nametableX ^= 1;
+    if(enable() && ++io.v.tileX == 0) io.v.nametableX ^= 1;
     step(1);
 
     uint tiledataLo = loadCHR(tileaddr + 0);
@@ -204,11 +206,11 @@ auto PPU::renderScanline() -> void {
   }
 
   //337-338
-  loadCHR(0x2000 | (uint12)r.v.address);
+  loadCHR(0x2000 | (uint12)io.v.address);
   step(2);
 
   //339
-  loadCHR(0x2000 | (uint12)r.v.address);
+  loadCHR(0x2000 | (uint12)io.v.address);
   step(1);
 
   //340

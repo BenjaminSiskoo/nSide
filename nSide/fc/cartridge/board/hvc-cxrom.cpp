@@ -34,7 +34,7 @@ struct HVC_CxROM : Board {
       return ppu.readCIRAM(addr);
     }
     if(settings.security) {
-      if(chrBank != settings.pass) return ppu.r.mdr;
+      if(chrBank != settings.pass) return ppu.io.mdr;
     }
     switch(revision) {
     case Revision::CNROM: {

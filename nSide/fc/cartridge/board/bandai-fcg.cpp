@@ -32,7 +32,7 @@ struct BandaiFCG : Board {
       if(revision != Revision::JUMP2)
         return read(prgrom, fcg.prgAddress(addr));
       else
-        return read(prgrom, fcg.prgAddress(addr) | ((fcg.chrBank[(ppu.r.chrAddressBus >> 10) & 3] & 1) << 18));
+        return read(prgrom, fcg.prgAddress(addr) | ((fcg.chrBank[(ppu.io.chrAddressBus >> 10) & 3] & 1) << 18));
     }
     return cpu.mdr();
   }

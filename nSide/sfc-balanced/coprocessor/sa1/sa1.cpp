@@ -30,6 +30,7 @@ auto SA1::main() -> void {
   instruction();
 }
 
+//override R65816::interrupt() to support SA-1 vector location IO registers
 auto SA1::interrupt() -> void {
   read(r.pc.d);
   idle();
@@ -38,9 +39,9 @@ auto SA1::interrupt() -> void {
   writeSP(r.pc.l);
   writeSP(r.e ? (r.p & ~0x10) : r.p);
   r.pc.w = r.vector;
+  r.pc.b = 0x00;
   r.p.i = 1;
   r.p.d = 0;
-  r.pc.b = 0x00;
 }
 
 auto SA1::lastCycle() -> void {

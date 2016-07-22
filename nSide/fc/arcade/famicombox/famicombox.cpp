@@ -347,7 +347,7 @@ auto FamicomBox::chrRead(uint14 addr) -> uint8 {
     }
     break;
   }
-  return ppu.r.mdr;
+  return ppu.io.mdr;
 }
 
 auto FamicomBox::chrWrite(uint14 addr, uint8 data) -> void {

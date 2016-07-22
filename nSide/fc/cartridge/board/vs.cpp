@@ -93,7 +93,7 @@ struct VS : Board {
     if(addr & 0x2000) return ppu.readCIRAM(addr);
     switch(chipType) {
     case ChipType::None:
-      if(chrrom.size() < bank << 13) return ppu.r.mdr;
+      if(chrrom.size() < bank << 13) return ppu.io.mdr;
       return read(chrrom, ((bank << 13) + (addr & 0x1fff)));
     case ChipType::_74HC32:
       return Board::readCHR(addr);

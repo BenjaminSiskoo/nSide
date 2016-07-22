@@ -20,10 +20,10 @@ struct R6502 {
   virtual auto readDisassembler(uint16 addr) -> uint8 { return 0; }
 
   //r6502.cpp
+  auto interrupt() -> void;
   auto mdr() const -> uint8;
   auto power() -> void;
   auto reset() -> void;
-  auto interrupt() -> void;
 
   //algorithms.cpp
   auto fp_asl();

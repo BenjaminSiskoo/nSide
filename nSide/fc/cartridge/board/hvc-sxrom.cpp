@@ -42,7 +42,7 @@ struct HVC_SxROM : Board {
   auto readPRG(uint addr) -> uint8 {
     if((addr & 0xe000) == 0x6000) {
       if(revision == Revision::SNROM) {
-        if((mmc1.chrAddress(ppu.r.chrAddressBus) >> 16) & 1) return cpu.mdr();
+        if((mmc1.chrAddress(ppu.io.chrAddressBus) >> 16) & 1) return cpu.mdr();
       }
       if(mmc1.ramDisable) return cpu.mdr();
       if(prgram.size() > 0) return read(prgram, ramAddress(addr));
@@ -53,7 +53,7 @@ struct HVC_SxROM : Board {
       default:
         addr = mmc1.prgAddress(addr);
         if(revision == Revision::SUROM || revision == Revision::SXROM) {
-          addr |= ((mmc1.chrAddress(ppu.r.chrAddressBus) >> 16) & 1) << 18;
+          addr |= ((mmc1.chrAddress(ppu.io.chrAddressBus) >> 16) & 1) << 18;
         }
         break;
       case Revision::SEROM:

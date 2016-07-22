@@ -21,22 +21,22 @@ auto PPU::step(uint clocks) -> void {
   const uint pre = system.region() == System::Region::NTSC ? 261 : 311;
 
   while(clocks--) {
-    if(vcounter() == vbl - 1 && hcounter() == 340) r.nmiHold = 1;
+    if(vcounter() == vbl - 1 && hcounter() == 340) io.nmiHold = 1;
 
-    if(vcounter() == vbl && hcounter() ==   0) r.chrAddressBus = (uint12)r.v.address;
-    if(vcounter() == vbl && hcounter() ==   1) r.nmiFlag = r.nmiHold;
-    if(vcounter() == vbl && hcounter() ==   2) cpu.nmiLine(r.nmiEnable && r.nmiFlag);
+    if(vcounter() == vbl && hcounter() ==   0) io.chrAddressBus = (uint12)io.v.address;
+    if(vcounter() == vbl && hcounter() ==   1) io.nmiFlag = io.nmiHold;
+    if(vcounter() == vbl && hcounter() ==   2) cpu.nmiLine(io.nmiEnable && io.nmiFlag);
 
-    if(vcounter() == pre - 1 && hcounter() == 340) r.nmiHold = 0;
-    if(vcounter() == pre     && hcounter() ==   1) r.nmiFlag = r.nmiHold;
-    if(vcounter() == pre     && hcounter() ==   1) r.spriteZeroHit = 0, r.spriteOverflow = 0;
-    if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(r.nmiEnable && r.nmiFlag);
+    if(vcounter() == pre - 1 && hcounter() == 340) io.nmiHold = 0;
+    if(vcounter() == pre     && hcounter() ==   1) io.nmiFlag = io.nmiHold;
+    if(vcounter() == pre     && hcounter() ==   1) io.spriteZeroHit = 0, io.spriteOverflow = 0;
+    if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(io.nmiEnable && io.nmiFlag);
 
     clock += system.region() == System::Region::NTSC ? 4 : 5;
     synchronizeCPU();
 
     for(uint i = 0; i < 8; i++) {
-      if(--r.mdrDecay[i] == 0) r.mdr &= ~(1 << i);
+      if(--io.mdrDecay[i] == 0) io.mdr &= ~(1 << i);
     }
 
     tick(1);
@@ -94,13 +94,13 @@ auto PPU::load(Markup::Node node) -> bool {
 }
 
 auto PPU::power() -> void {
-  r.v.address = 0x0000;
+  io.v.address = 0x0000;
 
-  r.nmiHold = 0;
-  r.nmiFlag = 1;
+  io.nmiHold = 0;
+  io.nmiFlag = 1;
 
   //$2003  OAMADDR
-  r.oamAddress = 0x00;
+  io.oamAddress = 0x00;
 
   for(auto& n : ciram) n = 0xff;
 }
@@ -114,34 +114,36 @@ auto PPU::reset() -> void {
   function<auto (uint16, uint8) -> void> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "2000-3fff");
 
-  r.mdr = 0x00;
-  r.busData = 0x00;
-  r.v.latch = 0;
-  r.v.fineX = 0;
-  r.t.tileX = 0;
-  r.t.fineY = 0;
-  r.t.tileY = 0;
-  r.t.address = 0x0000;
+  io.mdr = 0x00;
+  io.busData = 0x00;
+  io.v.latch = 0;
+  io.v.fineX = 0;
+  io.t.tileX = 0;
+  io.t.fineY = 0;
+  io.t.tileY = 0;
+  io.t.address = 0x0000;
 
   //$2000  PPUCTRL
-  r.nmiEnable = false;
-  r.masterSelect = 0;
-  r.spriteHeight = 8;
-  r.bgAddress = 0x0000;
-  r.objAddress = 0x0000;
-  r.vramIncrement = 1;
+  io.nmiEnable = false;
+  io.masterSelect = 0;
+  io.spriteHeight = 8;
+  io.bgAddress = 0x0000;
+  io.objAddress = 0x0000;
+  io.vramIncrement = 1;
 
   //$2001  PPUMASK
-  r.emphasis = 0;
-  r.objEnable = false;
-  r.bgEnable = false;
-  r.objEdgeEnable = false;
-  r.bgEdgeEnable = false;
-  r.grayscale = false;
+  io.emphasis = 0;
+  io.objEnable = false;
+  io.bgEnable = false;
+  io.objEdgeEnable = false;
+  io.bgEdgeEnable = false;
+  io.grayscale = false;
 
   //$2002  PPUSTATUS
-  r.spriteZeroHit = 0;
-  r.spriteOverflow = 0;
+  io.spriteZeroHit = 0;
+  io.spriteOverflow = 0;
+
+  _extOut = 0;
 
   for(auto& n : cgram) n = 0;
   for(auto& n : oam) n = 0;
@@ -182,8 +184,14 @@ auto PPU::refresh() -> void {
 
 //
 
-auto PPU::ext() -> uint4 {
-  return 0; //EXT pins are tied to ground
+auto PPU::extIn() -> uint4 {
+  if( io.masterSelect) return 0;  //always 0 in slave mode
+  if(!io.masterSelect) return 0;  //EXT pins are tied to ground
+}
+
+auto PPU::extOut() -> uint4 {
+  if( io.masterSelect) return _extOut;
+  if(!io.masterSelect) return 0;  //does not output anything in master mode
 }
 
 // Arcade RGB palettes

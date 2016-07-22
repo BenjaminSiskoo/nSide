@@ -94,7 +94,7 @@ auto Board::tick() -> void {
 auto Board::readCHR(uint addr) -> uint8 {
   if(chrram.size()) return read(chrram, addr);
   if(chrrom.size()) return read(chrrom, addr);
-  return ppu.r.mdr;
+  return ppu.io.mdr;
 }
 
 auto Board::writeCHR(uint addr, uint8 data) -> void {
