@@ -21,6 +21,7 @@ auto VausE::main() -> void {
 
   prev = next;
   step(3);
+  synchronize(cpu);
 }
 
 auto VausE::data1() -> bool {

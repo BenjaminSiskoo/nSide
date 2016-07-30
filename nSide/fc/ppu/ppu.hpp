@@ -32,7 +32,6 @@ struct PPU : Thread, PPUcounter {
   ~PPU();
 
   alwaysinline auto step(uint clocks) -> void;
-  alwaysinline auto synchronizeCPU() -> void;
 
   static auto Enter() -> void;
   auto main() -> void;

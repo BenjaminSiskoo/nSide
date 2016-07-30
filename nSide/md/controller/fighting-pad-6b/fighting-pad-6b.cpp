@@ -11,7 +11,7 @@ auto FightingPad6B::main() -> void {
   step(1);
 }
 
-auto FightingPad6B::data() -> uint7 {
+auto FightingPad6B::read() -> uint7 {
   bool up   = interface->inputPoll(port, ID::Device::FightingPad6B, Up);
   bool down = interface->inputPoll(port, ID::Device::FightingPad6B, Down);
   if(th && counter != 3) {
@@ -80,7 +80,7 @@ auto FightingPad6B::data() -> uint7 {
   unreachable;
 }
 
-auto ControlPad::write(uint7 data) -> void {
+auto FightingPad6B::write(uint7 data) -> void {
   if(th && !data.bit(6)) counter++;
   th = data.bit(6);
   timeout = 8192;

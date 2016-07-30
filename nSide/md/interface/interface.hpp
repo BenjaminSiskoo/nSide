@@ -12,6 +12,7 @@ struct ID {
   };};
 
   struct Device { enum : uint {
+    None,
     ControlPad,
     FightingPad6B,
   };};
@@ -47,6 +48,8 @@ struct Interface : Emulator::Interface {
 };
 
 struct Settings {
+  uint controllerPort1 = 0;
+  uint controllerPort2 = 0;
 };
 
 extern Interface* interface;

@@ -9,7 +9,7 @@ static auto dsp_state_load(unsigned char** in, void* out, size_t size) -> void {
 }
 
 auto DSP::serialize(serializer &s) -> void {
-  Thread::serialize(s);
+  s.integer(clock);
   s.array(samplebuffer);
 
   unsigned char state[SPC_DSP::state_size];

@@ -21,6 +21,7 @@ auto Vaus::main() -> void {
 
   prev = next;
   step(3);
+  synchronize(cpu);
 }
 
 auto Vaus::data() -> uint3 {

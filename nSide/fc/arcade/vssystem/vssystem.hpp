@@ -1,4 +1,4 @@
-struct VSSystem : Cothread {
+struct VSSystem : Thread {
   enum : uint {
     Button1, Button2, Button3, Button4, ServiceButton, Coin1, Coin2,
   };

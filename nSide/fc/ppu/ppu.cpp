@@ -32,8 +32,8 @@ auto PPU::step(uint clocks) -> void {
     if(vcounter() == pre     && hcounter() ==   1) io.spriteZeroHit = 0, io.spriteOverflow = 0;
     if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(io.nmiEnable && io.nmiFlag);
 
-    clock += system.region() == System::Region::NTSC ? 4 : 5;
-    synchronizeCPU();
+    Thread::step(system.region() == System::Region::NTSC ? 4 : 5);
+    synchronize(cpu);
 
     for(uint i = 0; i < 8; i++) {
       if(--io.mdrDecay[i] == 0) io.mdr &= ~(1 << i);
@@ -41,10 +41,6 @@ auto PPU::step(uint clocks) -> void {
 
     tick(1);
   }
-}
-
-auto PPU::synchronizeCPU() -> void {
-  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
 }
 
 auto PPU::Enter() -> void {

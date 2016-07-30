@@ -13,9 +13,19 @@
 
 namespace MegaDrive {
   using File = Emulator::File;
-  using Thread = Emulator::Thread;
   using Scheduler = Emulator::Scheduler;
   extern Scheduler scheduler;
+
+  struct Thread : Emulator::Thread {
+    auto create(auto (*entrypoint)() -> void, double frequency) -> void {
+      Emulator::Thread::create(entrypoint, frequency);
+      scheduler.append(*this);
+    }
+
+    inline auto synchronize(Thread& thread) -> void {
+      if(clock() >= thread.clock()) scheduler.resume(thread);
+    }
+  };
 
   #include <md/cpu/cpu.hpp>
   #include <md/apu/apu.hpp>
@@ -23,6 +33,7 @@ namespace MegaDrive {
   #include <md/psg/psg.hpp>
   #include <md/ym2612/ym2612.hpp>
 
+  #include <md/controller/controller.hpp>
   #include <md/system/system.hpp>
   #include <md/cartridge/cartridge.hpp>
 }

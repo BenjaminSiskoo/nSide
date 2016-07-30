@@ -18,6 +18,7 @@ auto VSSystem::main() -> void {
   //  //ppu.reset();
   //}
   step(1);
+  synchronize(cpu);
 }
 
 auto VSSystem::init() -> void {

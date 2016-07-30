@@ -1,20 +1,11 @@
 auto CPU::step(uint clocks) -> void {
-  apu.clock -= clocks;
-  if(!scheduler.synchronizing()) synchronizeAPU();
+  Thread::step(clocks);
+  for(auto peripheral : peripherals) synchronize(*peripheral);
 
-  ppu.clock -= clocks;
-  if(!scheduler.synchronizing()) synchronizePPU();
-
-  cartridge.clock -= clocks;
-  if(!scheduler.synchronizing()) synchronizeCartridge();
-
-  if(system.vs()) vssystem.clock -= clocks;
-  if(!scheduler.synchronizing()) synchronizeCoprocessors();
-
-  for(auto peripheral : peripherals) {
-    peripheral->clock -= clocks * (uint64)peripheral->frequency;
-  }
-  synchronizePeripherals();
+  synchronize(apu);
+  synchronize(ppu);
+  synchronize(cartridge);
+  for(auto coprocessor : coprocessors) synchronize(*coprocessor);
 }
 
 auto CPU::lastCycle() -> void {

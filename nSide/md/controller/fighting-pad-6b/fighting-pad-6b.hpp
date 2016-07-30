@@ -5,6 +5,7 @@ struct FightingPad6B : Controller {
 
   FightingPad6B(bool port);
 
+  auto main() -> void;
   auto read() -> uint7;
   auto write(uint7 data) -> void;
 

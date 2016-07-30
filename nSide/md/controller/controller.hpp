@@ -15,7 +15,7 @@
 //  8:  gnd
 //  9:  tr     $a10003.d5   $a10005.d5
 
-struct Controller : Cothread {
+struct Controller : Thread {
   enum : uint { Port1 = 0, Port2 = 1 };
 
   Controller(bool port);

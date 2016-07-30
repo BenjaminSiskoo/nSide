@@ -57,6 +57,7 @@ auto Zapper::main() -> void {
 
   prev = next;
   step(3);
+  synchronize(cpu);
 }
 
 auto Zapper::data() -> uint3 {

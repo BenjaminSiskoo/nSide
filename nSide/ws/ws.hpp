@@ -14,7 +14,6 @@
 
 namespace WonderSwan {
   using File = Emulator::File;
-  using Thread = Emulator::Thread;
   using Scheduler = Emulator::Scheduler;
   using Cheat = Emulator::Cheat;
   extern Scheduler scheduler;
@@ -27,6 +26,21 @@ namespace WonderSwan {
   };
 
   enum : uint { Byte = 1, Word = 2, Long = 4 };
+
+  struct Thread : Emulator::Thread {
+    auto create(auto (*entrypoint)() -> void, double frequency) -> void {
+      Emulator::Thread::create(entrypoint, frequency);
+      scheduler.append(*this);
+    }
+
+    inline auto synchronize(Thread& thread) -> void {
+      if(clock() >= thread.clock()) scheduler.resume(thread);
+    }
+
+    inline auto step(uint clocks) -> void {
+      _clock += clocks;
+    }
+  };
 
   #include <ws/memory/memory.hpp>
   #include <ws/eeprom/eeprom.hpp>

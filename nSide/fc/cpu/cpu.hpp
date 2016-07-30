@@ -1,12 +1,6 @@
 struct CPU : Processor::R6502, Thread {
   CPU();
 
-  auto synchronizeAPU() -> void;
-  auto synchronizePPU() -> void;
-  auto synchronizeCartridge() -> void;
-  auto synchronizeCoprocessors() -> void;
-  auto synchronizePeripherals() -> void;
-
   static auto Enter() -> void;
   auto main() -> void;
   auto load(Markup::Node) -> bool;

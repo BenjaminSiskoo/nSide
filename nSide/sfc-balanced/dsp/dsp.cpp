@@ -14,13 +14,9 @@ auto DSP::step(uint clocks) -> void {
   clock += clocks;
 }
 
-auto DSP::synchronizeSMP() -> void {
-  if(clock >= 0 && !scheduler.synchronizing()) co_switch(smp.thread);
-}
-
 auto DSP::main() -> void {
   spc_dsp.run(1);
-  step(24);
+  step(3 * 8);
 
   int count = spc_dsp.sample_count();
   if(count > 0) {
@@ -52,8 +48,9 @@ auto DSP::power() -> void {
 }
 
 auto DSP::reset() -> void {
+  clock = 0;
   stream = Emulator::audio.createStream(2, 32040.0);
-  Thread::clock = 0;
+
   spc_dsp.soft_reset();
   spc_dsp.set_output(samplebuffer, 8192);
 }

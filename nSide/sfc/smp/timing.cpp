@@ -1,14 +1,13 @@
 auto SMP::step(uint clocks) -> void {
-  clock += clocks * (uint64)cpu.frequency;
-  dsp.clock -= clocks;
-  synchronizeDSP();
+  Thread::step(clocks);
+  synchronize(dsp);
 
   #if defined(DEBUGGER)
-  synchronizeCPU();
+  synchronize(cpu);
   #else
   //forcefully sync S-SMP to S-CPU in case chips are not communicating
   //sync if S-SMP is more than 24 samples ahead of S-CPU
-  if(clock > +(768 * 24 * (int64)24000000)) synchronizeCPU();
+  if(clock() - cpu.clock() > frequency() * scalar() / (768 / 24)) synchronize(cpu);
   #endif
 }
 

@@ -54,6 +54,7 @@ Program::Program(string_vector args) {
   new CheatDatabase;
   new ToolsManager;
   new DipSwitches;
+  new AboutWindow;
 
   presentation->setFocused();
 

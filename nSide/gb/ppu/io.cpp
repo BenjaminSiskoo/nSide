@@ -118,9 +118,9 @@ auto PPU::writeIO(uint16 addr, uint8 data) -> void {
       status.lx = 0;
 
       //restart cothread to begin new frame
-      auto clock = this->clock;
+      auto clock = Thread::clock();
       create(Enter, 4 * 1024 * 1024);
-      this->clock = clock;
+      Thread::setClock(clock);
     }
 
     status.displayEnable = data & 0x80;

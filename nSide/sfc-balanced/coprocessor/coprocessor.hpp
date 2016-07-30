@@ -1,6 +1,3 @@
-struct Coprocessor : Cothread {
-};
-
 #include <sfc-balanced/coprocessor/icd2/icd2.hpp>
 #include <sfc-balanced/coprocessor/mcc/mcc.hpp>
 #include <sfc-balanced/coprocessor/nss/nss.hpp>

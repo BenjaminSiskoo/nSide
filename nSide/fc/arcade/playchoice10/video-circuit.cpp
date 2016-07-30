@@ -162,16 +162,16 @@ auto PlayChoice10::VideoCircuit::update() -> void {
   uint8 x;
   uint8 byte;
   uint color;
-  for(uint tile_y = 1; tile_y < 31; tile_y++) {
-    for(uint tile_x : range(32)) {
+  for(uint tile_y : range(1, 31)) {
+    for(uint tile_x : range(0, 32)) {
       addr = tile_y * 64 + tile_x * 2;
       tile_id = ((vram[addr + 0] & 0xff) << 0) + ((vram[addr + 1] & 0x07) << 8);
-      for(uint pixel_y = 0; pixel_y < 8; pixel_y++) {
+      for(uint pixel_y : range(8)) {
         y = ((tile_y - 1) << 3) + pixel_y;
-        for(uint pixel_x = 0; pixel_x < 8; pixel_x++) {
+        for(uint pixel_x : range(8)) {
           x = (tile_x << 3) + pixel_x;
           color = vram[tile_y * 64 + tile_x * 2 + 1] & 0xf8;
-          for(uint plane = 0; plane < 3; plane++) {
+          for(uint plane : range(3)) {
             byte = chrrom[(plane << 13) + (tile_id << 3) + pixel_y];
             color += ((byte >> (7 - pixel_x)) & 1) << plane;
           }

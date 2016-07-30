@@ -57,6 +57,7 @@ auto BeamGun::main() -> void {
 
   prev = next;
   step(3);
+  synchronize(cpu);
 }
 
 auto BeamGun::data1() -> bool {

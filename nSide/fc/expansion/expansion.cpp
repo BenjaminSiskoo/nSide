@@ -13,10 +13,11 @@ namespace Famicom {
 #include "mouse/mouse.cpp"
 
 Expansion::Expansion() {
-  if(!thread) create(Expansion::Enter, 1);
+  if(!handle()) create(Expansion::Enter, 1);
 }
 
 Expansion::~Expansion() {
+  scheduler.remove(*this);
 }
 
 auto Expansion::Enter() -> void {
@@ -25,6 +26,7 @@ auto Expansion::Enter() -> void {
 
 auto Expansion::main() -> void {
   step(1);
+  synchronize(cpu);
 }
 
 }

@@ -65,11 +65,11 @@ auto APU::main() -> void {
 
 auto APU::tick() -> void {
   switch(system.region()) {
-  case System::Region::NTSC:  clock += 12; break;
-  case System::Region::PAL:   clock += 16; break;
-  case System::Region::Dendy: clock += 15; break;
+  case System::Region::NTSC:  Thread::step(12); break;
+  case System::Region::PAL:   Thread::step(16); break;
+  case System::Region::Dendy: Thread::step(15); break;
   }
-  if(clock >= 0 && !scheduler.synchronizing()) co_switch(cpu.thread);
+  synchronize(cpu);
 }
 
 auto APU::setIRQ() -> void {

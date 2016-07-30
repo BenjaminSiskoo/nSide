@@ -13,21 +13,27 @@ struct Z80 {
   virtual auto stop() -> bool = 0;
   virtual auto debuggerRead(uint16 addr) -> uint8 { return 0; }
 
+  #include "registers.hpp"
+
   auto power() -> void;
   auto reset() -> void;
   auto interrupt(uint16 vector) -> void;
   auto instruction() -> void;
   auto instructionCB() -> void;
   auto instructionED() -> void;
+  auto instructionIndex(RegisterW&) -> void;
+  auto instructionIndexCB(RegisterW&) -> void;
 
   auto serialize(serializer&) -> void;
-
-  #include "registers.hpp"
 
 privileged:
   auto op_xx();
   auto op_cb();
+  auto op_dd();
+  auto op_ddcb();
   auto op_ed();
+  auto op_fd();
+  auto op_fdcb();
 
   //8-bit load commands
   auto op_ld_r_r(uint x, uint y);

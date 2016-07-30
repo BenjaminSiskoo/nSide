@@ -2,7 +2,7 @@ ControlPad::ControlPad(bool port) : Controller(port) {
   th = 1;
 }
 
-auto ControlPad::data() -> uint7 {
+auto ControlPad::read() -> uint7 {
   bool up   = interface->inputPoll(port, ID::Device::ControlPad, Up);
   bool down = interface->inputPoll(port, ID::Device::ControlPad, Down);
   if(th) {

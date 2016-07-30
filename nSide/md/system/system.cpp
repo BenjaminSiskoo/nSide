@@ -4,6 +4,7 @@ namespace MegaDrive {
 
 System system;
 Scheduler scheduler;
+#include "peripherals.cpp"
 
 auto System::run() -> void {
   if(scheduler.enter() == Scheduler::Event::Frame) {
@@ -49,13 +50,14 @@ auto System::reset() -> void {
   Emulator::audio.reset();
   Emulator::audio.setInterface(interface);
 
+  scheduler.reset();
   cartridge.reset();
   cpu.reset();
   apu.reset();
   vdp.reset();
   psg.reset();
   ym2612.reset();
-  scheduler.reset(cpu.thread);
+  scheduler.primary(cpu);
 }
 
 }

@@ -21,7 +21,7 @@
 // 14:  clock 1  $4016 read
 // 15:  +5v
 
-struct Expansion : Cothread {
+struct Expansion : Thread {
   Expansion();
   virtual ~Expansion();
   static auto Enter() -> void;

@@ -36,7 +36,7 @@ auto PlayChoice10::power() -> void {
 }
 
 auto PlayChoice10::reset() -> void {
-  //pc10cpu.reset();
+  pc10cpu.reset();
 }
 
 auto PlayChoice10::setDip(uint16 dip) -> void {
@@ -79,7 +79,7 @@ auto PlayChoice10::write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto PlayChoice10::portRead(uint8 addr) -> uint8 {
+auto PlayChoice10::portRead(uint8 port) -> uint8 {
   uint8 data = 0x00;
   bool channelSelect = false;
   bool enter         = false;
@@ -87,7 +87,7 @@ auto PlayChoice10::portRead(uint8 addr) -> uint8 {
   bool coin2         = false;
   bool service       = false;
   bool coin1         = false;
-  switch(addr & 0x03) {
+  switch(port & 0x03) {
   case 0x00:
     data |= channelSelect      << 0;
     data |= enter              << 1;
@@ -105,9 +105,9 @@ auto PlayChoice10::portRead(uint8 addr) -> uint8 {
   return data;
 }
 
-auto PlayChoice10::portWrite(uint8 addr, uint8 data) -> void {
+auto PlayChoice10::portWrite(uint8 port, uint8 data) -> void {
   data &= 0x01;
-  switch(addr & 0x1f) {
+  switch(port & 0x1f) {
   case 0x00: vramAccess = data; break;
   case 0x01: controls   = data; break;
   case 0x02: ppuOutput  = data; break;
@@ -124,7 +124,7 @@ auto PlayChoice10::portWrite(uint8 addr, uint8 data) -> void {
   case 0x0e: channel    = (channel & 0x7) | (data << 3); break;
   case 0x0f: sramBank   = data; break;
   }
-  switch(addr & 0x13) {
+  switch(port & 0x13) {
   case 0x10: break;
   case 0x11: break;
   case 0x12: break;

@@ -18,6 +18,7 @@ namespace Emulator {
   static const string OriginalAuthor = "byuu";
   static const string_vector Contributors = {
     "Andreas Naive (S-DD1 decompression algorithm)",
+    //"Ange Albertini (higan logo)",  //not used in nSide
     "anomie",
     "AWJ (Super Famicom PPUcounter NTSC/PAL timing)",
     "Bisqwit (Famicom PPU color generation for NTSC systems)",
@@ -56,7 +57,7 @@ namespace Emulator {
   static const string Website = "http://byuu.org/";
 
   //incremented only when serialization format changes
-  static const string SerializerVersion = "009.10(100)";
+  static const string SerializerVersion = "009.10(100.15)";
 
   namespace Constants {
     namespace Colorburst {

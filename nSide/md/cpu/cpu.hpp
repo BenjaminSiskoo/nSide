@@ -11,6 +11,13 @@ struct CPU : Processor::M68K, Thread {
 
   auto read(bool word, uint24 addr) -> uint16 override;
   auto write(bool word, uint24 addr, uint16 data) -> void override;
+
+  vector<Thread*> peripherals;
+
+private:
+  uint8 ram[64 * 1024];
+
+  uint cycles = 0;
 };
 
 extern CPU cpu;

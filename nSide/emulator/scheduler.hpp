@@ -2,6 +2,8 @@
 
 namespace Emulator {
 
+struct Thread;
+
 struct Scheduler {
   enum class Mode : uint {
     Run,
@@ -16,51 +18,77 @@ struct Scheduler {
     Debugger,
   };
 
-  auto reset(cothread_t master_) -> void {
-    master = resume = master_;
-    host = co_active();
+  inline auto synchronizing() const -> bool { return _mode == Mode::SynchronizeSlave; }
+
+  auto reset() -> void {
+    _host = co_active();
+    _threads.reset();
   }
 
-  auto enter(Mode mode_ = Mode::Run) -> Event {
-    mode = mode_;
-    host = co_active();
-    co_switch(resume);
-    return event;
+  auto primary(Thread& thread) -> void {
+    _master = _resume = thread.handle();
   }
 
-  auto exit(Event event_) -> void {
-    event = event_;
-    resume = co_active();
-    co_switch(host);
+  auto append(Thread& thread) -> bool {
+    if(_threads.find(&thread)) return false;
+    thread._clock += _threads.size();  //this bias prioritizes threads appended earlier first
+    return _threads.append(&thread), true;
   }
 
-  auto synchronize(cothread_t thread) -> void {
-    if(thread == master) {
+  auto remove(Thread& thread) -> bool {
+    if(auto offset = _threads.find(&thread)) return _threads.remove(*offset), true;
+    return false;
+  }
+
+  auto enter(Mode mode = Mode::Run) -> Event {
+    _mode = mode;
+    _host = co_active();
+    co_switch(_resume);
+    return _event;
+  }
+
+  inline auto resume(Thread& thread) -> void {
+    if(_mode != Mode::SynchronizeSlave) co_switch(thread.handle());
+  }
+
+  auto exit(Event event) -> void {
+    uint128_t minimum = -1;
+    for(auto thread : _threads) {
+      if(thread->_clock < minimum) minimum = thread->_clock;
+    }
+    for(auto thread : _threads) {
+      thread->_clock -= minimum;
+    }
+
+    _event = event;
+    _resume = co_active();
+    co_switch(_host);
+  }
+
+  inline auto synchronize(Thread& thread) -> void {
+    if(thread.handle() == _master) {
       while(enter(Mode::SynchronizeMaster) != Event::Synchronize);
     } else {
-      resume = thread;
+      _resume = thread.handle();
       while(enter(Mode::SynchronizeSlave) != Event::Synchronize);
     }
   }
 
-  auto synchronize() -> void {
-    if(co_active() == master) {
-      if(mode == Mode::SynchronizeMaster) return exit(Event::Synchronize);
+  inline auto synchronize() -> void {
+    if(co_active() == _master) {
+      if(_mode == Mode::SynchronizeMaster) return exit(Event::Synchronize);
     } else {
-      if(mode == Mode::SynchronizeSlave) return exit(Event::Synchronize);
+      if(_mode == Mode::SynchronizeSlave) return exit(Event::Synchronize);
     }
   }
 
-  auto synchronizing() const -> bool {
-    return mode == Mode::SynchronizeSlave;
-  }
-
 private:
-  cothread_t host = nullptr;    //program thread (used to exit scheduler)
-  cothread_t resume = nullptr;  //resume thread (used to enter scheduler)
-  cothread_t master = nullptr;  //primary thread (used to synchronize components)
-  Mode mode = Mode::Run;
-  Event event = Event::Step;
+  cothread_t _host = nullptr;    //program thread (used to exit scheduler)
+  cothread_t _resume = nullptr;  //resume thread (used to enter scheduler)
+  cothread_t _master = nullptr;  //primary thread (used to synchronize components)
+  Mode _mode = Mode::Run;
+  Event _event = Event::Step;
+  vector<Thread*> _threads;
 };
 
 }

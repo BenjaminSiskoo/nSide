@@ -1,4 +1,4 @@
-struct FamicomBox : Cothread {
+struct FamicomBox : Thread {
   enum class Exception : uint {
     Interrupt6_82Hz = 0,
     AttractionTimer = 1,

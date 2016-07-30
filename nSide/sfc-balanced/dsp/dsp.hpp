@@ -1,12 +1,11 @@
 #include "SPC_DSP.h"
 
-struct DSP : Thread {
+struct DSP {
   shared_pointer<Emulator::Stream> stream;
 
   DSP();
 
   alwaysinline auto step(uint clocks) -> void;
-  alwaysinline auto synchronizeSMP() -> void;
 
   auto mute() -> bool;
   auto read(uint8 addr) -> uint8;
@@ -18,6 +17,8 @@ struct DSP : Thread {
   auto reset() -> void;
 
   auto serialize(serializer&) -> void;
+
+  int64 clock;
 
 private:
   SPC_DSP spc_dsp;

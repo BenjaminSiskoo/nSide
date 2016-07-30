@@ -17,6 +17,7 @@ auto FamicomBox::main() -> void {
     counter = 3 * 0x2000;
   }
   step(1);
+  synchronize(cpu);
 }
 
 auto FamicomBox::init() -> void {

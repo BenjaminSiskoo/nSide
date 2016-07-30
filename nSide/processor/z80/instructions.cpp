@@ -6,8 +6,24 @@ auto Z80::op_cb() {
   instructionCB();
 }
 
+auto Z80::op_dd() {
+  instructionIndex(r.ix);
+}
+
+auto Z80::op_ddcb() {
+  instructionIndexCB(r.ix);
+}
+
 auto Z80::op_ed() {
   instructionED();
+}
+
+auto Z80::op_fd() {
+  instructionIndex(r.iy);
+}
+
+auto Z80::op_fdcb() {
+  instructionIndexCB(r.iy);
 }
 
 //8-bit load commands

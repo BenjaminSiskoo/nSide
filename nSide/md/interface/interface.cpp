@@ -24,6 +24,11 @@ Interface::Interface() {
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", true};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", true};
 
+  { Device device{ID::Device::None, "None"};
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
+  }
+
   { Device device{ID::Device::ControlPad, "Control Pad"};
     device.inputs.append({0, "Up"   });
     device.inputs.append({0, "Down" });

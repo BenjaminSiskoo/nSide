@@ -17,16 +17,12 @@ auto System::run() -> void {
 }
 
 auto System::runToSave() -> void {
-  scheduler.synchronize(cpu.thread);
-  scheduler.synchronize(apu.thread);
-  scheduler.synchronize(ppu.thread);
-  scheduler.synchronize(cartridge.thread);
-  for(auto coprocessor : cpu.coprocessors) {
-    scheduler.synchronize(coprocessor->thread);
-  }
-  for(auto peripheral : cpu.peripherals) {
-    scheduler.synchronize(peripheral->thread);
-  }
+  scheduler.synchronize(cpu);
+  scheduler.synchronize(apu);
+  scheduler.synchronize(ppu);
+  scheduler.synchronize(cartridge);
+  for(auto coprocessor : cpu.coprocessors) scheduler.synchronize(*coprocessor);
+  for(auto peripheral : cpu.peripherals) scheduler.synchronize(*peripheral);
 }
 
 auto System::init() -> void {
@@ -174,7 +170,7 @@ auto System::power() -> void {
   case Revision::FamicomBox:   famicombox.power(); break;
   }
 
-  ppu.reset();
+//ppu.reset();
   reset();
 }
 
@@ -188,12 +184,13 @@ auto System::reset() -> void {
   Emulator::audio.reset();
   Emulator::audio.setInterface(interface);
 
+  scheduler.reset();
   cartridge.reset();
   cpu.reset();
   apu.reset();
-  // Only the NES front-loader's PPU will reset. The Famicom's and NES
-  // top-loader's PPU will not.
-  //ppu.reset();
+  //Only the NES front-loader's PPU will reset. The Famicom's and NES top-loader's PPU will not.
+  //Because of a limitation of the Scheduler, the PPU must reset when the system resets.
+  ppu.reset();
 
   switch(revision()) {
   case Revision::VSSystem:     vssystem.reset(); break;
@@ -207,7 +204,7 @@ auto System::reset() -> void {
   case Revision::FamicomBox:   cpu.coprocessors.append(&famicombox); break;
   }
 
-  scheduler.reset(cpu.thread);
+  scheduler.primary(cpu);
   peripherals.reset();
 }
 

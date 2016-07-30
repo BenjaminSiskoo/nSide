@@ -53,7 +53,7 @@ struct PlayChoice10 {
   bool promClock;
   uint7 promAddress;
 
-  struct PC10CPU : Processor::Z80, Cothread {
+  struct PC10CPU : Processor::Z80, Thread {
     static auto Enter() -> void;
     auto main() -> void;
     auto stop() -> bool;
@@ -67,7 +67,7 @@ struct PlayChoice10 {
     auto portWrite(uint8 port, uint8 data) -> void;
 
     auto cycleEdge() -> void;
-    auto addClocks(uint clocks) -> void;
+    auto step(uint clocks) -> void;
 
     auto debuggerRead(uint16 addr) -> uint8;
 
