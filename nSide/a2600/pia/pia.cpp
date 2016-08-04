@@ -46,6 +46,7 @@ auto PIA::main() -> void {
   } else {
     input.difficulty1 = 0;
   }
+
   step(1);
 }
 

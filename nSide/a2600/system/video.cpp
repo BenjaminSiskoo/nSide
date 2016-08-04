@@ -3,4 +3,5 @@ auto System::configureVideoPalette() -> void {
 }
 
 auto System::configureVideoEffects() -> void {
+  Emulator::video.setEffect(Emulator::Video::Effect::Scanlines, settings.scanlineEmulation);
 }

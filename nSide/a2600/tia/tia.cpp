@@ -69,6 +69,7 @@ auto TIA::power() -> void {
   player[0].motion     = 0;
 
   player[1].numberSize = 0;
+  player[1].reflect    = 0;
   player[1].graphic    = 0;
   player[1].position   = 0;
   player[1].motion     = 0;
@@ -127,19 +128,45 @@ auto TIA::run() -> void {
 
   if(!io.vblank) {
     pixel = io.backgroundColor;
+    uint size;
+
+    bool p0 = false;
+    bool p1 = false;
+    bool m0 = false;
+    bool m1 = false;
+    bool bl = false;
+    bool pf = false;
+
+    if(player[0].position >= x - 7 && player[0].position <= x) {
+      uint bit = !player[0].reflect ? 7 - (x - player[0].position) : x - player[0].position;
+      p0 = player[0].graphic.bit(bit);
+    }
+
+    if(player[1].position >= x - 7 && player[1].position <= x) {
+      uint bit = !player[1].reflect ? 7 - (x - player[1].position) : x - player[1].position;
+      p1 = player[1].graphic.bit(bit);
+    }
+
+    if(missile[0].enable) {
+      size = 1 << missile[0].size;
+      if(missile[0].position >= x - (size - 1) && missile[0].position <= x) m0 = true;
+    }
+
+    if(missile[1].enable) {
+      size = 1 << missile[1].size;
+      if(missile[1].position >= x - (size - 1) && missile[1].position <= x) m1 = true;
+    }
+
+    if(ball.enable) {
+      size = 1 << ball.size;
+      if(ball.position >= x - (size - 1) && ball.position <= x) bl = true;
+    }
+
     uint playfieldX = x >> 2;
     if(playfieldX >= 20) playfieldX = !playfield.reflect ? playfieldX - 20 : 39 - playfieldX;
-
-    bool p0;
-    bool p1;
-    bool m0;
-    bool m1;
-    bool bl;
-    bool pf;
-
-    //TODO: Draw player and missile 0
-    //TODO: Draw player and missile 1
-    //TODO: Draw ball
+    if(playfieldX >=  0 && playfieldX <  4) pf = playfield.graphic0.bit(playfieldX -  0);
+    if(playfieldX >=  4 && playfieldX < 12) pf = playfield.graphic1.bit(11 - playfieldX);
+    if(playfieldX >= 12 && playfieldX < 20) pf = playfield.graphic2.bit(playfieldX - 12);
 
     if(m0 && p0) collision.m0p0 = true;
     if(m0 && p1) collision.m0p1 = true;
@@ -156,10 +183,6 @@ auto TIA::run() -> void {
     if(bl && pf) collision.blpf = true;
     if(m0 && m1) collision.m0m1 = true;
     if(p0 && p1) collision.p0p1 = true;
-
-    if(playfieldX >=  0 && playfieldX <  4) pf = playfield.graphic0.bit(playfieldX -  0);
-    if(playfieldX >=  4 && playfieldX < 12) pf = playfield.graphic1.bit(11 - playfieldX);
-    if(playfieldX >= 12 && playfieldX < 20) pf = playfield.graphic2.bit(playfieldX - 12);
 
     if(io.playfieldBallPriority && (bl || pf)) pixel = io.playfieldBallColor;
     else if(p0 || m0) pixel = io.playerMissile0Color;
