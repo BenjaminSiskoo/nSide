@@ -23,7 +23,7 @@ auto locateHigan(string name) -> string;
 auto locateSystem(string name) -> string;
 
 #include "program/program.hpp"
-#include "settings/settings.hpp"
+#include "configuration/configuration.hpp"
 #include "debugger/debugger.hpp"
 #include "tracer/tracer.hpp"
 #include "console/console.hpp"

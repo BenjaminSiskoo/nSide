@@ -23,7 +23,7 @@ struct Controller : Thread {
   static auto Enter() -> void;
 
   virtual auto main() -> void;
-  virtual auto read() -> uint7 { return 0; }
+  virtual auto read() -> uint7 { return 0x7f; }
   virtual auto write(uint7 data) -> void {}
 
   const bool port;

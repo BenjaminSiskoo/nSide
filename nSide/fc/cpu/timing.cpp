@@ -9,12 +9,12 @@ auto CPU::step(uint clocks) -> void {
 }
 
 auto CPU::lastCycle() -> void {
-  status.interruptPending = ((status.irqLine | status.apuLine) & ~r.p.i) | status.nmiPending;
+  io.interruptPending = ((io.irqLine | io.apuLine) & ~r.p.i) | io.nmiPending;
 }
 
 auto CPU::nmi(uint16 &vector) -> void {
-  if(status.nmiPending) {
-    status.nmiPending = false;
+  if(io.nmiPending) {
+    io.nmiPending = false;
     vector = 0xfffa;
   }
 }
@@ -28,25 +28,25 @@ auto CPU::oamdma() -> void {
 
 auto CPU::nmiLine(bool line) -> void {
   //edge-sensitive (0->1)
-  if(!status.nmiLine && line) status.nmiPending = true;
-  status.nmiLine = line;
+  if(!io.nmiLine && line) io.nmiPending = true;
+  io.nmiLine = line;
 }
 
 auto CPU::irqLine(bool line) -> void {
   //level-sensitive
-  status.irqLine = line;
+  io.irqLine = line;
 }
 
 auto CPU::apuLine(bool line) -> void {
   //level-sensitive
-  status.apuLine = line;
+  io.apuLine = line;
 }
 
 auto CPU::rdyLine(bool line) -> void {
-  status.rdyLine = line;
+  io.rdyLine = line;
 }
 
 auto CPU::rdyAddr(bool valid, uint16 value) -> void {
-  status.rdyAddrValid = valid;
-  status.rdyAddrValue = value;
+  io.rdyAddrValid = valid;
+  io.rdyAddrValue = value;
 }

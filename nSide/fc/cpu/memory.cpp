@@ -5,8 +5,8 @@ auto CPU::read(uint16 addr) -> uint8 {
     oamdma();
   }
 
-  while(status.rdyLine == 0) {
-    r.mdr = bus.read(status.rdyAddrValid ? status.rdyAddrValue : addr, r.mdr);
+  while(io.rdyLine == 0) {
+    r.mdr = bus.read(io.rdyAddrValid ? io.rdyAddrValue : addr, r.mdr);
     step(system.region() == System::Region::NTSC ? 12 : system.region() == System::Region::PAL ? 16 : 15);
   }
 

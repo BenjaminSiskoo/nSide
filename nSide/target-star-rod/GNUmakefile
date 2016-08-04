@@ -13,7 +13,7 @@ else ifeq ($(profile),balanced)
 endif
 include processor/GNUmakefile
 
-ui_objects := star-rod-laevateinn star-rod-program star-rod-settings
+ui_objects := star-rod-laevateinn star-rod-program star-rod-configuration
 ui_objects += star-rod-debugger star-rod-tracer
 ui_objects += star-rod-console star-rod-presentation
 ui_objects += star-rod-cpu star-rod-smp star-rod-memory
@@ -53,7 +53,7 @@ obj/hiro.o: ../hiro/hiro.cpp $(call rwildcard,../hiro/)
 
 obj/star-rod-laevateinn.o: $(ui)/laevateinn.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-program.o: $(ui)/program/program.cpp $(call rwildcard,$(ui)/)
-obj/star-rod-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
+obj/star-rod-configuration.o: $(ui)/configuration/configuration.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-debugger.o: $(ui)/debugger/debugger.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-tracer.o: $(ui)/tracer/tracer.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-console.o: $(ui)/console/console.cpp $(call rwildcard,$(ui)/)

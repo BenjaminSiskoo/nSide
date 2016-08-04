@@ -13,6 +13,10 @@ auto System::run() -> void {
   }
 }
 
+auto System::init() -> void {
+  assert(interface != nullptr);
+}
+
 auto System::load() -> bool {
   information = Information();
   if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {

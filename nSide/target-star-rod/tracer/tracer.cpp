@@ -47,10 +47,10 @@ auto Tracer::enable(bool state) -> void {
   //if all files exist, use 000, even if it overwrites another log.
   uint n = 1;
   do {
-    if(file::exists({program->mediumPaths(1), "debug/trace-", numeral(n, 3L), ".log"}) == false) break;
+    if(file::exists({program->mediumPaths(1), "debug/trace-", pad(n, 3L, '0'), ".log"}) == false) break;
   } while(++n <= 999);
 
-  string filename = {program->mediumPaths(1), "debug/trace-", numeral(n, 3L), ".log"};
+  string filename = {program->mediumPaths(1), "debug/trace-", pad(n, 3L, '0'), ".log"};
   if(fp.open(filename, file::mode::write) == false) return;
   debugger->print("Tracing to ", filename, "\n");
 }

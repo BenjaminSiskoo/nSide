@@ -10,8 +10,10 @@ Interface::Interface() {
 
   information.manufacturer = "Bandai";
   information.name         = "WonderSwan";
-  information.canvasWidth  = 224;  //note: technically 224×144; but screen can be rotated
-  information.canvasHeight = 224;  //by using a square size
+  information.width        = 224;
+  information.height       = 144;
+  information.canvasWidth  = 224;  //note: screen can be rotated by using a square size
+  information.canvasHeight = 224;
   information.overscan     = false;
   information.aspectRatio  = 1.0;
   information.resettable   = false;

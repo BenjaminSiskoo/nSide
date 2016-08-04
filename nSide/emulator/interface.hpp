@@ -6,6 +6,8 @@ struct Interface {
   struct Information {
     string manufacturer;
     string name;
+    uint width;
+    uint height;
     uint canvasWidth;
     uint canvasHeight;
     bool overscan;

@@ -40,7 +40,7 @@ struct CPU : Processor::R6502, Thread {
   bool side; // VS. System; 0: main, 1: sub
 
 //privileged:
-  struct Status {
+  struct IO {
     bool interruptPending;
     bool nmiPending;
     bool nmiLine;
@@ -50,9 +50,7 @@ struct CPU : Processor::R6502, Thread {
     bool rdyLine;
     bool rdyAddrValid;
     uint16 rdyAddrValue;
-  } status;
 
-  struct IO {
     bool oamdmaPending;
     uint8 oamdmaPage;
   } io;

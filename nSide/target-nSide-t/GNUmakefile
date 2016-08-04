@@ -3,6 +3,7 @@ ifndef name
 endif
 flags += -DSFC_SUPERGAMEBOY
 
+include a2600/GNUmakefile
 include fc/GNUmakefile
 ifndef profile
   include sfc/GNUmakefile

@@ -25,9 +25,9 @@ auto CPU::step(uint clocks) -> void {
   }
 
   #if defined(DEBUGGER)
-  synchronizeSMP();
-  synchronizePPU();
-  synchronizeCoprocessors();
+  synchronize(smp);
+  synchronize(ppu);
+  for(auto coprocessor : coprocessors) synchronize(*coprocessor);
   #endif
 }
 

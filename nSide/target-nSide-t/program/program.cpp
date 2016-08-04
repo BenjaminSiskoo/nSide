@@ -1,4 +1,5 @@
 #include "../tomoko.hpp"
+#include <a2600/interface/interface.hpp>
 #include <fc/interface/interface.hpp>
 #if defined(PROFILE_BALANCED)
 #include <sfc-balanced/interface/interface.hpp>
@@ -19,6 +20,7 @@ Program::Program(string_vector args) {
   program = this;
   Application::onMain({&Program::main, this});
 
+  emulators.append(new Atari2600::Interface);
   emulators.append(new Famicom::Interface);
   emulators.append(new SuperFamicom::Interface);
 //emulators.append(new MegaDrive::Interface);
@@ -80,6 +82,7 @@ Program::Program(string_vector args) {
 auto Program::main() -> void {
   updateStatusText();
   inputManager->poll();
+  inputManager->pollHotkeys();
 
   if(!emulator || !emulator->loaded() || pause || (!presentation->focused() && settings["Input/FocusLoss/Pause"].boolean())) {
     audio->clear();

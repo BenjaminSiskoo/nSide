@@ -23,6 +23,7 @@ auto Controller::Enter() -> void {
 
 auto Controller::main() -> void {
   step(1);
+  synchronize(cpu);
 }
 
 }

@@ -89,14 +89,14 @@ auto PlayChoice10::portRead(uint8 port) -> uint8 {
   bool coin1         = false;
   switch(port & 0x03) {
   case 0x00:
-    data |= channelSelect      << 0;
-    data |= enter              << 1;
-    data |= reset              << 2;
-    data |= cpu.status.nmiLine << 3;
-    data |= 0                  << 4;
-    data |= coin2              << 5;
-    data |= service            << 6;
-    data |= coin1              << 7;
+    data |= channelSelect  << 0;
+    data |= enter          << 1;
+    data |= reset          << 2;
+    data |= cpu.io.nmiLine << 3;
+    data |= 0              << 4;
+    data |= coin2          << 5;
+    data |= service        << 6;
+    data |= coin1          << 7;
     break;
   case 0x01: data = (dip >> 0) & 0xff; break;
   case 0x02: data = (dip >> 8) & 0xff; break;

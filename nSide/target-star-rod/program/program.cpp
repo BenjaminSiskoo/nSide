@@ -31,17 +31,15 @@ Program::Program(string_vector args) {
 
   higan_settings = BML::unserialize(string::read(locateHigan("settings.bml")));
 
-  settings->load();
-
   video = Video::create();
   video->set(Video::Handle, presentation->viewport.handle());
   if(!video->init()) video = Video::create("None");
-  video->set(Video::Synchronize, settings->video.synchronize);
+  video->set(Video::Synchronize, settings["Video/Synchronize"].boolean());
   video->set(Video::Filter, Video::FilterNearest);
 
   audio = Audio::create();
   audio->set(Audio::Handle, presentation->viewport.handle());
-  audio->set(Audio::Synchronize, settings->audio.synchronize);
+  audio->set(Audio::Synchronize, settings["Audio/Synchronize"].boolean());
   audio->set(Audio::Exclusive, false);
   audio->set(Audio::Latency, 80u);
   if(!audio->init()) audio = Audio::create("None");
@@ -75,6 +73,6 @@ auto Program::main() -> void {
 
 auto Program::quit() -> void {
   unloadMedium();
-  settings->unload();
+  settings.quit();
   Application::quit();
 }

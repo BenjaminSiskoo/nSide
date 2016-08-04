@@ -13,9 +13,9 @@ ConsoleWindow::ConsoleWindow() {
     menuEmulationPowerCycle.setText("Power Cycle");
     menuEmulationReset.setText("Reset");
     menuEmulationSynchronizeAudio.setText("Synchronize Audio");
-    menuEmulationSynchronizeAudio.setChecked(settings->audio.synchronize);
+    menuEmulationSynchronizeAudio.setChecked(settings["Audio/Synchronize"].boolean());
     menuEmulationMuteAudio.setText("Mute Audio");
-    menuEmulationMuteAudio.setChecked(settings->audio.mute);
+    menuEmulationMuteAudio.setChecked(settings["Audio/Mute"].boolean());
 
   menuDebug.setText("&Debug");
     menuDebugCPU.setText("CPU");
@@ -85,11 +85,11 @@ ConsoleWindow::ConsoleWindow() {
   });
 
   menuEmulationSynchronizeAudio.onToggle([&] {
-    audio->set(Audio::Synchronize, settings->audio.synchronize = menuEmulationSynchronizeAudio.checked());
+    audio->set(Audio::Synchronize, settings["Audio/Synchronize"].setValue(menuEmulationSynchronizeAudio.checked()));
   });
 
   menuEmulationMuteAudio.onToggle([&] {
-    settings->audio.mute = menuEmulationMuteAudio.checked();
+    settings["Audio/Mute"].setValue(menuEmulationMuteAudio.checked());
   });
 
   menuDebugCPU.onToggle([&] { debugger->debug.cpu = menuDebugCPU.checked(); });

@@ -4,6 +4,7 @@ struct System {
 
   auto run() -> void;
 
+  auto init() -> void;
   auto load() -> bool;
   auto save() -> void;
   auto unload() -> void;

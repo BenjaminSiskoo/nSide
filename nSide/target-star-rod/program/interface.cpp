@@ -85,7 +85,7 @@ auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint heig
 }
 
 auto Program::audioSample(const double* samples, uint channels) -> void {
-  if(settings->audio.mute) return audio->sample(0, 0);
+  if(settings["Audio/Mute"].boolean()) return audio->sample(0, 0);
   int16 left  = sclamp<16>(samples[0] * 32768.0);
   int16 right = sclamp<16>(samples[1] * 32768.0);
   audio->sample(left, right);

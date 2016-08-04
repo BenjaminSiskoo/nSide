@@ -16,7 +16,7 @@ auto CPU::Enter() -> void {
 }
 
 auto CPU::main() -> void {
-  if(status.interruptPending) return interrupt();
+  if(io.interruptPending) return interrupt();
   instruction();
 }
 
@@ -53,15 +53,15 @@ auto CPU::reset() -> void {
   r.pc  = bus.read(0xfffc, r.mdr) << 0;
   r.pc |= bus.read(0xfffd, r.mdr) << 8;
 
-  status.interruptPending = false;
-  status.nmiPending = false;
-  status.nmiLine = 0;
-  status.irqLine = 0;
-  status.apuLine = 0;
+  io.interruptPending = false;
+  io.nmiPending = false;
+  io.nmiLine = 0;
+  io.irqLine = 0;
+  io.apuLine = 0;
 
-  status.rdyLine = 1;
-  status.rdyAddrValid = false;
-  status.rdyAddrValue = 0x0000;
+  io.rdyLine = 1;
+  io.rdyAddrValid = false;
+  io.rdyAddrValue = 0x0000;
 
   io.oamdmaPending = false;
   io.oamdmaPage = 0x00;

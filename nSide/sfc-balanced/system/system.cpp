@@ -18,7 +18,6 @@ auto System::runToSave() -> void {
   scheduler.synchronize(cpu);
   scheduler.synchronize(smp);
   scheduler.synchronize(ppu);
-  //scheduler.synchronize(dsp);
   for(auto coprocessor : cpu.coprocessors) scheduler.synchronize(*coprocessor);
   for(auto peripheral : cpu.peripherals) scheduler.synchronize(*peripheral);
 }
