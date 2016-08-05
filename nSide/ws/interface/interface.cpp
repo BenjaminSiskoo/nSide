@@ -8,6 +8,7 @@ Settings settings;
 Interface::Interface() {
   interface = this;
 
+  information.preAlpha     = false;
   information.manufacturer = "Bandai";
   information.name         = "WonderSwan";
   information.width        = 224;

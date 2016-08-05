@@ -43,4 +43,10 @@ AdvancedSettings::AdvancedSettings(TabFrame* parent) : TabFrameItem(parent) {
   ignoreManifests.setText("Ignore Manifests").setChecked(settings["Library/IgnoreManifests"].boolean()).onToggle([&] {
     settings["Library/IgnoreManifests"].setValue(ignoreManifests.checked());
   });
+
+  showPreAlpha.setText("Show Pre-Alpha Cores").setChecked(settings["Library/ShowPreAlpha"].boolean()).onToggle([&] {
+    settings["Library/ShowPreAlpha"].setValue(showPreAlpha.checked());
+    presentation->refreshLibraryMenu();
+    settingsManager->input.refreshEmulatorList();
+  });
 }

@@ -10,6 +10,7 @@ Interface::Interface() {
   interface = this;
   system.init();
 
+  information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Super Famicom";
   information.width        = 512;

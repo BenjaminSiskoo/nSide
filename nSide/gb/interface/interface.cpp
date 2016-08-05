@@ -9,6 +9,7 @@ Interface::Interface() {
   interface = this;
   hook = nullptr;
 
+  information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy";
   information.width        = 160;

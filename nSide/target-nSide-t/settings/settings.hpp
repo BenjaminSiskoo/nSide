@@ -59,6 +59,7 @@ struct AudioSettings : TabFrameItem {
 
 struct InputSettings : TabFrameItem {
   InputSettings(TabFrame*);
+  auto refreshEmulatorList() -> void;
   auto updateControls() -> void;
   auto activeEmulator() -> InputEmulator&;
   auto activePort() -> InputPort&;
@@ -129,6 +130,7 @@ struct AdvancedSettings : TabFrameItem {
       LineEdit libraryLocation{&libraryLayout, Size{~0, 0}};
       Button libraryChange{&libraryLayout, Size{0, 0}};
     CheckLabel ignoreManifests{&layout, Size{~0, 0}};
+    CheckLabel showPreAlpha{&layout, Size{~0, 0}};
 };
 
 struct SettingsManager : Window {

@@ -9,6 +9,7 @@ Interface::Interface() {
   interface = this;
   system.init();
 
+  information.preAlpha     = true;
   information.manufacturer = "Atari";
   information.name         = "Atari 2600";
   information.width        = 160;

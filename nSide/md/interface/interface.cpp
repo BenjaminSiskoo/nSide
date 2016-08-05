@@ -9,6 +9,7 @@ Interface::Interface() {
   interface = this;
   system.init();
 
+  information.preAlpha     = true;
   information.manufacturer = "Sega";
   information.name         = "Mega Drive";
   information.width        = 1280;

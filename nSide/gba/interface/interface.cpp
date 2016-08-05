@@ -8,6 +8,7 @@ Settings settings;
 Interface::Interface() {
   interface = this;
 
+  information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy Advance";
   information.width        = 240;

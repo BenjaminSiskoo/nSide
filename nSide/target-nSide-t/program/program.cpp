@@ -23,7 +23,7 @@ Program::Program(string_vector args) {
   emulators.append(new Atari2600::Interface);
   emulators.append(new Famicom::Interface);
   emulators.append(new SuperFamicom::Interface);
-//emulators.append(new MegaDrive::Interface);
+  emulators.append(new MegaDrive::Interface);
   emulators.append(new GameBoy::Interface);
   emulators.append(new GameBoyAdvance::Interface);
   emulators.append(new WonderSwan::Interface);

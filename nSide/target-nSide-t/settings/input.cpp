@@ -11,9 +11,7 @@ InputSettings::InputSettings(TabFrame* parent) : TabFrameItem(parent) {
   allowInput.setText("Allow Input").setChecked(settings["Input/FocusLoss/AllowInput"].boolean()).onToggle([&] {
     settings["Input/FocusLoss/AllowInput"].setValue(allowInput.checked());
   });
-  for(auto& emulator : inputManager->emulators) {
-    emulatorList.append(ComboButtonItem().setText(emulator.name));
-  }
+  refreshEmulatorList();
   emulatorList.onChange([&] { reloadPorts(); });
   portList.onChange([&] { reloadDevices(); });
   deviceList.onChange([&] { reloadMappings(); });
@@ -36,6 +34,14 @@ InputSettings::InputSettings(TabFrame* parent) : TabFrameItem(parent) {
   });
 
   reloadPorts();
+}
+
+auto InputSettings::refreshEmulatorList() -> void {
+  emulatorList.reset();
+  for(auto& emulator : inputManager->emulators) {
+    if(emulator.interface->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
+    emulatorList.append(ComboButtonItem().setText(emulator.name));
+  }
 }
 
 auto InputSettings::updateControls() -> void {

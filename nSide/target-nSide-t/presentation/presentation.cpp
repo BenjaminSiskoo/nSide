@@ -7,29 +7,7 @@ Presentation::Presentation() {
   presentation = this;
 
   libraryMenu.setText("Library");
-  for(auto& emulator : program->emulators) {
-    for(auto& medium : emulator->media) {
-      auto item = new MenuItem{&libraryMenu};
-      item->setText({medium.name, " ..."}).onActivate([=] {
-        program->loadMedium(*emulator, medium);
-      });
-      loadBootableMedia.append(item);
-    }
-  }
-  //add cart-pal menu options -- but only if cart-pal binary is present
-  if(execute("cart-pal", "--name").output.strip() == "cart-pal") {
-    libraryMenu.append(MenuSeparator());
-    libraryMenu.append(MenuItem().setText("Load ROM File ...").onActivate([&] {
-      audio->clear();
-      if(auto location = execute("cart-pal", "--import")) {
-        program->mediumQueue.append(location.output.strip());
-        program->loadMedium();
-      }
-    }));
-    libraryMenu.append(MenuItem().setText("Import ROM Files ...").onActivate([&] {
-      invoke("cart-pal");
-    }));
-  }
+  refreshLibraryMenu();
 
   systemMenu.setText("System").setVisible(false);
   powerSystem.setText("Power").onActivate([&] { program->powerCycle(); });
@@ -172,6 +150,35 @@ Presentation::Presentation() {
   Application::Cocoa::onPreferences([&] { showConfiguration.doActivate(); });
   Application::Cocoa::onQuit([&] { doClose(); });
   #endif
+}
+
+auto Presentation::refreshLibraryMenu() -> void {
+  libraryMenu.reset();
+  loadBootableMedia.reset();
+  for(auto& emulator : program->emulators) {
+    if(emulator->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
+    for(auto& medium : emulator->media) {
+      auto item = new MenuItem{&libraryMenu};
+      item->setText({emulator->information.preAlpha ? "(!) " : "", medium.name, " ..."}).onActivate([=] {
+        program->loadMedium(*emulator, medium);
+      });
+      loadBootableMedia.append(item);
+    }
+  }
+  //add cart-pal menu options -- but only if cart-pal binary is present
+  if(execute("cart-pal", "--name").output.strip() == "cart-pal") {
+    libraryMenu.append(MenuSeparator());
+    libraryMenu.append(MenuItem().setText("Load ROM File ...").onActivate([&] {
+      audio->clear();
+      if(auto location = execute("cart-pal", "--import")) {
+        program->mediumQueue.append(location.output.strip());
+        program->loadMedium();
+      }
+    }));
+    libraryMenu.append(MenuItem().setText("Import ROM Files ...").onActivate([&] {
+      invoke("cart-pal");
+    }));
+  }
 }
 
 auto Presentation::updateEmulator() -> void {
