@@ -3,7 +3,7 @@ struct Joystick : Controller {
     Up, Down, Left, Right, Fire,
   };
 
-  Joystick(bool port);
+  Joystick(uint port);
 
   auto pot0() -> bool;
   auto pot1() -> bool;

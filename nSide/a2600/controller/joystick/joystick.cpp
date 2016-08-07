@@ -1,4 +1,4 @@
-Joystick::Joystick(bool port) : Controller(port) {
+Joystick::Joystick(uint port) : Controller(port) {
 }
 
 auto Joystick::pot0() -> bool {

@@ -12,10 +12,12 @@ auto PIA::serialize(serializer& s) -> void {
   s.integer(io.swchb);
   s.integer(io.swbcnt);
 
-  s.integer(io.timer);
-  s.integer(io.timerMask);
+  s.integer(io.timer.value);
+  s.integer(io.timerDecrement);
+  s.integer(io.timerUnderflowINSTAT);
+  s.integer(io.timerUnderflowTIM_T);
 
-  s.integer(io.timerInterrupt);
-  s.integer(io.pa7Interrupt);
-  s.integer(io.edgeDetect);
+  s.integer(io.timerIRQEnable);
+  s.integer(io.pa7IRQEnable);
+  s.integer(io.pa7EdgeDetect);
 }

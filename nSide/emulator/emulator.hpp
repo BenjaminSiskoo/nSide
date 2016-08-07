@@ -17,6 +17,7 @@ namespace Emulator {
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string_vector Contributors = {
+    "Alyosha_TAS (Atari 2600 PIA timer and TIA sprite implementation details)",
     "Andreas Naive (S-DD1 decompression algorithm)",
     //"Ange Albertini (higan logo)",  //not used in nSide
     "anomie",

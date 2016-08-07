@@ -11,6 +11,9 @@ struct PIA : Thread {
   auto load(Markup::Node) -> bool;
   auto power() -> void;
 
+  auto updateIO() -> void;
+  auto runTimer() -> void;
+
   //memory.cpp
   auto readRAM(uint7 addr, uint8 data) -> uint8;
   auto writeRAM(uint7 addr, uint8 data) -> void;
@@ -43,11 +46,18 @@ privileged:
     //$0283 SWBCNT
     uint8 swbcnt;
 
-    uint18 timer;
-    uint18 timerMask;
-    bool timerInterrupt;
-    bool pa7Interrupt;
-    bool edgeDetect;
+    union {
+      uint value;
+      NaturalBitField<uint, 0, 9> prescaler;
+      NaturalBitField<uint,10,17> base;
+    } timer;
+    uint10 timerDecrement;
+    bool timerUnderflowINSTAT;
+    bool timerUnderflowTIM_T;
+
+    bool timerIRQEnable;  //useless with MOS 6507
+    bool pa7IRQEnable;  //useless with MOS 6507
+    bool pa7EdgeDetect;
   } io;
 
   struct Input {

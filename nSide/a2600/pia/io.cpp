@@ -9,7 +9,7 @@ auto PIA::readIO(uint7 addr, uint8 data) -> uint8 {
   }
 
   case 0x01: {  //SWACNT
-    return io.swacnt;
+    data = io.swacnt;
     break;
   }
 
@@ -26,16 +26,21 @@ auto PIA::readIO(uint7 addr, uint8 data) -> uint8 {
   }
 
   case 0x03: {  //SWBCNT
-    return io.swbcnt;
+    data = io.swbcnt;
     break;
   }
 
   case 0x04: case 0x06: {  //INTIM
-    io.timerInterrupt = addr.bit(3);
+    data = io.timer.base;
+    io.timerIRQEnable = addr.bit(3);
     break;
   }
 
   case 0x05: case 0x07: {  //INSTAT
+    data.bits(0,5) = 0;
+    data.bit (  6) = io.timerUnderflowINSTAT;
+    data.bit (  7) = io.timerUnderflowTIM_T;
+    io.timerUnderflowINSTAT = false;
     break;
   }
 
@@ -66,36 +71,46 @@ auto PIA::writeIO(uint7 addr, uint8 data) -> void {
   }
 
   case 0x04: case 0x05: case 0x06: case 0x07: {
-    io.edgeDetect   = addr.bit(0);
-    io.pa7Interrupt = addr.bit(1);
+    //PA7 is connected to the left controller port's Right direction.
+    //Because the CPU has no IRQ line, this interrupt is useless.
+    io.pa7EdgeDetect = addr.bit(0);
+    io.pa7IRQEnable  = addr.bit(1);
     return;
   }
 
   case 0x14: {  //TIM1T
-    io.timer     = data <<  0;
-    io.timerMask = 0x000ff;
-    io.timerInterrupt = addr.bit(3);
+    io.timer.value         = data << 10;
+    io.timerDecrement      = 1024;
+    io.timerUnderflowTIM_T = false;
+    io.timerIRQEnable      = addr.bit(3);
+    runTimer();
     return;
   }
 
   case 0x15: {  //TIM8T
-    io.timer     = data <<  3;
-    io.timerMask = 0x007ff;
-    io.timerInterrupt = addr.bit(3);
+    io.timer.value         = data << 10;
+    io.timerDecrement      =  128;
+    io.timerUnderflowTIM_T = false;
+    io.timerIRQEnable      = addr.bit(3);
+    runTimer();
     return;
   }
 
   case 0x16: {  //TIM64T
-    io.timer     = data <<  6;
-    io.timerMask = 0x03fff;
-    io.timerInterrupt = addr.bit(3);
+    io.timer.value         = data << 10;
+    io.timerDecrement      =   16;
+    io.timerUnderflowTIM_T = false;
+    io.timerIRQEnable      = addr.bit(3);
+    runTimer();
     return;
   }
 
   case 0x17: {  //T1024T
-    io.timer     = data << 10;
-    io.timerMask = 0x3ffff;
-    io.timerInterrupt = addr.bit(3);
+    io.timer.value         = data << 10;
+    io.timerDecrement      =    1;
+    io.timerUnderflowTIM_T = false;
+    io.timerIRQEnable      = addr.bit(3);
+    runTimer();
     return;
   }
 

@@ -197,6 +197,10 @@ auto TIA::scanline() -> void {
   if(io.vcounter == 0) frame();
 
   if(io.vcounter == (system.region() == System::Region::NTSC ? 192 + 37 : 228 + 44)) {
+    //dirty hack to prevent controls for hardware switches from being polled
+    //19912 (262 * 228 / 3) times as fast as joystick/paddle controls and other emulators' controls
+    if(io.vblank) pia.updateIO();
+
     scheduler.exit(Scheduler::Event::Frame);
   }
 }

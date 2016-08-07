@@ -18,7 +18,7 @@
 struct Controller : Thread {
   enum : uint { Port1 = 0, Port2 = 1 };
 
-  Controller(bool port);
+  Controller(uint port);
   virtual ~Controller();
   static auto Enter() -> void;
 
@@ -28,7 +28,7 @@ struct Controller : Thread {
   virtual auto fire() -> bool { return 1; }
   virtual auto direction() -> uint4 { return 0xf; }
 
-  const bool port;
+  const uint port;
 };
 
 #include "joystick/joystick.hpp"
