@@ -13,7 +13,7 @@ namespace Emulator {
   static const string Name = "nSide";
   static const string OriginalName = "higan";
   static const string Version = "009.10";
-  static const string FromVersion = "100.05";
+  static const string FromVersion = "101.01";
   static const string Author = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string_vector Contributors = {
@@ -58,7 +58,7 @@ namespace Emulator {
   static const string Website = "http://byuu.org/";
 
   //incremented only when serialization format changes
-  static const string SerializerVersion = "009.10(100.15)";
+  static const string SerializerVersion = "009.10(101)";
 
   namespace Constants {
     namespace Colorburst {

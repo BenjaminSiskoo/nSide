@@ -3,6 +3,8 @@
 namespace Emulator {
 
 struct Thread {
+  enum : uintmax { Second = (uintmax)1 << (8 * sizeof(uintmax) - 1) };
+
   virtual ~Thread() {
     if(_handle) co_delete(_handle);
   }
@@ -15,14 +17,14 @@ struct Thread {
 
   auto setFrequency(double frequency) -> void {
     _frequency = frequency + 0.5;
-    _scalar = ((uint128_t)1 << 96) / _frequency;
+    _scalar = Second / _frequency;
   }
 
-  auto setScalar(uint128_t scalar) -> void {
+  auto setScalar(uintmax scalar) -> void {
     _scalar = scalar;
   }
 
-  auto setClock(uint128_t clock) -> void {
+  auto setClock(uintmax clock) -> void {
     _clock = clock;
   }
 
@@ -30,6 +32,7 @@ struct Thread {
     if(_handle) co_delete(_handle);
     _handle = co_create(64 * 1024 * sizeof(void*), entrypoint);
     setFrequency(frequency);
+    setClock(0);
   }
 
   inline auto step(uint clocks) -> void {
@@ -44,9 +47,9 @@ struct Thread {
 
 protected:
   cothread_t _handle = nullptr;
-  uint32_t _frequency = 0;
-  uint128_t _scalar = 0;
-  uint128_t _clock = 0;
+  uintmax _frequency = 0;
+  uintmax _scalar = 0;
+  uintmax _clock = 0;
 
   friend class Scheduler;
 };

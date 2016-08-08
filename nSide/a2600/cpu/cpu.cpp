@@ -21,7 +21,7 @@ auto CPU::load(Markup::Node node) -> bool {
 
 auto CPU::power() -> void {
   R6502::power();
-  create(Enter, system.colorburst() / 3.0);
+  create(Enter, system.colorburst() / (system.region() == System::Region::NTSC ? 3.0 : 3.75));
 }
 
 auto CPU::reset() -> void {

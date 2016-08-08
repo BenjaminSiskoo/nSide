@@ -2,8 +2,6 @@
 
 namespace Emulator {
 
-struct Thread;
-
 struct Scheduler {
   enum class Mode : uint {
     Run,
@@ -52,7 +50,7 @@ struct Scheduler {
   }
 
   auto exit(Event event) -> void {
-    uint128_t minimum = -1;
+    uintmax minimum = -1;
     for(auto thread : _threads) {
       if(thread->_clock < minimum) minimum = thread->_clock;
     }

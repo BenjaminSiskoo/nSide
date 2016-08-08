@@ -39,7 +39,7 @@ auto PIA::load(Markup::Node node) -> bool {
 }
 
 auto PIA::power() -> void {
-  create(Enter, system.colorburst() / 3.0);
+  create(Enter, system.colorburst() / (system.region() == System::Region::NTSC ? 3.0 : 3.75));
 
   io.color = 1;
   io.difficulty0 = 0;
