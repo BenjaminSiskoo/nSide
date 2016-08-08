@@ -250,8 +250,8 @@ auto Presentation::resizeViewport() -> void {
 
   int windowWidth = 0, windowHeight = 0;
   if(!fullScreen()) {
-    windowWidth  = width  * scale * (settings["Video/AspectCorrection"].boolean() ? stretch : 1.0);
-    windowHeight = height * scale;
+    windowWidth  = 256 * scale * (settings["Video/AspectCorrection"].boolean() ? 8.0 / 7.0 : 1.0);
+    windowHeight = 240 * scale;
   } else {
     windowWidth  = geometry().width();
     windowHeight = geometry().height();
