@@ -63,10 +63,9 @@ auto BGViewer::bgChanged() -> void {
 
 auto BGViewer::updateTiles() -> void {
   uint32_t* dp = canvas.data();
-  for(uint y : range(512)) {
-    for(uint x : range(1024)) {
-      *dp++ = 0xff800000;
-    }
+  for(uint y : range(512))
+  for(uint x : range(1024)) {
+    *dp++ = 0xff800000;
   }
   dp = canvas.data();
   uint16 tiledata;

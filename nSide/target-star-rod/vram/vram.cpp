@@ -62,17 +62,16 @@ auto VRAMViewer::modeChanged() -> void {
   paletteSelection.reset();
   switch(modeSelection.selected().offset()) {
   case SFC::PPU::Background::Mode::BPP2:
-    for(uint bg = 0; bg < 4; bg++) {
-      for(uint palette = 0; palette < 8; palette++) {
-        paletteSelection.append(ComboButtonItem().setText({"BG", bg, " ", palette}));
-      }
+    for(uint bg : range(4))
+    for(uint palette : range(8)) {
+      paletteSelection.append(ComboButtonItem().setText({"BG", bg, " ", palette}));
     }
     break;
   case SFC::PPU::Background::Mode::BPP4:
-    for(uint palette = 0; palette < 8; palette++) {
+    for(uint palette : range(8)) {
       paletteSelection.append(ComboButtonItem().setText({"BG ", palette}));
     }
-    for(uint palette = 0; palette < 8; palette++) {
+    for(uint palette : range(8)) {
       paletteSelection.append(ComboButtonItem().setText({"SP ", palette}));
     }
     break;
@@ -90,10 +89,9 @@ auto VRAMViewer::paletteChanged() -> void {
 
 auto VRAMViewer::updateTiles() -> void {
   uint32_t* dp = canvas.data();
-  for(uint y = 0; y < 512; y++) {
-    for(uint x = 0; x < 512; x++) {
-      *dp++ = 0xff800000;
-    }
+  for(uint y : range(512))
+  for(uint x : range(512)) {
+    *dp++ = 0xff800000;
   }
   dp = canvas.data();
   const uint16* sp = SFC::ppu.vram.data;
@@ -102,100 +100,96 @@ auto VRAMViewer::updateTiles() -> void {
 
   switch(modeSelection.selected().offset()) {
   case SFC::PPU::Background::Mode::BPP2:
-    for(uint tileY : range(64)) {
-      for(uint tileX : range(64)) {
-        for(uint y : range(8)) {
-          uint16 d[] = { sp[0] };
-          for(uint x : range(8)) {
-            color = 0;
-            color += d[0] & 0x0080 ? 1 : 0;
-            color += d[0] & 0x8000 ? 2 : 0;
-            for(auto& b : d) b <<= 1;
-            color += paletteSelection.selected().offset() << 2;
-            color = SFC::ppu.screen.cgram[color];
-            color = (255u << 24) |
-              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
-              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
-              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
-            dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
-          }
-          sp++;
+    for(uint tileY : range(64))
+    for(uint tileX : range(64)) {
+      for(uint y : range(8)) {
+        uint16 d[] = { sp[0] };
+        for(uint x : range(8)) {
+          color = 0;
+          color += d[0] & 0x0080 ? 1 : 0;
+          color += d[0] & 0x8000 ? 2 : 0;
+          for(auto& b : d) b <<= 1;
+          color += paletteSelection.selected().offset() << 2;
+          color = SFC::ppu.screen.cgram[color];
+          color = (255u << 24) |
+            (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+            (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+            (image::normalize(color >> 10 & 31, 5, 8) <<  0);
+          dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
         }
+        sp++;
       }
     }
     break;
 
   case SFC::PPU::Background::Mode::BPP4:
-    for(uint tileY : range(64)) {
-      for(uint tileX : range(32)) {
-        for(uint y : range(8)) {
-          uint16 d[] = { sp[0], sp[8] };
-          for(uint x : range(8)) {
-            color = 0;
-            color += d[0] & 0x0080 ? 1 : 0;
-            color += d[0] & 0x8000 ? 2 : 0;
-            color += d[1] & 0x0080 ? 4 : 0;
-            color += d[1] & 0x8000 ? 8 : 0;
-            for(auto& b : d) b <<= 1;
-            color += paletteSelection.selected().offset() << 4;
-            color = SFC::ppu.screen.cgram[color];
-            color = (255u << 24) |
-              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
-              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
-              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
-            dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
-          }
-          sp++;
+    for(uint tileY : range(64))
+    for(uint tileX : range(32)) {
+      for(uint y : range(8)) {
+        uint16 d[] = { sp[0], sp[8] };
+        for(uint x : range(8)) {
+          color = 0;
+          color += d[0] & 0x0080 ? 1 : 0;
+          color += d[0] & 0x8000 ? 2 : 0;
+          color += d[1] & 0x0080 ? 4 : 0;
+          color += d[1] & 0x8000 ? 8 : 0;
+          for(auto& b : d) b <<= 1;
+          color += paletteSelection.selected().offset() << 4;
+          color = SFC::ppu.screen.cgram[color];
+          color = (255u << 24) |
+            (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+            (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+            (image::normalize(color >> 10 & 31, 5, 8) <<  0);
+          dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
         }
-        sp += 8;
+        sp++;
       }
+      sp += 8;
     }
     break;
 
   case SFC::PPU::Background::Mode::BPP8:
-    for(uint tileY : range(32)) {
-      for(uint tileX : range(32)) {
-        for(uint y : range(8)) {
-          uint16 d[] = { sp[0], sp[8], sp[16], sp[24] };
-          for(uint x : range(8)) {
-            color = 0;
-            color += d[0] & 0x0080 ?   1 : 0;
-            color += d[0] & 0x8000 ?   2 : 0;
-            color += d[1] & 0x0080 ?   4 : 0;
-            color += d[1] & 0x8000 ?   8 : 0;
-            color += d[2] & 0x0080 ?  16 : 0;
-            color += d[2] & 0x8000 ?  32 : 0;
-            color += d[3] & 0x0080 ?  64 : 0;
-            color += d[3] & 0x8000 ? 128 : 0;
-            for(auto& b : d) b <<= 1;
-            color = SFC::ppu.screen.cgram[color];
-            color = (255u << 24) |
-              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
-              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
-              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
-            dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
-          }
-          sp++;
+    for(uint tileY : range(32))
+    for(uint tileX : range(32)) {
+      for(uint y : range(8)) {
+        uint16 d[] = { sp[0], sp[8], sp[16], sp[24] };
+        for(uint x : range(8)) {
+          color = 0;
+          color += d[0] & 0x0080 ?   1 : 0;
+          color += d[0] & 0x8000 ?   2 : 0;
+          color += d[1] & 0x0080 ?   4 : 0;
+          color += d[1] & 0x8000 ?   8 : 0;
+          color += d[2] & 0x0080 ?  16 : 0;
+          color += d[2] & 0x8000 ?  32 : 0;
+          color += d[3] & 0x0080 ?  64 : 0;
+          color += d[3] & 0x8000 ? 128 : 0;
+          for(auto& b : d) b <<= 1;
+          color = SFC::ppu.screen.cgram[color];
+          color = (255u << 24) |
+            (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+            (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+            (image::normalize(color >> 10 & 31, 5, 8) <<  0);
+          dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
         }
-        sp += 24;
+        sp++;
       }
+      sp += 24;
     }
     break;
 
   case SFC::PPU::Background::Mode::Mode7:
-    for(uint tileY : range(32)) {
-      for(uint tileX : range(16)) {
-        for(uint y : range(8)) {
-          for(uint x : range(8)) {
-            color = SFC::ppu.screen.cgram[sp[x] >> 8];
-            color = (255u << 24) |
-              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
-              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
-              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
-            dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
-          }
-          sp += 8;
+    for(uint tileY : range(32))
+    for(uint tileX : range(16)) {
+      for(uint y : range(8)) {
+        for(uint x : range(8)) {
+          color = SFC::ppu.screen.cgram[sp[x] >> 8];
+          color = (255u << 24) |
+            (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+            (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+            (image::normalize(color >> 10 & 31, 5, 8) <<  0);
+          dp[(tileY * 8 + y) * 512 + (tileX * 8 + x)] = color;
         }
+        sp += 8;
       }
     }
     break;

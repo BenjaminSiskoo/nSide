@@ -18,7 +18,9 @@ auto Cartridge::load() -> bool {
 
   auto document = BML::unserialize(information.manifest);
   information.title = document["information/title"].text();
-  information.region = document["board/region"].text() == "pal" ? Region::PAL : Region::NTSC;
+  if(document["board/region"].text() == "ntsc")  information.region = Region::NTSC;
+  if(document["board/region"].text() == "pal")   information.region = Region::PAL;
+  if(document["board/region"].text() == "secam") information.region = Region::SECAM;
 
   if(auto node = document["board/rom"]) {
     rom.size = node["size"].natural();

@@ -86,7 +86,7 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     double q;
 
     //TODO: Determine the real formula for generating colors. The below formula
-    //is a quick hack-up match colors with publicly-available palettes.
+    //is a quick hack-up to match colors with publicly-available palettes.
     if(color == 0 && level == 0) y = 0.0;
     else y = 0.125 + level / 7.0 * 0.875;
 
@@ -118,7 +118,7 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     double v;
 
     //TODO: Determine the real formula for generating colors. The below formula
-    //is a quick hack-up match colors with publicly-available palettes.
+    //is a quick hack-up to match colors with publicly-available palettes.
     if((color.bits(1,3) == 0 || color.bits(1,3) == 7) && level == 0) y = 0.0;
     else y = 0.125 + level / 7.0 * 0.875;
 
@@ -126,11 +126,11 @@ auto Interface::videoColor(uint32 n) -> uint64 {
       u = 0.0;
       v = 0.0;
     } else if(color.bit(0) == 0) {
-      double phase = ((n >> 5) * 30.0 - 90.0) * Math::Pi / 180.0;
+      double phase = ((color >> 1) * 30.0 - 90.0) * Math::Pi / 180.0;
       u = std::sin(phase) * 0.25;
       v = std::cos(phase) * 0.25;
     } else if(color.bit(0) == 1) {
-      double phase = (285.0 - (n >> 5) * 30.0) * Math::Pi / 180.0;
+      double phase = (285.0 - (color >> 1) * 30.0) * Math::Pi / 180.0;
       u = std::sin(phase) * 0.25;
       v = std::cos(phase) * 0.25;
     }
@@ -143,19 +143,43 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     return r << 32 | g << 16 | b << 0;
   };
 
-  static auto generateSECAMColor = [](uint7 n) -> uint64 {
+  static auto generateSECAMColor = [](uint7 n, double gamma) -> uint64 {
     uint3 level = n.bits(0,2);
 
-    //TODO: Determine if these colors are generated through some method
-    //other than RGB, and use that color space instead.
-    static uint32 colors[] = {
-      0xff000000, 0xff2121ff, 0xfff03c79, 0xffff50ff,
-      0xff7fff50, 0xff7fffff, 0xffffff3f, 0xffffffff,
+    //static uint32 colors[] = {
+    //  0xff000000, 0xff2121ff, 0xfff03c79, 0xffff50ff,
+    //  0xff7fff50, 0xff7fffff, 0xffffff3f, 0xffffffff,
+    //};
+    static double Y[] = {
+       0.0000000000000000000,  0.2286588235294117800,
+       0.4736235294117646700,  0.5971568627450980000,
+       0.7716784313725490000,  0.8499137254901961000,
+       0.9141647058823529000,  1.0000000000000000000,
+    };
+    static double Db[] = {
+       0.0000000000000000000,  1.1604941176470587000,
+       0.0012274509803921196,  0.6059803921568627000,
+      -0.6889215686274510000,  0.2258823529411764200,
+      -1.0036705882352940000,  0.0000000000000000000,
+    };
+    static double Dr[] = {
+       0.0000000000000000000,  0.1889176470588235500,
+      -0.8890313725490195000, -0.7658823529411765000,
+       0.5201921568627452000,  0.6691137254901962000,
+      -0.1633882352941175000,  0.0000000000000000000,
     };
 
-    uint64 r = image::normalize(colors[level].byte(2), 8, 16);
-    uint64 g = image::normalize(colors[level].byte(1), 8, 16);
-    uint64 b = image::normalize(colors[level].byte(0), 8, 16);
+    double y  = Y[level];
+    double db = Db[level];
+    double dr = Dr[level];
+
+    //uint64 r = image::normalize(colors[level].byte(2), 8, 16);
+    //uint64 g = image::normalize(colors[level].byte(1), 8, 16);
+    //uint64 b = image::normalize(colors[level].byte(0), 8, 16);
+    auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
+    uint64 r = uclamp<16>(65535.0 * gammaAdjust(y +  0.000092303716148 * db + -0.525912630661865 * dr));
+    uint64 g = uclamp<16>(65535.0 * gammaAdjust(y + -0.129132898890509 * db +  0.267899328207599 * dr));
+    uint64 b = uclamp<16>(65535.0 * gammaAdjust(y +  0.664679059978955 * db + -0.000079202543533 * dr));
 
     return r << 32 | g << 16 | b << 0;
   };
@@ -166,7 +190,7 @@ auto Interface::videoColor(uint32 n) -> uint64 {
   } else if(system.region() == System::Region::PAL) {
     return generatePALColor(n, gamma);
   } else if(system.region() == System::Region::SECAM) {
-    return generateSECAMColor(n);
+    return generateSECAMColor(n, gamma);
   }
 }
 
