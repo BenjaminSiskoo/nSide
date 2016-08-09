@@ -3,6 +3,11 @@ struct VSSystem : Thread {
     Button1, Button2, Button3, Button4, ServiceButton, Coin1, Coin2,
   };
 
+  struct GameCount { enum : uint {
+    Uni = 1,
+    Dual = 2,
+  };};
+
   static auto Enter() -> void;
   auto main() -> void;
 
@@ -19,6 +24,7 @@ struct VSSystem : Thread {
   auto serialize(serializer& s) -> void;
 
   bool forceSubRAM;
+  uint gameCount;
 
 private:
   uint8 ram[0x800];

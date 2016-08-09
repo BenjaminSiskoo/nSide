@@ -9,6 +9,7 @@ PlayChoice10 playchoice10;
 
 auto PlayChoice10::init() -> void {
   dip = 0;
+  screenConfig = ScreenConfig::Single;
 }
 
 auto PlayChoice10::load() -> void {

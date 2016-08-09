@@ -118,11 +118,13 @@ auto TIA::run() -> void {
   if(missile[0].reset) missile[0].position = player[0].position + 3;
   if(missile[1].reset) missile[1].position = player[1].position + 3;
 
-  if(io.hcounter < 68 || io.vcounter < 37) return;
+  uint offsetX = 68;
+  uint offsetY = system.region() == System::Region::NTSC ? 19 : 37;
+  if(io.hcounter < offsetX || io.vcounter < offsetY) return;
 
-  uint x = io.hcounter - 68;
-  uint y = io.vcounter - 37;
-  if(y >= (system.region() == System::Region::NTSC ? 192 : 228)) return;
+  uint x = io.hcounter - offsetX;
+  uint y = io.vcounter - offsetY;
+  if(y >= 228) return;
 
   uint7 pixel = 0;
 
@@ -196,7 +198,7 @@ auto TIA::run() -> void {
 auto TIA::scanline() -> void {
   if(io.vcounter == 0) frame();
 
-  if(io.vcounter == (system.region() == System::Region::NTSC ? 192 + 37 : 228 + 44)) {
+  if(io.vcounter == 228 + (system.region() == System::Region::NTSC ? 19 : 44)) {
     //dirty hack to prevent controls for hardware switches from being polled
     //19912 (262 * 228 / 3) times as fast as joystick/paddle controls and other emulators' controls
     if(io.vblank) pia.updateIO();
@@ -212,7 +214,7 @@ auto TIA::refresh() -> void {
   auto output = this->output;
   auto pitch = 160;
   auto width = 160;
-  auto height = system.region() == System::Region::NTSC ? 192 : 228;
+  auto height = 228;
   Emulator::video.refresh(output, pitch * sizeof(uint32), width, height);
 }
 

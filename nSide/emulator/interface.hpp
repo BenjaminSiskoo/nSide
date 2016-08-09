@@ -9,8 +9,6 @@ struct Interface {
     string name;
     uint width;
     uint height;
-    uint canvasWidth;
-    uint canvasHeight;
     bool overscan;
     double aspectRatio;
     bool resettable;

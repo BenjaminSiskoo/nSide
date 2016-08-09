@@ -53,7 +53,6 @@ auto System::load() -> bool {
   ? Emulator::Constants::Colorburst::NTSC
   : Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
 
-  interface->information.canvasHeight = region() == Region::NTSC ? 192 : 228;
   interface->information.aspectRatio = region() == Region::NTSC ? 12.0 / 7.0 : 1'475'000.0 / 709'379.0;
 
   serializeInit();

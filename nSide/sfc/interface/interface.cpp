@@ -13,10 +13,8 @@ Interface::Interface() {
   information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Super Famicom";
-  information.width        = 512;
-  information.height       = 480;
-  information.canvasWidth  = 256;  //note: half of the true size; needed for Medium (×3) scale
-  information.canvasHeight = 240;
+  information.width        = 256;  //note: half of the true size of 512×480;
+  information.height       = 240;  //needed for Medium (×3) scale
   information.overscan     = true;
   information.aspectRatio  = 8.0 / 7.0;
   information.resettable   = true;

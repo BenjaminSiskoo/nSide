@@ -12,10 +12,8 @@ Interface::Interface() {
   information.preAlpha     = true;
   information.manufacturer = "Sega";
   information.name         = "Mega Drive";
-  information.width        = 1280;
-  information.height       =  480;
-  information.canvasWidth  =  320;  //note: 1/4 of the true size; needed for scaling
-  information.canvasHeight =  240;
+  information.width        = 320;  //note: 1/4 of the true size; needed for scaling
+  information.height       = 240;
   information.overscan     = true;
   information.aspectRatio  = 32.0 / 35.0;
   information.resettable   = true;

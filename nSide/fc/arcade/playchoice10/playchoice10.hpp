@@ -1,4 +1,9 @@
 struct PlayChoice10 {
+  struct ScreenConfig { enum : uint {
+    Dual = 2,
+    Single = 1,
+  };};
+
   auto init() -> void;
   auto load() -> void;
   auto unload() -> void;
@@ -28,12 +33,6 @@ struct PlayChoice10 {
   //e000-ffff: cartridge IO registers
 
   uint16 dip;
-
-  struct ScreenConfig { enum : uint {
-    Dual = 2,
-    Single = 1,
-  };};
-
   uint screenConfig;
 
   bool vramAccess;

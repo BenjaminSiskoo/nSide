@@ -23,20 +23,20 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
 }
 
 auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
-  uint ppus = 0;
+  vssystem.gameCount = 0;
   auto side = node.find("side");
   bool primarySide;
   if(side(0)["ppu"]) {
     primarySide = 2 - side.size();
     boardNode = side(0);
-    ppus++;
+    vssystem.gameCount++;
   }
   if(side(1)["ppu"]) {
-    if(ppus == 0) {
+    if(vssystem.gameCount == 0) {
       primarySide = 1;
       boardNode = side(1);
     }
-    ppus++;
+    vssystem.gameCount++;
   }
   cpu.side = primarySide;
   apu.side = primarySide;
@@ -79,8 +79,6 @@ auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
   if(ppuVersion == "RC2C05-03")   ppu.version = PPU::Version::RC2C05_03;
   if(ppuVersion == "RC2C05-04")   ppu.version = PPU::Version::RC2C05_04;
   if(ppuVersion == "RC2C05-05")   ppu.version = PPU::Version::RC2C05_05;
-
-  if(ppus == 2) interface->information.canvasWidth = 512;
 }
 
 //

@@ -12,10 +12,8 @@ Interface::Interface() {
   information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Famicom";
-  information.width        = 256;
-  information.height       = 240;
-  information.canvasWidth  = 256; //increases to 512 during VS. DualSystem emulation
-  information.canvasHeight = 240; //increases to 480 during PlayChoice-10 emulation
+  information.width        = 256;  //increases to 512 during VS. DualSystem emulation
+  information.height       = 240;  //increases to 480 during PlayChoice-10 emulation
   information.overscan     = true;
   information.aspectRatio  = 8.0 / 7.0; //PAL: 2950000.0 / 2128137.0
   information.resettable   = true;

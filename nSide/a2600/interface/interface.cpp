@@ -14,8 +14,6 @@ Interface::Interface() {
   information.name         = "Atari 2600";
   information.width        = 160;
   information.height       = 228;
-  information.canvasWidth  = 160;
-  information.canvasHeight = 228;
   information.overscan     = true;
   information.aspectRatio  = 12.0 / 7.0;
   information.resettable   = false;

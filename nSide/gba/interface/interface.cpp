@@ -11,10 +11,8 @@ Interface::Interface() {
   information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy Advance";
-  information.width        = 240;
-  information.height       = 160;
-  information.canvasWidth  = 240;  //note: screen can be rotated by using a square size
-  information.canvasHeight = 240;
+  information.width        = 240;  //note: screen can be rotated by using a square size
+  information.height       = 240;
   information.overscan     = false;
   information.aspectRatio  = 1.0;
   information.resettable   = false;

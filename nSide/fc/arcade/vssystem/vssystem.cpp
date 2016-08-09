@@ -23,6 +23,7 @@ auto VSSystem::main() -> void {
 
 auto VSSystem::init() -> void {
   forceSubRAM = false;
+  gameCount = GameCount::Uni;
 }
 
 auto VSSystem::load() -> void {

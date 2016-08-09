@@ -159,7 +159,7 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::originX() -> uint {
-  return (system.vs() && interface->information.canvasWidth == 512) ? side * 256 : 0;
+  return (system.vs() && vssystem.gameCount == 2) ? side * 256 : 0;
 }
 
 auto PPU::originY() -> uint {

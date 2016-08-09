@@ -234,8 +234,8 @@ auto Presentation::updateEmulator() -> void {
 }
 
 auto Presentation::resizeViewport() -> void {
-  int width   = emulator ? emulator->information.canvasWidth  : 256;
-  int height  = emulator ? emulator->information.canvasHeight : 240;
+  int width   = emulator ? emulator->information.width  : 256;
+  int height  = emulator ? emulator->information.height : 240;
   double stretch = emulator ? emulator->information.aspectRatio : 1.0;
   if(stretch != 1.0) {
     //aspect correction is always enabled in fullscreen mode
@@ -250,7 +250,7 @@ auto Presentation::resizeViewport() -> void {
 
   int windowWidth = 0, windowHeight = 0;
   if(!fullScreen()) {
-    windowWidth  = 256 * scale * (settings["Video/AspectCorrection"].boolean() ? 8.0 / 7.0 : 1.0);
+    windowWidth  = max(256.0 * scale, width * scale * (settings["Video/AspectCorrection"].boolean() ? stretch : 1.0));
     windowHeight = 240 * scale;
   } else {
     windowWidth  = geometry().width();

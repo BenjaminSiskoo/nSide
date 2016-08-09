@@ -102,8 +102,8 @@ auto System::load(Revision revision) -> bool {
   ? Emulator::Constants::Colorburst::NTSC
   : Emulator::Constants::Colorburst::PAL;
 
-  interface->information.canvasWidth  = 256;
-  interface->information.canvasHeight = 240;
+  interface->information.width  = 256;
+  interface->information.height = 240;
   interface->information.aspectRatio = region() == Region::NTSC ? 8.0 / 7.0 : 2'950'000.0 / 2'128'137.0;
 
   switch(revision) {
@@ -115,6 +115,7 @@ auto System::load(Revision revision) -> bool {
 
   case Revision::VSSystem: {
     vssystem.load();
+    interface->information.height = 240 / vssystem.gameCount;  //actually double width
     peripherals.connect(ID::Port::Arcade, ID::Device::VSPanel);
     break;
   }
@@ -122,7 +123,7 @@ auto System::load(Revision revision) -> bool {
   case Revision::PlayChoice10: {
     playchoice10.screenConfig = min(max(document["system/pc10/screen/mode"].integer(), 1), 2);
     playchoice10.load();
-    interface->information.canvasHeight = playchoice10.screenConfig * 240;
+    interface->information.width = 256 / playchoice10.screenConfig;  //actually double height
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
