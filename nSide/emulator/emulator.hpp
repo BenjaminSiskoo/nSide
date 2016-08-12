@@ -4,6 +4,7 @@
 #include <nall/vfs.hpp>
 using namespace nall;
 
+#include "types.hpp"
 #include <libco/libco.h>
 #include <audio/audio.hpp>
 #include <video/video.hpp>

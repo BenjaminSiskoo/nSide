@@ -16,7 +16,7 @@ Interface::Interface() {
   information.width        = 256;  //note: half of the true size of 512×480;
   information.height       = 240;  //needed for Medium (×3) scale
   information.overscan     = true;
-  information.aspectRatio  = 8.0 / 7.0;
+  information.aspectRatio  = (135.0 / 22.0 * 1'000'000.0) / (Emulator::Constants::Colorburst::NTSC * 6.0 / (2.0 + 2.0));
   information.resettable   = true;
 
   information.capability.states = true;

@@ -104,7 +104,9 @@ auto System::load(Revision revision) -> bool {
 
   interface->information.width  = 256;
   interface->information.height = 240;
-  interface->information.aspectRatio = region() == Region::NTSC ? 8.0 / 7.0 : 2'950'000.0 / 2'128'137.0;
+  interface->information.aspectRatio = region() == Region::NTSC
+  ? (135.0 / 22.0 * 1'000'000.0) / (information.colorburst * 6.0 / 4.0)
+  : 7375000.0 / (information.colorburst * 6.0 / 5.0);
 
   switch(revision) {
 

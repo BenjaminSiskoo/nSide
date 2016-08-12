@@ -15,7 +15,7 @@ Interface::Interface() {
   information.width        = 320;  //note: 1/4 of the true size; needed for scaling
   information.height       = 240;
   information.overscan     = true;
-  information.aspectRatio  = 32.0 / 35.0;
+  information.aspectRatio  = (135.0 / 22.0 * 1'000'000.0) / (Emulator::Constants::Colorburst::NTSC * 15.0 / 8.0);
   information.resettable   = true;
 
   information.capability.states = false;
@@ -82,9 +82,9 @@ auto Interface::videoColors() -> uint32 {
 }
 
 auto Interface::videoColor(uint32 color) -> uint64 {
-  uint R = color.bits( 1, 3);
-  uint G = color.bits( 5, 7);
-  uint B = color.bits( 9,11);
+  uint B = color.bits(0,2);
+  uint G = color.bits(3,5);
+  uint R = color.bits(6,8);
 
   uint64 r = image::normalize(R, 3, 16);
   uint64 g = image::normalize(G, 3, 16);

@@ -15,7 +15,7 @@ Interface::Interface() {
   information.width        = 256;  //increases to 512 during VS. DualSystem emulation
   information.height       = 240;  //increases to 480 during PlayChoice-10 emulation
   information.overscan     = true;
-  information.aspectRatio  = 8.0 / 7.0; //PAL: 2950000.0 / 2128137.0
+  information.aspectRatio  = (135.0 / 22.0 * 1'000'000.0) / (Emulator::Constants::Colorburst::NTSC * 6.0 / 4.0);
   information.resettable   = true;
 
   information.capability.states = true;
