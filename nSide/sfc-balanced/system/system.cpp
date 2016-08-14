@@ -72,10 +72,6 @@ auto System::load() -> bool {
   ? Emulator::Constants::Colorburst::NTSC
   : Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
 
-  interface->information.aspectRatio = region() == Region::NTSC
-  ? (135.0 / 22.0 * 1'000'000.0) / (information.colorburst * 6.0 / (2.0 + 2.0))
-  : 7375000.0 / (information.colorburst * 6.0 / (2.0 + 2.0));
-
   if(cartridge.has.ICD2) icd2.load();
   if(cartridge.has.MCC) mcc.load();
   if(cartridge.has.NSSDIP) nss.load();

@@ -12,10 +12,7 @@ Interface::Interface() {
   information.preAlpha     = true;
   information.manufacturer = "Atari";
   information.name         = "Atari 2600";
-  information.width        = 160;
-  information.height       = 228;
   information.overscan     = true;
-  information.aspectRatio  = (135.0 / 22.0 * 1'000'000.0) / Emulator::Constants::Colorburst::NTSC;
   information.resettable   = false;
 
   information.capability.states = true;
@@ -62,6 +59,23 @@ auto Interface::manifest() -> string {
 
 auto Interface::title() -> string {
   return cartridge.title();
+}
+
+auto Interface::videoSize() -> VideoSize {
+  return {160, 228};
+}
+
+auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+  double w = 160;
+  if(arc) {
+    double squarePixelRate = system.region() == System::Region::NTSC
+    ? 135.0 / 22.0 * 1'000'000.0
+    : 7'375'000.0;
+    w *= squarePixelRate / system.colorburst();
+  }
+  uint h = 228;
+  uint m = min((uint)(width / w), height / h);
+  return {(uint)(w * m), h * m};
 }
 
 auto Interface::videoFrequency() -> double {

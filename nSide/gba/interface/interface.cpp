@@ -11,10 +11,7 @@ Interface::Interface() {
   information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy Advance";
-  information.width        = 240;  //note: screen can be rotated by using a square size
-  information.height       = 240;
   information.overscan     = false;
-  information.aspectRatio  = 1.0;
   information.resettable   = false;
 
   information.capability.states = true;
@@ -63,6 +60,17 @@ auto Interface::manifest() -> string {
 
 auto Interface::title() -> string {
   return cartridge.title();
+}
+
+auto Interface::videoSize() -> VideoSize {
+  return {240, 240};
+}
+
+auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+  uint w = 240;
+  uint h = 240;
+  uint m = min(width / w, height / h);
+  return {w * m, h * m};
 }
 
 auto Interface::videoFrequency() -> double {
@@ -121,10 +129,6 @@ auto Interface::connect(uint port, uint device) -> void {
 }
 
 auto Interface::power() -> void {
-  system.power();
-}
-
-auto Interface::reset() -> void {
   system.power();
 }
 

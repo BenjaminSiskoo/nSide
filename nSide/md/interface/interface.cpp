@@ -12,10 +12,7 @@ Interface::Interface() {
   information.preAlpha     = true;
   information.manufacturer = "Sega";
   information.name         = "Mega Drive";
-  information.width        = 320;  //note: 1/4 of the true size; needed for scaling
-  information.height       = 240;
   information.overscan     = true;
-  information.aspectRatio  = (135.0 / 22.0 * 1'000'000.0) / (Emulator::Constants::Colorburst::NTSC * 15.0 / 8.0);
   information.resettable   = true;
 
   information.capability.states = false;
@@ -73,6 +70,21 @@ auto Interface::title() -> string {
   return cartridge.title();
 }
 
+auto Interface::videoSize() -> VideoSize {
+  return {1280, 480};
+}
+
+auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+  double w = 320;
+  if(arc) {
+    double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
+    w *= squarePixelRate / (system.colorburst() * 15.0 / 8.0);
+  }
+  uint h = 240;
+  uint m = min((uint)(width / w), height / h);
+  return {(uint)(w * m), h * m};
+}
+
 auto Interface::videoFrequency() -> double {
   return 60.0;
 }
@@ -82,9 +94,9 @@ auto Interface::videoColors() -> uint32 {
 }
 
 auto Interface::videoColor(uint32 color) -> uint64 {
-  uint B = color.bits(0,2);
+  uint R = color.bits(0,2);
   uint G = color.bits(3,5);
-  uint R = color.bits(6,8);
+  uint B = color.bits(6,8);
 
   uint64 r = image::normalize(R, 3, 16);
   uint64 g = image::normalize(G, 3, 16);

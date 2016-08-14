@@ -13,10 +13,7 @@ Interface::Interface() {
   information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Super Famicom";
-  information.width        = 256;  //note: half of the true size of 512×480;
-  information.height       = 240;  //needed for Medium (×3) scale
   information.overscan     = true;
-  information.aspectRatio  = (135.0 / 22.0 * 1'000'000.0) / (Emulator::Constants::Colorburst::NTSC * 6.0 / (2.0 + 2.0));
   information.resettable   = true;
 
   information.capability.states = true;
@@ -131,6 +128,24 @@ auto Interface::manifest() -> string {
 
 auto Interface::title() -> string {
   return cartridge.title();
+}
+
+auto Interface::videoSize() -> VideoSize {
+  return {512, 480};
+}
+
+auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+  double w = 256;
+  if(arc) {
+    double squarePixelRate = system.region() == System::Region::NTSC
+    ? 135.0 / 22.0 * 1'000'000.0
+    : 7'375'000.0;
+    //note: PAL SNES multiples colorburst by 4/5 to make clock rate
+    w *= squarePixelRate / (system.colorburst() * 6.0 / (2.0 + 2.0));
+  }
+  uint h = 240;
+  uint m = min((uint)(width / w), height / h);
+  return {(uint)(w * m), h * m};
 }
 
 auto Interface::videoFrequency() -> double {

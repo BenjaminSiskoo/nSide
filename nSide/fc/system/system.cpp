@@ -102,12 +102,6 @@ auto System::load(Revision revision) -> bool {
   ? Emulator::Constants::Colorburst::NTSC
   : Emulator::Constants::Colorburst::PAL;
 
-  interface->information.width  = 256;
-  interface->information.height = 240;
-  interface->information.aspectRatio = region() == Region::NTSC
-  ? (135.0 / 22.0 * 1'000'000.0) / (information.colorburst * 6.0 / 4.0)
-  : 7375000.0 / (information.colorburst * 6.0 / 5.0);
-
   switch(revision) {
 
   case Revision::Famicom: {
@@ -117,7 +111,6 @@ auto System::load(Revision revision) -> bool {
 
   case Revision::VSSystem: {
     vssystem.load();
-    interface->information.height = 240 / vssystem.gameCount;  //actually double width
     peripherals.connect(ID::Port::Arcade, ID::Device::VSPanel);
     break;
   }
@@ -125,7 +118,6 @@ auto System::load(Revision revision) -> bool {
   case Revision::PlayChoice10: {
     playchoice10.screenConfig = min(max(document["system/pc10/screen/mode"].integer(), 1), 2);
     playchoice10.load();
-    interface->information.width = 256 / playchoice10.screenConfig;  //actually double height
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }

@@ -2,7 +2,7 @@ struct AboutWindow : Window {
   AboutWindow();
 
   VerticalLayout layout{this};
-  //Canvas canvas{&layout, Size{399, 95}, 15};
+    Canvas canvas{&layout, Size{256, 96}, 15};
     HorizontalLayout informationLayout{&layout, Size{~0, 0}};
       Label informationLeft{&informationLayout, Size{~0, 0}, 3};
       Label informationRight{&informationLayout, Size{~0, 0}};
@@ -15,7 +15,7 @@ struct Presentation : Window {
   auto updateEmulator() -> void;
   auto resizeViewport() -> void;
   auto toggleFullScreen() -> void;
-  auto drawSplashScreen() -> void;
+  auto draw(image logo = {}) -> void;
   auto loadShaders() -> void;
 
   MenuBar menuBar{this};

@@ -12,10 +12,7 @@ Interface::Interface() {
   information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy";
-  information.width        = 160;
-  information.height       = 144;
   information.overscan     = false;
-  information.aspectRatio  = 1.0;
   information.resettable   = false;
 
   information.capability.states = true;
@@ -47,6 +44,17 @@ auto Interface::manifest() -> string {
 
 auto Interface::title() -> string {
   return cartridge.title();
+}
+
+auto Interface::videoSize() -> VideoSize {
+  return {160, 144};
+}
+
+auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+  uint w = 160;
+  uint h = 144;
+  uint m = min(width / w, height / h);
+  return {w * m, h * m};
 }
 
 auto Interface::videoFrequency() -> double {

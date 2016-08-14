@@ -23,9 +23,13 @@ struct Interface : Emulator::Interface {
 
   auto manifest() -> string override;
   auto title() -> string override;
+
+  auto videoSize() -> VideoSize override;
+  auto videoSize(uint width, uint height, bool arc) -> VideoSize override;
   auto videoFrequency() -> double override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
+
   auto audioFrequency() -> double override;
 
   auto loaded() -> bool override;
@@ -35,7 +39,6 @@ struct Interface : Emulator::Interface {
 
   auto connect(uint port, uint device) -> void override;
   auto power() -> void override;
-  auto reset() -> void override;
   auto run() -> void override;
   auto rotate() -> void override;
 

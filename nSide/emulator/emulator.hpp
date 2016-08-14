@@ -11,12 +11,14 @@ using namespace nall;
 #include <resource/resource.hpp>
 
 namespace Emulator {
-  static const string Name = "nSide";
-  static const string OriginalName = "higan";
-  static const string Version = "009.10";
-  static const string FromVersion = "101.01";
-  static const string Author = "hex_usr";
+  static const string Name           = "nSide";
+  static const string OriginalName   = "higan";
+  static const string Version        = "009.10";
+  static const string FromVersion    = "101.06";
+  static const string Author         = "hex_usr";
   static const string OriginalAuthor = "byuu";
+  static const string License        = "GPLv3";
+  static const string Website        = "http://byuu.org/";
   static const string_vector Contributors = {
     "Alyosha_TAS (Atari 2600 PIA timer and TIA sprite implementation details)",
     "Andreas Naive (S-DD1 decompression algorithm)",
@@ -55,8 +57,6 @@ namespace Emulator {
     "wareya (WASAPI driver)",
     "zones",
   };
-  static const string License = "GPLv3";
-  static const string Website = "http://byuu.org/";
 
   //incremented only when serialization format changes
   static const string SerializerVersion = "009.10(101)";

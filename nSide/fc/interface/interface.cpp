@@ -12,10 +12,7 @@ Interface::Interface() {
   information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Famicom";
-  information.width        = 256;  //increases to 512 during VS. DualSystem emulation
-  information.height       = 240;  //increases to 480 during PlayChoice-10 emulation
   information.overscan     = true;
-  information.aspectRatio  = (135.0 / 22.0 * 1'000'000.0) / (Emulator::Constants::Colorburst::NTSC * 6.0 / 4.0);
   information.resettable   = true;
 
   information.capability.states = true;
@@ -319,6 +316,23 @@ auto Interface::manifest() -> string {
 
 auto Interface::title() -> string {
   return cartridge.title();
+}
+
+auto Interface::videoSize() -> VideoSize {
+  return {256 * vssystem.gameCount, 240 * playchoice10.screenConfig};
+}
+
+auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+  double w = 256 / playchoice10.screenConfig;
+  if(arc) {
+    double squarePixelRate = system.region() == System::Region::NTSC
+    ? 135.0 / 22.0 * 1'000'000.0
+    : 7'375'000.0;
+    w *= squarePixelRate / (system.colorburst() * 6.0 / (system.region() == System::Region::NTSC ? 4.0 : 5.0));
+  }
+  uint h = 240 / vssystem.gameCount;
+  uint m = min((uint)(width / w), height / h);
+  return {(uint)(w * m), h * m};
 }
 
 auto Interface::videoFrequency() -> double {

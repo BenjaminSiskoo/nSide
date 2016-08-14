@@ -37,7 +37,7 @@ Program::Program(string_vector args) {
   video->set(Video::Synchronize, settings["Video/Synchronize"].boolean());
   if(!video->init()) video = Video::create("None");
 
-  presentation->drawSplashScreen();
+  presentation->draw(args[1] ? image{} : Resource::Logo::nSide);
 
   audio = Audio::create(settings["Audio/Driver"].text());
   audio->set(Audio::Device, settings["Audio/Device"].text());
@@ -94,6 +94,7 @@ auto Program::main() -> void {
 }
 
 auto Program::quit() -> void {
+  hasQuit = true;
   unloadMedium();
   settings.quit();
   inputManager->quit();

@@ -38,6 +38,7 @@ struct Program : Emulator::Interface::Bind {
   auto updateAudioDriver() -> void;
   auto updateAudioEffects() -> void;
 
+  bool hasQuit = false;
   bool pause = false;
 
   vector<Emulator::Interface*> emulators;

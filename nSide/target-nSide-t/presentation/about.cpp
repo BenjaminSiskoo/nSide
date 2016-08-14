@@ -2,11 +2,11 @@ AboutWindow::AboutWindow() {
   aboutWindow = this;
 
   setTitle("About nSide ...");
-//setBackgroundColor({255, 255, 240});
+  setBackgroundColor({255, 255, 240});
   layout.setMargin(10);
-//auto logo = image{Resource::Logo::higan};
-//logo.alphaBlend(0xfffff0);
-//canvas.setIcon(logo);
+  auto logo = image{Resource::Logo::nSide};
+  logo.alphaBlend(0xfffff0);
+  canvas.setIcon(logo);
   informationLeft.setFont(Font().setBold()).setAlignment(1.0).setText({
     "Version:\n",
     "Based on:\n",

@@ -53,10 +53,6 @@ auto System::load() -> bool {
   ? Emulator::Constants::Colorburst::NTSC
   : Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
 
-  interface->information.aspectRatio = region() == Region::NTSC
-  ? (135.0 / 22.0 * 1'000'000.0) / information.colorburst
-  : 7375000.0 / information.colorburst;
-
   serializeInit();
   return information.loaded = true;
 }
