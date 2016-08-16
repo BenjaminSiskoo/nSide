@@ -233,7 +233,28 @@ auto Presentation::updateEmulator() -> void {
   emulator->set("Scanline Emulation", scanlineEmulation.checked());
 }
 
+auto Presentation::clearViewport() -> void {
+  if(!video) return;
+
+  uint32_t* output;
+  uint length = 0;
+  uint width = viewport.geometry().width();
+  uint height = viewport.geometry().height();
+  if(video->lock(output, length, width, height)) {
+    for(uint y : range(height)) {
+      auto dp = output + y * (length >> 2);
+      for(uint x : range(width)) *dp++ = 0xff000000;
+    }
+
+    video->unlock();
+    video->refresh();
+  }
+}
+
 auto Presentation::resizeViewport() -> void {
+  //clear video area before resizing to avoid seeing distorted video momentarily
+  clearViewport();
+
   uint scale = 2;
   if(settings["Video/Scale"].text() == "Tiny"  ) scale = 1;
   if(settings["Video/Scale"].text() == "Small" ) scale = 2;
@@ -243,7 +264,7 @@ auto Presentation::resizeViewport() -> void {
   uint windowWidth = 0, windowHeight = 0;
   bool aspectCorrection = true;
   if(!fullScreen()) {
-    windowWidth  = 384 * scale;  //320 for NTSC, 384 for PAL and SECAM
+    windowWidth  = (aspectCorrection ? 384 : 320) * scale;  //320 for NTSC, 384 for PAL and SECAM
     windowHeight = 240 * scale;  //240 for NTSC, 288 for PAL and SECAM
     aspectCorrection = settings["Video/AspectCorrection"].boolean();
   } else {
@@ -254,7 +275,6 @@ auto Presentation::resizeViewport() -> void {
 
   if(!emulator) {
     viewport.setGeometry({0, 0, windowWidth, windowHeight});
-    draw(Resource::Logo::nSide);
   } else {
     auto videoSize = emulator->videoSize(windowWidth, windowHeight, aspectCorrection);
     viewport.setGeometry({
@@ -262,6 +282,9 @@ auto Presentation::resizeViewport() -> void {
       videoSize.width, videoSize.height
     });
   }
+
+  //clear video area again to ensure entire viewport area has been painted in
+  clearViewport();
 }
 
 auto Presentation::toggleFullScreen() -> void {
@@ -278,11 +301,10 @@ auto Presentation::toggleFullScreen() -> void {
     menuBar.setVisible(true);
     statusBar.setVisible(settings["UserInterface/ShowStatusBar"].boolean());
   }
-
-  Application::processEvents();
   resizeViewport();
 }
 
+/*
 auto Presentation::draw(image logo) -> void {
   if(!video) return;
 
@@ -314,6 +336,7 @@ auto Presentation::draw(image logo) -> void {
     video->refresh();
   }
 }
+*/
 
 auto Presentation::loadShaders() -> void {
   auto pathname = locate("Video Shaders/");

@@ -172,8 +172,8 @@ auto TIA::run() -> void {
 
     if(m0 && p0) collision.m0p0 = true;
     if(m0 && p1) collision.m0p1 = true;
-    if(m1 && p0) collision.m1p0 = true;
     if(m1 && p1) collision.m1p1 = true;
+    if(m1 && p0) collision.m1p0 = true;
     if(p0 && bl) collision.p0bl = true;
     if(p0 && pf) collision.p0pf = true;
     if(p1 && bl) collision.p1bl = true;

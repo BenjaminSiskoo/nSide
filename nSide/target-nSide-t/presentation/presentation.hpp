@@ -13,9 +13,10 @@ struct Presentation : Window {
   Presentation();
   auto refreshLibraryMenu() -> void;
   auto updateEmulator() -> void;
+  auto clearViewport() -> void;
   auto resizeViewport() -> void;
   auto toggleFullScreen() -> void;
-  auto draw(image logo = {}) -> void;
+  //auto draw(image logo = {}) -> void;
   auto loadShaders() -> void;
 
   MenuBar menuBar{this};

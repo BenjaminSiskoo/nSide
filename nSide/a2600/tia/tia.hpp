@@ -81,8 +81,8 @@ struct TIA : Thread {
   struct Collision {
     bool m0p0;
     bool m0p1;
-    bool m1p0;
     bool m1p1;
+    bool m1p0;
     bool p0bl;
     bool p0pf;
     bool p1bl;

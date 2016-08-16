@@ -26,7 +26,7 @@ auto PIA::Enter() -> void {
 
 auto PIA::main() -> void {
   runTimer();
-  step(1);
+  step(3);
 
   //Behavior not relevant to the Atari 2600:
   //The MOS 6507 has no IRQ pin, so IRQ functionality is left unused.
@@ -39,7 +39,7 @@ auto PIA::load(Markup::Node node) -> bool {
 }
 
 auto PIA::power() -> void {
-  create(Enter, system.colorburst() / (system.region() == System::Region::NTSC ? 3.0 : 3.75));
+  create(Enter, system.colorburst());
 
   io.color = 1;
   io.difficulty0 = 0;

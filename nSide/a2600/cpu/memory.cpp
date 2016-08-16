@@ -7,7 +7,7 @@ auto CPU::read(uint16 addr) -> uint8 {
     if((addr & 0x1280) == 0x0080) r.mdr = pia.readRAM(addr, r.mdr);
     if((addr & 0x1280) == 0x0280) r.mdr = pia.readIO(addr, r.mdr);
     if((addr & 0x1000) == 0x1000) r.mdr = cartridge.access(addr, r.mdr);
-    step(1);
+    step(3);
   } while(io.rdyLine == 0);
 
   return r.mdr;
@@ -20,5 +20,5 @@ auto CPU::write(uint16 addr, uint8 data) -> void {
   if((addr & 0x1280) == 0x0080) pia.writeRAM(addr, data);
   if((addr & 0x1280) == 0x0280) pia.writeIO(addr, data);
   if((addr & 0x1000) == 0x1000) cartridge.access(addr, data);
-  step(1);
+  step(3);
 }

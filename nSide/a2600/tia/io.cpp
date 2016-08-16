@@ -3,49 +3,56 @@ auto TIA::readIO(uint6 addr, uint8 data) -> uint8 {
 
   //CXM0P
   case 0x0: {
-    return collision.m0p0 << 6 | collision.m0p1 << 7;
+    data.bit(6) = collision.m0p0;
+    data.bit(7) = collision.m0p1;
     break;
   }
 
   //CXM1P
   case 0x1: {
-    return collision.m1p0 << 6 | collision.m1p1 << 7;
+    data.bit(6) = collision.m1p1;
+    data.bit(7) = collision.m1p0;
     break;
   }
 
   //CXP0FB
   case 0x2: {
-    return collision.p0bl << 6 | collision.p0pf << 7;
+    data.bit(6) = collision.p0bl;
+    data.bit(7) = collision.p0pf;
     break;
   }
 
   //CXP1FB
   case 0x3: {
-    return collision.p1bl << 6 | collision.p1pf << 7;
+    data.bit(6) = collision.p1bl;
+    data.bit(7) = collision.p1pf;
     break;
   }
 
   //CXM0FB
   case 0x4: {
-    return collision.m0bl << 6 | collision.m0pf << 7;
+    data.bit(6) = collision.m0bl;
+    data.bit(7) = collision.m0pf;
     break;
   }
 
   //CXM1FB
   case 0x5: {
-    return collision.m1bl << 6 | collision.m1pf << 7;
+    data.bit(6) = collision.m1bl;
+    data.bit(7) = collision.m1pf;
     break;
   }
 
   //CXBLPF
   case 0x6: {
-    return collision.blpf << 7;
+    data.bit(7) = collision.blpf;
     break;
   }
 
   //CXPPMM
   case 0x7: {
-    return collision.m0m1 << 6 | collision.p0p1 << 7;
+    data.bit(6) = collision.m0m1;
+    data.bit(7) = collision.p0p1;
     break;
   }
 
@@ -356,8 +363,8 @@ auto TIA::writeIO(uint6 addr, uint8 data) -> void {
   case 0x2c: {
     collision.m0p0 = false;
     collision.m0p1 = false;
-    collision.m1p0 = false;
     collision.m1p1 = false;
+    collision.m1p0 = false;
     collision.p0bl = false;
     collision.p0pf = false;
     collision.p1bl = false;
