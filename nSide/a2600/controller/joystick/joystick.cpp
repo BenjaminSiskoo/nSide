@@ -10,7 +10,7 @@ auto Joystick::pot1() -> bool {
 }
 
 auto Joystick::fire() -> bool {
-  return interface->inputPoll(port, ID::Device::Joystick, Fire);
+  return !interface->inputPoll(port, ID::Device::Joystick, Fire);
 }
 
 auto Joystick::direction() -> uint4 {
