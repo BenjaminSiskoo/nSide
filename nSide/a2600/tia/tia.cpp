@@ -149,12 +149,12 @@ auto TIA::run() -> void {
       p1 = player[1].graphic.bit(bit);
     }
 
-    if(missile[0].enable) {
+    if(missile[0].enable && !missile[0].reset) {
       size = 1 << missile[0].size;
       if(missile[0].position >= x - (size - 1) && missile[0].position <= x) m0 = true;
     }
 
-    if(missile[1].enable) {
+    if(missile[1].enable && !missile[1].reset) {
       size = 1 << missile[1].size;
       if(missile[1].position >= x - (size - 1) && missile[1].position <= x) m1 = true;
     }
@@ -201,7 +201,7 @@ auto TIA::scanline() -> void {
   if(io.vcounter == 228 + (system.region() == System::Region::NTSC ? 19 : 44)) {
     //dirty hack to prevent controls for hardware switches from being polled
     //19912 (262 * 228 / 3) times as fast as joystick/paddle controls and other emulators' controls
-    if(io.vblank) pia.updateIO();
+    pia.updateIO();
 
     scheduler.exit(Scheduler::Event::Frame);
   }

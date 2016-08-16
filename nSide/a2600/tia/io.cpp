@@ -233,26 +233,32 @@ auto TIA::writeIO(uint6 addr, uint8 data) -> void {
     return;
   }
 
+  //AUDC0
   case 0x15: {
     return;
   }
 
+  //AUDC1
   case 0x16: {
     return;
   }
 
+  //AUDF0
   case 0x17: {
     return;
   }
 
+  //AUDF1
   case 0x18: {
     return;
   }
 
+  //AUDV0
   case 0x19: {
     return;
   }
 
+  //AUDV1
   case 0x1a: {
     return;
   }
@@ -317,14 +323,17 @@ auto TIA::writeIO(uint6 addr, uint8 data) -> void {
     return;
   }
 
+  //VDELP0
   case 0x25: {
     return;
   }
 
+  //VDELP1
   case 0x26: {
     return;
   }
 
+  //VDELBL
   case 0x27: {
     return;
   }
@@ -343,9 +352,9 @@ auto TIA::writeIO(uint6 addr, uint8 data) -> void {
 
   //HMOVE
   case 0x2a: {
-    for(auto& p : player)  p.position = (p.position + p.motion + 160) % 160;
-    for(auto& m : missile) m.position = (m.position + m.motion + 160) % 160;
-    ball.position = (ball.position + ball.motion + 160) % 160;
+    for(auto& p : player)  p.position = (p.position - p.motion + 160) % 160;
+    for(auto& m : missile) m.position = (m.position - m.motion + 160) % 160;
+    ball.position = (ball.position - ball.motion + 160) % 160;
     return;
   }
 
