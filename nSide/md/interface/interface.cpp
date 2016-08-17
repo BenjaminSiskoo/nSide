@@ -90,7 +90,7 @@ auto Interface::videoFrequency() -> double {
 }
 
 auto Interface::videoColors() -> uint32 {
-  return 1 << 9;
+  return (1 << 9) * 3;
 }
 
 auto Interface::videoColor(uint32 color) -> uint64 {

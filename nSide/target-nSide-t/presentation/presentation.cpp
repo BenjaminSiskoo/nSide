@@ -154,15 +154,25 @@ Presentation::Presentation() {
 
 auto Presentation::refreshLibraryMenu() -> void {
   libraryMenu.reset();
-  loadBootableMedia.reset();
+  string_vector manufacturers;
   for(auto& emulator : program->emulators) {
     if(emulator->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
-    for(auto& medium : emulator->media) {
-      auto item = new MenuItem{&libraryMenu};
-      item->setText({emulator->information.preAlpha ? "(!) " : "", medium.name, " ..."}).onActivate([=] {
-        program->loadMedium(*emulator, medium);
-      });
-      loadBootableMedia.append(item);
+    if(!manufacturers.find(emulator->information.manufacturer)) {
+      manufacturers.append(emulator->information.manufacturer);
+    }
+  }
+  for(auto& manufacturer : manufacturers) {
+    Menu manufacturerMenu{&libraryMenu};
+    manufacturerMenu.setText(manufacturer);
+    for(auto& emulator : program->emulators) {
+      if(emulator->information.manufacturer != manufacturer) continue;
+      if(emulator->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
+      for(auto& medium : emulator->media) {
+        auto item = new MenuItem{&manufacturerMenu};
+        item->setText({emulator->information.preAlpha ? "(!) " : "", medium.name, " ..."}).onActivate([=] {
+          program->loadMedium(*emulator, medium);
+        });
+      }
     }
   }
   //add cart-pal menu options -- but only if cart-pal binary is present

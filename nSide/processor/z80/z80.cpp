@@ -23,9 +23,9 @@ auto Z80::reset() -> void {
 }
 
 auto Z80::interrupt(uint16 vector) -> void {
-  io();
-  io();
-  io();
+  idle();
+  idle();
+  idle();
   r.ime = 0;
   write(--r[SP], r[PC] >> 8);
   write(--r[SP], r[PC] >> 0);

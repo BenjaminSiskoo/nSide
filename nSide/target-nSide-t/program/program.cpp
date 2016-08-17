@@ -1,4 +1,5 @@
 #include "../tomoko.hpp"
+
 #include <a2600/interface/interface.hpp>
 #include <fc/interface/interface.hpp>
 #if defined(PROFILE_BALANCED)
@@ -6,10 +7,14 @@
 #else
 #include <sfc/interface/interface.hpp>
 #endif
-#include <md/interface/interface.hpp>
 #include <gb/interface/interface.hpp>
 #include <gba/interface/interface.hpp>
+
+#include <ms/interface/interface.hpp>
+#include <md/interface/interface.hpp>
+
 #include <ws/interface/interface.hpp>
+
 #include "interface.cpp"
 #include "medium.cpp"
 #include "state.cpp"
@@ -23,10 +28,14 @@ Program::Program(string_vector args) {
   emulators.append(new Atari2600::Interface);
   emulators.append(new Famicom::Interface);
   emulators.append(new SuperFamicom::Interface);
-  emulators.append(new MegaDrive::Interface);
   emulators.append(new GameBoy::Interface);
   emulators.append(new GameBoyAdvance::Interface);
+
+  emulators.append(new MasterSystem::Interface);
+  emulators.append(new MegaDrive::Interface);
+
   emulators.append(new WonderSwan::Interface);
+
   for(auto& emulator : emulators) emulator->bind = this;
 
   new Presentation;

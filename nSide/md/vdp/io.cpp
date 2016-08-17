@@ -1,8 +1,6 @@
-//todo: does data mirroring occur for all VDP addresses; or just data/control ports?
-
 auto VDP::readByte(uint24 addr) -> uint8 {
   auto data = readWord(addr & ~1);
-  return data << 8 | data << 0;
+  return data.byte(!addr.bit(0));
 }
 
 auto VDP::writeByte(uint24 addr, uint8 data) -> void {
@@ -22,6 +20,11 @@ auto VDP::readWord(uint24 addr) -> uint16 {
   //control port
   case 0xc00004: case 0xc00006: {
     return readControlPort();
+  }
+
+  //counter
+  case 0xc00008: case 0xc0000a: case 0xc0000c: case 0xc0000e: {
+    return state.y << 8 | (state.x >> 1) << 0;
   }
 
   }
@@ -73,8 +76,7 @@ auto VDP::writeDataPort(uint16 data) -> void {
 
   //DMA VRAM fill
   if(io.dmaFillWait.lower()) {
-    io.dmaFillWord = data;
-    return;
+    io.dmaFillByte = data >> 8;
   }
 
   //VRAM write
@@ -82,6 +84,9 @@ auto VDP::writeDataPort(uint16 data) -> void {
     auto address = io.address.bits(1,15);
     if(io.address.bit(0)) data = data >> 8 | data << 8;
     vram[address] = data;
+    if(address >= sprite.io.attributeAddress && address < sprite.io.attributeAddress + 320) {
+      sprite.write(address, data);
+    }
     io.address += io.dataIncrement;
     return;
   }

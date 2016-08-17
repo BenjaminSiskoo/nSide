@@ -120,11 +120,11 @@ auto Z80::op_ld_nn_sp() {
 
 auto Z80::op_ld_sp_hl() {
   r[SP] = r[HL];
-  io();
+  idle();
 }
 
 auto Z80::op_push_rr(uint x) {
-  io();
+  idle();
   write(--r[SP], r[x] >> 8);
   write(--r[SP], r[x] >> 0);
 }
@@ -298,7 +298,7 @@ auto Z80::op_cpl() {
 //16-bit arithmetic commands
 
 auto Z80::op_add_hl_rr(uint x) {
-  io();
+  idle();
   uint32 rb = (r[HL] + r[x]);
   uint32 rn = (r[HL] & 0xfff) + (r[x] & 0xfff);
   r[HL] = rb;
@@ -308,12 +308,12 @@ auto Z80::op_add_hl_rr(uint x) {
 }
 
 auto Z80::op_inc_rr(uint x) {
-  io();
+  idle();
   r[x]++;
 }
 
 auto Z80::op_dec_rr(uint x) {
-  io();
+  idle();
   r[x]--;
 }
 
@@ -324,8 +324,8 @@ auto Z80::op_add_sp_n() {
   r.f.h = ((r[SP] & 0x0f) + (n & 0x0f)) > 0x0f;
   r.f.c = ((r[SP] & 0xff) + (n & 0xff)) > 0xff;
   r[SP] += n;
-  io();
-  io();
+  idle();
+  idle();
 }
 
 auto Z80::op_ld_hl_sp_n() {
@@ -335,7 +335,7 @@ auto Z80::op_ld_hl_sp_n() {
   r.f.h = ((r[SP] & 0x0f) + (n & 0x0f)) > 0x0f;
   r.f.c = ((r[SP] & 0xff) + (n & 0xff)) > 0xff;
   r[HL] = r[SP] + n;
-  io();
+  idle();
 }
 
 //rotate/shift commands
@@ -582,13 +582,13 @@ auto Z80::op_nop() {
 
 auto Z80::op_halt() {
   r.halt = true;
-  while(r.halt == true) io();
+  while(r.halt == true) idle();
 }
 
 auto Z80::op_stop() {
   if(stop()) return;
   r.stop = true;
-  while(r.stop == true) io();
+  while(r.stop == true) idle();
 }
 
 auto Z80::op_di() {
@@ -606,7 +606,7 @@ auto Z80::op_jp_nn() {
   uint8 lo = read(r[PC]++);
   uint8 hi = read(r[PC]++);
   r[PC] = (hi << 8) | (lo << 0);
-  io();
+  idle();
 }
 
 auto Z80::op_jp_hl() {
@@ -618,28 +618,28 @@ auto Z80::op_jp_f_nn(uint x, bool y) {
   uint8 hi = read(r[PC]++);
   if(r.f[x] == y) {
     r[PC] = (hi << 8) | (lo << 0);
-    io();
+    idle();
   }
 }
 
 auto Z80::op_jr_n() {
   int8 n = read(r[PC]++);
   r[PC] += n;
-  io();
+  idle();
 }
 
 auto Z80::op_jr_f_n(uint x, bool y) {
   int8 n = read(r[PC]++);
   if(r.f[x] == y) {
     r[PC] += n;
-    io();
+    idle();
   }
 }
 
 auto Z80::op_call_nn() {
   uint8 lo = read(r[PC]++);
   uint8 hi = read(r[PC]++);
-  io();
+  idle();
   write(--r[SP], r[PC] >> 8);
   write(--r[SP], r[PC] >> 0);
   r[PC] = (hi << 8) | (lo << 0);
@@ -649,7 +649,7 @@ auto Z80::op_call_f_nn(uint x, bool y) {
   uint8 lo = read(r[PC]++);
   uint8 hi = read(r[PC]++);
   if(r.f[x] == y) {
-    io();
+    idle();
     write(--r[SP], r[PC] >> 8);
     write(--r[SP], r[PC] >> 0);
     r[PC] = (hi << 8) | (lo << 0);
@@ -660,16 +660,16 @@ auto Z80::op_ret() {
   uint8 lo = read(r[SP]++);
   uint8 hi = read(r[SP]++);
   r[PC] = (hi << 8) | (lo << 0);
-  io();
+  idle();
 }
 
 auto Z80::op_ret_f(uint x, bool y) {
-  io();
+  idle();
   if(r.f[x] == y) {
     uint8 lo = read(r[SP]++);
     uint8 hi = read(r[SP]++);
     r[PC] = (hi << 8) | (lo << 0);
-    io();
+    idle();
   }
 }
 
@@ -677,12 +677,12 @@ auto Z80::op_reti() {
   uint8 lo = read(r[SP]++);
   uint8 hi = read(r[SP]++);
   r[PC] = (hi << 8) | (lo << 0);
-  io();
+  idle();
   r.ime = 1;
 }
 
 auto Z80::op_rst_n(uint n) {
-  io();
+  idle();
   write(--r[SP], r[PC] >> 8);
   write(--r[SP], r[PC] >> 0);
   r[PC] = n;
@@ -690,14 +690,14 @@ auto Z80::op_rst_n(uint n) {
 
 auto Z80::op_out(uint x) {
   uint8 port = read(r[PC]++);
-  io();
-  io();
+  idle();
+  idle();
   portWrite(port, r[x]);
 }
 
 auto Z80::op_in(uint x) {
   uint8 port = read(r[PC]++);
-  io();
-  io();
+  idle();
+  idle();
   r[x] = portRead(port);
 }

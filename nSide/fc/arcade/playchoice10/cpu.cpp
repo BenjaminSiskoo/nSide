@@ -28,8 +28,8 @@ auto PlayChoice10::PC10CPU::reset() -> void {
   r[HL] = 0x0000;
 }
 
-auto PlayChoice10::PC10CPU::io() -> void {
-  print("PC10 CPU IO\n");
+auto PlayChoice10::PC10CPU::idle() -> void {
+  print("PC10 CPU Idle\n");
   cycleEdge();
   step(2);
 }

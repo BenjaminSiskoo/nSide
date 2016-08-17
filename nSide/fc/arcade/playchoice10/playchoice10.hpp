@@ -59,7 +59,7 @@ struct PlayChoice10 {
     auto power() -> void;
     auto reset() -> void;
 
-    auto io() -> void;
+    auto idle() -> void;
     auto read(uint16 addr) -> uint8;
     auto write(uint16 addr, uint8 data) -> void;
     auto portRead(uint8 port) -> uint8;

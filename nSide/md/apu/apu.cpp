@@ -27,7 +27,7 @@ auto APU::reset() -> void {
   create(APU::Enter, system.colorburst());
 }
 
-auto APU::io() -> void {
+auto APU::idle() -> void {
 }
 
 auto APU::read(uint16 addr) -> uint8 {
