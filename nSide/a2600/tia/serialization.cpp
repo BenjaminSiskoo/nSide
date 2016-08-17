@@ -43,8 +43,8 @@ auto TIA::serialize(serializer& s) -> void {
 
   s.integer(collision.m0p0);
   s.integer(collision.m0p1);
-  s.integer(collision.m1p0);
   s.integer(collision.m1p1);
+  s.integer(collision.m1p0);
   s.integer(collision.p0bl);
   s.integer(collision.p0pf);
   s.integer(collision.p1bl);

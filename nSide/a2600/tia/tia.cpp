@@ -139,24 +139,32 @@ auto TIA::run() -> void {
     bool bl = false;
     bool pf = false;
 
-    if(player[0].position >= x - 7 && player[0].position <= x) {
-      uint bit = !player[0].reflect ? 7 - (x - player[0].position) : x - player[0].position;
-      p0 = player[0].graphic.bit(bit);
+    for(bool i : range(2)) {
+      uint scale;
+      if(player[i].numberSize != 5 && player[i].numberSize != 7) {
+        scale = 0;
+      } else if(player[i].numberSize == 5) {
+        scale = 1;
+      } else if(player[i].numberSize == 7) {
+        scale = 2;
+      }
+      size = 8 << scale;
+      if(player[i].position >= x - (size - 1) && player[i].position <= x) {
+        uint bit = (x - player[i].position) >> scale;
+        if(!player[i].reflect) bit = 7 - bit;
+        if(i == 0) p0 = player[i].graphic.bit(bit);
+        if(i == 1) p1 = player[i].graphic.bit(bit);
+      }
     }
 
-    if(player[1].position >= x - 7 && player[1].position <= x) {
-      uint bit = !player[1].reflect ? 7 - (x - player[1].position) : x - player[1].position;
-      p1 = player[1].graphic.bit(bit);
-    }
-
-    if(missile[0].enable && !missile[0].reset) {
-      size = 1 << missile[0].size;
-      if(missile[0].position >= x - (size - 1) && missile[0].position <= x) m0 = true;
-    }
-
-    if(missile[1].enable && !missile[1].reset) {
-      size = 1 << missile[1].size;
-      if(missile[1].position >= x - (size - 1) && missile[1].position <= x) m1 = true;
+    for(bool i : range(2)) {
+      if(missile[i].enable && !missile[i].reset) {
+        size = 1 << missile[i].size;
+        if(missile[i].position >= x - (size - 1) && missile[i].position <= x) {
+          if(i == 0) m0 = true;
+          if(i == 1) m1 = true;
+        }
+      }
     }
 
     if(ball.enable) {
