@@ -11,6 +11,11 @@ struct CartPal {
 
   auto concatenate(vector<uint8_t>& output, string location) -> void;
 
+  //atari-2600.cpp
+  auto atari2600Manifest(string location) -> string;
+  auto atari2600Manifest(vector<uint8_t>& buffer, string location) -> string;
+  auto atari2600Import(vector<uint8_t>& buffer, string location) -> string;
+
   //famicom.cpp
   auto famicomManifest(string location) -> string;
   auto famicomManifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
@@ -35,6 +40,16 @@ struct CartPal {
   auto superFamicomManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
   auto superFamicomImport(vector<uint8_t>& buffer, string location) -> string;
 
+  //sg-1000.cpp
+  auto sg1000Manifest(string location) -> string;
+  auto sg1000Manifest(vector<uint8_t>& buffer, string location) -> string;
+  auto sg1000Import(vector<uint8_t>& buffer, string location) -> string;
+
+  //master-system.cpp
+  auto masterSystemManifest(string location) -> string;
+  auto masterSystemManifest(vector<uint8_t>& buffer, string location) -> string;
+  auto masterSystemImport(vector<uint8_t>& buffer, string location) -> string;
+
   //mega-drive.cpp
   auto megaDriveManifest(string location) -> string;
   auto megaDriveManifest(vector<uint8_t>& buffer, string location) -> string;
@@ -54,6 +69,11 @@ struct CartPal {
   auto gameBoyAdvanceManifest(string location) -> string;
   auto gameBoyAdvanceManifest(vector<uint8_t>& buffer, string location) -> string;
   auto gameBoyAdvanceImport(vector<uint8_t>& buffer, string location) -> string;
+
+  //game-gear.cpp
+  auto gameGearManifest(string location) -> string;
+  auto gameGearManifest(vector<uint8_t>& buffer, string location) -> string;
+  auto gameGearImport(vector<uint8_t>& buffer, string location) -> string;
 
   //wonderswan.cpp
   auto wonderSwanManifest(string location) -> string;
@@ -83,10 +103,13 @@ private:
     Markup::Node vsSystem;
     Markup::Node playchoice10;
     Markup::Node superFamicom;
+    Markup::Node sg1000;
+    Markup::Node masterSystem;
     Markup::Node megaDrive;
     Markup::Node gameBoy;
     Markup::Node gameBoyColor;
     Markup::Node gameBoyAdvance;
+    Markup::Node gameGear;
     Markup::Node wonderSwan;
     Markup::Node wonderSwanColor;
     Markup::Node bsMemory;

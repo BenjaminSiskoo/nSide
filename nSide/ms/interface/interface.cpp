@@ -116,7 +116,7 @@ auto Interface::videoColor(uint32 color) -> uint64 {
 
     auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
     //This matrix is from FCC's 1953 NTSC standard.
-    //The SG-1000 and ColecoVision are older than the SMPTE C standard that followed in 1987.
+    //The SG-1000, ColecoVision, and MSX are older than the SMPTE C standard that followed in 1987.
     r = uclamp<16>(65535.0 * gammaAdjust(y +  0.946882 * i +  0.623557 * q));
     g = uclamp<16>(65535.0 * gammaAdjust(y + -0.274788 * i + -0.635691 * q));
     b = uclamp<16>(65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q));

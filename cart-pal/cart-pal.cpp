@@ -18,27 +18,34 @@ auto locate(string name) -> string {
 #include "settings.cpp"
 Settings settings;
 
+#include "heuristics/atari-2600.cpp"
 #include "heuristics/famicom.cpp"
 #include "heuristics/super-famicom.cpp"
+#include "heuristics/master-system.cpp"
 #include "heuristics/mega-drive.cpp"
 #include "heuristics/game-boy.cpp"
 #include "heuristics/game-boy-advance.cpp"
+#include "heuristics/game-gear.cpp"
 #include "heuristics/wonderswan.cpp"
 #include "heuristics/bs-memory.cpp"
 #include "heuristics/sufami-turbo.cpp"
 
 #include "core/core.hpp"
 #include "core/core.cpp"
+#include "core/atari-2600.cpp"
 #include "core/famicom.cpp"
-#include "core/vs-system.cpp"
-#include "core/playchoice-10.cpp"
 #include "core/super-famicom.cpp"
+#include "core/sg-1000.cpp"
+#include "core/master-system.cpp"
 #include "core/mega-drive.cpp"
 #include "core/game-boy.cpp"
 #include "core/game-boy-color.cpp"
 #include "core/game-boy-advance.cpp"
+#include "core/game-gear.cpp"
 #include "core/wonderswan.cpp"
 #include "core/wonderswan-color.cpp"
+#include "core/vs-system.cpp"
+#include "core/playchoice-10.cpp"
 #include "core/bs-memory.cpp"
 #include "core/sufami-turbo.cpp"
 CartPal cart_pal;
@@ -70,8 +77,25 @@ auto nall::main(string_vector args) -> void {
     if(string source = BrowserDialog()
     .setTitle("Load ROM Image")
     .setPath(settings["cart-pal/Path"].text())
-    .setFilters("ROM Files|*.fc:*.vs:*.pc10:*.nes:*.sfc:*.smc:*.md:*.gb:*.gbc:*.gba:*.ws:*.wsc:*.bs:*.st:*.zip")
-    .openFile()) {
+    .setFilters("ROM Files|"
+      "*.a26:"
+      "*.fc:*.nes:"
+      "*.sfc:*.smc:"
+      "*.sg:"
+      "*.ms:*.sms:"
+      "*.md:*.smd:*.gen:"
+      "*.gb:"
+      "*.gbc:"
+      "*.gba:"
+      "*.gg:"
+      "*.ws:"
+      "*.wsc:"
+      "*.vs:"
+      "*.pc10:"
+      "*.bs:"
+      "*.st:"
+      "*.zip"
+    ).openFile()) {
       if(string target = cart_pal.import(source)) {
         settings["cart-pal/Path"].setValue(Location::path(source));
         return print(target, "\n");
