@@ -49,8 +49,8 @@ auto System::serializeAll(serializer& s) -> void {
   apu.serialize(s);
   ppu.serialize(s);
 
-  if(revision() == Revision::VSSystem) vssystem.serialize(s);
-  if(revision() == Revision::PlayChoice10) playchoice10.serialize(s);
+  if(model() == Model::VSSystem) vssystem.serialize(s);
+  if(model() == Model::PlayChoice10) playchoice10.serialize(s);
 }
 
 //perform dry-run state save:

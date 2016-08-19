@@ -26,7 +26,8 @@ auto VSSystem::init() -> void {
   gameCount = GameCount::Uni;
 }
 
-auto VSSystem::load() -> void {
+auto VSSystem::load() -> bool {
+  return true;
 }
 
 auto VSSystem::unload() -> void {

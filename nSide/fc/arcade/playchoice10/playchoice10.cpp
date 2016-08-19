@@ -12,7 +12,27 @@ auto PlayChoice10::init() -> void {
   screenConfig = ScreenConfig::Single;
 }
 
-auto PlayChoice10::load() -> void {
+auto PlayChoice10::load(Markup::Node node) -> bool {
+  if(auto firmware = node["cpu/rom/name"].text()) {
+    if(auto fp = interface->open(ID::System, firmware, File::Read, File::Required)) {
+      fp->read(bios, 16384);
+    } else return false;
+  }
+
+  if(auto character = node["pc10/video-circuit/vrom/name"].text()) {
+    if(auto fp = interface->open(ID::System, character, File::Read, File::Required)) {
+      fp->read(videoCircuit.chrrom, 24576);
+    } else return false;
+  }
+
+  if(auto palette = node["pc10/video-circuit/cgrom/name"].text()) {
+    if(auto fp = interface->open(ID::System, palette, File::Read, File::Required)) {
+      fp->read(videoCircuit.cgrom, 768);
+    } else return false;
+  }
+
+  screenConfig = min(max(node["pc10/screen/mode"].integer(), 1), 2);
+  return true;
 }
 
 auto PlayChoice10::unload() -> void {
@@ -20,6 +40,7 @@ auto PlayChoice10::unload() -> void {
 
 auto PlayChoice10::power() -> void {
   pc10cpu.power();
+  videoCircuit.power();
   vramAccess = 1; // 0: Z80,                  1: video circuit
   controls   = 1; // 0: disable START/SELECT, 1: enable START/SELECT
   ppuOutput  = 1; // 0: disable,              1: enable
@@ -32,12 +53,11 @@ auto PlayChoice10::power() -> void {
   ppuReset   = 1; // 0: reset,                1: run
   channel    = 0; // 0-9 internally, 1-10 on screen
   sramBank   = 1; // bank at $8c00-8fff
-  videoCircuit.power();
-  videoCircuit.update();
 }
 
 auto PlayChoice10::reset() -> void {
   pc10cpu.reset();
+  videoCircuit.reset();
 }
 
 auto PlayChoice10::setDip(uint16 dip) -> void {

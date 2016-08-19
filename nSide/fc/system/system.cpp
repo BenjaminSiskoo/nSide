@@ -36,10 +36,10 @@ auto System::init() -> void {
 auto System::term() -> void {
 }
 
-auto System::load(Revision revision) -> bool {
+auto System::load(Model model) -> bool {
   information = Information();
 
-  information.revision = revision;
+  information.model = model;
 
   if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
@@ -47,40 +47,6 @@ auto System::load(Revision revision) -> bool {
 
   auto document = BML::unserialize(information.manifest);
   auto system = document["system"];
-
-  if(pc10()) {
-    if(auto firmware = document["system/pc10/cpu/rom/name"].text()) {
-      if(auto fp = interface->open(ID::System, firmware, File::Read, File::Required)) {
-        fp->read(playchoice10.bios, 16384);
-      } else return false;
-    }
-
-    if(auto character = document["system/pc10/video-circuit/vrom/name"].text()) {
-      if(auto fp = interface->open(ID::System, character, File::Read, File::Required)) {
-        fp->read(playchoice10.videoCircuit.chrrom, 24576);
-      } else return false;
-    }
-
-    if(auto palette = document["system/pc10/video-circuit/cgrom/name"].text()) {
-      if(auto fp = interface->open(ID::System, palette, File::Read, File::Required)) {
-        fp->read(playchoice10.videoCircuit.cgrom, 768);
-      } else return false;
-    }
-  }
-
-  if(fcb()) {
-    if(auto bios_prg = document["system/prg/rom/name"].text()) {
-      if(auto fp = interface->open(ID::System, bios_prg, File::Read, File::Required)) {
-        fp->read(famicombox.bios_prg, 32768);
-      } else return false;
-    }
-
-    if(auto bios_chr = document["system/prg/rom/name"].text()) {
-      if(auto fp = interface->open(ID::System, bios_chr, File::Read, File::Required)) {
-        fp->read(famicombox.bios_chr, 8192);
-      } else return false;
-    }
-  }
 
   bus.reset();
   if(!cartridge.load()) return false;
@@ -102,28 +68,27 @@ auto System::load(Revision revision) -> bool {
   ? Emulator::Constants::Colorburst::NTSC
   : Emulator::Constants::Colorburst::PAL;
 
-  switch(revision) {
+  switch(model) {
 
-  case Revision::Famicom: {
+  case Model::Famicom: {
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
 
-  case Revision::VSSystem: {
+  case Model::VSSystem: {
     vssystem.load();
     peripherals.connect(ID::Port::Arcade, ID::Device::VSPanel);
     break;
   }
 
-  case Revision::PlayChoice10: {
-    playchoice10.screenConfig = min(max(document["system/pc10/screen/mode"].integer(), 1), 2);
-    playchoice10.load();
+  case Model::PlayChoice10: {
+    if(!playchoice10.load(system)) return false;
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
 
-  case Revision::FamicomBox: {
-    famicombox.load();
+  case Model::FamicomBox: {
+    if(!famicombox.load(system)) return false;
     peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
@@ -143,10 +108,10 @@ auto System::unload() -> void {
   if(!loaded()) return;
   peripherals.unload();
 
-  switch(revision()) {
-  case Revision::VSSystem:     vssystem.unload(); break;
-  case Revision::PlayChoice10: playchoice10.unload(); break;
-  case Revision::FamicomBox:   famicombox.unload(); break;
+  switch(model()) {
+  case Model::VSSystem:     vssystem.unload(); break;
+  case Model::PlayChoice10: playchoice10.unload(); break;
+  case Model::FamicomBox:   famicombox.unload(); break;
   }
 
   cartridge.unload();
@@ -159,10 +124,10 @@ auto System::power() -> void {
   apu.power();
   ppu.power();
 
-  switch(revision()) {
-  case Revision::VSSystem:     vssystem.power(); break;
-  case Revision::PlayChoice10: playchoice10.power(); break;
-  case Revision::FamicomBox:   famicombox.power(); break;
+  switch(model()) {
+  case Model::VSSystem:     vssystem.power(); break;
+  case Model::PlayChoice10: playchoice10.power(); break;
+  case Model::FamicomBox:   famicombox.power(); break;
   }
 
 //ppu.reset();
@@ -187,16 +152,16 @@ auto System::reset() -> void {
   //Because of a limitation of the Scheduler, the PPU must reset when the system resets.
   ppu.reset();
 
-  switch(revision()) {
-  case Revision::VSSystem:     vssystem.reset(); break;
-  case Revision::PlayChoice10: playchoice10.reset(); break;
-  case Revision::FamicomBox:   famicombox.reset(); break;
+  switch(model()) {
+  case Model::VSSystem:     vssystem.reset(); break;
+  case Model::PlayChoice10: playchoice10.reset(); break;
+  case Model::FamicomBox:   famicombox.reset(); break;
   }
 
-  switch(revision()) {
-  case Revision::VSSystem:     cpu.coprocessors.append(&vssystem); break;
-  case Revision::PlayChoice10: cpu.coprocessors.append(&playchoice10.pc10cpu); break;
-  case Revision::FamicomBox:   cpu.coprocessors.append(&famicombox); break;
+  switch(model()) {
+  case Model::VSSystem:     cpu.coprocessors.append(&vssystem); break;
+  case Model::PlayChoice10: cpu.coprocessors.append(&playchoice10.pc10cpu); break;
+  case Model::FamicomBox:   cpu.coprocessors.append(&famicombox); break;
   }
 
   scheduler.primary(cpu);

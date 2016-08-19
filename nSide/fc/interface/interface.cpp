@@ -319,7 +319,7 @@ auto Interface::title() -> string {
 }
 
 auto Interface::videoSize() -> VideoSize {
-  return {256 * vssystem.gameCount, 240 * playchoice10.screenConfig};
+  return {256 * vssystem.gameCount, 240 + playchoice10.screenConfig * 224};
 }
 
 auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
@@ -331,6 +331,7 @@ auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
     w *= squarePixelRate / (system.colorburst() * 6.0 / (system.region() == System::Region::NTSC ? 4.0 : 5.0));
   }
   uint h = 240 / vssystem.gameCount;
+  if(system.pc10() && playchoice10.screenConfig == 2) h = (240 + 224) / 2;
   uint m = min((uint)(width / w), height / h);
   return {(uint)(w * m), h * m};
 }
@@ -578,10 +579,10 @@ auto Interface::sha256() -> string {
 }
 
 auto Interface::load(uint id) -> bool {
-  if(id == ID::Famicom) return system.load(System::Revision::Famicom);
-  if(id == ID::VSSystem) return system.load(System::Revision::VSSystem); 
-  if(id == ID::PlayChoice10) return system.load(System::Revision::PlayChoice10);
-  if(id == ID::FamicomBox) return system.load(System::Revision::FamicomBox);
+  if(id == ID::Famicom) return system.load(Model::Famicom);
+  if(id == ID::VSSystem) return system.load(Model::VSSystem); 
+  if(id == ID::PlayChoice10) return system.load(Model::PlayChoice10);
+  if(id == ID::FamicomBox) return system.load(Model::FamicomBox);
 }
 
 auto Interface::save() -> void {

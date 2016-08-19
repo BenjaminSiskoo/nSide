@@ -32,23 +32,23 @@ auto Cartridge::main() -> void {
 auto Cartridge::load() -> bool {
   information = Information();
 
-  switch(system.revision()) {
-  case System::Revision::Famicom:
+  switch(system.model()) {
+  case Model::Famicom:
     if(auto pathID = interface->load(ID::Famicom, "Famicom", "fc")) {
       information.pathID = pathID();
     } else return false;
     break;
-  case System::Revision::VSSystem:
+  case Model::VSSystem:
     if(auto pathID = interface->load(ID::VSSystem, "VS. System", "vs")) {
       information.pathID = pathID();
     } else return false;
     break;
-  case System::Revision::PlayChoice10:
+  case Model::PlayChoice10:
     if(auto pathID = interface->load(ID::PlayChoice10, "PlayChoice-10", "pc10")) {
       information.pathID = pathID();
     } else return false;
     break;
-  //case System::Revision::FamicomBox:
+  //case Model::FamicomBox:
   //  if(auto pathID = interface->load(ID::FamicomBox, "FamicomBox", "fcb")) {
   //    information.pathID = pathID();
   //  } else return false;

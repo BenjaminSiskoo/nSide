@@ -12,7 +12,7 @@ struct VSSystem : Thread {
   auto main() -> void;
 
   auto init() -> void;
-  auto load() -> void;
+  auto load() -> bool;
   auto unload() -> void;
   auto power() -> void;
   auto reset() -> void;

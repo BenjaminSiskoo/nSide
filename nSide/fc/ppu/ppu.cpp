@@ -163,14 +163,7 @@ auto PPU::originX() -> uint {
 }
 
 auto PPU::originY() -> uint {
-  if(system.pc10()) {
-    switch(playchoice10.screenConfig) {
-    case PlayChoice10::ScreenConfig::Dual:   return 240;
-    case PlayChoice10::ScreenConfig::Single: return   0;
-    }
-  } else {
-    return 0;
-  }
+  return system.pc10() ? (playchoice10.screenConfig - 1) * 224 : 0;
 }
 
 auto PPU::refresh() -> void {

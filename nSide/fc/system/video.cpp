@@ -9,6 +9,6 @@ auto System::configureVideoEffects() -> void {
   } else if(vs()) {
     Emulator::video.resize(256 * vssystem.gameCount, 240);
   } else if(pc10()) {
-    Emulator::video.resize(256, 240 * playchoice10.screenConfig);
+    Emulator::video.resize(256, 240 + (playchoice10.screenConfig - 1) * 224);
   }
 }

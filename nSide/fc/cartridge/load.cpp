@@ -5,7 +5,7 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
   if(boardNode["region"].text() == "pal")   information.region = Region::PAL;
   if(boardNode["region"].text() == "dendy") information.region = Region::Dendy;
 
-  if(system.revision() == System::Revision::VSSystem) setupVS(node, boardNode);
+  if(system.vs()) setupVS(node, boardNode);
 
   Board::load(boardNode);  //this call will set Cartridge::board if successful
   if(!board) return;

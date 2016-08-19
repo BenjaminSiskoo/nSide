@@ -16,6 +16,7 @@ struct System {
   auto power() -> void;
   auto reset() -> void;
 
+private:
   struct Information {
     string manifest;
     bool loaded = false;

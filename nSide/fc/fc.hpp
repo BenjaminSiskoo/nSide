@@ -24,6 +24,13 @@ namespace Famicom {
   extern Scheduler scheduler;
   extern Cheat cheat;
 
+  enum class Model : uint {
+    Famicom,
+    VSSystem,
+    PlayChoice10,
+    FamicomBox,
+  };
+
   struct Thread : Emulator::Thread {
     auto create(auto (*entrypoint)() -> void, double frequency) -> void {
       Emulator::Thread::create(entrypoint, frequency);

@@ -5,7 +5,7 @@ struct PlayChoice10 {
   };};
 
   auto init() -> void;
-  auto load() -> void;
+  auto load(Markup::Node node) -> bool;
   auto unload() -> void;
   auto power() -> void;
   auto reset() -> void;
@@ -55,35 +55,44 @@ struct PlayChoice10 {
   struct PC10CPU : Processor::Z80, Thread {
     static auto Enter() -> void;
     auto main() -> void;
-    auto stop() -> bool;
+    auto step(uint clocks) -> void;
+
+    auto wait() -> void override;
+    auto read(uint16 addr) -> uint8 override;
+    auto write(uint16 addr, uint8 data) -> void override;
+    auto portRead(uint8 port) -> uint8 override;
+    auto portWrite(uint8 port, uint8 data) -> void override;
+    auto stop() -> bool override;
+
     auto power() -> void;
     auto reset() -> void;
 
-    auto idle() -> void;
-    auto read(uint16 addr) -> uint8;
-    auto write(uint16 addr, uint8 data) -> void;
-    auto portRead(uint8 port) -> uint8;
-    auto portWrite(uint8 port, uint8 data) -> void;
-
     auto cycleEdge() -> void;
-    auto step(uint clocks) -> void;
 
     auto debuggerRead(uint16 addr) -> uint8;
 
     auto serialize(serializer& s) -> void;
   } pc10cpu;
 
-  struct VideoCircuit {
-    auto power() -> void;
-    auto update() -> void;
+  struct VideoCircuit : Thread {
+    static auto Enter() -> void;
+    auto main() -> void;
+    auto step(uint clocks) -> void;
     auto refresh() -> void;
+
+    auto power() -> void;
+    auto reset() -> void;
+
+    auto run(uint x, uint y) -> void;
 
     uint8 chrrom[0x2000 * 3];
     uint8 cgrom[0x100 * 3];
 
     uint8 vram[2048];
 
-    uint32 output[256 * 240];
+  private:
+
+    uint32 buffer[256 * 240];
   } videoCircuit;
 };
 

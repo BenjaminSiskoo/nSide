@@ -1,5 +1,29 @@
+auto PlayChoice10::VideoCircuit::Enter() -> void {
+  while(true) scheduler.synchronize(), playchoice10.videoCircuit.main();
+}
+
+auto PlayChoice10::VideoCircuit::main() -> void {
+  for(uint y : range(256)) {
+    for(uint x : range(327)) {
+      run(x, y);
+    }
+    step(4 * 327);
+  }
+}
+
+auto PlayChoice10::VideoCircuit::step(uint clocks) -> void {
+  Thread::step(clocks);
+  synchronize(playchoice10.pc10cpu);
+}
+
+auto PlayChoice10::VideoCircuit::refresh() -> void {
+  if(playchoice10.screenConfig == ScreenConfig::Dual) {
+    Emulator::video.refreshRegion(buffer, 256 * sizeof(uint32), 0, 0, 256, 224, 1 << 9);
+  }
+}
+
 auto PlayChoice10::VideoCircuit::power() -> void {
-  uint8 defaultVRAM[0x0800] = {
+  uint8 defaultVRAM[0x0780] = {
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
 0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,0xf8,
@@ -155,35 +179,27 @@ auto PlayChoice10::VideoCircuit::power() -> void {
   }
 }
 
-auto PlayChoice10::VideoCircuit::update() -> void {
-  uint16 addr;
-  uint tile_id;
-  uint8 y;
-  uint8 x;
-  uint8 byte;
-  uint color;
-  for(uint tile_y : range(1, 31)) {
-    for(uint tile_x : range(0, 32)) {
-      addr = tile_y * 64 + tile_x * 2;
-      tile_id = ((vram[addr + 0] & 0xff) << 0) + ((vram[addr + 1] & 0x07) << 8);
-      for(uint pixel_y : range(8)) {
-        y = ((tile_y - 1) << 3) + pixel_y;
-        for(uint pixel_x : range(8)) {
-          x = (tile_x << 3) + pixel_x;
-          color = vram[tile_y * 64 + tile_x * 2 + 1] & 0xf8;
-          for(uint plane : range(3)) {
-            byte = chrrom[(plane << 13) + (tile_id << 3) + pixel_y];
-            color += ((byte >> (7 - pixel_x)) & 1) << plane;
-          }
-          output[y * 256 + x] = color;
-        }
-      }
-    }
-  }
+auto PlayChoice10::VideoCircuit::reset() -> void {
+  create(VideoCircuit::Enter, 20'160'000.0);
 }
 
-auto PlayChoice10::VideoCircuit::refresh() -> void {
-  if(playchoice10.screenConfig == ScreenConfig::Dual) {
-    Emulator::video.refreshRegion(output, 256 * sizeof(uint32), 0, 0, 256, 240, 1 << 9);
+auto PlayChoice10::VideoCircuit::run(uint x, uint y) -> void {
+  if(y < 16 || y >= 240 || x >= 256) return;
+
+  uint tileY = y >> 3;
+  uint tileX = x >> 3;
+  uint16 addr = (tileY * 32 + tileX) << 1;
+  uint tileID = ((vram[addr | 0] & 0xff) << 0) + ((vram[addr | 1] & 0x07) << 8);
+
+  uint pixelY = y & 7;
+  uint pixelX = x & 7;
+
+  uint32 color = vram[addr | 1].bits(3,7) << 3;
+  uint8 byte;
+  for(uint plane : range(3)) {
+    byte = chrrom[(plane << 13) + (tileID << 3) + pixelY];
+    color.bit(plane) = byte.bit(7 - pixelX);
   }
+
+  buffer[(y - 16) * 256 + x] = color;
 }

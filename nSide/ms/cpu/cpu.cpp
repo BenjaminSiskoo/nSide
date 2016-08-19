@@ -9,35 +9,29 @@ auto CPU::Enter() -> void {
 }
 
 auto CPU::main() -> void {
-  step(6);
+  instruction();
 }
 
 auto CPU::step(uint clocks) -> void {
   Thread::step(clocks);
+  synchronize(vdp);
+  synchronize(psg);
 }
 
-auto CPU::stop() -> bool {
-}
-
-auto CPU::power() -> void {
-  ramMask = system.model() == Model::SG1000 ? 0x3ff : 0x1fff;
-}
-
-auto CPU::reset() -> void {
-  create(CPU::Enter, system.colorburst() * 6.0);
-}
-
-auto CPU::idle() -> void {
+auto CPU::wait() -> void {
+  step(1);
 }
 
 auto CPU::read(uint16 addr) -> uint8 {
+  step(1);
   if(addr < 0xc000 || ramDisable) return cartridge.read(addr);
-  else                            return ram[addr & ramMask];
+  return ram[addr & ramMask];
 }
 
 auto CPU::write(uint16 addr, uint8 data) -> void {
-  if(addr < 0xc000 || ramDisable) cartridge.write(addr, data);
-  else                            ram[addr & ramMask] = data;
+  step(1);
+  if(addr < 0xc000 || ramDisable) return cartridge.write(addr, data);
+  ram[addr & ramMask] = data;
 }
 
 auto CPU::portRead(uint8 port) -> uint8 {
@@ -102,6 +96,17 @@ auto CPU::portWrite(uint8 port, uint8 data) -> void {
   }
 
   }
+}
+
+auto CPU::stop() -> bool {
+}
+
+auto CPU::power() -> void {
+  ramMask = system.model() == Model::SG1000 ? 0x3ff : 0x1fff;
+}
+
+auto CPU::reset() -> void {
+  create(CPU::Enter, system.colorburst() * 6.0);
 }
 
 }

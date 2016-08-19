@@ -1,11 +1,10 @@
-//Texas Instruments TMS9918A
-//Yamaha YM2602
-//NEC uPD9004G
+//TI TMS9918A (derivative)
 
 struct VDP : Thread {
   static auto Enter() -> void;
   auto main() -> void;
   auto step(uint clocks) -> void;
+  auto refresh() -> void;
 
   auto power() -> void;
   auto reset() -> void;

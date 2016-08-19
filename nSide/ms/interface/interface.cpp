@@ -52,7 +52,7 @@ auto Interface::title() -> string {
 auto Interface::videoSize() -> VideoSize {
   switch(system.model()) {
   case Model::SG1000:       return {256, 192};
-  case Model::MasterSystem: return {256, 192};
+  case Model::MasterSystem: return {256, 240};
   case Model::GameGear:     return {160, 144};
   }
   unreachable;
@@ -66,7 +66,7 @@ auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
     : 7'375'000.0;
     w *= squarePixelRate / (system.colorburst() * 6.0 / (system.region() == System::Region::NTSC ? 4.0 : 4.0));
   }
-  uint h = system.model() != Model::GameGear ? 192 : 144;
+  uint h = system.model() == Model::SG1000 ? 192 : system.model() == Model::MasterSystem ? 240 : 144;
   uint m = min((uint)(width / w), height / h);
   return {(uint)(w * m), h * m};
 }
@@ -154,9 +154,9 @@ auto Interface::loaded() -> bool {
 }
 
 auto Interface::load(uint id) -> bool {
-  if(id == ID::SG1000)       return system.load(Model::SG1000);
+  if(id == ID::SG1000) return system.load(Model::SG1000);
   if(id == ID::MasterSystem) return system.load(Model::MasterSystem);
-  if(id == ID::GameGear)     return system.load(Model::GameGear);
+  if(id == ID::GameGear) return system.load(Model::GameGear);
   return false;
 }
 

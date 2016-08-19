@@ -1,17 +1,14 @@
 void Z80::serialize(serializer& s) {
-  s.integer(r.a.data);
-  s.integer(r.f.z);
-  s.integer(r.f.n);
-  s.integer(r.f.h);
-  s.integer(r.f.c);
-  s.integer(r.b.data);
-  s.integer(r.c.data);
-  s.integer(r.d.data);
-  s.integer(r.e.data);
-  s.integer(r.h.data);
-  s.integer(r.l.data);
-  s.integer(r.sp.data);
-  s.integer(r.pc.data);
+  s.integer(r.af);
+  s.integer(r.bc);
+  s.integer(r.de);
+  s.integer(r.hl);
+  s.integer(r.ix);
+  s.integer(r.iy);
+  s.integer(r.sp);
+  s.integer(r.pc);
+  s.integer(r.i);
+  s.integer(r.r);
 
   s.integer(r.halt);
   s.integer(r.stop);

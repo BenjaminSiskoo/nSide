@@ -5,9 +5,14 @@ namespace MasterSystem {
 Cartridge cartridge;
 
 auto Cartridge::load() -> bool {
-  information = Information();
+  information = {};
 
   switch(system.model()) {
+  case Model::SG1000:
+    if(auto pathID = interface->load(ID::SG1000, "SG-1000", "sg")) {
+      information.pathID = pathID();
+    } else return false;
+    break;
   case Model::MasterSystem:
     if(auto pathID = interface->load(ID::MasterSystem, "Master System", "ms")) {
       information.pathID = pathID();
@@ -31,7 +36,7 @@ auto Cartridge::load() -> bool {
     rom.size = node["size"].natural();
     rom.mask = bit::round(rom.size) - 1;
     if(rom.size) {
-      rom.data = new uint8[rom.mask];
+      rom.data = new uint8[rom.mask + 1];
       if(auto name = node["name"].text()) {
         if(auto fp = interface->open(pathID(), name, File::Read, File::Required)) {
           fp->read(rom.data, rom.size);
@@ -44,7 +49,7 @@ auto Cartridge::load() -> bool {
     ram.size = node["size"].natural();
     ram.mask = bit::round(ram.size) - 1;
     if(ram.size) {
-      ram.data = new uint8[ram.mask];
+      ram.data = new uint8[ram.mask + 1];
       if(auto name = node["name"].text()) {
         if(auto fp = interface->open(pathID(), name, File::Read)) {
           fp->read(ram.data, ram.size);
@@ -69,14 +74,8 @@ auto Cartridge::save() -> void {
 auto Cartridge::unload() -> void {
   delete[] rom.data;
   delete[] ram.data;
-  rom = Memory();
-  ram = Memory();
-}
-
-auto Cartridge::power() -> void {
-}
-
-auto Cartridge::reset() -> void {
+  rom = {};
+  ram = {};
 }
 
 auto Cartridge::read(uint16 addr) -> uint8 {
@@ -84,6 +83,12 @@ auto Cartridge::read(uint16 addr) -> uint8 {
 }
 
 auto Cartridge::write(uint16 addr, uint8 data) -> void {
+}
+
+auto Cartridge::power() -> void {
+}
+
+auto Cartridge::reset() -> void {
 }
 
 }

@@ -5,15 +5,15 @@ struct APU : Processor::Z80, Thread {
   auto main() -> void;
   auto step(uint clocks) -> void;
 
+  auto wait() -> void override;
+  auto read(uint16 addr) -> uint8 override;
+  auto write(uint16 addr, uint8 data) -> void override;
+  auto portRead(uint8 port) -> uint8 override;
+  auto portWrite(uint8 port, uint8 data) -> void override;
+  auto stop() -> bool override;
+
   auto power() -> void;
   auto reset() -> void;
-
-  auto idle() -> void;
-  auto read(uint16 addr) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
-  auto portRead(uint8 port) -> uint8;
-  auto portWrite(uint8 port, uint8 data) -> void;
-  auto stop() -> bool;
 };
 
 extern APU apu;

@@ -24,7 +24,20 @@ auto FamicomBox::init() -> void {
   dip = 0x3da;
 }
 
-auto FamicomBox::load() -> void {
+auto FamicomBox::load(Markup::Node node) -> bool {
+  if(auto bios_prg = node["prg/rom/name"].text()) {
+    if(auto fp = interface->open(ID::System, bios_prg, File::Read, File::Required)) {
+      fp->read(famicombox.bios_prg, 32768);
+    } else return false;
+  }
+
+  if(auto bios_chr = node["chr/rom/name"].text()) {
+    if(auto fp = interface->open(ID::System, bios_chr, File::Read, File::Required)) {
+      fp->read(famicombox.bios_chr, 8192);
+    } else return false;
+  }
+
+  return true;
 }
 
 auto FamicomBox::unload() -> void {

@@ -14,7 +14,7 @@ struct FamicomBox : Thread {
   auto main() -> void;
 
   auto init() -> void;
-  auto load() -> void;
+  auto load(Markup::Node node) -> bool;
   auto unload() -> void;
   auto power() -> void;
   auto reset() -> void;

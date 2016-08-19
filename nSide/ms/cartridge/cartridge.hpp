@@ -7,12 +7,14 @@ struct Cartridge {
   auto load() -> bool;
   auto save() -> void;
   auto unload() -> void;
-  auto power() -> void;
-  auto reset() -> void;
 
   auto read(uint16 addr) -> uint8;
   auto write(uint16 addr, uint8 data) -> void;
 
+  auto power() -> void;
+  auto reset() -> void;
+
+private:
   struct Information {
     uint pathID = 0;
     string sha256;
