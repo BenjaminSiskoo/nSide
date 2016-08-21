@@ -115,8 +115,11 @@ auto TIA::power() -> void {
 
 auto TIA::run() -> void {
   stream->sample(0.0 / 32768.0);
-  if(missile[0].reset) missile[0].position = player[0].position + 3;
-  if(missile[1].reset) missile[1].position = player[1].position + 3;
+  for(bool i : range(2)) {
+    if(!missile[i].reset) continue;
+    uint offset = player[i].numberSize == 5 ? 6 : player[i].numberSize == 7 ? 10 : 3;
+    missile[i].position = (player[i].position + offset) % 160;
+  }
 
   uint offsetX = 68;
   uint offsetY = system.region() == System::Region::NTSC ? 19 : 37;
@@ -194,6 +197,10 @@ auto TIA::run() -> void {
     if(m0 && m1) collision.m0m1 = true;
     if(p0 && p1) collision.p0p1 = true;
 
+    if(playfield.score && pf) {
+      if(x <  80) p0 = m0 = true;
+      if(x >= 80) p1 = m1 = true;
+    }
     if(io.playfieldBallPriority && (bl || pf)) pixel = io.playfieldBallColor;
     else if(p0 || m0) pixel = io.playerMissile0Color;
     else if(p1 || m1) pixel = io.playerMissile1Color;

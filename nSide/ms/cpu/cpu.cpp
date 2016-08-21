@@ -41,8 +41,8 @@ auto CPU::portRead(uint8 port) -> uint8 {
   if((port & 0xc1) == 0x80) return vdp.readData();      //port $be
   if((port & 0xc1) == 0x81) return vdp.readControl();   //port $bf
   if((port & 0xc0) == 0xc0) {
-    uint8 data0 = MasterSystem::peripherals.controllerPort1->read();
-    uint8 data1 = MasterSystem::peripherals.controllerPort2->read();
+    uint7 data0 = MasterSystem::peripherals.controllerPort1->readData();
+    uint7 data1 = MasterSystem::peripherals.controllerPort2->readData();
     uint8 data;
     if((port & 0xc1) == 0xc0) {  //port $dc
       data.bits(0,5) = (uint)data0.bits(0,5);
@@ -74,14 +74,22 @@ auto CPU::portWrite(uint8 port, uint8 data) -> void {
 
   case 0x01: {  //port $3f
     //Writing to TH lines has no effect in Japanese systems.
-    io.port[0].trDirection = data.bit(0);
-  //io.port[0].thDirection = data.bit(1);
-    io.port[1].trDirection = data.bit(2);
-  //io.port[1].thDirection = data.bit(3);
-    if(!io.port[0].trDirection) io.port[0].trOutput = data.bit(4);
-  //if(!io.port[0].thDirection) io.port[0].thOutput = data.bit(5);
-    if(!io.port[1].trDirection) io.port[1].trOutput = data.bit(6);
-  //if(!io.port[1].thDirection) io.port[1].thOutput = data.bit(7);
+    uint7 control1;
+    uint7 control2;
+    uint7 data1;
+    uint7 data2;
+    control1.bit(5) = data.bit(0);
+    control1.bit(6) = data.bit(1);
+    control2.bit(5) = data.bit(2);
+    control2.bit(6) = data.bit(3);
+    data1.bit(5) = data.bit(4);
+    data1.bit(6) = data.bit(5);
+    data2.bit(5) = data.bit(6);
+    data2.bit(6) = data.bit(7);
+    MasterSystem::peripherals.controllerPort1->writeControl(control1);
+    MasterSystem::peripherals.controllerPort2->writeControl(control2);
+    MasterSystem::peripherals.controllerPort1->writeData(data1);
+    MasterSystem::peripherals.controllerPort2->writeData(data2);
     break;
   }
 

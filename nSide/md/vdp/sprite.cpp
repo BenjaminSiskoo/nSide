@@ -5,14 +5,14 @@ auto VDP::Sprite::write(uint9 address, uint16 data) -> void {
   switch(address.bits(0,1)) {
 
   case 0: {
-    object.y = data.bits(0,9) - 128;
+    object.y = data.bits(0,8);
     break;
   }
 
   case 1: {
     object.link = data.bits(0,6);
-    object.height = data.bits(8,9) << 3;
-    object.width = data.bits(10,11) << 3;
+    object.height = 1 + data.bits(8,9) << 3;
+    object.width = 1 + data.bits(10,11) << 3;
     break;
   }
 
@@ -26,7 +26,7 @@ auto VDP::Sprite::write(uint9 address, uint16 data) -> void {
   }
 
   case 3: {
-    object.x = data.bits(0,9) - 128;
+    object.x = data.bits(0,8);
     break;
   }
 
@@ -34,40 +34,39 @@ auto VDP::Sprite::write(uint9 address, uint16 data) -> void {
 }
 
 auto VDP::Sprite::scanline(uint y) -> void {
-  object.reset();
+  objects.reset();
 
   uint7 link = 0;
-  while(link) {
-    auto& o = oam[link];
+  uint tiles = 0;
+  do {
+    auto& object = oam[link];
+    link = object.link;
 
-    if((uint9)(o.y + o.height - 1) < y) continue;
-    if((uint9)(y + o.height - 1) < o.y) continue;
-    if(o.x == 0) break;
+    if(128 + y <  object.y) continue;
+    if(128 + y >= object.y + object.height) continue;
+    if(object.x == 0) break;
 
-    object.append(o);
-    if(object.size() >= 20) break;
-
-    link = o.link;
-    if(!link || link >= 80) break;
-  }
+    objects.append(object);
+    tiles += object.width >> 3;
+  } while(link && link < 80 && objects.size() < 20 && tiles < 40);
 }
 
 auto VDP::Sprite::run(uint x, uint y) -> void {
   output.priority = 0;
   output.color = 0;
 
-  for(auto& o : object) {
-    if((uint9)(o.x + o.width - 1) < x) continue;
-    if((uint9)(y + o.width - 1) < o.x) continue;
+  for(auto& o : objects) {
+    if(128 + x <  o.x) continue;
+    if(128 + x >= o.x + o.width) continue;
 
-    auto objectX = (uint9)(x - o.x);
-    auto objectY = (uint9)(y - o.y);
+    uint objectX = 128 + x - o.x;
+    uint objectY = 128 + y - o.y;
     if(o.horizontalFlip) objectX = (o.width - 1) - objectX;
     if(o.verticalFlip) objectY = (o.height - 1) - objectY;
 
     uint tileX = objectX >> 3;
     uint tileY = objectY >> 3;
-    uint tileNumber = tileX * (o.width >> 3) + tileY;
+    uint tileNumber = tileX * (o.height >> 3) + tileY;
     uint15 tileAddress = o.address + (tileNumber << 4);
     uint pixelX = objectX & 7;
     uint pixelY = objectY & 7;
@@ -78,6 +77,7 @@ auto VDP::Sprite::run(uint x, uint y) -> void {
     if(color) {
       output.color = o.palette << 4 | color;
       output.priority = o.priority;
+      break;
     }
   }
 }

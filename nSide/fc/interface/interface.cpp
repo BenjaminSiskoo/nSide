@@ -23,10 +23,10 @@ Interface::Interface() {
   media.append({ID::PlayChoice10, "PlayChoice-10", "pc10"});
   //media.append({ID::FamicomBox,   "FamicomBox",    "fcb"});
 
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", true};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", true};
-  Port expansionPort{ID::Port::Expansion, "Expansion Port", true};
-  Port arcadePanel{ID::Port::Arcade, "Arcade Panel", false};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
+  Port expansionPort{ID::Port::Expansion, "Expansion Port", PlugAndPlay};
+  Port arcadePanel{ID::Port::Arcade, "Arcade Panel", Hardwired};
 
   { Device device{ID::Device::None, "None"};
     controllerPort1.devices.append(device);

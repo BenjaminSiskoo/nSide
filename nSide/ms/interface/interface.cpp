@@ -22,8 +22,8 @@ Interface::Interface() {
   media.append({ID::MasterSystem, "Master System", "ms"});
   media.append({ID::GameGear,     "Game Gear",     "gg"});
 
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", true};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", true};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
 
   { Device device{ID::Device::None, "None"};
     controllerPort2.devices.append(device);

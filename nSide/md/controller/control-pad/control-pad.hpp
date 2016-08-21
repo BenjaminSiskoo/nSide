@@ -3,11 +3,11 @@ struct ControlPad : Controller {
     Up, Down, Left, Right, A, B, C, Start,
   };
 
-  ControlPad(bool port);
+  ControlPad(uint port);
 
-  auto read() -> uint7;
-  auto write(uint7 data) -> void;
+  auto readData() -> uint8 override;
+  auto writeData(uint8 data) -> void override;
 
-private:
-  bool th;
+  boolean select;
+  boolean latch;
 };

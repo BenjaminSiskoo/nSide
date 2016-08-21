@@ -1,16 +1,5 @@
-auto VDP::readByte(uint24 addr) -> uint8 {
-  auto data = readWord(addr & ~1);
-  return data.byte(!addr.bit(0));
-}
-
-auto VDP::writeByte(uint24 addr, uint8 data) -> void {
-  return writeWord(addr & ~1, data << 8 | data << 0);
-}
-
-//
-
-auto VDP::readWord(uint24 addr) -> uint16 {
-  switch(addr & 0xc0001f) {
+auto VDP::read(uint24 addr) -> uint16 {
+  switch(addr & 0xc0001e) {
 
   //data port
   case 0xc00000: case 0xc00002: {
@@ -32,10 +21,8 @@ auto VDP::readWord(uint24 addr) -> uint16 {
   return 0x0000;
 }
 
-auto VDP::writeWord(uint24 addr, uint16 data) -> void {
-//print("[VDP] ", hex(addr, 6L), "=", hex(data, 4L), "\n");
-
-  switch(addr & 0xc0001f) {
+auto VDP::write(uint24 addr, uint16 data) -> void {
+  switch(addr & 0xc0001e) {
 
   //data port
   case 0xc00000: case 0xc00002: {
@@ -57,18 +44,30 @@ auto VDP::readDataPort() -> uint16 {
 
   //VRAM read
   if(io.command.bits(0,3) == 0) {
-    return 0x0000;
+    auto address = io.address.bits(1,15);
+    auto data = vram[address];
+    io.address += io.dataIncrement;
+    return data;
   }
 
   //VSRAM read
   if(io.command.bits(0,3) == 4) {
-    return 0x0000;
+    auto address = io.address.bits(1,6);
+    if(address >= 40) return 0x0000;
+    auto data = vsram[address];
+    io.address += io.dataIncrement;
+    return data;
   }
 
   //CRAM read
   if(io.command.bits(0,3) == 8) {
-    return 0x0000;
+    auto address = io.address.bits(1,6);
+    auto data = cram[address];
+    io.address += io.dataIncrement;
+    return data.bits(0,2) << 1 | data.bits(3,5) << 2 | data.bits(6,8) << 3;
   }
+
+  return 0x0000;
 }
 
 auto VDP::writeDataPort(uint16 data) -> void {
@@ -217,8 +216,12 @@ auto VDP::writeControlPort(uint16 data) -> void {
 
   //mode register 3
   case 0x0b: {
-    io.horizontalScrollMode = data.bits(0,1);
-    io.verticalScrollMode = data.bit(2);
+    planeA.io.horizontalScrollMode = data.bits(0,1);
+    window.io.horizontalScrollMode = data.bits(0,1);
+    planeB.io.horizontalScrollMode = data.bits(0,1);
+    planeA.io.verticalScrollMode = data.bit(2);
+    window.io.verticalScrollMode = data.bit(2);
+    planeB.io.verticalScrollMode = data.bit(2);
     io.externalInterruptEnable = data.bit(3);
     return;
   }
@@ -236,7 +239,9 @@ auto VDP::writeControlPort(uint16 data) -> void {
 
   //horizontal scroll data location
   case 0x0d: {
-    io.horizontalScrollTable = data.bits(1,6);
+    planeA.io.horizontalScrollAddress = data.bits(0,6) << 9;
+    window.io.horizontalScrollAddress = data.bits(0,6) << 9;
+    planeB.io.horizontalScrollAddress = data.bits(0,6) << 9;
     return;
   }
 
@@ -255,20 +260,12 @@ auto VDP::writeControlPort(uint16 data) -> void {
 
   //plane size
   case 0x10: {
-    //0 = 32 tiles
-    //1 = 64 tiles
-    //2 = invalid (repeats first row for every scanline)
-    //3 = 128 tiles
-    static const uint shift[] = {5, 6, 0, 7};
-
-    planeA.io.nametableWidth = shift[data.bits(0,1)];
-    window.io.nametableWidth = shift[data.bits(0,1)];
-    planeB.io.nametableWidth = shift[data.bits(0,1)];
-
-    planeA.io.nametableHeight = shift[data.bits(4,5)];
-    window.io.nametableHeight = shift[data.bits(4,5)];
-    planeB.io.nametableHeight = shift[data.bits(4,5)];
-
+    planeA.io.nametableWidth = data.bits(0,1);
+    window.io.nametableWidth = data.bits(0,1);
+    planeB.io.nametableWidth = data.bits(0,1);
+    planeA.io.nametableHeight = data.bits(4,5);
+    window.io.nametableHeight = data.bits(4,5);
+    planeB.io.nametableHeight = data.bits(4,5);
     return;
   }
 

@@ -84,8 +84,8 @@ auto System::power() -> void {
   cpu.reset();
   pia.power();
   tia.power();
-
   scheduler.primary(cpu);
+
   peripherals.reset();
 }
 

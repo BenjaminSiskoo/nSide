@@ -42,6 +42,9 @@ namespace Famicom {
     }
   };
 
+  #include <fc/controller/controller.hpp>
+  #include <fc/expansion/expansion.hpp>
+
   #include <fc/memory/memory.hpp>
   #include <fc/ppu/counter/counter.hpp>
 
@@ -49,8 +52,6 @@ namespace Famicom {
   #include <fc/apu/apu.hpp>
   #include <fc/ppu/ppu.hpp>
 
-  #include <fc/controller/controller.hpp>
-  #include <fc/expansion/expansion.hpp>
   #include <fc/system/system.hpp>
   #include <fc/arcade/arcade.hpp>
   #include <fc/cartridge/cartridge.hpp>

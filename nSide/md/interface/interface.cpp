@@ -20,12 +20,14 @@ Interface::Interface() {
 
   media.append({ID::MegaDrive, "Mega Drive", "md"});
 
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", true};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", true};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
+  Port extensionPort{ID::Port::Extension, "Extension Port", PlugAndPlay};
 
   { Device device{ID::Device::None, "None"};
     controllerPort1.devices.append(device);
     controllerPort2.devices.append(device);
+    extensionPort.devices.append(device);
   }
 
   { Device device{ID::Device::ControlPad, "Control Pad"};
@@ -60,6 +62,7 @@ Interface::Interface() {
 
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
+  ports.append(move(extensionPort));
 }
 
 auto Interface::manifest() -> string {
@@ -123,6 +126,10 @@ auto Interface::save() -> void {
 
 auto Interface::unload() -> void {
   system.unload();
+}
+
+auto Interface::connect(uint port, uint device) -> void {
+  MegaDrive::peripherals.connect(port, device);
 }
 
 auto Interface::power() -> void {

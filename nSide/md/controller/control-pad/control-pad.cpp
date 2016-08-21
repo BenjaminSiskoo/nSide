@@ -1,40 +1,28 @@
-ControlPad::ControlPad(bool port) : Controller(port) {
-  th = 1;
+ControlPad::ControlPad(uint port) : Controller(port) {
 }
 
-auto ControlPad::read() -> uint7 {
-  bool up   = interface->inputPoll(port, ID::Device::ControlPad, Up);
-  bool down = interface->inputPoll(port, ID::Device::ControlPad, Down);
-  if(th) {
-    bool left  = interface->inputPoll(port, ID::Device::ControlPad, Left);
-    bool right = interface->inputPoll(port, ID::Device::ControlPad, Right);
-    bool b     = interface->inputPoll(port, ID::Device::ControlPad, B);
-    bool c     = interface->inputPoll(port, ID::Device::ControlPad, C);
-    return (
-      !up    << 0
-    | !down  << 1
-    | !left  << 2
-    | !right << 3
-    | !b     << 4
-    | !c     << 5
-    | th     << 6
-    );
+auto ControlPad::readData() -> uint8 {
+  uint6 data;
+
+  if(select == 0) {
+    data.bit(0) = interface->inputPoll(port, ID::Device::ControlPad, Up);
+    data.bit(1) = interface->inputPoll(port, ID::Device::ControlPad, Down);
+    data.bit(4) = interface->inputPoll(port, ID::Device::ControlPad, A);
+    data.bit(5) = interface->inputPoll(port, ID::Device::ControlPad, Start);
   } else {
-    bool a     = interface->inputPoll(port, ID::Device::ControlPad, A);
-    bool start = interface->inputPoll(port, ID::Device::ControlPad, Start);
-    return (
-      !up    << 0
-    | !down  << 1
-    | 0      << 2
-    | 0      << 3
-    | !a     << 4
-    | !start << 5
-    | th     << 6
-    );
+    data.bit(0) = interface->inputPoll(port, ID::Device::ControlPad, Up);
+    data.bit(1) = interface->inputPoll(port, ID::Device::ControlPad, Down);
+    data.bit(2) = interface->inputPoll(port, ID::Device::ControlPad, Left);
+    data.bit(3) = interface->inputPoll(port, ID::Device::ControlPad, Right);
+    data.bit(4) = interface->inputPoll(port, ID::Device::ControlPad, B);
+    data.bit(5) = interface->inputPoll(port, ID::Device::ControlPad, C);
   }
-  unreachable;
+
+  data = ~data;
+  return latch << 7 | select << 6 | data;
 }
 
-auto ControlPad::write(uint7 data) -> void {
-  th = data.bit(6);
+auto ControlPad::writeData(uint8 data) -> void {
+  select = data.bit(6);
+  latch  = data.bit(7);
 }

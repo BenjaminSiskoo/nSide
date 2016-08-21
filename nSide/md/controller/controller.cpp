@@ -5,8 +5,8 @@ namespace MegaDrive {
 #include "control-pad/control-pad.cpp"
 #include "fighting-pad-6b/fighting-pad-6b.cpp"
 
-Controller::Controller(bool port) : port(port) {
-  if(!handle()) create(Controller::Enter, 1);
+Controller::Controller(uint port) : port(port) {
+  if(!handle()) create(Controller::Enter, 100);
 }
 
 Controller::~Controller() {
@@ -18,6 +18,7 @@ auto Controller::Enter() -> void {
     scheduler.synchronize();
     if(peripherals.controllerPort1->active()) peripherals.controllerPort1->main();
     if(peripherals.controllerPort2->active()) peripherals.controllerPort2->main();
+    if(peripherals.extensionPort->active())   peripherals.extensionPort->main();
   }
 }
 

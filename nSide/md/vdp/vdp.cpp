@@ -15,21 +15,21 @@ auto VDP::Enter() -> void {
 
 auto VDP::main() -> void {
   scanline();
-  if(state.y < 240) {
+  if(state.y < screenHeight()) {
     if(state.y == 0) {
       cpu.lower(CPU::Interrupt::VerticalBlank);
     }
     cpu.lower(CPU::Interrupt::HorizontalBlank);
-    for(uint x : range(320)) {
+    for(uint x : range(screenWidth())) {
       run();
-      step(4);
+      step(screenWidth() == 256 ? 5 : 4);
     }
     if(io.horizontalBlankInterruptEnable) {
       cpu.raise(CPU::Interrupt::HorizontalBlank);
     }
     step(430);
   } else {
-    if(state.y == 240) {
+    if(state.y == screenHeight()) {
       if(io.verticalBlankInterruptEnable) {
         cpu.raise(CPU::Interrupt::VerticalBlank);
       }
@@ -61,6 +61,7 @@ auto VDP::reset() -> void {
   create(VDP::Enter, system.colorburst() * 15.0 / 2.0);
 
   memory::fill(&io, sizeof(IO));
+  memory::fill(&state, sizeof(State));
 
   planeA.reset();
   window.reset();

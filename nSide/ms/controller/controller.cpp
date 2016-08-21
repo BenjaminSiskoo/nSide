@@ -9,6 +9,7 @@ Controller::Controller(bool port) : port(port) {
 }
 
 Controller::~Controller() {
+  scheduler.remove(*this);
 }
 
 auto Controller::Enter() -> void {

@@ -19,7 +19,7 @@ Interface::Interface() {
 
   media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba"});
 
-  Port hardwarePort{ID::Port::Hardware, "Hardware", true};
+  Port hardwarePort{ID::Port::Hardware, "Hardware", PlugAndPlay};
 
   { Device device{ID::Device::HorizontalControls, "Horizontal Controls"};
     device.inputs.append({0, "Up"    });

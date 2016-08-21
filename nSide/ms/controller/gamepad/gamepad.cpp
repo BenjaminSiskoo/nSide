@@ -1,23 +1,20 @@
 Gamepad::Gamepad(bool port) : Controller(port) {
 }
 
-auto Gamepad::read() -> uint7 {
-  bool up    = interface->inputPoll(port, ID::Device::Gamepad, Up);
-  bool down  = interface->inputPoll(port, ID::Device::Gamepad, Down);
-  bool left  = interface->inputPoll(port, ID::Device::Gamepad, Left);
-  bool right = interface->inputPoll(port, ID::Device::Gamepad, Right);
-  bool i     = interface->inputPoll(port, ID::Device::Gamepad, I);
-  bool ii    = interface->inputPoll(port, ID::Device::Gamepad, II);
-  return (
-    !up    << 0
-  | !down  << 1
-  | !left  << 2
-  | !right << 3
-  | !i     << 4
-  | !ii    << 5
-  | 0      << 6
-  );
+auto Gamepad::readData() -> uint7 {
+  uint6 data;
+
+  data.bit(0) = interface->inputPoll(port, ID::Device::Gamepad, Up);
+  data.bit(1) = interface->inputPoll(port, ID::Device::Gamepad, Down);
+  data.bit(2) = interface->inputPoll(port, ID::Device::Gamepad, Left);
+  data.bit(3) = interface->inputPoll(port, ID::Device::Gamepad, Right);
+  data.bit(4) = interface->inputPoll(port, ID::Device::Gamepad, I);
+  data.bit(5) = interface->inputPoll(port, ID::Device::Gamepad, II);
+
+  data = ~data;
+  return latch << 6 | data;
 }
 
-auto Gamepad::write(uint7 data) -> void {
+auto Gamepad::writeData(uint7 data) -> void {
+  latch  = data.bit(6);
 }

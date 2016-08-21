@@ -3,14 +3,14 @@ struct FightingPad6B : Controller {
     Up, Down, Left, Right, A, B, C, X, Y, Z, Start, Mode,
   };
 
-  FightingPad6B(bool port);
+  FightingPad6B(uint port);
 
-  auto main() -> void;
-  auto read() -> uint7;
-  auto write(uint7 data) -> void;
+  auto main() -> void override;
+  auto readData() -> uint8 override;
+  auto writeData(uint8 data) -> void override;
 
-private:
-  bool th;
+  boolean select;
+  boolean latch;
   uint counter;
   uint timeout;
 };

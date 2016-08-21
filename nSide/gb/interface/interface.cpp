@@ -21,7 +21,7 @@ Interface::Interface() {
   media.append({ID::GameBoy,      "Game Boy",       "gb" });
   media.append({ID::GameBoyColor, "Game Boy Color", "gbc"});
 
-  Port hardwarePort{ID::Port::Hardware, "Hardware", false};
+  Port hardwarePort{ID::Port::Hardware, "Hardware", Hardwired};
 
   { Device device{ID::Device::Controls, "Controls"};
     device.inputs.append({0, "Up"    });

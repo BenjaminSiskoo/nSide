@@ -16,17 +16,19 @@
 //  9:  tr     $a10003.d5   $a10005.d5
 
 struct Controller : Thread {
-  enum : uint { Port1 = 0, Port2 = 1 };
-
-  Controller(bool port);
+  Controller(uint port);
   virtual ~Controller();
+
   static auto Enter() -> void;
-
   virtual auto main() -> void;
-  virtual auto read() -> uint7 { return 0x7f; }
-  virtual auto write(uint7 data) -> void {}
 
-  const bool port;
+  virtual auto readData() -> uint8 { return 0xff; }
+  virtual auto writeData(uint8 data) -> void {}
+
+  virtual auto readControl() -> uint8 { return 0x00; }
+  virtual auto writeControl(uint8 data) -> void {}
+
+  const uint port;
 };
 
 #include "control-pad/control-pad.hpp"

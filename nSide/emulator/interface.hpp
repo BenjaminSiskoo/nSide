@@ -40,6 +40,8 @@ struct Interface {
   };
   vector<Port> ports;
 
+  enum : bool { Hardwired, PlugAndPlay };
+
   struct Bind {
     virtual auto path(uint) -> string { return ""; }
     virtual auto open(uint, string, vfs::file::mode, bool) -> vfs::shared::file { return {}; }

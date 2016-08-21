@@ -21,9 +21,9 @@ Interface::Interface() {
 
   media.append({ID::SuperFamicom, "Super Famicom", "sfc"});
 
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", true};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", true};
-  Port expansionPort{ID::Port::Expansion, "Expansion Port", true};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
+  Port expansionPort{ID::Port::Expansion, "Expansion Port", PlugAndPlay};
 
   { Device device{ID::Device::None, "None"};
     controllerPort1.devices.append(device);

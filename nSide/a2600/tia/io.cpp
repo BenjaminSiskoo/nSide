@@ -205,31 +205,31 @@ auto TIA::writeIO(uint6 addr, uint8 data) -> void {
 
   //RESP0
   case 0x10: {
-    player[0].position = io.hcounter < 68 ? 0 : io.hcounter - 68;
+    player[0].position = ((io.hcounter < 68 ? 0 : io.hcounter - 68) + 3) % 160;
     return;
   }
 
   //RESP1
   case 0x11: {
-    player[1].position = io.hcounter < 68 ? 0 : io.hcounter - 68;
+    player[1].position = ((io.hcounter < 68 ? 0 : io.hcounter - 68) + 3) % 160;
     return;
   }
 
   //RESM0
   case 0x12: {
-    missile[0].position = io.hcounter < 68 ? 0 : io.hcounter - 68;
+    missile[0].position = ((io.hcounter < 68 ? 0 : io.hcounter - 68) + 2) % 160;
     return;
   }
 
   //RESM1
   case 0x13: {
-    missile[1].position = io.hcounter < 68 ? 0 : io.hcounter - 68;
+    missile[1].position = ((io.hcounter < 68 ? 0 : io.hcounter - 68) + 2) % 160;
     return;
   }
 
   //RESBL
   case 0x14: {
-    ball.position = io.hcounter < 68 ? 0 : io.hcounter - 68;
+    ball.position = ((io.hcounter < 68 ? 0 : io.hcounter - 68) + 2) % 160;
     return;
   }
 

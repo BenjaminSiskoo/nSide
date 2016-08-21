@@ -5,6 +5,8 @@ struct Gamepad : Controller {
 
   Gamepad(bool port);
 
-  auto read() -> uint7;
-  auto write(uint7 data) -> void;
+  auto readData() -> uint7 override;
+  auto writeData(uint7 data) -> void override;
+
+  boolean latch;
 };

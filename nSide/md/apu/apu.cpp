@@ -31,13 +31,16 @@ auto APU::write(uint16 addr, uint8 data) -> void {
 }
 
 auto APU::portRead(uint8 port) -> uint8 {
+  step(1);
   return 0x00;
 }
 
 auto APU::portWrite(uint8 port, uint8 data) -> void {
+  step(1);
 }
 
 auto APU::stop() -> bool {
+  return false;
 }
 
 auto APU::power() -> void {

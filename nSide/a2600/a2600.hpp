@@ -31,11 +31,12 @@ namespace Atari2600 {
     }
   };
 
+  #include <a2600/controller/controller.hpp>
+
   #include <a2600/cpu/cpu.hpp>
   #include <a2600/pia/pia.hpp>
   #include <a2600/tia/tia.hpp>
 
-  #include <a2600/controller/controller.hpp>
   #include <a2600/system/system.hpp>
   #include <a2600/cartridge/cartridge.hpp>
 }

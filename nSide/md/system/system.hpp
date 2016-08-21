@@ -25,6 +25,7 @@ struct Peripherals {
 
   Controller* controllerPort1 = nullptr;
   Controller* controllerPort2 = nullptr;
+  Controller* extensionPort = nullptr;
 };
 
 extern System system;
