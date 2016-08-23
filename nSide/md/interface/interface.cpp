@@ -18,7 +18,7 @@ Interface::Interface() {
   information.capability.states = false;
   information.capability.cheats = false;
 
-  media.append({ID::MegaDrive, "Mega Drive", "md"});
+  media.append({ID::MegaDrive, "Mega Drive", "md", Domain::Home});
 
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};

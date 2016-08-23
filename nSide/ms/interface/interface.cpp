@@ -18,9 +18,9 @@ Interface::Interface() {
   information.capability.states = false;
   information.capability.cheats = false;
 
-  media.append({ID::SG1000,       "SG-1000",       "sg"});
-  media.append({ID::MasterSystem, "Master System", "ms"});
-  media.append({ID::GameGear,     "Game Gear",     "gg"});
+  media.append({ID::SG1000,       "SG-1000",       "sg", Domain::Home});
+  media.append({ID::MasterSystem, "Master System", "ms", Domain::Home});
+  media.append({ID::GameGear,     "Game Gear",     "gg", Domain::Portable});
 
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};

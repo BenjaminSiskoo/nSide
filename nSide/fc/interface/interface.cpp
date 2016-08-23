@@ -18,10 +18,10 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::Famicom,      "Famicom",       "fc"});
-  media.append({ID::VSSystem,     "VS. System",    "vs"});
-  media.append({ID::PlayChoice10, "PlayChoice-10", "pc10"});
-  //media.append({ID::FamicomBox,   "FamicomBox",    "fcb"});
+  media.append({ID::Famicom,      "Famicom",       "fc",   Domain::Home});
+  media.append({ID::VSSystem,     "VS. System",    "vs",   Domain::Arcade});
+  media.append({ID::PlayChoice10, "PlayChoice-10", "pc10", Domain::Arcade});
+//media.append({ID::FamicomBox,   "FamicomBox",    "fcb",  Domain::Arcade});
 
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};

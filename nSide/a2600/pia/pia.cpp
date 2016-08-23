@@ -41,9 +41,9 @@ auto PIA::load(Markup::Node node) -> bool {
 auto PIA::power() -> void {
   create(Enter, system.colorburst());
 
-  io.color = 1;
-  io.difficulty0 = 0;
-  io.difficulty1 = 0;
+  io.tvtype = TVType::Color;
+  io.difficulty0 = Difficulty::B;
+  io.difficulty1 = Difficulty::B;
 
   io.swcha  = 0x00;
   io.swacnt = 0x00;
@@ -61,15 +61,15 @@ auto PIA::power() -> void {
 }
 
 auto PIA::updateIO() -> void {
-  //If this code runs 59736 (262 * 288) times as fast as it does in other
+  //If this code runs 19912 (262 * 228 / 3) times as fast as it does in other
   //emulators, it will tremendously slow down emulation.
   //Therefore, a dirty hack is used where this function is called from within
   //the TIA.
   if(interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 2)) {
-    if(!input.color) io.color = !io.color;
-    input.color = 1;
+    if(!input.tvtype) io.tvtype = !io.tvtype;
+    input.tvtype = 1;
   } else {
-    input.color = 0;
+    input.tvtype = 0;
   }
 
   if(interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 3)) {

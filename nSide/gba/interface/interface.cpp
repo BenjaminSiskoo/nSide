@@ -17,7 +17,7 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba"});
+  media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", Domain::Portable});
 
   Port hardwarePort{ID::Port::Hardware, "Hardware", PlugAndPlay};
 

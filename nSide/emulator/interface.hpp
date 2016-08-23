@@ -15,10 +15,17 @@ struct Interface {
     } capability;
   } information;
 
+  struct Domain { enum : uint {
+    Home,
+    Portable,
+    Arcade,
+  };};
+
   struct Medium {
     uint id;
     string name;
     string type;  //extension
+    uint domain;
   };
   vector<Medium> media;
 
@@ -32,6 +39,8 @@ struct Interface {
     vector<Input> inputs;
   };
 
+  enum : bool { Hardwired, PlugAndPlay };
+
   struct Port {
     uint id;
     string name;
@@ -39,8 +48,6 @@ struct Interface {
     vector<Device> devices;
   };
   vector<Port> ports;
-
-  enum : bool { Hardwired, PlugAndPlay };
 
   struct Bind {
     virtual auto path(uint) -> string { return ""; }

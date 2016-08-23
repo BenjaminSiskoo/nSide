@@ -18,8 +18,8 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::GameBoy,      "Game Boy",       "gb" });
-  media.append({ID::GameBoyColor, "Game Boy Color", "gbc"});
+  media.append({ID::GameBoy,      "Game Boy",       "gb",  Domain::Portable});
+  media.append({ID::GameBoyColor, "Game Boy Color", "gbc", Domain::Portable});
 
   Port hardwarePort{ID::Port::Hardware, "Hardware", Hardwired};
 

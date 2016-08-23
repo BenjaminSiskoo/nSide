@@ -19,7 +19,7 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::SuperFamicom, "Super Famicom", "sfc"});
+  media.append({ID::SuperFamicom, "Super Famicom", "sfc", Domain::Home});
 
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};

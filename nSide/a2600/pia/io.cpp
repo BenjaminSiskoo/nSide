@@ -19,7 +19,7 @@ auto PIA::readIO(uint7 addr, uint8 data) -> uint8 {
     if(!io.swbcnt.bit(0)) data.bit(0) = !interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 1);
     //Select switch/button
     if(!io.swbcnt.bit(1)) data.bit(1) = !interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 0);
-    if(!io.swbcnt.bit(3)) data.bit(3) = io.color;
+    if(!io.swbcnt.bit(3)) data.bit(3) = io.tvtype;
     if(!io.swbcnt.bit(6)) data.bit(6) = io.difficulty0;
     if(!io.swbcnt.bit(7)) data.bit(7) = io.difficulty1;
     break;

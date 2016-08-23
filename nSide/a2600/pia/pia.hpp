@@ -29,8 +29,11 @@ struct PIA : Thread {
   vector<Thread*> peripherals;
 
 privileged:
+  struct TVType { enum : bool { Monochrome, Color };};
+  struct Difficulty { enum : bool { B, A };};
+
   struct IO {
-    bool color;
+    bool tvtype;
     bool difficulty0;
     bool difficulty1;
 
@@ -61,7 +64,7 @@ privileged:
   } io;
 
   struct Input {
-    bool color;
+    bool tvtype;
     bool difficulty0;
     bool difficulty1;
   } input;

@@ -3,7 +3,7 @@ auto PIA::serialize(serializer& s) -> void {
 
   s.array(ram);
 
-  s.integer(io.color);
+  s.integer(io.tvtype);
   s.integer(io.difficulty0);
   s.integer(io.difficulty1);
 
