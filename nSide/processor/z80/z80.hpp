@@ -93,13 +93,7 @@ privileged:
   auto op_ld_hl_r(uint8_t& x) -> void;
   auto op_ld_hl_n() -> void;
   auto op_ld_a_rr(uint16_t& x) -> void;
-  auto op_ld_a_nn() -> void;
   auto op_ld_rr_a(uint16_t& x) -> void;
-  auto op_ld_nn_a() -> void;
-  auto op_ld_a_ffn() -> void;
-  auto op_ld_ffn_a() -> void;
-  auto op_ld_a_ffc() -> void;
-  auto op_ld_ffc_a() -> void;
   auto op_ldi_hl_a() -> void;
   auto op_ldi_a_hl() -> void;
   auto op_ldd_hl_a() -> void;
@@ -108,7 +102,7 @@ privileged:
   //16-bit load commands
   auto op_ld_rr_nn(uint16_t& x) -> void;
   auto op_ld_nn_sp() -> void;
-  auto op_ld_sp_hl() -> void;
+  auto op_ld_sp_rr(uint16_t& x) -> void;
   auto op_push_rr(uint16_t& x) -> void;
   auto op_pop_rr(uint16_t& x) -> void;
 
@@ -164,8 +158,6 @@ privileged:
   auto op_add_hl_rr(uint16_t& x) -> void;
   auto op_inc_rr(uint16_t& x) -> void;
   auto op_dec_rr(uint16_t& x) -> void;
-  auto op_add_sp_n() -> void;
-  auto op_ld_hl_sp_n() -> void;
 
   //rotate/shift commands
   auto op_rlca() -> void;
@@ -203,10 +195,11 @@ privileged:
   auto op_halt() -> void;
   auto op_stop() -> void;
   auto op_ei() -> void;
+  auto op_im(uint2 im) -> void;
 
   //jump commands
   auto op_jp_nn() -> void;
-  auto op_jp_hl() -> void;
+  auto op_jp_rr(uint16_t& x) -> void;
   auto op_jp_f_nn(bool x, bool y) -> void;
   auto op_jr_n() -> void;
   auto op_jr_f_n(bool x, bool y) -> void;
@@ -218,8 +211,10 @@ privileged:
   auto op_rst_n(uint n) -> void;
 
   //port commands
-  auto op_out(uint8_t& x) -> void;
-  auto op_in(uint8_t& x) -> void;
+  auto op_out_n_a(uint8_t x) -> void;
+  auto op_out_c_r(uint8_t x) -> void;
+  auto op_in_a_n(uint8_t& x) -> void;
+  auto op_in_r_c(uint8_t& x) -> void;
 
   //disassembler.cpp
   auto disassemble(uint16 pc) -> string;

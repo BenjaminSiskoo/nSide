@@ -3,19 +3,24 @@
 namespace MasterSystem {
 
 VDP vdp;
-
 #include "io.cpp"
+#include "render.cpp"
 
 auto VDP::Enter() -> void {
   while(true) scheduler.synchronize(), vdp.main();
 }
 
 auto VDP::main() -> void {
-  for(uint y : range(262)) {
-    for(uint x : range(342)) {
+  scanline();
+  if(state.y < activeHeight()) {
+    for(uint x : range(activeWidth())) {
+      run();
       step(4);
     }
-    if(y == 240) scheduler.exit(Scheduler::Event::Frame);
+    step(344);
+    if(state.y == screenY() + screenHeight()) scheduler.exit(Scheduler::Event::Frame);
+  } else {
+    step(1368);
   }
 }
 
@@ -25,9 +30,7 @@ auto VDP::step(uint clocks) -> void {
 }
 
 auto VDP::refresh() -> void {
-  uint width = system.model() != Model::GameGear ? 256 : 160;
-  uint height = system.model() == Model::SG1000 ? 192 : system.model() == Model::MasterSystem ? 240 : 144;
-  Emulator::video.refresh(buffer, 256 * sizeof(uint32), width, height);
+  Emulator::video.refresh(buffer, 256 * sizeof(uint32), screenWidth(), screenHeight());
 }
 
 auto VDP::power() -> void {
@@ -39,6 +42,34 @@ auto VDP::reset() -> void {
 
 auto VDP::vblank() -> bool {
   return false;
+}
+
+inline auto VDP::screenX() -> uint {
+  return system.model() != Model::GameGear ? 0 : (256 - 160) / 2;
+}
+
+inline auto VDP::screenY() -> uint {
+  return system.model() != Model::GameGear ? 0 : (240 - 144) / 2;
+}
+
+inline auto VDP::screenWidth() -> uint {
+  return system.model() != Model::GameGear ? 256 : 160;
+}
+
+inline auto VDP::screenHeight() -> uint {
+  switch(system.model()) {
+  case Model::SG1000: return 192;
+  case Model::MasterSystem: return 240;
+  case Model::GameGear: return 144;
+  }
+}
+
+inline auto VDP::activeWidth() -> uint {
+  return 256;
+}
+
+inline auto VDP::activeHeight() -> uint {
+  return system.model() == Model::SG1000 ? 192 : 240;
 }
 
 }

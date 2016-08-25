@@ -11,8 +11,8 @@ auto Z80::instruction() -> void {
   op(0xf3, DI)
   }
 
-  print("[Z80] unimplemented instruction: ", hex(opcode, 2L), "\n");
-  print("[Z80] instructions executed: ", --instructionsExecuted, "\n");
+  //print("[Z80] unimplemented instruction: ", hex(opcode, 2L), "\n");
+  //print("[Z80] instructions executed: ", --instructionsExecuted, "\n");
   return legacyInstruction(opcode);
   //while(true) wait();
 }

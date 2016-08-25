@@ -32,8 +32,6 @@ auto CPU::reset() -> void {
   r.pc |= cartridge.access(0xfffd, r.mdr) << 8;
 
   io.rdyLine = 1;
-  io.rdyAddrValid = false;
-  io.rdyAddrValue = 0x0000;
 }
 
 }

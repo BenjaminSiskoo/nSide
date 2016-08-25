@@ -3,6 +3,4 @@ auto CPU::serialize(serializer& s) -> void {
   Thread::serialize(s);
 
   s.integer(io.rdyLine);
-  s.integer(io.rdyAddrValid);
-  s.integer(io.rdyAddrValue);
 }

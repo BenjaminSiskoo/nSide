@@ -18,7 +18,19 @@ struct VDP : Thread {
   auto readControl() -> uint8;
   auto writeControl(uint8 data) -> void;
 
+  //render.cpp
+  auto scanline() -> void;
+  auto run() -> void;
+  auto outputPixel(uint12 color) -> void;
+
 private:
+  inline auto screenX() -> uint;
+  inline auto screenY() -> uint;
+  inline auto screenWidth() -> uint;
+  inline auto screenHeight() -> uint;
+  inline auto activeWidth() -> uint;
+  inline auto activeHeight() -> uint;
+
   uint8 vram[16 * 1024];
   uint8 cram[64];  //SG-1000: 0, MS: 32, GG: 64
 
@@ -70,6 +82,12 @@ private:
     bool spriteCollision;
     bool spriteOverflow;
   } io;
+
+  struct State {
+    uint32* output = nullptr;
+    uint x;
+    uint y;
+  } state;
 
   uint32 buffer[256 * 240];  //SG-1000: 256 * 192
 };

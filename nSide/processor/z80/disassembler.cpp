@@ -34,7 +34,6 @@ auto Z80::disassembleOpcode(uint16 pc) -> string {
   case 0x05: return { "dec  b" };
   case 0x06: return { "ld   b,$", hex(p0, 2L) };
   case 0x07: return { "rlc  a" };
-  case 0x08: return { "ld   ($", hex(p1, 2L), hex(p0, 2L), "),sp" };
   case 0x09: return { "add  hl,bc" };
   case 0x0a: return { "ld   a,(bc)" };
   case 0x0b: return { "dec  bc" };
@@ -243,42 +242,41 @@ auto Z80::disassembleOpcode(uint16 pc) -> string {
   case 0xd6: return { "sub  a,$", hex(p0, 2L) };
   case 0xd7: return { "rst  $0010" };
   case 0xd8: return { "ret  c" };
-  case 0xd9: return { "reti" };
   case 0xda: return { "jp   c,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xdb: return { "in   a,(", hex(p0, 2L), ")" };
   case 0xdc: return { "call c,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xdd: return { "xx" };
   case 0xde: return { "sbc  a,$", hex(p0, 2L) };
   case 0xdf: return { "rst  $0018" };
-  case 0xe0: return { "ld   ($ff", hex(p0, 2L), "),a" };
+  case 0xe0: return { "ret  po" };
   case 0xe1: return { "pop  hl" };
-  case 0xe2: return { "ld   ($ff00+c),a" };
+  case 0xe2: return { "jp   po,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xe3: return { "xx" };
-  case 0xe4: return { "xx" };
+  case 0xe4: return { "call po,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xe5: return { "push hl" };
   case 0xe6: return { "and  a,$", hex(p0, 2L) };
   case 0xe7: return { "rst  $0020" };
-  case 0xe8: return { "add  sp,$", hex((int8)p0, 4L) };
+  case 0xe8: return { "ret  pe" };
   case 0xe9: return { "jp   hl" };
-  case 0xea: return { "ld   ($", hex(p1, 2L), hex(p0, 2L), "),a" };
+  case 0xea: return { "jp   pe,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xeb: return { "xx" };
-  case 0xec: return { "xx" };
+  case 0xec: return { "call pe,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xed: return disassembleOpcodeED(pc + 1);
   case 0xee: return { "xor  a,$", hex(p0, 2L) };
   case 0xef: return { "rst  $0028" };
-  case 0xf0: return { "ld   a,($ff", hex(p0, 2L), ")" };
+  case 0xf0: return { "ret  p" };
   case 0xf1: return { "pop  af" };
-  case 0xf2: return { "ld   a,($ff00+c)" };
+  case 0xf2: return { "jp   p,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xf3: return { "di" };
-  case 0xf4: return { "xx" };
+  case 0xf4: return { "call p,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xf5: return { "push af" };
   case 0xf6: return { "or  a,$", hex(p0, 2L) };
   case 0xf7: return { "rst  $0030" };
-  case 0xf8: return { "ld   hl,sp+$", hex((int8)p0, 4L) };
+  case 0xf8: return { "ret  m" };
   case 0xf9: return { "ld   sp,hl" };
-  case 0xfa: return { "ld   a,($", hex(p1, 2L), hex(p0, 2L), ")" };
+  case 0xfa: return { "jp   m,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xfb: return { "ei" };
-  case 0xfc: return { "xx" };
+  case 0xfc: return { "call m,$", hex(p1, 2L), hex(p0, 2L) };
   case 0xfd: return { "xx" };
   case 0xfe: return { "cp   a,$", hex(p0, 2L) };
   case 0xff: return { "rst  $0038" };
@@ -556,5 +554,43 @@ auto Z80::disassembleOpcodeCB(uint16 pc) -> string {
 }
 
 auto Z80::disassembleOpcodeED(uint16 pc) -> string {
-  return "xx";
+  uint8 opcode = debuggerRead(pc);
+  uint8 p0 = debuggerRead(pc + 1);
+  uint8 p1 = debuggerRead(pc + 2);
+  uint8 p2 = debuggerRead(pc + 3);
+
+  switch(opcode) {
+  case 0x40: return { "in   b,(c)" };
+  case 0x41: return { "out  (c),b" };
+  case 0x44: return { "neg" };
+  case 0x46: return { "im   0" };
+  case 0x48: return { "in   c,(c)" };
+  case 0x49: return { "out  (c),c" };
+  case 0x4c: return { "neg" };
+  case 0x4d: return { "reti" };
+  case 0x50: return { "in   d,(c)" };
+  case 0x51: return { "out  (c),d" };
+  case 0x54: return { "neg" };
+  case 0x56: return { "im   1" };
+  case 0x58: return { "in   e,(c)" };
+  case 0x59: return { "out  (c),e" };
+  case 0x5c: return { "neg" };
+  case 0x5e: return { "im   2" };
+  case 0x60: return { "in   h,(c)" };
+  case 0x61: return { "out  (c),h" };
+  case 0x64: return { "neg" };
+  case 0x66: return { "im   0" };
+  case 0x68: return { "in   l,(c)" };
+  case 0x69: return { "out  (c),l" };
+  case 0x6c: return { "neg" };
+  case 0x73: return { "ld   ($", hex(p1, 2L), hex(p0, 2L), "),sp" };
+  case 0x74: return { "neg" };
+  case 0x76: return { "im   1" };
+  case 0x78: return { "in   a,(c)" };
+  case 0x79: return { "out  (c),a" };
+  case 0x7c: return { "neg" };
+  case 0x7e: return { "im   2" };
+  }
+
+  return "";
 }

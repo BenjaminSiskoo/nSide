@@ -97,7 +97,7 @@ struct TIA : Thread {
   } collision;
 
 privileged:
-  uint32* output = nullptr;
+  alwaysinline auto hblank() -> bool { return io.hcounter < 68; }
 
   auto run() -> void;
 
@@ -106,6 +106,8 @@ privileged:
   auto refresh() -> void;
 
   friend class System;
+
+  uint32* output = nullptr;
 };
 
 extern TIA tia;

@@ -16,7 +16,6 @@ struct CPU : Processor::R6502, Thread {
   auto lastCycle() -> void;
 
   auto rdyLine(bool) -> void;
-  auto rdyAddr(bool valid, uint16 value = 0) -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
@@ -26,8 +25,6 @@ struct CPU : Processor::R6502, Thread {
 privileged:
   struct IO {
     bool rdyLine;
-    bool rdyAddrValid;
-    uint16 rdyAddrValue;
   } io;
 };
 

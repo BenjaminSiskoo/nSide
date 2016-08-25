@@ -1,4 +1,5 @@
 auto Z80::instructionDI() -> void {
+  r.ei = false;
 }
 
 auto Z80::instructionNOP() -> void {
@@ -54,36 +55,8 @@ auto Z80::op_ld_a_rr(uint16_t& x) -> void {
   r.a = read(x);
 }
 
-auto Z80::op_ld_a_nn() -> void {
-  uint8 lo = read(r.pc++);
-  uint8 hi = read(r.pc++);
-  r.a = read((hi << 8) | (lo << 0));
-}
-
 auto Z80::op_ld_rr_a(uint16_t& x) -> void {
   write(x, r.a);
-}
-
-auto Z80::op_ld_nn_a() -> void {
-  uint8 lo = read(r.pc++);
-  uint8 hi = read(r.pc++);
-  write((hi << 8) | (lo << 0), r.a);
-}
-
-auto Z80::op_ld_a_ffn() -> void {
-  r.a = read(0xff00 + read(r.pc++));
-}
-
-auto Z80::op_ld_ffn_a() -> void {
-  write(0xff00 + read(r.pc++), r.a);
-}
-
-auto Z80::op_ld_a_ffc() -> void {
-  r.a = read(0xff00 + r.c);
-}
-
-auto Z80::op_ld_ffc_a() -> void {
-  write(0xff00 + r.c, r.a);
 }
 
 auto Z80::op_ldi_hl_a() -> void {
@@ -120,8 +93,8 @@ auto Z80::op_ld_nn_sp() -> void {
   write(addr + 1, r.sp >> 8);
 }
 
-auto Z80::op_ld_sp_hl() -> void {
-  r.sp = r.hl;
+auto Z80::op_ld_sp_rr(uint16_t& x) -> void {
+  r.sp = x;
   wait();
 }
 
@@ -317,27 +290,6 @@ auto Z80::op_inc_rr(uint16_t& x) -> void {
 auto Z80::op_dec_rr(uint16_t& x) -> void {
   wait();
   x--;
-}
-
-auto Z80::op_add_sp_n() -> void {
-  int n = (int8)read(r.pc++);
-  r.p.z = 0;
-  r.p.n = 0;
-  r.p.h = ((r.sp & 0x0f) + (n & 0x0f)) > 0x0f;
-  r.p.c = ((r.sp & 0xff) + (n & 0xff)) > 0xff;
-  r.sp += n;
-  wait();
-  wait();
-}
-
-auto Z80::op_ld_hl_sp_n() -> void {
-  int n = (int8)read(r.pc++);
-  r.p.z = 0;
-  r.p.n = 0;
-  r.p.h = ((r.sp & 0x0f) + (n & 0x0f)) > 0x0f;
-  r.p.c = ((r.sp & 0xff) + (n & 0xff)) > 0xff;
-  r.hl = r.sp + n;
-  wait();
 }
 
 //rotate/shift commands
@@ -595,6 +547,9 @@ auto Z80::op_ei() -> void {
 //r.ime = 1;
 }
 
+auto Z80::op_im(uint2 im) -> void {
+}
+
 //jump commands
 
 auto Z80::op_jp_nn() -> void {
@@ -604,8 +559,8 @@ auto Z80::op_jp_nn() -> void {
   wait();
 }
 
-auto Z80::op_jp_hl() -> void {
-  r.pc = r.hl;
+auto Z80::op_jp_rr(uint16_t& x) -> void {
+  r.pc = x;
 }
 
 auto Z80::op_jp_f_nn(bool x, bool y) -> void {
@@ -683,16 +638,28 @@ auto Z80::op_rst_n(uint n) -> void {
   r.pc = n;
 }
 
-auto Z80::op_out(uint8_t& x) -> void {
+auto Z80::op_out_n_a(uint8_t x) -> void {
   uint8 port = read(r.pc++);
   wait();
   wait();
   portWrite(port, x);
 }
 
-auto Z80::op_in(uint8_t& x) -> void {
+auto Z80::op_out_c_r(uint8_t x) -> void {
+  wait();
+  wait();
+  portWrite(r.c, x);
+}
+
+auto Z80::op_in_a_n(uint8_t& x) -> void {
   uint8 port = read(r.pc++);
   wait();
   wait();
   x = portRead(port);
+}
+
+auto Z80::op_in_r_c(uint8_t& x) -> void {
+  wait();
+  wait();
+  x = portRead(r.c);
 }

@@ -121,11 +121,10 @@ auto TIA::run() -> void {
     missile[i].position = (player[i].position + offset) % 160;
   }
 
-  uint offsetX = 68;
   uint offsetY = system.region() == System::Region::NTSC ? 19 : 37;
-  if(io.hcounter < offsetX || io.vcounter < offsetY) return;
+  if(hblank() || io.vcounter < offsetY) return;
 
-  uint x = io.hcounter - offsetX;
+  uint x = io.hcounter - 68;
   uint y = io.vcounter - offsetY;
   if(y >= 228) return;
 
