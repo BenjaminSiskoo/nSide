@@ -50,7 +50,7 @@ auto Bus::writeWord(uint24 addr, uint16 data) -> void {
 
 auto Bus::readIO(uint24 addr) -> uint16 {
   switch(addr & ~1) {
-  case 0xa10000: return 0x0080;
+  case 0xa10000: return 0x00a0;  //Overseas NTSC (North America), no Mega-CD
   case 0xa10002: return peripherals.controllerPort1->readData();
   case 0xa10004: return peripherals.controllerPort2->readData();
   case 0xa10006: return peripherals.extensionPort->readData();

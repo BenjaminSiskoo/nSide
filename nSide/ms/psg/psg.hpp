@@ -5,6 +5,8 @@ struct PSG : Thread {
   auto main() -> void;
   auto step(uint clocks) -> void;
 
+  auto out(uint8 addr, uint8 data) -> void;
+
   auto power() -> void;
   auto reset() -> void;
 };

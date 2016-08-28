@@ -79,21 +79,21 @@ struct TIA : Thread {
   } playfield;
 
   struct Collision {
-    bool m0p0;
     bool m0p1;
-    bool m1p1;
+    bool m0p0;
     bool m1p0;
-    bool p0bl;
+    bool m1p1;
     bool p0pf;
-    bool p1bl;
+    bool p0bl;
     bool p1pf;
-    bool m0bl;
+    bool p1bl;
     bool m0pf;
-    bool m1bl;
+    bool m0bl;
     bool m1pf;
+    bool m1bl;
     bool blpf;
-    bool m0m1;
     bool p0p1;
+    bool m0m1;
   } collision;
 
 privileged:

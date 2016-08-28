@@ -16,35 +16,35 @@ auto PlayChoice10::PC10CPU::step(uint clocks) -> void {
 auto PlayChoice10::PC10CPU::wait() -> void {
   print("PC10 CPU Wait\n");
   cycleEdge();
-  step(2);
+  step(1);
 }
 
 auto PlayChoice10::PC10CPU::read(uint16 addr) -> uint8 {
   print("PC10 CPU Read\n");
   cycleEdge();
-  step(3);
+  step(2);
   return playchoice10.read(addr);
 }
 
 auto PlayChoice10::PC10CPU::write(uint16 addr, uint8 data) -> void {
   print("PC10 CPU Write\n");
   cycleEdge();
-  step(3);
+  step(2);
   playchoice10.write(addr, data);
 }
 
-auto PlayChoice10::PC10CPU::portRead(uint8 port) -> uint8 {
+auto PlayChoice10::PC10CPU::in(uint8 port) -> uint8 {
   print("PC10 CPU Port Read\n");
   cycleEdge();
-  step(4);
-  return playchoice10.portRead(port);
+  step(3);
+  return playchoice10.in(port);
 }
 
-auto PlayChoice10::PC10CPU::portWrite(uint8 port, uint8 data) -> void {
+auto PlayChoice10::PC10CPU::out(uint8 port, uint8 data) -> void {
   print("PC10 CPU Port Write\n");
   cycleEdge();
-  step(4);
-  playchoice10.portWrite(port, data);
+  step(3);
+  playchoice10.out(port, data);
 }
 
 auto PlayChoice10::PC10CPU::stop() -> bool {
@@ -62,8 +62,8 @@ auto PlayChoice10::PC10CPU::reset() -> void {
 auto PlayChoice10::PC10CPU::cycleEdge() -> void {
   print("PC10 CPU Cycle Edge\n");
   if(r.ei) {
-    r.ei = false;
-    r.ime = 1;
+    r.ei = 0;
+    r.di = 1;
   }
 }
 

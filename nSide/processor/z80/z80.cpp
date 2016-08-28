@@ -3,12 +3,12 @@
 
 namespace Processor {
 
-#include "disassembler.cpp"
-#include "serialization.cpp"
-
 #include "instruction.cpp"
-#include "legacy-lr35902-switch.cpp"
 #include "instructions.cpp"
+#include "disassembler.cpp"
+
+#include "legacy-lr35902-switch.cpp"
+#include "serialization.cpp"
 
 auto Z80::power() -> void {
 }
@@ -24,10 +24,21 @@ auto Z80::reset() -> void {
   r.pc = 0x0000;
   r.i  = 0x00;
   r.r  = 0x00;
+
+  r.di = false;
+  r.ei = false;
+  r.im = 0;
+
   r.halt = false;
   r.stop = false;
-  r.ei = false;
   r.ime = false;
+}
+
+auto Z80::parity(uint8_t value) const -> bool {
+  value ^= value >> 4;
+  value ^= value >> 2;
+  value ^= value >> 1;
+  return !(value & 1);
 }
 
 auto Z80::interrupt(uint16 vector) -> void {

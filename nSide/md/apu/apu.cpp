@@ -22,21 +22,21 @@ auto APU::wait() -> void {
 }
 
 auto APU::read(uint16 addr) -> uint8 {
-  step(1);
+  step(2);
   return 0x00;
 }
 
 auto APU::write(uint16 addr, uint8 data) -> void {
-  step(1);
+  step(2);
 }
 
-auto APU::portRead(uint8 port) -> uint8 {
-  step(1);
+auto APU::in(uint8 addr) -> uint8 {
+  step(3);
   return 0x00;
 }
 
-auto APU::portWrite(uint8 port, uint8 data) -> void {
-  step(1);
+auto APU::out(uint8 addr, uint8 data) -> void {
+  step(3);
 }
 
 auto APU::stop() -> bool {

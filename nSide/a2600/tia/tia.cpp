@@ -17,8 +17,7 @@ TIA::~TIA() {
 
 auto TIA::step(uint clocks) -> void {
   while(clocks--) {
-    io.hcounter++;
-    if(io.hcounter >= 228) {
+    if(++io.hcounter >= 228) {
       io.hcounter = 0;
       if(io.vcounter < 511) io.vcounter++;
       //Safe-guard against software that does not use VSYNC properly
@@ -180,21 +179,21 @@ auto TIA::run() -> void {
     if(playfieldX >=  4 && playfieldX < 12) pf = playfield.graphic1.bit(11 - playfieldX);
     if(playfieldX >= 12 && playfieldX < 20) pf = playfield.graphic2.bit(playfieldX - 12);
 
-    if(m0 && p0) collision.m0p0 = true;
     if(m0 && p1) collision.m0p1 = true;
-    if(m1 && p1) collision.m1p1 = true;
+    if(m0 && p0) collision.m0p0 = true;
     if(m1 && p0) collision.m1p0 = true;
-    if(p0 && bl) collision.p0bl = true;
+    if(m1 && p1) collision.m1p1 = true;
     if(p0 && pf) collision.p0pf = true;
-    if(p1 && bl) collision.p1bl = true;
+    if(p0 && bl) collision.p0bl = true;
     if(p1 && pf) collision.p1pf = true;
-    if(m0 && bl) collision.m0bl = true;
+    if(p1 && bl) collision.p1bl = true;
     if(m0 && pf) collision.m0pf = true;
-    if(m1 && bl) collision.m1bl = true;
+    if(m0 && bl) collision.m0bl = true;
     if(m1 && pf) collision.m1pf = true;
+    if(m1 && bl) collision.m1bl = true;
     if(bl && pf) collision.blpf = true;
-    if(m0 && m1) collision.m0m1 = true;
     if(p0 && p1) collision.p0p1 = true;
+    if(m0 && m1) collision.m0m1 = true;
 
     if(playfield.score && pf) {
       if(x <  80) p0 = m0 = true;

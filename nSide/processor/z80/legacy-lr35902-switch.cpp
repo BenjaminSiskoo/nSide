@@ -23,7 +23,7 @@ auto Z80::legacyInstruction(uint8 opcode) -> void {
   case 0x15: return op_dec_r(r.d);
   case 0x16: return op_ld_r_n(r.d);
   case 0x17: return op_rla();
-  case 0x18: return op_jr_n();
+  //0x18-0x18 covered by new instructions
   case 0x19: return op_add_hl_rr(r.de);
   case 0x1a: return op_ld_a_rr(r.de);
   case 0x1b: return op_dec_rr(r.de);
@@ -31,7 +31,7 @@ auto Z80::legacyInstruction(uint8 opcode) -> void {
   case 0x1d: return op_dec_r(r.e);
   case 0x1e: return op_ld_r_n(r.e);
   case 0x1f: return op_rra();
-  case 0x20: return op_jr_f_n(r.p.z, 0);
+  //0x20-0x20 covered by new instructions
   case 0x21: return op_ld_rr_nn(r.hl);
   case 0x22: return op_ldi_hl_a();
   case 0x23: return op_inc_rr(r.hl);
@@ -39,7 +39,7 @@ auto Z80::legacyInstruction(uint8 opcode) -> void {
   case 0x25: return op_dec_r(r.h);
   case 0x26: return op_ld_r_n(r.h);
   case 0x27: return op_daa();
-  case 0x28: return op_jr_f_n(r.p.z, 1);
+  //0x28-0x28 covered by new instructions
   case 0x29: return op_add_hl_rr(r.hl);
   case 0x2a: return op_ldi_a_hl();
   case 0x2b: return op_dec_rr(r.hl);
@@ -47,7 +47,7 @@ auto Z80::legacyInstruction(uint8 opcode) -> void {
   case 0x2d: return op_dec_r(r.l);
   case 0x2e: return op_ld_r_n(r.l);
   case 0x2f: return op_cpl();
-  case 0x30: return op_jr_f_n(r.p.c, 0);
+  //0x30-0x30 covered by new instructions
   case 0x31: return op_ld_rr_nn(r.sp);
   case 0x32: return op_ldd_hl_a();
   case 0x33: return op_inc_rr(r.sp);
@@ -55,7 +55,7 @@ auto Z80::legacyInstruction(uint8 opcode) -> void {
   case 0x35: return op_dec_hl();
   case 0x36: return op_ld_hl_n();
   case 0x37: return op_scf();
-  case 0x38: return op_jr_f_n(r.p.c, 1);
+  //0x38-0x38 covered by new instructions
   case 0x39: return op_add_hl_rr(r.sp);
   case 0x3a: return op_ldd_a_hl();
   case 0x3b: return op_dec_rr(r.sp);
@@ -183,82 +183,69 @@ auto Z80::legacyInstruction(uint8 opcode) -> void {
   case 0xb5: return op_or_a_r(r.l);
   case 0xb6: return op_or_a_hl();
   case 0xb7: return op_or_a_r(r.a);
-  case 0xb8: return op_cp_a_r(r.b);
-  case 0xb9: return op_cp_a_r(r.c);
-  case 0xba: return op_cp_a_r(r.d);
-  case 0xbb: return op_cp_a_r(r.e);
-  case 0xbc: return op_cp_a_r(r.h);
-  case 0xbd: return op_cp_a_r(r.l);
-  case 0xbe: return op_cp_a_hl();
-  case 0xbf: return op_cp_a_r(r.a);
+  //0xb8-0xbf covered by new instructions
   case 0xc0: return op_ret_f(r.p.z, 0);
   case 0xc1: return op_pop_rr(r.bc);
-  case 0xc2: return op_jp_f_nn(r.p.z, 0);
-  case 0xc3: return op_jp_nn();
+  //0xc2-0xc3 covered by new instructions
   case 0xc4: return op_call_f_nn(r.p.z, 0);
   case 0xc5: return op_push_rr(r.bc);
   case 0xc6: return op_add_a_n();
   case 0xc7: return op_rst_n(0x00);
   case 0xc8: return op_ret_f(r.p.z, 1);
   case 0xc9: return op_ret();
-  case 0xca: return op_jp_f_nn(r.p.z, 1);
-  case 0xcb: return op_cb();
+  //0xca-0xca covered by new instructions
+  case 0xcb: return legacyInstructionCB(read(r.pc++));
   case 0xcc: return op_call_f_nn(r.p.z, 1);
   case 0xcd: return op_call_nn();
   case 0xce: return op_adc_a_n();
   case 0xcf: return op_rst_n(0x08);
   case 0xd0: return op_ret_f(r.p.c, 0);
   case 0xd1: return op_pop_rr(r.de);
-  case 0xd2: return op_jp_f_nn(r.p.c, 0);
+  //0xd2-0xd2 covered by new instructions
   case 0xd3: return op_out_n_a(r.a);
   case 0xd4: return op_call_f_nn(r.p.c, 0);
   case 0xd5: return op_push_rr(r.de);
   case 0xd6: return op_sub_a_n();
   case 0xd7: return op_rst_n(0x10);
   case 0xd8: return op_ret_f(r.p.c, 1);
-  case 0xda: return op_jp_f_nn(r.p.c, 1);
-  case 0xdb: return op_in_a_n(r.a);
+  //0xda-0xdb covered by new instructions
   case 0xdc: return op_call_f_nn(r.p.c, 1);
-  case 0xdd: return op_dd();
+  //0xdd-0xdd covered by new instructions
   case 0xde: return op_sbc_a_n();
   case 0xdf: return op_rst_n(0x18);
   case 0xe0: return op_ret_f(r.p.v, 0);
   case 0xe1: return op_pop_rr(r.hl);
-  case 0xe2: return op_jp_f_nn(r.p.v, 0);
+  //0xe2-0xe2 covered by new instructions
   case 0xe4: return op_call_f_nn(r.p.v, 0);
   case 0xe5: return op_push_rr(r.hl);
   case 0xe6: return op_and_a_n();
   case 0xe7: return op_rst_n(0x20);
   case 0xe8: return op_ret_f(r.p.v, 1);
-  case 0xe9: return op_jp_rr(r.hl);
-  case 0xea: return op_jp_f_nn(r.p.v, 1);
+  //0xe9-0xea covered by new instructions
   case 0xec: return op_call_f_nn(r.p.v, 1);
-  case 0xed: return op_ed();
+  //0xed-0xed covered by new instructions
   case 0xee: return op_xor_a_n();
   case 0xef: return op_rst_n(0x28);
   case 0xf0: return op_ret_f(r.p.n, 0);
   case 0xf1: return op_pop_rr(r.af);
-  case 0xf2: return op_jp_f_nn(r.p.n, 0);
-  //0xf3-0xf3 covered by new instructions
+  //0xf2-0xf3 covered by new instructions
   case 0xf4: return op_call_f_nn(r.p.n, 0);
   case 0xf5: return op_push_rr(r.af);
   case 0xf6: return op_or_a_n();
   case 0xf7: return op_rst_n(0x30);
   case 0xf8: return op_ret_f(r.p.n, 1);
   case 0xf9: return op_ld_sp_rr(r.hl);
-  case 0xfa: return op_jp_f_nn(r.p.n, 1);
+  //0xfa-0xfa covered by new instructions
   case 0xfb: return op_ei();
   case 0xfc: return op_call_f_nn(r.p.n, 1);
-  case 0xfd: return op_fd();
-  case 0xfe: return op_cp_a_n();
+  //0xfd-0xfe covered by new instructions
   case 0xff: return op_rst_n(0x38);
   }
   print("[Z80] unimplemented legacy instruction: ", hex(opcode, 2L), "\n");
   while(true) wait();
 }
 
-auto Z80::instructionCB() -> void {
-  uint8 opcode = read(r.pc++);
+auto Z80::legacyInstructionCB(uint8 opcode) -> void {
   switch(opcode) {
   case 0x00: return op_rlc_r(r.b);
   case 0x01: return op_rlc_r(r.c);
@@ -521,57 +508,55 @@ auto Z80::instructionCB() -> void {
   while(true) wait();
 }
 
-auto Z80::instructionED() -> void {
-  uint8 opcode = read(r.pc++);
+auto Z80::legacyInstructionED(uint8 opcode) -> void {
   switch(opcode) {
-  case 0x40: return op_in_r_c(r.b);
+  //0x40-0x40 covered by new instructions
   case 0x41: return op_out_c_r(r.b);
-  case 0x46: return op_im(0);
-  case 0x47: return op_ld_r_r(r.i, r.a);
-  case 0x48: return op_in_r_c(r.c);
+  //0x46-0x46 covered by new instructions
+  case 0x47: return wait(), op_ld_r_r(r.i, r.a);
+  //0x48-0x48 covered by new instructions
   case 0x49: return op_out_c_r(r.c);
   case 0x4d: return op_reti();
-  case 0x4f: return op_ld_r_r(r.r, r.a);
-  case 0x50: return op_in_r_c(r.d);
+  case 0x4f: return wait(), op_ld_r_r(r.r, r.a);
+  //0x50-0x50 covered by new instructions
   case 0x51: return op_out_c_r(r.d);
-  case 0x56: return op_im(1);
-  case 0x57: return op_ld_r_r(r.a, r.i);
-  case 0x58: return op_in_r_c(r.e);
+  //0x56-0x56 covered by new instructions
+  case 0x57: return wait(), op_ld_r_r(r.a, r.i);
+  //0x58-0x58 covered by new instructions
   case 0x59: return op_out_c_r(r.e);
-  case 0x5e: return op_im(2);
-  case 0x5f: return op_ld_r_r(r.a, r.r);
-  case 0x60: return op_in_r_c(r.h);
+  //0x5e-0x5e covered by new instructions
+  case 0x5f: return wait(), op_ld_r_r(r.a, r.r);
+  //0x60-0x60 covered by new instructions
   case 0x61: return op_out_c_r(r.h);
-  case 0x66: return op_im(0);
-  case 0x68: return op_in_r_c(r.l);
+  //0x66-0x66 covered by new instructions
+  //0x68-0x68 covered by new instructions
   case 0x69: return op_out_c_r(r.l);
+  //0x70-0x70 covered by new instructions
   case 0x71: return op_out_c_r(0);
   case 0x73: return op_ld_nn_sp();
-  case 0x76: return op_im(1);
-  case 0x78: return op_in_r_c(r.a);
+  //0x76-0x76 covered by new instructions
+  //0x78-0x78 covered by new instructions
   case 0x79: return op_out_c_r(r.a);
-  case 0x7e: return op_im(2);
+  //0x7e-0x7e covered by new instructions
   }
   print("[Z80] unimplemented legacy ED instruction: ", hex(opcode, 2L), "\n");
   while(true) wait();
 }
 
-auto Z80::instructionIndex(uint16_t& ir) -> void {
-  uint8 opcode = read(r.pc++);
+auto Z80::legacyInstructionIndex(uint8 opcode, uint16_t& ir) -> void {
   switch(opcode) {
   case 0x21: return op_ld_rr_nn(ir);
-  case 0xcb: return op_ddcb();
+  case 0xcb: return legacyInstructionIndexCB(read(r.pc++), ir);
   case 0xe1: return op_pop_rr(ir);
   case 0xe5: return op_push_rr(ir);
-  case 0xe9: return op_jp_rr(ir);
+  //0xe9-0xe9 covered by new instructions
   case 0xf9: return op_ld_sp_rr(ir);
   }
   print("[Z80] unimplemented legacy index instruction: ", hex(opcode, 2L), "\n");
   while(true) wait();
 }
 
-auto Z80::instructionIndexCB(uint16_t& ir) -> void {
-  uint8 opcode = read(r.pc++);
+auto Z80::legacyInstructionIndexCB(uint8 opcode, uint16_t& ir) -> void {
   print("[Z80] unimplemented legacy index CB instruction: ", hex(opcode, 2L), "\n");
   while(true) wait();
 }

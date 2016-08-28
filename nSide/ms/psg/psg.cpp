@@ -17,6 +17,9 @@ auto PSG::step(uint clocks) -> void {
   synchronize(cpu);
 }
 
+auto PSG::out(uint8 addr, uint8 data) -> void {
+}
+
 auto PSG::power() -> void {
 }
 

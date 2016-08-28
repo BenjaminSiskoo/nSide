@@ -14,13 +14,13 @@ namespace Emulator {
   static const string Name           = "nSide";
   static const string OriginalName   = "higan";
   static const string Version        = "009.10";
-  static const string FromVersion    = "101.12";
+  static const string FromVersion    = "101.13";
   static const string Author         = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string License        = "GPLv3";
   static const string Website        = "http://byuu.org/";
   static const string_vector Contributors = {
-    "Alyosha_TAS (Atari 2600 PIA timer and TIA sprite implementation details)",
+    "Alyosha_TAS (Atari 2600 PIA, TIA, timing details)",
     "Andreas Naive (S-DD1 decompression algorithm)",
     //"Ange Albertini (higan logo)",  //not used in nSide
     "anomie",

@@ -2,7 +2,7 @@
 
 //Atari 2600 emulator by hex_usr, with contributions from:
 // byuu        (R6502 processor)
-// Alyosha_TAS (PIA timer and TIA sprite implementation details)
+// Alyosha_TAS (PIA TIA, timing details)
 //license: GPLv3
 //original project started: 2016-07-31
 

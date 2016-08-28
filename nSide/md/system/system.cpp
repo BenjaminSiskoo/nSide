@@ -26,6 +26,7 @@ auto System::load() -> bool {
 }
 
 auto System::save() -> void {
+  if(!loaded()) return;
   cartridge.save();
 }
 

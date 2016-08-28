@@ -22,6 +22,8 @@ auto System::load(Model model) -> bool {
     information.manifest = fp->reads();
   } else return false;
 
+  bus.ramMask = system.model() == Model::SG1000 ? 0x3ff : 0x1fff;
+
   auto document = BML::unserialize(information.manifest);
   if(!cartridge.load()) return false;
 
@@ -30,6 +32,7 @@ auto System::load(Model model) -> bool {
 }
 
 auto System::save() -> void {
+  if(!loaded()) return;
   cartridge.save();
 }
 

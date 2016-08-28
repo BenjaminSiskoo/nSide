@@ -370,21 +370,21 @@ auto TIA::writeIO(uint6 addr, uint8 data) -> void {
 
   //CXCLR
   case 0x2c: {
-    collision.m0p0 = false;
     collision.m0p1 = false;
-    collision.m1p1 = false;
+    collision.m0p0 = false;
     collision.m1p0 = false;
-    collision.p0bl = false;
+    collision.m1p1 = false;
     collision.p0pf = false;
-    collision.p1bl = false;
+    collision.p0bl = false;
     collision.p1pf = false;
-    collision.m0bl = false;
+    collision.p1bl = false;
     collision.m0pf = false;
-    collision.m1bl = false;
+    collision.m0bl = false;
     collision.m1pf = false;
+    collision.m1bl = false;
     collision.blpf = false;
-    collision.m0m1 = false;
     collision.p0p1 = false;
+    collision.m0m1 = false;
     return;
   }
 

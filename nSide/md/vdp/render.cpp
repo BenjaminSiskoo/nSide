@@ -18,11 +18,7 @@ auto VDP::run() -> void {
   if(!io.displayEnable) return outputPixel(0);
   if(state.y >= screenHeight()) return outputPixel(0);
 
-  bool windowed = false;  //todo: broken
-  windowed &= state.x >= io.windowHorizontalLo && state.x <= io.windowHorizontalHi;
-  windowed &= state.y >= io.windowVerticalLo   && state.y <= io.windowVerticalHi;
-  auto& planeA = windowed ? this->window : this->planeA;
-
+  auto& planeA = window.isWindowed(state.x, state.y) ? window : this->planeA;
   planeA.run(state.x, state.y);
   planeB.run(state.x, state.y);
   sprite.run(state.x, state.y);
@@ -40,10 +36,9 @@ auto VDP::run() -> void {
 }
 
 auto VDP::outputPixel(uint9 color) -> void {
-  uint clocks = screenWidth() == 256 ? 5 : 4;
-  for(auto n : range(clocks)) {
+  for(auto n : range(4)) {
     state.output[   0 + n] = color;
     state.output[1280 + n] = color;
   }
-  state.output += clocks;
+  state.output += 4;
 }

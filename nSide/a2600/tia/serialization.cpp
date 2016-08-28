@@ -14,7 +14,7 @@ auto TIA::serialize(serializer& s) -> void {
 
   s.integer(io.playfieldBallPriority);
 
-  for(auto p : player) {
+  for(auto& p : player) {
     s.integer(p.numberSize);
     s.integer(p.reflect);
     s.integer(p.graphic);
@@ -22,7 +22,7 @@ auto TIA::serialize(serializer& s) -> void {
     s.integer(p.motion);
   }
 
-  for(auto m : missile) {
+  for(auto& m : missile) {
     s.integer(m.enable);
     s.integer(m.size);
     s.integer(m.position);
@@ -41,19 +41,19 @@ auto TIA::serialize(serializer& s) -> void {
   s.integer(playfield.graphic1);
   s.integer(playfield.graphic2);
 
-  s.integer(collision.m0p0);
   s.integer(collision.m0p1);
-  s.integer(collision.m1p1);
+  s.integer(collision.m0p0);
   s.integer(collision.m1p0);
-  s.integer(collision.p0bl);
+  s.integer(collision.m1p1);
   s.integer(collision.p0pf);
-  s.integer(collision.p1bl);
+  s.integer(collision.p0bl);
   s.integer(collision.p1pf);
-  s.integer(collision.m0bl);
+  s.integer(collision.p1bl);
   s.integer(collision.m0pf);
-  s.integer(collision.m1bl);
+  s.integer(collision.m0bl);
   s.integer(collision.m1pf);
+  s.integer(collision.m1bl);
   s.integer(collision.blpf);
-  s.integer(collision.m0m1);
   s.integer(collision.p0p1);
+  s.integer(collision.m0m1);
 }

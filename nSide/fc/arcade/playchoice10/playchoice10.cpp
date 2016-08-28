@@ -100,7 +100,7 @@ auto PlayChoice10::write(uint16 addr, uint8 data) -> void {
   }
 }
 
-auto PlayChoice10::portRead(uint8 port) -> uint8 {
+auto PlayChoice10::in(uint8 port) -> uint8 {
   uint8 data = 0x00;
   bool channelSelect = false;
   bool enter         = false;
@@ -126,7 +126,7 @@ auto PlayChoice10::portRead(uint8 port) -> uint8 {
   return data;
 }
 
-auto PlayChoice10::portWrite(uint8 port, uint8 data) -> void {
+auto PlayChoice10::out(uint8 port, uint8 data) -> void {
   data &= 0x01;
   switch(port & 0x1f) {
   case 0x00: vramAccess = data; break;

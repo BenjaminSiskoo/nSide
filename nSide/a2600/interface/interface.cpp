@@ -99,8 +99,8 @@ auto Interface::videoColor(uint32 n) -> uint64 {
     double i;
     double q;
 
-    //TODO: Determine the real formula for generating colors. The below formula
-    //is a quick hack-up to match colors with publicly-available palettes.
+    //TODO: Determine if there is any special circuitry for when both the
+    //luminosity and hue are 0 (black).
     if(color == 0 && level == 0) y = 0.0;
     else y = 0.125 + level / 7.0 * 0.875;
 
@@ -108,9 +108,14 @@ auto Interface::videoColor(uint32 n) -> uint64 {
       i = 0.0;
       q = 0.0;
     } else {
-      double phase = Math::Pi + hue - (24.0 + color * 27.0809523) * Math::Pi / 180.0;
-      i = std::sin(phase) * 0.1986;
-      q = std::cos(phase) * 0.1742;
+      //hue 15 == hue 1:                   (360.0 / 14.0)°
+      //hue 15 == (hue 1 + hue 2) / 2:     (360.0 / (14.0 - 1.0 / 2.0))°
+      //hue 15 == (hue 1 + hue 2 * 2) / 3: (360.0 / (14.0 - 2.0 / 3.0))°
+      static const double delay = (360.0 / (14.0 - 2.0 / 3.0)) * Math::Pi / 180.0;
+      //phase shift delay only applies to colors 2-15
+      double phase = Math::Pi + hue - (color - 1) * delay;
+      i = std::sin(phase - 33.0 * Math::Pi / 180.0) * 0.1986;
+      q = std::cos(phase - 33.0 * Math::Pi / 180.0) * 0.1742;
     }
 
     auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
@@ -160,23 +165,23 @@ auto Interface::videoColor(uint32 n) -> uint64 {
   static auto generateSECAMColor = [](uint7 n, double gamma) -> uint64 {
     uint3 level = n.bits(0,2);
 
-    //static uint32 colors[] = {
+    //static const uint32 colors[] = {
     //  0xff000000, 0xff2121ff, 0xfff03c79, 0xffff50ff,
     //  0xff7fff50, 0xff7fffff, 0xffffff3f, 0xffffffff,
     //};
-    static double Y[] = {
+    static const double Y[] = {
        0.0000000000000000000,  0.2286588235294117800,
        0.4736235294117646700,  0.5971568627450980000,
        0.7716784313725490000,  0.8499137254901961000,
        0.9141647058823529000,  1.0000000000000000000,
     };
-    static double Db[] = {
+    static const double Db[] = {
        0.0000000000000000000,  1.1604941176470587000,
        0.0012274509803921196,  0.6059803921568627000,
       -0.6889215686274510000,  0.2258823529411764200,
       -1.0036705882352940000,  0.0000000000000000000,
     };
-    static double Dr[] = {
+    static const double Dr[] = {
        0.0000000000000000000,  0.1889176470588235500,
       -0.8890313725490195000, -0.7658823529411765000,
        0.5201921568627452000,  0.6691137254901962000,

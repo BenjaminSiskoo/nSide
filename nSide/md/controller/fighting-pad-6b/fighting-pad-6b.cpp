@@ -17,11 +17,11 @@ auto FightingPad6B::readData() -> uint8 {
     if(counter != 3 && counter != 4) {
       data.bit(0) = interface->inputPoll(port, ID::Device::FightingPad6B, Up);
       data.bit(1) = interface->inputPoll(port, ID::Device::FightingPad6B, Down);
-      data.bits(2,3) = 0;
+      data.bits(2,3) = 1;
     } else if(counter == 3) {
-      data.bits(0,3) = 0;
-    } else if(counter == 4) {
       data.bits(0,3) = 1;
+    } else if(counter == 4) {
+      data.bits(0,3) = 0;
     }
     data.bit(4) = interface->inputPoll(port, ID::Device::FightingPad6B, A);
     data.bit(5) = interface->inputPoll(port, ID::Device::FightingPad6B, Start);
@@ -38,7 +38,7 @@ auto FightingPad6B::readData() -> uint8 {
       data.bit(1) = interface->inputPoll(port, ID::Device::FightingPad6B, Y);
       data.bit(2) = interface->inputPoll(port, ID::Device::FightingPad6B, X);
       data.bit(3) = interface->inputPoll(port, ID::Device::FightingPad6B, Mode);
-      data.bits(4,5) = 1;
+      data.bits(4,5) = 0;
     }
   }
 
