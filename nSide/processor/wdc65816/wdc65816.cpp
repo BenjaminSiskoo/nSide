@@ -1,5 +1,5 @@
 #include <processor/processor.hpp>
-#include "r65816.hpp"
+#include "wdc65816.hpp"
 
 namespace Processor {
 
@@ -19,7 +19,7 @@ namespace Processor {
 #include "instructions-misc.cpp"
 #include "switch.cpp"
 
-auto R65816::interrupt() -> void {
+auto WDC65816::interrupt() -> void {
   read(r.pc.d);
   idle();
 N writeSP(r.pc.b);
@@ -41,7 +41,7 @@ N writeSP(r.pc.b);
 //  tcd, tcs, tdc, tsc, tsx, txs,
 //  inc, inx, iny, dec, dex, dey,
 //  asl, lsr, rol, ror, nop, xce.
-auto R65816::idleIRQ() -> void {
+auto WDC65816::idleIRQ() -> void {
   if(interruptPending()) {
     //modify I/O cycle to bus read cycle, do not increment PC
     read(r.pc.d);
@@ -50,19 +50,19 @@ auto R65816::idleIRQ() -> void {
   }
 }
 
-auto R65816::idle2() -> void {
+auto WDC65816::idle2() -> void {
   if(r.d.l != 0x00) {
     idle();
   }
 }
 
-auto R65816::idle4(uint16 x, uint16 y) -> void {
+auto WDC65816::idle4(uint16 x, uint16 y) -> void {
   if(!r.p.x || (x & 0xff00) != (y & 0xff00)) {
     idle();
   }
 }
 
-auto R65816::idle6(uint16 addr) -> void {
+auto WDC65816::idle6(uint16 addr) -> void {
   if(r.e && (r.pc.w & 0xff00) != (addr & 0xff00)) {
     idle();
   }

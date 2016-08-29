@@ -1,8 +1,8 @@
-auto R6502::disassemble() -> string {
+auto MOS6502::disassemble() -> string {
   return disassemble(r.pc);
 }
 
-auto R6502::disassemble(uint16 addr) -> string {
+auto MOS6502::disassemble(uint16 addr) -> string {
   string output = {hex(addr, 4L), "  "};
 
   auto abs = [&]() -> string { return {"$", hex(readDisassembler(addr + 2), 2L), hex(readDisassembler(addr + 1), 2L)}; };

@@ -1,4 +1,4 @@
-processors += r65816 spc700 arm gsu hg51b upd96050
+processors += wdc65816 spc700 arm gsu hg51b upd96050
 
 objects += sfc-balanced-interface sfc-balanced-system sfc-balanced-controller
 objects += sfc-balanced-cartridge sfc-balanced-memory

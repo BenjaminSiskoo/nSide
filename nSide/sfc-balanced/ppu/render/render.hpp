@@ -65,7 +65,7 @@ auto obj_renderLine_rto() -> void;
 auto obj_renderLine() -> void;
 
 //line.cpp
-inline auto get_pixel_normal(uint32 x) -> uint16;
-inline auto get_pixel_swap(uint32 x) -> uint16;
-auto renderLine_output() -> void;
+inline auto getPixelBelow(uint32 x) -> uint16;
+inline auto getPixelAbove(uint32 x) -> uint16;
+auto renderLineOutput() -> void;
 auto clearLine() -> void;

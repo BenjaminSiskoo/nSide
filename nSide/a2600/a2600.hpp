@@ -1,7 +1,7 @@
 #pragma once
 
 //Atari 2600 emulator by hex_usr, with contributions from:
-// byuu        (R6502 processor)
+// byuu        (MOS6502 processor)
 // Alyosha_TAS (PIA TIA, timing details)
 //license: GPLv3
 //original project started: 2016-07-31
@@ -11,7 +11,7 @@
 #include <emulator/scheduler.hpp>
 #include <emulator/cheat.hpp>
 
-#include <processor/r6502/r6502.hpp>
+#include <processor/mos6502/mos6502.hpp>
 
 namespace Atari2600 {
   using File = Emulator::File;

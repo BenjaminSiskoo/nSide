@@ -1,5 +1,5 @@
 #include <processor/processor.hpp>
-#include "r6502.hpp"
+#include "mos6502.hpp"
 
 namespace Processor {
 
@@ -18,7 +18,10 @@ namespace Processor {
 #include "instructions-illegal.cpp"
 #include "switch.cpp"
 
-auto R6502::interrupt() -> void {
+MOS6502::MOS6502(bool allowBCD) : allowBCD(allowBCD) {
+}
+
+auto MOS6502::interrupt() -> void {
   idle();
   idle();
   writeSP(r.pc.h);
@@ -32,11 +35,11 @@ L abs.h = read(vector + 1);
   r.pc = abs.w;
 }
 
-auto R6502::mdr() const -> uint8 {
+auto MOS6502::mdr() const -> uint8 {
   return r.mdr;
 }
 
-auto R6502::power() -> void {
+auto MOS6502::power() -> void {
   r.a = 0x00;
   r.x = 0x00;
   r.y = 0x00;
@@ -44,7 +47,7 @@ auto R6502::power() -> void {
   r.p = 0x04;
 }
 
-auto R6502::reset() -> void {
+auto MOS6502::reset() -> void {
   r.mdr = 0x00;
   r.s -= 3;
   r.p.i = 1;

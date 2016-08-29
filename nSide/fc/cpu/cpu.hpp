@@ -1,4 +1,4 @@
-struct CPU : Processor::R6502, Thread {
+struct CPU : Processor::MOS6502, Thread {
   CPU();
 
   static auto Enter() -> void;

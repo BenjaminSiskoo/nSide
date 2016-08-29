@@ -1,4 +1,4 @@
-processors += r6502
+processors += mos6502
 
 objects += a2600-interface
 objects += a2600-cpu a2600-pia a2600-tia

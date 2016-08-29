@@ -1,8 +1,18 @@
 //opcode functions
 //================
 
-auto R6502::fp_adc() {
-  int result = r.a + rd + r.p.c;
+auto MOS6502::fp_adc() {
+  int result;
+
+  if(!allowBCD || !r.p.d) {
+    result = r.a + rd + r.p.c;
+  } else {
+    result = (r.a & 0x0f) + (rd & 0x0f) + (r.p.c << 0);
+    if(result > 0x09) result += 0x06;
+    r.p.c = result > 0x0f;
+    result = (r.a & 0xf0) + (rd & 0xf0) + (r.p.c << 4) + (result & 0x0f);
+  }
+
   r.p.v = ~(r.a ^ rd) & (r.a ^ result) & 0x80;
   r.p.c = (result > 0xff);
   r.p.n = (result & 0x80);
@@ -10,96 +20,96 @@ auto R6502::fp_adc() {
   r.a = result;
 }
 
-auto R6502::fp_and() {
+auto MOS6502::fp_and() {
   r.a &= rd;
   r.p.n = (r.a & 0x80);
   r.p.z = (r.a == 0);
 }
 
-auto R6502::fp_asl() {
+auto MOS6502::fp_asl() {
   r.p.c = rd & 0x80;
   rd <<= 1;
   r.p.n = (rd & 0x80);
   r.p.z = (rd == 0);
 }
 
-auto R6502::fp_bit() {
+auto MOS6502::fp_bit() {
   r.p.n = (rd & 0x80);
   r.p.v = (rd & 0x40);
   r.p.z = ((rd & r.a) == 0);
 }
 
-auto R6502::fp_cmp() {
+auto MOS6502::fp_cmp() {
   int result = r.a - rd;
   r.p.n = (result & 0x80);
   r.p.z = (uint8)(result == 0);
   r.p.c = (result >= 0);
 }
 
-auto R6502::fp_cpx() {
+auto MOS6502::fp_cpx() {
   int result = r.x - rd;
   r.p.n = (result & 0x80);
   r.p.z = (uint8)(result == 0);
   r.p.c = (result >= 0);
 }
 
-auto R6502::fp_cpy() {
+auto MOS6502::fp_cpy() {
   int result = r.y - rd;
   r.p.n = (result & 0x80);
   r.p.z = (uint8)(result == 0);
   r.p.c = (result >= 0);
 }
 
-auto R6502::fp_dec() {
+auto MOS6502::fp_dec() {
   rd--;
   r.p.n = (rd & 0x80);
   r.p.z = (rd == 0);
 }
 
-auto R6502::fp_eor() {
+auto MOS6502::fp_eor() {
   r.a ^= rd;
   r.p.n = (r.a & 0x80);
   r.p.z = (r.a == 0);
 }
 
-auto R6502::fp_inc() {
+auto MOS6502::fp_inc() {
   rd++;
   r.p.n = (rd & 0x80);
   r.p.z = (rd == 0);
 }
 
-auto R6502::fp_lda() {
+auto MOS6502::fp_lda() {
   r.a = rd;
   r.p.n = (r.a & 0x80);
   r.p.z = (r.a == 0);
 }
 
-auto R6502::fp_ldx() {
+auto MOS6502::fp_ldx() {
   r.x = rd;
   r.p.n = (r.x & 0x80);
   r.p.z = (r.x == 0);
 }
 
-auto R6502::fp_ldy() {
+auto MOS6502::fp_ldy() {
   r.y = rd;
   r.p.n = (r.y & 0x80);
   r.p.z = (r.y == 0);
 }
 
-auto R6502::fp_lsr() {
+auto MOS6502::fp_lsr() {
   r.p.c = rd & 0x01;
   rd >>= 1;
   r.p.n = (rd & 0x80);
   r.p.z = (rd == 0);
 }
 
-auto R6502::fp_ora() {
+auto MOS6502::fp_ora() {
   r.a |= rd;
   r.p.n = (r.a & 0x80);
   r.p.z = (r.a == 0);
 }
 
-auto R6502::fp_rla() {
+auto MOS6502::fp_rla() {
   uint carry = (uint)r.p.c;
   r.p.c = r.a & 0x80;
   r.a = (r.a << 1) | carry;
@@ -107,7 +117,7 @@ auto R6502::fp_rla() {
   r.p.z = (r.a == 0);
 }
 
-auto R6502::fp_rol() {
+auto MOS6502::fp_rol() {
   uint carry = (uint)r.p.c;
   r.p.c = rd & 0x80;
   rd = (rd << 1) | carry;
@@ -115,7 +125,7 @@ auto R6502::fp_rol() {
   r.p.z = (rd == 0);
 }
 
-auto R6502::fp_ror() {
+auto MOS6502::fp_ror() {
   uint carry = (uint)r.p.c << 7;
   r.p.c = rd & 0x01;
   rd = carry | (rd >> 1);
@@ -123,7 +133,7 @@ auto R6502::fp_ror() {
   r.p.z = (rd == 0);
 }
 
-auto R6502::fp_rra() {
+auto MOS6502::fp_rra() {
   uint carry = (uint)r.p.c << 7;
   r.p.c = r.a & 0x01;
   r.a = carry | (r.a >> 1);
@@ -131,19 +141,34 @@ auto R6502::fp_rra() {
   r.p.z = (r.a == 0);
 }
 
-auto R6502::fp_sbc() {
+auto MOS6502::fp_sbc() {
+  int result;
   rd ^= 0xff;
-  return fp_adc();
+
+  if(!allowBCD || !r.p.d) {
+    result = r.a + rd + r.p.c;
+  } else {
+    result = (r.a & 0x0f) + (rd & 0x0f) + (r.p.c << 0);
+    if(result <= 0x0f) result -= 0x06;
+    r.p.c = result > 0x0f;
+    result = (r.a & 0xf0) + (rd & 0xf0) + (r.p.c << 4) + (result & 0x0f);
+  }
+
+  r.p.v = ~(r.a ^ rd) & (r.a ^ result) & 0x80;
+  r.p.c = (result > 0xff);
+  r.p.n = (result & 0x80);
+  r.p.z = ((uint8)result == 0);
+  r.a = result;
 }
 
-auto R6502::fp_sla() {
+auto MOS6502::fp_sla() {
   r.p.c = r.a & 0x80;
   r.a <<= 1;
   r.p.n = (r.a & 0x80);
   r.p.z = (r.a == 0);
 }
 
-auto R6502::fp_sra() {
+auto MOS6502::fp_sra() {
   r.p.c = r.a & 0x01;
   r.a >>= 1;
   r.p.n = (r.a & 0x80);
@@ -153,12 +178,12 @@ auto R6502::fp_sra() {
 //illegal opcode functions
 //========================
 
-auto R6502::fp_dcp() {
+auto MOS6502::fp_dcp() {
   fp_dec();
   fp_cmp();
 }
 
-auto R6502::fp_lax() {
+auto MOS6502::fp_lax() {
   fp_lda();
   r.x = r.a;
 }

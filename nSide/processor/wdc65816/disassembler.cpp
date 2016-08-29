@@ -1,4 +1,4 @@
-auto R65816::dreadb(uint24 addr) -> uint8 {
+auto WDC65816::dreadb(uint24 addr) -> uint8 {
   if((addr & 0x40ffff) >= 0x2000 && (addr & 0x40ffff) <= 0x5fff) {
     //$00-3f|80-bf:2000-5fff
     //do not read MMIO registers within debugger
@@ -7,14 +7,14 @@ auto R65816::dreadb(uint24 addr) -> uint8 {
   return readDisassembler(addr);
 }
 
-auto R65816::dreadw(uint24 addr) -> uint16 {
+auto WDC65816::dreadw(uint24 addr) -> uint16 {
   uint16 data;
   data.byte(0) = dreadb(addr++);
   data.byte(1) = dreadb(addr++);
   return data;
 }
 
-auto R65816::dreadl(uint24 addr) -> uint24 {
+auto WDC65816::dreadl(uint24 addr) -> uint24 {
   uint24 data;
   data.byte(0) = dreadb(addr++);
   data.byte(1) = dreadb(addr++);
@@ -22,7 +22,7 @@ auto R65816::dreadl(uint24 addr) -> uint24 {
   return data;
 }
 
-auto R65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
+auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
   uint24 a = 0;
 
   switch(mode) {
@@ -102,11 +102,11 @@ auto R65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
   return a;
 }
 
-auto R65816::disassemble() -> string {
+auto WDC65816::disassemble() -> string {
   return disassemble(r.pc.d, r.e, r.p.m, r.p.x);
 }
 
-auto R65816::disassemble(uint24 addr, bool e, bool m, bool x) -> string {
+auto WDC65816::disassemble(uint24 addr, bool e, bool m, bool x) -> string {
   string s;
 
   Reg24 pc;

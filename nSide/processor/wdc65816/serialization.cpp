@@ -1,4 +1,4 @@
-auto R65816::serialize(serializer& s) -> void {
+auto WDC65816::serialize(serializer& s) -> void {
   s.integer(r.pc.d);
 
   s.integer(r.a.w);

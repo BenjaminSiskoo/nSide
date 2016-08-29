@@ -105,14 +105,14 @@ auto Interface::videoColor(uint32 color) -> uint64 {
       0.233, 0.200, 0.000, 0.000,
     };
     static uint Phase[] = {
-        0,   0, 204, 202,
-      321, 321,  81, 262,
-       81,  81, 140, 140,
-      202,  20,   0,   0,
+        0,   0, 237, 235,
+      354, 354, 114, 295,
+      114, 114, 173, 173,
+      235,  53,   0,   0,
     };
     double y = Y[color];
-    double i = Saturation[color] * std::sin(Phase[color] * Math::Pi / 180.0);
-    double q = Saturation[color] * std::cos(Phase[color] * Math::Pi / 180.0);
+    double i = Saturation[color] * std::sin((Phase[color] - 33) * Math::Pi / 180.0);
+    double q = Saturation[color] * std::cos((Phase[color] - 33) * Math::Pi / 180.0);
 
     auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
     //This matrix is from FCC's 1953 NTSC standard.

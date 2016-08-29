@@ -7,6 +7,9 @@ CPU cpu;
 #include "timing.cpp"
 #include "serialization.cpp"
 
+CPU::CPU() : Processor::MOS6502(true) {
+}
+
 auto CPU::Enter() -> void {
   while(true) scheduler.synchronize(), cpu.main();
 }
@@ -20,12 +23,12 @@ auto CPU::load(Markup::Node node) -> bool {
 }
 
 auto CPU::power() -> void {
-  R6502::power();
+  MOS6502::power();
   create(Enter, system.colorburst());
 }
 
 auto CPU::reset() -> void {
-  R6502::reset();
+  MOS6502::reset();
 
   //CPU
   r.pc  = cartridge.access(0xfffc, r.mdr) << 0;

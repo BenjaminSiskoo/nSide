@@ -1,4 +1,5 @@
-//Ricoh 6502
+//MOS 6502
+//* MOS 6507
 //* Ricoh 2A03
 //* Ricoh 2A07
 
@@ -6,11 +7,13 @@
 
 namespace Processor {
 
-struct R6502 {
+struct MOS6502 {
   #include "registers.hpp"
   #include "memory.hpp"
 
-  using fp = auto (R6502::*)() -> void;
+  using fp = auto (MOS6502::*)() -> void;
+
+  MOS6502(bool allowBCD);
 
   virtual auto read(uint16 addr) -> uint8 = 0;
   virtual auto write(uint16 addr, uint8 data) -> void = 0;
@@ -19,7 +22,7 @@ struct R6502 {
 
   virtual auto readDisassembler(uint16 addr) -> uint8 { return 0; }
 
-  //r6502.cpp
+  //mos6502.cpp
   auto interrupt() -> void;
   auto mdr() const -> uint8;
   auto power() -> void;
@@ -144,6 +147,8 @@ struct R6502 {
   Reg16 abs, iabs;
   uint8 rd, zp;
   uint16 aa;
+
+  const bool allowBCD;
 };
 
 }

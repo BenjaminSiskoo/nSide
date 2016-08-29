@@ -30,7 +30,7 @@ auto SA1::main() -> void {
   instruction();
 }
 
-//override R65816::interrupt() to support SA-1 vector location IO registers
+//override WDC65816::interrupt() to support SA-1 vector location IO registers
 auto SA1::interrupt() -> void {
   read(r.pc.d);
   idle();

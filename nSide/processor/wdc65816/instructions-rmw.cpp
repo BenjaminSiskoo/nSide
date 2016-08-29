@@ -1,18 +1,18 @@
-auto R65816::op_adjust_imm_b(Reg16& reg, int adjust) {
+auto WDC65816::op_adjust_imm_b(Reg16& reg, int adjust) {
 L idleIRQ();
   reg.l += adjust;
   r.p.n = (reg.l & 0x80);
   r.p.z = (reg.l == 0);
 }
 
-auto R65816::op_adjust_imm_w(Reg16& reg, int adjust) {
+auto WDC65816::op_adjust_imm_w(Reg16& reg, int adjust) {
 L idleIRQ();
   reg.w += adjust;
   r.p.n = (reg.w & 0x8000);
   r.p.z = (reg.w == 0);
 }
 
-auto R65816::op_asl_imm_b() {
+auto WDC65816::op_asl_imm_b() {
 L idleIRQ();
   r.p.c = (r.a.l & 0x80);
   r.a.l <<= 1;
@@ -20,7 +20,7 @@ L idleIRQ();
   r.p.z = (r.a.l == 0);
 }
 
-auto R65816::op_asl_imm_w() {
+auto WDC65816::op_asl_imm_w() {
 L idleIRQ();
   r.p.c = (r.a.w & 0x8000);
   r.a.w <<= 1;
@@ -28,7 +28,7 @@ L idleIRQ();
   r.p.z = (r.a.w == 0);
 }
 
-auto R65816::op_lsr_imm_b() {
+auto WDC65816::op_lsr_imm_b() {
 L idleIRQ();
   r.p.c = (r.a.l & 0x01);
   r.a.l >>= 1;
@@ -36,7 +36,7 @@ L idleIRQ();
   r.p.z = (r.a.l == 0);
 }
 
-auto R65816::op_lsr_imm_w() {
+auto WDC65816::op_lsr_imm_w() {
 L idleIRQ();
   r.p.c = (r.a.w & 0x0001);
   r.a.w >>= 1;
@@ -44,7 +44,7 @@ L idleIRQ();
   r.p.z = (r.a.w == 0);
 }
 
-auto R65816::op_rol_imm_b() {
+auto WDC65816::op_rol_imm_b() {
 L idleIRQ();
   bool carry = r.p.c;
   r.p.c = (r.a.l & 0x80);
@@ -53,7 +53,7 @@ L idleIRQ();
   r.p.z = (r.a.l == 0);
 }
 
-auto R65816::op_rol_imm_w() {
+auto WDC65816::op_rol_imm_w() {
 L idleIRQ();
   bool carry = r.p.c;
   r.p.c = (r.a.w & 0x8000);
@@ -62,7 +62,7 @@ L idleIRQ();
   r.p.z = (r.a.w == 0);
 }
 
-auto R65816::op_ror_imm_b() {
+auto WDC65816::op_ror_imm_b() {
 L idleIRQ();
   bool carry = r.p.c;
   r.p.c = (r.a.l & 0x01);
@@ -71,7 +71,7 @@ L idleIRQ();
   r.p.z = (r.a.l == 0);
 }
 
-auto R65816::op_ror_imm_w() {
+auto WDC65816::op_ror_imm_w() {
 L idleIRQ();
   bool carry = r.p.c;
   r.p.c = (r.a.w & 0x0001);
@@ -80,7 +80,7 @@ L idleIRQ();
   r.p.z = (r.a.w == 0);
 }
 
-auto R65816::op_adjust_addr_b(fp op) {
+auto WDC65816::op_adjust_addr_b(fp op) {
   aa.l = readPC();
   aa.h = readPC();
   rd.l = readDB(aa.w);
@@ -89,7 +89,7 @@ auto R65816::op_adjust_addr_b(fp op) {
 L writeDB(aa.w, rd.l);
 }
 
-auto R65816::op_adjust_addr_w(fp op) {
+auto WDC65816::op_adjust_addr_w(fp op) {
   aa.l = readPC();
   aa.h = readPC();
   rd.l = readDB(aa.w + 0);
@@ -100,7 +100,7 @@ auto R65816::op_adjust_addr_w(fp op) {
 L writeDB(aa.w + 0, rd.l);
 }
 
-auto R65816::op_adjust_addrx_b(fp op) {
+auto WDC65816::op_adjust_addrx_b(fp op) {
   aa.l = readPC();
   aa.h = readPC();
   idle();
@@ -110,7 +110,7 @@ auto R65816::op_adjust_addrx_b(fp op) {
 L writeDB(aa.w + r.x.w, rd.l);
 }
 
-auto R65816::op_adjust_addrx_w(fp op) {
+auto WDC65816::op_adjust_addrx_w(fp op) {
   aa.l = readPC();
   aa.h = readPC();
   idle();
@@ -122,7 +122,7 @@ auto R65816::op_adjust_addrx_w(fp op) {
 L writeDB(aa.w + r.x.w + 0, rd.l);
 }
 
-auto R65816::op_adjust_dp_b(fp op) {
+auto WDC65816::op_adjust_dp_b(fp op) {
   dp = readPC();
   idle2();
   rd.l = readDP(dp);
@@ -131,7 +131,7 @@ auto R65816::op_adjust_dp_b(fp op) {
 L writeDP(dp, rd.l);
 }
 
-auto R65816::op_adjust_dp_w(fp op) {
+auto WDC65816::op_adjust_dp_w(fp op) {
   dp = readPC();
   idle2();
   rd.l = readDP(dp + 0);
@@ -142,7 +142,7 @@ auto R65816::op_adjust_dp_w(fp op) {
 L writeDP(dp + 0, rd.l);
 }
 
-auto R65816::op_adjust_dpx_b(fp op) {
+auto WDC65816::op_adjust_dpx_b(fp op) {
   dp = readPC();
   idle2();
   idle();
@@ -152,7 +152,7 @@ auto R65816::op_adjust_dpx_b(fp op) {
 L writeDP(dp + r.x.w, rd.l);
 }
 
-auto R65816::op_adjust_dpx_w(fp op) {
+auto WDC65816::op_adjust_dpx_w(fp op) {
   dp = readPC();
   idle2();
   idle();

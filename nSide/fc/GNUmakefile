@@ -1,4 +1,4 @@
-processors += r6502 z80
+processors += mos6502 z80
 
 objects += fc-interface fc-system fc-controller
 objects += fc-cartridge fc-memory

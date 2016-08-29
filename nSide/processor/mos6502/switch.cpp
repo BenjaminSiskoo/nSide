@@ -1,8 +1,8 @@
 #define I  //prefix highlights illegal instructions
 #define op(id, name, ...) case id: return op_##name(__VA_ARGS__);
-#define fp(name) &R6502::fp_##name
+#define fp(name) &MOS6502::fp_##name
 
-auto R6502::instruction() -> void {
+auto MOS6502::instruction() -> void {
   switch(readPC()) {
   op(0x00, brk)
   op(0x01, read_indirect_zero_page_x, fp(ora))

@@ -1,15 +1,15 @@
-auto R65816::instruction() -> void {
+auto WDC65816::instruction() -> void {
   #define opA(  n, o      ) case n: return op_##o();
   #define opAI( n, o, i   ) case n: return op_##o(i);
   #define opAII(n, o, i, j) case n: return op_##o(i, j);
   #define opM(  n, o      ) case n: return r.p.m ? op_##o##_b() : op_##o##_w();
-  #define opMF( n, o, f   ) case n: return r.p.m ? op_##o##_b(&R65816::op_##f##_b) : op_##o##_w(&R65816::op_##f##_w);
-  #define opMFI(n, o, f, i) case n: return r.p.m ? op_##o##_b(&R65816::op_##f##_b, i) : op_##o##_w(&R65816::op_##f##_w, i);
+  #define opMF( n, o, f   ) case n: return r.p.m ? op_##o##_b(&WDC65816::op_##f##_b) : op_##o##_w(&WDC65816::op_##f##_w);
+  #define opMFI(n, o, f, i) case n: return r.p.m ? op_##o##_b(&WDC65816::op_##f##_b, i) : op_##o##_w(&WDC65816::op_##f##_w, i);
   #define opMI( n, o, i   ) case n: return r.p.m ? op_##o##_b(i) : op_##o##_w(i);
   #define opMII(n, o, i, j) case n: return r.p.m ? op_##o##_b(i, j) : op_##o##_w(i, j);
   #define opX(  n, o)       case n: return r.p.x ? op_##o##_b() : op_##o##_w();
-  #define opXF( n, o, f   ) case n: return r.p.x ? op_##o##_b(&R65816::op_##f##_b) : op_##o##_w(&R65816::op_##f##_w);
-  #define opXFI(n, o, f, i) case n: return r.p.x ? op_##o##_b(&R65816::op_##f##_b, i) : op_##o##_w(&R65816::op_##f##_w, i);
+  #define opXF( n, o, f   ) case n: return r.p.x ? op_##o##_b(&WDC65816::op_##f##_b) : op_##o##_w(&WDC65816::op_##f##_w);
+  #define opXFI(n, o, f, i) case n: return r.p.x ? op_##o##_b(&WDC65816::op_##f##_b, i) : op_##o##_w(&WDC65816::op_##f##_w, i);
   #define opXI( n, o, i   ) case n: return r.p.x ? op_##o##_b(i) : op_##o##_w(i);
   #define opXII(n, o, i, j) case n: return r.p.x ? op_##o##_b(i, j) : op_##o##_w(i, j);
 

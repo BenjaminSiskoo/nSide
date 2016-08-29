@@ -8,7 +8,7 @@ CPU cpu;
 #include "timing.cpp"
 #include "serialization.cpp"
 
-CPU::CPU() {
+CPU::CPU() : Processor::MOS6502(false) {
 }
 
 auto CPU::Enter() -> void {
@@ -25,7 +25,7 @@ auto CPU::load(Markup::Node node) -> bool {
 }
 
 auto CPU::power() -> void {
-  R6502::power();
+  MOS6502::power();
 
   for(auto addr : range(0x0800)) ram[addr] = 0xff;
   ram[0x0008] = 0xf7;
@@ -35,7 +35,7 @@ auto CPU::power() -> void {
 }
 
 auto CPU::reset() -> void {
-  R6502::reset();
+  MOS6502::reset();
   create(Enter, system.colorburst() * 6.0);
 
   function<auto (uint16, uint8) -> uint8> reader;

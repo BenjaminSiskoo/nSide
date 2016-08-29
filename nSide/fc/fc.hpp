@@ -14,7 +14,7 @@
 #include <emulator/scheduler.hpp>
 #include <emulator/cheat.hpp>
 
-#include <processor/r6502/r6502.hpp>
+#include <processor/mos6502/mos6502.hpp>
 #include <processor/z80/z80.hpp>
 
 namespace Famicom {

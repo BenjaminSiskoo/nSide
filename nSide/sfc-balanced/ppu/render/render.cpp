@@ -57,7 +57,7 @@ auto PPU::renderLine() -> void {
   bg_renderLine<Background::ID::BG4>();
   obj_renderLine();
 
-  renderLine_output();
+  renderLineOutput();
 
   obj_renderLine_rto();
 }

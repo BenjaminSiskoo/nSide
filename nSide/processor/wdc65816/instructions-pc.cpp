@@ -1,4 +1,4 @@
-auto R65816::op_branch(bool flag, bool value) {
+auto WDC65816::op_branch(bool flag, bool value) {
   if(flag != value) {
 L   rd.l = readPC();
   } else {
@@ -10,7 +10,7 @@ L   idle();
   }
 }
 
-auto R65816::op_bra() {
+auto WDC65816::op_bra() {
   rd.l = readPC();
   aa.w = r.pc.d + (int8)rd.l;
   idle6(aa.w);
@@ -18,27 +18,27 @@ L idle();
   r.pc.w = aa.w;
 }
 
-auto R65816::op_brl() {
+auto WDC65816::op_brl() {
   rd.l = readPC();
   rd.h = readPC();
 L idle();
   r.pc.w = r.pc.d + (int16)rd.w;
 }
 
-auto R65816::op_jmp_addr() {
+auto WDC65816::op_jmp_addr() {
   rd.l = readPC();
 L rd.h = readPC();
   r.pc.w = rd.w;
 }
 
-auto R65816::op_jmp_long() {
+auto WDC65816::op_jmp_long() {
   rd.l = readPC();
   rd.h = readPC();
 L rd.b = readPC();
   r.pc.d = rd.d;
 }
 
-auto R65816::op_jmp_iaddr() {
+auto WDC65816::op_jmp_iaddr() {
   aa.l = readPC();
   aa.h = readPC();
   rd.l = readAddr(aa.w + 0);
@@ -46,7 +46,7 @@ L rd.h = readAddr(aa.w + 1);
   r.pc.w = rd.w;
 }
 
-auto R65816::op_jmp_iaddrx() {
+auto WDC65816::op_jmp_iaddrx() {
   aa.l = readPC();
   aa.h = readPC();
   idle();
@@ -55,7 +55,7 @@ L rd.h = readPB(aa.w + r.x.w + 1);
   r.pc.w = rd.w;
 }
 
-auto R65816::op_jmp_iladdr() {
+auto WDC65816::op_jmp_iladdr() {
   aa.l = readPC();
   aa.h = readPC();
   rd.l = readAddr(aa.w + 0);
@@ -64,7 +64,7 @@ L rd.b = readAddr(aa.w + 2);
   r.pc.d = rd.d;
 }
 
-auto R65816::op_jsr_addr() {
+auto WDC65816::op_jsr_addr() {
   aa.l = readPC();
   aa.h = readPC();
   idle();
@@ -74,7 +74,7 @@ L writeSP(r.pc.l);
   r.pc.w = aa.w;
 }
 
-auto R65816::op_jsr_long() {
+auto WDC65816::op_jsr_long() {
   aa.l = readPC();
   aa.h = readPC();
   writeSPn(r.pc.b);
@@ -87,7 +87,7 @@ L writeSPn(r.pc.l);
 E r.s.h = 0x01;
 }
 
-auto R65816::op_jsr_iaddrx() {
+auto WDC65816::op_jsr_iaddrx() {
   aa.l = readPC();
   writeSPn(r.pc.h);
   writeSPn(r.pc.l);
@@ -99,7 +99,7 @@ L rd.h = readPB(aa.w + r.x.w + 1);
 E r.s.h = 0x01;
 }
 
-auto R65816::op_rti() {
+auto WDC65816::op_rti() {
   idle();
   idle();
   r.p = readSP();
@@ -117,7 +117,7 @@ E r.p.m = 1, r.p.x = 1;
   }
 }
 
-auto R65816::op_rts() {
+auto WDC65816::op_rts() {
   idle();
   idle();
   rd.l = readSP();
@@ -126,7 +126,7 @@ L idle();
   r.pc.w = ++rd.w;
 }
 
-auto R65816::op_rtl() {
+auto WDC65816::op_rtl() {
   idle();
   idle();
   rd.l = readSPn();

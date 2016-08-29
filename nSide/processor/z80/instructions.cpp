@@ -164,6 +164,7 @@ auto Z80::op_ld_sp_rr(uint16_t& x) -> void {
 
 auto Z80::op_push_rr(uint16_t& x) -> void {
   wait();
+  wait();
   write(--r.sp, x >> 8);
   wait();
   write(--r.sp, x >> 0);

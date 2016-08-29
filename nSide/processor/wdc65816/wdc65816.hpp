@@ -6,12 +6,12 @@
 
 namespace Processor {
 
-struct R65816 {
+struct WDC65816 {
   #include "registers.hpp"
   #include "memory.hpp"
   #include "disassembler.hpp"
 
-  using fp = auto (R65816::*)() -> void;
+  using fp = auto (WDC65816::*)() -> void;
 
   virtual auto idle() -> void = 0;
   virtual auto read(uint24 addr) -> uint8 = 0;
@@ -22,7 +22,7 @@ struct R65816 {
 
   virtual auto readDisassembler(uint24 addr) -> uint8 { return 0; }
 
-  //r65816.cpp
+  //wdc65816.cpp
   alwaysinline auto idleIRQ() -> void;
   alwaysinline auto idle2() -> void;
   alwaysinline auto idle4(uint16 x, uint16 y) -> void;
