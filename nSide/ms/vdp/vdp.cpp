@@ -35,6 +35,7 @@ auto VDP::refresh() -> void {
 
 auto VDP::in(uint8 addr) -> uint8 {
   switch(addr) {
+
   case 0x40: case 0x42: case 0x44: case 0x46:
   case 0x48: case 0x4a: case 0x4c: case 0x4e:
   case 0x50: case 0x52: case 0x54: case 0x56:

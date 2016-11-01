@@ -56,4 +56,17 @@ auto TIA::serialize(serializer& s) -> void {
   s.integer(collision.blpf);
   s.integer(collision.p0p1);
   s.integer(collision.m0m1);
+
+  for(auto& channel : audio.channel) {
+    s.integer(channel.control);
+    s.integer(channel.frequency);
+    s.integer(channel.volume);
+    s.integer(channel.phase);
+    s.integer(channel.state1);
+    s.integer(channel.state3);
+    s.integer(channel.shift4);
+    s.integer(channel.shift5);
+    s.integer(channel.shift9);
+    s.integer(channel.sample);
+  }
 }

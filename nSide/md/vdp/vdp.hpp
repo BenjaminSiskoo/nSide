@@ -28,7 +28,7 @@ struct VDP : Thread {
   //render.cpp
   auto scanline() -> void;
   auto run() -> void;
-  auto outputPixel(uint9 color) -> void;
+  auto outputPixel(uint11 color) -> void;
 
   //background.cpp
   struct Background {

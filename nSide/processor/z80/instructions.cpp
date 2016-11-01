@@ -1,717 +1,947 @@
-auto Z80::CP(uint8 x) -> void {
-  uint16 y = r.a - x;
+//legend:
+//  a   = register A
+//  c   = condition
+//  e   = relative operand
+//  in  = (operand)
+//  inn = (operand-word)
+//  irr = (register-word)
+//  o   = opcode bits
+//  n   = operand
+//  nn  = operand-word
+//  r   = register
 
-  r.p.c = y > 0xff;
-  r.p.n = 1;
-  r.p.v = (r.a ^ x) & (r.a ^ y) & 0x80;
-  r.p.h = (r.a ^ y ^ x) & 0x10;
-  r.p.z = y == 0;
-  r.p.s = y & 0x80;
+auto Z80::ADD(uint8 x, uint8 y, bool c) -> uint8 {
+  uint9 z = x + y + c;
+
+  CF = z.bit(8);
+  NF = 0;
+  VF = ~(x ^ y) & (x ^ z) & 0x80;
+  XF = z.bit(3);
+  HF = (x ^ y ^ z) & 0x10;
+  YF = z.bit(5);
+  ZF = (uint8)z == 0;
+  SF = z.bit(7);
+
+  return z;
 }
 
-auto Z80::instructionCP_ihl() -> void {
-  wait();
-  CP(read(r.hl));
+auto Z80::AND(uint8 x, uint8 y) -> uint8 {
+  uint8 z = x & y;
+
+  CF = 0;
+  NF = 0;
+  PF = parity(z);
+  XF = z.bit(3);
+  HF = 1;
+  YF = z.bit(5);
+  ZF = z == 0;
+  SF = z.bit(7);
+
+  return z;
 }
 
-auto Z80::instructionCP_n() -> void {
-  wait();
-  CP(read(r.pc++));
+auto Z80::BIT(uint3 bit, uint8 x) -> void {
+  NF = 0;
+  HF = 1;
+  ZF = (x & 1 << bit) == 0;
 }
 
-auto Z80::instructionCP_r(uint8_t& x) -> void {
-  CP(x);
+auto Z80::DEC(uint8 x) -> uint8 {
+  uint8 z = x - 1;
+
+  NF = 1;
+  VF = z == 0x7f;
+  XF = z.bit(3);
+  HF = z.bits(0,3) == 0x0f;
+  YF = z.bit(5);
+  ZF = z == 0;
+  SF = z.bit(7);
+
+  return z;
+}
+
+auto Z80::INC(uint8 x) -> uint8 {
+  uint8 z = x + 1;
+
+  NF = 0;
+  VF = z == 0x80;
+  XF = z.bit(3);
+  HF = z.bits(0,3) == 0x00;
+  YF = z.bit(5);
+  ZF = z == 0;
+  SF = z.bit(7);
+
+  return z;
+}
+
+auto Z80::OR(uint8 x, uint8 y) -> uint8 {
+  uint8 z = x | y;
+
+  CF = 0;
+  NF = 0;
+  PF = parity(z);
+  XF = z.bit(3);
+  HF = 0;
+  YF = z.bit(5);
+  ZF = z == 0;
+  SF = z.bit(7);
+
+  return z;
+}
+
+auto Z80::RES(uint3 bit, uint8 x) -> uint8 {
+  x &= ~(1 << bit);
+  return x;
+}
+
+auto Z80::RL(uint8 x) -> uint8 {
+  bool c = x.bit(7);
+  x = x << 1 | CF;
+
+  CF = c;
+  NF = 0;
+  PF = parity(x);
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+
+  return x;
+}
+
+auto Z80::RLC(uint8 x) -> uint8 {
+  x = x << 1 | x >> 7;
+
+  CF = x.bit(0);
+  NF = 0;
+  PF = parity(x);
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+
+  return x;
+}
+
+auto Z80::RR(uint8 x) -> uint8 {
+  bool c = x.bit(0);
+  x = x >> 1 | CF << 7;
+
+  CF = c;
+  NF = 0;
+  PF = parity(x);
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+
+  return x;
+}
+
+auto Z80::RRC(uint8 x) -> uint8 {
+  x = x >> 1 | x << 7;
+
+  CF = x.bit(7);
+  NF = 0;
+  PF = parity(x);
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+
+  return x;
+}
+
+auto Z80::SET(uint3 bit, uint8 x) -> uint8 {
+  x |= (1 << bit);
+  return x;
+}
+
+auto Z80::SLA(uint8 x) -> uint8 {
+  bool c = x.bit(7);
+  x = x << 1;
+
+  CF = c;
+  NF = 0;
+  PF = parity(x);
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+
+  return x;
+}
+
+auto Z80::SLL(uint8 x) -> uint8 {
+  bool c = x.bit(7);
+  x = x << 1 | 1;
+
+  CF = c;
+  NF = 0;
+  PF = parity(x);
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+
+  return x;
+}
+
+auto Z80::SRA(uint8 x) -> uint8 {
+  bool c = x.bit(0);
+  x = (int8)x >> 1;
+
+  CF = c;
+  NF = 0;
+  PF = parity(x);
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+
+  return x;
+}
+
+auto Z80::SRL(uint8 x) -> uint8 {
+  bool c = x.bit(0);
+  x = x >> 1;
+
+  CF = c;
+  NF = 0;
+  PF = parity(x);
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+
+  return x;
+}
+
+auto Z80::SUB(uint8 x, uint8 y, bool c) -> uint8 {
+  uint9 z = x - y - c;
+
+  CF = z.bit(8);
+  NF = 1;
+  VF = (x ^ y) & (x ^ z) & 0x80;
+  XF = z.bit(3);
+  HF = (x ^ y ^ z) & 0x10;
+  YF = z.bit(5);
+  ZF = (uint8)z == 0;
+  SF = z.bit(7);
+
+  return z;
+}
+
+auto Z80::XOR(uint8 x, uint8 y) -> uint8 {
+  uint8 z = x ^ y;
+
+  CF = 0;
+  NF = 0;
+  PF = parity(z);
+  XF = z.bit(3);
+  HF = 0;
+  YF = z.bit(5);
+  ZF = z == 0;
+  SF = z.bit(7);
+
+  return z;
+}
+
+//
+
+auto Z80::instructionADC_a_irr(uint16& x) -> void {
+  A = ADD(A, read(displace(x)), CF);
+}
+
+auto Z80::instructionADC_a_n() -> void {
+  A = ADD(A, operand(), CF);
+}
+
+auto Z80::instructionADC_a_r(uint8& x) -> void {
+  A = ADD(A, x, CF);
+}
+
+auto Z80::instructionADC_hl_rr(uint16& x) -> void {
+  wait(4);
+  auto lo = ADD(HL >> 0, x >> 0, CF);
+  wait(3);
+  auto hi = ADD(HL >> 8, x >> 8, CF);
+  HL = hi << 8 | lo << 0;
+  ZF = HL == 0;
+}
+
+auto Z80::instructionADD_a_irr(uint16& x) -> void {
+  A = ADD(A, read(displace(x)));
+}
+
+auto Z80::instructionADD_a_n() -> void {
+  A = ADD(A, operand());
+}
+
+auto Z80::instructionADD_a_r(uint8& x) -> void {
+  A = ADD(A, x);
+}
+
+auto Z80::instructionADD_hl_rr(uint16& x) -> void {
+  wait(4);
+  auto lo = ADD(HL >> 0, x >> 0);
+  wait(3);
+  auto hi = ADD(HL >> 8, x >> 8, CF);
+  HL = hi << 8 | lo << 0;
+  ZF = HL == 0;
+}
+
+auto Z80::instructionAND_a_irr(uint16& x) -> void {
+  A = AND(A, read(displace(x)));
+}
+
+auto Z80::instructionAND_a_n() -> void {
+  A = AND(A, operand());
+}
+
+auto Z80::instructionAND_a_r(uint8& x) -> void {
+  A = AND(A, x);
+}
+
+auto Z80::instructionBIT_o_irr(uint3 bit, uint16& x) -> void {
+  BIT(bit, read(displace(x)));
+}
+
+auto Z80::instructionBIT_o_r(uint3 bit, uint8& x) -> void {
+  BIT(bit, x);
+}
+
+auto Z80::instructionCALL_c_nn(bool c) -> void {
+  auto addr = operands();
+  if(!c) return;
+  wait(1);
+  push(PC);
+  PC = addr;
+}
+
+auto Z80::instructionCALL_nn() -> void {
+  auto addr = operands();
+  wait(1);
+  push(PC);
+  PC = addr;
+}
+
+auto Z80::instructionCCF() -> void {
+  CF = !CF;
+  NF = 0;
+  HF = !CF;
+}
+
+auto Z80::instructionCP_a_irr(uint16& x) -> void {
+  SUB(A, read(displace(x)));
+}
+
+auto Z80::instructionCP_a_n() -> void {
+  SUB(A, operand());
+}
+
+auto Z80::instructionCP_a_r(uint8& x) -> void {
+  SUB(A, x);
+}
+
+auto Z80::instructionCPD() -> void {
+  auto data = read(_HL--);
+  SUB(A, data);
+  VF = --BC > 0;
+  wait(5);
+}
+
+auto Z80::instructionCPDR() -> void {
+  instructionCPD();
+  if(!VF || ZF) return;
+  wait(5);
+  PC -= 2;
+}
+
+auto Z80::instructionCPI() -> void {
+  auto data = read(_HL++);
+  wait(5);
+  SUB(A, data);
+  VF = --BC > 0;
+}
+
+auto Z80::instructionCPIR() -> void {
+  instructionCPI();
+  if(!VF || ZF) return;
+  wait(5);
+  PC -= 2;
+}
+
+auto Z80::instructionCPL() -> void {
+  A = ~A;
+
+  NF = 1;
+  XF = A.bit(3);
+  HF = 1;
+  YF = A.bit(5);
+}
+
+auto Z80::instructionDAA() -> void {
+  uint8 lo = A.bits(0,3);
+  uint8 hi = A.bits(4,7);
+  uint8 diff;
+
+  if(CF) {
+    diff = lo <= 9 && !HF ? 0x60 : 0x66;
+  } else if(lo >= 10) {
+    diff = hi <= 8 ? 0x06 : 0x66;
+  } else if(hi >= 10) {
+    diff = HF ? 0x66 : 0x60;
+  } else {
+    diff = HF ? 0x06 : 0x00;
+  }
+
+  if(NF == 0) A += diff;
+  if(NF == 1) A -= diff;
+
+  CF = CF || (lo <= 9 ? hi >= 10 : hi >= 9);
+  PF = parity(A);
+  XF = A.bit(3);
+  HF = NF ? (HF && lo <= 5) : (lo >= 10);
+  YF = A.bit(5);
+  ZF = A == 0;
+  SF = A.bit(7);
+}
+
+auto Z80::instructionDEC_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  auto data = read(addr);
+  wait(1);
+  write(addr, DEC(data));
+}
+
+auto Z80::instructionDEC_r(uint8& x) -> void {
+  x = DEC(x);
+}
+
+auto Z80::instructionDEC_rr(uint16& x) -> void {
+  wait(2);
+  x--;
 }
 
 auto Z80::instructionDI() -> void {
-  r.di = 1;
-  r.ei = 0;
+  r.iff1 = 0;
+  r.iff2 = 0;
 }
 
-auto Z80::instructionIM(uint mode) -> void {
-  r.im = mode;
+auto Z80::instructionDJNZ_e() -> void {
+  wait(1);
+  auto e = operand();
+  if(!--B) return;
+  wait(5);
+  PC += (int8)e;
+}
+
+auto Z80::instructionEI() -> void {
+  r.iff1 = 1;
+  r.iff2 = 1;
+}
+
+auto Z80::instructionEX_rr_rr(uint16& x, uint16& y) -> void {
+  auto z = x;
+  x = y;
+  y = z;
+}
+
+auto Z80::instructionEXX() -> void {
+  swap(BC, BC_);
+  swap(DE, DE_);
+  swap(_HL, HL_);
+}
+
+auto Z80::instructionHALT() -> void {
+  r.halt = 1;
+}
+
+auto Z80::instructionIM_o(uint2 code) -> void {
+  wait(4);
+  r.im = code;
 }
 
 auto Z80::instructionIN_a_in() -> void {
-  wait();
-  auto addr = read(r.pc++);
-  wait();
-  r.a = in(addr);
+  A = in(operand());
 }
 
-auto Z80::instructionIN_r_ic(uint8_t& x) -> void {
-  wait();
-  auto addr = read(r.c);
-  wait();
-  x = in(addr);
-  r.p.n = 0;
-  r.p.p = parity(x);
-  r.p.h = 0;
-  r.p.z = x == 0;
-  r.p.s = x & 0x80;
+auto Z80::instructionIN_r_ic(uint8& x) -> void {
+  x = in(C);
+}
+
+auto Z80::instructionINC_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  auto data = read(addr);
+  wait(1);
+  write(addr, INC(data));
+}
+
+auto Z80::instructionINC_r(uint8& x) -> void {
+  x = INC(x);
+}
+
+auto Z80::instructionINC_rr(uint16& x) -> void {
+  wait(2);
+  x++;
+}
+
+auto Z80::instructionIND() -> void {
+  wait(1);
+  auto data = in(C);
+  write(_HL--, data);
+  NF = 0;
+  ZF = --B > 0;
+}
+
+auto Z80::instructionINDR() -> void {
+  instructionIND();
+  if(!ZF) return;
+  wait(5);
+  PC -= 2;
+}
+
+auto Z80::instructionINI() -> void {
+  wait(1);
+  auto data = in(C);
+  write(_HL++, data);
+  NF = 0;
+  ZF = --B > 0;
+}
+
+auto Z80::instructionINIR() -> void {
+  instructionINI();
+  if(!ZF) return;
+  wait(5);
+  PC -= 2;
 }
 
 auto Z80::instructionJP_c_nn(bool c) -> void {
-  wait();
-  auto lo = read(r.pc++);
-  wait();
-  auto hi = read(r.pc++);
-  if(c) r.pc = hi << 8 | lo << 0;
+  auto pc = operands();
+  if(c) r.pc = pc;
 }
 
-auto Z80::instructionJP_rr(uint16_t& x) -> void {
-  r.pc = x;
+auto Z80::instructionJP_rr(uint16& x) -> void {
+  PC = x;
 }
 
-auto Z80::instructionJR_c(bool c) -> void {
-  wait();
-  auto d = read(r.pc++);
-  if(c) {
-    wait();
-    wait();
-    wait();
-    wait();
-    wait();
-    r.pc += (int8)d;
-  }
+auto Z80::instructionJR_c_e(bool c) -> void {
+  auto e = operand();
+  if(c) wait(5), r.pc += (int8)e;
+}
+
+auto Z80::instructionLD_a_inn() -> void {
+  A = read(operands());
+}
+
+auto Z80::instructionLD_a_irr(uint16& x) -> void {
+  A = read(displace(x));
+}
+
+auto Z80::instructionLD_inn_a() -> void {
+  write(operands(), A);
+}
+
+auto Z80::instructionLD_inn_rr(uint16& x) -> void {
+  auto addr = operands();
+  write(addr + 0, x >> 0);
+  write(addr + 1, x >> 8);
+}
+
+auto Z80::instructionLD_irr_a(uint16& x) -> void {
+  write(displace(x), A);
+}
+
+auto Z80::instructionLD_irr_n(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, operand());
+}
+
+auto Z80::instructionLD_irr_r(uint16& x, uint8& y) -> void {
+  write(displace(x), y);
+}
+
+auto Z80::instructionLD_r_n(uint8& x) -> void {
+  x = operand();
+}
+
+auto Z80::instructionLD_r_irr(uint8& x, uint16& y) -> void {
+  x = read(displace(y));
+}
+
+auto Z80::instructionLD_r_r(uint8& x, uint8& y) -> void {
+  x = y;
+}
+
+//LD to/from I/R requires an extra T-cycle
+auto Z80::instructionLD_r_r1(uint8& x, uint8& y) -> void {
+  wait(1);
+  x = y;
+}
+
+auto Z80::instructionLD_rr_inn(uint16& x) -> void {
+  auto addr = operands();
+  x.byte(0) = read(addr + 0);
+  x.byte(1) = read(addr + 1);
+}
+
+auto Z80::instructionLD_rr_nn(uint16& x) -> void {
+  x = operands();
+}
+
+auto Z80::instructionLD_sp_rr(uint16& x) -> void {
+  wait(2);
+  SP = x;
+}
+
+auto Z80::instructionLDD() -> void {
+  auto data = read(_HL--);
+  write(DE--, data);
+  wait(2);
+  NF = 0;
+  VF = --BC > 0;
+  HF = 0;
+}
+
+auto Z80::instructionLDDR() -> void {
+  instructionLDD();
+  if(!VF) return;
+  wait(5);
+  PC -= 2;
+}
+
+auto Z80::instructionLDI() -> void {
+  auto data = read(_HL++);
+  write(DE++, data);
+  wait(2);
+  NF = 0;
+  VF = --BC > 0;
+  HF = 0;
+}
+
+auto Z80::instructionLDIR() -> void {
+  instructionLDI();
+  if(!VF) return;
+  wait(5);
+  PC -= 2;
+}
+
+auto Z80::instructionNEG() -> void {
+  A = SUB(0, A);
 }
 
 auto Z80::instructionNOP() -> void {
 }
 
-//8-bit load commands
+auto Z80::instructionOR_a_irr(uint16& x) -> void {
+  A = OR(A, read(displace(x)));
+}
+
+auto Z80::instructionOR_a_n() -> void {
+  A = OR(A, operand());
+}
+
+auto Z80::instructionOR_a_r(uint8& x) -> void {
+  A = OR(A, x);
+}
+
+auto Z80::instructionOTDR() -> void {
+  instructionOUTD();
+  if(!ZF) return;
+  wait(5);
+  PC -= 2;
+}
+
+auto Z80::instructionOTIR() -> void {
+  instructionOUTI();
+  if(!ZF) return;
+  wait(5);
+  PC -= 2;
+}
+
+auto Z80::instructionOUT_ic_r(uint8& x) -> void {
+  out(C, x);
+}
+
+auto Z80::instructionOUT_n_a() -> void {
+  auto addr = operand();
+  out(addr, A);
+}
+
+auto Z80::instructionOUTD() -> void {
+  wait(1);
+  auto data = read(_HL--);
+  out(C, data);
+  NF = 1;
+  ZF = --B > 0;
+}
+
+auto Z80::instructionOUTI() -> void {
+  wait(1);
+  auto data = read(_HL++);
+  out(C, data);
+  NF = 1;
+  ZF = --B > 0;
+}
+
+auto Z80::instructionPOP_rr(uint16& x) -> void {
+  x = pop();
+}
+
+auto Z80::instructionPUSH_rr(uint16& x) -> void {
+  wait(1);
+  push(x);
+}
+
+auto Z80::instructionRES_o_irr(uint3 bit, uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, RES(bit, read(addr)));
+}
+
+auto Z80::instructionRES_o_r(uint3 bit, uint8& x) -> void {
+  x = RES(bit, x);
+}
+
+auto Z80::instructionRET() -> void {
+  wait(1);
+  PC = pop();
+}
+
+auto Z80::instructionRET_c(bool c) -> void {
+  wait(1);
+  if(!c) return;
+  PC = pop();
+}
+
+auto Z80::instructionRETI() -> void {
+  PC = pop();
+  //todo: there's more to RETI than just PC restore ...
+}
+
+auto Z80::instructionRETN() -> void {
+  PC = pop();
+  r.iff1 = r.iff2;
+}
+
+auto Z80::instructionRL_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, RL(read(addr)));
+}
+
+auto Z80::instructionRL_r(uint8& x) -> void {
+  x = RL(x);
+}
 
-auto Z80::op_ld_r_r(uint8_t& x, uint8_t& y) -> void {
-  x = y;
+auto Z80::instructionRLA() -> void {
+  bool c = A.bit(7);
+  A = A << 1 | CF;
+
+  CF = c;
+  NF = 0;
+  XF = A.bit(3);
+  HF = 0;
+  YF = A.bit(5);
+}
+
+auto Z80::instructionRLC_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, RLC(read(addr)));
+}
+
+auto Z80::instructionRLC_r(uint8& x) -> void {
+  x = RLC(x);
+}
+
+auto Z80::instructionRLCA() -> void {
+  bool c = A.bit(7);
+  A = A << 1 | c;
+
+  CF = c;
+  NF = 0;
+  XF = A.bit(3);
+  HF = 0;
+  YF = A.bit(5);
+}
+
+auto Z80::instructionRLD() -> void {
+  auto data = read(HL);
+  wait(1);
+  write(HL, (data << 4) | (A & 0x0f));
+  wait(3);
+  A = (A & 0xf0) | (data >> 4);
+
+  NF = 0;
+  PF = parity(A);
+  XF = A.bit(3);
+  HF = 0;
+  YF = A.bit(5);
+  ZF = A == 0;
+  SF = A.bit(7);
+}
+
+auto Z80::instructionRR_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, RR(read(addr)));
+}
+
+auto Z80::instructionRR_r(uint8& x) -> void {
+  x = RR(x);
+}
+
+auto Z80::instructionRRA() -> void {
+  bool c = A.bit(0);
+  A = CF << 7 | A >> 1;
+
+  CF = c;
+  NF = 0;
+  XF = A.bit(3);
+  HF = 0;
+  YF = A.bit(5);
+}
+
+auto Z80::instructionRRC_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, RRC(read(addr)));
+}
+
+auto Z80::instructionRRC_r(uint8& x) -> void {
+  x = RRC(x);
+}
+
+auto Z80::instructionRRCA() -> void {
+  bool c = A.bit(0);
+  A = c << 7 | A >> 1;
+
+  CF = c;
+  NF = 0;
+  XF = A.bit(3);
+  HF = 0;
+  YF = A.bit(5);
+}
+
+auto Z80::instructionRRD() -> void {
+  auto data = read(HL);
+  wait(1);
+  write(HL, (data >> 4) | (A << 4));
+  wait(3);
+  A = (A & 0xf0) | (data & 0x0f);
+
+  NF = 0;
+  PF = parity(A);
+  XF = A.bit(3);
+  HF = 0;
+  YF = A.bit(5);
+  ZF = A == 0;
+  SF = A.bit(7);
 }
 
-auto Z80::op_ld_r_n(uint8_t& x) -> void {
-  wait();
-  x = read(r.pc++);
+auto Z80::instructionRST_o(uint3 vector) -> void {
+  wait(1);
+  push(PC);
+  PC = vector << 3;
 }
 
-auto Z80::op_ld_r_hl(uint8_t& x) -> void {
-  wait();
-  x = read(r.hl);
+auto Z80::instructionSBC_a_irr(uint16& x) -> void {
+  A = SUB(A, read(displace(x)), CF);
 }
 
-auto Z80::op_ld_hl_r(uint8_t& x) -> void {
-  wait();
-  write(r.hl, x);
+auto Z80::instructionSBC_a_n() -> void {
+  A = SUB(A, operand(), CF);
 }
 
-auto Z80::op_ld_hl_n() -> void {
-  wait();
-  auto addr = read(r.pc++);
-  wait();
-  write(r.hl, addr);
+auto Z80::instructionSBC_a_r(uint8& x) -> void {
+  A = SUB(A, x, CF);
 }
 
-auto Z80::op_ld_a_rr(uint16_t& x) -> void {
-  wait();
-  r.a = read(x);
+auto Z80::instructionSBC_hl_rr(uint16& x) -> void {
+  wait(4);
+  auto lo = SUB(HL >> 0, x >> 0, CF);
+  wait(3);
+  auto hi = SUB(HL >> 8, x >> 8, CF);
+  HL = hi << 8 | lo << 0;
+  ZF = HL == 0;
 }
 
-auto Z80::op_ld_rr_a(uint16_t& x) -> void {
-  wait();
-  write(x, r.a);
+auto Z80::instructionSCF() -> void {
+  CF = 1;
+  NF = 0;
+  HF = 0;
 }
 
-auto Z80::op_ldi_hl_a() -> void {
-  wait();
-  write(r.hl++, r.a);
+auto Z80::instructionSET_o_irr(uint3 bit, uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, SET(bit, read(addr)));
 }
 
-auto Z80::op_ldi_a_hl() -> void {
-  wait();
-  r.a = read(r.hl++);
+auto Z80::instructionSET_o_r(uint3 bit, uint8& x) -> void {
+  x = SET(bit, x);
 }
 
-auto Z80::op_ldd_hl_a() -> void {
-  wait();
-  write(r.hl--, r.a);
+auto Z80::instructionSLA_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, SLA(read(addr)));
 }
 
-auto Z80::op_ldd_a_hl() -> void {
-  wait();
-  r.a = read(r.hl--);
+auto Z80::instructionSLA_r(uint8& x) -> void {
+  x = SLA(x);
 }
 
-//16-bit load commands
+auto Z80::instructionSLL_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, SLL(read(addr)));
+}
+
+auto Z80::instructionSLL_r(uint8& x) -> void {
+  x = SLL(x);
+}
+
+auto Z80::instructionSRA_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, SRA(read(addr)));
+}
 
-auto Z80::op_ld_rr_nn(uint16_t& x) -> void {
-  wait();
-  x  = read(r.pc++) << 0;
-  wait();
-  x |= read(r.pc++) << 8;
+auto Z80::instructionSRA_r(uint8& x) -> void {
+  x = SRA(x);
 }
 
-auto Z80::op_ld_nn_sp() -> void {
-  wait();
-  uint16 addr = read(r.pc++) << 0;
-  wait();
-  addr |= read(r.pc++) << 8;
-  wait();
-  write(addr + 0, r.sp >> 0);
-  wait();
-  write(addr + 1, r.sp >> 8);
+auto Z80::instructionSRL_irr(uint16& x) -> void {
+  auto addr = displace(x);
+  write(addr, SRL(read(addr)));
 }
 
-auto Z80::op_ld_sp_rr(uint16_t& x) -> void {
-  r.sp = x;
-  wait();
+auto Z80::instructionSRL_r(uint8& x) -> void {
+  x = SRL(x);
 }
 
-auto Z80::op_push_rr(uint16_t& x) -> void {
-  wait();
-  wait();
-  write(--r.sp, x >> 8);
-  wait();
-  write(--r.sp, x >> 0);
+auto Z80::instructionSUB_a_irr(uint16& x) -> void {
+  A = SUB(A, read(displace(x)));
 }
 
-auto Z80::op_pop_rr(uint16_t& x) -> void {
-  wait();
-  x  = read(r.sp++) << 0;
-  wait();
-  x |= read(r.sp++) << 8;
+auto Z80::instructionSUB_a_n() -> void {
+  A = SUB(A, operand());
 }
 
-//8-bit arithmetic commands
+auto Z80::instructionSUB_a_r(uint8& x) -> void {
+  A = SUB(A, x);
+}
+
+auto Z80::instructionXOR_a_irr(uint16& x) -> void {
+  A = XOR(A, read(displace(x)));
+}
+
+auto Z80::instructionXOR_a_n() -> void {
+  A = XOR(A, operand());
+}
 
-auto Z80::opi_add_a(uint8 x) -> void {
-  uint16 rh = r.a + x;
-  uint16 rl = (r.a & 0x0f) + (x & 0x0f);
-  r.a = rh;
-  r.p.z = (uint8)rh == 0;
-  r.p.n = 0;
-  r.p.h = rl > 0x0f;
-  r.p.c = rh > 0xff;
-}
-
-auto Z80::op_add_a_r(uint8_t& x) -> void { opi_add_a(x); }
-auto Z80::op_add_a_n() -> void { wait(); opi_add_a(read(r.pc++)); }
-auto Z80::op_add_a_hl() -> void { wait(); opi_add_a(read(r.hl)); }
-
-auto Z80::opi_adc_a(uint8 x) -> void {
-  uint16 rh = r.a + x + r.p.c;
-  uint16 rl = (r.a & 0x0f) + (x & 0x0f) + r.p.c;
-  r.a = rh;
-  r.p.z = (uint8)rh == 0;
-  r.p.n = 0;
-  r.p.h = rl > 0x0f;
-  r.p.c = rh > 0xff;
-}
-
-auto Z80::op_adc_a_r(uint8_t& x) -> void { opi_adc_a(x); }
-auto Z80::op_adc_a_n() -> void { wait(); opi_adc_a(read(r.pc++)); }
-auto Z80::op_adc_a_hl() -> void { wait(); opi_adc_a(read(r.hl)); }
-
-auto Z80::opi_sub_a(uint8 x) -> void {
-  uint16 rh = r.a - x;
-  uint16 rl = (r.a & 0x0f) - (x & 0x0f);
-  r.a = rh;
-  r.p.z = (uint8)rh == 0;
-  r.p.n = 1;
-  r.p.h = rl > 0x0f;
-  r.p.c = rh > 0xff;
-}
-
-auto Z80::op_sub_a_r(uint8_t& x) -> void { opi_sub_a(x); }
-auto Z80::op_sub_a_n() -> void { wait(); opi_sub_a(read(r.pc++)); }
-auto Z80::op_sub_a_hl() -> void { wait(); opi_sub_a(read(r.hl)); }
-
-auto Z80::opi_sbc_a(uint8 x) -> void {
-  uint16 rh = r.a - x - r.p.c;
-  uint16 rl = (r.a & 0x0f) - (x & 0x0f) - r.p.c;
-  r.a = rh;
-  r.p.z = (uint8)rh == 0;
-  r.p.n = 1;
-  r.p.h = rl > 0x0f;
-  r.p.c = rh > 0xff;
-}
-
-auto Z80::op_sbc_a_r(uint8_t& x) -> void { opi_sbc_a(x); }
-auto Z80::op_sbc_a_n() -> void { wait(); opi_sbc_a(read(r.pc++)); }
-auto Z80::op_sbc_a_hl() -> void { wait(); opi_sbc_a(read(r.hl)); }
-
-auto Z80::opi_and_a(uint8 x) -> void {
-  r.a &= x;
-  r.p.z = r.a == 0;
-  r.p.n = 0;
-  r.p.h = 1;
-  r.p.c = 0;
-}
-
-auto Z80::op_and_a_r(uint8_t& x) -> void { opi_and_a(x); }
-auto Z80::op_and_a_n() -> void { wait(); opi_and_a(read(r.pc++)); }
-auto Z80::op_and_a_hl() -> void { wait(); opi_and_a(read(r.hl)); }
-
-auto Z80::opi_xor_a(uint8 x) -> void {
-  r.a ^= x;
-  r.p.z = r.a == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = 0;
-}
-
-auto Z80::op_xor_a_r(uint8_t& x) -> void { opi_xor_a(x); }
-auto Z80::op_xor_a_n() -> void { wait(); opi_xor_a(read(r.pc++)); }
-auto Z80::op_xor_a_hl() -> void { wait(); opi_xor_a(read(r.hl)); }
-
-auto Z80::opi_or_a(uint8 x) -> void {
-  r.a |= x;
-  r.p.z = r.a == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = 0;
-}
-
-auto Z80::op_or_a_r(uint8_t& x) -> void { opi_or_a(x); }
-auto Z80::op_or_a_n() -> void { wait(); opi_or_a(read(r.pc++)); }
-auto Z80::op_or_a_hl() -> void { wait(); opi_or_a(read(r.hl)); }
-
-auto Z80::op_inc_r(uint8_t& x) -> void {
-  x++;
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = (x & 0x0f) == 0x00;
-}
-
-auto Z80::op_inc_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  wait();
-  write(r.hl, ++n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = (n & 0x0f) == 0x00;
-}
-
-auto Z80::op_dec_r(uint8_t& x) -> void {
-  x--;
-  r.p.z = x == 0;
-  r.p.n = 1;
-  r.p.h = (x & 0x0f) == 0x0f;
-}
-
-auto Z80::op_dec_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  wait();
-  write(r.hl, --n);
-  r.p.z = n == 0;
-  r.p.n = 1;
-  r.p.h = (n & 0x0f) == 0x0f;
-}
-
-auto Z80::op_daa() -> void {
-  uint16 a = r.a;
-  if(r.p.n == 0) {
-    if(r.p.h || (a & 0x0f) > 0x09) a += 0x06;
-    if(r.p.c || (a       ) > 0x9f) a += 0x60;
-  } else {
-    if(r.p.h) {
-      a -= 0x06;
-      if(r.p.c == 0) a &= 0xff;
-    }
-    if(r.p.c) a -= 0x60;
-  }
-  r.a = a;
-  r.p.z = r.a == 0;
-  r.p.h = 0;
-  r.p.c |= a & 0x100;
-}
-
-auto Z80::op_cpl() -> void {
-  r.a ^= 0xff;
-  r.p.n = 1;
-  r.p.h = 1;
-}
-
-//16-bit arithmetic commands
-
-auto Z80::op_add_hl_rr(uint16_t& x) -> void {
-  wait();
-  wait();
-  wait();
-  wait();
-  wait();
-  wait();
-  wait();
-  uint32 rb = (r.hl + x);
-  uint32 rn = (r.hl & 0xfff) + (x & 0xfff);
-  r.hl = rb;
-  r.p.n = 0;
-  r.p.h = rn > 0x0fff;
-  r.p.c = rb > 0xffff;
-}
-
-auto Z80::op_inc_rr(uint16_t& x) -> void {
-  wait();
-  wait();
-  x++;
-}
-
-auto Z80::op_dec_rr(uint16_t& x) -> void {
-  wait();
-  wait();
-  x--;
-}
-
-//rotate/shift commands
-
-auto Z80::op_rlca() -> void {
-  r.a = (r.a << 1) | (r.a >> 7);
-  r.p.z = 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = r.a & 0x01;
-}
-
-auto Z80::op_rla() -> void {
-  bool c = r.a & 0x80;
-  r.a = (r.a << 1) | (r.p.c << 0);
-  r.p.z = 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_rrca() -> void {
-  r.a = (r.a >> 1) | (r.a << 7);
-  r.p.z = 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = r.a & 0x80;
-}
-
-auto Z80::op_rra() -> void {
-  bool c = r.a & 0x01;
-  r.a = (r.a >> 1) | (r.p.c << 7);
-  r.p.z = 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_rlc_r(uint8_t& x) -> void {
-  x = (x << 1) | (x >> 7);
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = x & 0x01;
-}
-
-auto Z80::op_rlc_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  n = (n << 1) | (n >> 7);
-  wait();
-  write(r.hl, n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = n & 0x01;
-}
-
-auto Z80::op_rl_r(uint8_t& x) -> void {
-  bool c = x & 0x80;
-  x = (x << 1) | (r.p.c << 0);
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_rl_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  bool c = n & 0x80;
-  n = (n << 1) | (r.p.c << 0);
-  wait();
-  write(r.hl, n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_rrc_r(uint8_t& x) -> void {
-  x = (x >> 1) | (x << 7);
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = x & 0x80;
-}
-
-auto Z80::op_rrc_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  n = (n >> 1) | (n << 7);
-  wait();
-  write(r.hl, n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = n & 0x80;
-}
-
-auto Z80::op_rr_r(uint8_t& x) -> void {
-  bool c = x & 0x01;
-  x = (x >> 1) | (r.p.c << 7);
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_rr_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  bool c = n & 0x01;
-  n = (n >> 1) | (r.p.c << 7);
-  wait();
-  write(r.hl, n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_sla_r(uint8_t& x) -> void {
-  bool c = x & 0x80;
-  x <<= 1;
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_sla_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  bool c = n & 0x80;
-  n <<= 1;
-  wait();
-  write(r.hl, n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_swap_r(uint8_t& x) -> void {
-  x = (x << 4) | (x >> 4);
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = 0;
-}
-
-auto Z80::op_swap_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  n = (n << 4) | (n >> 4);
-  wait();
-  write(r.hl, n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = 0;
-}
-
-auto Z80::op_sra_r(uint8_t& x) -> void {
-  bool c = x & 0x01;
-  x = (int8)x >> 1;
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_sra_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  bool c = n & 0x01;
-  n = (int8)n >> 1;
-  wait();
-  write(r.hl, n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_srl_r(uint8_t& x) -> void {
-  bool c = x & 0x01;
-  x >>= 1;
-  r.p.z = x == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-auto Z80::op_srl_hl() -> void {
-  wait();
-  uint8 n = read(r.hl);
-  bool c = n & 0x01;
-  n >>= 1;
-  wait();
-  write(r.hl, n);
-  r.p.z = n == 0;
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = c;
-}
-
-//single-bit commands
-
-auto Z80::op_bit_n_r(uint b, uint8_t& x) -> void {
-  r.p.z = (x & (1 << b)) == 0;
-  r.p.n = 0;
-  r.p.h = 1;
-}
-
-auto Z80::op_bit_n_hl(uint b) -> void {
-  wait();
-  uint8 n = read(r.hl);
-  r.p.z = (n & (1 << b)) == 0;
-  r.p.n = 0;
-  r.p.h = 1;
-}
-
-auto Z80::op_set_n_r(uint b, uint8_t& x) -> void {
-  x |= 1 << b;
-}
-
-auto Z80::op_set_n_hl(uint b) -> void {
-  wait();
-  uint8 n = read(r.hl);
-  n |= 1 << b;
-  wait();
-  write(r.hl, n);
-}
-
-auto Z80::op_res_n_r(uint b, uint8_t& x) -> void {
-  x &= ~(1 << b);
-}
-
-auto Z80::op_res_n_hl(uint b) -> void {
-  wait();
-  uint n = read(r.hl);
-  n &= ~(1 << b);
-  wait();
-  write(r.hl, n);
-}
-
-//control commands
-
-auto Z80::op_ccf() -> void {
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = !r.p.c;
-}
-
-auto Z80::op_scf() -> void {
-  r.p.n = 0;
-  r.p.h = 0;
-  r.p.c = 1;
-}
-
-auto Z80::op_halt() -> void {
-  r.halt = true;
-  while(r.halt == true) wait();
-}
-
-auto Z80::op_stop() -> void {
-  if(stop()) return;
-  r.stop = true;
-  while(r.stop == true) wait();
-}
-
-auto Z80::op_ei() -> void {
-  r.ei = 1;
-  r.di = 0;
-}
-
-//jump commands
-
-auto Z80::op_call_nn() -> void {
-  wait();
-  uint8 lo = read(r.pc++);
-  wait();
-  uint8 hi = read(r.pc++);
-  wait();
-  write(--r.sp, r.pc >> 8);
-  wait();
-  write(--r.sp, r.pc >> 0);
-  r.pc = (hi << 8) | (lo << 0);
-}
-
-auto Z80::op_call_f_nn(bool x, bool y) -> void {
-  wait();
-  uint8 lo = read(r.pc++);
-  wait();
-  uint8 hi = read(r.pc++);
-  if(x == y) {
-    wait();
-    write(--r.sp, r.pc >> 8);
-    wait();
-    write(--r.sp, r.pc >> 0);
-    r.pc = (hi << 8) | (lo << 0);
-  }
-}
-
-auto Z80::op_ret() -> void {
-  wait();
-  uint8 lo = read(r.sp++);
-  wait();
-  uint8 hi = read(r.sp++);
-  r.pc = (hi << 8) | (lo << 0);
-  wait();
-}
-
-auto Z80::op_ret_f(bool x, bool y) -> void {
-  wait();
-  if(x == y) {
-    wait();
-    uint8 lo = read(r.sp++);
-    wait();
-    uint8 hi = read(r.sp++);
-    r.pc = (hi << 8) | (lo << 0);
-    wait();
-  }
-}
-
-auto Z80::op_reti() -> void {
-  wait();
-  uint8 lo = read(r.sp++);
-  wait();
-  uint8 hi = read(r.sp++);
-  r.pc = (hi << 8) | (lo << 0);
-  wait();
-  r.ime = 1;
-}
-
-auto Z80::op_rst_n(uint n) -> void {
-  wait();
-  write(--r.sp, r.pc >> 8);
-  wait();
-  write(--r.sp, r.pc >> 0);
-  r.pc = n;
-}
-
-auto Z80::op_out_n_a(uint8_t x) -> void {
-  wait();
-  uint8 port = read(r.pc++);
-  wait();
-  wait();
-  out(port, x);
-}
-
-auto Z80::op_out_c_r(uint8_t x) -> void {
-  wait();
-  wait();
-  out(r.c, x);
+auto Z80::instructionXOR_a_r(uint8& x) -> void {
+  A = XOR(A, x);
 }

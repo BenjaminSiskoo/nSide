@@ -1,3 +1,12 @@
 system name:Mega Drive
-  cpu
+  bus
     rom name=tmss.rom size=0x800
+    ram name=work.ram size=0x10000 volatile
+  apu
+    ram name=audio.ram size=0x2000 volatile
+  vdp
+    ram name=video.ram size=0x10000 volatile
+    ram name=palette.ram size=0x80 volatile
+    ram name=vertical-scroll.ram size=0x50 volatile
+  psg
+  ym2612

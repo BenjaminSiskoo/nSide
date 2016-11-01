@@ -1,27 +1,27 @@
 FightingPad6B::FightingPad6B(uint port) : Controller(port) {
-  create(Controller::Enter, system.colorburst() * 15.0 / 7.0);
-  counter = 0;
-  timeout = 0;
+  create(Controller::Enter, 1'000'000.0);
+  select = 1;
 }
 
 auto FightingPad6B::main() -> void {
   if(timeout) timeout -= 1;
-  else        counter = 0;
+  else        counter  = 0;
   step(1);
+  synchronize(cpu);
 }
 
 auto FightingPad6B::readData() -> uint8 {
   uint6 data;
 
   if(select == 0) {
-    if(counter != 3 && counter != 4) {
+    if(counter != 2 && counter != 3) {
       data.bit(0) = interface->inputPoll(port, ID::Device::FightingPad6B, Up);
       data.bit(1) = interface->inputPoll(port, ID::Device::FightingPad6B, Down);
-      data.bits(2,3) = 1;
+      data.bits(2,3) = ~0;
+    } else if(counter == 2) {
+      data.bits(0,3) = ~0;  //needed for controller detection
     } else if(counter == 3) {
-      data.bits(0,3) = 1;
-    } else if(counter == 4) {
-      data.bits(0,3) = 0;
+      data.bits(0,3) =  0;
     }
     data.bit(4) = interface->inputPoll(port, ID::Device::FightingPad6B, A);
     data.bit(5) = interface->inputPoll(port, ID::Device::FightingPad6B, Start);
@@ -33,7 +33,7 @@ auto FightingPad6B::readData() -> uint8 {
       data.bit(3) = interface->inputPoll(port, ID::Device::FightingPad6B, Right);
       data.bit(4) = interface->inputPoll(port, ID::Device::FightingPad6B, B);
       data.bit(5) = interface->inputPoll(port, ID::Device::FightingPad6B, C);
-    } else if(counter == 3) {
+    } else {
       data.bit(0) = interface->inputPoll(port, ID::Device::FightingPad6B, Z);
       data.bit(1) = interface->inputPoll(port, ID::Device::FightingPad6B, Y);
       data.bit(2) = interface->inputPoll(port, ID::Device::FightingPad6B, X);
@@ -47,9 +47,9 @@ auto FightingPad6B::readData() -> uint8 {
 }
 
 auto FightingPad6B::writeData(uint8 data) -> void {
-  if(select && !data.bit(6)) counter++;
+  if(!select && data.bit(6)) counter = (counter + 1) % 5;
   select = data.bit(6);
-  timeout = 8192;
+  timeout = 1607;
 
   latch  = data.bit(7);
 }

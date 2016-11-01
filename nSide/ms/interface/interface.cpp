@@ -39,6 +39,9 @@ Interface::Interface() {
     controllerPort1.devices.append(device);
     controllerPort2.devices.append(device);
   }
+
+  ports.append(move(controllerPort1));
+  ports.append(move(controllerPort2));
 }
 
 auto Interface::manifest() -> string {

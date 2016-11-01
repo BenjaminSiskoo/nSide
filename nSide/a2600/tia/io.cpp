@@ -235,31 +235,37 @@ auto TIA::writeIO(uint6 addr, uint8 data) -> void {
 
   //AUDC0
   case 0x15: {
+    audio.channel[0].control = data.bits(0,3);
     return;
   }
 
   //AUDC1
   case 0x16: {
+    audio.channel[1].control = data.bits(0,3);
     return;
   }
 
   //AUDF0
   case 0x17: {
+    audio.channel[0].frequency = data.bits(0,4);
     return;
   }
 
   //AUDF1
   case 0x18: {
+    audio.channel[1].frequency = data.bits(0,4);
     return;
   }
 
   //AUDV0
   case 0x19: {
+    audio.channel[0].volume = data.bits(0,3);
     return;
   }
 
   //AUDV1
   case 0x1a: {
+    audio.channel[1].volume = data.bits(0,3);
     return;
   }
 

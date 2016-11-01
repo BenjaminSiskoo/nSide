@@ -11,6 +11,6 @@ struct FightingPad6B : Controller {
 
   boolean select;
   boolean latch;
-  uint counter;
+  uint3 counter;
   uint timeout;
 };

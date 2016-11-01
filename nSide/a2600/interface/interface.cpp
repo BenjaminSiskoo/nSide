@@ -114,8 +114,8 @@ auto Interface::videoColor(uint32 n) -> uint64 {
       static const double delay = (360.0 / (14.0 - 2.0 / 3.0)) * Math::Pi / 180.0;
       //phase shift delay only applies to colors 2-15
       double phase = Math::Pi + hue - (color - 1) * delay;
-      i = std::sin(phase - 33.0 * Math::Pi / 180.0) * 0.1986;
-      q = std::cos(phase - 33.0 * Math::Pi / 180.0) * 0.1742;
+      i = std::sin(phase - 33.0 * Math::Pi / 180.0) * 0.25;
+      q = std::cos(phase - 33.0 * Math::Pi / 180.0) * 0.25;
     }
 
     auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
@@ -145,13 +145,13 @@ auto Interface::videoColor(uint32 n) -> uint64 {
       u = 0.0;
       v = 0.0;
     } else if(color.bit(0) == 0) {
-      double phase = ((color >> 1) * 30.0 - 90.0) * Math::Pi / 180.0;
-      u = std::sin(phase) * 0.25;
-      v = std::cos(phase) * 0.25;
+      double phase = (180.0 - (color >> 1) * 30.0) * Math::Pi / 180.0;
+      u = std::cos(phase) * 0.25;
+      v = std::sin(phase) * 0.25;
     } else if(color.bit(0) == 1) {
-      double phase = (285.0 - (color >> 1) * 30.0) * Math::Pi / 180.0;
-      u = std::sin(phase) * 0.25;
-      v = std::cos(phase) * 0.25;
+      double phase = (165.0 + (color >> 1) * 30.0) * Math::Pi / 180.0;
+      u = std::cos(phase) * 0.25;
+      v = std::sin(phase) * 0.25;
     }
 
     auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
@@ -214,11 +214,7 @@ auto Interface::videoColor(uint32 n) -> uint64 {
 }
 
 auto Interface::audioFrequency() -> double {
-  switch(system.region()) { default:
-  case System::Region::NTSC:  return system.colorburst();
-  case System::Region::PAL:   return system.colorburst();
-  case System::Region::SECAM: return system.colorburst();
-  }
+  return system.colorburst() / 114.0;
 }
 
 auto Interface::loaded() -> bool {

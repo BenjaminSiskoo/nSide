@@ -1,24 +1,16 @@
 void Z80::serialize(serializer& s) {
-  s.integer(r.af);
-  s.integer(r.bc);
-  s.integer(r.de);
-  s.integer(r.hl);
-
-  s.integer(r.ix);
-  s.integer(r.iy);
+  s.integer(r.af.word); s.integer(r.af_.word);
+  s.integer(r.bc.word); s.integer(r.bc_.word);
+  s.integer(r.de.word); s.integer(r.de_.word);
+  s.integer(r.hl.word); s.integer(r.hl_.word);
+  s.integer(r.ix.word);
+  s.integer(r.iy.word);
+  s.integer(r.ir.word);
   s.integer(r.sp);
   s.integer(r.pc);
 
-  s.integer(r.i);
-  s.integer(r.r);
-
-  //s.integer(r.di);
-  //s.integer(r.ei);
+  r.halt.serialize(s);
+  r.iff1.serialize(s);
+  r.iff2.serialize(s);
   s.integer(r.im);
-
-  //s.integer(r.halt);
-  //s.integer(r.stop);
-  //s.integer(r.ime);
-
-  s.integer(r.flag);
 }

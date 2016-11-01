@@ -99,6 +99,7 @@ private:
   string errorMessage;
 
   struct {
+    Markup::Node atari2600;
     Markup::Node famicom;
     Markup::Node vsSystem;
     Markup::Node playchoice10;

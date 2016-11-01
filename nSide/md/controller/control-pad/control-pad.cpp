@@ -1,4 +1,5 @@
 ControlPad::ControlPad(uint port) : Controller(port) {
+  select = 1;
 }
 
 auto ControlPad::readData() -> uint8 {

@@ -3750,6 +3750,21 @@ cartridge sha256:e9f4c9d1b7c66c6af83f2db5d4f704cf5f4b3c86e26a49c05539237807d8875
   :  name:     Excitebike
   :  title:    Excitebike
 
+cartridge sha256:c0c98471130cd09c82af6ead5e706c9299cc2cb4584016a5e5eb0c8897380172
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-EQ-USA
+  :  board:    NES-SLROM-05
+  :  revision: 1.0
+  :  name:     Fester's Quest
+  :  title:    Fester's Quest
+
 cartridge sha256:fa456d852372173ea31b192459ba1a2026f779df67793327ba6e132476c1d034
   :board region=ntsc id:NES-SNROM
   :  chip type=MMC1B2
@@ -5014,6 +5029,21 @@ cartridge sha256:51958d12a19e7c573fab26b85fe81d57330ff6668d630c6bc95c7c563c441e9
   :  revision: 1.0
   :  name:     SkyKid
   :  title:    SkyKid
+
+cartridge sha256:98691aea357072f901095e47db056a01887083fd81710d425b9171db1cd1ad1b
+  :board region=ntsc id:NES-SEROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   NES-RJ-USA
+  :  board:    NES-SEROM-04
+  :  revision: 1.0
+  :  name:     Snake Rattle 'n Roll
+  :  title:    Snake Rattle 'n Roll
 
 cartridge sha256:6a0c8be0f6445d9d777080955c7aa8fbff7497633b878a36c8139ec13dabfb8b
   :board region=ntsc id:NES-NROM-256

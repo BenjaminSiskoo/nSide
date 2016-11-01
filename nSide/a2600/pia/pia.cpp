@@ -39,7 +39,8 @@ auto PIA::load(Markup::Node node) -> bool {
 }
 
 auto PIA::power() -> void {
-  create(Enter, system.colorburst());
+  //PIA's clock rate is the same in all regions
+  create(Enter, Emulator::Constants::Colorburst::NTSC);
 
   io.tvtype = TVType::Color;
   io.difficulty0 = Difficulty::B;

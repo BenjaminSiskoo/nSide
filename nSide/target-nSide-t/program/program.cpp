@@ -29,7 +29,6 @@ Program::Program(string_vector args) {
   emulators.append(new GameBoy::Interface);
   emulators.append(new GameBoyAdvance::Interface);
   emulators.append(new WonderSwan::Interface);
-
   for(auto& emulator : emulators) emulator->bind = this;
 
   new Presentation;

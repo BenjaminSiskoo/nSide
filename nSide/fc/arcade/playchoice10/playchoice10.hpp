@@ -11,26 +11,8 @@ struct PlayChoice10 {
   auto reset() -> void;
 
   auto setDip(uint16 dip) -> void;
-  auto read(uint16 addr) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
-
-  auto in(uint8 addr) -> uint8;
-  auto out(uint8 addr, uint8 data) -> void;
 
   auto serialize(serializer& s) -> void;
-
-  uint8 bios[16384];
-  uint8 wram[2048];
-  uint8 sram[2048];
-  //Z80 memory map
-  //0000-7fff: BIOS
-  //8000-87ff: WRAM
-  //8800-8bff: SRAM bank 0
-  //8c00-8fff: SRAM switchable bank (0 or 1)
-  //9000-97ff: VRAM
-  //9800-bfff: open bus
-  //c000-dfff: cartridge instruction ROM
-  //e000-ffff: cartridge IO registers
 
   uint16 dip;
   uint screenConfig;
@@ -45,31 +27,47 @@ struct PlayChoice10 {
   bool z80NMI;
   bool watchdog;
   bool ppuReset;
-  uint4 channel;
-  bool sramBank;
 
-  bool promTest;
-  bool promClock;
-  uint7 promAddress;
-
-  struct PC10CPU : Processor::Z80, Thread {
-    static auto Enter() -> void;
-    auto main() -> void;
-    auto step(uint clocks) -> void;
-
-    auto wait() -> void override;
+  struct Bus : Processor::Z80::Bus {
     auto read(uint16 addr) -> uint8 override;
     auto write(uint16 addr, uint8 data) -> void override;
-    auto in(uint8 port) -> uint8 override;
-    auto out(uint8 port, uint8 data) -> void override;
-    auto stop() -> bool override;
+
+    auto in(uint8 addr) -> uint8 override;
+    auto out(uint8 addr, uint8 data) -> void override;
 
     auto power() -> void;
     auto reset() -> void;
 
-    auto cycleEdge() -> void;
+    auto serialize(serializer& s) -> void;
 
-    auto debuggerRead(uint16 addr) -> uint8;
+    uint8 bios[0x4000];
+
+  private:
+    //memory map
+    //8000-87ff: WRAM
+    //8800-8bff: SRAM bank 0
+    //8c00-8fff: SRAM switchable bank (0 or 1)
+    //9000-97ff: VRAM
+    //9800-bfff: open bus
+    //c000-dfff: cartridge instruction ROM
+    //e000-ffff: cartridge IO registers
+    uint8 wram[0x800];
+    uint8 sram[0x800];
+
+    uint4 channel;
+    bool sramBank;
+    bool promTest;
+    bool promClock;
+    uint7 promAddress;
+  } pc10bus;
+
+  struct CPU : Processor::Z80, Thread {
+    static auto Enter() -> void;
+    auto main() -> void;
+    auto step(uint clocks) -> void;
+
+    auto power() -> void;
+    auto reset() -> void;
 
     auto serialize(serializer& s) -> void;
   } pc10cpu;
@@ -91,7 +89,6 @@ struct PlayChoice10 {
     uint8 vram[2048];
 
   private:
-
     uint32 buffer[256 * 240];
   } videoCircuit;
 };

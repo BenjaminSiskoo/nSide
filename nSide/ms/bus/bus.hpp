@@ -1,9 +1,9 @@
-struct Bus {
-  auto read(uint16 addr) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
+struct Bus : Processor::Z80::Bus {
+  auto read(uint16 addr) -> uint8 override;
+  auto write(uint16 addr, uint8 data) -> void override;
 
-  auto in(uint8 addr) -> uint8;
-  auto out(uint8 addr, uint8 data) -> void;
+  auto in(uint8 addr) -> uint8 override;
+  auto out(uint8 addr, uint8 data) -> void override;
 
   uint ramMask;
 

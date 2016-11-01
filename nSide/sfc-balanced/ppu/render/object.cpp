@@ -130,14 +130,14 @@ auto PPU::obj_renderLine() -> void {
   uint8* wt_above = windowCache[Object::ID::OBJ].above;
   uint8* wt_below = windowCache[Object::ID::OBJ].below;
 
-  #define setpixel_above(x) \
+  #define setPixelAbove(x) \
     if(pixelCache[x].abovePriority < pri) { \
       pixelCache[x].abovePriority = pri; \
       pixelCache[x].aboveLayer = Object::ID::OBJ; \
       pixelCache[x].aboveColor = screen.cgram[obj_linePalette[x]]; \
       pixelCache[x].aboveColorExemption = obj_linePalette[x] < 192; \
     }
-  #define setpixel_below(x) \
+  #define setPixelBelow(x) \
     if(pixelCache[x].belowPriority < pri) { \
       pixelCache[x].belowPriority = pri; \
       pixelCache[x].belowLayer = Object::ID::OBJ; \
@@ -148,9 +148,9 @@ auto PPU::obj_renderLine() -> void {
     if(obj_linePriority[x] == OBJ_PRI_NONE) continue;
 
     uint pri = obj.io.priority[obj_linePriority[x]];
-    if(obj.io.aboveEnable && !wt_above[x]) { setpixel_above(x); }
-    if(obj.io.belowEnable && !wt_below[x]) { setpixel_below(x); }
+    if(obj.io.aboveEnable && !wt_above[x]) { setPixelAbove(x); }
+    if(obj.io.belowEnable && !wt_below[x]) { setPixelBelow(x); }
   }
-  #undef setpixel_above
-  #undef setpixel_below
+  #undef setPixelAbove
+  #undef setPixelBelow
 }

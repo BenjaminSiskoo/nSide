@@ -100,10 +100,26 @@ auto Interface::videoColor(uint32 color) -> uint64 {
   uint R = color.bits(0,2);
   uint G = color.bits(3,5);
   uint B = color.bits(6,8);
+  uint intensity = color.bits(9,10);
 
-  uint64 r = image::normalize(R, 3, 16);
-  uint64 g = image::normalize(G, 3, 16);
-  uint64 b = image::normalize(B, 3, 16);
+  switch(intensity) {
+  case 0:  //shadow
+    break;
+  case 1:  //normal
+    R <<= 1;
+    G <<= 1;
+    B <<= 1;
+    break;
+  case 2:  //highlight
+    R += 7;
+    G += 7;
+    B += 7;
+    break;
+  }
+
+  uint64 r = image::normalize(R, 4, 16) + image::normalize(R, 4, 16) / 14;
+  uint64 g = image::normalize(G, 4, 16) + image::normalize(G, 4, 16) / 14;
+  uint64 b = image::normalize(B, 4, 16) + image::normalize(B, 4, 16) / 14;
 
   return r << 32 | g << 16 | b << 0;
 }

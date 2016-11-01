@@ -3,14 +3,13 @@ processors += wdc65816 spc700 arm gsu hg51b upd96050
 objects += sfc-balanced-interface sfc-balanced-system sfc-balanced-controller
 objects += sfc-balanced-cartridge sfc-balanced-memory
 objects += sfc-balanced-cpu sfc-balanced-smp sfc-balanced-dsp sfc-balanced-ppu
-objects += sfc-balanced-expansion sfc-balanced-satellaview sfc-balanced-superdisc
-objects += sfc-balanced-21fx
+objects += sfc-balanced-expansion sfc-balanced-satellaview sfc-balanced-21fx
 objects += sfc-balanced-icd2 sfc-balanced-mcc sfc-balanced-nss sfc-balanced-event
 objects += sfc-balanced-sa1 sfc-balanced-superfx
 objects += sfc-balanced-armdsp sfc-balanced-hitachidsp sfc-balanced-necdsp
 objects += sfc-balanced-epsonrtc sfc-balanced-sharprtc
-objects += sfc-balanced-spc7110 sfc-balanced-sdd1 sfc-balanced-obc1
-objects += sfc-balanced-msu1
+objects += sfc-balanced-spc7110 sfc-balanced-sdd1
+objects += sfc-balanced-obc1 sfc-balanced-msu1
 objects += sfc-balanced-bsmemory sfc-balanced-sufamiturbo
 
 flags += -DPROFILE_BALANCED
@@ -28,7 +27,6 @@ obj/sfc-balanced-ppu.o:         sfc-balanced/ppu/ppu.cpp $(call rwildcard,sfc-ba
 
 obj/sfc-balanced-expansion.o:   sfc-balanced/expansion/expansion.cpp $(call rwildcard,sfc-balanced/expansion/)
 obj/sfc-balanced-satellaview.o: sfc-balanced/expansion/satellaview/satellaview.cpp $(call rwildcard,sfc-balanced/expansion/satellaview/)
-obj/sfc-balanced-superdisc.o:   sfc-balanced/expansion/superdisc/superdisc.cpp $(call rwildcard,sfc-balanced/expansion/superdisc/)
 obj/sfc-balanced-21fx.o:        sfc-balanced/expansion/21fx/21fx.cpp $(call rwildcard,sfc-balanced/expansion/21fx/)
 
 obj/sfc-balanced-icd2.o:        sfc-balanced/coprocessor/icd2/icd2.cpp $(call rwildcard,sfc-balanced/coprocessor/icd2/)

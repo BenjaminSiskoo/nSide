@@ -71,10 +71,10 @@ auto Cartridge::load() -> bool {
   else {
     Hash::SHA256 sha;
     //hash each ROM image that exists; any with size() == 0 is ignored by sha256_chunk()
-    sha.data(board->prgrom.data(), board->prgrom.size());
-    sha.data(board->chrrom.data(), board->chrrom.size());
-    sha.data(board->instrom.data(), board->instrom.size());
-    sha.data(board->keyrom.data(), board->keyrom.size());
+    sha.input(board->prgrom.data(), board->prgrom.size());
+    sha.input(board->chrrom.data(), board->chrrom.size());
+    sha.input(board->instrom.data(), board->instrom.size());
+    sha.input(board->keyrom.data(), board->keyrom.size());
     //finalize hash
     information.sha256 = sha.digest();
   }

@@ -24,7 +24,8 @@ auto CPU::load(Markup::Node node) -> bool {
 
 auto CPU::power() -> void {
   MOS6502::power();
-  create(Enter, system.colorburst());
+  //CPU's clock rate is the same in all regions
+  create(Enter, Emulator::Constants::Colorburst::NTSC);
 }
 
 auto CPU::reset() -> void {

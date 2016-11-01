@@ -24,6 +24,7 @@ auto VDP::run() -> void {
   sprite.run(state.x, state.y);
 
   auto output = io.backgroundColor;
+  uint2 intensity = 1;
   if(auto color = planeB.output.color) output = color;
   if(auto color = planeA.output.color) output = color;
   if(auto color = sprite.output.color) output = color;
@@ -31,14 +32,15 @@ auto VDP::run() -> void {
   if(planeA.output.priority) if(auto color = planeA.output.color) output = color;
   if(sprite.output.priority) if(auto color = sprite.output.color) output = color;
 
-  outputPixel(cram[output]);
+  outputPixel(cram[output] | intensity << 9);
   state.x++;
 }
 
-auto VDP::outputPixel(uint9 color) -> void {
-  for(auto n : range(4)) {
+auto VDP::outputPixel(uint11 color) -> void {
+  uint pixelWidth = screenWidth() == 256 ? 5 : 4;
+  for(auto n : range(pixelWidth)) {
     state.output[   0 + n] = color;
     state.output[1280 + n] = color;
   }
-  state.output += 4;
+  state.output += pixelWidth;
 }

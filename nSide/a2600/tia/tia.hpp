@@ -20,6 +20,7 @@ struct TIA : Thread {
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
+privileged:
   struct IO {
     uint8 hcounter;
     uint vcounter;  //not actually in TIA; needed for rendering
@@ -78,6 +79,24 @@ struct TIA : Thread {
     uint8 graphic2;
   } playfield;
 
+  struct HMove {
+    bool enable;
+    uint2 counter;
+    uint3 delay;
+
+    bool latchP0;
+    bool latchP1;
+    bool latchM0;
+    bool latchM1;
+    bool latchBL;
+
+    uint4 counterP0;
+    uint4 counterP1;
+    uint4 counterM0;
+    uint4 counterM1;
+    uint4 counterBL;
+  } hmove;
+
   struct Collision {
     bool m0p1;
     bool m0p0;
@@ -96,14 +115,36 @@ struct TIA : Thread {
     bool m0m1;
   } collision;
 
-privileged:
+  struct Audio {
+    struct Channel {
+      uint4 control;
+      uint5 frequency;
+      uint4 volume;
+
+      uint5 phase;
+      bool state1;
+      uint2 state3;
+      uint4 shift4;
+      uint5 shift5;
+      uint9 shift9;
+      bool sample;
+    } channel[2];
+  } audio;
+
   alwaysinline auto hblank() -> bool { return io.hcounter < 68; }
 
-  auto run() -> void;
-
-  auto scanline() -> void;
-  auto frame() -> void;
   auto refresh() -> void;
+
+  //render.cpp
+  auto frame() -> void;
+  auto scanline() -> void;
+  auto runVideo() -> void;
+
+  //audio.cpp
+  auto runAudio() -> void;
+  alwaysinline auto shift(uint4& shift) -> bool;
+  alwaysinline auto shift(uint5& shift) -> bool;
+  alwaysinline auto shift(uint9& shift) -> bool;
 
   friend class System;
 
