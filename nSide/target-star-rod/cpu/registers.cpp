@@ -68,11 +68,11 @@ CPURegisterEditor::CPURegisterEditor() {
 }
 
 void CPURegisterEditor::loadRegisters() {
-  regAValue.setText(hex(SFC::cpu.r.a, 4L));
-  regXValue.setText(hex(SFC::cpu.r.x, 4L));
-  regYValue.setText(hex(SFC::cpu.r.y, 4L));
-  regSValue.setText(hex(SFC::cpu.r.s, 4L));
-  regDValue.setText(hex(SFC::cpu.r.d, 4L));
+  regAValue.setText(hex(SFC::cpu.r.a.w, 4L));
+  regXValue.setText(hex(SFC::cpu.r.x.w, 4L));
+  regYValue.setText(hex(SFC::cpu.r.y.w, 4L));
+  regSValue.setText(hex(SFC::cpu.r.s.w, 4L));
+  regDValue.setText(hex(SFC::cpu.r.d.w, 4L));
   regDBValue.setText(hex(SFC::cpu.r.db, 2L));
   flagN.setChecked(SFC::cpu.r.p.n);
   flagV.setChecked(SFC::cpu.r.p.v);
@@ -86,11 +86,11 @@ void CPURegisterEditor::loadRegisters() {
 }
 
 void CPURegisterEditor::saveRegisters() {
-  SFC::cpu.r.a = regAValue.text().hex();
-  SFC::cpu.r.x = regXValue.text().hex();
-  SFC::cpu.r.y = regYValue.text().hex();
-  SFC::cpu.r.s = regSValue.text().hex();
-  SFC::cpu.r.d = regDValue.text().hex();
+  SFC::cpu.r.a.w = regAValue.text().hex();
+  SFC::cpu.r.x.w = regXValue.text().hex();
+  SFC::cpu.r.y.w = regYValue.text().hex();
+  SFC::cpu.r.s.w = regSValue.text().hex();
+  SFC::cpu.r.d.w = regDValue.text().hex();
   SFC::cpu.r.db = regDBValue.text().hex();
   SFC::cpu.r.p.n = flagN.checked();
   SFC::cpu.r.p.v = flagV.checked();
