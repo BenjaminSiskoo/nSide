@@ -130,8 +130,11 @@ auto Interface::videoSize() -> VideoSize {
   return {512, 480};
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   double w = 256;
+  double h = 240;
+  double m;
+
   if(arc) {
     double squarePixelRate = system.region() == System::Region::NTSC
     ? 135.0 / 22.0 * 1'000'000.0
@@ -139,9 +142,11 @@ auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
     //note: PAL SNES multiples colorburst by 4/5 to make clock rate
     w *= squarePixelRate / (system.colorburst() * 6.0 / (2.0 + 2.0));
   }
-  uint h = 240;
-  uint m = min((uint)(width / w), height / h);
-  return {(uint)(w * m), h * m};
+
+  if(intScale) m = min(  (uint)(width / w),   (uint)(height / h));
+  else         m = min((double)(width / w), (double)(height / h));
+
+  return {(uint)(w * m), (uint)(h * m)};
 }
 
 auto Interface::videoFrequency() -> double {

@@ -66,11 +66,13 @@ auto Interface::videoSize() -> VideoSize {
   return {240, 240};
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   uint w = 240;
   uint h = 240;
-  uint m = min(width / w, height / h);
-  return {w * m, h * m};
+  double m;
+  if(intScale) m = min(width / w, height / h);
+  else         m = min(width / (double)w, height / (double)h);
+  return {(uint)(w * m), (uint)(h * m)};
 }
 
 auto Interface::videoFrequency() -> double {

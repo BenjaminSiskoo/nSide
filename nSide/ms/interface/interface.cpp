@@ -61,7 +61,7 @@ auto Interface::videoSize() -> VideoSize {
   unreachable;
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   double w = system.model() != Model::GameGear ? 256 : 160;
   if(arc && system.model() != Model::GameGear) {
     double squarePixelRate = system.region() == System::Region::NTSC
@@ -70,8 +70,10 @@ auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
     w *= squarePixelRate / (system.colorburst() * 6.0 / (system.region() == System::Region::NTSC ? 4.0 : 4.0));
   }
   uint h = system.model() == Model::SG1000 ? 192 : system.model() == Model::MasterSystem ? 240 : 144;
-  uint m = min((uint)(width / w), height / h);
-  return {(uint)(w * m), h * m};
+  double m;
+  if(intScale) m = min((uint)(width / w), height / h);
+  else         m = min((width / w), height / (double)h);
+  return {(uint)(w * m), (uint)(h * m)};
 }
 
 auto Interface::videoFrequency() -> double {

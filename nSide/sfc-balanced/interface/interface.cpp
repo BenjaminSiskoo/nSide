@@ -130,7 +130,7 @@ auto Interface::videoSize() -> VideoSize {
   return {512, 480};
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   double w = 256;
   if(arc) {
     double squarePixelRate = system.region() == System::Region::NTSC
@@ -140,8 +140,10 @@ auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
     w *= squarePixelRate / (system.colorburst() * 6.0 / (2.0 + 2.0));
   }
   uint h = 240;
-  uint m = min((uint)(width / w), height / h);
-  return {(uint)(w * m), h * m};
+  double m;
+  if(intScale) m = min((uint)(width / w), height / h);
+  else         m = min(width / w, height / (double)h);
+  return {(uint)(w * m), (uint)(h * m)};
 }
 
 auto Interface::videoFrequency() -> double {

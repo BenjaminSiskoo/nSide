@@ -276,11 +276,13 @@ auto Presentation::resizeViewport() -> void {
 
   uint windowWidth = 0, windowHeight = 0;
   bool aspectCorrection = true;
+  bool integerScaling = true;
   if(!fullScreen()) {
     aspectCorrection = settings["Video/AspectCorrection"].boolean();
-    windowWidth  = (aspectCorrection ? 384 : 320) * scale;  //320 for NTSC, 384 for PAL and SECAM
-    windowHeight = 240 * scale;  //240 for NTSC, 288 for PAL and SECAM
+    windowWidth  = (aspectCorrection ? 384 : 320) * scale;  //320 for NTSC, 384 for PAL and SÉCAM
+    windowHeight = 240 * scale;  //240 for NTSC, 288 for PAL and SÉCAM
   } else {
+    integerScaling = settings["Video/Shader"].text() == "None";
     windowWidth  = geometry().width();
     windowHeight = geometry().height();
   }
@@ -289,7 +291,7 @@ auto Presentation::resizeViewport() -> void {
   if(!emulator) {
     viewport.setGeometry({0, 0, windowWidth, windowHeight});
   } else {
-    auto videoSize = emulator->videoSize(windowWidth, windowHeight, aspectCorrection);
+    auto videoSize = emulator->videoSize(windowWidth, windowHeight, aspectCorrection, integerScaling);
     viewport.setGeometry({
       (windowWidth - videoSize.width) / 2, (windowHeight - videoSize.height) / 2,
       videoSize.width, videoSize.height

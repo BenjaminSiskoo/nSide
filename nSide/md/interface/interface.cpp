@@ -77,15 +77,17 @@ auto Interface::videoSize() -> VideoSize {
   return {1280, 480};
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   double w = 320;
   if(arc) {
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
     w *= squarePixelRate / (system.colorburst() * 15.0 / 8.0);
   }
   uint h = 240;
-  uint m = min((uint)(width / w), height / h);
-  return {(uint)(w * m), h * m};
+  double m;
+  if(intScale) m = min((uint)(width / w), height / h);
+  else         m = min((width / w), height / (double)h);
+  return {(uint)(w * m), (uint)(h * m)};
 }
 
 auto Interface::videoFrequency() -> double {

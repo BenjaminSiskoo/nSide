@@ -322,7 +322,7 @@ auto Interface::videoSize() -> VideoSize {
   return {256 * vssystem.gameCount, 240 + playchoice10.screenConfig * 224};
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   double w = 256 / playchoice10.screenConfig;
   if(arc) {
     double squarePixelRate = system.region() == System::Region::NTSC
@@ -330,10 +330,12 @@ auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
     : 7'375'000.0;
     w *= squarePixelRate / (system.colorburst() * 6.0 / (system.region() == System::Region::NTSC ? 4.0 : 5.0));
   }
-  uint h = 240 / vssystem.gameCount;
+  int h = 240 / vssystem.gameCount;
   if(system.pc10() && playchoice10.screenConfig == 2) h = (240 + 224) / 2;
-  uint m = min((uint)(width / w), height / h);
-  return {(uint)(w * m), h * m};
+  double m;
+  if(intScale) m = min((uint)(width / w), height / h);
+  else         m = min(width / w, height / (double)h);
+  return {(uint)(w * m), (uint)(h * m)};
 }
 
 auto Interface::videoFrequency() -> double {
