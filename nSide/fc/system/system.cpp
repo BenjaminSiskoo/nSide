@@ -7,6 +7,7 @@ Scheduler scheduler;
 Cheat cheat;
 #include "video.cpp"
 #include "peripherals.cpp"
+#include "random.cpp"
 #include "serialization.cpp"
 
 auto System::run() -> void {
@@ -119,6 +120,8 @@ auto System::unload() -> void {
 }
 
 auto System::power() -> void {
+  random.seed((uint)time(0));
+
   cartridge.power();
   cpu.power();
   apu.power();

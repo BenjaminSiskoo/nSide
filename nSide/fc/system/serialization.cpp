@@ -45,6 +45,7 @@ auto System::serialize(serializer& s) -> void {
 auto System::serializeAll(serializer& s) -> void {
   cartridge.serialize(s);
   system.serialize(s);
+  random.serialize(s);
   cpu.serialize(s);
   apu.serialize(s);
   ppu.serialize(s);

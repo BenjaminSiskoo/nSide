@@ -60,5 +60,15 @@ struct Peripherals {
   Expansion* expansionPort = nullptr;
 };
 
+struct Random {
+  auto seed(uint seed) -> void;
+  auto operator()(uint result) -> uint;
+  auto serialize(serializer& s) -> void;
+
+private:
+  uint iter = 0;
+};
+
 extern System system;
 extern Peripherals peripherals;
+extern Random random;

@@ -89,6 +89,7 @@ struct Settings {
   uint controllerPort2 = 0;
   uint expansionPort = 0;
   uint arcadePanel = 0;
+  bool random = true;
 };
 
 extern Interface* interface;
