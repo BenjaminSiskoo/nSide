@@ -9,6 +9,9 @@ struct CPU : Processor::Z80, Thread {
   auto reset() -> void;
 
   vector<Thread*> peripherals;
+
+private:
+  uint64 instructionsExecuted;
 };
 
 extern CPU cpu;

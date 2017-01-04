@@ -16,7 +16,6 @@ auto Z80::power() -> void {
 auto Z80::reset() -> void {
   memory::fill(&r, sizeof(Registers));
   r.hlp = &r.hl;
-  instructionsExecuted = 0;
 }
 
 auto Z80::parity(uint8 value) const -> bool {

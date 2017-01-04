@@ -53,12 +53,8 @@ auto Interface::title() -> string {
 }
 
 auto Interface::videoSize() -> VideoSize {
-  switch(system.model()) {
-  case Model::SG1000:       return {256, 192};
-  case Model::MasterSystem: return {256, 240};
-  case Model::GameGear:     return {160, 144};
-  }
-  unreachable;
+  if(system.model() == Model::GameGear) return {160, 144};
+  else                                  return {256, 240};
 }
 
 auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
@@ -67,9 +63,9 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
     double squarePixelRate = system.region() == System::Region::NTSC
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    w *= squarePixelRate / (system.colorburst() * 6.0 / (system.region() == System::Region::NTSC ? 4.0 : 4.0));
+    w *= squarePixelRate / (system.colorburst() * 3.0 / (system.region() == System::Region::NTSC ? 2.0 : 2.0));
   }
-  uint h = system.model() == Model::SG1000 ? 192 : system.model() == Model::MasterSystem ? 240 : 144;
+  uint h = system.model() != Model::GameGear ? 240 : 144;
   double m;
   if(intScale) m = min((uint)(width / w), height / h);
   else         m = min((width / w), height / (double)h);

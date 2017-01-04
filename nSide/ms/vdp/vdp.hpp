@@ -6,23 +6,20 @@ struct VDP : Thread {
   auto step(uint clocks) -> void;
   auto refresh() -> void;
 
-  auto in(uint8 addr) -> uint8;
-  auto out(uint8 addr, uint8 data) -> void;
-
   auto power() -> void;
   auto reset() -> void;
 
-  auto vblank() -> bool;
-
   //io.cpp
-  auto readData() -> uint8;
-  auto writeData(uint8 data) -> void;
+  auto vcounter() -> uint8;
+  auto hcounter() -> uint8;
+  auto data() -> uint8;
+  auto status() -> uint8;
 
-  auto readControl() -> uint8;
-  auto writeControl(uint8 data) -> void;
+  auto data(uint8) -> void;
+  auto control(uint8) -> void;
+  auto registerWrite(uint4 addr, uint8 data) -> void;
 
   //render.cpp
-  auto scanline() -> void;
   auto run() -> void;
   auto outputPixel(uint12 color) -> void;
 
@@ -34,65 +31,69 @@ private:
   inline auto activeWidth() -> uint;
   inline auto activeHeight() -> uint;
 
-  uint8 vram[16 * 1024];
-  uint8 cram[64];  //SG-1000: 0, MS: 32, GG: 64
+  uint32 buffer[256 * 240];  //SG-1000: 256 * 192
+  uint8 vram[0x4000];
+  uint8 cram[0x40];  //SG-1000: 0, MS: 32, GG: 64
 
   struct IO {
-    uint14 controlAddress;
-    uint2 controlCode;
+    uint vcounter;
+    uint hcounter;
+
     bool controlLatch;
+    uint16 controlData;
+    uint2 code;
+    uint14 address;
 
-    bool externalVDP;
-    bool mode3;
+    uint8 vramLatch;
+
+    //$00  mode control 1
+    bool externalSync;
+    bool extendedHeight;
     bool mode4;
-    bool spriteShiftLeft;
-    bool lineInterrupt;
-    bool hideLeft;
-    bool horizontalLock;
-    bool verticalLock;
+    bool spriteShift;
+    bool lineInterrupts;
+    bool leftClip;
+    bool horizontalScrollLock;
+    bool verticalScrollLock;
 
-    bool spriteMag;
-    bool spriteSize;
-    bool mode2;
-    bool mode1;
-    bool interrupt;
-    bool blank;
-    bool ramSize;
+    //$01  mode control 2
+    bool spriteDouble;
+    bool spriteTile;
+    bool lines240;
+    bool lines224;
+    bool frameInterrupts;
+    bool displayEnable;
 
-    bool nametableMask;
-    uint14 nametableAddress;
+    //$02  name table base address
+    uint1 nameTableMask;
+    uint3 nameTableAddress;
 
-    uint14 colorAddress;
+    //$03  color table base address
+    uint8 colorTableAddress;
 
-    uint14 patternAddress;
+    //$04  pattern table base address
+    uint8 patternTableAddress;
 
-    uint14 spriteAttributeMask;
-    uint14 spriteAttributeAddress;
+    //$05  sprite attribute table base address
+    uint1 spriteAttributeTableMask;
+    uint6 spriteAttributeTableAddress;
 
-    uint14 spritePatternMask;
-    uint14 spritePatternAddress;
+    //$06  sprite pattern table base address
+    uint2 spritePatternTableMask;
+    uint1 spritePatternTableAddress;
 
-    uint4 backColor;
-    uint4 textColor;
+    //$07  backdrop color
+    uint4 backdropColor;
 
-    uint8 scrollX;
+    //$08  horizontal scroll offset
+    uint8 hscroll;
 
-    uint8 scrollY;
+    //$09  vertical scroll offset
+    uint8 vscroll;
 
+    //$0a  line counter
     uint8 lineCounter;
-
-    uint5 fifthSprite;
-    bool spriteCollision;
-    bool spriteOverflow;
   } io;
-
-  struct State {
-    uint32* output = nullptr;
-    uint x;
-    uint y;
-  } state;
-
-  uint32 buffer[256 * 240];  //SG-1000: 256 * 192
 };
 
 extern VDP vdp;

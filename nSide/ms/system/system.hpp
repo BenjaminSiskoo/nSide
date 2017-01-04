@@ -18,10 +18,10 @@ struct System {
 
 private:
   struct Information {
-    string manifest;
     bool loaded = false;
     Model model = Model::SG1000;
     Region region = Region::NTSC;
+    string manifest;
     double colorburst = 0.0;
   } information;
 };

@@ -214,9 +214,6 @@ struct Z80 {
   } r;
 
   Bus* bus = nullptr;
-
-private:
-  uint64 instructionsExecuted = 0;
 };
 
 }
