@@ -29,7 +29,19 @@ auto VDP::data() -> uint8 {
 auto VDP::status() -> uint8 {
   io.controlLatch = 0;
 
-  return 0x00;
+  uint8 result = 0x00;
+  result |= io.intFrame << 7;
+  result |= io.spriteOverflow << 6;
+  result |= io.spriteCollision << 5;
+  result |= io.fifthSprite << 0;
+
+  io.intLine = 0;
+  io.intFrame = 0;
+  io.spriteOverflow = 0;
+  io.spriteCollision = 0;
+  io.fifthSprite = 0;
+
+  return result;
 }
 
 auto VDP::data(uint8 data) -> void {

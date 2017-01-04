@@ -5,13 +5,19 @@ struct CPU : Processor::Z80, Thread {
   auto main() -> void;
   auto step(uint clocks) -> void;
 
+  auto setNMI(bool value) -> void;
+  auto setINT(bool value) -> void;
+
   auto power() -> void;
   auto reset() -> void;
 
   vector<Thread*> peripherals;
 
 private:
-  uint64 instructionsExecuted;
+  struct State {
+    boolean nmiLine;
+    boolean intLine;
+  } state;
 };
 
 extern CPU cpu;

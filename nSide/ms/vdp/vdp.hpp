@@ -6,6 +6,9 @@ struct VDP : Thread {
   auto step(uint clocks) -> void;
   auto refresh() -> void;
 
+  auto vlines() -> uint;
+  auto vblank() -> bool;
+
   auto power() -> void;
   auto reset() -> void;
 
@@ -24,21 +27,25 @@ struct VDP : Thread {
   auto outputPixel(uint12 color) -> void;
 
 private:
-  inline auto screenX() -> uint;
-  inline auto screenY() -> uint;
-  inline auto screenWidth() -> uint;
-  inline auto screenHeight() -> uint;
-  inline auto activeWidth() -> uint;
-  inline auto activeHeight() -> uint;
-
   uint32 buffer[256 * 240];  //SG-1000: 256 * 192
   uint8 vram[0x4000];
   uint8 cram[0x40];  //SG-1000: 0, MS: 32, GG: 64
 
   struct IO {
-    uint vcounter;
-    uint hcounter;
+    uint vcounter;  //vertical counter
+    uint hcounter;  //horizontal counter
+    uint lcounter;  //line counter
 
+    //interrupt flags
+    bool intLine;
+    bool intFrame;
+
+    //status flags
+    bool spriteOverflow;
+    bool spriteCollision;
+    uint5 fifthSprite;
+
+    //latches
     bool controlLatch;
     uint16 controlData;
     uint2 code;

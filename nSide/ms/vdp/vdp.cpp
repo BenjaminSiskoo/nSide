@@ -4,36 +4,58 @@ namespace MasterSystem {
 
 VDP vdp;
 #include "io.cpp"
-#include "render.cpp"
 
 auto VDP::Enter() -> void {
   while(true) scheduler.synchronize(), vdp.main();
 }
 
 auto VDP::main() -> void {
-  for(uint y : range(262)) {
-    for(uint x : range(342)) {
-      run();
-      step(1);
+  if(io.vcounter <= vlines()) {
+    if(io.lcounter-- == 0) {
+      io.lcounter = io.lineCounter;
+      io.intLine = 1;
     }
-    if(y == activeHeight()) scheduler.exit(Scheduler::Event::Frame);
   }
+
+  if(io.vcounter == vlines() + 1) {
+    io.lcounter = io.lineCounter;
+    io.intFrame = 1;
+  }
+
+  for(uint x : range(684)) {
+    step(1);
+  }
+
+  if(io.vcounter == 240) scheduler.exit(Scheduler::Event::Frame);
 }
 
 auto VDP::step(uint clocks) -> void {
-  if(++io.hcounter == 684) {
-    io.hcounter = 0;
-    if(++io.vcounter == 262) {
-      io.vcounter = 0;
+  while(clocks--) {
+    if(++io.hcounter == 684) {
+      io.hcounter = 0;
+      if(++io.vcounter == 262) {
+        io.vcounter = 0;
+      }
     }
-  }
 
-  Thread::step(clocks);
-  synchronize(cpu);
+    cpu.setINT((io.lineInterrupts && io.intLine) || (io.frameInterrupts && io.intFrame));
+    Thread::step(1);
+    synchronize(cpu);
+  }
 }
 
 auto VDP::refresh() -> void {
-  Emulator::video.refresh(buffer, 256 * sizeof(uint32), screenWidth(), screenHeight());
+  Emulator::video.refresh(buffer, 256 * sizeof(uint32), 256, 240);
+}
+
+auto VDP::vlines() -> uint {
+  if(io.lines240) return 240;
+  if(io.lines224) return 224;
+  return 192;
+}
+
+auto VDP::vblank() -> bool {
+  return io.vcounter >= vlines();
 }
 
 auto VDP::power() -> void {
@@ -43,30 +65,6 @@ auto VDP::reset() -> void {
   create(VDP::Enter, system.colorburst() * 15.0 / 5.0);
 
   memory::fill(&io, sizeof(IO));
-}
-
-inline auto VDP::screenX() -> uint {
-  return system.model() != Model::GameGear ? 0 : (256 - 160) / 2;
-}
-
-inline auto VDP::screenY() -> uint {
-  return system.model() != Model::GameGear ? 0 : (240 - 144) / 2;
-}
-
-inline auto VDP::screenWidth() -> uint {
-  return system.model() != Model::GameGear ? 256 : 160;
-}
-
-inline auto VDP::screenHeight() -> uint {
-  return system.model() != Model::GameGear ? 240 : 144;
-}
-
-inline auto VDP::activeWidth() -> uint {
-  return 256;
-}
-
-inline auto VDP::activeHeight() -> uint {
-  return system.model() == Model::SG1000 ? 192 : 240;
 }
 
 }
