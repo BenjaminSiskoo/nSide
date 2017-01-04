@@ -22,12 +22,54 @@ struct VDP : Thread {
   auto control(uint8) -> void;
   auto registerWrite(uint4 addr, uint8 data) -> void;
 
-  //render.cpp
-  auto run() -> void;
-  auto outputPixel(uint12 color) -> void;
+  //background.cpp
+  struct Background {
+    auto scanline() -> void;
+    auto run() -> void;
+
+    auto power() -> void;
+    auto reset() -> void;
+
+    struct State {
+      uint x;
+      uint y;
+    } state;
+
+    struct Output {
+      uint4 color;
+      uint1 palette;
+      uint1 priority;
+    } output;
+  } background;
+
+  //sprite.cpp
+  struct Sprite {
+    auto scanline() -> void;
+    auto run() -> void;
+
+    auto power() -> void;
+    auto reset() -> void;
+
+    struct Object {
+      uint8 x;
+      uint8 y;
+      uint8 pattern;
+    };
+
+    struct State {
+      uint x;
+      uint y;
+    } state;
+
+    struct Output {
+      uint4 color;
+    } output;
+
+    array<Object, 8> objects;
+  } sprite;
 
 private:
-  uint32 buffer[256 * 240];  //SG-1000: 256 * 192
+  uint32 buffer[256 * 262];
   uint8 vram[0x4000];
   uint8 cram[0x40];  //SG-1000: 0, MS: 32, GG: 64
 

@@ -99,7 +99,7 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
   }
 
   case 1: {  //officially port $7f
-    return psg.out(addr, data);
+    return psg.data(data);
   }
 
   case 2: {  //officially ports $be and $bf

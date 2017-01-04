@@ -124,9 +124,9 @@ auto Interface::videoColor(uint32 color) -> uint64 {
   }
 
   if(system.model() == Model::MasterSystem) {
-    uint R = color.bits(0,1);
-    uint G = color.bits(2,3);
-    uint B = color.bits(4,5);
+    uint2 B = color >> 4;
+    uint2 G = color >> 2;
+    uint2 R = color >> 0;
 
     r = image::normalize(R, 2, 16);
     g = image::normalize(G, 2, 16);
@@ -134,9 +134,9 @@ auto Interface::videoColor(uint32 color) -> uint64 {
   }
 
   if(system.model() == Model::GameGear) {
-    uint R = color.bits( 0, 3);
-    uint G = color.bits( 4, 7);
-    uint B = color.bits( 8,11);
+    uint4 B = color >> 8;
+    uint4 G = color >> 4;
+    uint4 R = color >> 0;
 
     r = image::normalize(R, 4, 16);
     g = image::normalize(G, 4, 16);

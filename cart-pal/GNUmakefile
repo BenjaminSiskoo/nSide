@@ -29,7 +29,7 @@ obj/cart-pal.o: cart-pal.cpp $(call rwildcard,core/) $(call rwildcard,heuristics
 	$(compiler) $(cppflags) $(flags) -o obj/cart-pal.o -c cart-pal.cpp
 
 obj/resource.o:
-	windres ../hiro/windows/hiro.rc obj/resource.o
+	$(windres) ../hiro/windows/hiro.rc obj/resource.o
 
 clean:
 ifeq ($(platform),macosx)

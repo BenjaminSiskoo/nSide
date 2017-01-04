@@ -9,6 +9,7 @@ void Z80::serialize(serializer& s) {
   s.integer(r.sp);
   s.integer(r.pc);
 
+  r.ei.serialize(s);
   r.halt.serialize(s);
   r.iff1.serialize(s);
   r.iff2.serialize(s);
