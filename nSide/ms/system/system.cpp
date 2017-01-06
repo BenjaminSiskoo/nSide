@@ -61,6 +61,7 @@ auto System::reset() -> void {
   Emulator::audio.setInterface(interface);
 
   scheduler.reset();
+  bus.reset();
   cartridge.reset();
   cpu.reset();
   vdp.reset();

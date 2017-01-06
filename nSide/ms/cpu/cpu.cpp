@@ -35,6 +35,7 @@ auto CPU::step(uint clocks) -> void {
   Thread::step(clocks);
   synchronize(vdp);
   synchronize(psg);
+  for(auto peripheral : peripherals) synchronize(*peripheral);
 }
 
 auto CPU::setNMI(bool value) -> void {
@@ -52,7 +53,7 @@ auto CPU::power() -> void {
 
 auto CPU::reset() -> void {
   Z80::reset();
-  create(CPU::Enter, system.colorburst() * 6.0);
+  create(CPU::Enter, system.colorburst());
 
   memory::fill(&state, sizeof(State));
 }

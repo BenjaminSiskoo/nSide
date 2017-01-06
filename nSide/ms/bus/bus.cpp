@@ -5,13 +5,17 @@ namespace MasterSystem {
 Bus bus;
 
 auto Bus::read(uint16 addr) -> uint8 {
-  if(addr < 0xc000 || disableRAM) return cartridge.read(addr);
-  return ram[addr & ramMask];
+  if(addr >= 0xc000 && !disableRAM) return ram[addr & ramMask];
+  if(auto data = cartridge.read(addr)) return data();
+  return 0x00;
 }
 
 auto Bus::write(uint16 addr, uint8 data) -> void {
-  if(addr < 0xc000 || disableRAM) return cartridge.write(addr, data);
-  ram[addr & ramMask] = data;
+  if(addr >= 0xc000 && !disableRAM) {
+    ram[addr & ramMask] = data;
+    return;
+  }
+  cartridge.write(addr, data);
 }
 
 auto Bus::in(uint8 addr) -> uint8 {
@@ -46,7 +50,7 @@ auto Bus::in(uint8 addr) -> uint8 {
     if(system.model() == Model::GameGear && (addr != 0xc0 && addr != 0xdc)) return 0x00;
     uint7 data0 = MasterSystem::peripherals.controllerPort1->readData();
     uint7 data1 = MasterSystem::peripherals.controllerPort2->readData();
-    uint8 data = 0x00;
+    uint8 data = 0xff;
     if(!addr.bit(0)) {
       data.bits(0,5) = (uint)data0.bits(0,5);
       data.bits(6,7) = (uint)data1.bits(0,1);
@@ -62,7 +66,7 @@ auto Bus::in(uint8 addr) -> uint8 {
 
   }
 
-  return 0x00;
+  unreachable;
 }
 
 auto Bus::out(uint8 addr, uint8 data) -> void {
@@ -111,6 +115,15 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
   }
 
   }
+}
+
+auto Bus::reset() -> void {
+  disableIO        = false;
+  disableBIOS      = true;
+  disableRAM       = false;
+  disableMyCard    = true;
+  disableCartridge = false;
+  disableExpansion = true;
 }
 
 }

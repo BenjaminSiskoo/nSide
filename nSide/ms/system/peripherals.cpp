@@ -13,14 +13,25 @@ auto Peripherals::reset() -> void {
 }
 
 auto Peripherals::connect(uint port, uint device) -> void {
+  if(port == ID::Port::Controller1) {
+    settings.controllerPort1 = device;
+    if(!system.loaded()) return;
+
+    delete controllerPort1;
+    switch(device) { default:
+    case ID::Device::None:    controllerPort1 = new Controller(0); break;
+    case ID::Device::Gamepad: controllerPort1 = new Gamepad(0); break;
+    }
+  }
+
   if(port == ID::Port::Controller2) {
     settings.controllerPort2 = device;
     if(!system.loaded()) return;
 
     delete controllerPort2;
     switch(device) { default:
-    case ID::Device::None:    controllerPort1 = new Controller(1); break;
-    case ID::Device::Gamepad: controllerPort1 = new Gamepad(1); break;
+    case ID::Device::None:    controllerPort2 = new Controller(1); break;
+    case ID::Device::Gamepad: controllerPort2 = new Gamepad(1); break;
     }
   }
 

@@ -26,6 +26,7 @@ Interface::Interface() {
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
 
   { Device device{ID::Device::None, "None"};
+    controllerPort1.devices.append(device);
     controllerPort2.devices.append(device);
   }
 

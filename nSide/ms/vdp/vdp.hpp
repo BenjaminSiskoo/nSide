@@ -71,7 +71,7 @@ struct VDP : Thread {
 private:
   uint32 buffer[256 * 262];
   uint8 vram[0x4000];
-  uint8 cram[0x40];  //SG-1000: 0, MS: 32, GG: 64
+  uint8 cram[0x20];
 
   struct IO {
     uint vcounter;  //vertical counter

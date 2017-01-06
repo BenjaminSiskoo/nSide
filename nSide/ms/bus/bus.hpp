@@ -5,13 +5,15 @@ struct Bus : Processor::Z80::Bus {
   auto in(uint8 addr) -> uint8 override;
   auto out(uint8 addr, uint8 data) -> void override;
 
+  auto reset() -> void;
+
   uint ramMask;
 
   bool disableIO;
   bool disableBIOS;
-  bool disableRAM;
+  boolean disableRAM;
   bool disableMyCard;
-  bool disableCartridge;
+  boolean disableCartridge;
   bool disableExpansion;
 
   struct IO {
