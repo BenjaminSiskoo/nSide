@@ -9,21 +9,12 @@ struct Bus : Processor::Z80::Bus {
 
   uint ramMask;
 
-  bool disableIO;
-  bool disableBIOS;
+  boolean disableIO;
+  boolean disableBIOS;
   boolean disableRAM;
-  bool disableMyCard;
+  boolean disableMyCard;
   boolean disableCartridge;
-  bool disableExpansion;
-
-  struct IO {
-    struct Port {
-      bool trDirection;
-      bool thDirection;
-      bool trOutput;
-      bool thOutput;
-    } port[2];
-  } io;
+  boolean disableExpansion;
 
 private:
   uint8 ram[0x2000];  //SG-1000 = 1KB, MS/GG = 8KB

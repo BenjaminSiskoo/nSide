@@ -1,12 +1,9 @@
 struct Gamepad : Controller {
   enum : uint {
-    Up, Down, Left, Right, I, II,
+    Up, Down, Left, Right, One, Two,
   };
 
-  Gamepad(bool port);
+  Gamepad(uint port);
 
   auto readData() -> uint7 override;
-  auto writeData(uint7 data) -> void override;
-
-  boolean latch;
 };

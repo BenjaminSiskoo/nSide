@@ -16,19 +16,15 @@
 //  9:  tr     $dc.d5   $dd.d3
 
 struct Controller : Thread {
-  Controller(bool port);
+  Controller(uint port);
   virtual ~Controller();
 
   static auto Enter() -> void;
   virtual auto main() -> void;
 
   virtual auto readData() -> uint7 { return 0x7f; }
-  virtual auto writeData(uint7 data) -> void {}
 
-  virtual auto readControl() -> uint7 { return 0x00; }
-  virtual auto writeControl(uint7 data) -> void {}
-
-  const bool port;
+  const uint port;
 };
 
 #include "gamepad/gamepad.hpp"

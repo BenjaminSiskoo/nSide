@@ -48,20 +48,15 @@ auto Bus::in(uint8 addr) -> uint8 {
 
   case 3: {
     if(system.model() == Model::GameGear && (addr != 0xc0 && addr != 0xdc)) return 0x00;
-    uint7 data0 = MasterSystem::peripherals.controllerPort1->readData();
-    uint7 data1 = MasterSystem::peripherals.controllerPort2->readData();
-    uint8 data = 0xff;
-    if(!addr.bit(0)) {
-      data.bits(0,5) = (uint)data0.bits(0,5);
-      data.bits(6,7) = (uint)data1.bits(0,1);
+    auto A = peripherals.controllerPort1->readData();
+    auto B = peripherals.controllerPort2->readData();
+    if(addr.bit(0) == 0) {
+      return A.bits(0,5) << 0 | B.bits(0,1) << 6;
     } else {
-      data.bits(0,3) = (uint)data1.bits(2,5);
-      data.bit (  4) = 1;  //reset button
-      data.bit (  5) = 1;  //cartridge CONT pin
-      data.bit (  6) = (bool)data0.bit (6);
-      data.bit (  7) = (bool)data1.bit (6);
+      //d4 = reset button
+      //d5 = cartridge CONT pin
+      return B.bits(2,5) << 0 | 1 << 4 | 1 << 5 | A.bit(6) << 6 | B.bit(6) << 7;
     }
-    return data;
   }
 
   }
@@ -82,6 +77,7 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
       disableExpansion = data.bit(7);
     } else {
       //Writing to TH lines has no effect in Japanese systems.
+      /*
       uint7 control1;
       uint7 control2;
       uint7 data1;
@@ -98,6 +94,7 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
       MasterSystem::peripherals.controllerPort2->writeControl(control2);
       MasterSystem::peripherals.controllerPort1->writeData(data1);
       MasterSystem::peripherals.controllerPort2->writeData(data2);
+      */
     }
     break;
   }

@@ -4,8 +4,8 @@ namespace MasterSystem {
 
 #include "gamepad/gamepad.cpp"
 
-Controller::Controller(bool port) : port(port) {
-  if(!handle()) create(Controller::Enter, 1);
+Controller::Controller(uint port) : port(port) {
+  if(!handle()) create(Controller::Enter, 100);
 }
 
 Controller::~Controller() {
