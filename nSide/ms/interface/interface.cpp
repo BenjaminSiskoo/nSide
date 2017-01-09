@@ -22,8 +22,14 @@ Interface::Interface() {
   media.append({ID::MasterSystem, "Master System", "ms", Domain::Home});
   media.append({ID::GameGear,     "Game Gear",     "gg", Domain::Portable});
 
+  Port hardwarePort{ID::Port::Hardware, "Hardware", Hardwired};
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
+
+  { Device device{ID::Device::Controls, "Controls"};
+    device.inputs.append({0, "Reset"});
+    hardwarePort.devices.append(device);
+  }
 
   { Device device{ID::Device::None, "None"};
     controllerPort1.devices.append(device);
@@ -41,6 +47,7 @@ Interface::Interface() {
     controllerPort2.devices.append(device);
   }
 
+  ports.append(move(hardwarePort));
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
 }

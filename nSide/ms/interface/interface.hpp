@@ -9,11 +9,13 @@ struct ID {
   };
 
   struct Port { enum : uint {
+    Hardware,
     Controller1,
     Controller2,
   };};
 
   struct Device { enum : uint {
+    Controls,
     None,
     Gamepad,
   };};
@@ -56,6 +58,7 @@ struct Interface : Emulator::Interface {
 struct Settings {
   bool colorEmulation = true;
 
+  uint hardwarePort = ID::Device::Controls;
   uint controllerPort1 = ID::Device::None;
   uint controllerPort2 = ID::Device::None;
 };

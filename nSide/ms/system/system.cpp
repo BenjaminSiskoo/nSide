@@ -28,6 +28,9 @@ auto System::load(Model model) -> bool {
   if(!cartridge.load()) return false;
 
   information.colorburst = Emulator::Constants::Colorburst::NTSC;
+
+  peripherals.connect(ID::Port::Hardware, model != Model::GameGear ? ID::Device::Controls : ID::Device::None);
+
   return information.loaded = true;
 }
 

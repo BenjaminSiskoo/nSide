@@ -3,6 +3,9 @@ include ../nall/GNUmakefile
 ifndef target
   target := nSide-t
 endif
+ifeq ($(target),tomoko)
+  $(error "tomoko is unsupported; it is only a reference for nSide's UI")
+endif
 # console := true
 
 flags += -I. -I.. -O3

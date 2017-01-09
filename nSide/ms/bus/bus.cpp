@@ -53,9 +53,9 @@ auto Bus::in(uint8 addr) -> uint8 {
     if(addr.bit(0) == 0) {
       return A.bits(0,5) << 0 | B.bits(0,1) << 6;
     } else {
-      //d4 = reset button
       //d5 = cartridge CONT pin
-      return B.bits(2,5) << 0 | 1 << 4 | 1 << 5 | A.bit(6) << 6 | B.bit(6) << 7;
+      bool reset = !interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 0);
+      return B.bits(2,5) << 0 | reset << 4 | 1 << 5 | A.bit(6) << 6 | B.bit(6) << 7;
     }
   }
 
