@@ -29,12 +29,10 @@ auto HotkeySettings::reloadMappings() -> void {
   mappingList.append(TableViewHeader().setVisible()
     .append(TableViewColumn().setText("Name"))
     .append(TableViewColumn().setText("Mapping").setExpandable())
-    .append(TableViewColumn().setText("Device").setAlignment(1.0).setForegroundColor({0, 128, 0}))
   );
   for(auto& hotkey : inputManager->hotkeys) {
     mappingList.append(TableViewItem()
       .append(TableViewCell().setText(hotkey->name))
-      .append(TableViewCell())
       .append(TableViewCell())
     );
   }
@@ -45,7 +43,6 @@ auto HotkeySettings::refreshMappings() -> void {
   uint position = 0;
   for(auto& hotkey : inputManager->hotkeys) {
     mappingList.item(position).cell(1).setText(hotkey->assignmentName());
-    mappingList.item(position).cell(2).setText(hotkey->deviceName());
     position++;
   }
   mappingList.resizeColumns();

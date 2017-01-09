@@ -1,5 +1,6 @@
 struct InputMapping {
   auto bind() -> void;
+  auto append(string mapping) -> bool;
   auto bind(shared_pointer<HID::Device> device, uint group, uint input, int16 oldValue, int16 newValue) -> bool;
   auto poll() -> int16;
   auto rumble(bool enable) -> void;
@@ -10,21 +11,29 @@ struct InputMapping {
   auto isRumble() const -> bool { return type == 2; }
 
   auto assignmentName() -> string;
-  auto deviceName() -> string;
 
   string path;  //configuration file key path
   string name;  //input name (human readable)
   uint type = 0;
   string assignment = "None";
-  shared_pointer<HID::Device> device;
-  uint group = 0;
-  uint input = 0;
-  enum class Qualifier : uint { None, Lo, Hi, Rumble } qualifier = Qualifier::None;
+
+  virtual auto logic() const -> bool { return 0; }
+
+  enum class Qualifier : uint { None, Lo, Hi, Rumble };
+  struct Input {
+    shared_pointer<HID::Device> device = nullptr;
+    uint group = 0;
+    uint input = 0;
+    Qualifier qualifier = Qualifier::None;
+  };
+  vector<Input> inputList;
 };
 
 struct InputHotkey : InputMapping {
   function<auto () -> void> press;
   function<auto () -> void> release;
+
+  auto logic() const -> bool { return 1; }
 
   int16 state = 0;
 };
