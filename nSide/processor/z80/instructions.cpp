@@ -370,8 +370,8 @@ auto Z80::instructionCPD() -> void {
   auto data = read(_HL--);
   wait(5);
   SUB(A, data);
-  VF = --BC > 0;
-  CF = cf;
+  VF = --BC != 0;
+  CF = cf;  //restore unaffected flag
 }
 
 auto Z80::instructionCPDR() -> void {
@@ -386,8 +386,8 @@ auto Z80::instructionCPI() -> void {
   auto data = read(_HL++);
   wait(5);
   SUB(A, data);
-  VF = --BC > 0;
-  CF = cf;
+  VF = --BC != 0;
+  CF = cf;  //restore unaffected flag
 }
 
 auto Z80::instructionCPIR() -> void {
@@ -452,6 +452,15 @@ auto Z80::instructionEI() -> void {
   r.ei = 1;  //raise IFF1, IFF2 after the next instruction
 }
 
+auto Z80::instructionEX_irr_rr(uint16& x, uint16& y) -> void {
+  uint16 z;
+  z  = read(x + 0) << 0;
+  z |= read(x + 1) << 8;
+  write(x + 0, y >> 0);
+  write(x + 1, y >> 8);
+  y = z;
+}
+
 auto Z80::instructionEX_rr_rr(uint16& x, uint16& y) -> void {
   auto z = x;
   x = y;
@@ -502,12 +511,12 @@ auto Z80::instructionIND() -> void {
   auto data = in(C);
   write(_HL--, data);
   NF = 0;
-  ZF = --B > 0;
+  ZF = --B == 0;
 }
 
 auto Z80::instructionINDR() -> void {
   instructionIND();
-  if(!ZF) return;
+  if(ZF) return;
   wait(5);
   PC -= 2;
 }
@@ -517,12 +526,12 @@ auto Z80::instructionINI() -> void {
   auto data = in(C);
   write(_HL++, data);
   NF = 0;
-  ZF = --B > 0;
+  ZF = --B == 0;
 }
 
 auto Z80::instructionINIR() -> void {
   instructionINI();
-  if(!ZF) return;
+  if(ZF) return;
   wait(5);
   PC -= 2;
 }
@@ -590,6 +599,19 @@ auto Z80::instructionLD_r_r1(uint8& x, uint8& y) -> void {
   x = y;
 }
 
+//LD to/from I/R requires an extra T-cycle
+auto Z80::instructionLD_r_r2(uint8& x, uint8& y) -> void {
+  wait(1);
+  x = y;
+  NF = 0;
+  PF = r.iff2;
+  XF = x.bit(3);
+  HF = 0;
+  YF = x.bit(5);
+  ZF = x == 0;
+  SF = x.bit(7);
+}
+
 auto Z80::instructionLD_rr_inn(uint16& x) -> void {
   auto addr = operands();
   x.byte(0) = read(addr + 0);
@@ -610,14 +632,15 @@ auto Z80::instructionLDD() -> void {
   write(DE--, data);
   wait(2);
   NF = 0;
-  VF = --BC > 0;
+  VF = --BC != 0;
   HF = 0;
 }
 
 auto Z80::instructionLDDR() -> void {
   instructionLDD();
-  if(!VF) return;
+  if(!BC) { VF = 0; return; }
   wait(5);
+  VF = 1;
   PC -= 2;
 }
 
@@ -626,14 +649,15 @@ auto Z80::instructionLDI() -> void {
   write(DE++, data);
   wait(2);
   NF = 0;
-  VF = --BC > 0;
+  VF = --BC != 0;
   HF = 0;
 }
 
 auto Z80::instructionLDIR() -> void {
   instructionLDI();
-  if(!VF) return;
+  if(!BC) { VF = 0; return; }
   wait(5);
+  VF = 1;
   PC -= 2;
 }
 
@@ -658,14 +682,14 @@ auto Z80::instructionOR_a_r(uint8& x) -> void {
 
 auto Z80::instructionOTDR() -> void {
   instructionOUTD();
-  if(!ZF) return;
+  if(ZF) return;
   wait(5);
   PC -= 2;
 }
 
 auto Z80::instructionOTIR() -> void {
   instructionOUTI();
-  if(!ZF) return;
+  if(ZF) return;
   wait(5);
   PC -= 2;
 }
@@ -684,7 +708,7 @@ auto Z80::instructionOUTD() -> void {
   auto data = read(_HL--);
   out(C, data);
   NF = 1;
-  ZF = --B > 0;
+  ZF = --B == 0;
 }
 
 auto Z80::instructionOUTI() -> void {
@@ -692,7 +716,7 @@ auto Z80::instructionOUTI() -> void {
   auto data = read(_HL++);
   out(C, data);
   NF = 1;
-  ZF = --B > 0;
+  ZF = --B == 0;
 }
 
 auto Z80::instructionPOP_rr(uint16& x) -> void {

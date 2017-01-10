@@ -29,4 +29,7 @@ auto PlayChoice10::Bus::serialize(serializer& s) -> void {
 auto PlayChoice10::CPU::serialize(serializer& s) -> void {
   Processor::Z80::serialize(s);
   Thread::serialize(s);
+
+  s.integer(state.nmiLine);
+  s.integer(state.intLine);
 }

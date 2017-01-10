@@ -304,6 +304,16 @@ Interface::Interface() {
     arcadePanel.devices.append(device);
   }
 
+  { Device device{ID::Device::PC10Panel, "PlayChoice-10 Panel"};
+    device.inputs.append({0, "Channel Select"});
+    device.inputs.append({0, "Enter"         });
+    device.inputs.append({0, "Reset"         });
+    device.inputs.append({0, "Service Button"});
+    device.inputs.append({0, "Coin 1"        });
+    device.inputs.append({0, "Coin 2"        });
+    arcadePanel.devices.append(device);
+  }
+
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
   ports.append(move(expansionPort));

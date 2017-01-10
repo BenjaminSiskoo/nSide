@@ -19,8 +19,8 @@ auto Peripherals::connect(uint port, uint device) -> void {
 
     delete controllerPort1;
     switch(device) { default:
-    case ID::Device::None:    controllerPort1 = new Controller(0); break;
-    case ID::Device::Gamepad: controllerPort1 = new Gamepad(0); break;
+    case ID::Device::None:    controllerPort1 = new Controller(ID::Port::Controller1); break;
+    case ID::Device::Gamepad: controllerPort1 = new Gamepad(ID::Port::Controller1); break;
     }
   }
 
@@ -30,8 +30,8 @@ auto Peripherals::connect(uint port, uint device) -> void {
 
     delete controllerPort2;
     switch(device) { default:
-    case ID::Device::None:    controllerPort2 = new Controller(1); break;
-    case ID::Device::Gamepad: controllerPort2 = new Gamepad(1); break;
+    case ID::Device::None:    controllerPort2 = new Controller(ID::Port::Controller2); break;
+    case ID::Device::Gamepad: controllerPort2 = new Gamepad(ID::Port::Controller2); break;
     }
   }
 

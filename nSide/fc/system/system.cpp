@@ -84,7 +84,7 @@ auto System::load(Model model) -> bool {
 
   case Model::PlayChoice10: {
     if(!playchoice10.load(system)) return false;
-    peripherals.connect(ID::Port::Arcade, ID::Device::None);
+    peripherals.connect(ID::Port::Arcade, ID::Device::PC10Panel);
     break;
   }
 

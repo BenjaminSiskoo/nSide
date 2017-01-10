@@ -38,6 +38,7 @@ struct ID {
     MouseE,
 
     VSPanel,
+    PC10Panel,
   };};
 };
 

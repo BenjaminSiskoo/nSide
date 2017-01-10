@@ -38,6 +38,7 @@ struct Interface : Emulator::Interface {
   auto audioFrequency() -> double override;
 
   auto loaded() -> bool override;
+  auto sha256() -> string override;
   auto load(uint id) -> bool override;
   auto save() -> void override;
   auto unload() -> void override;

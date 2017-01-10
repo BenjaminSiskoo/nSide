@@ -5,17 +5,14 @@ namespace MasterSystem {
 Bus bus;
 
 auto Bus::read(uint16 addr) -> uint8 {
+  auto data = cartridge.read(addr);
   if(addr >= 0xc000 && !disableRAM) return ram[addr & ramMask];
-  if(auto data = cartridge.read(addr)) return data();
-  return 0x00;
+  return data ? data() : (uint8)0x00;
 }
 
 auto Bus::write(uint16 addr, uint8 data) -> void {
-  if(addr >= 0xc000 && !disableRAM) {
-    ram[addr & ramMask] = data;
-    return;
-  }
   cartridge.write(addr, data);
+  if(addr >= 0xc000 && !disableRAM) ram[addr & ramMask] = data;
 }
 
 auto Bus::in(uint8 addr) -> uint8 {
@@ -54,7 +51,10 @@ auto Bus::in(uint8 addr) -> uint8 {
       return A.bits(0,5) << 0 | B.bits(0,1) << 6;
     } else {
       //d5 = cartridge CONT pin
-      bool reset = !interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 0);
+      bool reset = 1;
+      if(system.model() != Model::GameGear) {
+        reset = !interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 0);
+      }
       return B.bits(2,5) << 0 | reset << 4 | 1 << 5 | A.bit(6) << 6 | B.bit(6) << 7;
     }
   }
@@ -115,6 +115,7 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
 }
 
 auto Bus::reset() -> void {
+  ramMask = system.model() == Model::SG1000 ? 0x3ff : 0x1fff;
   disableIO        = false;
   disableBIOS      = true;
   disableRAM       = false;

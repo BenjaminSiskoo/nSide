@@ -17,6 +17,8 @@ struct PlayChoice10 {
   uint16 dip;
   uint screenConfig;
 
+  bool nmiDetected;
+
   bool vramAccess;
   bool controls;
   bool ppuOutput;
@@ -29,11 +31,17 @@ struct PlayChoice10 {
   bool ppuReset;
 
   struct Bus : Processor::Z80::Bus {
+    enum : uint {
+      ChannelSelect, Enter, Reset, ServiceButton, Coin1, Coin2,
+    };
+
     auto read(uint16 addr) -> uint8 override;
     auto write(uint16 addr, uint8 data) -> void override;
 
     auto in(uint8 addr) -> uint8 override;
     auto out(uint8 addr, uint8 data) -> void override;
+
+    auto poll(uint input) -> int16;
 
     auto power() -> void;
     auto reset() -> void;
@@ -66,10 +74,19 @@ struct PlayChoice10 {
     auto main() -> void;
     auto step(uint clocks) -> void;
 
+    auto setNMI(bool value) -> void;
+    auto setINT(bool value) -> void;
+
     auto power() -> void;
     auto reset() -> void;
 
     auto serialize(serializer& s) -> void;
+
+  private:
+    struct State {
+      bool nmiLine;
+      bool intLine;
+    } state;
   } pc10cpu;
 
   struct VideoCircuit : Thread {
@@ -80,6 +97,8 @@ struct PlayChoice10 {
 
     auto power() -> void;
     auto reset() -> void;
+
+    auto writeVRAM(uint16 addr, uint8 data) -> void;
 
     auto run(uint x, uint y) -> void;
 

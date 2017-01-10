@@ -162,6 +162,10 @@ auto Interface::loaded() -> bool {
   return system.loaded();
 }
 
+auto Interface::sha256() -> string {
+  return cartridge.sha256();
+}
+
 auto Interface::load(uint id) -> bool {
   if(id == ID::SG1000) return system.load(Model::SG1000);
   if(id == ID::MasterSystem) return system.load(Model::MasterSystem);
@@ -174,6 +178,7 @@ auto Interface::save() -> void {
 }
 
 auto Interface::unload() -> void {
+  save();
   system.unload();
 }
 

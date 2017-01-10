@@ -7,8 +7,6 @@ struct Bus : Processor::Z80::Bus {
 
   auto reset() -> void;
 
-  uint ramMask;
-
   boolean disableIO;
   boolean disableBIOS;
   boolean disableRAM;
@@ -18,6 +16,7 @@ struct Bus : Processor::Z80::Bus {
 
 private:
   uint8 ram[0x2000];  //SG-1000 = 1KB, MS/GG = 8KB
+  uint16 ramMask;
 };
 
 extern Bus bus;

@@ -22,15 +22,10 @@ auto System::load(Model model) -> bool {
     information.manifest = fp->reads();
   } else return false;
 
-  bus.ramMask = system.model() == Model::SG1000 ? 0x3ff : 0x1fff;
-
   auto document = BML::unserialize(information.manifest);
   if(!cartridge.load()) return false;
 
   information.colorburst = Emulator::Constants::Colorburst::NTSC;
-
-  peripherals.connect(ID::Port::Hardware, model != Model::GameGear ? ID::Device::Controls : ID::Device::None);
-
   return information.loaded = true;
 }
 
