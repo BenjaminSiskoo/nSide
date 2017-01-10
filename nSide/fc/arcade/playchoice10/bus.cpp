@@ -12,7 +12,7 @@ auto PlayChoice10::Bus::read(uint16 addr) -> uint8 {
   uint8 data = 0xe7;
   uint8 byte;
   if(!promTest || !promAddress.bit(6)) {
-    byte = cartridge.board->keyrom.read(promAddress >> 3);
+    byte = cartridge.board->keyrom.read((promAddress & 0x3f) >> 3);
   } else {
     byte = promAddress.bit(4) ? (uint8)0x00 : cartridge.board->keyrom.read(8);
   }
@@ -76,7 +76,7 @@ auto PlayChoice10::Bus::out(uint8 addr, uint8 data) -> void {
     break;
   }
   case 0x03: {
-    playchoice10.apuOutput  = data;
+    playchoice10.apuOutput  = 1;//data;
     print(data ? "Enable" : "Disable", " Sound\n");
     break;
   }

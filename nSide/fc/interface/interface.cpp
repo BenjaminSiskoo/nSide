@@ -329,18 +329,20 @@ auto Interface::title() -> string {
 }
 
 auto Interface::videoSize() -> VideoSize {
-  return {256 * vssystem.gameCount, 240 + playchoice10.screenConfig * 224};
+  uint width = 256 * (system.vs() ? vssystem.gameCount : 1);
+  uint height = 240 + (system.pc10() ? playchoice10.screenConfig : 0) * 224;
+  return {width, height};
 }
 
 auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
-  double w = 256 / playchoice10.screenConfig;
+  double w = 256 / (system.pc10() ? playchoice10.screenConfig : 1);
   if(arc) {
     double squarePixelRate = system.region() == System::Region::NTSC
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
     w *= squarePixelRate / (system.colorburst() * 6.0 / (system.region() == System::Region::NTSC ? 4.0 : 5.0));
   }
-  int h = 240 / vssystem.gameCount;
+  int h = 240 / (system.vs() ? vssystem.gameCount : 1);
   if(system.pc10() && playchoice10.screenConfig == 2) h = (240 + 224) / 2;
   double m;
   if(intScale) m = min((uint)(width / w), height / h);
