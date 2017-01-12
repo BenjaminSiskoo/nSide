@@ -1,4 +1,4 @@
-#include "../tomoko.hpp"
+#include "../nSide.hpp"
 #include "video.cpp"
 #include "audio.cpp"
 #include "input.cpp"

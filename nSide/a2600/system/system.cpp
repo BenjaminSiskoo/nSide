@@ -9,25 +9,10 @@ Cheat cheat;
 #include "peripherals.cpp"
 #include "serialization.cpp"
 
-auto System::run() -> void {
-  if(scheduler.enter() == Scheduler::Event::Frame) tia.refresh();
-}
-
-auto System::runToSave() -> void {
-  scheduler.synchronize(cpu);
-  scheduler.synchronize(pia);
-  scheduler.synchronize(tia);
-  for(auto peripheral : pia.peripherals) scheduler.synchronize(*peripheral);
-}
-
-auto System::init() -> void {
-  assert(interface != nullptr);
-}
-
-auto System::load() -> bool {
+auto System::load(Emulator::Interface* interface) -> bool {
   information = Information();
 
-  if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {
+  if(auto fp = platform->open(ID::System, "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
   } else return false;
 
@@ -54,6 +39,7 @@ auto System::load() -> bool {
   : Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
 
   serializeInit();
+  this->interface = interface;
   return information.loaded = true;
 }
 
@@ -87,6 +73,17 @@ auto System::power() -> void {
   scheduler.primary(cpu);
 
   peripherals.reset();
+}
+
+auto System::run() -> void {
+  if(scheduler.enter() == Scheduler::Event::Frame) tia.refresh();
+}
+
+auto System::runToSave() -> void {
+  scheduler.synchronize(cpu);
+  scheduler.synchronize(pia);
+  scheduler.synchronize(tia);
+  for(auto peripheral : pia.peripherals) scheduler.synchronize(*peripheral);
 }
 
 }

@@ -218,9 +218,9 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
   }
 
   if(!effects.rotation.bit(0)) {
-    interface->videoRefresh(output, this->width * sizeof(uint32), this->width, this->height << effects.scanlines);
+    platform->videoRefresh(output, this->width * sizeof(uint32), this->width, this->height << effects.scanlines);
   } else {
-    interface->videoRefresh(
+    platform->videoRefresh(
       output, (this->height << effects.scanlines) * sizeof(uint32),
       this->height << effects.scanlines, this->width
     );

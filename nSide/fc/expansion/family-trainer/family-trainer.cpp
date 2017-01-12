@@ -9,7 +9,7 @@ auto FamilyTrainer::data1() -> bool {
 
 auto FamilyTrainer::data2() -> uint5 {
   if(counter >= 8) return 0x18;
-  if(latched == 1) return (interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 1) << 1) | (interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 3) << 2);
+  if(latched == 1) return (platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 1) << 1) | (platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 3) << 2);
 
   switch(counter++) {
   case 0: return (b2  << 3) | (b4  << 4);
@@ -30,17 +30,17 @@ auto FamilyTrainer::write(uint3 data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    b1  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  0);
-    b2  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  1);
-    b3  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  2);
-    b4  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  3);
-    b5  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  4);
-    b6  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  5);
-    b7  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  6);
-    b8  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  7);
-    b9  = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  8);
-    b10 = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  9);
-    b11 = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 10);
-    b12 = interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 11);
+    b1  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  0);
+    b2  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  1);
+    b3  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  2);
+    b4  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  3);
+    b5  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  4);
+    b6  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  5);
+    b7  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  6);
+    b8  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  7);
+    b9  = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  8);
+    b10 = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer,  9);
+    b11 = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 10);
+    b12 = platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyTrainer, 11);
   }
 }

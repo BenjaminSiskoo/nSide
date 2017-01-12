@@ -15,29 +15,29 @@ auto FightingPad6B::readData() -> uint8 {
 
   if(select == 0) {
     if(counter != 2 && counter != 3) {
-      data.bit(0) = interface->inputPoll(port, ID::Device::FightingPad6B, Up);
-      data.bit(1) = interface->inputPoll(port, ID::Device::FightingPad6B, Down);
+      data.bit(0) = platform->inputPoll(port, ID::Device::FightingPad6B, Up);
+      data.bit(1) = platform->inputPoll(port, ID::Device::FightingPad6B, Down);
       data.bits(2,3) = ~0;
     } else if(counter == 2) {
       data.bits(0,3) = ~0;  //needed for controller detection
     } else if(counter == 3) {
       data.bits(0,3) =  0;
     }
-    data.bit(4) = interface->inputPoll(port, ID::Device::FightingPad6B, A);
-    data.bit(5) = interface->inputPoll(port, ID::Device::FightingPad6B, Start);
+    data.bit(4) = platform->inputPoll(port, ID::Device::FightingPad6B, A);
+    data.bit(5) = platform->inputPoll(port, ID::Device::FightingPad6B, Start);
   } else if(select == 1) {
     if(counter != 3) {
-      data.bit(0) = interface->inputPoll(port, ID::Device::FightingPad6B, Up);
-      data.bit(1) = interface->inputPoll(port, ID::Device::FightingPad6B, Down);
-      data.bit(2) = interface->inputPoll(port, ID::Device::FightingPad6B, Left);
-      data.bit(3) = interface->inputPoll(port, ID::Device::FightingPad6B, Right);
-      data.bit(4) = interface->inputPoll(port, ID::Device::FightingPad6B, B);
-      data.bit(5) = interface->inputPoll(port, ID::Device::FightingPad6B, C);
+      data.bit(0) = platform->inputPoll(port, ID::Device::FightingPad6B, Up);
+      data.bit(1) = platform->inputPoll(port, ID::Device::FightingPad6B, Down);
+      data.bit(2) = platform->inputPoll(port, ID::Device::FightingPad6B, Left);
+      data.bit(3) = platform->inputPoll(port, ID::Device::FightingPad6B, Right);
+      data.bit(4) = platform->inputPoll(port, ID::Device::FightingPad6B, B);
+      data.bit(5) = platform->inputPoll(port, ID::Device::FightingPad6B, C);
     } else {
-      data.bit(0) = interface->inputPoll(port, ID::Device::FightingPad6B, Z);
-      data.bit(1) = interface->inputPoll(port, ID::Device::FightingPad6B, Y);
-      data.bit(2) = interface->inputPoll(port, ID::Device::FightingPad6B, X);
-      data.bit(3) = interface->inputPoll(port, ID::Device::FightingPad6B, Mode);
+      data.bit(0) = platform->inputPoll(port, ID::Device::FightingPad6B, Z);
+      data.bit(1) = platform->inputPoll(port, ID::Device::FightingPad6B, Y);
+      data.bit(2) = platform->inputPoll(port, ID::Device::FightingPad6B, X);
+      data.bit(3) = platform->inputPoll(port, ID::Device::FightingPad6B, Mode);
       data.bits(4,5) = 0;
     }
   }

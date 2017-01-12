@@ -1,8 +1,9 @@
 auto PlayChoice10::serialize(serializer& s) -> void {
-  pc10bus.serialize(s);
   pc10cpu.serialize(s);
 
   s.integer(dip);
+
+  s.integer(nmiDetected);
 
   s.integer(vramAccess);
   s.integer(controls);
@@ -15,15 +16,19 @@ auto PlayChoice10::serialize(serializer& s) -> void {
   s.integer(watchdog);
   s.integer(ppuReset);
 
-  s.array(videoCircuit.vram);
-}
-
-auto PlayChoice10::Bus::serialize(serializer& s) -> void {
-  s.integer(channel);
-  s.integer(sramBank);
-
   s.array(wram);
   s.array(sram);
+
+  s.integer(channel);
+  s.integer(sramBank);
+  s.integer(promTest);
+  s.integer(promClock);
+  s.integer(promAddress);
+
+  s.integer(controller1GameSelect);
+  s.integer(controller1Start);
+
+  s.array(videoCircuit.vram);
 }
 
 auto PlayChoice10::CPU::serialize(serializer& s) -> void {

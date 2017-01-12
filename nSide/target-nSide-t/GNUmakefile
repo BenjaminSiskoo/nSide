@@ -1,7 +1,7 @@
 ifndef name
   name := nSide
 endif
-flags += -DSFC_SUPERGAMEBOY
+#flags += -DSFC_SUPERGAMEBOY
 
 include a2600/GNUmakefile
 include fc/GNUmakefile
@@ -20,7 +20,7 @@ include gba/GNUmakefile
 include ws/GNUmakefile
 include processor/GNUmakefile
 
-ui_objects := ui-tomoko ui-program ui-configuration ui-input
+ui_objects := ui-nSide ui-program ui-configuration ui-input
 ui_objects += ui-settings ui-tools ui-dip-switches ui-presentation
 ui_objects += ruby hiro
 ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
@@ -62,7 +62,7 @@ obj/ruby.o: ../ruby/ruby.cpp $(call rwildcard,../ruby/)
 obj/hiro.o: ../hiro/hiro.cpp $(call rwildcard,../hiro/)
 	$(compiler) $(hiroflags) -c $< -o $@
 
-obj/ui-tomoko.o: $(ui)/tomoko.cpp $(call rwildcard,$(ui)/)
+obj/ui-nSide.o: $(ui)/nSide.cpp $(call rwildcard,$(ui)/)
 obj/ui-program.o: $(ui)/program/program.cpp $(call rwildcard,$(ui)/)
 obj/ui-configuration.o: $(ui)/configuration/configuration.cpp $(call rwildcard,$(ui)/)
 obj/ui-input.o: $(ui)/input/input.cpp $(call rwildcard,$(ui)/)

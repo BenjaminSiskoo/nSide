@@ -15,7 +15,7 @@ auto Cartridge::saveMemory(MappedRAM& memory, Markup::Node node, maybe<uint> id)
   if(!node || node["volatile"]) return;
   auto name = node["name"].text();
   auto size = node["size"].natural();
-  if(auto fp = interface->open(id(), name, File::Write)) {
+  if(auto fp = platform->open(id(), name, File::Write)) {
     fp->write(memory.data(), memory.size());
   }
 }

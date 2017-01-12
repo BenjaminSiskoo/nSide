@@ -50,7 +50,7 @@ auto PPU::serialize(serializer& s) -> void {
   for(auto& o : l.oam) o.serialize(s);
   for(auto& o : l.soam) o.serialize(s);
 
-  s.array(ciram, !system.vs() ? 0x0800 : 0x1000);
+  s.array(ciram, system.model() != Model::VSSystem ? 0x0800 : 0x1000);
   s.array(cgram);
   s.array(oam);
 }

@@ -44,8 +44,8 @@ auto Zapper::main() -> void {
   if(next < prev) {
     if(triggertime > 0) triggertime -= 1;
     //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
-    int nx = interface->inputPoll(port, ID::Device::Zapper, X);
-    int ny = interface->inputPoll(port, ID::Device::Zapper, Y);
+    int nx = platform->inputPoll(port, ID::Device::Zapper, X);
+    int ny = platform->inputPoll(port, ID::Device::Zapper, Y);
     nx += x;
     ny += y;
     x = max(-16, min(256 + 16, nx));
@@ -61,8 +61,8 @@ auto Zapper::main() -> void {
 }
 
 auto Zapper::data() -> uint3 {
-  if(!system.vs()) {
-    bool newtrigger = interface->inputPoll(port, ID::Device::Zapper, Trigger);
+  if(system.model() != Model::VSSystem) {
+    bool newtrigger = platform->inputPoll(port, ID::Device::Zapper, Trigger);
     if(newtrigger && !triggerlock) {
       triggertime = 3;
       triggerlock = true;
@@ -119,9 +119,9 @@ auto Zapper::readLight() -> bool {
 auto Zapper::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
-  if(system.vs() && latched == 0) {
+  if(system.model() == Model::VSSystem && latched == 0) {
     counter = 0;
-    trigger = interface->inputPoll(port, ID::Device::Zapper, Trigger);
+    trigger = platform->inputPoll(port, ID::Device::Zapper, Trigger);
     light = lighttime > 0;
   }
 }

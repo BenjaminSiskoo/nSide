@@ -7,14 +7,13 @@ struct System {
   inline auto region() const -> Region { return information.region; }
   inline auto colorburst() const -> double { return information.colorburst; }
 
-  auto run() -> void;
-  auto runToSave() -> void;
-
-  auto init() -> void;
-  auto load() -> bool;
+  auto load(Emulator::Interface*) -> bool;
   auto save() -> void;
   auto unload() -> void;
   auto power() -> void;
+
+  auto run() -> void;
+  auto runToSave() -> void;
 
   //video.cpp
   auto configureVideoPalette() -> void;
@@ -25,6 +24,8 @@ struct System {
   auto unserialize(serializer&) -> bool;
 
 private:
+  Emulator::Interface* interface = nullptr;
+
   struct Information {
     string manifest;
     bool loaded = false;

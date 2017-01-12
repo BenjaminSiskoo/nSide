@@ -1,6 +1,6 @@
 struct NES_Event : Board {
   NES_Event(Markup::Node& boardNode) : Board(boardNode), mmc1(*this, boardNode) {
-    dip = interface->dipSettings(BML::unserialize({
+    dip = platform->dipSettings(BML::unserialize({
       "setting name=Time\n",
       "  option value=4 name=6:14.96\n",
       "  option value=0 name=4:59.97\n",

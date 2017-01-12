@@ -13,6 +13,7 @@
 #include <processor/lr35902/lr35902.hpp>
 
 namespace GameBoy {
+  #define platform Emulator::platform
   using File = Emulator::File;
   using Scheduler = Emulator::Scheduler;
   using Cheat = Emulator::Cheat;

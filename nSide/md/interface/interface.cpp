@@ -2,13 +2,9 @@
 
 namespace MegaDrive {
 
-Interface* interface = nullptr;
 Settings settings;
 
 Interface::Interface() {
-  interface = this;
-  system.init();
-
   information.preAlpha     = true;
   information.manufacturer = "Sega";
   information.name         = "Mega Drive";
@@ -18,7 +14,7 @@ Interface::Interface() {
   information.capability.states = false;
   information.capability.cheats = false;
 
-  media.append({ID::MegaDrive, "Mega Drive", "md", Domain::Home});
+  media.append({ID::MegaDrive, "Mega Drive", "md"});
 
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
@@ -139,7 +135,7 @@ auto Interface::sha256() -> string {
 }
 
 auto Interface::load(uint id) -> bool {
-  return system.load();
+  return system.load(this);
 }
 
 auto Interface::save() -> void {
@@ -151,7 +147,7 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  MegaDrive::peripherals.connect(port, device);
+  peripherals.connect(port, device);
 }
 
 auto Interface::power() -> void {

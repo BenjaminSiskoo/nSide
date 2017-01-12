@@ -5,7 +5,7 @@ GamepadMic::GamepadMic(bool port) : Controller(port) {
 
 auto GamepadMic::data() -> uint3 {
   if(counter >= 8) return 1;
-  if(latched == 1) return interface->inputPoll(port, ID::Device::GamepadMic, A);
+  if(latched == 1) return platform->inputPoll(port, ID::Device::GamepadMic, A);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -22,7 +22,7 @@ auto GamepadMic::data() -> uint3 {
 }
 
 auto GamepadMic::mic() -> bool {
-  return interface->inputPoll(port, ID::Device::GamepadMic, Mic) && random(1) & 1;
+  return platform->inputPoll(port, ID::Device::GamepadMic, Mic) && random(1) & 1;
 }
 
 auto GamepadMic::latch(bool data) -> void {
@@ -31,11 +31,11 @@ auto GamepadMic::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    a      = interface->inputPoll(port, ID::Device::GamepadMic, A);
-    b      = interface->inputPoll(port, ID::Device::GamepadMic, B);
-    up     = interface->inputPoll(port, ID::Device::GamepadMic, Up);
-    down   = interface->inputPoll(port, ID::Device::GamepadMic, Down);
-    left   = interface->inputPoll(port, ID::Device::GamepadMic, Left);
-    right  = interface->inputPoll(port, ID::Device::GamepadMic, Right);
+    a      = platform->inputPoll(port, ID::Device::GamepadMic, A);
+    b      = platform->inputPoll(port, ID::Device::GamepadMic, B);
+    up     = platform->inputPoll(port, ID::Device::GamepadMic, Up);
+    down   = platform->inputPoll(port, ID::Device::GamepadMic, Down);
+    left   = platform->inputPoll(port, ID::Device::GamepadMic, Left);
+    right  = platform->inputPoll(port, ID::Device::GamepadMic, Right);
   }
 }

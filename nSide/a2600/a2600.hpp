@@ -14,6 +14,7 @@
 #include <processor/mos6502/mos6502.hpp>
 
 namespace Atari2600 {
+  #define platform Emulator::platform
   using File = Emulator::File;
   using Scheduler = Emulator::Scheduler;
   using Cheat = Emulator::Cheat;

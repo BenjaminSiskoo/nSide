@@ -113,7 +113,7 @@ auto Board::serialize(serializer& s) -> void {
 }
 
 Board* Board::load(Markup::Node boardNode) {
-  if(system.vs()) return new VS(boardNode);
+  if(system.model() == Model::VSSystem) return new VS(boardNode);
 
   string type = boardNode["id"].text();
 
@@ -337,7 +337,7 @@ Board* Board::load(Markup::Node boardNode) {
   if(type == "NoConflicts-CNROM") return new NoConflicts_CNROM(boardNode);
   if(type == "SingleChip") return new SingleChip(boardNode);
 
-  interface->notify(string{"Unrecognized board ID: ", type});
+  platform->notify(string{"Unrecognized board ID: ", type});
 
   return nullptr;
 }

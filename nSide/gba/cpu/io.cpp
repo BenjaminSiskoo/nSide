@@ -68,7 +68,7 @@ auto CPU::readIO(uint32 addr) -> uint8 {
     const uint* lookup = !system.orientation() ? lookupHorizontal : lookupVertical;
     if(auto result = player.keyinput()) return result() >> 0;
     uint8 result = 0;
-    for(uint n = 0; n < 8; n++) result |= interface->inputPoll(port, device, lookup[n]) << n;
+    for(uint n = 0; n < 8; n++) result |= platform->inputPoll(port, device, lookup[n]) << n;
     if((result & 0xc0) == 0xc0) result &= (uint8)~0xc0;  //up+down cannot be pressed simultaneously
     if((result & 0x30) == 0x30) result &= (uint8)~0x30;  //left+right cannot be pressed simultaneously
     return result ^ 0xff;
@@ -78,8 +78,8 @@ auto CPU::readIO(uint32 addr) -> uint8 {
     uint port = ID::Port::Hardware;
     uint device = !system.orientation() ? ID::Device::HorizontalControls : ID::Device::VerticalControls;
     uint8 result = 0;
-    result |= interface->inputPoll(port, device, 7) << 0;
-    result |= interface->inputPoll(port, device, 6) << 1;
+    result |= platform->inputPoll(port, device, 7) << 0;
+    result |= platform->inputPoll(port, device, 6) << 1;
     return result ^ 0x03;
   }
 

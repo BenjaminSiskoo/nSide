@@ -44,8 +44,8 @@ auto BeamGun::main() -> void {
   if(next < prev) {
     if(triggertime > 0) triggertime -= 1;
     //Vcounter wrapped back to zero; update cursor coordinates for start of new frame
-    int nx = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, X);
-    int ny = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Y);
+    int nx = platform->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, X);
+    int ny = platform->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Y);
     nx += x;
     ny += y;
     x = max(-16, min(256 + 16, nx));
@@ -65,8 +65,8 @@ auto BeamGun::data1() -> bool {
 }
 
 auto BeamGun::data2() -> uint5 {
-  if(!system.vs()) {
-    bool newtrigger = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
+  if(system.model() != Model::VSSystem) {
+    bool newtrigger = platform->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
     if(newtrigger && !triggerlock) {
       triggertime = 3;
       triggerlock = true;
@@ -123,9 +123,9 @@ auto BeamGun::readLight() -> bool {
 auto BeamGun::write(uint3 data) -> void {
   if(latched == data.bit(0)) return;
   latched = data.bit(0);
-  if(system.vs() && latched == 0) {
+  if(system.model() == Model::VSSystem && latched == 0) {
     counter = 0;
-    trigger = interface->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
+    trigger = platform->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
     light = lighttime > 0;
   }
 }

@@ -5,7 +5,7 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
   if(boardNode["region"].text() == "pal")   information.region = Region::PAL;
   if(boardNode["region"].text() == "dendy") information.region = Region::Dendy;
 
-  if(system.vs()) setupVS(node, boardNode);
+  if(system.model() == Model::VSSystem) setupVS(node, boardNode);
 
   Board::load(boardNode);  //this call will set Cartridge::board if successful
   if(!board) return;
@@ -15,7 +15,7 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
   if(auto node = boardNode["chr/ram"]) loadMemory(board->chrram, node, File::Optional, pathID());
   if(board->chip) if(auto node = boardNode["chip/ram"]) loadMemory(board->chip->ram, node, File::Optional, pathID());
 
-  if(system.pc10()) {
+  if(system.model() == Model::PlayChoice10) {
     auto rom = boardNode["pc10"].find("rom");
     loadMemory(board->instrom, rom(0), File::Required, pathID());
     loadMemory(board->keyrom,  rom(1), File::Required, pathID());
@@ -58,7 +58,7 @@ auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
   } else if(device2 == "none") {
     peripherals.connect(ID::Port::Controller2, ID::Device::None);
   }
-  vssystem.setDip(primarySide, interface->dipSettings(boardNode));
+  vssystem.setDip(primarySide, platform->dipSettings(boardNode));
 
   string cpuVersion = side(0)["cpu/version"].text();
   vssystem.forceSubRAM = cpuVersion == "RP2A04";
@@ -87,7 +87,7 @@ auto Cartridge::loadMemory(MappedRAM& ram, Markup::Node node, bool required, may
   string name = node["name"].text();
   uint size = node["size"].natural();
   ram.allocate(size);
-  if(auto fp = interface->open(id(), name, File::Read, required)) {
+  if(auto fp = platform->open(id(), name, File::Read, required)) {
     fp->read(ram.data(), ram.size());
   }
 }

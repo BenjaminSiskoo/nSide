@@ -1,4 +1,4 @@
-#include "../tomoko.hpp"
+#include "../nSide.hpp"
 Settings settings;
 
 Settings::Settings() {

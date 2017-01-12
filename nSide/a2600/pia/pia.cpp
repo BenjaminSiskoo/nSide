@@ -66,21 +66,21 @@ auto PIA::updateIO() -> void {
   //emulators, it will tremendously slow down emulation.
   //Therefore, a dirty hack is used where this function is called from within
   //the TIA.
-  if(interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 2)) {
+  if(platform->inputPoll(ID::Port::Hardware, ID::Device::Controls, 2)) {
     if(!input.tvtype) io.tvtype = !io.tvtype;
     input.tvtype = 1;
   } else {
     input.tvtype = 0;
   }
 
-  if(interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 3)) {
+  if(platform->inputPoll(ID::Port::Hardware, ID::Device::Controls, 3)) {
     if(!input.difficulty0) io.difficulty0 = !io.difficulty0;
     input.difficulty0 = 1;
   } else {
     input.difficulty0 = 0;
   }
 
-  if(interface->inputPoll(ID::Port::Hardware, ID::Device::Controls, 4)) {
+  if(platform->inputPoll(ID::Port::Hardware, ID::Device::Controls, 4)) {
     if(!input.difficulty1) io.difficulty1 = !io.difficulty1;
     input.difficulty1 = 1;
   } else {

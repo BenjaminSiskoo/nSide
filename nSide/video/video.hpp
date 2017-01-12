@@ -35,7 +35,7 @@ struct Video {
   auto clear() -> void;
 
 private:
-  Emulator::Interface* interface = nullptr;
+  Interface* interface = nullptr;
   vector<shared_pointer<Sprite>> sprites;
 
   uint32* output = nullptr;

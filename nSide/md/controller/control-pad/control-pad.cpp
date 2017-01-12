@@ -6,19 +6,19 @@ auto ControlPad::readData() -> uint8 {
   uint6 data;
 
   if(select == 0) {
-    data.bit(0) = interface->inputPoll(port, ID::Device::ControlPad, Up);
-    data.bit(1) = interface->inputPoll(port, ID::Device::ControlPad, Down);
+    data.bit(0) = platform->inputPoll(port, ID::Device::ControlPad, Up);
+    data.bit(1) = platform->inputPoll(port, ID::Device::ControlPad, Down);
     data.bit(2) = 1;
     data.bit(3) = 1;
-    data.bit(4) = interface->inputPoll(port, ID::Device::ControlPad, A);
-    data.bit(5) = interface->inputPoll(port, ID::Device::ControlPad, Start);
+    data.bit(4) = platform->inputPoll(port, ID::Device::ControlPad, A);
+    data.bit(5) = platform->inputPoll(port, ID::Device::ControlPad, Start);
   } else {
-    data.bit(0) = interface->inputPoll(port, ID::Device::ControlPad, Up);
-    data.bit(1) = interface->inputPoll(port, ID::Device::ControlPad, Down);
-    data.bit(2) = interface->inputPoll(port, ID::Device::ControlPad, Left);
-    data.bit(3) = interface->inputPoll(port, ID::Device::ControlPad, Right);
-    data.bit(4) = interface->inputPoll(port, ID::Device::ControlPad, B);
-    data.bit(5) = interface->inputPoll(port, ID::Device::ControlPad, C);
+    data.bit(0) = platform->inputPoll(port, ID::Device::ControlPad, Up);
+    data.bit(1) = platform->inputPoll(port, ID::Device::ControlPad, Down);
+    data.bit(2) = platform->inputPoll(port, ID::Device::ControlPad, Left);
+    data.bit(3) = platform->inputPoll(port, ID::Device::ControlPad, Right);
+    data.bit(4) = platform->inputPoll(port, ID::Device::ControlPad, B);
+    data.bit(5) = platform->inputPoll(port, ID::Device::ControlPad, C);
   }
 
   data = ~data;

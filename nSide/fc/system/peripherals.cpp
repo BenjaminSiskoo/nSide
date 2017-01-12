@@ -17,47 +17,69 @@ auto Peripherals::reset() -> void {
 }
 
 auto Peripherals::connect(uint port, uint device) -> void {
-  if(port == ID::Port::Controller1) {
-    settings.controllerPort1 = device;
-    if(!system.loaded()) return;
+  cpu.peripherals.reset();
 
-    delete controllerPort1;
-    switch(device) { default:
-    case ID::Device::None:        controllerPort1 = new Controller(0); break;
-    case ID::Device::Gamepad:     controllerPort1 = new Gamepad(0); break;
-    case ID::Device::FourScore:   controllerPort1 = new FourScore(0); break;
-    case ID::Device::SNESGamepad: controllerPort1 = new SNESGamepad(0); break;
-    case ID::Device::Mouse:       controllerPort1 = new Mouse(0); break;
+  if(system.model() != Model::PlayChoice10) {
+    if(port == ID::Port::Controller1) {
+      settings.controllerPort1 = device;
+      if(!system.loaded()) return;
+
+      delete controllerPort1;
+      switch(device) { default:
+      case ID::Device::None:        controllerPort1 = new Controller(port); break;
+      case ID::Device::Gamepad:     controllerPort1 = new Gamepad(port); break;
+      case ID::Device::FourScore:   controllerPort1 = new FourScore(port); break;
+      case ID::Device::SNESGamepad: controllerPort1 = new SNESGamepad(port); break;
+      case ID::Device::Mouse:       controllerPort1 = new Mouse(port); break;
+      }
+
+      if(device == ID::Device::FourScore && settings.controllerPort2 != ID::Device::FourScore) {
+        connect(ID::Port::Controller2, ID::Device::FourScore);
+      } else if(device != ID::Device::FourScore && settings.controllerPort2 == ID::Device::FourScore) {
+        connect(ID::Port::Controller2, ID::Device::None);
+      }
     }
 
-    if(device == ID::Device::FourScore && settings.controllerPort2 != ID::Device::FourScore) {
-      connect(ID::Port::Controller2, ID::Device::FourScore);
-    } else if(device != ID::Device::FourScore && settings.controllerPort2 == ID::Device::FourScore) {
-      connect(ID::Port::Controller2, ID::Device::None);
+    if(port == ID::Port::Controller2) {
+      settings.controllerPort2 = device;
+      if(!system.loaded()) return;
+
+      delete controllerPort2;
+      switch(device) { default:
+      case ID::Device::None:        controllerPort2 = new Controller(port); break;
+      case ID::Device::Gamepad:     controllerPort2 = new Gamepad(port); break;
+      case ID::Device::GamepadMic:  controllerPort2 = new GamepadMic(port); break;
+      case ID::Device::FourScore:   controllerPort2 = new FourScore(port); break;
+      case ID::Device::Zapper:      controllerPort2 = new Zapper(port); break;
+      case ID::Device::PowerPad:    controllerPort2 = new PowerPad(port); break;
+      case ID::Device::Vaus:        controllerPort2 = new Vaus(port); break;
+      case ID::Device::SNESGamepad: controllerPort2 = new SNESGamepad(port); break;
+      case ID::Device::Mouse:       controllerPort2 = new Mouse(port); break;
+      }
+
+      if(device == ID::Device::FourScore && settings.controllerPort1 != ID::Device::FourScore) {
+        connect(ID::Port::Controller1, ID::Device::FourScore);
+      } else if(device != ID::Device::FourScore && settings.controllerPort1 == ID::Device::FourScore) {
+        connect(ID::Port::Controller1, ID::Device::None);
+      }
     }
   }
 
-  if(port == ID::Port::Controller2) {
-    settings.controllerPort2 = device;
-    if(!system.loaded()) return;
+  if(system.model() == Model::PlayChoice10) {
+    if(port == ID::Port::Controller1) {
+      settings.controllerPort1 = device;
+      if(!system.loaded()) return;
 
-    delete controllerPort2;
-    switch(device) { default:
-    case ID::Device::None:        controllerPort2 = new Controller(1); break;
-    case ID::Device::Gamepad:     controllerPort2 = new Gamepad(1); break;
-    case ID::Device::GamepadMic:  controllerPort2 = new GamepadMic(1); break;
-    case ID::Device::FourScore:   controllerPort2 = new FourScore(1); break;
-    case ID::Device::Zapper:      controllerPort2 = new Zapper(1); break;
-    case ID::Device::PowerPad:    controllerPort2 = new PowerPad(1); break;
-    case ID::Device::Vaus:        controllerPort2 = new Vaus(1); break;
-    case ID::Device::SNESGamepad: controllerPort2 = new SNESGamepad(1); break;
-    case ID::Device::Mouse:       controllerPort2 = new Mouse(1); break;
+      delete controllerPort1;
+      controllerPort1 = new Gamepad(port);
     }
 
-    if(device == ID::Device::FourScore && settings.controllerPort1 != ID::Device::FourScore) {
-      connect(ID::Port::Controller1, ID::Device::FourScore);
-    } else if(device != ID::Device::FourScore && settings.controllerPort1 == ID::Device::FourScore) {
-      connect(ID::Port::Controller1, ID::Device::None);
+    if(port == ID::Port::Controller2) {
+      settings.controllerPort2 = device;
+      if(!system.loaded()) return;
+
+      delete controllerPort2;
+      controllerPort2 = new Gamepad(port);
     }
   }
 
@@ -85,7 +107,6 @@ auto Peripherals::connect(uint port, uint device) -> void {
     if(!system.loaded()) return;
   }
 
-  cpu.peripherals.reset();
   cpu.peripherals.append(controllerPort1);
   cpu.peripherals.append(controllerPort2);
   cpu.peripherals.append(expansionPort);

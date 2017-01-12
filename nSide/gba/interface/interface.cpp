@@ -2,12 +2,9 @@
 
 namespace GameBoyAdvance {
 
-Interface* interface = nullptr;
 Settings settings;
 
 Interface::Interface() {
-  interface = this;
-
   information.preAlpha     = false;
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy Advance";
@@ -17,7 +14,7 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba", Domain::Portable});
+  media.append({ID::GameBoyAdvance, "Game Boy Advance", "gba"});
 
   Port hardwarePort{ID::Port::Hardware, "Hardware", PlugAndPlay};
 
@@ -114,7 +111,7 @@ auto Interface::loaded() -> bool {
 }
 
 auto Interface::load(uint id) -> bool {
-  return system.load();
+  return system.load(this);
 }
 
 auto Interface::save() -> void {
@@ -140,7 +137,7 @@ auto Interface::run() -> void {
 
 auto Interface::rotate() -> void {
   system.rotate();
-  deviceChanged(0, system.orientation());
+  platform->deviceChanged(0, system.orientation());
 }
 
 auto Interface::serialize() -> serializer {
@@ -185,18 +182,18 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
-  string pathname = {path(cartridge.pathID()), "debug/"};
+  string pathname = {platform->path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 
-  if(auto fp = interface->open(cartridge.pathID(), "debug/i-work.ram", File::Write)) fp->write(cpu.iwram, 32 * 1024);
-  if(auto fp = interface->open(cartridge.pathID(), "debug/e-work.ram", File::Write)) fp->write(cpu.ewram, 256 * 1024);
-  if(cartridge.sram.size) if(auto fp = interface->open(cartridge.pathID(), "debug/save-static.ram", File::Write)) {
+  if(auto fp = platform->open(cartridge.pathID(), "debug/i-work.ram", File::Write)) fp->write(cpu.iwram, 32 * 1024);
+  if(auto fp = platform->open(cartridge.pathID(), "debug/e-work.ram", File::Write)) fp->write(cpu.ewram, 256 * 1024);
+  if(cartridge.sram.size) if(auto fp = platform->open(cartridge.pathID(), "debug/save-static.ram", File::Write)) {
     fp->write(cartridge.sram.data, cartridge.sram.size);
   }
-  if(cartridge.eeprom.size) if(auto fp = interface->open(cartridge.pathID(), "debug/save-eeprom.ram", File::Write)) {
+  if(cartridge.eeprom.size) if(auto fp = platform->open(cartridge.pathID(), "debug/save-eeprom.ram", File::Write)) {
     fp->write(cartridge.eeprom.data, cartridge.eeprom.size);
   }
-  if(cartridge.flash.size) if(auto fp = interface->open(cartridge.pathID(), "debug/save-flash.ram", File::Write)) {
+  if(cartridge.flash.size) if(auto fp = platform->open(cartridge.pathID(), "debug/save-flash.ram", File::Write)) {
     fp->write(cartridge.flash.data, cartridge.flash.size);
   }
 }

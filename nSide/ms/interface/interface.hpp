@@ -15,16 +15,18 @@ struct ID {
   };};
 
   struct Device { enum : uint {
-    Controls,
     None,
+    SG1000Controls,
+    MasterSystemControls,
+    GameGearControls,
     Gamepad,
   };};
 };
 
-struct Interface : Emulator::Interface {
+struct SG1000Interface : Emulator::Interface {
   using Emulator::Interface::load;
 
-  Interface();
+  SG1000Interface();
 
   auto manifest() -> string override;
   auto title() -> string override;
@@ -45,7 +47,74 @@ struct Interface : Emulator::Interface {
 
   auto connect(uint port, uint device) -> void override;
   auto power() -> void override;
-  auto reset() -> void override;
+  auto run() -> void override;
+
+  auto serialize() -> serializer override;
+  auto unserialize(serializer&) -> bool override;
+
+  auto cap(const string& name) -> bool override;
+  auto get(const string& name) -> any override;
+  auto set(const string& name, const any& value) -> bool override;
+};
+
+struct MasterSystemInterface : Emulator::Interface {
+  using Emulator::Interface::load;
+
+  MasterSystemInterface();
+
+  auto manifest() -> string override;
+  auto title() -> string override;
+
+  auto videoSize() -> VideoSize override;
+  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoFrequency() -> double override;
+  auto videoColors() -> uint32 override;
+  auto videoColor(uint32 color) -> uint64 override;
+
+  auto audioFrequency() -> double override;
+
+  auto loaded() -> bool override;
+  auto sha256() -> string override;
+  auto load(uint id) -> bool override;
+  auto save() -> void override;
+  auto unload() -> void override;
+
+  auto connect(uint port, uint device) -> void override;
+  auto power() -> void override;
+  auto run() -> void override;
+
+  auto serialize() -> serializer override;
+  auto unserialize(serializer&) -> bool override;
+
+  auto cap(const string& name) -> bool override;
+  auto get(const string& name) -> any override;
+  auto set(const string& name, const any& value) -> bool override;
+};
+
+struct GameGearInterface : Emulator::Interface {
+  using Emulator::Interface::load;
+
+  GameGearInterface();
+
+  auto manifest() -> string override;
+  auto title() -> string override;
+
+  auto videoSize() -> VideoSize override;
+  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoFrequency() -> double override;
+  auto videoColors() -> uint32 override;
+  auto videoColor(uint32 color) -> uint64 override;
+
+  auto audioFrequency() -> double override;
+
+  auto loaded() -> bool override;
+  auto sha256() -> string override;
+  auto load(uint id) -> bool override;
+  auto save() -> void override;
+  auto unload() -> void override;
+
+  auto connect(uint port, uint device) -> void override;
+  auto power() -> void override;
   auto run() -> void override;
 
   auto serialize() -> serializer override;
@@ -58,13 +127,11 @@ struct Interface : Emulator::Interface {
 
 struct Settings {
   bool colorEmulation = true;
-
-  uint hardwarePort = ID::Device::Controls;
+  uint hardware = ID::Device::None;
   uint controllerPort1 = ID::Device::None;
   uint controllerPort2 = ID::Device::None;
 };
 
-extern Interface* interface;
 extern Settings settings;
 
 }

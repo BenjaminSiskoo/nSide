@@ -1,0 +1,169 @@
+SG1000Interface::SG1000Interface() {
+  information.preAlpha     = true;
+  information.manufacturer = "Sega";
+  information.name         = "SG-1000";
+  information.overscan     = true;
+  information.resettable   = false;
+
+  information.capability.states = false;
+  information.capability.cheats = false;
+
+  media.append({ID::SG1000, "SG-1000", "sg"});
+
+  Port hardware{ID::Port::Hardware, "Hardware", Hardwired};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
+
+  { Device device{ID::Device::SG1000Controls, "Controls"};
+    device.inputs.append({0, "Pause"});
+    hardware.devices.append(device);
+  }
+
+  { Device device{ID::Device::None, "None"};
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
+  }
+
+  { Device device{ID::Device::Gamepad, "Gamepad"};
+    device.inputs.append({0, "Up"});
+    device.inputs.append({0, "Down"});
+    device.inputs.append({0, "Left"});
+    device.inputs.append({0, "Right"});
+    device.inputs.append({0, "1"});
+    device.inputs.append({0, "2"});
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
+  }
+
+  ports.append(move(hardware));
+  ports.append(move(controllerPort1));
+  ports.append(move(controllerPort2));
+}
+
+auto SG1000Interface::manifest() -> string {
+  return cartridge.manifest();
+}
+
+auto SG1000Interface::title() -> string {
+  return cartridge.title();
+}
+
+auto SG1000Interface::videoSize() -> VideoSize {
+  return {256, 192};
+}
+
+auto SG1000Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
+  double w = 256;
+  if(arc) {
+    double squarePixelRate = system.region() == System::Region::NTSC
+    ? 135.0 / 22.0 * 1'000'000.0
+    : 7'375'000.0;
+    w *= squarePixelRate / (system.colorburst() * 3.0 / (system.region() == System::Region::NTSC ? 2.0 : 2.0));
+  }
+  uint h = 192;
+  double m;
+  if(intScale) m = min((uint)(width / w), height / h);
+  else         m = min((width / w), height / (double)h);
+  return {(uint)(w * m), (uint)(h * m)};
+}
+
+auto SG1000Interface::videoFrequency() -> double {
+  return 60.0;
+}
+
+auto SG1000Interface::videoColors() -> uint32 {
+  return 1 << 4;
+}
+
+auto SG1000Interface::videoColor(uint32 color) -> uint64 {
+  double gamma = settings.colorEmulation ? 1.8 : 2.2;
+
+  static double Y[] = {
+    0.00, 0.00, 0.53, 0.67,
+    0.40, 0.53, 0.47, 0.67,
+    0.53, 0.67, 0.73, 0.80,
+    0.46, 0.53, 0.80, 1.00,
+  };
+  static double Saturation[] = {
+    0.000, 0.000, 0.267, 0.200,
+    0.300, 0.267, 0.233, 0.300,
+    0.300, 0.300, 0.233, 0.167,
+    0.233, 0.200, 0.000, 0.000,
+  };
+  static uint Phase[] = {
+      0,   0, 237, 235,
+    354, 354, 114, 295,
+    114, 114, 173, 173,
+    235,  53,   0,   0,
+  };
+  double y = Y[color];
+  double i = Saturation[color] * std::sin((Phase[color] - 33) * Math::Pi / 180.0);
+  double q = Saturation[color] * std::cos((Phase[color] - 33) * Math::Pi / 180.0);
+
+  auto gammaAdjust = [=](double f) -> double { return f < 0.0 ? 0.0 : std::pow(f, 2.2 / gamma); };
+  //This matrix is from FCC's 1953 NTSC standard.
+  //The SG-1000, ColecoVision, and MSX are older than the SMPTE C standard that followed in 1987.
+  uint64 r = uclamp<16>(65535.0 * gammaAdjust(y +  0.946882 * i +  0.623557 * q));
+  uint64 g = uclamp<16>(65535.0 * gammaAdjust(y + -0.274788 * i + -0.635691 * q));
+  uint64 b = uclamp<16>(65535.0 * gammaAdjust(y + -1.108545 * i +  1.709007 * q));
+
+  return r << 32 | g << 16 | b << 0;
+}
+
+auto SG1000Interface::audioFrequency() -> double {
+  return 44'100.0;
+}
+
+auto SG1000Interface::loaded() -> bool {
+  return system.loaded();
+}
+
+auto SG1000Interface::sha256() -> string {
+  return cartridge.sha256();
+}
+
+auto SG1000Interface::load(uint id) -> bool {
+  if(id == ID::SG1000) return system.load(this, Model::SG1000);
+  return false;
+}
+
+auto SG1000Interface::save() -> void {
+  system.save();
+}
+
+auto SG1000Interface::unload() -> void {
+  save();
+  system.unload();
+}
+
+auto SG1000Interface::connect(uint port, uint device) -> void {
+  peripherals.connect(port, device);
+}
+
+auto SG1000Interface::power() -> void {
+  system.power();
+}
+
+auto SG1000Interface::run() -> void {
+  system.run();
+}
+
+auto SG1000Interface::serialize() -> serializer {
+  return {};
+}
+
+auto SG1000Interface::unserialize(serializer& s) -> bool {
+  return false;
+}
+
+auto SG1000Interface::cap(const string& name) -> bool {
+  return false;
+}
+
+auto SG1000Interface::get(const string& name) -> any {
+  return {};
+}
+
+auto SG1000Interface::set(const string& name, const any& value) -> bool {
+  return false;
+}

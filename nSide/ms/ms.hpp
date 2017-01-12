@@ -11,9 +11,11 @@
 #include <processor/z80/z80.hpp>
 
 namespace MasterSystem {
+  #define platform Emulator::platform
   using File = Emulator::File;
   using Scheduler = Emulator::Scheduler;
   extern Scheduler scheduler;
+  struct Interface;
 
   enum class Model : uint {
     SG1000,

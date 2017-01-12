@@ -5,7 +5,7 @@ SFCGamepad::SFCGamepad() {
 
 auto SFCGamepad::data1() -> bool {
   if(counter >= 16) return 1;
-  if(latched == 1) return interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, 0);
+  if(latched == 1) return platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, 0);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -36,17 +36,17 @@ auto SFCGamepad::write(uint3 data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    b      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, B);
-    y      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Y);
-    select = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Select);
-    start  = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Start);
-    up     = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Up);
-    down   = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Down);
-    left   = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Left);
-    right  = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Right);
-    a      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, A);
-    x      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, X);
-    l      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, L);
-    r      = interface->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, R);
+    b      = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, B);
+    y      = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Y);
+    select = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Select);
+    start  = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Start);
+    up     = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Up);
+    down   = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Down);
+    left   = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Left);
+    right  = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, Right);
+    a      = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, A);
+    x      = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, X);
+    l      = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, L);
+    r      = platform->inputPoll(ID::Port::Expansion, ID::Device::SFCGamepad, R);
   }
 }

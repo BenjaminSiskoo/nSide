@@ -34,28 +34,28 @@ auto Cartridge::load() -> bool {
 
   switch(system.model()) {
   case Model::Famicom:
-    if(auto pathID = interface->load(ID::Famicom, "Famicom", "fc")) {
+    if(auto pathID = platform->load(ID::Famicom, "Famicom", "fc")) {
       information.pathID = pathID();
     } else return false;
     break;
   case Model::VSSystem:
-    if(auto pathID = interface->load(ID::VSSystem, "VS. System", "vs")) {
+    if(auto pathID = platform->load(ID::VSSystem, "VS. System", "vs")) {
       information.pathID = pathID();
     } else return false;
     break;
   case Model::PlayChoice10:
-    if(auto pathID = interface->load(ID::PlayChoice10, "PlayChoice-10", "pc10")) {
+    if(auto pathID = platform->load(ID::PlayChoice10, "PlayChoice-10", "pc10")) {
       information.pathID = pathID();
     } else return false;
     break;
-  //case Model::FamicomBox:
-  //  if(auto pathID = interface->load(ID::FamicomBox, "FamicomBox", "fcb")) {
-  //    information.pathID = pathID();
-  //  } else return false;
-  //  break;
+  case Model::FamicomBox:
+    if(auto pathID = platform->load(ID::FamicomBox, "FamicomBox", "fcb")) {
+      information.pathID = pathID();
+    } else return false;
+    break;
   }
 
-  if(auto fp = interface->open(pathID(), "manifest.bml", File::Read, File::Required)) {
+  if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {
     information.manifest.cartridge = fp->reads();
   } else return false;
   auto document = BML::unserialize(information.manifest.cartridge);

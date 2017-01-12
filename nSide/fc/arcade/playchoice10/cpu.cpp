@@ -31,7 +31,7 @@ auto PlayChoice10::CPU::setINT(bool value) -> void {
 }
 
 auto PlayChoice10::CPU::power() -> void {
-  Z80::bus = &playchoice10.pc10bus;
+  Z80::bus = &playchoice10;
   Z80::power();
 }
 

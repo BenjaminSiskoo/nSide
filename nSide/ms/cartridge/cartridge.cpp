@@ -10,23 +10,23 @@ auto Cartridge::load() -> bool {
 
   switch(system.model()) {
   case Model::SG1000:
-    if(auto pathID = interface->load(ID::SG1000, "SG-1000", "sg")) {
+    if(auto pathID = platform->load(ID::SG1000, "SG-1000", "sg")) {
       information.pathID = pathID();
     } else return false;
     break;
   case Model::MasterSystem:
-    if(auto pathID = interface->load(ID::MasterSystem, "Master System", "ms")) {
+    if(auto pathID = platform->load(ID::MasterSystem, "Master System", "ms")) {
       information.pathID = pathID();
     } else return false;
     break;
   case Model::GameGear:
-    if(auto pathID = interface->load(ID::GameGear, "Game Gear", "gg")) {
+    if(auto pathID = platform->load(ID::GameGear, "Game Gear", "gg")) {
       information.pathID = pathID();
     } else return false;
     break;
   }
 
-  if(auto fp = interface->open(pathID(), "manifest.bml", File::Read, File::Required)) {
+  if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
   } else return false;
 
@@ -39,7 +39,7 @@ auto Cartridge::load() -> bool {
     if(rom.size) {
       rom.data = new uint8[rom.mask + 1];
       if(auto name = node["name"].text()) {
-        if(auto fp = interface->open(pathID(), name, File::Read, File::Required)) {
+        if(auto fp = platform->open(pathID(), name, File::Read, File::Required)) {
           fp->read(rom.data, rom.size);
         }
       }
@@ -52,7 +52,7 @@ auto Cartridge::load() -> bool {
     if(ram.size) {
       ram.data = new uint8[ram.mask + 1];
       if(auto name = node["name"].text()) {
-        if(auto fp = interface->open(pathID(), name, File::Read)) {
+        if(auto fp = platform->open(pathID(), name, File::Read)) {
           fp->read(ram.data, ram.size);
         }
       }
@@ -67,7 +67,7 @@ auto Cartridge::save() -> void {
   auto document = BML::unserialize(information.manifest);
 
   if(auto name = document["board/ram/name"].text()) {
-    if(auto fp = interface->open(pathID(), name, File::Write)) {
+    if(auto fp = platform->open(pathID(), name, File::Write)) {
       fp->write(ram.data, ram.size);
     }
   }
@@ -81,9 +81,6 @@ auto Cartridge::unload() -> void {
 }
 
 auto Cartridge::power() -> void {
-}
-
-auto Cartridge::reset() -> void {
   memory::fill(&mapper, sizeof(Mapper));
   mapper.romPage0 = 0;
   mapper.romPage1 = 1;

@@ -14,4 +14,6 @@ private:
 
   boolean a, b, select, start;
   boolean up, down, left, right;
+
+  friend class PlayChoice10;
 };

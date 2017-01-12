@@ -2,12 +2,10 @@
 
 namespace SuperFamicom {
 
-Interface* interface = nullptr;
 Settings settings;
 Debugger debugger;
 
 Interface::Interface() {
-  interface = this;
   system.init();
 
   information.preAlpha     = false;
@@ -19,7 +17,7 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::SuperFamicom, "Super Famicom", "sfc", Domain::Home});
+  media.append({ID::SuperFamicom, "Super Famicom", "sfc"});
 
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
@@ -196,7 +194,7 @@ auto Interface::sha256() -> string {
 }
 
 auto Interface::load(uint id) -> bool {
-  if(id == ID::SuperFamicom) return system.load();
+  if(id == ID::SuperFamicom) return system.load(this);
   if(id == ID::BSMemory) return cartridge.loadBSMemory();
   if(id == ID::SufamiTurboA) return cartridge.loadSufamiTurboA();
   if(id == ID::SufamiTurboB) return cartridge.loadSufamiTurboB();
@@ -213,7 +211,7 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  SuperFamicom::peripherals.connect(port, device);
+  peripherals.connect(port, device);
 }
 
 auto Interface::power() -> void {
@@ -286,45 +284,45 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
-  string pathname = {path(cartridge.pathID()), "debug/"};
+  string pathname = {platform->path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 
-  if(auto fp = interface->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.wram, 128 * 1024);
-  if(cartridge.ram.size()) if(auto fp = interface->open(cartridge.pathID(), "debug/program-save.ram", File::Write)) {
+  if(auto fp = platform->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.wram, 128 * 1024);
+  if(cartridge.ram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/program-save.ram", File::Write)) {
     fp->write(cartridge.ram.data(), cartridge.ram.size());
   }
-  if(cartridge.has.MCC) if(auto fp = interface->open(cartridge.pathID(), "debug/mcc.ram", File::Write)) {
+  if(cartridge.has.MCC) if(auto fp = platform->open(cartridge.pathID(), "debug/mcc.ram", File::Write)) {
     fp->write(mcc.ram.data(), mcc.ram.size());
   }
-  if(cartridge.has.Event) if(auto fp = interface->open(cartridge.pathID(), "debug/event.ram", File::Write)) {
+  if(cartridge.has.Event) if(auto fp = platform->open(cartridge.pathID(), "debug/event.ram", File::Write)) {
     fp->write(event.ram.data(), event.ram.size());
   }
   if(cartridge.has.SA1) {
-    if(auto fp = interface->open(cartridge.pathID(), "debug/sa1.internal.ram", File::Write)) {
+    if(auto fp = platform->open(cartridge.pathID(), "debug/sa1.internal.ram", File::Write)) {
       fp->write(sa1.iram.data(), sa1.iram.size());
     }
-    if(auto fp = interface->open(cartridge.pathID(), "debug/sa1.bitmap-work.ram", File::Write)) {
+    if(auto fp = platform->open(cartridge.pathID(), "debug/sa1.bitmap-work.ram", File::Write)) {
       fp->write(sa1.bwram.data(), sa1.bwram.size());
     }
   }
-  if(cartridge.has.SuperFX) if(auto fp = interface->open(cartridge.pathID(), "debug/superfx.ram", File::Write)) {
+  if(cartridge.has.SuperFX) if(auto fp = platform->open(cartridge.pathID(), "debug/superfx.ram", File::Write)) {
     fp->write(superfx.ram.data(), superfx.ram.size());
   }
-  if(cartridge.has.SPC7110) if(auto fp = interface->open(cartridge.pathID(), "debug/spc7110.ram", File::Write)) {
+  if(cartridge.has.SPC7110) if(auto fp = platform->open(cartridge.pathID(), "debug/spc7110.ram", File::Write)) {
     fp->write(spc7110.ram.data(), spc7110.ram.size());
   }
-  if(cartridge.has.SDD1) if(auto fp = interface->open(cartridge.pathID(), "debug/sdd1.ram", File::Write)) {
+  if(cartridge.has.SDD1) if(auto fp = platform->open(cartridge.pathID(), "debug/sdd1.ram", File::Write)) {
     fp->write(sdd1.ram.data(), sdd1.ram.size());
   }
-  if(cartridge.has.OBC1) if(auto fp = interface->open(cartridge.pathID(), "debug/obc1.ram", File::Write)) {
+  if(cartridge.has.OBC1) if(auto fp = platform->open(cartridge.pathID(), "debug/obc1.ram", File::Write)) {
     fp->write(obc1.ram.data(), obc1.ram.size());
   }
 
   if(cartridge.has.SufamiTurboSlots) {
-    if(auto fp = interface->open(cartridge.pathID(), "debug/sufamiturbo.slota.ram", File::Write)) {
+    if(auto fp = platform->open(cartridge.pathID(), "debug/sufamiturbo.slota.ram", File::Write)) {
       fp->write(sufamiturboA.ram.data(), sufamiturboA.ram.size());
     }
-    if(auto fp = interface->open(cartridge.pathID(), "debug/sufamiturbo.slotb.ram", File::Write)) {
+    if(auto fp = platform->open(cartridge.pathID(), "debug/sufamiturbo.slotb.ram", File::Write)) {
       fp->write(sufamiturboB.ram.data(), sufamiturboB.ram.size());
     }
   }

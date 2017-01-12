@@ -10,7 +10,6 @@ struct PSG : Thread {
   auto data(uint8 data) -> void;
 
   auto power() -> void;
-  auto reset() -> void;
 };
 
 extern PSG psg;

@@ -1,4 +1,4 @@
-#include "../tomoko.hpp"
+#include "../nSide.hpp"
 DipSwitches* dipSwitches = nullptr;
 
 DipSwitch::DipSwitch(VerticalLayout* parent, Size size) : HorizontalLayout(parent, size) {

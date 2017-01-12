@@ -1,4 +1,4 @@
-#include "../tomoko.hpp"
+#include "../nSide.hpp"
 #include <a2600/interface/interface.hpp>
 #include <fc/interface/interface.hpp>
 #if defined(PROFILE_BALANCED)
@@ -22,16 +22,21 @@ Program::Program(string_vector args) {
   program = this;
   Application::onMain({&Program::main, this});
 
+  Emulator::platform = this;
   emulators.append(new Atari2600::Interface);
-  emulators.append(new Famicom::Interface);
+  emulators.append(new Famicom::FamicomInterface);
   emulators.append(new SuperFamicom::Interface);
-  emulators.append(new MasterSystem::Interface);
+  emulators.append(new MasterSystem::SG1000Interface);
+  emulators.append(new MasterSystem::MasterSystemInterface);
   emulators.append(new MegaDrive::Interface);
 //emulators.append(new PCEngine::Interface);
   emulators.append(new GameBoy::Interface);
   emulators.append(new GameBoyAdvance::Interface);
+  emulators.append(new MasterSystem::GameGearInterface);
   emulators.append(new WonderSwan::Interface);
-  for(auto& emulator : emulators) emulator->bind = this;
+  emulators.append(new Famicom::VSSystemInterface);
+  emulators.append(new Famicom::PlayChoice10Interface);
+//emulators.append(new Famicom::FamicomBoxInterface);
 
   new Presentation;
   presentation->setVisible();

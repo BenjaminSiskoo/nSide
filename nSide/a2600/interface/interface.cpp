@@ -2,13 +2,9 @@
 
 namespace Atari2600 {
 
-Interface* interface = nullptr;
 Settings settings;
 
 Interface::Interface() {
-  interface = this;
-  system.init();
-
   information.preAlpha     = true;
   information.manufacturer = "Atari";
   information.name         = "Atari 2600";
@@ -228,7 +224,7 @@ auto Interface::sha256() -> string {
 }
 
 auto Interface::load(uint id) -> bool {
-  return system.load();
+  return system.load(this);
 }
 
 auto Interface::save() -> void {

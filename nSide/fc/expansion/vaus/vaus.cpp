@@ -14,7 +14,7 @@ auto VausE::main() -> void {
 
   if(next < prev) {
     //Vcounter wrapped back to zero; update control knob for start of new frame
-    int nx = interface->inputPoll(ID::Port::Expansion, ID::Device::VausE, Control) * 160 / 256;
+    int nx = platform->inputPoll(ID::Port::Expansion, ID::Device::VausE, Control) * 160 / 256;
     const uint8_t trimpot = 0x0d;
     x = max(trimpot, min(trimpot + 0xa0, x - nx));
   }
@@ -25,7 +25,7 @@ auto VausE::main() -> void {
 }
 
 auto VausE::data1() -> bool {
-  return interface->inputPoll(ID::Port::Expansion, ID::Device::VausE, Fire);
+  return platform->inputPoll(ID::Port::Expansion, ID::Device::VausE, Fire);
 }
 
 auto VausE::data2() -> uint5 {

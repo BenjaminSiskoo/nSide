@@ -18,9 +18,7 @@ struct System {
   auto loaded() const -> bool { return _loaded; }
   auto orientation() const -> bool { return _orientation; }
 
-  auto init() -> void;
-  auto term() -> void;
-  auto load() -> bool;
+  auto load(Emulator::Interface*) -> bool;
   auto save() -> void;
   auto unload() -> void;
   auto power() -> void;
@@ -39,6 +37,9 @@ struct System {
   auto serialize(serializer&) -> void;
   auto serializeAll(serializer&) -> void;
   auto serializeInit() -> void;
+
+private:
+  Emulator::Interface* interface = nullptr;
 
   struct Information {
     string manifest;

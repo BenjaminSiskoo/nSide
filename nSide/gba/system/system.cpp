@@ -10,10 +10,36 @@ System system;
 Scheduler scheduler;
 Cheat cheat;
 
-auto System::init() -> void {
+auto System::load(Emulator::Interface* interface) -> bool {
+  if(auto fp = platform->open(ID::System, "manifest.bml", File::Read, File::Required)) {
+    information.manifest = fp->reads();
+  } else return false;
+
+  auto document = BML::unserialize(information.manifest);
+
+  if(auto name = document["system/cpu/rom/name"].text()) {
+    if(auto fp = platform->open(ID::System, name, File::Read, File::Required)) {
+      fp->read(bios.data, bios.size);
+    }
+  }
+
+  if(!cartridge.load()) return false;
+
+  serializeInit();
+  _orientation = 0;
+  this->interface = interface;
+  return _loaded = true;
 }
 
-auto System::term() -> void {
+auto System::save() -> void {
+  if(!loaded()) return;
+  cartridge.save();
+}
+
+auto System::unload() -> void {
+  if(!loaded()) return;
+  cartridge.unload();
+  _loaded = false;
 }
 
 auto System::power() -> void {
@@ -34,35 +60,6 @@ auto System::power() -> void {
   apu.power();
   cartridge.power();
   scheduler.primary(cpu);
-}
-
-auto System::load() -> bool {
-  if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {
-    information.manifest = fp->reads();
-  } else return false;
-  auto document = BML::unserialize(information.manifest);
-
-  if(auto name = document["system/cpu/rom/name"].text()) {
-    if(auto fp = interface->open(ID::System, name, File::Read, File::Required)) {
-      fp->read(bios.data, bios.size);
-    }
-  }
-
-  if(!cartridge.load()) return false;
-  serializeInit();
-  _orientation = 0;
-  return _loaded = true;
-}
-
-auto System::save() -> void {
-  if(!loaded()) return;
-  cartridge.save();
-}
-
-auto System::unload() -> void {
-  if(!loaded()) return;
-  cartridge.unload();
-  _loaded = false;
 }
 
 auto System::run() -> void {

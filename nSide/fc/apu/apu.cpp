@@ -58,7 +58,7 @@ auto APU::main() -> void {
 //output  = filter.runLopass(output);
   output  = sclamp<16>(output);
 
-  if(!system.pc10() || playchoice10.apuOutput) {
+  if(system.model() != Model::PlayChoice10 || playchoice10.apuOutput) {
     stream->sample(output / 32768.0);
   } else {
     stream->sample(0.0);
@@ -85,10 +85,10 @@ auto APU::setSample(int16 sample) -> void {
 }
 
 auto APU::load(Markup::Node node) -> bool {
-  if(system.vs()) return true;
+  if(system.model() == Model::VSSystem) return true;
 
   string versionString;
-  if(system.fc()) {
+  if(system.model() == Model::Famicom) {
     if(system.region() == System::Region::NTSC)  versionString = node["apu/ntsc-version"].text();
     if(system.region() == System::Region::PAL)   versionString = node["apu/pal-version"].text();
     if(system.region() == System::Region::Dendy) versionString = node["apu/dendy-version"].text();

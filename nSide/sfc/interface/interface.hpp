@@ -86,7 +86,6 @@ struct Settings {
   bool random = true;
 };
 
-extern Interface* interface;
 extern Settings settings;
 
 }

@@ -1,6 +1,6 @@
 $(error "tomoko is unsupported; it is only a reference for nSide's UI")
 name := higan
-flags += -DSFC_SUPERGAMEBOY
+#flags += -DSFC_SUPERGAMEBOY
 
 include fc/GNUmakefile
 include sfc/GNUmakefile

@@ -30,7 +30,7 @@ auto CPU::nmiLine(bool line) -> void {
   //edge-sensitive (0->1)
   if(!io.nmiLine && line) {
     io.nmiPending = true;
-    if(system.pc10()) playchoice10.nmiDetected = true;
+    if(system.model() == Model::PlayChoice10) playchoice10.nmiDetected = true;
   }
   io.nmiLine = line;
 }

@@ -41,10 +41,10 @@ auto FamilyKeyboard::data2() -> uint5 {
     matrix[(row << 2) | 3],
   };
   return (
-    !interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyKeyboard, keys[0]) << 1
-  | !interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyKeyboard, keys[1]) << 2
-  | !interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyKeyboard, keys[2]) << 3
-  | !interface->inputPoll(ID::Port::Expansion, ID::Device::FamilyKeyboard, keys[3]) << 4
+    !platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyKeyboard, keys[0]) << 1
+  | !platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyKeyboard, keys[1]) << 2
+  | !platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyKeyboard, keys[2]) << 3
+  | !platform->inputPoll(ID::Port::Expansion, ID::Device::FamilyKeyboard, keys[3]) << 4
   );
 }
 

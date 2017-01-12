@@ -68,10 +68,10 @@ auto MouseE::write(uint3 data) -> void {
   latched = data.bit(0);
   counter = 0;
 
-  x = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, X);  //-n = left, 0 = center, +n = right
-  y = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Y);  //-n = up,   0 = center, +n = down
-  l = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Left);
-  r = interface->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Right);
+  x = platform->inputPoll(ID::Port::Expansion, ID::Device::MouseE, X);  //-n = left, 0 = center, +n = right
+  y = platform->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Y);  //-n = up,   0 = center, +n = down
+  l = platform->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Left);
+  r = platform->inputPoll(ID::Port::Expansion, ID::Device::MouseE, Right);
 
   dx = x < 0;  //0 = right, 1 = left
   dy = y < 0;  //0 = down,  1 = up

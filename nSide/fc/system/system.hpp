@@ -8,21 +8,16 @@ struct System {
   inline auto region() const -> Region { return information.region; }
   inline auto colorburst() const -> double { return information.colorburst; }
 
-  inline auto fc()   const { return information.model == Model::Famicom; }
-  inline auto vs()   const { return information.model == Model::VSSystem; }
-  inline auto pc10() const { return information.model == Model::PlayChoice10; }
-  inline auto fcb()  const { return information.model == Model::FamicomBox; }
-
-  auto run() -> void;
-  auto runToSave() -> void;
-
   auto init() -> void;
-  auto term() -> void;
-  auto load(Model) -> bool;
+  auto load(Emulator::Interface* interface, Model) -> bool;
   auto save() -> void;
   auto unload() -> void;
   auto power() -> void;
   auto reset() -> void;
+  auto resetAudio() -> void;
+
+  auto run() -> void;
+  auto runToSave() -> void;
 
   //video.cpp
   auto configureVideoPalette() -> void;
@@ -33,6 +28,8 @@ struct System {
   auto unserialize(serializer&) -> bool;
 
 private:
+  Emulator::Interface* interface = nullptr;
+
   struct Information {
     string manifest;
     bool loaded = false;

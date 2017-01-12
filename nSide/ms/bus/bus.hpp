@@ -5,7 +5,7 @@ struct Bus : Processor::Z80::Bus {
   auto in(uint8 addr) -> uint8 override;
   auto out(uint8 addr, uint8 data) -> void override;
 
-  auto reset() -> void;
+  auto power() -> void;
 
   boolean disableIO;
   boolean disableBIOS;

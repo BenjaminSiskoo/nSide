@@ -6,7 +6,7 @@ JoyPair::JoyPair() {
 
 auto JoyPair::data1() -> bool {
   if(counter1 >= 8) return 1;
-  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, 0 + A);
+  if(latched) return platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, 0 + A);
 
   auto& A = gamepads[0];
 
@@ -25,7 +25,7 @@ auto JoyPair::data1() -> bool {
 
 auto JoyPair::data2() -> uint5 {
   if(counter2 >= 8) return 2;
-  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, 8 + A) << 1;
+  if(latched) return platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, 8 + A) << 1;
 
   auto& B = gamepads[1];
 
@@ -51,14 +51,14 @@ auto JoyPair::write(uint3 data) -> void {
   if(latched == 0) {
     for(uint id : range(2)) {
       auto& gamepad = gamepads[id];
-      gamepad.a      = interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + A);
-      gamepad.b      = interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + B);
-      gamepad.select = interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Select);
-      gamepad.start  = interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Start);
-      gamepad.up     = interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Up);
-      gamepad.down   = interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Down);
-      gamepad.left   = interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Left);
-      gamepad.right  = interface->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Right);
+      gamepad.a      = platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + A);
+      gamepad.b      = platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + B);
+      gamepad.select = platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Select);
+      gamepad.start  = platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Start);
+      gamepad.up     = platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Up);
+      gamepad.down   = platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Down);
+      gamepad.left   = platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Left);
+      gamepad.right  = platform->inputPoll(ID::Port::Expansion, ID::Device::JoyPair, id * 8 + Right);
     }
   }
 }

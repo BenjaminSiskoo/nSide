@@ -8,11 +8,11 @@ Cartridge cartridge;
 auto Cartridge::load() -> bool {
   information = Information();
 
-  if(auto pathID = interface->load(ID::Atari2600, "Atari 2600", "a26")) {
+  if(auto pathID = platform->load(ID::Atari2600, "Atari 2600", "a26")) {
     information.pathID = pathID();
   } else return false;
 
-  if(auto fp = interface->open(pathID(), "manifest.bml", File::Read, File::Required)) {
+  if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
   } else return false;
 
@@ -28,7 +28,7 @@ auto Cartridge::load() -> bool {
     if(rom.size) {
       rom.data = new uint8[rom.mask];
       if(auto name = node["name"].text()) {
-        if(auto fp = interface->open(pathID(), name, File::Read, File::Required)) {
+        if(auto fp = platform->open(pathID(), name, File::Read, File::Required)) {
           fp->read(rom.data, rom.size);
         }
       }
@@ -41,7 +41,7 @@ auto Cartridge::load() -> bool {
     if(ram.size) {
       ram.data = new uint8[ram.mask];
       if(auto name = node["name"].text()) {
-        if(auto fp = interface->open(pathID(), name, File::Read)) {
+        if(auto fp = platform->open(pathID(), name, File::Read)) {
           fp->read(ram.data, ram.size);
         }
       }
@@ -56,7 +56,7 @@ auto Cartridge::save() -> void {
   auto document = BML::unserialize(information.manifest);
 
   if(auto name = document["board/ram/name"].text()) {
-    if(auto fp = interface->open(pathID(), name, File::Write)) {
+    if(auto fp = platform->open(pathID(), name, File::Write)) {
       fp->write(ram.data, ram.size);
     }
   }

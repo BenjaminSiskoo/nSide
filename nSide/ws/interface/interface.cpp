@@ -2,12 +2,9 @@
 
 namespace WonderSwan {
 
-Interface* interface = nullptr;
 Settings settings;
 
 Interface::Interface() {
-  interface = this;
-
   information.preAlpha     = false;
   information.manufacturer = "Bandai";
   information.name         = "WonderSwan";
@@ -17,8 +14,8 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::WonderSwan,      "WonderSwan",       "ws",  Domain::Portable});
-  media.append({ID::WonderSwanColor, "WonderSwan Color", "wsc", Domain::Portable});
+  media.append({ID::WonderSwan,      "WonderSwan",       "ws"});
+  media.append({ID::WonderSwanColor, "WonderSwan Color", "wsc"});
 
   Port hardwarePort{ID::Port::Hardware, "Hardware", PlugAndPlay};
 
@@ -118,8 +115,8 @@ auto Interface::sha256() -> string {
 }
 
 auto Interface::load(uint id) -> bool {
-  if(id == ID::WonderSwan) return system.load(Model::WonderSwan);
-  if(id == ID::WonderSwanColor) return system.load(Model::WonderSwanColor);
+  if(id == ID::WonderSwan) return system.load(this, Model::WonderSwan);
+  if(id == ID::WonderSwanColor) return system.load(this, Model::WonderSwanColor);
   return false;
 }
 
@@ -146,7 +143,7 @@ auto Interface::run() -> void {
 
 auto Interface::rotate() -> void {
   system.rotate();
-  deviceChanged(0, system.orientation());
+  platform->deviceChanged(0, system.orientation());
 }
 
 auto Interface::serialize() -> serializer {

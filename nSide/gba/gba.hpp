@@ -13,6 +13,7 @@
 #include <processor/arm/arm.hpp>
 
 namespace GameBoyAdvance {
+  #define platform Emulator::platform
   using File = Emulator::File;
   using Scheduler = Emulator::Scheduler;
   using Cheat = Emulator::Cheat;

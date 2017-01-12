@@ -2,11 +2,9 @@
 
 namespace GameBoy {
 
-Interface* interface = nullptr;
 Settings settings;
 
 Interface::Interface() {
-  interface = this;
   hook = nullptr;
 
   information.preAlpha     = false;
@@ -18,8 +16,8 @@ Interface::Interface() {
   information.capability.states = true;
   information.capability.cheats = true;
 
-  media.append({ID::GameBoy,      "Game Boy",       "gb",  Domain::Portable});
-  media.append({ID::GameBoyColor, "Game Boy Color", "gbc", Domain::Portable});
+  media.append({ID::GameBoy,      "Game Boy",       "gb"});
+  media.append({ID::GameBoyColor, "Game Boy Color", "gbc"});
 
   Port hardwarePort{ID::Port::Hardware, "Hardware", Hardwired};
 
@@ -137,9 +135,9 @@ auto Interface::sha256() -> string {
 }
 
 auto Interface::load(uint id) -> bool {
-  if(id == ID::GameBoy) return system.load(System::Revision::GameBoy);
-  if(id == ID::SuperGameBoy) return system.load(System::Revision::SuperGameBoy);
-  if(id == ID::GameBoyColor) return system.load(System::Revision::GameBoyColor);
+  if(id == ID::GameBoy) return system.load(this, System::Revision::GameBoy);
+  if(id == ID::SuperGameBoy) return system.load(this, System::Revision::SuperGameBoy);
+  if(id == ID::GameBoyColor) return system.load(this, System::Revision::GameBoyColor);
   return false;
 }
 
@@ -218,12 +216,12 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
-  string pathname = {path(cartridge.pathID()), "debug/"};
+  string pathname = {platform->path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 
-  if(auto fp = interface->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.wram, !system.cgb() ? 8192 : 32768);
-  if(auto fp = interface->open(cartridge.pathID(), "debug/internal.ram", File::Write)) fp->write(cpu.hram, 128);
-  if(cartridge.ram.size) if(auto fp = interface->open(cartridge.pathID(), "debug/program-save.ram", File::Write)) {
+  if(auto fp = platform->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.wram, !system.cgb() ? 8192 : 32768);
+  if(auto fp = platform->open(cartridge.pathID(), "debug/internal.ram", File::Write)) fp->write(cpu.hram, 128);
+  if(cartridge.ram.size) if(auto fp = platform->open(cartridge.pathID(), "debug/program-save.ram", File::Write)) {
     fp->write(cartridge.ram.data, cartridge.ram.size);
   }
 }

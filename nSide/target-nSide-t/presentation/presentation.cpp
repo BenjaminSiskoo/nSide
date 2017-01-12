@@ -1,4 +1,4 @@
-#include "../tomoko.hpp"
+#include "../nSide.hpp"
 #include "about.cpp"
 unique_pointer<AboutWindow> aboutWindow;
 unique_pointer<Presentation> presentation;
@@ -164,17 +164,14 @@ auto Presentation::refreshLibraryMenu() -> void {
   for(auto& manufacturer : manufacturers) {
     Menu manufacturerMenu{&libraryMenu};
     manufacturerMenu.setText(manufacturer);
-    for(uint domain : range(3)) {
-      for(auto& emulator : program->emulators) {
-        if(emulator->information.manufacturer != manufacturer) continue;
-        if(emulator->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
-        for(auto& medium : emulator->media) {
-          if(medium.domain != domain) continue;
-          auto item = new MenuItem{&manufacturerMenu};
-          item->setText({emulator->information.preAlpha ? "(!) " : "", medium.name, " ..."}).onActivate([=] {
-            program->loadMedium(*emulator, medium);
-          });
-        }
+    for(auto& emulator : program->emulators) {
+      if(emulator->information.manufacturer != manufacturer) continue;
+      if(emulator->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
+      for(auto& medium : emulator->media) {
+        auto item = new MenuItem{&manufacturerMenu};
+        item->setText({emulator->information.preAlpha ? "(!) " : "", medium.name, " ..."}).onActivate([=] {
+          program->loadMedium(*emulator, medium);
+        });
       }
     }
   }

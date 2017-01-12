@@ -13,6 +13,7 @@
 #include <processor/v30mz/v30mz.hpp>
 
 namespace WonderSwan {
+  #define platform Emulator::platform
   using File = Emulator::File;
   using Scheduler = Emulator::Scheduler;
   using Cheat = Emulator::Cheat;

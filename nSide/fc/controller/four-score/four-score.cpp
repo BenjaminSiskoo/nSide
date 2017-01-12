@@ -5,7 +5,7 @@ FourScore::FourScore(bool port) : Controller(port) {
 
 auto FourScore::data() -> uint3 {
   if(counter >= 24) return 1;
-  if(latched) return interface->inputPoll(port, ID::Device::FourScore, 0 + A);
+  if(latched) return platform->inputPoll(port, ID::Device::FourScore, 0 + A);
 
   auto& A = gamepads[0];
   auto& B = gamepads[1];
@@ -47,14 +47,14 @@ auto FourScore::latch(bool data) -> void {
   if(latched == 0) {
     for(uint id : range(2)) {
       auto& gamepad = gamepads[id];
-      gamepad.a      = interface->inputPoll(port, ID::Device::FourScore, id * 8 + A);
-      gamepad.b      = interface->inputPoll(port, ID::Device::FourScore, id * 8 + B);
-      gamepad.select = interface->inputPoll(port, ID::Device::FourScore, id * 8 + Select);
-      gamepad.start  = interface->inputPoll(port, ID::Device::FourScore, id * 8 + Start);
-      gamepad.up     = interface->inputPoll(port, ID::Device::FourScore, id * 8 + Up);
-      gamepad.down   = interface->inputPoll(port, ID::Device::FourScore, id * 8 + Down);
-      gamepad.left   = interface->inputPoll(port, ID::Device::FourScore, id * 8 + Left);
-      gamepad.right  = interface->inputPoll(port, ID::Device::FourScore, id * 8 + Right);
+      gamepad.a      = platform->inputPoll(port, ID::Device::FourScore, id * 8 + A);
+      gamepad.b      = platform->inputPoll(port, ID::Device::FourScore, id * 8 + B);
+      gamepad.select = platform->inputPoll(port, ID::Device::FourScore, id * 8 + Select);
+      gamepad.start  = platform->inputPoll(port, ID::Device::FourScore, id * 8 + Start);
+      gamepad.up     = platform->inputPoll(port, ID::Device::FourScore, id * 8 + Up);
+      gamepad.down   = platform->inputPoll(port, ID::Device::FourScore, id * 8 + Down);
+      gamepad.left   = platform->inputPoll(port, ID::Device::FourScore, id * 8 + Left);
+      gamepad.right  = platform->inputPoll(port, ID::Device::FourScore, id * 8 + Right);
     }
   }
 }

@@ -22,9 +22,6 @@ auto PSG::data(uint8 data) -> void {
 }
 
 auto PSG::power() -> void {
-}
-
-auto PSG::reset() -> void {
   create(PSG::Enter, system.colorburst());
   stream = Emulator::audio.createStream(2, system.colorburst());
 }

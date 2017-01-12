@@ -6,7 +6,7 @@ FourPlayers::FourPlayers() {
 
 auto FourPlayers::data1() -> bool {
   if(counter1 >= 24) return 1;
-  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, 0 + A);
+  if(latched) return platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, 0 + A);
 
   auto& A = gamepads[0];
   auto& B = gamepads[2];
@@ -42,7 +42,7 @@ auto FourPlayers::data1() -> bool {
 
 auto FourPlayers::data2() -> uint5 {
   if(counter2 >= 24) return 2;
-  if(latched) return interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, 8 + A) << 1;
+  if(latched) return platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, 8 + A) << 1;
 
   auto& A = gamepads[1];
   auto& B = gamepads[3];
@@ -85,14 +85,14 @@ auto FourPlayers::write(uint3 data) -> void {
   if(latched == 0) {
     for(uint id : range(4)) {
       auto& gamepad = gamepads[id];
-      gamepad.a      = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + A);
-      gamepad.b      = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + B);
-      gamepad.select = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Select);
-      gamepad.start  = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Start);
-      gamepad.up     = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Up);
-      gamepad.down   = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Down);
-      gamepad.left   = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Left);
-      gamepad.right  = interface->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Right);
+      gamepad.a      = platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + A);
+      gamepad.b      = platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + B);
+      gamepad.select = platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Select);
+      gamepad.start  = platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Start);
+      gamepad.up     = platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Up);
+      gamepad.down   = platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Down);
+      gamepad.left   = platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Left);
+      gamepad.right  = platform->inputPoll(ID::Port::Expansion, ID::Device::FourPlayers, id * 8 + Right);
     }
   }
 }

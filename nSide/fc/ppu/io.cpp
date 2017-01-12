@@ -1,10 +1,10 @@
 auto PPU::readCIRAM(uint12 addr) -> uint8 {
-  if(!system.vs()) addr &= 0x7ff;
+  if(system.model() != Model::VSSystem) addr &= 0x7ff;
   return ciram[addr];
 }
 
 auto PPU::writeCIRAM(uint12 addr, uint8 data) -> void {
-  if(!system.vs()) addr &= 0x7ff;
+  if(system.model() != Model::VSSystem) addr &= 0x7ff;
   ciram[addr] = data;
 }
 

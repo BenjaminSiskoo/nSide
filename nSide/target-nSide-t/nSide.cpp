@@ -1,4 +1,4 @@
-#include "tomoko.hpp"
+#include "nSide.hpp"
 unique_pointer<Video> video;
 unique_pointer<Audio> audio;
 unique_pointer<Input> input;

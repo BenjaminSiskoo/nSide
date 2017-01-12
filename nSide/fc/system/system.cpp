@@ -10,39 +10,17 @@ Cheat cheat;
 #include "random.cpp"
 #include "serialization.cpp"
 
-auto System::run() -> void {
-  if(scheduler.enter() == Scheduler::Event::Frame) {
-    ppu.refresh();
-    if(pc10()) playchoice10.videoCircuit.refresh();
-  }
-}
-
-auto System::runToSave() -> void {
-  scheduler.synchronize(cpu);
-  scheduler.synchronize(apu);
-  scheduler.synchronize(ppu);
-  scheduler.synchronize(cartridge);
-  for(auto coprocessor : cpu.coprocessors) scheduler.synchronize(*coprocessor);
-  for(auto peripheral : cpu.peripherals) scheduler.synchronize(*peripheral);
-}
-
 auto System::init() -> void {
-  assert(interface != nullptr);
-
   vssystem.init();
   playchoice10.init();
   famicombox.init();
 }
 
-auto System::term() -> void {
-}
-
-auto System::load(Model model) -> bool {
-  information = Information();
-
+auto System::load(Emulator::Interface* interface, Model model) -> bool {
+  information = {};
   information.model = model;
 
-  if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {
+  if(auto fp = platform->open(ID::System, "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
   } else return false;
 
@@ -97,6 +75,7 @@ auto System::load(Model model) -> bool {
   }
 
   serializeInit();
+  this->interface = interface;
   return information.loaded = true;
 }
 
@@ -144,8 +123,7 @@ auto System::reset() -> void {
   configureVideoPalette();
   configureVideoEffects();
 
-  Emulator::audio.reset();
-  Emulator::audio.setInterface(interface);
+  resetAudio();
 
   scheduler.reset();
   cartridge.reset();
@@ -169,6 +147,27 @@ auto System::reset() -> void {
 
   scheduler.primary(cpu);
   peripherals.reset();
+}
+
+auto System::resetAudio() -> void {
+  Emulator::audio.reset();
+  Emulator::audio.setInterface(interface);
+}
+
+auto System::run() -> void {
+  if(scheduler.enter() == Scheduler::Event::Frame) {
+    ppu.refresh();
+    if(model() == Model::PlayChoice10) playchoice10.videoCircuit.refresh();
+  }
+}
+
+auto System::runToSave() -> void {
+  scheduler.synchronize(cpu);
+  scheduler.synchronize(apu);
+  scheduler.synchronize(ppu);
+  scheduler.synchronize(cartridge);
+  for(auto coprocessor : cpu.coprocessors) scheduler.synchronize(*coprocessor);
+  for(auto peripheral : cpu.peripherals) scheduler.synchronize(*peripheral);
 }
 
 }

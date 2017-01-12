@@ -9,17 +9,10 @@ Cheat cheat;
 #include "video.cpp"
 #include "serialization.cpp"
 
-auto System::init() -> void {
-  assert(interface != nullptr);
-}
-
-auto System::term() -> void {
-}
-
-auto System::load(Model model) -> bool {
+auto System::load(Emulator::Interface* interface, Model model) -> bool {
   _model = model;
 
-  if(auto fp = interface->open(ID::System, "manifest.bml", File::Read, File::Required)) {
+  if(auto fp = platform->open(ID::System, "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
   } else return false;
 
@@ -33,14 +26,16 @@ auto System::load(Model model) -> bool {
     eeprom.erase();
     //initialize user-data section
     for(uint addr = 0x0030; addr <= 0x003a; addr++) eeprom[addr] = 0x0000;
-    if(auto fp = interface->open(ID::System, eeprom.name(), File::Read)) {
+    if(auto fp = platform->open(ID::System, eeprom.name(), File::Read)) {
       fp->read(eeprom.data(), eeprom.size());
     }
   }
 
   if(!cartridge.load()) return false;
+
   serializeInit();
   _orientation = cartridge.information.orientation;
+  this->interface = interface;
   return _loaded = true;
 }
 
@@ -105,17 +100,17 @@ auto System::pollKeypad() -> void {
   uint port = ID::Port::Hardware;
   uint device = !_orientation ? ID::Device::HorizontalControls : ID::Device::VerticalControls;
 
-  keypad.y1 = interface->inputPoll(port, device, 0);
-  keypad.y2 = interface->inputPoll(port, device, 1);
-  keypad.y3 = interface->inputPoll(port, device, 2);
-  keypad.y4 = interface->inputPoll(port, device, 3);
-  keypad.x1 = interface->inputPoll(port, device, 4);
-  keypad.x2 = interface->inputPoll(port, device, 5);
-  keypad.x3 = interface->inputPoll(port, device, 6);
-  keypad.x4 = interface->inputPoll(port, device, 7);
-  keypad.b = interface->inputPoll(port, device, 8);
-  keypad.a = interface->inputPoll(port, device, 9);
-  keypad.start = interface->inputPoll(port, device, 10);
+  keypad.y1 = platform->inputPoll(port, device, 0);
+  keypad.y2 = platform->inputPoll(port, device, 1);
+  keypad.y3 = platform->inputPoll(port, device, 2);
+  keypad.y4 = platform->inputPoll(port, device, 3);
+  keypad.x1 = platform->inputPoll(port, device, 4);
+  keypad.x2 = platform->inputPoll(port, device, 5);
+  keypad.x3 = platform->inputPoll(port, device, 6);
+  keypad.x4 = platform->inputPoll(port, device, 7);
+  keypad.b = platform->inputPoll(port, device, 8);
+  keypad.a = platform->inputPoll(port, device, 9);
+  keypad.start = platform->inputPoll(port, device, 10);
 
   if(keypad.y1 || keypad.y2 || keypad.y3 || keypad.y4
   || keypad.x1 || keypad.x2 || keypad.x3 || keypad.x4
