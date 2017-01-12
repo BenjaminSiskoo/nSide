@@ -66,53 +66,72 @@ auto PlayChoice10::Bus::out(uint8 addr, uint8 data) -> void {
     break;
   }
   case 0x01: {
-    playchoice10.controls   = data;
+    playchoice10.controls = data;
     print(data ? "Enable" : "Disable", " Controls\n");
     break;
   }
   case 0x02: {
-    playchoice10.ppuOutput  = data;
-    print(data ? "Enable" : "Disable", " PPU\n");
+    playchoice10.ppuOutput = data;
     break;
   }
   case 0x03: {
-    playchoice10.apuOutput  = 1;//data;
-    print(data ? "Enable" : "Disable", " Sound\n");
+    playchoice10.apuOutput = data;
     break;
   }
   case 0x04: {
-    if(!playchoice10.cpuReset && data) cpu.reset(), apu.reset();
-    playchoice10.cpuReset   = data;
-    print(data ? "End Resetting" : "Reset", " CPU\n");
+    if(!playchoice10.cpuReset && data) {
+      Emulator::audio.reset();
+      Emulator::audio.setInterface(interface);
+      cpu.reset();
+      apu.reset();
+    }
+    playchoice10.cpuReset = data;
     break;
   }
   case 0x05: {
-    playchoice10.cpuStop    = data;
+    playchoice10.cpuStop = data;
     print(data ? "Start" : "Stop", " CPU\n");
     break;
   }
-  case 0x06: playchoice10.display    = data; break;
+  case 0x06: {
+    playchoice10.display = data;
+    break;
+  }
   case 0x08: {
-    playchoice10.z80NMI     = data;
-    print(data ? "Enable" : "Disable", " Z80 NMI\n");
+    playchoice10.z80NMI = data;
     break;
   }
   case 0x09: {
-    playchoice10.watchdog   = data;
+    playchoice10.watchdog = data;
     print(data ? "Enable" : "Disable", " Watchdog\n");
     break;
   }
   case 0x0a: {
     if(!playchoice10.ppuReset && data) ppu.reset();
-    playchoice10.ppuReset   = data;
-    print(data ? "End Resetting" : "Reset", " PPU\n");
+    playchoice10.ppuReset = data;
     break;
   }
-  case 0x0b: channel.bit(0)          = data; break;
-  case 0x0c: channel.bit(1)          = data; break;
-  case 0x0d: channel.bit(2)          = data; break;
-  case 0x0e: channel.bit(3)          = data; break;
-  case 0x0f: sramBank                = data; break;
+  case 0x0b: {
+    channel.bit(0) = data;
+    break;
+  }
+  case 0x0c: {
+    channel.bit(1) = data;
+    break;
+  }
+  case 0x0d: {
+    channel.bit(2) = data;
+    break;
+  }
+  case 0x0e: {
+    channel.bit(3) = data;
+    break;
+  }
+  case 0x0f: {
+    sramBank = data;
+    break;
+  }
+
   }
   switch(addr & 0x13) {
   case 0x10: break;

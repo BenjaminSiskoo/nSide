@@ -22,18 +22,6 @@ struct CartPal {
   auto famicomManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
   auto famicomImport(vector<uint8_t>& buffer, string location) -> string;
 
-  //vs-system.cpp
-  auto vsSystemManifest(string location) -> string;
-  auto vsSystemManifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
-  auto vsSystemManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
-  auto vsSystemImport(vector<uint8_t>& buffer, string location) -> string;
-
-  //playchoice-10.cpp
-  auto playchoice10Manifest(string location) -> string;
-  auto playchoice10Manifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr, uint* instrom = nullptr, uint* keyrom = nullptr) -> string;
-  auto playchoice10ManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
-  auto playchoice10Import(vector<uint8_t>& buffer, string location) -> string;
-
   //super-famicom.cpp
   auto superFamicomManifest(string location) -> string;
   auto superFamicomManifest(vector<uint8_t>& buffer, string location, bool* firmwareAppended = nullptr) -> string;
@@ -54,6 +42,11 @@ struct CartPal {
   auto megaDriveManifest(string location) -> string;
   auto megaDriveManifest(vector<uint8_t>& buffer, string location) -> string;
   auto megaDriveImport(vector<uint8_t>& buffer, string location) -> string;
+
+  //pc-engine.cpp
+  auto pcEngineManifest(string location) -> string;
+  auto pcEngineManifest(vector<uint8_t>& buffer, string location) -> string;
+  auto pcEngineImport(vector<uint8_t>& buffer, string location) -> string;
 
   //game-boy.cpp
   auto gameBoyManifest(string location) -> string;
@@ -85,6 +78,18 @@ struct CartPal {
   auto wonderSwanColorManifest(vector<uint8_t>& buffer, string location) -> string;
   auto wonderSwanColorImport(vector<uint8_t>& buffer, string location) -> string;
 
+  //vs-system.cpp
+  auto vsSystemManifest(string location) -> string;
+  auto vsSystemManifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
+  auto vsSystemManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
+  auto vsSystemImport(vector<uint8_t>& buffer, string location) -> string;
+
+  //playchoice-10.cpp
+  auto playchoice10Manifest(string location) -> string;
+  auto playchoice10Manifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr, uint* instrom = nullptr, uint* keyrom = nullptr) -> string;
+  auto playchoice10ManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
+  auto playchoice10Import(vector<uint8_t>& buffer, string location) -> string;
+
   //bs-memory.cpp
   auto bsMemoryManifest(string location) -> string;
   auto bsMemoryManifest(vector<uint8_t>& buffer, string location) -> string;
@@ -101,18 +106,19 @@ private:
   struct {
     Markup::Node atari2600;
     Markup::Node famicom;
-    Markup::Node vsSystem;
-    Markup::Node playchoice10;
     Markup::Node superFamicom;
     Markup::Node sg1000;
     Markup::Node masterSystem;
     Markup::Node megaDrive;
+    Markup::Node pcEngine;
     Markup::Node gameBoy;
     Markup::Node gameBoyColor;
     Markup::Node gameBoyAdvance;
     Markup::Node gameGear;
     Markup::Node wonderSwan;
     Markup::Node wonderSwanColor;
+    Markup::Node vsSystem;
+    Markup::Node playchoice10;
     Markup::Node bsMemory;
     Markup::Node sufamiTurbo;
   } database;

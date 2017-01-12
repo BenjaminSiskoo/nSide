@@ -62,7 +62,11 @@ auto PPU::renderPixel() -> void {
     if(!palette) palette = extIn();
     _extOut = 0;
   }
-  output[vcounter() * 256 + x] = io.emphasis << 6 | readCGRAM(palette);
+  if(!system.pc10() || playchoice10.ppuOutput) {
+    output[vcounter() * 256 + x] = io.emphasis << 6 | readCGRAM(palette);
+  } else {
+    output[vcounter() * 256 + x] = 0x0f;
+  }
 }
 
 auto PPU::renderSprite() -> void {

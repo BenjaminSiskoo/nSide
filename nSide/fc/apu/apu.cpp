@@ -58,7 +58,11 @@ auto APU::main() -> void {
 //output  = filter.runLopass(output);
   output  = sclamp<16>(output);
 
-  stream->sample(output / 32768.0);
+  if(!system.pc10() || playchoice10.apuOutput) {
+    stream->sample(output / 32768.0);
+  } else {
+    stream->sample(0.0);
+  }
 
   tick();
 }

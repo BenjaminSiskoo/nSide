@@ -33,38 +33,38 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, uint size) {
   if(data[2] != 'S') return;
   if(data[3] !=  26) return;
 
-  mapper = ((data[7] >> 4) << 4) | (data[6] >> 4);
-  mirror = ((data[6] & 0x08) >> 2) | (data[6] & 0x01);
+  mapper = data[6].bits(4,7) | data[7].bits(4,7) << 4;
+  mirror = data[6].bit(0) | data[6].bit(3) << 1;
   prgrom = data[4] * 0x4000;
   chrrom = data[5] * 0x2000;
   prgram = 0u;
   chrram = chrrom == 0u ? 8192u : 0u;
-  battery = data[6] & 0x02;
-  vs      = data[7] & 0x01;
+  battery = data[6].bit(1);
+  vs      = data[7].bit(0);
   nes2    = (data[7] & 0x0c) == 0x08;
   if(!nes2) {
     // ignore the last 9 bytes of headers that have "DiskDude!" or other
     // messages written there
     if(data[12] == 0 && data[13] == 0 && data[14] == 0 && data[15] == 0) {
       prgram = data[8] * 0x2000;
-      region = data[9] & 0x01;
+      region = data[9].bit(0);
     } else {
       mapper &= 0x0f;
       vs = false;
       pc10 = false;
     }
   } else {
-    pc10 = data[7] & 0x02;
-    mapper |= (data[8] & 0x0f) << 8;
-    submapper |= data[8] >> 4;
-    prgrom += (data[9] & 0x0f) * 0x400000;
-    chrrom += (data[9] >> 4) * 0x200000;
-    prgram = ((data[10] & 0x0f) == 0 ? 0 : 64) << (data[10] & 0x0f); // no battery
-    prgram += (data[10] >> 4 == 0 ? 0 : 64) << (data[10] >> 4); // battery
-    chrram = ((data[11] & 0x0f) == 0 ? 0 : 64) << (data[11] & 0x0f); // no battery
-    chrram += (data[11] >> 4 == 0 ? 0 : 64) << (data[11] >> 4); // battery
-    region = data[12] & 0x01;
-    ppu = data[13] & 0x0f;
+    pc10 = data[7].bit(1);
+    mapper |= data[8].bits(0,3) << 8;
+    submapper = data[8].bits(4,7);
+    prgrom += data[9].bits(0,3) * 0x400000;
+    chrrom += data[9].bits(4,7) * 0x200000;
+    prgram  = (data[10].bits(0,3) == 0 ? 0 : 64) << data[10].bits(0,3); // no battery
+    prgram += (data[10].bits(4,7) == 0 ? 0 : 64) << data[10].bits(4,7); // battery
+    chrram  = (data[11].bits(0,3) == 0 ? 0 : 64) << data[11].bits(0,3); // no battery
+    chrram += (data[11].bits(4,7) == 0 ? 0 : 64) << data[11].bits(4,7); // battery
+    region = data[12].bit(0);
+    ppu = data[13].bits(0,3);
   }
 
   if(vs) { vsSystemHeuristic(data, size); return; }
@@ -393,14 +393,14 @@ FamicomCartridge::FamicomCartridge(const uint8_t* data, uint size) {
 }
 
 auto FamicomCartridge::vsSystemHeuristic(const uint8_t* data, unsigned size) -> void {
-  mapper = (data[7] & 0x80) | (data[6] >> 4);
-  mirror = ((data[6] & 0x08) >> 2) | (data[6] & 0x01);
+  mapper = data[6].bits(4,7) | data[7].bits(4,7) << 4;
+  mirror = data[6].bit(0) | data[6].bit(3) << 1;
   prgrom = data[4] * 0x4000;
   chrrom = data[5] * 0x2000;
   prgram = 0u;
   chrram = chrrom == 0u ? 8192u : 0u;
-  battery = data[6] & 0x02;
-  vs      = data[7] & 0x01;
+  battery = data[6].bit(1);
+  vs      = data[7].bit(0);
   nes2    = (data[7] & 0x0c) == 0x08;
   if(!nes2) {
     // ignore the last 9 bytes of headers that have "DiskDude!" or other
@@ -412,17 +412,17 @@ auto FamicomCartridge::vsSystemHeuristic(const uint8_t* data, unsigned size) -> 
       return;
     }
   } else {
-    pc10 = data[7] & 0x02;
-    mapper |= (data[8] & 0x0f) << 8;
-    submapper |= data[8] >> 4;
-    prgrom += (data[9] & 0x0f) * 0x400000;
-    chrrom += (data[9] >> 4) * 0x200000;
-    prgram = ((data[10] & 0x0f) == 0 ? 0 : 64) << (data[10] & 0x0f); // no battery
-    prgram += (data[10] >> 4 == 0 ? 0 : 64) << (data[10] >> 4); // battery
-    chrram = ((data[11] & 0x0f) == 0 ? 0 : 64) << (data[11] & 0x0f); // no battery
-    chrram += (data[11] >> 4 == 0 ? 0 : 64) << (data[11] >> 4); // battery
-    region = data[12] & 0x01;
-    ppu = data[13] & 0x0f;
+    pc10 = data[7].bit(1);
+    mapper |= data[8].bits(0,3) << 8;
+    submapper = data[8].bits(4,7);
+    prgrom += data[9].bits(0,3) * 0x400000;
+    chrrom += data[9].bits(4,7) * 0x200000;
+    prgram  = (data[10].bits(0,3) == 0 ? 0 : 64) << data[10].bits(0,3); // no battery
+    prgram += (data[10].bits(4,7) == 0 ? 0 : 64) << data[10].bits(4,7); // battery
+    chrram  = (data[11].bits(0,3) == 0 ? 0 : 64) << data[11].bits(0,3); // no battery
+    chrram += (data[11].bits(4,7) == 0 ? 0 : 64) << data[11].bits(4,7); // battery
+    region = data[12].bit(0);
+    ppu = data[13].bits(0,3);
   }
   if(prgram >= 0x800) prgram -= 0x800; // VS. System built-in RAM
 

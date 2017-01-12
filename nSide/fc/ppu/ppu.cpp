@@ -167,6 +167,9 @@ auto PPU::originY() -> uint {
 }
 
 auto PPU::refresh() -> void {
+  if(system.pc10() && playchoice10.screenConfig == PlayChoice10::ScreenConfig::Single) {
+    if(playchoice10.display == 0) return;
+  }
   auto output = this->output;
   Emulator::video.refreshRegion(output, 256 * sizeof(uint32), originX(), originY(), 256, 240);
 }

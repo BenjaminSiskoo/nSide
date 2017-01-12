@@ -4,7 +4,6 @@ auto PlayChoice10::CPU::Enter() -> void {
 
 auto PlayChoice10::CPU::main() -> void {
   if(state.nmiLine) {
-    print("NMI while program counter was at $", hex(r.pc, 4L), "\n");
     state.nmiLine = 0;  //edge-sensitive
     irq(0, 0x0066, 0xff);
   }
