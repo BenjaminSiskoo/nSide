@@ -45,8 +45,8 @@ auto PlayChoice10::VideoCircuit::run(uint x, uint y) -> void {
     return;
   }
 
-  uint tileY = y >> 3;
-  uint tileX = x >> 3;
+  uint5 tileY = y >> 3;
+  uint5 tileX = x >> 3;
   uint16 addr = (tileY * 32 + tileX) << 1;
 
   uint16 data;
@@ -54,10 +54,11 @@ auto PlayChoice10::VideoCircuit::run(uint x, uint y) -> void {
   data.byte(1) = vram[addr | 1];
 
   uint tileID = data.bits(0,10);
+  uint32 color = data.bits(11,15) << 3;
+
   uint pixelY = y & 7;
   uint pixelX = x & 7;
 
-  uint32 color = data.bits(11,15) << 3;
   uint8 byte;
   for(uint plane : range(3)) {
     byte = chrrom[(plane << 13) + (tileID << 3) + pixelY];

@@ -52,19 +52,19 @@ auto PlayChoice10::power() -> void {
 
   nmiDetected = false;
 
-  vramAccess = 0;  //0: Z80,                  1: video circuit
-  controls   = 0;  //0: disable START/SELECT, 1: enable START/SELECT
-  ppuOutput  = 0;  //0: disable,              1: enable
-  apuOutput  = 0;  //0: disable,              1: enable
-  cpuReset   = 0;  //0: reset,                1: run
-  cpuStop    = 0;  //0: stop,                 1: run
-  display    = 0;  //0: video circuit,        1: PPU
-  z80NMI     = 0;  //0: disable,              1: enable
-  watchdog   = 0;  //0: enable,               1: disable
-  ppuReset   = 0;  //0: reset,                1: run
+  vramAccess      = 0;  //0: Z80,                  1: video circuit
+  gameSelectStart = 0;  //0: disable START/SELECT, 1: enable START/SELECT
+  ppuOutput       = 0;  //0: disable,              1: enable
+  apuOutput       = 0;  //0: disable,              1: enable
+  cpuReset        = 0;  //0: reset,                1: run
+  cpuStop         = 0;  //0: stop,                 1: run
+  display         = 0;  //0: video circuit,        1: PPU
+  z80NMI          = 0;  //0: disable,              1: enable
+  watchdog        = 0;  //0: enable,               1: disable
+  ppuReset        = 0;  //0: reset,                1: run
 
-  channel    = 0;  //channel 1 on-screen
-  sramBank   = 1;
+  channel  = 0;  //channel 1 on-screen
+  sramBank = 1;
 }
 
 auto PlayChoice10::reset() -> void {
@@ -119,13 +119,14 @@ auto PlayChoice10::in(uint8 addr) -> uint8 {
   bool enter         = poll(Enter);
   bool reset         = poll(Reset);
   bool nmi           = !nmiDetected;
+  bool primeTime     = false;
   bool coin2         = poll(Coin2);
   bool service       = poll(ServiceButton);
   bool coin1         = poll(Coin1);
   switch(addr & 0x03) {
   case 0x00:
     return channelSelect << 0 | enter << 1 | reset << 2 | nmi << 3
-    | coin2 << 5 | service << 6 | coin1 << 7;
+    | primeTime << 4 | coin2 << 5 | service << 6 | coin1 << 7;
   case 0x01: return dip.byte(0);
   case 0x02: return dip.byte(1);
   case 0x03: return nmiDetected = false, 0x00;
@@ -141,7 +142,7 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
     break;
   }
   case 0x01: {
-    controls = data;
+    gameSelectStart = data;
     break;
   }
   case 0x02: {
@@ -246,8 +247,8 @@ auto PlayChoice10::latchControllers(uint16 addr, uint8 data) -> void {
   cpu.writeCPU(addr, data);
   if(old_latched == data.bit(0)) return;
   if(gamepad->latched == 0) {
-    controller1GameSelect = poll(GameSelect);
-    controller1Start      = poll(Start);
+    controller1GameSelect = gameSelectStart & poll(GameSelect);
+    controller1Start      = gameSelectStart & poll(Start);
   }
 }
 

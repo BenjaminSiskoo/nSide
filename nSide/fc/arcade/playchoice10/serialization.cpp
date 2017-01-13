@@ -6,7 +6,7 @@ auto PlayChoice10::serialize(serializer& s) -> void {
   s.integer(nmiDetected);
 
   s.integer(vramAccess);
-  s.integer(controls);
+  s.integer(gameSelectStart);
   s.integer(ppuOutput);
   s.integer(apuOutput);
   s.integer(cpuReset);

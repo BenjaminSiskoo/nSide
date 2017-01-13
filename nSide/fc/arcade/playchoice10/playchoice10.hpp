@@ -33,7 +33,7 @@ struct PlayChoice10 : Processor::Z80::Bus {
   bool nmiDetected;
 
   bool vramAccess;
-  bool controls;
+  bool gameSelectStart;
   bool ppuOutput;
   bool apuOutput;
   bool cpuReset;
