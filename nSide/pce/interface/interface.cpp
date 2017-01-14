@@ -16,7 +16,7 @@ Interface::Interface() {
 
   media.append({ID::PCEngine, "PC Engine", "pce"});
 
-  Port controllerPort{ID::Port::Controller, "Controller Port", PlugAndPlay};
+  Port controllerPort{ID::Port::Controller, "Controller Port"};
 
   { Device device{ID::Device::None, "None"};
     controllerPort.devices.append(device);
@@ -49,7 +49,7 @@ auto Interface::videoSize() -> VideoSize {
   return {512, 484};
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc) -> VideoSize {
+auto Interface::videoSize(uint width, uint height, bool arc, bool intSize) -> VideoSize {
   auto a = arc ? 8.0 / 7.0 : 1.0;
   uint w = 256;
   uint h = 242;
