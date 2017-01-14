@@ -10,14 +10,19 @@ struct ID {
   };
 
   struct Port { enum : uint {
+    Hardware,
     Controller1,
     Controller2,
     Expansion,
-    Arcade,
   };};
 
   struct Device { enum : uint {
     None,
+    FamicomControls,
+    VSSystemControls,
+    PlayChoice10Controls,
+    FamicomBoxControls,
+
     Gamepad,
     GamepadMic,
     FourScore,
@@ -36,9 +41,6 @@ struct ID {
     VausE,
     SFCGamepad,
     MouseE,
-
-    VSPanel,
-    PC10Panel,
   };};
 };
 
@@ -209,7 +211,6 @@ struct Settings {
   uint controllerPort1 = 0;
   uint controllerPort2 = 0;
   uint expansionPort = 0;
-  uint arcadePanel = 0;
   bool random = true;
 };
 

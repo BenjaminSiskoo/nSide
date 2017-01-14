@@ -22,14 +22,12 @@ struct Presentation : Window {
   MenuBar menuBar{this};
     Menu libraryMenu{&menuBar};
     Menu systemMenu{&menuBar};
-      MenuItem powerSystem{&systemMenu};
-      MenuItem resetSystem{&systemMenu};
-      MenuSeparator systemMenuSeparatorPorts{&systemMenu};
       Menu inputPort1{&systemMenu};
       Menu inputPort2{&systemMenu};
       Menu inputPort3{&systemMenu};
       Menu inputPort4{&systemMenu};
-      MenuSeparator systemMenuSeparatorUnload{&systemMenu};
+      MenuSeparator systemMenuSeparatorPorts{&systemMenu};
+      MenuItem reloadSystem{&systemMenu};
       MenuItem unloadSystem{&systemMenu};
     Menu settingsMenu{&menuBar};
       Menu videoScaleMenu{&settingsMenu};

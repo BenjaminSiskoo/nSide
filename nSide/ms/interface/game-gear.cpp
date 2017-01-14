@@ -10,7 +10,7 @@ GameGearInterface::GameGearInterface() {
 
   media.append({ID::GameGear, "Game Gear", "gg"});
 
-  Port hardware{ID::Port::Hardware, "Hardware", Hardwired};
+  Port hardware{ID::Port::Hardware, "Hardware"};
 
   { Device device{ID::Device::GameGearControls, "Controls"};
     device.inputs.append({0, "Up"});

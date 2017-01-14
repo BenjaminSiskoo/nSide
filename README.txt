@@ -23,7 +23,8 @@ expansion port devices supported are:
 *Family Trainer (Power Pad)
 *Mouse (unlicensed, only supported by homebrew)
 
-Finally, it supports the VS. UniSystem, with its own arcade panel and buttons.
+Finally, it supports the VS. UniSystem and PlayChoice-10, each with their own
+arcade panels and buttons.
 
 Please be aware that a great majority of Famicom and NES games support the use
 of Player 3 and Player 4 (Famicom) as substitutes for Player 1 and Player 2,
@@ -44,8 +45,7 @@ higan's settings upon first load.
 In Windows, the configuration files are in "%LocalAppData%\nSide".
 
 You will need the GBA BIOS to play Game Boy Advance games. This is no different
-from higan. Like with higan, just drag the Game Boy Advance BIOS onto nSide's
-icon to install it.
+from higan.
 
 GBA BIOS
 sha256: fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570
@@ -58,17 +58,19 @@ sha256: 12200cee0965b871d2a47ac09ef563214d1b1a8355beda8bd477e21a561682e8
 BIOS for single-screen
 sha256: 64c1a7debf4729941c60e4c722ed61282ebd2f36928a30e55c9631477ce522ac
 
-Composite character ROM (3 files 8P + 8M + 8K put together for a 24KB ROM)
+Composite character ROM
+3 files 8P + 8M + 8K put together for a 24KB ROM
 sha256: a8bf9c58e31dee0a60a2d480bd707c323212fba8963cc35a47423cadd1d7ed26
 
-Composite palette ROM (3 files 6F + 6E + 6D put together—each byte is the
-corresponding nybble with a leading 0—for a 768-byte ROM)
-sha256: 9f639da2e0248431b59a9344769a38fad8b64742ce6e0e44534e6918b8977a0a)
+Composite palette ROM
+3 files 6F + 6E + 6D put together for a 768 byte ROM
+Each byte is the corresponding nybble in the low 4 bits and all 0's in the high
+4 bits. MAME's expected palette ROMs come in this format already, except split
+into 3 files.
+sha256: 9f639da2e0248431b59a9344769a38fad8b64742ce6e0e44534e6918b8977a0a
 
 ...but if you do not wish to emulate the PlayChoice-10, the above 3 files are
-not necessary. Keep in mind that PlayChoice-10 emulation is still incomplete, so
-these files will not be very useful right now. Dragging and dropping is not
-supported like with the Game Boy Advance BIOS.
+not necessary.
 
 Known Bugs:
 Famicom:
@@ -110,6 +112,11 @@ WonderSwan:
   *Card Captor Sakura has columns of corruption when characters speak.
   *Meitantei Conan - Nishi no Meitantei Saidai no Kiki!? will not start because
   it relies on correct prefetch emulation.
+
+PlayChoice-10:
+  *When the Z80 tries to stop the CPU, it never actually does so, so games keep
+  running for 20 more seconds even when the timer runs out, albeit with no sound
+  (which is a separate disable that works correctly).
 
 ===========================
 Changes from higan: General
@@ -345,38 +352,29 @@ Changes from higan: Famicom
    Added limited support for the VS. System. Only UniSystem games will work
   right now (Tennis and Baseball are DualSystem games that would require
   emulating 2 Famicoms). The Start and Select buttons are disabled in favor of
-  Buttons 1, 2, 3, and 4, which can be configured in the new Famicom Expansion
-  device, the VS. Panel. The VS. Panel also controls the service button and coin
-  slots. It is connected automatically and cannot be disconnected, but a
-  limitation of the UI prevents the interface from acknowledging that a device
-  change was refused.
-   VS. games are stored in a separate "VS. System" folder in the library, just
-  like PlayChoice-10 games. The VS. manifest format selects the PPU revision in
-  "cartridge/vs/ppu/revision" and specifies DIP switch settings in the same
-  format as the Nintendo Super System's DIP switch settings
-  ("cartridge/vs/setting/option/value").
+  Buttons 1, 2, 3, and 4, which can be configured in the new Famicom Arcade
+  Panel device, the VS. Panel. The VS. Panel also controls the service button
+  and coin slots. It is connected automatically and cannot be disconnected.
+   VS. games are stored in a separate "VS. System" folder in the library. The
+  VS. manifest format selects the PPU revision in "cartridge/vs/ppu/revision"
+  and specifies DIP switch settings in the same format as the Nintendo Super
+  System's DIP switch settings ("cartridge/vs/setting/option/value").
 
    Added support for loading games with the .pc10 extension.
-  Currently, PlayChoice-10 games load the same way as Famicom games but with the
-  RGB palette in the 2C03. It will now load the BIOS from the PlayChoice-10.sys
-  folder and throw a warning if one is not found, but because it is not
-  actually used in any way, you can put any 16384-byte file in there to avoid
-  the warning.
-  Note that RGB PPUs do not support the Color Emulation option or Display
-  Emulation shader. They display the same colors as when both are turned off.
+  The PlayChoice-10 loads the BIOS from the PlayChoice-10.sys folder and throws
+  a warning if one is not found. Using the BIOS is required to play
+  PlayChoice-10 games, which always occupy the 1st slot.
    In Famicom mode, which PPU to use is decided by the manifest in Famicom.sys.
   Just edit that file and replace "RP2C02G" with "RP2C03B" to use the RGB PPU
   in Famicom games.
 
    Prepared the video renderer for dynamic adjustment of screen width for
   VS. DualSystem and PlayChoice-10 games. To set the width to 512 pixels for a
-  VS. DualSystem game, add a second "vs" node with a "ppu" child. It is not
-  enough to simply have a 2nd "vs" node, said node needs to have a "ppu" node as
-  a child to activate the double width. This is currently not useful because of
-  lack of true DualSystem support. The height is set to 480 if using the
-  PlayChoice-10's dual screen mode (set in PlayChoice-10.sys/manifest.bml), and,
-  as a basic demonstration of the horrid frame-based renderer, it will display
-  the PlayChoice-10 logo at the top as you play.
+  VS. DualSystem game, add a second "side" node with a "ppu" child. It is not
+  enough to simply have a 2nd "side" node, said node needs to have a "ppu" node
+  as a child to activate the double width. This is currently not useful because
+  of lack of true DualSystem support. The height is set to 464 if using the
+  PlayChoice-10's dual screen mode (set in PlayChoice-10.sys/manifest.bml).
 
 =====================================================
 Changes from higan: processor/r6502 (affects Famicom)
@@ -459,7 +457,7 @@ Changes from higan: cart-pal
     NES-CPROM
     HVC-UN1ROM
     HVC-UNROM+74HC08
-    NES_TQROM
+    NES-TQROM
     NES-TVROM
     IREM-G101
     IREM-H3001

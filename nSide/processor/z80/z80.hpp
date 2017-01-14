@@ -202,6 +202,7 @@ struct Z80 {
   auto disassembleCBd(uint16 pc, uint8 prefix, int8 d, uint8 code) -> string;
   auto disassembleED(uint16 pc, uint8 prefix, uint8 code) -> string;
 
+  //serialization.cpp
   auto serialize(serializer&) -> void;
 
   struct Registers {

@@ -10,6 +10,30 @@ Cheat cheat;
 #include "random.cpp"
 #include "serialization.cpp"
 
+auto System::run() -> void {
+  if(scheduler.enter() == Scheduler::Event::Frame) {
+    switch(model()) {
+    case Model::Famicom:
+      if(platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomControls, 0)) reset();
+      break;
+    case Model::FamicomBox:
+      if(platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomBoxControls, 0)) reset();
+      break;
+    }
+    ppu.refresh();
+    if(model() == Model::PlayChoice10) playchoice10.videoCircuit.refresh();
+  }
+}
+
+auto System::runToSave() -> void {
+  scheduler.synchronize(cpu);
+  scheduler.synchronize(apu);
+  scheduler.synchronize(ppu);
+  scheduler.synchronize(cartridge);
+  for(auto coprocessor : cpu.coprocessors) scheduler.synchronize(*coprocessor);
+  for(auto peripheral : cpu.peripherals) scheduler.synchronize(*peripheral);
+}
+
 auto System::init() -> void {
   vssystem.init();
   playchoice10.init();
@@ -49,26 +73,18 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
 
   switch(model) {
 
-  case Model::Famicom: {
-    peripherals.connect(ID::Port::Arcade, ID::Device::None);
-    break;
-  }
-
   case Model::VSSystem: {
     vssystem.load();
-    peripherals.connect(ID::Port::Arcade, ID::Device::VSPanel);
     break;
   }
 
   case Model::PlayChoice10: {
     if(!playchoice10.load(system)) return false;
-    peripherals.connect(ID::Port::Arcade, ID::Device::PC10Panel);
     break;
   }
 
   case Model::FamicomBox: {
     if(!famicombox.load(system)) return false;
-    peripherals.connect(ID::Port::Arcade, ID::Device::None);
     break;
   }
 
@@ -152,22 +168,6 @@ auto System::reset() -> void {
 auto System::resetAudio() -> void {
   Emulator::audio.reset();
   Emulator::audio.setInterface(interface);
-}
-
-auto System::run() -> void {
-  if(scheduler.enter() == Scheduler::Event::Frame) {
-    ppu.refresh();
-    if(model() == Model::PlayChoice10) playchoice10.videoCircuit.refresh();
-  }
-}
-
-auto System::runToSave() -> void {
-  scheduler.synchronize(cpu);
-  scheduler.synchronize(apu);
-  scheduler.synchronize(ppu);
-  scheduler.synchronize(cartridge);
-  for(auto coprocessor : cpu.coprocessors) scheduler.synchronize(*coprocessor);
-  for(auto peripheral : cpu.peripherals) scheduler.synchronize(*peripheral);
 }
 
 }

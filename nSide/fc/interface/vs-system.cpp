@@ -12,9 +12,20 @@ VSSystemInterface::VSSystemInterface() {
 
   media.append({ID::VSSystem, "VS. System", "vs"});
 
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", Hardwired};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", Hardwired};
-  Port arcadePanel{ID::Port::Arcade, "Arcade Panel", Hardwired};
+  Port hardware{ID::Port::Hardware, "Hardware"};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
+
+  { Device device{ID::Device::VSSystemControls, "VS. System Controls"};
+    device.inputs.append({0, "Button 1"      });
+    device.inputs.append({0, "Button 2"      });
+    device.inputs.append({0, "Button 3"      });
+    device.inputs.append({0, "Button 4"      });
+    device.inputs.append({0, "Service Button"});
+    device.inputs.append({0, "Coin 1"        });
+    device.inputs.append({0, "Coin 2"        });
+    hardware.devices.append(device);
+  }
 
   { Device device{ID::Device::None, "None"};
     controllerPort1.devices.append(device);
@@ -39,20 +50,9 @@ VSSystemInterface::VSSystemInterface() {
     controllerPort2.devices.append(device);
   }
 
-  { Device device{ID::Device::VSPanel, "VS. Panel"};
-    device.inputs.append({0, "Button 1"      });
-    device.inputs.append({0, "Button 2"      });
-    device.inputs.append({0, "Button 3"      });
-    device.inputs.append({0, "Button 4"      });
-    device.inputs.append({0, "Service Button"});
-    device.inputs.append({0, "Coin 1"        });
-    device.inputs.append({0, "Coin 2"        });
-    arcadePanel.devices.append(device);
-  }
-
+  ports.append(move(hardware));
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
-  ports.append(move(arcadePanel));
 }
 
 auto VSSystemInterface::manifest() -> string {
@@ -90,9 +90,9 @@ auto VSSystemInterface::videoColors() -> uint32 {
 
 auto VSSystemInterface::videoColor(uint32 n) -> uint64 {
   static auto generateRGBColor = [](uint9 color, const uint9* palette) -> uint64 {
-    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)] >> 6 & 7;
-    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)] >> 3 & 7;
-    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)] >> 0 & 7;
+    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)].bits(6,8);
+    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)].bits(3,5);
+    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)].bits(0,2);
 
     uint64 R = image::normalize(r, 3, 16);
     uint64 G = image::normalize(g, 3, 16);

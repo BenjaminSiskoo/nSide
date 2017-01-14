@@ -13,7 +13,6 @@ auto Peripherals::reset() -> void {
   connect(ID::Port::Controller1, settings.controllerPort1);
   connect(ID::Port::Controller2, settings.controllerPort2);
   connect(ID::Port::Expansion, settings.expansionPort);
-  connect(ID::Port::Arcade, settings.arcadePanel);
 }
 
 auto Peripherals::connect(uint port, uint device) -> void {
@@ -100,11 +99,6 @@ auto Peripherals::connect(uint port, uint device) -> void {
     case ID::Device::SFCGamepad:     expansionPort = new SFCGamepad; break;
     case ID::Device::MouseE:         expansionPort = new MouseE; break;
     }
-  }
-
-  if(port == ID::Port::Arcade) {
-    settings.arcadePanel = device;
-    if(!system.loaded()) return;
   }
 
   cpu.peripherals.append(controllerPort1);

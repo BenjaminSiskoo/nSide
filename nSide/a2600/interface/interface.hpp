@@ -13,8 +13,8 @@ struct ID {
   };};
 
   struct Device { enum : uint {
-    Controls,
     None,
+    Controls,
     Joystick,
   };};
 };

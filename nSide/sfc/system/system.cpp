@@ -11,7 +11,10 @@ Cheat cheat;
 #include "serialization.cpp"
 
 auto System::run() -> void {
-  if(scheduler.enter() == Scheduler::Event::Frame) ppu.refresh();
+  if(scheduler.enter() == Scheduler::Event::Frame) {
+    if(platform->inputPoll(ID::Port::Hardware, ID::Device::Controls, 0)) reset();
+    ppu.refresh();
+  }
 }
 
 auto System::runToSave() -> void {

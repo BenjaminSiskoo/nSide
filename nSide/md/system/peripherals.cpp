@@ -22,9 +22,9 @@ auto Peripherals::connect(uint port, uint device) -> void {
 
     delete controllerPort1;
     switch(device) { default:
-    case ID::Device::None:          controllerPort1 = new Controller(ID::Port::Controller1); break;
-    case ID::Device::ControlPad:    controllerPort1 = new ControlPad(ID::Port::Controller1); break;
-    case ID::Device::FightingPad6B: controllerPort1 = new FightingPad6B(ID::Port::Controller1); break;
+    case ID::Device::None:          controllerPort1 = new Controller(port); break;
+    case ID::Device::ControlPad:    controllerPort1 = new ControlPad(port); break;
+    case ID::Device::FightingPad6B: controllerPort1 = new FightingPad6B(port); break;
     }
   }
 
@@ -34,9 +34,9 @@ auto Peripherals::connect(uint port, uint device) -> void {
 
     delete controllerPort2;
     switch(device) { default:
-    case ID::Device::None:          controllerPort2 = new Controller(ID::Port::Controller2); break;
-    case ID::Device::ControlPad:    controllerPort2 = new ControlPad(ID::Port::Controller2); break;
-    case ID::Device::FightingPad6B: controllerPort2 = new FightingPad6B(ID::Port::Controller2); break;
+    case ID::Device::None:          controllerPort2 = new Controller(port); break;
+    case ID::Device::ControlPad:    controllerPort2 = new ControlPad(port); break;
+    case ID::Device::FightingPad6B: controllerPort2 = new FightingPad6B(port); break;
     }
   }
 
@@ -46,7 +46,7 @@ auto Peripherals::connect(uint port, uint device) -> void {
 
     delete extensionPort;
     switch(device) { default:
-    case ID::Device::None: extensionPort = new Controller(2); break;
+    case ID::Device::None: extensionPort = new Controller(port); break;
     }
   }
 

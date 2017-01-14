@@ -12,9 +12,15 @@ FamicomInterface::FamicomInterface() {
 
   media.append({ID::Famicom, "Famicom", "fc"});
 
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
-  Port expansionPort{ID::Port::Expansion, "Expansion Port", PlugAndPlay};
+  Port hardware{ID::Port::Hardware, "Hardware"};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
+  Port expansionPort{ID::Port::Expansion, "Expansion Port"};
+
+  { Device device{ID::Device::FamicomControls, "Famicom Controls"};
+    device.inputs.append({0, "Reset"});
+    hardware.devices.append(device);
+  }
 
   { Device device{ID::Device::None, "None"};
     controllerPort1.devices.append(device);
@@ -280,6 +286,7 @@ FamicomInterface::FamicomInterface() {
     expansionPort.devices.append(device);
   }
 
+  ports.append(move(hardware));
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
   ports.append(move(expansionPort));
@@ -434,9 +441,9 @@ auto FamicomInterface::videoColor(uint32 n) -> uint64 {
   };
 
   static auto generateRGBColor = [](uint9 color, const uint9* palette) -> uint64 {
-    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)] >> 6 & 7;
-    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)] >> 3 & 7;
-    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)] >> 0 & 7;
+    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)].bits(6,8);
+    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)].bits(3,5);
+    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)].bits(0,2);
 
     uint64 R = image::normalize(r, 3, 16);
     uint64 G = image::normalize(g, 3, 16);

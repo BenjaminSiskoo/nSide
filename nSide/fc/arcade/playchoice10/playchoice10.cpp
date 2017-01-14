@@ -226,7 +226,7 @@ auto PlayChoice10::bus_remap() -> void {
 }
 
 auto PlayChoice10::poll(uint input) -> int16 {
-  return platform->inputPoll(ID::Port::Arcade, ID::Device::PC10Panel, (uint)input);
+  return platform->inputPoll(ID::Port::Hardware, ID::Device::PlayChoice10Controls, (uint)input);
 }
 
 auto PlayChoice10::readController1(uint16 addr, uint8 data) -> uint8 {

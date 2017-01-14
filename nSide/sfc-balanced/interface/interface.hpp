@@ -13,6 +13,7 @@ struct ID {
   };
 
   struct Port { enum : uint {
+    Hardware,
     Controller1,
     Controller2,
     Expansion,
@@ -20,6 +21,8 @@ struct ID {
 
   struct Device { enum : uint {
     None,
+    Controls,
+
     Gamepad,
     Mouse,
     SuperMultitap,

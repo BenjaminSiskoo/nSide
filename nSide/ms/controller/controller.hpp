@@ -22,12 +22,9 @@ struct Controller : Thread {
   static auto Enter() -> void;
   auto main() -> void;
 
-  virtual auto readData() -> uint8 { return 0xff; }
+  virtual auto readData() -> uint7 { return 0x7f; }
 
   const uint port;
 };
 
-#include "sg1000/sg1000.hpp"
-#include "mastersystem/mastersystem.hpp"
-#include "gamegear/gamegear.hpp"
 #include "gamepad/gamepad.hpp"

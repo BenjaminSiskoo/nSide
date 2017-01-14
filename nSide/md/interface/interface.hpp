@@ -7,6 +7,7 @@ struct ID {
   };
 
   struct Port { enum : uint {
+    Hardware,
     Controller1,
     Controller2,
     Extension,
@@ -14,6 +15,8 @@ struct ID {
 
   struct Device { enum : uint {
     None,
+    Controls,
+
     ControlPad,
     FightingPad6B,
   };};

@@ -127,7 +127,6 @@ struct GameGearInterface : Emulator::Interface {
 
 struct Settings {
   bool colorEmulation = true;
-  uint hardware = ID::Device::None;
   uint controllerPort1 = ID::Device::None;
   uint controllerPort2 = ID::Device::None;
 };

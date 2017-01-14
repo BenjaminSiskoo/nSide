@@ -11,11 +11,21 @@ namespace Processor {
 #include "serialization.cpp"
 
 auto Z80::power() -> void {
+  memory::fill(&r, sizeof(Registers));
+  r.hlp = &r.hl;
 }
 
 auto Z80::reset() -> void {
-  memory::fill(&r, sizeof(Registers));
-  r.hlp = &r.hl;
+//wait(1);
+  r.iff1 = 0;
+  r.iff2 = 0;
+  r.im = 0;
+//wait(1);
+  PC = 0x0000;
+  IR = 0x0000;
+//wait(1);
+  SP = 0xffff;
+  AF = 0xffff;
 }
 
 auto Z80::irq(bool maskable, uint16 pc, uint8 extbus) -> bool {

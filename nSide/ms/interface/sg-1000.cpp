@@ -10,9 +10,9 @@ SG1000Interface::SG1000Interface() {
 
   media.append({ID::SG1000, "SG-1000", "sg"});
 
-  Port hardware{ID::Port::Hardware, "Hardware", Hardwired};
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
+  Port hardware{ID::Port::Hardware, "Hardware"};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
 
   { Device device{ID::Device::SG1000Controls, "Controls"};
     device.inputs.append({0, "Pause"});

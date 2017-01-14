@@ -16,9 +16,9 @@ Interface::Interface() {
 
   media.append({ID::Atari2600, "Atari 2600", "a26"});
 
-  Port hardwarePort{ID::Port::Hardware, "Hardware", Hardwired};
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
+  Port hardware{ID::Port::Hardware, "Hardware"};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
 
   { Device device{ID::Device::Controls, "Controls"};
     device.inputs.append({0, "Select"          });
@@ -26,7 +26,7 @@ Interface::Interface() {
     device.inputs.append({0, "Color"           });
     device.inputs.append({0, "Left Difficulty" });
     device.inputs.append({0, "Right Difficulty"});
-    hardwarePort.devices.append(device);
+    hardware.devices.append(device);
   }
 
   { Device device{ID::Device::None, "None"};
@@ -44,7 +44,7 @@ Interface::Interface() {
     controllerPort2.devices.append(device);
   }
 
-  ports.append(move(hardwarePort));
+  ports.append(move(hardware));
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
 }

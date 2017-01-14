@@ -12,15 +12,20 @@ FamicomBoxInterface::FamicomBoxInterface() {
 
   media.append({ID::FamicomBox, "FamicomBox", "fcb"});
 
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
-  Port expansionPort{ID::Port::Expansion, "Expansion Port", PlugAndPlay};
+  Port hardware{ID::Port::Hardware, "Hardware"};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
+  Port expansionPort{ID::Port::Expansion, "Controller Port 3"};
+
+  { Device device{ID::Device::FamicomBoxControls, "FamicomBox Controls"};
+    device.inputs.append({0, "Reset"});
+    hardware.devices.append(device);
+  }
 
   { Device device{ID::Device::None, "None"};
     controllerPort1.devices.append(device);
     controllerPort2.devices.append(device);
     expansionPort.devices.append(device);
-    arcadePanel.devices.append(device);
   }
 
   { Device device{ID::Device::Gamepad, "Gamepad"};
@@ -64,19 +69,6 @@ FamicomBoxInterface::FamicomBoxInterface() {
     controllerPort2.devices.append(device);
   }
 
-  { Device device{ID::Device::PowerPad, "Power Pad"};
-    for(uint n : range(12)) {
-      device.inputs.append({0, {"Button ", n + 1}});
-    }
-    controllerPort2.devices.append(device);
-  }
-
-  { Device device{ID::Device::Vaus, "Arkanoid Vaus"};
-    device.inputs.append({1, "Control Knob"});
-    device.inputs.append({0, "Fire Button" });
-    controllerPort2.devices.append(device);
-  }
-
   { Device device{ID::Device::SNESGamepad, "SNES Gamepad"};
     device.inputs.append({0, "Up"    });
     device.inputs.append({0, "Down"  });
@@ -110,6 +102,20 @@ FamicomBoxInterface::FamicomBoxInterface() {
     expansionPort.devices.append(device);
   }
 
+  { Device device{ID::Device::FamilyTrainer, "Power Pad"};
+    for(uint n : range(12)) {
+      device.inputs.append({0, {"Button ", n + 1}});
+    }
+    expansionPort.devices.append(device);
+  }
+
+  { Device device{ID::Device::VausE, "Arkanoid Vaus"};
+    device.inputs.append({1, "Control Knob"});
+    device.inputs.append({0, "Fire Button" });
+    expansionPort.devices.append(device);
+  }
+
+  ports.append(move(hardware));
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
   ports.append(move(expansionPort));
@@ -199,9 +205,9 @@ auto FamicomBoxInterface::videoColor(uint32 n) -> uint64 {
   };
 
   static auto generateRGBColor = [](uint9 color, const uint9* palette) -> uint64 {
-    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)] >> 6 & 7;
-    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)] >> 3 & 7;
-    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)] >> 0 & 7;
+    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)].bits(6,8);
+    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)].bits(3,5);
+    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)].bits(0,2);
 
     uint64 R = image::normalize(r, 3, 16);
     uint64 G = image::normalize(g, 3, 16);
@@ -384,6 +390,4 @@ auto FamicomBoxInterface::exportMemory() -> void {
   if(cartridge.board->chip->ram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/chip.ram", File::Write)) {
     fp->write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
   }
-}
-
 }

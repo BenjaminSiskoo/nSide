@@ -10,13 +10,13 @@ MasterSystemInterface::MasterSystemInterface() {
 
   media.append({ID::MasterSystem, "Master System", "ms"});
 
-  Port hardware{ID::Port::Hardware, "Hardware", Hardwired};
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", PlugAndPlay};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", PlugAndPlay};
+  Port hardware{ID::Port::Hardware, "Hardware"};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
 
   { Device device{ID::Device::MasterSystemControls, "Controls"};
-    device.inputs.append({0, "Pause"});
     device.inputs.append({0, "Reset"});
+    device.inputs.append({0, "Pause"});
     hardware.devices.append(device);
   }
 
@@ -110,6 +110,7 @@ auto MasterSystemInterface::save() -> void {
 }
 
 auto MasterSystemInterface::unload() -> void {
+  save();
   system.unload();
 }
 

@@ -45,12 +45,9 @@ struct Interface {
     vector<Input> inputs;
   };
 
-  enum : bool { Hardwired, PlugAndPlay };
-
   struct Port {
     uint id;
     string name;
-    bool plugAndPlay;
     vector<Device> devices;
   };
   vector<Port> ports;

@@ -17,7 +17,7 @@ Interface::Interface() {
   media.append({ID::WonderSwan,      "WonderSwan",       "ws"});
   media.append({ID::WonderSwanColor, "WonderSwan Color", "wsc"});
 
-  Port hardwarePort{ID::Port::Hardware, "Hardware", PlugAndPlay};
+  Port hardwarePort{ID::Port::Hardware, "Hardware"};
 
   { Device device{ID::Device::HorizontalControls, "Horizontal Controls"};
     device.inputs.append({0, "Y1"});

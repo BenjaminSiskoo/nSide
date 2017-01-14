@@ -7,7 +7,10 @@ System system;
 Scheduler scheduler;
 
 auto System::run() -> void {
-  if(scheduler.enter() == Scheduler::Event::Frame) vdp.refresh();
+  if(scheduler.enter() == Scheduler::Event::Frame) {
+    if(platform->inputPoll(ID::Port::Hardware, ID::Device::Controls, 0)) reset();
+    vdp.refresh();
+  }
 }
 
 auto System::load(Emulator::Interface* interface) -> bool {

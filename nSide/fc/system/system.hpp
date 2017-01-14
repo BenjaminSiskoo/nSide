@@ -8,6 +8,9 @@ struct System {
   inline auto region() const -> Region { return information.region; }
   inline auto colorburst() const -> double { return information.colorburst; }
 
+  auto run() -> void;
+  auto runToSave() -> void;
+
   auto init() -> void;
   auto load(Emulator::Interface* interface, Model) -> bool;
   auto save() -> void;
@@ -15,9 +18,6 @@ struct System {
   auto power() -> void;
   auto reset() -> void;
   auto resetAudio() -> void;
-
-  auto run() -> void;
-  auto runToSave() -> void;
 
   //video.cpp
   auto configureVideoPalette() -> void;

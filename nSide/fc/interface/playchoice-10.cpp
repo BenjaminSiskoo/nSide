@@ -12,10 +12,22 @@ PlayChoice10Interface::PlayChoice10Interface() {
 
   media.append({ID::PlayChoice10, "PlayChoice-10", "pc10"});
 
-  Port controllerPort1{ID::Port::Controller1, "Controller Port 1", Hardwired};
-  Port controllerPort2{ID::Port::Controller2, "Controller Port 2", Hardwired};
-  Port expansionPort{ID::Port::Expansion, "Expansion Port", PlugAndPlay};
-  Port arcadePanel{ID::Port::Arcade, "Arcade Panel", Hardwired};
+  Port hardware{ID::Port::Hardware, "Hardware"};
+  Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
+  Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
+  Port expansionPort{ID::Port::Expansion, "Expansion Port"};
+
+  { Device device{ID::Device::PlayChoice10Controls, "PlayChoice-10 Controls"};
+    device.inputs.append({0, "Game Select"   });
+    device.inputs.append({0, "Start"         });
+    device.inputs.append({0, "Channel Select"});
+    device.inputs.append({0, "Enter"         });
+    device.inputs.append({0, "Reset"         });
+    device.inputs.append({0, "Service Button"});
+    device.inputs.append({0, "Coin 1"        });
+    device.inputs.append({0, "Coin 2"        });
+    hardware.devices.append(device);
+  }
 
   { Device device{ID::Device::None, "None"};
     expansionPort.devices.append(device);
@@ -39,22 +51,10 @@ PlayChoice10Interface::PlayChoice10Interface() {
     expansionPort.devices.append(device);
   }
 
-  { Device device{ID::Device::PC10Panel, "PlayChoice-10 Panel"};
-    device.inputs.append({0, "Game Select"   });
-    device.inputs.append({0, "Start"         });
-    device.inputs.append({0, "Channel Select"});
-    device.inputs.append({0, "Enter"         });
-    device.inputs.append({0, "Reset"         });
-    device.inputs.append({0, "Service Button"});
-    device.inputs.append({0, "Coin 1"        });
-    device.inputs.append({0, "Coin 2"        });
-    arcadePanel.devices.append(device);
-  }
-
+  ports.append(move(hardware));
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
   ports.append(move(expansionPort));
-  ports.append(move(arcadePanel));
 }
 
 auto PlayChoice10Interface::manifest() -> string {
@@ -92,9 +92,9 @@ auto PlayChoice10Interface::videoColors() -> uint32 {
 
 auto PlayChoice10Interface::videoColor(uint32 n) -> uint64 {
   static auto generateRGBColor = [](uint9 color, const uint9* palette) -> uint64 {
-    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)] >> 6 & 7;
-    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)] >> 3 & 7;
-    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)] >> 0 & 7;
+    uint3 r = color.bit(6) ? 7 : palette[color.bits(5,0)].bits(6,8);
+    uint3 g = color.bit(7) ? 7 : palette[color.bits(5,0)].bits(3,5);
+    uint3 b = color.bit(8) ? 7 : palette[color.bits(5,0)].bits(0,2);
 
     uint64 R = image::normalize(r, 3, 16);
     uint64 G = image::normalize(g, 3, 16);

@@ -61,14 +61,6 @@ auto InputManager::appendHotkeys() -> void {
   }
 
   { auto hotkey = new InputHotkey;
-    hotkey->name = "Soft Reset";
-    hotkey->press = [] {
-      program->softReset();
-    };
-    hotkeys.append(hotkey);
-  }
-
-  { auto hotkey = new InputHotkey;
     hotkey->name = "Rotate";
     hotkey->press = [] {
       program->rotate();

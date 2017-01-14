@@ -82,8 +82,8 @@ system name:PlayChoice-10
       option value=0x003e name:150 | 3600
       option value=0x003f name:150 | 3800
     setting name:Attract Mode Audio
-      option value=0x0040 name:Plays
       option value=0x0000 name:Muted
+      option value=0x0040 name:Plays
     setting name:Service Mode
       option value=0x0000 name:Normal
       option value=0x0080 name:Service Mode
