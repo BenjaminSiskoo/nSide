@@ -1,4 +1,4 @@
-Justifier::Justifier(bool port, bool chained):
+Justifier::Justifier(uint port, bool chained):
 Controller(port),
 chained(chained),
 device(!chained ? ID::Device::Justifier : ID::Device::Justifiers)

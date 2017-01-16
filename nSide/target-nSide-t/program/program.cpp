@@ -36,7 +36,7 @@ Program::Program(string_vector args) {
   emulators.append(new WonderSwan::Interface);
   emulators.append(new Famicom::VSSystemInterface);
   emulators.append(new Famicom::PlayChoice10Interface);
-//emulators.append(new Famicom::FamicomBoxInterface);
+  emulators.append(new Famicom::FamicomBoxInterface);
 
   new Presentation;
   presentation->setVisible();

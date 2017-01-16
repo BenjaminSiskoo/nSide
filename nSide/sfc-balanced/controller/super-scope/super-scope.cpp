@@ -10,7 +10,7 @@
 //require manual polling of PIO ($4201.d6) to determine when iobit was written.
 //Note that no commercial game ever utilizes a Super Scope in port 1.
 
-SuperScope::SuperScope(bool port) : Controller(port) {
+SuperScope::SuperScope(uint port) : Controller(port) {
   create(Controller::Enter, 21'477'272);
   sprite = Emulator::video.createSprite(32, 32);
   sprite->setPixels(Resource::Sprite::CrosshairGreen);

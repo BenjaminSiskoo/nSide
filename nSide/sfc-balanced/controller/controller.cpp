@@ -8,7 +8,7 @@ namespace SuperFamicom {
 #include "super-scope/super-scope.cpp"
 #include "justifier/justifier.cpp"
 
-Controller::Controller(bool port) : port(port) {
+Controller::Controller(uint port) : port(port) {
   if(!handle()) create(Controller::Enter, 1);
 }
 

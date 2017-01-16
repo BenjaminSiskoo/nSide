@@ -5,7 +5,7 @@ struct Zapper : Controller {
     X, Y, Trigger,
   };
 
-  Zapper(bool port);
+  Zapper(uint port);
   ~Zapper();
 
   auto main() -> void;

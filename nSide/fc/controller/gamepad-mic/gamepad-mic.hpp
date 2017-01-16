@@ -3,7 +3,7 @@ struct GamepadMic : Controller {
     Up, Down, Left, Right, B, A, Mic,
   };
 
-  GamepadMic(bool port);
+  GamepadMic(uint port);
 
   auto data() -> uint3;
   auto mic() -> bool;

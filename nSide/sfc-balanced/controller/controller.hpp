@@ -14,7 +14,7 @@
 struct Controller : Thread {
   enum : bool { Port1 = 0, Port2 = 1 };
 
-  Controller(bool port);
+  Controller(uint port);
   virtual ~Controller();
   static auto Enter() -> void;
 
@@ -24,7 +24,7 @@ struct Controller : Thread {
   virtual auto data() -> uint2 { return 0; }
   virtual auto latch(bool data) -> void {}
 
-  const bool port;
+  const uint port;
 };
 
 #include "gamepad/gamepad.hpp"
