@@ -47,6 +47,12 @@ auto Cartridge::power() -> void {
 
 auto Cartridge::read(uint20 addr) -> uint8 {
   if(!rom.size) return 0x00;
+
+  if(rom.size == 0x060000) {
+    if(addr <= 0x03ffff) return rom.data[addr];
+    return rom.data[0x040000 + (addr & 0x01ffff)];
+  }
+
   return rom.data[mirror(addr, rom.size)];
 }
 
