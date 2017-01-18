@@ -20,7 +20,7 @@ struct PlayChoice10 : Processor::Z80::Bus {
   auto in(uint8 addr) -> uint8 override;
   auto out(uint8 addr, uint8 data) -> void override;
 
-  auto bus_remap() -> void;
+  auto remapBus() -> void;
   auto poll(uint input) -> int16;
   auto readController1(uint16 addr, uint8 data) -> uint8;
   auto latchControllers(uint16 addr, uint8 data) -> void;

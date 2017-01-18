@@ -36,7 +36,7 @@ auto CartPal::playchoice10Manifest(vector<uint8_t>& buffer, string location,
   }
 
   if(settings["cart-pal/UseHeuristics"].boolean() && !markup) {
-    FamicomCartridge cartridge{buffer.data(), buffer.size()};
+    FamicomCartridge cartridge{(uint8*)buffer.data(), buffer.size()};
     if(markup = cartridge.markup) {
       markup.append("\n");
       markup.append("information\n");

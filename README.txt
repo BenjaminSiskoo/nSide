@@ -24,13 +24,14 @@ expansion port devices supported are:
 *Mouse (unlicensed, only supported by homebrew)
 
 Finally, it supports the VS. UniSystem and PlayChoice-10, each with their own
-arcade panels and buttons.
+arcade panels and buttons. The PlayChoice-10 support includes being able to view
+game instructions, but only with the right BIOS files.
 
 Please be aware that a great majority of Famicom and NES games support the use
 of Player 3 and Player 4 (Famicom) as substitutes for Player 1 and Player 2,
 including ones that use the NES Four Score such as A Nightmare on Elm Street. If
 the expansion slot is set to Gamepad, JoyPair, or 4-Players Adaptor, this can
-result in unrelated controller inputs controlling both Player 1 and Player 3.
+result in controller inputs meant for Player 3 controlling Player 1 as well.
 
 The Export Memory functions for the Famicom and Super Famicom emulators now
 export a limited selection of PPU registers in BML format and expansion chip
@@ -47,23 +48,23 @@ In Windows, the configuration files are in "%LocalAppData%\nSide".
 You will need the GBA BIOS to play Game Boy Advance games. This is no different
 from higan.
 
-GBA BIOS
+Game Boy Advance.sys/bios.rom
 sha256: fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570
 
-In addition, the PlayChoice-10 takes 3 files:
+The PlayChoice-10 takes 3 files:
 
-BIOS for dual-screen
+PlayChoice-10/bios-dual.rom
 sha256: 12200cee0965b871d2a47ac09ef563214d1b1a8355beda8bd477e21a561682e8
 
-BIOS for single-screen
+PlayChoice-10/bios-single.rom
 sha256: 64c1a7debf4729941c60e4c722ed61282ebd2f36928a30e55c9631477ce522ac
 
-Composite character ROM
-3 files 8P + 8M + 8K put together for a 24KB ROM
+PlayChoice-10/character.rom
+Concatenate the 3 ROMs 8P + 8M + 8K for a 24KB ROM.
 sha256: a8bf9c58e31dee0a60a2d480bd707c323212fba8963cc35a47423cadd1d7ed26
 
-Composite palette ROM
-3 files 6F + 6E + 6D put together for a 768 byte ROM
+PlayChoice-10/palette.rom
+Concatenate the 3 ROMs 6F + 6E + 6D for a 768 byte ROM.
 Each byte is the corresponding nybble in the low 4 bits and all 0's in the high
 4 bits. MAME's expected palette ROMs come in this format already, except split
 into 3 files.

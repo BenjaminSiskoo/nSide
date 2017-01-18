@@ -19,6 +19,9 @@ FamicomBoxInterface::FamicomBoxInterface() {
 
   { Device device{ID::Device::FamicomBoxControls, "FamicomBox Controls"};
     device.inputs.append({0, "Reset"});
+    device.inputs.append({0, "Keyswitch Left"});
+    device.inputs.append({0, "Keyswitch Right"});
+    device.inputs.append({0, "Coin"});
     hardware.devices.append(device);
   }
 

@@ -4,6 +4,8 @@ using namespace nall;
 #include <hiro/hiro.hpp>
 using namespace hiro;
 
+using uint8 = Natural<8>;
+
 auto locate(string name) -> string {
   string location = {Path::program(), name};
   if(inode::exists(location)) return location;
@@ -48,6 +50,7 @@ Settings settings;
 #include "core/wonderswan-color.cpp"
 #include "core/vs-system.cpp"
 #include "core/playchoice-10.cpp"
+#include "core/famicombox.cpp"
 #include "core/bs-memory.cpp"
 #include "core/sufami-turbo.cpp"
 CartPal cart_pal;
@@ -95,6 +98,7 @@ auto nall::main(string_vector args) -> void {
       "*.wsc:"
       "*.vs:"
       "*.pc10:"
+      "*.fcb:"
       "*.bs:"
       "*.st:"
       "*.zip"

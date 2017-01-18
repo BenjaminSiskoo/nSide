@@ -45,7 +45,7 @@ struct PPU : Thread, PPUcounter {
   auto extIn() -> uint4;
   auto extOut() -> uint4;
 
-  //mmio.cpp
+  //io.cpp
   auto readCIRAM(uint12 addr) -> uint8;
   auto writeCIRAM(uint12 addr, uint8 data) -> void;
 

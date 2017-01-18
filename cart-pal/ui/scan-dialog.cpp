@@ -112,6 +112,7 @@ auto ScanDialog::gamePakType(const string& type) -> bool {
   || type == ".gg"
   || type == ".vs"
   || type == ".pc10"
+  || type == ".fcb"
   || type == ".bs"
   || type == ".st";
 }

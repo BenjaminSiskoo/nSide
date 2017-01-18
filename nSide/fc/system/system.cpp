@@ -12,14 +12,10 @@ Cheat cheat;
 
 auto System::run() -> void {
   if(scheduler.enter() == Scheduler::Event::Frame) {
-    switch(model()) {
-    case Model::Famicom:
+    if(model() == Model::Famicom) {
       if(platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomControls, 0)) reset();
-      break;
-    case Model::FamicomBox:
-      if(platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomBoxControls, 0)) reset();
-      break;
     }
+    if(model() == Model::FamicomBox) famicombox.pollInputs();
     ppu.refresh();
     if(model() == Model::PlayChoice10) playchoice10.videoCircuit.refresh();
   }

@@ -51,6 +51,9 @@ struct Bus {
   alwaysinline auto read(uint16 addr, uint8 data) -> uint8;
   alwaysinline auto write(uint16 addr, uint8 data) -> void;
 
+  alwaysinline auto readCHR(uint16 addr, uint8 data) -> uint8;
+  alwaysinline auto writeCHR(uint16 addr, uint8 data) -> void;
+
   auto reset() -> void;
   auto map(
     const function<uint8 (uint16, uint8)>& read,

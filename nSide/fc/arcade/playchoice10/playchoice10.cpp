@@ -32,13 +32,7 @@ auto PlayChoice10::load(Markup::Node node) -> bool {
 
   screenConfig = min(max(node["pc10/screen/mode"].integer(), 1), 2);
 
-  this->dip = platform->dipSettings(node["pc10"]);
-  //dip.bits( 0, 5) = 0;  //Price
-  //dip.bit (    6) = 1;  //Enable Sound during Attract Mode
-  //dip.bit (    7) = 0;  //Self-test on Power-up
-  //dip.bits( 8,13) = 0;  //Timer Speed
-  //dip.bit (   14) = 0;  //Divide price by 2
-  //dip.bit (   15) = 0;  //Free play (if bits 8..14 are 0)
+  dip = platform->dipSettings(node["pc10"]);
 
   return true;
 }
@@ -70,7 +64,7 @@ auto PlayChoice10::power() -> void {
 auto PlayChoice10::reset() -> void {
   pc10cpu.reset();
   videoCircuit.reset();
-  bus_remap();
+  remapBus();
 
   promAddress = 0;
 }
@@ -158,7 +152,7 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
       system.resetAudio();
       cpu.reset();
       apu.reset();
-      bus_remap();
+      remapBus();
     };
     cpuReset = data;
     break;
@@ -216,7 +210,7 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
   }
 }
 
-auto PlayChoice10::bus_remap() -> void {
+auto PlayChoice10::remapBus() -> void {
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;
 

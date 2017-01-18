@@ -3,7 +3,8 @@ auto PPU::enable() const -> bool {
 }
 
 auto PPU::loadCHR(uint14 addr) -> uint8 {
-  return enable() ? cartridge.readCHR(io.chrAddressBus = addr) : (uint8)0x00;
+  if(!enable()) return 0x00;
+  return bus.readCHR(io.chrAddressBus = addr, io.mdr);
 }
 
 auto PPU::renderPixel() -> void {

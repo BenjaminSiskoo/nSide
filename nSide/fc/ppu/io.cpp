@@ -72,7 +72,7 @@ auto PPU::readIO(uint16 addr, uint8 data) -> uint8 {
     } else if(addr <= 0x3fff) {
       io.mdr = (io.mdr & 0xc0) | readCGRAM(addr);
     }
-    io.busData = cartridge.readCHR(io.chrAddressBus = addr);
+    io.busData = bus.readCHR(io.chrAddressBus = addr, io.mdr);
     io.v.address += io.vramIncrement;
     io.chrAddressBus = io.v.address;
     return io.mdr;
@@ -179,7 +179,7 @@ auto PPU::writeIO(uint16 addr, uint8 data) -> void {
 
     addr = (uint14)io.v.address;
     if(addr <= 0x3eff) {
-      cartridge.writeCHR(io.chrAddressBus = addr, data);
+      bus.writeCHR(io.chrAddressBus = addr, data);
     } else if(addr <= 0x3fff) {
       writeCGRAM(addr, data);
     }

@@ -90,6 +90,12 @@ struct CartPal {
   auto playchoice10ManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
   auto playchoice10Import(vector<uint8_t>& buffer, string location) -> string;
 
+  //famicombox.cpp
+  auto famicomboxManifest(string location) -> string;
+  auto famicomboxManifest(vector<uint8_t>& buffer, string location, uint* prgrom = nullptr, uint* chrrom = nullptr) -> string;
+  auto famicomboxManifestScan(vector<Markup::Node>& roms, Markup::Node node) -> void;
+  auto famicomboxImport(vector<uint8_t>& buffer, string location) -> string;
+
   //bs-memory.cpp
   auto bsMemoryManifest(string location) -> string;
   auto bsMemoryManifest(vector<uint8_t>& buffer, string location) -> string;
@@ -119,6 +125,7 @@ private:
     Markup::Node wonderSwanColor;
     Markup::Node vsSystem;
     Markup::Node playchoice10;
+    Markup::Node famicombox;
     Markup::Node bsMemory;
     Markup::Node sufamiTurbo;
   } database;

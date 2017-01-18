@@ -5,7 +5,7 @@ struct FamicomBox : Thread {
     ControllerRead  = 2,
     KeyswitchRotate = 3,
     Coin            = 4,
-    ResetButton     = 5,
+    Reset           = 5,
     Watchdog        = 6,
     CATVPin1        = 7,
   };
@@ -19,20 +19,21 @@ struct FamicomBox : Thread {
   auto power() -> void;
   auto reset() -> void;
 
-  auto setDip(uint10 dip) -> void;
   auto trap(Exception exceptionId) -> void;
+  auto remapBus() -> void;
+  auto pollInputs() -> void;
 
-  auto wramRead(uint16 addr, uint8 data) -> uint8;
-  auto portRead(uint16 addr, uint8 data) -> uint8;
-  auto sramRead(uint16 addr, uint8 data) -> uint8;
-  auto cartridgeRead(uint16 addr, uint8 data) -> uint8;
-  auto wramWrite(uint16 addr, uint8 data) -> void;
-  auto portWrite(uint16 addr, uint8 data) -> void;
-  auto sramWrite(uint16 addr, uint8 data) -> void;
-  auto cartridgeWrite(uint16 addr, uint8 data) -> void;
+  auto readWRAM(uint16 addr, uint8 data) -> uint8;
+  auto readIO(uint16 addr, uint8 data) -> uint8;
+  auto readSRAM(uint16 addr, uint8 data) -> uint8;
+  auto readCartridge(uint16 addr, uint8 data) -> uint8;
+  auto writeWRAM(uint16 addr, uint8 data) -> void;
+  auto writeIO(uint16 addr, uint8 data) -> void;
+  auto writeSRAM(uint16 addr, uint8 data) -> void;
+  auto writeCartridge(uint16 addr, uint8 data) -> void;
 
-  auto chrRead(uint14 addr) -> uint8;
-  auto chrWrite(uint14 addr, uint8 data) -> void;
+  auto readCHR(uint14 addr, uint8 data) -> uint8;
+  auto writeCHR(uint14 addr, uint8 data) -> void;
 
   auto serialize(serializer& s) -> void;
 
@@ -52,11 +53,15 @@ struct FamicomBox : Thread {
   uint8 test_ram[0x2000];
 
   uint10 dip;
+  uint6 keyswitch;
 
   uint8 exceptionEnable;
   uint8 exceptionTrap;
-
   uint3 ramProtect;
+  bool zapperGND;
+  bool warmboot;
+  bool enableControllers;
+  bool swapControllers;
 
   uint counter;
   uint15 attractionTimer;

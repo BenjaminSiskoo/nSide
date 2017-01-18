@@ -88,3 +88,13 @@ auto Bus::write(uint16 addr, uint8 data) -> void {
   if(system.model() != Model::FamicomBox) cartridge.writePRG(addr, data);
   return writer[lookup[addr]](target[addr], data);
 }
+
+auto Bus::readCHR(uint16 addr, uint8 data) -> uint8 {
+  if(system.model() == Model::FamicomBox) return famicombox.readCHR(addr, data);
+  return cartridge.readCHR(addr);
+}
+
+auto Bus::writeCHR(uint16 addr, uint8 data) -> void {
+  if(system.model() == Model::FamicomBox) return famicombox.writeCHR(addr, data);
+  return cartridge.writeCHR(addr, data);
+}
