@@ -5,7 +5,7 @@ namespace WonderSwan {
 Settings settings;
 
 Interface::Interface() {
-  information.preAlpha     = false;
+  information.devState     = DevState::Full;
   information.manufacturer = "Bandai";
   information.name         = "WonderSwan";
   information.overscan     = false;

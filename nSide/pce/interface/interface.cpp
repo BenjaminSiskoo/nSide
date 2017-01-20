@@ -5,7 +5,7 @@ namespace PCEngine {
 Settings settings;
 
 Interface::Interface() {
-  information.preAlpha     = true;
+  information.devState     = DevState::Alpha;
   information.manufacturer = "NEC";
   information.name         = "PC Engine";
   information.overscan     = true;
@@ -46,15 +46,20 @@ auto Interface::title() -> string {
 }
 
 auto Interface::videoSize() -> VideoSize {
-  return {512, 484};
+  return {256, 240};
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc, bool intSize) -> VideoSize {
-  auto a = arc ? 8.0 / 7.0 : 1.0;
-  uint w = 256;
-  uint h = 242;
-  uint m = min(width / (w * a), height / h);
-  return {uint(w * a * m), uint(h * m)};
+auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
+  double w = 256;
+  if(arc) {
+    double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
+    w *= squarePixelRate / (system.colorburst() * 6.0 / 4.0);
+  }
+  int h = 240;
+  double m;
+  if(intScale) m = min((uint)(width / w), height / h);
+  else         m = min(width / w, height / (double)h);
+  return {(uint)(w * m), (uint)(h * m)};
 }
 
 auto Interface::videoFrequency() -> double {
@@ -67,8 +72,8 @@ auto Interface::videoColors() -> uint32 {
 
 auto Interface::videoColor(uint32 color) -> uint64 {
   uint3 B = color.bits(0,2);
-  uint3 G = color.bits(3,5);
-  uint3 R = color.bits(6,8);
+  uint3 R = color.bits(3,5);
+  uint3 G = color.bits(6,8);
 
   uint64 r = image::normalize(R, 3, 16);
   uint64 g = image::normalize(G, 3, 16);

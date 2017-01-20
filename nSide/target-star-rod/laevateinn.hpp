@@ -16,6 +16,7 @@ extern Emulator::Interface* emulator;
 #else
 #include <sfc/sfc.hpp>
 #endif
+#undef platform
 namespace SFC = SuperFamicom;
 
 auto locate(string name) -> string;

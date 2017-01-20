@@ -1,7 +1,7 @@
 VSSystemInterface::VSSystemInterface() {
   system.init();
 
-  information.preAlpha     = false;
+  information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "VS. System";
   information.overscan     = true;

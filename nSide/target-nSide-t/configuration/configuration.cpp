@@ -13,7 +13,7 @@ Settings::Settings() {
 
   set("Library/Location", {Path::user(), "Emulation/"});
   set("Library/IgnoreManifests", false);
-  set("Library/ShowPreAlpha", false);
+  set("Library/DevState", 1);
 
   set("Video/Driver", ruby::Video::optimalDriver());
   set("Video/Synchronize", false);

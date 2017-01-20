@@ -39,7 +39,7 @@ InputSettings::InputSettings(TabFrame* parent) : TabFrameItem(parent) {
 auto InputSettings::refreshEmulatorList() -> void {
   emulatorList.reset();
   for(auto& emulator : inputManager->emulators) {
-    if(emulator.interface->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
+    if(emulator.interface->information.devState > settings["Library/DevState"].natural()) continue;
     emulatorList.append(ComboButtonItem().setText(emulator.name));
   }
 }
@@ -65,7 +65,12 @@ auto InputSettings::updateControls() -> void {
 }
 
 auto InputSettings::activeEmulator() -> InputEmulator& {
-  return inputManager->emulators[emulatorList.selected().offset()];
+  uint offset = emulatorList.selected().offset();
+  for(uint i : range(offset + 1)) {
+    auto& interface = inputManager->emulators[i].interface;
+    if(interface->information.devState > settings["Library/DevState"].natural()) offset++;
+  }
+  return inputManager->emulators[offset];
 }
 
 auto InputSettings::activePort() -> InputPort& {

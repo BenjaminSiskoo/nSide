@@ -8,7 +8,7 @@ Debugger debugger;
 Interface::Interface() {
   system.init();
 
-  information.preAlpha     = false;
+  information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "Super Famicom";
   information.overscan     = true;

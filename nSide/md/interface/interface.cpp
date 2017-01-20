@@ -5,7 +5,7 @@ namespace MegaDrive {
 Settings settings;
 
 Interface::Interface() {
-  information.preAlpha     = true;
+  information.devState     = DevState::Alpha;
   information.manufacturer = "Sega";
   information.name         = "Mega Drive";
   information.overscan     = true;

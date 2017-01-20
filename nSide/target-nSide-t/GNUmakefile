@@ -14,7 +14,7 @@ else ifeq ($(profile),balanced)
 endif
 include ms/GNUmakefile
 include md/GNUmakefile
-#include pce/GNUmakefile
+include pce/GNUmakefile
 include gb/GNUmakefile
 include gba/GNUmakefile
 include ws/GNUmakefile

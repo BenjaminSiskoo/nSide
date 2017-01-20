@@ -44,8 +44,22 @@ AdvancedSettings::AdvancedSettings(TabFrame* parent) : TabFrameItem(parent) {
     settings["Library/IgnoreManifests"].setValue(ignoreManifests.checked());
   });
 
-  showPreAlpha.setText("Show Pre-Alpha Cores").setChecked(settings["Library/ShowPreAlpha"].boolean()).onToggle([&] {
-    settings["Library/ShowPreAlpha"].setValue(showPreAlpha.checked());
+  uint devState = settings["Library/DevState"].natural();
+  auto* devStateRadioLabel = &*(devStateGroup->state.objects[devState].acquire());
+  dynamic_cast<mRadioLabel*>(devStateRadioLabel)->setChecked();
+
+  devStateFull.setText("Only show full cores").onActivate([&] {
+    settings["Library/DevState"].setValue(0);
+    presentation->refreshLibraryMenu();
+    settingsManager->input.refreshEmulatorList();
+  });
+  devStateAlpha.setText("Show full and alpha cores").onActivate([&] {
+    settings["Library/DevState"].setValue(1);
+    presentation->refreshLibraryMenu();
+    settingsManager->input.refreshEmulatorList();
+  });
+  devStatePreAlpha.setText("Show all cores, including pre-alpha").onActivate([&] {
+    settings["Library/DevState"].setValue(2);
     presentation->refreshLibraryMenu();
     settingsManager->input.refreshEmulatorList();
   });

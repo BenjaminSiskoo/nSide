@@ -1,7 +1,7 @@
 PlayChoice10Interface::PlayChoice10Interface() {
   system.init();
 
-  information.preAlpha     = false;
+  information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "PlayChoice-10";
   information.overscan     = true;

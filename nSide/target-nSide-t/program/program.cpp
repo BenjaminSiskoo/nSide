@@ -8,7 +8,7 @@
 #endif
 #include <ms/interface/interface.hpp>
 #include <md/interface/interface.hpp>
-//#include <pce/interface/interface.hpp>
+#include <pce/interface/interface.hpp>
 #include <gb/interface/interface.hpp>
 #include <gba/interface/interface.hpp>
 #include <ws/interface/interface.hpp>
@@ -29,7 +29,7 @@ Program::Program(string_vector args) {
   emulators.append(new MasterSystem::SG1000Interface);
   emulators.append(new MasterSystem::MasterSystemInterface);
   emulators.append(new MegaDrive::Interface);
-//emulators.append(new PCEngine::Interface);
+  emulators.append(new PCEngine::Interface);
   emulators.append(new GameBoy::Interface);
   emulators.append(new GameBoyAdvance::Interface);
   emulators.append(new MasterSystem::GameGearInterface);

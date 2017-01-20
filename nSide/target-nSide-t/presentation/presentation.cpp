@@ -155,7 +155,7 @@ auto Presentation::refreshLibraryMenu() -> void {
   libraryMenu.reset();
   string_vector manufacturers;
   for(auto& emulator : program->emulators) {
-    if(emulator->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
+    if(emulator->information.devState > settings["Library/DevState"].natural()) continue;
     if(!manufacturers.find(emulator->information.manufacturer)) {
       manufacturers.append(emulator->information.manufacturer);
     }
@@ -165,10 +165,10 @@ auto Presentation::refreshLibraryMenu() -> void {
     manufacturerMenu.setText(manufacturer);
     for(auto& emulator : program->emulators) {
       if(emulator->information.manufacturer != manufacturer) continue;
-      if(emulator->information.preAlpha && !settings["Library/ShowPreAlpha"].boolean()) continue;
+      if(emulator->information.devState > settings["Library/DevState"].natural()) continue;
       for(auto& medium : emulator->media) {
         auto item = new MenuItem{&manufacturerMenu};
-        item->setText({emulator->information.preAlpha ? "(!) " : "", medium.name, " ..."}).onActivate([=] {
+        item->setText({emulator->information.devState == 2 ? "(!) " : "", medium.name, " ..."}).onActivate([=] {
           program->loadMedium(*emulator, medium);
         });
       }

@@ -16,8 +16,12 @@ struct Platform {
 };
 
 struct Interface {
+  struct DevState { enum : uint {
+    Full, Alpha, PreAlpha,
+  };};
+
   struct Information {
-    bool preAlpha;
+    uint devState;
     string manufacturer;
     string name;
     bool overscan;

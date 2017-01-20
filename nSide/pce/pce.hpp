@@ -1,8 +1,7 @@
 #pragma once
 
-//based on higan's PC Engine emulator by byuu
 //license: GPLv3
-//original project started: 2017-01-11
+//started: 2017-01-11
 
 #include <emulator/emulator.hpp>
 #include <emulator/thread.hpp>

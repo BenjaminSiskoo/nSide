@@ -1,7 +1,7 @@
 FamicomBoxInterface::FamicomBoxInterface() {
   system.init();
 
-  information.preAlpha     = true;
+  information.devState     = DevState::Alpha;
   information.manufacturer = "Nintendo";
   information.name         = "FamicomBox";
   information.overscan     = true;

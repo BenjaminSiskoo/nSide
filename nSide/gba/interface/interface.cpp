@@ -5,7 +5,7 @@ namespace GameBoyAdvance {
 Settings settings;
 
 Interface::Interface() {
-  information.preAlpha     = false;
+  information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy Advance";
   information.overscan     = false;

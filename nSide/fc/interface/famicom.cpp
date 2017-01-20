@@ -1,7 +1,7 @@
 FamicomInterface::FamicomInterface() {
   system.init();
 
-  information.preAlpha     = false;
+  information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "Famicom";
   information.overscan     = true;

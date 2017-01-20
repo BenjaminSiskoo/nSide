@@ -4,7 +4,6 @@
 struct VDC : Thread {
   static auto Enter() -> void;
   auto main() -> void;
-  auto scanline() -> void;
   auto step(uint clocks) -> void;
   auto refresh() -> void;
 
@@ -77,8 +76,50 @@ private:
     bool   vramActive;
     bool   satbActive;
     bool   satbPending;
-    uint16 satbTarget;
+    uint16 satbOffset;
   } dma;
+
+  struct Background {
+    //background.cpp
+    auto scanline(uint y) -> void;
+    auto run(uint x, uint y) -> void;
+
+    bool   enable;
+    uint10 hscroll;
+    uint9  vscroll;
+    uint8  width;
+    uint8  height;
+
+    uint10 hoffset;
+    uint9  voffset;
+
+    maybe<uint9> color;
+  } background;
+
+  struct Sprite {
+    //sprite.cpp
+    auto scanline(uint y) -> void;
+    auto run(uint x, uint y) -> void;
+
+    bool enable;
+
+    struct Object {
+      uint10 y;
+      uint10 x;
+      bool   mode;
+      uint10 pattern;
+      uint4  palette;
+      bool   priority;
+      uint   width;
+      bool   hflip;
+      uint   height;
+      bool   vflip;
+    };
+    array<Object, 64> objects;
+
+    maybe<uint9> color;
+    bool priority;
+  } sprite;
 
   struct IO {
     uint5  address;
@@ -98,8 +139,6 @@ private:
 
     //$05  CR (W)
     uint2  externalSync;
-    bool   spriteBlank;
-    bool   backgroundBlank;
     uint2  displayOutput;
     bool   dramRefresh;
     uint   vramAddressIncrement;
@@ -107,17 +146,9 @@ private:
     //$06  RCR
     uint10 lineCoincidence;
 
-    //$07  BXR
-    uint10 backgroundHscroll;
-
-    //$08  BYR
-    uint9  backgroundVscroll;
-
     //$09  MWR
     uint2  vramAccess;
     uint2  spriteAccess;
-    uint   backgroundWidth;
-    uint   backgroundHeight;
     bool   cgMode;
 
     //$0a  HSR

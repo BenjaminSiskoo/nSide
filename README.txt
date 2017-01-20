@@ -1,4 +1,4 @@
-﻿nSide v009r10 (2016-07-09)
+﻿nSide v009r12 (2017-01-19)
 
 A fork of higan v100 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
@@ -23,9 +23,9 @@ expansion port devices supported are:
 *Family Trainer (Power Pad)
 *Mouse (unlicensed, only supported by homebrew)
 
-Finally, it supports the VS. UniSystem and PlayChoice-10, each with their own
-arcade panels and buttons. The PlayChoice-10 support includes being able to view
-game instructions, but only with the right BIOS files.
+Finally, it supports the VS. UniSystem, PlayChoice-10, and FamicomBox, each with
+their own arcade panels and buttons. The PlayChoice-10 support includes being
+able to view game instructions, but only with the right BIOS files.
 
 Please be aware that a great majority of Famicom and NES games support the use
 of Player 3 and Player 4 (Famicom) as substitutes for Player 1 and Player 2,
@@ -51,27 +51,43 @@ from higan.
 Game Boy Advance.sys/bios.rom
 sha256: fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570
 
-The PlayChoice-10 takes 3 files:
+The PlayChoice-10 takes 3 files, a BIOS, a character ROM, and a palette ROM.
+The BIOS varies depending on the screen setup.
 
-PlayChoice-10/bios-dual.rom
+PlayChoice-10.sys/bios-dual.rom
+ROM 8T on the PCB. MAME calls it "pch1-c__8t_e-2.8t".
 sha256: 12200cee0965b871d2a47ac09ef563214d1b1a8355beda8bd477e21a561682e8
+The Dual Screen version is ready to use when this BIOS is installed.
 
-PlayChoice-10/bios-single.rom
+PlayChoice-10.sys/bios-single.rom
+ROM 8T on the PCB. MAME calls it "pck1-c.8t".
 sha256: 64c1a7debf4729941c60e4c722ed61282ebd2f36928a30e55c9631477ce522ac
+To use the Single Screen BIOS, you need to edit the file
+"PlayChoice-10.sys/manifest.bml".
 
-PlayChoice-10/character.rom
+PlayChoice-10.sys/character.rom
 Concatenate the 3 ROMs 8P + 8M + 8K for a 24KB ROM.
 sha256: a8bf9c58e31dee0a60a2d480bd707c323212fba8963cc35a47423cadd1d7ed26
+Used by both screen setups.
 
-PlayChoice-10/palette.rom
+PlayChoice-10.sys/palette.rom
 Concatenate the 3 ROMs 6F + 6E + 6D for a 768 byte ROM.
 Each byte is the corresponding nybble in the low 4 bits and all 0's in the high
 4 bits. MAME's expected palette ROMs come in this format already, except split
 into 3 files.
 sha256: 9f639da2e0248431b59a9344769a38fad8b64742ce6e0e44534e6918b8977a0a
+Used by both screen setups.
 
-...but if you do not wish to emulate the PlayChoice-10, the above 3 files are
-not necessary.
+If you do not wish to emulate the PlayChoice-10, then these files are not
+necessary and can safely be ignored.
+
+The FamicomBox takes only a program ROM and character ROM for its BIOS.
+
+FamicomBox.sys/bios.program.rom
+sha256: cc34e51798c0ff45d21a793b78f20143587ee0ac398f979e22a32809b273a470
+
+FamicomBox.sys/bios.character.rom
+sha256: 227b3acecf78c47927ca76125a0d3564f0bc6e1ae9a9ab5935e34acbe4022032
 
 Known Bugs:
 Famicom:
@@ -92,6 +108,15 @@ Super Famicom:
   in the area above the pipe.
   Known to affect actual hardware.
 
+Master System:
+  *Many, many bugs. This core is still in alpha.
+
+Mega Drive:
+  *Many, many bugs. This core is still in alpha.
+
+PC Engine:
+  *Many, many bugs. This core is still in alpha.
+
 Game Boy:
   *When loading a Game Boy game in Game Boy Color mode, colors are applied to
   the wrong areas, making game displays terrible on the eyes.
@@ -107,12 +132,18 @@ Game Boy Advance:
   or play the original Famicom/NES versions instead.
   Inherited from higan v095.
 
+Game Gear:
+  *Many, many bugs. This core is still in alpha.
+
 WonderSwan:
   Many bugs in different spots. higan's WonderSwan emulator is still new and
   full of bugs, all of which affect nSide's version of the emulator.
   *Card Captor Sakura has columns of corruption when characters speak.
   *Meitantei Conan - Nishi no Meitantei Saidai no Kiki!? will not start because
   it relies on correct prefetch emulation.
+
+VS. System:
+  *No support for games using DRM such as R.B.I. Baseball.
 
 PlayChoice-10:
   *When the Z80 tries to stop the CPU, it never actually does so, so games keep
@@ -140,8 +171,6 @@ Changes from higan: General
 ===========================
 Changes from higan: Famicom
 ===========================
-   Revised emulator name and copyright information.
-
    The read registers at $4016 and $4017 only have 5 bits each, not 6, so
   cpu.mdr() is ANDed with 0xe0 instead of 0xc0.
 
@@ -393,9 +422,6 @@ Changes from higan: processor/r6502 (affects Famicom)
 =================================
 Changes from higan: Super Famicom
 =================================
-   Revised emulator name and copyright information. Credited multiple people who
-  helped out with higan's Super Famicom emulator in the past.
-
    Expanded exportMemory to dump expansion chip-specific memory.
 
    Added a second cursor design that will be shown whenever the Super Scope is
@@ -410,6 +436,20 @@ Changes from higan: processor/r65816 (affects Super Famicom)
   which produces incorrect results for opcodes with relative addresses such as
   branching opcodes.
 
+=========================================================
+Changes from higan: processor/z80 (affects Master System)
+=========================================================
+   Supported "ld A,i"'s and "ld A,r"'s unique flag effects, including setting
+  the zero flag if i or r are 0x00 when being copied into A. This is needed for
+  PlayChoice-10 emulation.
+
+==============================
+Changes from higan: Mega Drive
+==============================
+   Added support for the Fighting Pad 6B, the 6-button controller. While higan
+  allows mapping the X, Y, and Z buttons but not MODE, they are never actually
+  polled in higan.
+
 ============================
 Changes from higan: Game Boy
 ============================
@@ -420,9 +460,6 @@ Changes from higan: Game Boy
 ====================================
 Changes from higan: Game Boy Advance
 ====================================
-   Revised copyright information. Credited endrift, jchadwick,
-  and Jonas Quinn for various improvements to GBA emulation.
-
    Added the exportMemory function, which can dump External WRAM, Internal WRAM,
   VRAM, and PRAM (Palette RAM).
   However, dumping External WRAM causes a crash with about 3/4 of the data

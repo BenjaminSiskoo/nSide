@@ -7,7 +7,7 @@ Settings settings;
 Interface::Interface() {
   hook = nullptr;
 
-  information.preAlpha     = false;
+  information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy";
   information.overscan     = false;

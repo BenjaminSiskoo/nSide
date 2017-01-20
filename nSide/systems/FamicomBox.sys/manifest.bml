@@ -10,3 +10,28 @@ system name:FamicomBox
     rom name=bios.program.rom size=0x8000
   chr
     rom name=bios.character.rom size=0x2000
+  setting name:Self-test
+    option value=0x0000 name:Only on power on
+    option value=0x0001 name:Continuous
+  setting name:Coin time
+    option value=0x0000 name:10 minutes
+    option value=0x0002 name:20 minutes
+  setting name:Menu time
+    option value=0x0000 name:7 seconds
+    option value=0x0008 name:12 seconds
+  setting name:Attract time
+    option value=0x0000 name:12 seconds
+    option value=0x0010 name:23 seconds
+    option value=0x0020 name:17 seconds
+    option value=0x0030 name:7 seconds
+  setting name:Mode
+    option value=0x0080 name:Coin Mode
+    option value=0x0000 name:Key Mode
+    option value=0x0040 name:CATV Mode
+    option value=0x00c0 name:Free Play
+  setting name:Coin feep
+    option value=0x0100 name:Mute
+    option value=0x0000 name:Enable
+  setting name:Zapper
+    option value=0x0200 name:Enable
+    option value=0x0000 name:Disable

@@ -5,7 +5,7 @@ namespace Atari2600 {
 Settings settings;
 
 Interface::Interface() {
-  information.preAlpha     = true;
+  information.devState     = DevState::PreAlpha;
   information.manufacturer = "Atari";
   information.name         = "Atari 2600";
   information.overscan     = true;
