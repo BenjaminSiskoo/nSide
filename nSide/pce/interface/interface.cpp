@@ -46,19 +46,18 @@ auto Interface::title() -> string {
 }
 
 auto Interface::videoSize() -> VideoSize {
-  return {256, 240};
+  return {1140, 240};
 }
 
 auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
-  double w = 256;
+  double w = 285;
   if(arc) {
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    w *= squarePixelRate / (system.colorburst() * 6.0 / 4.0);
+    w = round(w * (squarePixelRate / (system.colorburst() * 6.0 / 4.0)));
   }
-  int h = 240;
-  double m;
-  if(intScale) m = min((uint)(width / w), height / h);
-  else         m = min(width / w, height / (double)h);
+  double h = 242;
+  double m = min(width / w, height / h);
+  if(intScale) m = floor(m);
   return {(uint)(w * m), (uint)(h * m)};
 }
 

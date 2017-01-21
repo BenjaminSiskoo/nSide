@@ -273,8 +273,14 @@ auto Presentation::resizeViewport() -> void {
   bool integerScaling = true;
   if(!fullScreen()) {
     aspectCorrection = settings["Video/AspectCorrection"].boolean();
-    windowWidth  = (aspectCorrection ? 384 : 320) * scale;  //320 for NTSC, 384 for PAL and SÉCAM
-    windowHeight = 240 * scale;  //240 for NTSC, 288 for PAL and SÉCAM
+    if(emulator) {
+      auto size = emulator->videoSize(aspectCorrection ? 384 : 326, 242, true, true);
+      windowWidth  = (size.width  > 326 ? 384 : (size.width  > 320 ? 326 : 320)) * scale;
+      windowHeight = (size.height > 242 ? 288 : (size.height > 240 ? 242 : 240)) * scale;
+    } else {
+      windowWidth  = 320 * scale;
+      windowHeight = 240 * scale;
+    }
   } else {
     integerScaling = settings["Video/Shader"].text() == "None";
     windowWidth  = geometry().width();
