@@ -3,7 +3,6 @@ GameGearInterface::GameGearInterface() {
   information.manufacturer = "Sega";
   information.name         = "Game Gear";
   information.overscan     = false;
-  information.resettable   = false;
 
   information.capability.states = false;
   information.capability.cheats = false;
@@ -48,7 +47,7 @@ auto GameGearInterface::videoSize(uint width, uint height, bool arc, bool intSca
 }
 
 auto GameGearInterface::videoFrequency() -> double {
-  return 60.0;
+  return (system.colorburst() * 6.0) / (262.0 * 1368.0);
 }
 
 auto GameGearInterface::videoColors() -> uint32 {

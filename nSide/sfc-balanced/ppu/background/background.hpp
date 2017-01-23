@@ -1,7 +1,7 @@
 struct Background {
   Background(uint id) : id(id) {}
 
-  auto reset() -> void;
+  auto power() -> void;
 
   auto getTile(uint x, uint y) -> uint16;
 

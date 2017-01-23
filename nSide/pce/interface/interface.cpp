@@ -9,7 +9,6 @@ Interface::Interface() {
   information.manufacturer = "NEC";
   information.name         = "PC Engine";
   information.overscan     = true;
-  information.resettable   = false;
 
   information.capability.states = false;
   information.capability.cheats = false;
@@ -62,7 +61,7 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
 }
 
 auto Interface::videoFrequency() -> double {
-  return 60.0;
+  return (system.colorburst() * 6.0) / (262.0 * 1365.0);
 }
 
 auto Interface::videoColors() -> uint32 {
@@ -82,7 +81,7 @@ auto Interface::videoColor(uint32 color) -> uint64 {
 }
 
 auto Interface::audioFrequency() -> double {
-  return 52'000.0;
+  return 32'087.5;
 }
 
 auto Interface::loaded() -> bool {

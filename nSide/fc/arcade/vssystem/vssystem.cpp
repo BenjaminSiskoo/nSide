@@ -34,10 +34,6 @@ auto VSSystem::unload() -> void {
 }
 
 auto VSSystem::power() -> void {
-  reset();
-}
-
-auto VSSystem::reset() -> void {
   create(VSSystem::Enter, system.colorburst() * 6.0);
 
   function<auto (uint16, uint8) -> uint8> reader;

@@ -1,5 +1,5 @@
 struct Window {
-  auto reset() -> void;
+  auto power() -> void;
 
   auto serialize(serializer&) -> void;
 

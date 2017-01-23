@@ -5,7 +5,6 @@ PlayChoice10Interface::PlayChoice10Interface() {
   information.manufacturer = "Nintendo";
   information.name         = "PlayChoice-10";
   information.overscan     = true;
-  information.resettable   = true;
 
   information.capability.states = true;
   information.capability.cheats = true;
@@ -211,10 +210,6 @@ auto PlayChoice10Interface::connect(uint port, uint device) -> void {
 
 auto PlayChoice10Interface::power() -> void {
   system.power();
-}
-
-auto PlayChoice10Interface::reset() -> void {
-  system.reset();
 }
 
 auto PlayChoice10Interface::run() -> void {

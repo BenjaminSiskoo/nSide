@@ -1,4 +1,4 @@
-auto PPU::Window::reset() -> void {
+auto PPU::Window::power() -> void {
   io.bg1.oneEnable = false;
   io.bg1.oneInvert = false;
   io.bg1.twoEnable = false;

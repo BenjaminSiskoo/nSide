@@ -116,6 +116,14 @@ auto APU::load(Markup::Node node) -> bool {
 }
 
 auto APU::power() -> void {
+  double clockDivider;
+  switch(system.region()) {
+  case System::Region::NTSC:  clockDivider = 12.0; break;
+  case System::Region::PAL:   clockDivider = 16.0; break;
+  case System::Region::Dendy: clockDivider = 15.0; break;
+  }
+  stream = Emulator::audio.createStream(1, (system.colorburst() * 6.0) / clockDivider);
+
   filter.hipassStrong = 0;
   filter.hipassWeak = 0;
   filter.lopass = 0;
@@ -125,17 +133,12 @@ auto APU::power() -> void {
   triangle.power();
   noise.power();
   dmc.power();
+
+  reset();
 }
 
 auto APU::reset() -> void {
   create(APU::Enter, system.colorburst() * 6.0);
-  double clockDivider;
-  switch(system.region()) {
-  case System::Region::NTSC:  clockDivider = 12.0; break;
-  case System::Region::PAL:   clockDivider = 16.0; break;
-  case System::Region::Dendy: clockDivider = 15.0; break;
-  }
-  stream = Emulator::audio.createStream(1, (system.colorburst() * 6.0) / clockDivider);
 
   pulse[0].reset();
   pulse[1].reset();

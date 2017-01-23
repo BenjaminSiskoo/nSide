@@ -67,7 +67,6 @@ auto System::power() -> void {
 
   scheduler.reset();
   cpu.power();
-  cpu.reset();
   pia.power();
   tia.power();
   scheduler.primary(cpu);

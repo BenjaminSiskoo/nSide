@@ -3,7 +3,6 @@
 namespace SuperFamicom {
 
 Settings settings;
-Debugger debugger;
 
 Interface::Interface() {
   system.init();
@@ -12,7 +11,6 @@ Interface::Interface() {
   information.manufacturer = "Nintendo";
   information.name         = "Super Famicom";
   information.overscan     = true;
-  information.resettable   = true;
 
   information.capability.states = true;
   information.capability.cheats = true;
@@ -144,7 +142,8 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
     double squarePixelRate = system.region() == System::Region::NTSC
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    //note: PAL SNES multiples colorburst by 4/5 to make clock rate
+    //note: PAL SNES multiples colorburst by 4/5 to make clock rate;
+    //this operation was already done within system.cpp.
     w *= squarePixelRate / (system.colorburst() * 6.0 / (2.0 + 2.0));
   }
 
@@ -226,10 +225,6 @@ auto Interface::connect(uint port, uint device) -> void {
 
 auto Interface::power() -> void {
   system.power();
-}
-
-auto Interface::reset() -> void {
-  system.reset();
 }
 
 auto Interface::run() -> void {

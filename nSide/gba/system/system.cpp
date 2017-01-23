@@ -10,6 +10,16 @@ System system;
 Scheduler scheduler;
 Cheat cheat;
 
+auto System::run() -> void {
+  if(scheduler.enter() == Scheduler::Event::Frame) ppu.refresh();
+}
+
+auto System::runToSave() -> void {
+  scheduler.synchronize(cpu);
+  scheduler.synchronize(ppu);
+  scheduler.synchronize(apu);
+}
+
 auto System::load(Emulator::Interface* interface) -> bool {
   if(auto fp = platform->open(ID::System, "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
@@ -60,16 +70,6 @@ auto System::power() -> void {
   apu.power();
   cartridge.power();
   scheduler.primary(cpu);
-}
-
-auto System::run() -> void {
-  if(scheduler.enter() == Scheduler::Event::Frame) ppu.refresh();
-}
-
-auto System::runToSave() -> void {
-  scheduler.synchronize(cpu);
-  scheduler.synchronize(ppu);
-  scheduler.synchronize(apu);
 }
 
 auto System::rotate() -> void {

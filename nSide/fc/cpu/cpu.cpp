@@ -26,17 +26,7 @@ auto CPU::load(Markup::Node node) -> bool {
 
 auto CPU::power() -> void {
   MOS6502::power();
-
-  for(auto addr : range(0x0800)) ram[addr] = 0xff;
-  ram[0x0008] = 0xf7;
-  ram[0x0009] = 0xef;
-  ram[0x000a] = 0xdf;
-  ram[0x000f] = 0xbf;
-}
-
-auto CPU::reset() -> void {
-  MOS6502::reset();
-  create(Enter, system.colorburst() * 6.0);
+  coprocessors.reset();
 
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;
@@ -48,6 +38,19 @@ auto CPU::reset() -> void {
   reader = {&CPU::readCPU, this};
   writer = {&CPU::writeCPU, this};
   bus.map(reader, writer, "4000-4017");
+
+  for(auto addr : range(0x0800)) ram[addr] = 0xff;
+  ram[0x0008] = 0xf7;
+  ram[0x0009] = 0xef;
+  ram[0x000a] = 0xdf;
+  ram[0x000f] = 0xbf;
+
+  cpu.reset();
+}
+
+auto CPU::reset() -> void {
+  create(Enter, system.colorburst() * 6.0);
+  MOS6502::reset();
 
   //CPU
   r.pc  = bus.read(0xfffc, r.mdr) << 0;

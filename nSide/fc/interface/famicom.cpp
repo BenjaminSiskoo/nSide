@@ -5,7 +5,6 @@ FamicomInterface::FamicomInterface() {
   information.manufacturer = "Nintendo";
   information.name         = "Famicom";
   information.overscan     = true;
-  information.resettable   = true;
 
   information.capability.states = true;
   information.capability.cheats = true;
@@ -574,10 +573,6 @@ auto FamicomInterface::connect(uint port, uint device) -> void {
 
 auto FamicomInterface::power() -> void {
   system.power();
-}
-
-auto FamicomInterface::reset() -> void {
-  system.reset();
 }
 
 auto FamicomInterface::run() -> void {

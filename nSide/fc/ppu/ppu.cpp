@@ -99,6 +99,8 @@ auto PPU::power() -> void {
   io.oamAddress = 0x00;
 
   for(auto& n : ciram) n = 0xff;
+
+  reset();
 }
 
 auto PPU::reset() -> void {

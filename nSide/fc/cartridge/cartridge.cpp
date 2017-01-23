@@ -101,11 +101,13 @@ auto Cartridge::unload() -> void {
 }
 
 auto Cartridge::power() -> void {
+  create(Cartridge::Enter, system.colorburst() * 6.0);
   board->power();
+
+  reset();
 }
 
 auto Cartridge::reset() -> void {
-  create(Cartridge::Enter, system.colorburst() * 6.0);
   board->reset();
 }
 

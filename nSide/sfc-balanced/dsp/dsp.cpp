@@ -44,15 +44,13 @@ auto DSP::load(Markup::Node node) -> bool {
 auto DSP::power() -> void {
   spc_dsp.init(smp.apuram);
   spc_dsp.reset();
-  spc_dsp.set_output(samplebuffer, 8192);
-}
+//spc_dsp.set_output(samplebuffer, 8192);  //power()
 
-auto DSP::reset() -> void {
   clock = 0;
   stream = Emulator::audio.createStream(2, 32040.0);
 
   spc_dsp.soft_reset();
-  spc_dsp.set_output(samplebuffer, 8192);
+  spc_dsp.set_output(samplebuffer, 8192);  //reset()
 }
 
 }

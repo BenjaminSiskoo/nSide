@@ -12,9 +12,6 @@ Cheat cheat;
 
 auto System::run() -> void {
   if(scheduler.enter() == Scheduler::Event::Frame) {
-    if(model() == Model::Famicom) {
-      if(platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomControls, 0)) reset();
-    }
     if(model() == Model::FamicomBox) famicombox.pollInputs();
     ppu.refresh();
     if(model() == Model::PlayChoice10) playchoice10.videoCircuit.refresh();
@@ -111,8 +108,16 @@ auto System::unload() -> void {
 }
 
 auto System::power() -> void {
-  random.seed((uint)time(0));
+  Emulator::video.reset();
+  Emulator::video.setInterface(interface);
+  //Emulator::video.resize() is called in configureVideoEffects()
+  configureVideoPalette();
+  configureVideoEffects();
 
+  Emulator::audio.reset();
+  Emulator::audio.setInterface(interface);
+
+  scheduler.reset();
   cartridge.power();
   cpu.power();
   apu.power();
@@ -124,33 +129,6 @@ auto System::power() -> void {
   case Model::FamicomBox:   famicombox.power(); break;
   }
 
-//ppu.reset();
-  reset();
-}
-
-auto System::reset() -> void {
-  Emulator::video.reset();
-  Emulator::video.setInterface(interface);
-  //Emulator::video.resize() is called in configureVideoEffects()
-  configureVideoPalette();
-  configureVideoEffects();
-
-  resetAudio();
-
-  scheduler.reset();
-  cartridge.reset();
-  cpu.reset();
-  apu.reset();
-  //Only the NES front-loader's PPU will reset. The Famicom's and NES top-loader's PPU will not.
-  //Because of a limitation of the Scheduler, the PPU must reset when the system resets.
-  ppu.reset();
-
-  switch(model()) {
-  case Model::VSSystem:     vssystem.reset(); break;
-  case Model::PlayChoice10: playchoice10.reset(); break;
-  case Model::FamicomBox:   famicombox.reset(); break;
-  }
-
   switch(model()) {
   case Model::VSSystem:     cpu.coprocessors.append(&vssystem); break;
   case Model::PlayChoice10: cpu.coprocessors.append(&playchoice10.pc10cpu); break;
@@ -159,11 +137,6 @@ auto System::reset() -> void {
 
   scheduler.primary(cpu);
   peripherals.reset();
-}
-
-auto System::resetAudio() -> void {
-  Emulator::audio.reset();
-  Emulator::audio.setInterface(interface);
 }
 
 }

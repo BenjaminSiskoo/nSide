@@ -25,7 +25,6 @@ struct Interface {
     string manufacturer;
     string name;
     bool overscan;
-    bool resettable;
     struct Capability {
       bool states;
       bool cheats;
@@ -81,7 +80,6 @@ struct Interface {
   //system interface
   virtual auto connect(uint port, uint device) -> void {}
   virtual auto power() -> void {}
-  virtual auto reset() -> void {}
   virtual auto run() -> void {}
   virtual auto rotate() -> void {}
 

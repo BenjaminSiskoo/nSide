@@ -9,7 +9,7 @@ auto PPU::Object::setFirstSprite() -> void {
   io.firstSprite = !ppu.io.oamPriority ? 0 : (ppu.io.oamAddress >> 2) & 127;
 }
 
-auto PPU::Object::reset() -> void {
+auto PPU::Object::power() -> void {
   for(auto& object : oam.object) {
     object.x = 0;
     object.y = 0;

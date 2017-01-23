@@ -5,7 +5,6 @@ FamicomBoxInterface::FamicomBoxInterface() {
   information.manufacturer = "Nintendo";
   information.name         = "FamicomBox";
   information.overscan     = true;
-  information.resettable   = true;
 
   information.capability.states = true;
   information.capability.cheats = true;
@@ -109,12 +108,6 @@ FamicomBoxInterface::FamicomBoxInterface() {
     for(uint n : range(12)) {
       device.inputs.append({0, {"Button ", n + 1}});
     }
-    expansionPort.devices.append(device);
-  }
-
-  { Device device{ID::Device::VausE, "Arkanoid Vaus"};
-    device.inputs.append({1, "Control Knob"});
-    device.inputs.append({0, "Fire Button" });
     expansionPort.devices.append(device);
   }
 
@@ -328,10 +321,6 @@ auto FamicomBoxInterface::connect(uint port, uint device) -> void {
 
 auto FamicomBoxInterface::power() -> void {
   system.power();
-}
-
-auto FamicomBoxInterface::reset() -> void {
-  system.reset();
 }
 
 auto FamicomBoxInterface::run() -> void {

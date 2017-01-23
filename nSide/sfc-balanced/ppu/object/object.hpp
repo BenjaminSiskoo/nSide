@@ -23,7 +23,7 @@ struct OAM {
 struct Object {
   alwaysinline auto addressReset() -> void;
   alwaysinline auto setFirstSprite() -> void;
-  auto reset() -> void;
+  auto power() -> void;
 
   auto serialize(serializer&) -> void;
 

@@ -46,6 +46,8 @@ auto FamicomBox::unload() -> void {
 }
 
 auto FamicomBox::power() -> void {
+  create(FamicomBox::Enter, system.colorburst() * 6.0);
+
   exceptionEnable = 0x00;
 
   zapperGND = false;
@@ -67,12 +69,24 @@ auto FamicomBox::power() -> void {
   writer = {&FamicomBox::writeCartridge, this};
   bus.map(reader, writer, "8000-ffff");
   // The cartridge is only mapped to $8000-ffff, not $4018-ffff.
+
+  cpu.reset();  //Workaround for CPU jumping to reset vector at $fffc before FamicomBox
+
+  reset();
 }
 
 auto FamicomBox::reset() -> void {
-  create(FamicomBox::Enter, system.colorburst() * 6.0);
+  function<auto (uint16, uint8) -> uint8> reader;
+  function<auto (uint16, uint8) -> void> writer;
 
-  remapBus();
+  reader = {&FamicomBox::readWRAM, this};
+  writer = {&FamicomBox::writeWRAM, this};
+  bus.map(reader, writer, "0800-1fff");
+
+  reader = {&FamicomBox::readIO, this};
+  writer = {&FamicomBox::writeIO, this};
+  bus.map(reader, writer, "4016-4017");
+  bus.map(reader, writer, "5000-5fff");
 
   exceptionTrap = 0xff;
   ramProtect = 7;
@@ -92,25 +106,10 @@ auto FamicomBox::trap(Exception exceptionId) -> void {
   synchronize(cpu);
   synchronize(apu);
   synchronize(cartridge);
-  system.resetAudio();
   cartridge.reset();
   cpu.reset();
   apu.reset();
   reset();
-}
-
-auto FamicomBox::remapBus() -> void {
-  function<auto (uint16, uint8) -> uint8> reader;
-  function<auto (uint16, uint8) -> void> writer;
-
-  reader = {&FamicomBox::readWRAM, this};
-  writer = {&FamicomBox::writeWRAM, this};
-  bus.map(reader, writer, "0800-1fff");
-
-  reader = {&FamicomBox::readIO, this};
-  writer = {&FamicomBox::writeIO, this};
-  bus.map(reader, writer, "4016-4017");
-  bus.map(reader, writer, "5000-5fff");
 }
 
 auto FamicomBox::pollInputs() -> void {

@@ -9,7 +9,6 @@ Interface::Interface() {
   information.manufacturer = "Atari";
   information.name         = "Atari 2600";
   information.overscan     = true;
-  information.resettable   = false;
 
   information.capability.states = true;
   information.capability.cheats = false;
@@ -241,10 +240,6 @@ auto Interface::connect(uint port, uint device) -> void {
 }
 
 auto Interface::power() -> void {
-  system.power();
-}
-
-auto Interface::reset() -> void {
   system.power();
 }
 

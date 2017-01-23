@@ -7,10 +7,7 @@ System system;
 Scheduler scheduler;
 
 auto System::run() -> void {
-  if(scheduler.enter() == Scheduler::Event::Frame) {
-    if(platform->inputPoll(ID::Port::Hardware, ID::Device::Controls, 0)) reset();
-    vdp.refresh();
-  }
+  if(scheduler.enter() == Scheduler::Event::Frame) vdp.refresh();
 }
 
 auto System::load(Emulator::Interface* interface) -> bool {
@@ -42,16 +39,6 @@ auto System::unload() -> void {
 }
 
 auto System::power() -> void {
-  cartridge.power();
-  cpu.power();
-  apu.power();
-  vdp.power();
-  psg.power();
-  ym2612.power();
-  reset();
-}
-
-auto System::reset() -> void {
   Emulator::video.reset();
   Emulator::video.setInterface(interface);
   Emulator::video.setPalette();
@@ -60,12 +47,12 @@ auto System::reset() -> void {
   Emulator::audio.setInterface(interface);
 
   scheduler.reset();
-  cartridge.reset();
-  cpu.reset();
-  apu.reset();
-  vdp.reset();
-  psg.reset();
-  ym2612.reset();
+  cartridge.power();
+  cpu.power();
+  apu.power();
+  vdp.power();
+  psg.power();
+  ym2612.power();
   scheduler.primary(cpu);
 
   peripherals.reset();

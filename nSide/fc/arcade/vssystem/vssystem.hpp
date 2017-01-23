@@ -15,7 +15,6 @@ struct VSSystem : Thread {
   auto load() -> bool;
   auto unload() -> void;
   auto power() -> void;
-  auto reset() -> void;
 
   auto setDip(bool side, uint8 dip) -> void;
   auto read(bool side, uint16 addr, uint8 data) -> uint8;

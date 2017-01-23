@@ -3,7 +3,6 @@ MasterSystemInterface::MasterSystemInterface() {
   information.manufacturer = "Sega";
   information.name         = "Master System";
   information.overscan     = true;
-  information.resettable   = false;
 
   information.capability.states = false;
   information.capability.cheats = false;
@@ -69,7 +68,10 @@ auto MasterSystemInterface::videoSize(uint width, uint height, bool arc, bool in
 }
 
 auto MasterSystemInterface::videoFrequency() -> double {
-  return 60.0;
+  switch(system.region()) { default:
+  case System::Region::NTSC: return (system.colorburst() * 6.0) / (262.0 * 1368.0);
+  case System::Region::PAL:  return (system.colorburst() * 6.0) / (312.0 * 1368.0);
+  }
 }
 
 auto MasterSystemInterface::videoColors() -> uint32 {

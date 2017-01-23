@@ -30,10 +30,12 @@ Program::Program(string_vector args) {
   emulators.append(new MasterSystem::MasterSystemInterface);
   emulators.append(new MegaDrive::Interface);
   emulators.append(new PCEngine::Interface);
-  emulators.append(new GameBoy::Interface);
+  emulators.append(new GameBoy::GameBoyInterface);
+  emulators.append(new GameBoy::GameBoyColorInterface);
   emulators.append(new GameBoyAdvance::Interface);
   emulators.append(new MasterSystem::GameGearInterface);
-  emulators.append(new WonderSwan::Interface);
+  emulators.append(new WonderSwan::WonderSwanInterface);
+  emulators.append(new WonderSwan::WonderSwanColorInterface);
   emulators.append(new Famicom::VSSystemInterface);
   emulators.append(new Famicom::PlayChoice10Interface);
   emulators.append(new Famicom::FamicomBoxInterface);

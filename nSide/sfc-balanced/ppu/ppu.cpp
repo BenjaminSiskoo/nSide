@@ -88,11 +88,6 @@ auto PPU::load(Markup::Node node) -> bool {
 }
 
 auto PPU::power() -> void {
-  for(auto& n : vram.data) n = random(0x0000);
-  tiledataCache.flush();
-}
-
-auto PPU::reset() -> void {
   create(Enter, system.colorburst() * 6.0);
   PPUcounter::reset();
   memory::fill(output, 512 * 480 * sizeof(uint32));
@@ -100,6 +95,9 @@ auto PPU::reset() -> void {
   function<auto (uint24, uint8) -> uint8> reader{&PPU::readIO, this};
   function<auto (uint24, uint8) -> void> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
+
+  for(auto& n : vram.data) n = random(0x0000);
+  tiledataCache.flush();
 
   //open bus support
   ppu1.mdr = random(0xff);
@@ -196,13 +194,13 @@ auto PPU::reset() -> void {
   //$213d  OPVCT
   io.vcounter = 0;
 
-  bg1.reset();
-  bg2.reset();
-  bg3.reset();
-  bg4.reset();
-  obj.reset();
-  window.reset();
-  screen.reset();
+  bg1.power();
+  bg2.power();
+  bg3.power();
+  bg4.power();
+  obj.power();
+  window.power();
+  screen.power();
 
   //bg line counters
   io.bg_y[Background::ID::BG1] = 0;

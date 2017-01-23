@@ -14,7 +14,6 @@ struct DSP {
   auto main() -> void;
   auto load(Markup::Node) -> bool;
   auto power() -> void;
-  auto reset() -> void;
 
   auto serialize(serializer&) -> void;
 

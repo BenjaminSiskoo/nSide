@@ -18,12 +18,14 @@ struct System {
   auto loaded() const -> bool { return _loaded; }
   auto orientation() const -> bool { return _orientation; }
 
+  auto run() -> void;
+  auto runToSave() -> void;
+
   auto load(Emulator::Interface*) -> bool;
   auto save() -> void;
   auto unload() -> void;
+
   auto power() -> void;
-  auto run() -> void;
-  auto runToSave() -> void;
   auto rotate() -> void;
 
   //video.cpp

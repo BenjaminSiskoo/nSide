@@ -17,10 +17,9 @@ struct FamicomBox : Thread {
   auto load(Markup::Node node) -> bool;
   auto unload() -> void;
   auto power() -> void;
-  auto reset() -> void;
 
+  auto reset() -> void;
   auto trap(Exception exceptionId) -> void;
-  auto remapBus() -> void;
   auto pollInputs() -> void;
 
   auto readWRAM(uint16 addr, uint8 data) -> uint8;

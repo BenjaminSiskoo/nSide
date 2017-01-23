@@ -9,7 +9,6 @@ Interface::Interface() {
   information.manufacturer = "Nintendo";
   information.name         = "Game Boy Advance";
   information.overscan     = false;
-  information.resettable   = false;
 
   information.capability.states = true;
   information.capability.cheats = true;

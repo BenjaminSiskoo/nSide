@@ -44,6 +44,13 @@ auto PlayChoice10::power() -> void {
   pc10cpu.power();
   videoCircuit.power();
 
+  function<auto (uint16, uint8) -> uint8> reader;
+  function<auto (uint16, uint8) -> void> writer;
+
+  reader = {&PlayChoice10::readController1, this};
+  writer = {&PlayChoice10::latchControllers, this};
+  bus.map(reader, writer, "4016-4016");
+
   nmiDetected = false;
 
   vramAccess      = 0;  //0: Z80,                  1: video circuit
@@ -59,12 +66,9 @@ auto PlayChoice10::power() -> void {
 
   channel  = 0;  //channel 1 on-screen
   sramBank = 1;
-}
 
-auto PlayChoice10::reset() -> void {
   pc10cpu.reset();
   videoCircuit.reset();
-  remapBus();
 
   promAddress = 0;
 }
@@ -149,10 +153,8 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
   }
   case 0x04: {
     if(!cpuReset && data) {
-      system.resetAudio();
       cpu.reset();
       apu.reset();
-      remapBus();
     };
     cpuReset = data;
     break;
@@ -208,15 +210,6 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
   case 0x12: break;
   case 0x13: break;
   }
-}
-
-auto PlayChoice10::remapBus() -> void {
-  function<auto (uint16, uint8) -> uint8> reader;
-  function<auto (uint16, uint8) -> void> writer;
-
-  reader = {&PlayChoice10::readController1, this};
-  writer = {&PlayChoice10::latchControllers, this};
-  bus.map(reader, writer, "4016-4016");
 }
 
 auto PlayChoice10::poll(uint input) -> int16 {

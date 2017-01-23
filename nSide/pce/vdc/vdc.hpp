@@ -16,7 +16,7 @@ struct VDC : Thread {
   auto write(uint11 addr, uint8 data) -> void;
 
 private:
-  uint32 buffer[1140 * 512];
+  uint32 buffer[1140 * 242];
 
   struct VRAM {
     //memory.cpp

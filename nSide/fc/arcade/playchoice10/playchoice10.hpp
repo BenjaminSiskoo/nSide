@@ -12,7 +12,6 @@ struct PlayChoice10 : Processor::Z80::Bus {
   auto load(Markup::Node node) -> bool;
   auto unload() -> void;
   auto power() -> void;
-  auto reset() -> void;
 
   auto read(uint16 addr) -> uint8 override;
   auto write(uint16 addr, uint8 data) -> void override;
@@ -20,7 +19,6 @@ struct PlayChoice10 : Processor::Z80::Bus {
   auto in(uint8 addr) -> uint8 override;
   auto out(uint8 addr, uint8 data) -> void override;
 
-  auto remapBus() -> void;
   auto poll(uint input) -> int16;
   auto readController1(uint16 addr, uint8 data) -> uint8;
   auto latchControllers(uint16 addr, uint8 data) -> void;

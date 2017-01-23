@@ -3,7 +3,6 @@ SG1000Interface::SG1000Interface() {
   information.manufacturer = "Sega";
   information.name         = "SG-1000";
   information.overscan     = true;
-  information.resettable   = false;
 
   information.capability.states = false;
   information.capability.cheats = false;
@@ -68,7 +67,10 @@ auto SG1000Interface::videoSize(uint width, uint height, bool arc, bool intScale
 }
 
 auto SG1000Interface::videoFrequency() -> double {
-  return 60.0;
+  switch(system.region()) { default:
+  case System::Region::NTSC: return (system.colorburst() * 6.0) / (262.0 * 1368.0);
+  case System::Region::PAL:  return (system.colorburst() * 6.0) / (312.0 * 1368.0);
+  }
 }
 
 auto SG1000Interface::videoColors() -> uint32 {

@@ -15,7 +15,7 @@ auto VDC::Enter() -> void {
 }
 
 auto VDC::main() -> void {
-  auto output = buffer + 1140 * vce.vclock;
+  auto output = buffer + 1140 * (vce.vclock - 10);
 
   //todo: if block breaks TV Sports Basketball
   //if(vce.vclock >= vce.vstart && vce.voffset < vce.vlength) {
@@ -44,15 +44,17 @@ auto VDC::main() -> void {
       }
     }
 
-    if(vce.clock >= 2) *output++ = color;
-    if(vce.clock >= 2) *output++ = color;
-    if(vce.clock >= 3) *output++ = color;
-    if(vce.clock >= 4) *output++ = color;
+    if(vce.vclock >= 10 && vce.vclock < 252) {
+      if(vce.clock >= 2) *output++ = color;
+      if(vce.clock >= 2) *output++ = color;
+      if(vce.clock >= 3) *output++ = color;
+      if(vce.clock >= 4) *output++ = color;
+    }
 
     step(vce.clock);
   }
 
-  if(vce.vclock == io.lineCoincidence - (66 - vce.vstart)) {
+  if(vce.vclock == io.lineCoincidence - (65 - vce.vstart)) {
     irq.raise(IRQ::Line::LineCoincidence);
   }
 
@@ -70,11 +72,9 @@ auto VDC::scanline() -> void {
   if(vce.clock == 4) vce.hstart += 0;
 
   vce.vclock++;
-  if(vce.vclock >= vce.vstart) vce.voffset++;
+  if(vce.vclock > vce.vstart) vce.voffset++;
 
-  if(vce.vclock == 262) {
-    frame();
-  }
+  if(vce.vclock == 263 || (io.colorBlur && vce.vclock == 262)) frame();
 
   if(vce.vclock == vce.vstart + vce.vlength) {
     irq.raise(IRQ::Line::Vblank);
@@ -99,7 +99,7 @@ auto VDC::step(uint clocks) -> void {
 }
 
 auto VDC::refresh() -> void {
-  Emulator::video.refresh(buffer + 1140 * vce.vstart, 1140 * sizeof(uint32), 1140, 242);
+  Emulator::video.refresh(buffer, 1140 * sizeof(uint32), 1140, 242);
 }
 
 auto VDC::power() -> void {

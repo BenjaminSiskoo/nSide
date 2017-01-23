@@ -15,9 +15,8 @@ struct System {
   auto load(Emulator::Interface* interface, Model) -> bool;
   auto save() -> void;
   auto unload() -> void;
+
   auto power() -> void;
-  auto reset() -> void;
-  auto resetAudio() -> void;
 
   //video.cpp
   auto configureVideoPalette() -> void;

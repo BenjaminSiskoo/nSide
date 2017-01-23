@@ -10,7 +10,7 @@ auto PPU::Background::getTile(uint x, uint y) -> uint16 {
   return ppu.vram[address];
 }
 
-auto PPU::Background::reset() -> void {
+auto PPU::Background::power() -> void {
   io.tiledataAddress = 0x0000;
   io.screenAddress = 0x0000;
   io.screenSize = ScreenSize::Size32x32;

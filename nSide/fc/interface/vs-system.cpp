@@ -5,7 +5,6 @@ VSSystemInterface::VSSystemInterface() {
   information.manufacturer = "Nintendo";
   information.name         = "VS. System";
   information.overscan     = true;
-  information.resettable   = true;
 
   information.capability.states = true;
   information.capability.cheats = true;
@@ -175,10 +174,6 @@ auto VSSystemInterface::connect(uint port, uint device) -> void {
 
 auto VSSystemInterface::power() -> void {
   system.power();
-}
-
-auto VSSystemInterface::reset() -> void {
-  system.reset();
 }
 
 auto VSSystemInterface::run() -> void {
