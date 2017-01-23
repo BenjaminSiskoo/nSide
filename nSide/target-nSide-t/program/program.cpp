@@ -29,7 +29,8 @@ Program::Program(string_vector args) {
   emulators.append(new MasterSystem::SG1000Interface);
   emulators.append(new MasterSystem::MasterSystemInterface);
   emulators.append(new MegaDrive::Interface);
-  emulators.append(new PCEngine::Interface);
+  emulators.append(new PCEngine::PCEngineInterface);
+  emulators.append(new PCEngine::SuperGrafxInterface);
   emulators.append(new GameBoy::GameBoyInterface);
   emulators.append(new GameBoy::GameBoyColorInterface);
   emulators.append(new GameBoyAdvance::Interface);

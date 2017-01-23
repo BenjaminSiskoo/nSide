@@ -19,8 +19,8 @@ auto PSG::step(uint clocks) -> void {
 }
 
 auto PSG::power() -> void {
-  create(PSG::Enter, 32'087.5);
-  stream = Emulator::audio.createStream(2, 32'087.5);
+  create(PSG::Enter, 44'100.0);
+  stream = Emulator::audio.createStream(2, 44'100.0);
 }
 
 }

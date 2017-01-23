@@ -48,6 +48,11 @@ struct CartPal {
   auto pcEngineManifest(vector<uint8_t>& buffer, string location) -> string;
   auto pcEngineImport(vector<uint8_t>& buffer, string location) -> string;
 
+  //supergrafx.cpp
+  auto superGrafxManifest(string location) -> string;
+  auto superGrafxManifest(vector<uint8_t>& buffer, string location) -> string;
+  auto superGrafxImport(vector<uint8_t>& buffer, string location) -> string;
+
   //game-boy.cpp
   auto gameBoyManifest(string location) -> string;
   auto gameBoyManifest(vector<uint8_t>& buffer, string location) -> string;
@@ -117,6 +122,7 @@ private:
     Markup::Node masterSystem;
     Markup::Node megaDrive;
     Markup::Node pcEngine;
+    Markup::Node superGrafx;
     Markup::Node gameBoy;
     Markup::Node gameBoyColor;
     Markup::Node gameBoyAdvance;

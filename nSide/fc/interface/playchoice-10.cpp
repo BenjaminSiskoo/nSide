@@ -4,7 +4,6 @@ PlayChoice10Interface::PlayChoice10Interface() {
   information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "PlayChoice-10";
-  information.overscan     = true;
 
   information.capability.states = true;
   information.capability.cheats = true;
@@ -54,14 +53,6 @@ PlayChoice10Interface::PlayChoice10Interface() {
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
   ports.append(move(expansionPort));
-}
-
-auto PlayChoice10Interface::manifest() -> string {
-  return cartridge.manifest();
-}
-
-auto PlayChoice10Interface::title() -> string {
-  return cartridge.title();
 }
 
 auto PlayChoice10Interface::videoSize() -> VideoSize {
@@ -183,92 +174,10 @@ auto PlayChoice10Interface::audioFrequency() -> double {
   }
 }
 
-auto PlayChoice10Interface::loaded() -> bool {
-  return system.loaded();
-}
-
-auto PlayChoice10Interface::sha256() -> string {
-  return cartridge.sha256();
-}
-
 auto PlayChoice10Interface::load(uint id) -> bool {
   return system.load(this, Model::PlayChoice10);
 }
 
-auto PlayChoice10Interface::save() -> void {
-  system.save();
-}
-
-auto PlayChoice10Interface::unload() -> void {
-  save();
-  system.unload();
-}
-
 auto PlayChoice10Interface::connect(uint port, uint device) -> void {
   peripherals.connect(port, device);
-}
-
-auto PlayChoice10Interface::power() -> void {
-  system.power();
-}
-
-auto PlayChoice10Interface::run() -> void {
-  system.run();
-}
-
-auto PlayChoice10Interface::serialize() -> serializer {
-  system.runToSave();
-  return system.serialize();
-}
-
-auto PlayChoice10Interface::unserialize(serializer& s) -> bool {
-  return system.unserialize(s);
-}
-
-auto PlayChoice10Interface::cheatSet(const string_vector& list) -> void {
-  cheat.reset();
-  cheat.assign(list);
-}
-
-auto PlayChoice10Interface::cap(const string& name) -> bool {
-  if(name == "Color Emulation") return true;
-  if(name == "Scanline Emulation") return true;
-  return false;
-}
-
-auto PlayChoice10Interface::get(const string& name) -> any {
-  if(name == "Color Emulation") return settings.colorEmulation;
-  if(name == "Scanline Emulation") return settings.scanlineEmulation;
-  return {};
-}
-
-auto PlayChoice10Interface::set(const string& name, const any& value) -> bool {
-  if(name == "Color Emulation" && value.is<bool>()) {
-    settings.colorEmulation = value.get<bool>();
-    system.configureVideoPalette();
-    return true;
-  }
-  if(name == "Scanline Emulation" && value.is<bool>()) {
-    settings.scanlineEmulation = value.get<bool>();
-    system.configureVideoEffects();
-    return true;
-  }
-  return false;
-}
-
-auto PlayChoice10Interface::exportMemory() -> void {
-  string pathname = {platform->path(cartridge.pathID()), "debug/"};
-  directory::create(pathname);
-
-  if(auto fp = platform->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.ram, 0x800);
-  if(cartridge.board->prgram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/program.ram", File::Write)) {
-    fp->write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
-  }
-  if(cartridge.board->chrram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/character.ram", File::Write)) {
-    fp->write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
-  }
-  if(!cartridge.board->chip) return;
-  if(cartridge.board->chip->ram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/chip.ram", File::Write)) {
-    fp->write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
-  }
 }

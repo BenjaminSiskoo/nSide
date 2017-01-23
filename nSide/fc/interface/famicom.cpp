@@ -4,7 +4,6 @@ FamicomInterface::FamicomInterface() {
   information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "Famicom";
-  information.overscan     = true;
 
   information.capability.states = true;
   information.capability.cheats = true;
@@ -291,14 +290,6 @@ FamicomInterface::FamicomInterface() {
   ports.append(move(expansionPort));
 }
 
-auto FamicomInterface::manifest() -> string {
-  return cartridge.manifest();
-}
-
-auto FamicomInterface::title() -> string {
-  return cartridge.title();
-}
-
 auto FamicomInterface::videoSize() -> VideoSize {
   return {256, 240};
 }
@@ -523,25 +514,8 @@ auto FamicomInterface::audioFrequency() -> double {
   }
 }
 
-auto FamicomInterface::loaded() -> bool {
-  return system.loaded();
-}
-
-auto FamicomInterface::sha256() -> string {
-  return cartridge.sha256();
-}
-
 auto FamicomInterface::load(uint id) -> bool {
   return system.load(this, Model::Famicom);
-}
-
-auto FamicomInterface::save() -> void {
-  system.save();
-}
-
-auto FamicomInterface::unload() -> void {
-  save();
-  system.unload();
 }
 
 auto FamicomInterface::connect(uint port, uint device) -> void {
@@ -568,70 +542,5 @@ auto FamicomInterface::connect(uint port, uint device) -> void {
       platform->deviceChanged(ID::Port::Controller1, ID::Device::FourScore);
       break;
     }
-  }
-}
-
-auto FamicomInterface::power() -> void {
-  system.power();
-}
-
-auto FamicomInterface::run() -> void {
-  system.run();
-}
-
-auto FamicomInterface::serialize() -> serializer {
-  system.runToSave();
-  return system.serialize();
-}
-
-auto FamicomInterface::unserialize(serializer& s) -> bool {
-  return system.unserialize(s);
-}
-
-auto FamicomInterface::cheatSet(const string_vector& list) -> void {
-  cheat.reset();
-  cheat.assign(list);
-}
-
-auto FamicomInterface::cap(const string& name) -> bool {
-  if(name == "Color Emulation") return true;
-  if(name == "Scanline Emulation") return true;
-  return false;
-}
-
-auto FamicomInterface::get(const string& name) -> any {
-  if(name == "Color Emulation") return settings.colorEmulation;
-  if(name == "Scanline Emulation") return settings.scanlineEmulation;
-  return {};
-}
-
-auto FamicomInterface::set(const string& name, const any& value) -> bool {
-  if(name == "Color Emulation" && value.is<bool>()) {
-    settings.colorEmulation = value.get<bool>();
-    system.configureVideoPalette();
-    return true;
-  }
-  if(name == "Scanline Emulation" && value.is<bool>()) {
-    settings.scanlineEmulation = value.get<bool>();
-    system.configureVideoEffects();
-    return true;
-  }
-  return false;
-}
-
-auto FamicomInterface::exportMemory() -> void {
-  string pathname = {platform->path(cartridge.pathID()), "debug/"};
-  directory::create(pathname);
-
-  if(auto fp = platform->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.ram, 0x800);
-  if(cartridge.board->prgram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/program.ram", File::Write)) {
-    fp->write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
-  }
-  if(cartridge.board->chrram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/character.ram", File::Write)) {
-    fp->write(cartridge.board->chrram.data(), cartridge.board->chrram.size());
-  }
-  if(!cartridge.board->chip) return;
-  if(cartridge.board->chip->ram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/chip.ram", File::Write)) {
-    fp->write(cartridge.board->chip->ram.data(), cartridge.board->chip->ram.size());
   }
 }
