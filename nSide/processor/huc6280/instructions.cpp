@@ -314,6 +314,8 @@ auto HuC6280::instruction_pull(uint8& data) -> void {
   io();
   io();
 L data = pull();
+  Z = data == 0;
+  N = data.bit(7);
 }
 
 auto HuC6280::instruction_pullP() -> void {

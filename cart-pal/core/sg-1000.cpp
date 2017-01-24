@@ -28,7 +28,7 @@ auto CartPal::sg1000Manifest(vector<uint8_t>& buffer, string location) -> string
 auto CartPal::sg1000Import(vector<uint8_t>& buffer, string location) -> string {
   auto name = Location::prefix(location);
   auto source = Location::path(location);
-  string target{settings["Library/Location"].text(), "SG-1000/", name, ".ms/"};
+  string target{settings["Library/Location"].text(), "SG-1000/", name, ".sg1000/"};
 //if(directory::exists(target)) return failure("game already exists");
 
   auto manifest = sg1000Manifest(buffer, location);

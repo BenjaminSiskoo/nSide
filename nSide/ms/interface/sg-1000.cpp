@@ -7,7 +7,7 @@ SG1000Interface::SG1000Interface() {
   information.capability.states = false;
   information.capability.cheats = false;
 
-  media.append({ID::SG1000, "SG-1000", "sg1"});
+  media.append({ID::SG1000, "SG-1000", "sg1000"});
 
   Port hardware{ID::Port::Hardware, "Hardware"};
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};

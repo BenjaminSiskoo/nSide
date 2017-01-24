@@ -1,6 +1,7 @@
 CartPal::CartPal() {
   database.famicom = BML::unserialize(string::read(locate("Database/Famicom.bml")));
   database.superFamicom = BML::unserialize(string::read(locate("Database/Super Famicom.bml")));
+  database.sg1000 = BML::unserialize(string::read(locate("Database/SG-1000.bml")));
   database.masterSystem = BML::unserialize(string::read(locate("Database/Master System.bml")));
   database.megaDrive = BML::unserialize(string::read(locate("Database/Mega Drive.bml")));
   database.pcEngine = BML::unserialize(string::read(locate("Database/PC Engine.bml")));
@@ -36,6 +37,7 @@ auto CartPal::manifest(string location) -> string {
   auto type = Location::suffix(location).downcase();
   if(type == ".fc") return famicomManifest(location);
   if(type == ".sfc") return superFamicomManifest(location);
+  if(type == ".sg1000") return sg1000Manifest(location);
   if(type == ".ms") return masterSystemManifest(location);
   if(type == ".md") return megaDriveManifest(location);
   if(type == ".pce") return pcEngineManifest(location);
@@ -76,6 +78,7 @@ auto CartPal::import(string location) -> string {
 
   if(type == ".fc" || type == ".nes") return famicomImport(buffer, location);
   if(type == ".sfc" || type == ".smc") return superFamicomImport(buffer, location);
+  if(type == ".sg1000") return sg1000Import(buffer, location);
   if(type == ".ms" || type == ".sms") return masterSystemImport(buffer, location);
   if(type == ".md" || type == ".smd" || type == ".gen") return megaDriveImport(buffer, location);
   if(type == ".pce") return pcEngineImport(buffer, location);
