@@ -10,7 +10,7 @@ auto APU::Pulse::clock() -> uint8 {
 
   static const uint dutyTable[] = {1, 2, 4, 6};
   static const uint umcDutyTable[] = {1, 4, 2, 6};
-  uint dutyLimit = apu.version != APU::Version::UA6527P ? dutyTable[duty] : umcDutyTable[duty];
+  uint dutyLimit = apu0.version != APU::Version::UA6527P ? dutyTable[duty] : umcDutyTable[duty];
   uint8 result = (dutyCounter < dutyLimit) ? envelope.volume() : 0;
   if(sweep.pulsePeriod < 0x008) result = 0;
 

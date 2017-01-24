@@ -18,7 +18,7 @@ auto CPU::readCPU(uint16 addr, uint8 data) -> uint8 {
 
   }
 
-  return apu.readIO(addr);
+  return apu.readIO(addr, data);
 }
 
 auto CPU::writeCPU(uint16 addr, uint8 data) -> void {

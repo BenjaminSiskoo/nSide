@@ -40,7 +40,7 @@ struct FCG : Chip {
     }
   }
 
-  auto ramRead(uint addr) -> uint8 {
+  auto ramRead(uint addr, uint8 data) -> uint8 {
     return board.read(board.prgram, addr & 0x1fff);
   }
 
@@ -123,6 +123,6 @@ struct FCG : Chip {
   bool irqCounterEnable;
   uint16 irqCounter;
   uint16 irqLatch;
-  bool eepromI2C_SCL; // When using SRAM, enables RAM chip
+  bool eepromI2C_SCL;  //When using SRAM, enables RAM chip
   bool eepromEnableRead;
 };

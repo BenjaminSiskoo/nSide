@@ -25,10 +25,10 @@ struct HVC_NROM : Board {
     }
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if((addr & 0x8000) == 0x8000) return read(prgrom, addr);
     if(revision == Revision::FAMILYBASIC && (addr & 0xe000) == 0x6000) return read(prgram, addr);
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

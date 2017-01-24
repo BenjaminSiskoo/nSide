@@ -19,8 +19,8 @@ struct TC : Chip {
 
   auto irqTest(uint addr) -> void {
     bool edge;
-    // IRQs occur a little after they would on the MMC3.
-    // Do they use the MC-ACC's behavior instead?
+    //IRQs occur a little after they would on the MMC3.
+    //Do they use the MC-ACC's behavior instead?
     edge = (chrAddressBus & 0x1000) && !(addr & 0x1000);
     if(edge) {
       if(irqDelay == 0) {
@@ -138,8 +138,8 @@ struct TC : Chip {
   }
 
   enum class Revision : uint {
-    TC0190FMC, // No IRQ
-    TC0350FMR, // identical to TC0190 except with IRQ that no game uses
+    TC0190FMC,  //No IRQ
+    TC0350FMR,  //identical to TC0190 except with IRQ that no game uses
     TC0690FMR,
   } revision;
 

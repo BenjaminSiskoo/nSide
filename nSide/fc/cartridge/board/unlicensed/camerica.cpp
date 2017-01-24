@@ -10,15 +10,16 @@ struct Camerica : Board {
     settings.mirror = boardNode["mirror/mode"].text() == "horizontal";
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if((addr & 0x8000) == 0x0000) return cpu.mdr();
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if((addr & 0x8000) == 0x0000) return data;
     if((addr & 0xc000) == 0x8000) {
       return read(prgrom, (prgBlock << 16) | (prgBank << 14) | (addr & 0x3fff));
     } else {
-      if(revision != Revision::ALGQ && revision != Revision::BF9096)
+      if(revision != Revision::ALGQ && revision != Revision::BF9096) {
         return read(prgrom, (0x0f << 14) | (addr & 0x3fff));
-      else
+      } else {
         return read(prgrom, (prgBlock << 16) | (0x03 << 14) | (addr & 0x3fff));
+      }
     }
   }
 
@@ -86,18 +87,18 @@ struct Camerica : Board {
   }
 
   enum class Revision : uint {
-    ALGN, // Aladdin Game Enhancer
-    ALGQ, // Aladdin Game Enhancer (Quattro Multicarts)
+    ALGN,  //Aladdin Game Enhancer
+    ALGQ,  //Aladdin Game Enhancer (Quattro Multicarts)
     BF9093,
     BF9096,
     BF9097,
   } revision;
 
   struct Settings {
-    bool mirror;    //0 = vertical, 1 = horizontal
+    bool mirror;  //0 = vertical, 1 = horizontal
   } settings;
 
   uint4 prgBank;
-  uint2 prgBlock; // for ALGQ and BF9096
-  bool nametable; // for BF9097
+  uint2 prgBlock;  //for ALGQ and BF9096
+  bool nametable;  //for BF9097
 };

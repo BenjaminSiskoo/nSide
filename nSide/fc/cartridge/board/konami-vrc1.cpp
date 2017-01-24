@@ -2,9 +2,9 @@ struct KonamiVRC1 : Board {
   KonamiVRC1(Markup::Node& boardNode) : Board(boardNode), vrc1(*this) {
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) return read(prgrom, vrc1.prgAddress(addr));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

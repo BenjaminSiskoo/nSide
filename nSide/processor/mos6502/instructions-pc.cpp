@@ -1,4 +1,4 @@
-auto MOS6502::op_branch(bool flag, bool value) {
+auto MOS6502::op_branch(bool flag, bool value) -> void {
   if(flag != value) {
 L   rd = readPC();
   } else {
@@ -10,13 +10,13 @@ L   idle();
   }
 }
 
-auto MOS6502::op_jmp_absolute() {
+auto MOS6502::op_jmp_absolute() -> void {
   abs.l = readPC();
 L abs.h = readPC();
   r.pc = abs.w;
 }
 
-auto MOS6502::op_jmp_indirect_absolute() {
+auto MOS6502::op_jmp_indirect_absolute() -> void {
   abs.l = readPC();
   abs.h = readPC();
   iabs.l = read(abs.w); abs.l++;
@@ -24,7 +24,7 @@ L iabs.h = read(abs.w); abs.l++;
   r.pc = iabs.w;
 }
 
-auto MOS6502::op_jsr_absolute() {
+auto MOS6502::op_jsr_absolute() -> void {
   abs.l = readPC();
   abs.h = readPC();
   idle();
@@ -34,7 +34,7 @@ L writeSP(r.pc >> 0);
   r.pc.w = abs.w;
 }
 
-auto MOS6502::op_rti() {
+auto MOS6502::op_rti() -> void {
   idle();
   idle();
   r.p = readSP();
@@ -43,7 +43,7 @@ L abs.h = readSP();
   r.pc = abs.w;
 }
 
-auto MOS6502::op_rts() {
+auto MOS6502::op_rts() -> void {
   idle();
   idle();
   abs.l = readSP();

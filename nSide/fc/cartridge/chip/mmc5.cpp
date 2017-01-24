@@ -67,10 +67,10 @@ struct MMC5 : Chip {
     }
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if((addr & 0xfc00) == 0x5c00) {
       if(exramMode >= 2) return ram.read(addr & 0x03ff);
-      return cpu.mdr();
+      return data;
     }
 
     if(addr >= 0x6000) {

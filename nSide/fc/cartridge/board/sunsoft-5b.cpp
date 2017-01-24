@@ -59,8 +59,8 @@ struct Sunsoft5B : Board {
     tick();
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if(addr < 0x6000) return cpu.mdr();
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if(addr < 0x6000) return data;
 
     uint8 bank = 0x3f;  //((addr & 0xe000) == 0xe000
     if((addr & 0xe000) == 0x6000) bank = prgBank[0];
@@ -73,7 +73,7 @@ struct Sunsoft5B : Board {
     bank &= 0x3f;
 
     if(ramSelect) {
-      if(ramEnable == false) return cpu.mdr();
+      if(ramEnable == false) return data;
       return read(prgram, addr & 0x1fff);
     }
 

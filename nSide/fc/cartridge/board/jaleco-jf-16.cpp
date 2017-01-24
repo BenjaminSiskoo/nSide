@@ -1,20 +1,21 @@
-  //JALECO-JF-16
+//JALECO-JF-16
 
 struct JalecoJF16 : Board {
   JalecoJF16(Markup::Node& boardNode) : Board(boardNode) {
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     switch(addr & 0xc000) {
     case 0x8000: return read(prgrom, (prgBank << 14) | (addr & 0x3fff));
     case 0xc000: return read(prgrom, (   0x07 << 14) | (addr & 0x3fff));
     }
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
-      // Bus conflicts
-      data &= readPRG(addr);
+      //Bus conflicts
+      data &= readPRG(addr, data);
       prgBank = (data & 0x07) >> 0;
       nametable = data & 0x08;
       chrBank = (data & 0xf0) >> 4;

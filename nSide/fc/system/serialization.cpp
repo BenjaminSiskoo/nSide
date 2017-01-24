@@ -46,11 +46,18 @@ auto System::serializeAll(serializer& s) -> void {
   cartridge.serialize(s);
   system.serialize(s);
   random.serialize(s);
-  cpu.serialize(s);
-  apu.serialize(s);
-  ppu.serialize(s);
 
-  if(model() == Model::VSSystem) vssystem.serialize(s);
+  cpu0.serialize(s);
+  apu0.serialize(s);
+  ppu0.serialize(s);
+
+  if(model() == Model::VSSystem) {
+    cpu1.serialize(s);
+    apu1.serialize(s);
+    ppu1.serialize(s);
+    vssystem.serialize(s);
+  }
+
   if(model() == Model::PlayChoice10) playchoice10.serialize(s);
 }
 

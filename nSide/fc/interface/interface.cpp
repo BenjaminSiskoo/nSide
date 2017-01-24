@@ -9,8 +9,6 @@ Settings settings;
 #include "famicombox.cpp"
 
 Interface::Interface() {
-  system.init();
-
   information.overscan = true;
 }
 
@@ -91,7 +89,7 @@ auto Interface::exportMemory() -> void {
   string pathname = {platform->path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 
-  if(auto fp = platform->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu.ram, 0x800);
+  if(auto fp = platform->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu0.ram, 0x800);
   if(cartridge.board->prgram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/program.ram", File::Write)) {
     fp->write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
   }

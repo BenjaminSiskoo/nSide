@@ -6,12 +6,12 @@ struct NES_QJ : Board {
     mmc3.main();
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) {
       addr = (mmc3.prgAddress(addr) & 0x1ffff) | (bank << 17);
       return read(prgrom, addr);
     }
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

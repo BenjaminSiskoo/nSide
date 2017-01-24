@@ -9,7 +9,7 @@ struct Board {
   virtual auto main() -> void;
   virtual auto tick() -> void;
 
-  virtual uint8 readPRG(uint addr) = 0;
+  virtual uint8 readPRG(uint addr, uint8 data) = 0;
   virtual void writePRG(uint addr, uint8 data) = 0;
 
   virtual auto readCHR(uint addr) -> uint8;

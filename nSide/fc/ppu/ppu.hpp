@@ -28,7 +28,7 @@ struct PPU : Thread, PPUcounter {
   alwaysinline auto pal()  const -> bool { return version >= Version::RP2C07  && version <= Version::UA6538;  }
   alwaysinline auto rgb()  const -> bool { return version >= Version::RP2C03B && version <= Version::RC2C05_05; }
 
-  PPU();
+  PPU(bool side);
   ~PPU();
 
   alwaysinline auto step(uint clocks) -> void;
@@ -77,7 +77,7 @@ struct PPU : Thread, PPUcounter {
   uint8 cgram[32];
   uint8 oam[256];
 
-  bool side;  //VS. System; 0: main, 1: sub
+  const bool side;  //0: main, 1: sub (VS. System only)
 
   static const uint9 RP2C03[16 * 4];
   static const uint9 RP2C04_0001[16 * 4];
@@ -175,4 +175,5 @@ privileged:
   friend class System;
 };
 
-extern PPU ppu;
+extern PPU ppu0;
+extern PPU ppu1;

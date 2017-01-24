@@ -2,17 +2,27 @@
 
 namespace Famicom {
 
-CPU cpu;
+CPU cpu0(0);
+CPU cpu1(1);
+
+#define bus (side ? bus1 : bus0)
+#define apu (side ? apu1 : apu0)
+#define ppu (side ? ppu1 : ppu0)
+
 #include "memory.cpp"
 #include "io.cpp"
 #include "timing.cpp"
 #include "serialization.cpp"
 
-CPU::CPU() : Processor::MOS6502(false) {
+CPU::CPU(bool side) : Processor::MOS6502(false), side(side) {
 }
 
 auto CPU::Enter() -> void {
-  while(true) scheduler.synchronize(), cpu.main();
+  while(true) {
+    scheduler.synchronize();
+    if(cpu0.active()) cpu0.main();
+    if(cpu1.active()) cpu1.main();
+  }
 }
 
 auto CPU::main() -> void {
@@ -31,8 +41,8 @@ auto CPU::power() -> void {
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;
 
-  reader = [](uint16 addr, uint8) -> uint8 { return cpu.ram[addr]; };
-  writer = [](uint16 addr, uint8 data) -> void { cpu.ram[addr] = data; };
+  reader = [&](uint16 addr, uint8) -> uint8 { return ram[addr]; };
+  writer = [&](uint16 addr, uint8 data) -> void { ram[addr] = data; };
   bus.map(reader, writer, "0000-1fff", 0x800);
 
   reader = {&CPU::readCPU, this};
@@ -45,7 +55,7 @@ auto CPU::power() -> void {
   ram[0x000a] = 0xdf;
   ram[0x000f] = 0xbf;
 
-  cpu.reset();
+  reset();
 }
 
 auto CPU::reset() -> void {
@@ -69,5 +79,9 @@ auto CPU::reset() -> void {
   io.oamdmaPending = false;
   io.oamdmaPage = 0x00;
 }
+
+#undef bus
+#undef apu
+#undef ppu
 
 }

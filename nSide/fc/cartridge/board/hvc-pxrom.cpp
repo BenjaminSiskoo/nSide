@@ -7,8 +7,8 @@ struct HVC_PxROM : Board {
     if(type.match("*PNROM*"  )) revision = Revision::PNROM;
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if(addr < 0x6000) return cpu.mdr();
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if(addr < 0x6000) return data;
     if(addr < 0x8000) return read(prgram, addr);
     uint bank = 0;
     switch((addr / 0x2000) & 3) {

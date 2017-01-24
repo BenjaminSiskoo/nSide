@@ -4,10 +4,10 @@ struct Sunsoft4 : Board {
   Sunsoft4(Markup::Node& boardNode) : Board(boardNode) {
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if((addr & 0xc000) == 0x8000) return read(prgrom, (prgBank << 14) | (addr & 0x3fff));
     if((addr & 0xc000) == 0xc000) return read(prgrom, (    0xff << 14) | (addr & 0x3fff));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

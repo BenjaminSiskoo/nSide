@@ -13,24 +13,36 @@ Cheat cheat;
 auto System::run() -> void {
   if(scheduler.enter() == Scheduler::Event::Frame) {
     if(model() == Model::FamicomBox) famicombox.pollInputs();
-    ppu.refresh();
+    if(model() != Model::VSSystem || vssystem.gameCount == 2) ppu0.refresh();
+    if(model() == Model::VSSystem) ppu1.refresh();
     if(model() == Model::PlayChoice10) playchoice10.videoCircuit.refresh();
   }
 }
 
 auto System::runToSave() -> void {
-  scheduler.synchronize(cpu);
-  scheduler.synchronize(apu);
-  scheduler.synchronize(ppu);
-  scheduler.synchronize(cartridge);
-  for(auto coprocessor : cpu.coprocessors) scheduler.synchronize(*coprocessor);
-  for(auto peripheral : cpu.peripherals) scheduler.synchronize(*peripheral);
-}
+  if(model() != Model::VSSystem || vssystem.gameCount == 2) {
+    scheduler.synchronize(cpu0);
+    scheduler.synchronize(apu0);
+    scheduler.synchronize(ppu0);
+  }
 
-auto System::init() -> void {
-  vssystem.init();
-  playchoice10.init();
-  famicombox.init();
+  if(model() == Model::VSSystem) {
+    scheduler.synchronize(cpu1);
+    scheduler.synchronize(apu1);
+    scheduler.synchronize(ppu1);
+  }
+
+  scheduler.synchronize(cartridge);
+
+  if(model() != Model::VSSystem) {
+    for(auto coprocessor : cpu0.coprocessors) scheduler.synchronize(*coprocessor);
+    for(auto peripheral : cpu0.peripherals) scheduler.synchronize(*peripheral);
+  }
+
+  if(model() == Model::VSSystem) {
+    for(auto coprocessor : cpu1.coprocessors) scheduler.synchronize(*coprocessor);
+    for(auto peripheral : cpu1.peripherals) scheduler.synchronize(*peripheral);
+  }
 }
 
 auto System::load(Emulator::Interface* interface, Model model) -> bool {
@@ -44,7 +56,8 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
   auto document = BML::unserialize(information.manifest);
   auto system = document["system"];
 
-  bus.reset();
+  bus0.reset();
+  bus1.reset();
   if(!cartridge.load()) return false;
 
   switch(cartridge.region()) {
@@ -56,9 +69,15 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
   if(system["region"].text() == "PAL"  ) information.region = Region::PAL;
   if(system["region"].text() == "Dendy") information.region = Region::Dendy;
 
-  if(!cpu.load(system)) return false;
-  if(!apu.load(system)) return false;
-  if(!ppu.load(system)) return false;
+  if(!cpu0.load(system)) return false;
+  if(!apu0.load(system)) return false;
+  if(!ppu0.load(system)) return false;
+
+  if(model == Model::VSSystem) {
+    if(!cpu1.load(system)) return false;
+    if(!apu1.load(system)) return false;
+    if(!ppu1.load(system)) return false;
+  }
 
   information.colorburst = region() == Region::NTSC
   ? Emulator::Constants::Colorburst::NTSC
@@ -97,12 +116,6 @@ auto System::unload() -> void {
   if(!loaded()) return;
   peripherals.unload();
 
-  switch(model()) {
-  case Model::VSSystem:     vssystem.unload(); break;
-  case Model::PlayChoice10: playchoice10.unload(); break;
-  case Model::FamicomBox:   famicombox.unload(); break;
-  }
-
   cartridge.unload();
   information.loaded = false;
 }
@@ -119,9 +132,18 @@ auto System::power() -> void {
 
   scheduler.reset();
   cartridge.power();
-  cpu.power();
-  apu.power();
-  ppu.power();
+
+  if(model() != Model::VSSystem || vssystem.gameCount == 2) {
+    cpu0.power();
+    apu0.power();
+    ppu0.power();
+  }
+
+  if(model() == Model::VSSystem) {
+    cpu1.power();
+    apu1.power();
+    ppu1.power();
+  }
 
   switch(model()) {
   case Model::VSSystem:     vssystem.power(); break;
@@ -130,12 +152,12 @@ auto System::power() -> void {
   }
 
   switch(model()) {
-  case Model::VSSystem:     cpu.coprocessors.append(&vssystem); break;
-  case Model::PlayChoice10: cpu.coprocessors.append(&playchoice10.pc10cpu); break;
-  case Model::FamicomBox:   cpu.coprocessors.append(&famicombox); break;
+  case Model::VSSystem:     cpu0.coprocessors.append(&vssystem); cpu1.coprocessors.append(&vssystem); break;
+  case Model::PlayChoice10: cpu0.coprocessors.append(&playchoice10.pc10cpu); break;
+  case Model::FamicomBox:   cpu0.coprocessors.append(&famicombox); break;
   }
 
-  scheduler.primary(cpu);
+  scheduler.primary(model() == Model::VSSystem && vssystem.gameCount == 1 ? cpu1 : cpu0);
   peripherals.reset();
 }
 

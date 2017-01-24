@@ -38,12 +38,12 @@
 #include "fds.cpp"
 #include "vs.cpp"
 
-// Unlicensed board definitions; feel free to remove
+//Unlicensed board definitions; feel free to remove
 #include "unlicensed/camerica.cpp"
 #include "unlicensed/colordreams-74-377.cpp"
 #include "unlicensed/mlt-action52.cpp"
 #include "unlicensed/nina.cpp"
-// Homebrew board definitions; feel free to remove
+//Homebrew board definitions; feel free to remove
 #include "unlicensed/noconflicts-cnrom.cpp"
 #include "unlicensed/single-chip.cpp"
 
@@ -314,7 +314,7 @@ Board* Board::load(Markup::Node boardNode) {
 
   if(type == "FDS") return new FDS(boardNode);
 
-  // Unlicensed boards below; feel free to remove
+  //Unlicensed boards below; feel free to remove
   if(type == "AVE-NINA-01"       ) return new Nina(boardNode);
   if(type == "AVE-NINA-02"       ) return new Nina(boardNode);
   if(type == "AVE-NINA-03"       ) return new Nina(boardNode);
@@ -333,7 +333,7 @@ Board* Board::load(Markup::Node boardNode) {
   if(type == "TENGEN-800008"     ) return new HVC_CxROM(boardNode);
   if(type == "TENGEN-800030"     ) return new Namco34xx(boardNode);
   if(type == "TENGEN-800042"     ) return new Sunsoft4(boardNode);
-  // Homebrew boards; feel free to remove
+  //Homebrew boards; feel free to remove
   if(type == "NoConflicts-CNROM") return new NoConflicts_CNROM(boardNode);
   if(type == "SingleChip") return new SingleChip(boardNode);
 

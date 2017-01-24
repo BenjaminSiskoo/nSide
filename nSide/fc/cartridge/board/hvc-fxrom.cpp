@@ -7,8 +7,8 @@ struct HVC_FxROM : Board {
     if(type.match("*FKROM*" )) revision = Revision::FKROM;
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if(addr < 0x6000) return cpu.mdr();
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if(addr < 0x6000) return data;
     if(addr < 0x8000) return read(prgram, addr);
     uint bank = addr < 0xc000 ? prgBank : (uint4)0x0f;
     return read(prgrom, (bank * 0x4000) | (addr & 0x3fff));

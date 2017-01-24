@@ -4,15 +4,15 @@ struct Irem74_161_161_21_138 : Board {
   Irem74_161_161_21_138(Markup::Node& boardNode) : Board(boardNode) {
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) return read(prgrom, (prgBank << 15) | (addr & 0x7fff));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
-      // Bus conflicts
-      data &= readPRG(addr);
+      //Bus conflicts
+      data &= readPRG(addr, data);
       prgBank = (data & 0x0f) >> 0;
       chrBank = (data & 0xf0) >> 4;
     }

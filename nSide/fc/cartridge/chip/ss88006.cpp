@@ -32,7 +32,7 @@ struct SS88006 : Chip {
     }
   }
 
-  auto ramRead(uint addr) -> uint8 {
+  auto ramRead(uint addr, uint8 data) -> uint8 {
     if(ramEnable) return board.read(board.prgram, addr & 0x1fff);
   }
 

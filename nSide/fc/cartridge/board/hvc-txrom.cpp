@@ -24,10 +24,10 @@ struct HVC_TxROM : Board {
     mmc3.main();
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return mmc3.ramRead(addr);
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return mmc3.ramRead(addr, data);
     if(addr & 0x8000) return read(prgrom, mmc3.prgAddress(addr));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

@@ -76,7 +76,7 @@ auto Bus::reduce(uint addr, uint mask) -> uint {
 //$4018-ffff = Cartridge
 
 auto Bus::read(uint16 addr, uint8 data) -> uint8 {
-  if(system.model() != Model::FamicomBox) data = cartridge.readPRG(addr);
+  if(system.model() != Model::FamicomBox) data = cartridge.readPRG(addr, data);
   data = reader[lookup[addr]](target[addr], data);
   if(cheat) {
     if(auto result = cheat.find<1>(addr, data)) return result();
@@ -91,7 +91,7 @@ auto Bus::write(uint16 addr, uint8 data) -> void {
 
 auto Bus::readCHR(uint16 addr, uint8 data) -> uint8 {
   if(system.model() == Model::FamicomBox) return famicombox.readCHR(addr, data);
-  return cartridge.readCHR(addr);
+  return cartridge.readCHR(addr, data);
 }
 
 auto Bus::writeCHR(uint16 addr, uint8 data) -> void {

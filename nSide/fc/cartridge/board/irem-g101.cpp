@@ -9,10 +9,10 @@ struct IremG101 : Board {
     }
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if((addr & 0x8000) == 0x8000) return read(prgrom, g101.prgAddress(addr));
     if((addr & 0xe000) == 0x6000) return read(prgram, addr & 0x1fff);
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

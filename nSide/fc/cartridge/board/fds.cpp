@@ -7,22 +7,22 @@ struct FDS : Board {
       cpu.irqLine(1);
       if(irqRepeat) irqCounter = irqLatch;
       else           irqEnable = false;
-      irqLatch = 0; // for Kaettekita Mario Bros.?
+      irqLatch = 0;  //for Kaettekita Mario Bros.?
     } else {
       //TODO: Drive timer emulation
     }
     tick();
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     switch(addr) {
     case 0x4030: {
-      uint8 data = (irqPending | (byteTransferred << 1));
+      data = (irqPending | (byteTransferred << 1));
       irqPending = false;
       byteTransferred = false;
-      // 0x10: CRC 0=pass; 1=fail
-      // 0x40: End of disk head
-      // 0x80: Disk read/write enable
+      //0x10: CRC 0=pass; 1=fail
+      //0x40: End of disk head
+      //0x80: Disk read/write enable
       cpu.irqLine(0);
       return 0;
     }
@@ -40,22 +40,22 @@ struct FDS : Board {
     }
 
     case 0x4033: {
-      // 7-bit expansion input; 0x80 means low battery
+      //7-bit expansion input; 0x80 means low battery
       return 0x00;
     }
 
     case 0x4090: {
-      return cpu.mdr() & 0xc0;
+      return data & 0xc0;
     }
 
     case 0x4092: {
-      return cpu.mdr() & 0xc0;
+      return data & 0xc0;
     }
 
     }
 
     if((addr & 0xffc0) == 0x4040) {
-      return wavetable[addr & 0x3f] | (cpu.mdr() & 0xc0);
+      return wavetable[addr & 0x3f] | (data & 0xc0);
     }
     switch(addr & 0xe000) {
     case 0x6000:
@@ -64,7 +64,7 @@ struct FDS : Board {
     case 0xc000: return read(prgram, addr);
     case 0xe000: return read(prgrom, addr);
     }
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
@@ -76,7 +76,7 @@ struct FDS : Board {
       irqEnable = data & 0x02;
       irqCounter = irqLatch;
       byteTransferred = false;
-      cpu.irqLine(0); // if pending IRQ flag is clear
+      cpu.irqLine(0);  //if pending IRQ flag is clear
       break;
     }
 
@@ -87,7 +87,7 @@ struct FDS : Board {
     }
 
     case 0x4024: {
-      // clear pending IRQ flag
+      //clear pending IRQ flag
       if(!byteTransferred) cpu.irqLine(0);
       break;
     }
@@ -99,7 +99,7 @@ struct FDS : Board {
     }
 
     case 0x4026: {
-      // 7-bit expansion output
+      //7-bit expansion output
       break;
     }
 

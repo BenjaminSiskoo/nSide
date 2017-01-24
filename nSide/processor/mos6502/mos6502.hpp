@@ -54,87 +54,87 @@ struct MOS6502 {
   auto fp_dcp();
   auto fp_lax();
 
-  //opcode_read.cpp
-  auto op_read_immediate(fp);
-  auto op_read_absolute(fp);
-  auto op_read_absolute_x(fp);
-  auto op_read_absolute_y(fp);
-  auto op_read_zero_page(fp);
-  auto op_read_zero_page_x(fp);
-  auto op_read_zero_page_y(fp);
-  auto op_read_indirect_zero_page_x(fp);
-  auto op_read_indirect_zero_page_y(fp);
-
-  //opcode_write.cpp
-  auto op_store_absolute(uint8);
-  auto op_store_absolute_x(uint8&);
-  auto op_store_absolute_y(uint8&);
-  auto op_store_zero_page(uint8);
-  auto op_store_zero_page_x(uint8);
-  auto op_store_zero_page_y(uint8);
-  auto op_store_indirect_zero_page_x(uint8);
-  auto op_store_indirect_zero_page_y(uint8&);
-
-  //opcode_rmw.cpp
-  auto op_increment(uint8& r);
-  auto op_decrement(uint8& r);
-  auto op_shift(fp);
-  auto op_rmw_absolute(fp);
-  auto op_rmw_absolute_x(fp);
-  auto op_rmw_zero_page(fp);
-  auto op_rmw_zero_page_x(fp);
-
-  //opcode_pc.cpp
-  auto op_branch(bool flag, bool value);
-  auto op_jmp_absolute();
-  auto op_jmp_indirect_absolute();
-  auto op_jsr_absolute();
-  auto op_rti();
-  auto op_rts();
-
-  //opcode_misc.cpp
-  auto op_nop();
-  auto op_brk();
-  auto op_set_flag(uint bit);
-  auto op_clear_flag(uint bit);
-  auto op_transfer(uint8& s, uint8& d, bool flag);
-  auto op_push(uint8& r);
-  auto op_php();
-  auto op_pull(uint8& r);
-  auto op_plp();
-
-  //opcode_illegal.cpp
-  auto op_nop_immediate();
-  auto op_nop_absolute();
-  auto op_nop_absolute_x();
-  auto op_nop_zero_page();
-  auto op_nop_zero_page_x();
-  auto op_stp();
-  auto op_rmwr_absolute(fp, fp);
-  auto op_rmwr_absolute_x(fp, fp);
-  auto op_rmwr_absolute_y(fp, fp);
-  auto op_rmwr_indirect_zero_page_x(fp, fp);
-  auto op_rmwr_indirect_zero_page_y(fp, fp);
-  auto op_rmwr_zero_page(fp, fp);
-  auto op_rmwr_zero_page_x(fp, fp);
-  auto op_alr_immediate();
-  auto op_anc_immediate();
-  auto op_arr_immediate();
-  auto op_axs_immediate();
-  auto op_dcp_absolute_y();
-  auto op_dcp_indirect_zero_page_x();
-  auto op_dcp_indirect_zero_page_y();
-  auto op_las_absolute_y();
-  auto op_lxa_immediate();
-  auto op_sha_absolute_y();
-  auto op_sha_indirect_zero_page_y();
-  auto op_shx_absolute_y();
-  auto op_shy_absolute_x();
-  auto op_tas_absolute_y();
-  auto op_xaa_immediate();
-
-  //switch.cpp
+  //instruction.cpp
   auto instruction() -> void;
+
+  //instructions-read.cpp
+  auto op_read_immediate(fp) -> void;
+  auto op_read_absolute(fp) -> void;
+  auto op_read_absolute_x(fp) -> void;
+  auto op_read_absolute_y(fp) -> void;
+  auto op_read_zero_page(fp) -> void;
+  auto op_read_zero_page_x(fp) -> void;
+  auto op_read_zero_page_y(fp) -> void;
+  auto op_read_indirect_zero_page_x(fp) -> void;
+  auto op_read_indirect_zero_page_y(fp) -> void;
+
+  //instructions-write.cpp
+  auto op_store_absolute(uint8) -> void;
+  auto op_store_absolute_x(uint8&) -> void;
+  auto op_store_absolute_y(uint8&) -> void;
+  auto op_store_zero_page(uint8) -> void;
+  auto op_store_zero_page_x(uint8) -> void;
+  auto op_store_zero_page_y(uint8) -> void;
+  auto op_store_indirect_zero_page_x(uint8) -> void;
+  auto op_store_indirect_zero_page_y(uint8&) -> void;
+
+  //instructions-rmw.cpp
+  auto op_increment(uint8& r) -> void;
+  auto op_decrement(uint8& r) -> void;
+  auto op_shift(fp) -> void;
+  auto op_rmw_absolute(fp) -> void;
+  auto op_rmw_absolute_x(fp) -> void;
+  auto op_rmw_zero_page(fp) -> void;
+  auto op_rmw_zero_page_x(fp) -> void;
+
+  //instructions-pc.cpp
+  auto op_branch(bool flag, bool value) -> void;
+  auto op_jmp_absolute() -> void;
+  auto op_jmp_indirect_absolute() -> void;
+  auto op_jsr_absolute() -> void;
+  auto op_rti() -> void;
+  auto op_rts() -> void;
+
+  //instructions-misc.cpp
+  auto op_nop() -> void;
+  auto op_brk() -> void;
+  auto op_set_flag(uint bit) -> void;
+  auto op_clear_flag(uint bit) -> void;
+  auto op_transfer(uint8& s, uint8& d, bool flag) -> void;
+  auto op_push(uint8& r) -> void;
+  auto op_php() -> void;
+  auto op_pull(uint8& r) -> void;
+  auto op_plp() -> void;
+
+  //instructions-illegal.cpp
+  auto op_nop_immediate() -> void;
+  auto op_nop_absolute() -> void;
+  auto op_nop_absolute_x() -> void;
+  auto op_nop_zero_page() -> void;
+  auto op_nop_zero_page_x() -> void;
+  auto op_stp() -> void;
+  auto op_rmwr_absolute(fp, fp) -> void;
+  auto op_rmwr_absolute_x(fp, fp) -> void;
+  auto op_rmwr_absolute_y(fp, fp) -> void;
+  auto op_rmwr_indirect_zero_page_x(fp, fp) -> void;
+  auto op_rmwr_indirect_zero_page_y(fp, fp) -> void;
+  auto op_rmwr_zero_page(fp, fp) -> void;
+  auto op_rmwr_zero_page_x(fp, fp) -> void;
+  auto op_alr_immediate() -> void;
+  auto op_anc_immediate() -> void;
+  auto op_arr_immediate() -> void;
+  auto op_axs_immediate() -> void;
+  auto op_dcp_absolute_y() -> void;
+  auto op_dcp_indirect_zero_page_x() -> void;
+  auto op_dcp_indirect_zero_page_y() -> void;
+  auto op_las_absolute_y() -> void;
+  auto op_lxa_immediate() -> void;
+  auto op_sha_absolute_y() -> void;
+  auto op_sha_indirect_zero_page_y() -> void;
+  auto op_shx_absolute_y() -> void;
+  auto op_shy_absolute_x() -> void;
+  auto op_tas_absolute_y() -> void;
+  auto op_xaa_immediate() -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;

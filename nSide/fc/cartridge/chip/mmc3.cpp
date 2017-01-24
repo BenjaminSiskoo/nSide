@@ -72,7 +72,7 @@ struct MMC3 : Chip {
     if(mirror == 1) return ((addr & 0x0800) >> 1) | (addr & 0x03ff);
   }
 
-  auto ramRead(uint addr) -> uint8 {
+  auto ramRead(uint addr, uint8 data) -> uint8 {
     if(ramEnable) return board.read(board.prgram, addr & 0x1fff);
     return 0x00;
   }

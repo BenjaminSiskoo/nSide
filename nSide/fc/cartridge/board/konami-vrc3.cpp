@@ -7,10 +7,10 @@ struct KonamiVRC3 : Board {
     vrc3.main();
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if((addr & 0xe000) == 0x6000) return read(prgram, addr & 0x1fff);
     if(addr & 0x8000) return read(prgrom, vrc3.prgAddress(addr));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

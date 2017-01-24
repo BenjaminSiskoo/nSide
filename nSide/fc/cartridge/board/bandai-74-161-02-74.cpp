@@ -1,4 +1,4 @@
-  //BANDAI-74*161/02/74
+//BANDAI-74*161/02/74
 
 struct Bandai74_161_02_74 : Board {
   Bandai74_161_02_74(Markup::Node& boardNode) : Board(boardNode) {
@@ -9,14 +9,14 @@ struct Bandai74_161_02_74 : Board {
     tick();
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) return read(prgrom, (prgBank << 15) | (addr & 0x7fff));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
-      data &= readPRG(addr);
+      data &= readPRG(addr, data);
       prgBank = (data & 0x03) >> 0;
       chrPlane = (data & 0x04) >> 2;
     }
@@ -43,7 +43,7 @@ struct Bandai74_161_02_74 : Board {
 
   auto chrAddressBusTest(uint addr) -> void {
     if((addr & 0x3000) != (chrAddressBus & 0x3000) && (addr & 0x3000) == 0x2000) {
-      // NOR logic reverses bank numbers
+      //NOR logic reverses bank numbers
       chrBank = (((addr & 0x0300) ^ 0x0300) >> 8);
     }
     chrAddressBus = addr & 0x3000;

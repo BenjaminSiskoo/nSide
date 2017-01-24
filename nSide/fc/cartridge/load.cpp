@@ -25,22 +25,33 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
 auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
   vssystem.gameCount = 0;
   auto side = node.find("side");
-  bool primarySide;
-  if(side(0)["ppu"]) {
-    primarySide = 2 - side.size();
-    boardNode = side(0);
-    vssystem.gameCount++;
-  }
-  if(side(1)["ppu"]) {
-    if(vssystem.gameCount == 0) {
-      primarySide = 1;
-      boardNode = side(1);
+
+  for(bool i : range(side.size())) {
+    if(side(i)["ppu"]) {
+      if(vssystem.gameCount == 0) boardNode = side(i);
+      vssystem.gameCount++;
+
+      if(side(i)["setting"]) vssystem.setDip(i + (2 - side.size()), platform->dipSettings(side(i)));
+
+      auto& ppu = i + (2 - side.size()) == 0 ? ppu0 : ppu1;
+      string ppuVersion = side(i)["ppu/version"].text();
+      if(ppuVersion == "RP2C02C")     ppu.version = PPU::Version::RP2C02C;
+      if(ppuVersion == "RP2C02G")     ppu.version = PPU::Version::RP2C02G;
+      if(ppuVersion == "RP2C03B")     ppu.version = PPU::Version::RP2C03B;
+      if(ppuVersion == "RP2C03G")     ppu.version = PPU::Version::RP2C03G;
+      if(ppuVersion == "RP2C04-0001") ppu.version = PPU::Version::RP2C04_0001;
+      if(ppuVersion == "RP2C04-0002") ppu.version = PPU::Version::RP2C04_0002;
+      if(ppuVersion == "RP2C04-0003") ppu.version = PPU::Version::RP2C04_0003;
+      if(ppuVersion == "RP2C04-0004") ppu.version = PPU::Version::RP2C04_0004;
+      if(ppuVersion == "RC2C03B")     ppu.version = PPU::Version::RC2C03B;
+      if(ppuVersion == "RC2C03C")     ppu.version = PPU::Version::RC2C03C;
+      if(ppuVersion == "RC2C05-01")   ppu.version = PPU::Version::RC2C05_01;
+      if(ppuVersion == "RC2C05-02")   ppu.version = PPU::Version::RC2C05_02;
+      if(ppuVersion == "RC2C05-03")   ppu.version = PPU::Version::RC2C05_03;
+      if(ppuVersion == "RC2C05-04")   ppu.version = PPU::Version::RC2C05_04;
+      if(ppuVersion == "RC2C05-05")   ppu.version = PPU::Version::RC2C05_05;
     }
-    vssystem.gameCount++;
   }
-  cpu.side = primarySide;
-  apu.side = primarySide;
-  ppu.side = primarySide;
 
   auto controller = boardNode.find("controller");
   vssystem.swapControllers = controller(0)["port"].integer() == 2;
@@ -58,27 +69,9 @@ auto Cartridge::setupVS(Markup::Node& node, Markup::Node& boardNode) -> void {
   } else if(device2 == "none") {
     peripherals.connect(ID::Port::Controller2, ID::Device::None);
   }
-  vssystem.setDip(primarySide, platform->dipSettings(boardNode));
 
   string cpuVersion = side(0)["cpu/version"].text();
   vssystem.forceSubRAM = cpuVersion == "RP2A04";
-
-  string ppuVersion = boardNode["ppu/version"].text();
-  if(ppuVersion == "RP2C02C")     ppu.version = PPU::Version::RP2C02C;
-  if(ppuVersion == "RP2C02G")     ppu.version = PPU::Version::RP2C02G;
-  if(ppuVersion == "RP2C03B")     ppu.version = PPU::Version::RP2C03B;
-  if(ppuVersion == "RP2C03G")     ppu.version = PPU::Version::RP2C03G;
-  if(ppuVersion == "RP2C04-0001") ppu.version = PPU::Version::RP2C04_0001;
-  if(ppuVersion == "RP2C04-0002") ppu.version = PPU::Version::RP2C04_0002;
-  if(ppuVersion == "RP2C04-0003") ppu.version = PPU::Version::RP2C04_0003;
-  if(ppuVersion == "RP2C04-0004") ppu.version = PPU::Version::RP2C04_0004;
-  if(ppuVersion == "RC2C03B")     ppu.version = PPU::Version::RC2C03B;
-  if(ppuVersion == "RC2C03C")     ppu.version = PPU::Version::RC2C03C;
-  if(ppuVersion == "RC2C05-01")   ppu.version = PPU::Version::RC2C05_01;
-  if(ppuVersion == "RC2C05-02")   ppu.version = PPU::Version::RC2C05_02;
-  if(ppuVersion == "RC2C05-03")   ppu.version = PPU::Version::RC2C05_03;
-  if(ppuVersion == "RC2C05-04")   ppu.version = PPU::Version::RC2C05_04;
-  if(ppuVersion == "RC2C05-05")   ppu.version = PPU::Version::RC2C05_05;
 }
 
 //

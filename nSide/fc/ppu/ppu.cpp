@@ -2,13 +2,17 @@
 
 namespace Famicom {
 
-PPU ppu;
+PPU ppu0(0);
+PPU ppu1(1);
+
+#define bus (side ? bus1 : bus0)
+#define cpu (side ? cpu1 : cpu0)
 
 #include "io.cpp"
 #include "render.cpp"
 #include "serialization.cpp"
 
-PPU::PPU() {
+PPU::PPU(bool side) : side(side) {
   output = new uint32[256 * 240];
 }
 
@@ -44,7 +48,11 @@ auto PPU::step(uint clocks) -> void {
 }
 
 auto PPU::Enter() -> void {
-  while(true) scheduler.synchronize(), ppu.main();
+  while(true) {
+    scheduler.synchronize();
+    if(ppu0.active()) ppu0.main();
+    if(ppu1.active()) ppu1.main();
+  }
 }
 
 auto PPU::main() -> void {
@@ -161,7 +169,7 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::originX() -> uint {
-  return (system.model() == Model::VSSystem && vssystem.gameCount == 2) ? side * 256 : 0;
+  return (system.model() == Model::VSSystem && vssystem.gameCount == 2 && ppu1.active()) ? 256 : 0;
 }
 
 auto PPU::originY() -> uint {
@@ -173,7 +181,7 @@ auto PPU::refresh() -> void {
     if(playchoice10.display == 0) return;
   }
   auto output = this->output;
-  Emulator::video.refreshRegion(output, 256 * sizeof(uint32), originX(), originY(), 256, 240);
+  Emulator::video.refreshRegion(output, 256 * sizeof(uint32), originX(), originY(), 256, 240, side << 9);
 }
 
 //
@@ -224,5 +232,8 @@ const uint9 PPU::RP2C04_0004[16 * 4] = {
   0503,0031,0420,0006,0407,0507,0333,0704,0022,0666,0036,0020,0111,0773,0444,0707,
   0757,0777,0320,0700,0760,0276,0777,0467,0000,0750,0637,0567,0360,0657,0077,0120,
 };
+
+#undef bus
+#undef cpu
 
 }

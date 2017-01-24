@@ -60,9 +60,9 @@ struct MMC6 : Chip {
     if(mirror == 1) return ((addr & 0x0800) >> 1) | (addr & 0x03ff);
   }
 
-  auto ramRead(uint addr) -> uint8 {
-    if(ramEnable == false) return cpu.mdr();
-    if(ramReadable[0] == false && ramReadable[1] == false) return cpu.mdr();
+  auto ramRead(uint addr, uint8 data) -> uint8 {
+    if(ramEnable == false) return data;
+    if(ramReadable[0] == false && ramReadable[1] == false) return data;
     bool region = addr & 0x0200;
     if(ramReadable[region] == false) return 0x00;
     return board.read(board.prgram, (region * 0x0200) + (addr & 0x01ff));

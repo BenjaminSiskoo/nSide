@@ -7,8 +7,8 @@ struct Namco163 : Board {
     n163.main();
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    n163.readPRG(addr);
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    n163.readPRG(addr, data);
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

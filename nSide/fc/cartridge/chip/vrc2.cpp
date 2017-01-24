@@ -28,10 +28,10 @@ struct VRC2 : Chip {
     throw;
   }
 
-  auto ramRead(uint addr) -> uint8 {
+  auto ramRead(uint addr, uint8 data) -> uint8 {
     if(board.prgram.size() == 0) {
-      if((addr & 0xf000) == 0x6000) return cpu.mdr() | latch;
-      return cpu.mdr();
+      if((addr & 0xf000) == 0x6000) return (data & 0xfe) | latch;
+      return data;
     }
     return board.read(board.prgram, addr & 0x1fff);
   }

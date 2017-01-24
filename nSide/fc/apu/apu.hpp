@@ -19,7 +19,7 @@ struct APU : Thread {
     TA_03NP1_6527P,
   } version;
 
-  APU();
+  APU(bool side);
 
   static auto Enter() -> void;
   auto main() -> void;
@@ -31,12 +31,12 @@ struct APU : Thread {
   auto power() -> void;
   auto reset() -> void;
 
-  auto readIO(uint16 addr) -> uint8;
+  auto readIO(uint16 addr, uint8 data) -> uint8;
   auto writeIO(uint16 addr, uint8 data) -> void;
 
   auto serialize(serializer&) -> void;
 
-  bool side; // VS. System; 0: main, 1: sub
+  const bool side;  //0: main, 1: sub (VS. System only)
 
   struct Filter {
     auto runHipassStrong(int sample) -> int;
@@ -154,6 +154,8 @@ struct APU : Thread {
   } noise;
 
   struct DMC {
+    auto setAPU(APU*) -> void;
+
     auto start() -> void;
     auto stop() -> void;
     auto clock() -> uint8;
@@ -185,6 +187,8 @@ struct APU : Thread {
 
     bool sampleValid;
     uint8 sample;
+
+    APU* apu;
   } dmc;
 
   struct FrameCounter {
@@ -192,7 +196,7 @@ struct APU : Thread {
 
     enum : uint {
       NtscPeriod = 14915,  //~(21.477MHz / 6 / 240hz)
-      PalPeriod = 18473, // conjectural
+      PalPeriod  = 18473,  //conjectural
     };
 
     bool irqPending;
@@ -221,4 +225,5 @@ struct APU : Thread {
   static const uint16 noisePeriodTablePAL[16];
 };
 
-extern APU apu;
+extern APU apu0;
+extern APU apu1;

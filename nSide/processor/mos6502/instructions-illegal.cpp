@@ -1,36 +1,36 @@
-auto MOS6502::op_nop_immediate() {
+auto MOS6502::op_nop_immediate() -> void {
 L rd = readPC();
 }
 
-auto MOS6502::op_nop_absolute() {
+auto MOS6502::op_nop_absolute() -> void {
   abs.l = readPC();
   abs.h = readPC();
 L idle();
 }
 
-auto MOS6502::op_nop_absolute_x() {
+auto MOS6502::op_nop_absolute_x() -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPage(abs.w, abs.w + r.x);
 L idle();
 }
 
-auto MOS6502::op_nop_zero_page() {
+auto MOS6502::op_nop_zero_page() -> void {
   zp = readPC();
 L readZP(zp);
 }
 
-auto MOS6502::op_nop_zero_page_x() {
+auto MOS6502::op_nop_zero_page_x() -> void {
   zp = readPC();
   readZP(zp);
 L readZP(zp + r.x);
 }
 
-auto MOS6502::op_stp() {
+auto MOS6502::op_stp() -> void {
   while(true) idle();
 }
 
-auto MOS6502::op_rmwr_absolute(fp opw, fp opr) {
+auto MOS6502::op_rmwr_absolute(fp opw, fp opr) -> void {
   abs.l = readPC();
   abs.h = readPC();
   rd = read(abs.w);
@@ -40,7 +40,7 @@ L write(abs.w, rd);
   call(opr);
 }
 
-auto MOS6502::op_rmwr_absolute_x(fp opw, fp opr) {
+auto MOS6502::op_rmwr_absolute_x(fp opw, fp opr) -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPageAlways(abs.w, abs.w + r.x);
@@ -51,7 +51,7 @@ L write(abs.w + r.x, rd);
   call(opr);
 }
 
-auto MOS6502::op_rmwr_absolute_y(fp opw, fp opr) {
+auto MOS6502::op_rmwr_absolute_y(fp opw, fp opr) -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPageAlways(abs.w, abs.w + r.y);
@@ -62,7 +62,7 @@ L write(abs.w + r.y, rd);
   call(opr);
 }
 
-auto MOS6502::op_rmwr_indirect_zero_page_x(fp opw, fp opr) {
+auto MOS6502::op_rmwr_indirect_zero_page_x(fp opw, fp opr) -> void {
   zp = readPC();
   readZP(zp);
   abs.l = readZP(zp++ + r.x);
@@ -74,7 +74,7 @@ L write(abs.w, rd);
   call(opr);
 }
 
-auto MOS6502::op_rmwr_indirect_zero_page_y(fp opw, fp opr) {
+auto MOS6502::op_rmwr_indirect_zero_page_y(fp opw, fp opr) -> void {
   rd = readPC();
   abs.l = readZP(rd++);
   abs.h = readZP(rd++);
@@ -86,7 +86,7 @@ L write(abs.w + r.y, rd);
   call(opr);
 }
 
-auto MOS6502::op_rmwr_zero_page(fp opw, fp opr) {
+auto MOS6502::op_rmwr_zero_page(fp opw, fp opr) -> void {
   zp = readPC();
   rd = readZP(zp);
   writeZP(zp, rd);
@@ -95,7 +95,7 @@ L writeZP(zp, rd);
   call(opr);
 }
 
-auto MOS6502::op_rmwr_zero_page_x(fp opw, fp opr) {
+auto MOS6502::op_rmwr_zero_page_x(fp opw, fp opr) -> void {
   zp = readPC();
   readZP(zp);
   rd = readZP(zp + r.x);
@@ -105,18 +105,18 @@ L writeZP(zp + r.x, rd);
   call(opr);
 }
 
-auto MOS6502::op_alr_immediate() {
+auto MOS6502::op_alr_immediate() -> void {
   op_read_immediate(&MOS6502::fp_and);
   fp_sra();
 }
 
-auto MOS6502::op_anc_immediate() {
+auto MOS6502::op_anc_immediate() -> void {
 L rd = readPC();
   fp_and();
   r.p.c = r.p.n;
 }
 
-auto MOS6502::op_arr_immediate() {
+auto MOS6502::op_arr_immediate() -> void {
 L rd = readPC();
   r.a &= rd;
   r.a = (r.p.c << 7) | (r.a >> 1);
@@ -126,7 +126,7 @@ L rd = readPC();
   r.p.v = r.p.c ^ ((r.a >> 5) & 1);
 }
 
-auto MOS6502::op_axs_immediate() {
+auto MOS6502::op_axs_immediate() -> void {
 L rd = readPC();
   int result = (r.a & r.x) - rd;
   r.p.n = (result & 0x80);
@@ -135,7 +135,7 @@ L rd = readPC();
   r.x = result;
 }
 
-auto MOS6502::op_dcp_absolute_y() {
+auto MOS6502::op_dcp_absolute_y() -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPageAlways(abs.w, abs.w + r.y);
@@ -145,7 +145,7 @@ auto MOS6502::op_dcp_absolute_y() {
 L write(abs.w + r.y, rd);
 }
 
-auto MOS6502::op_dcp_indirect_zero_page_x() {
+auto MOS6502::op_dcp_indirect_zero_page_x() -> void {
   zp = readPC();
   readZP(zp);
   abs.l = readZP(zp++ + r.x);
@@ -156,7 +156,7 @@ auto MOS6502::op_dcp_indirect_zero_page_x() {
 L write(abs.w, rd);
 }
 
-auto MOS6502::op_dcp_indirect_zero_page_y() {
+auto MOS6502::op_dcp_indirect_zero_page_y() -> void {
   rd = readPC();
   abs.l = readZP(rd++);
   abs.h = readZP(rd++);
@@ -167,7 +167,7 @@ auto MOS6502::op_dcp_indirect_zero_page_y() {
 L write(abs.w + r.y, rd);
 }
 
-auto MOS6502::op_las_absolute_y() {
+auto MOS6502::op_las_absolute_y() -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPage(abs.w, abs.w + r.y);
@@ -175,7 +175,7 @@ L rd = read(abs.w + r.y);
   r.a = r.x = r.s = rd & r.s;
 }
 
-auto MOS6502::op_lxa_immediate() {
+auto MOS6502::op_lxa_immediate() -> void {
 L rd = readPC();
   //While other LAX opcodes decode to LDA and LDX, this one decodes
   //to LDA, LDX, and TAX, causing line noise on the data bus to interfere.
@@ -185,14 +185,14 @@ L rd = readPC();
   r.p.z = (r.a == 0);
 }
 
-auto MOS6502::op_sha_absolute_y() {
+auto MOS6502::op_sha_absolute_y() -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPageAlways(abs.w, abs.w + r.y);
 L write(abs.w + r.y, r.a & r.x & (abs.h + 1));
 }
 
-auto MOS6502::op_sha_indirect_zero_page_y() {
+auto MOS6502::op_sha_indirect_zero_page_y() -> void {
   rd = readPC();
   abs.l = readZP(rd++);
   abs.h = readZP(rd++);
@@ -200,7 +200,7 @@ auto MOS6502::op_sha_indirect_zero_page_y() {
 L write(abs.w + r.y, r.a & r.x & (abs.h + 1));
 }
 
-auto MOS6502::op_shx_absolute_y() {
+auto MOS6502::op_shx_absolute_y() -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPageAlways(abs.w, abs.w + r.y);
@@ -208,7 +208,7 @@ auto MOS6502::op_shx_absolute_y() {
 L write(abs.w + r.y, r.x & (abs.h + 1));
 }
 
-auto MOS6502::op_shy_absolute_x() {
+auto MOS6502::op_shy_absolute_x() -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPageAlways(abs.w, abs.w + r.x);
@@ -216,7 +216,7 @@ auto MOS6502::op_shy_absolute_x() {
 L write(abs.w + r.x, r.y & (abs.h + 1));
 }
 
-auto MOS6502::op_tas_absolute_y() {
+auto MOS6502::op_tas_absolute_y() -> void {
   abs.l = readPC();
   abs.h = readPC();
   ioPageAlways(abs.w, abs.w + r.y);
@@ -224,7 +224,7 @@ auto MOS6502::op_tas_absolute_y() {
 L write(abs.w + r.y, r.a & r.x & (abs.h + 1));
 }
 
-auto MOS6502::op_xaa_immediate() {
+auto MOS6502::op_xaa_immediate() -> void {
   rd = readPC();
   r.a = (r.a | (rand() & 0xff)) & r.x & rd;
 }

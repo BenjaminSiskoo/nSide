@@ -1,3 +1,9 @@
+#define cpu (apu->side ? cpu1 : cpu0)
+
+auto APU::DMC::setAPU(APU* hostAPU) -> void {
+  apu = hostAPU;
+}
+
 auto APU::DMC::start() -> void {
   if(lengthCounter == 0) {
     readAddr = 0x4000 + (addrLatch << 6);
@@ -34,7 +40,7 @@ auto APU::DMC::clock() -> uint8 {
           start();
         } else if(irqEnable) {
           irqPending = true;
-          apu.setIRQ();
+          apu->setIRQ();
         }
       }
     }
@@ -92,3 +98,5 @@ auto APU::DMC::reset() -> void {
   sampleValid = 0;
   sample = 0;
 }
+
+#undef cpu

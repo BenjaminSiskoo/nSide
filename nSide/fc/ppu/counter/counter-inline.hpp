@@ -28,7 +28,7 @@ auto PPUcounter::hcounter() const -> uint16 { return status.hcounter; }
 //one PPU dot = 4 CPU clocks (1/3 CPU cycle)
 
 auto PPUcounter::lineclocks() const -> uint16 {
-  if(system.region() == System::Region::NTSC && ppu.ntsc() && ppu.enable() && vcounter() == 261 && field() == 1) return 340;
+  if(ppu0.ntsc() && ppu0.enable() && vcounter() == 261 && field() == 1) return 340;
   return 341;
 }
 

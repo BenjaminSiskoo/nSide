@@ -1,6 +1,4 @@
 VSSystemInterface::VSSystemInterface() {
-  system.init();
-
   information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "VS. System";
@@ -107,7 +105,7 @@ auto VSSystemInterface::videoColor(uint32 n) -> uint64 {
   };
 
   const uint9* palette = nullptr;
-  switch(ppu.version) {
+  switch((n < (1 << 9) ? ppu0 : ppu1).version) {
   case PPU::Version::RP2C03B:
   case PPU::Version::RP2C03G:
   case PPU::Version::RC2C03B:
@@ -132,7 +130,7 @@ auto VSSystemInterface::videoColor(uint32 n) -> uint64 {
     palette = PPU::RP2C04_0004;
     break;
   }
-  return generateRGBColor(n & 0x1ff, palette);
+  return palette ? generateRGBColor(n & 0x1ff, palette) : (uint64)0ull;
 }
 
 auto VSSystemInterface::audioFrequency() -> double {

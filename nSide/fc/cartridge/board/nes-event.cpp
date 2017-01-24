@@ -45,7 +45,7 @@ struct NES_Event : Board {
     }
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if((addr & 0xe000) == 0x6000) {
       if(mmc1.ramDisable) return 0x00;
       if(prgram.size() > 0) return read(prgram, addr);
@@ -55,7 +55,7 @@ struct NES_Event : Board {
       return read(prgrom, prgAddress(addr));
     }
 
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

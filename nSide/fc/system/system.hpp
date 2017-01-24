@@ -11,7 +11,6 @@ struct System {
   auto run() -> void;
   auto runToSave() -> void;
 
-  auto init() -> void;
   auto load(Emulator::Interface* interface, Model) -> bool;
   auto save() -> void;
   auto unload() -> void;

@@ -19,15 +19,15 @@ struct VS : Board {
     tick();
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     switch(chipType) {
     case ChipType::None: {
       if(addr & 0x8000) {
-        if(addr < 0xe000 && prgrom.size() < 0x2000) return cpu.mdr();
-        if(addr < 0xc000 && prgrom.size() < 0x4000) return cpu.mdr();
-        if(addr < 0xa000 && prgrom.size() < 0x6000) return cpu.mdr();
+        if(addr < 0xe000 && prgrom.size() < 0x2000) return data;
+        if(addr < 0xc000 && prgrom.size() < 0x4000) return data;
+        if(addr < 0xa000 && prgrom.size() < 0x6000) return data;
         addr &= 0x7fff;
-        if(prgrom.size() > 0x8000) { // Games with oversize 1D such as VS. Gumshoe
+        if(prgrom.size() > 0x8000) {  //Games with oversize 1D such as VS. Gumshoe
           if(addr >= 0x2000 || bank == 1) addr += 0x2000;
         }
         return read(prgrom, addr);
@@ -59,11 +59,8 @@ struct VS : Board {
     }
 
     }
-    if((addr & 0xe000) == 0x6000) {
-      if(prgram.size() == 0) return vssystem.read(cpu.side, addr, cpu.mdr());
-      else                   return read(prgram, addr);
-    }
-    return cpu.mdr();
+    if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return read(prgram, addr);
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
@@ -73,7 +70,7 @@ struct VS : Board {
       break;
     case ChipType::_74HC32:
       //TODO: Check if VS. UNROM has bus conflicts
-      //data &= readPRG(addr);
+      //data &= readPRG(addr, data);
       if(addr & 0x8000) bank = data & 0x0f;
       break;
     case ChipType::MMC1:
@@ -83,10 +80,7 @@ struct VS : Board {
       if(addr & 0x8000) return n108.regWrite(addr, data);
       break;
     }
-    if((addr & 0xe000) == 0x6000) {
-      if(prgram.size() == 0) vssystem.write(cpu.side, addr, data);
-      else                   write(prgram, addr, data);
-    }
+    if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return write(prgram, addr, data);
   }
 
   auto readCHR(uint addr) -> uint8 {

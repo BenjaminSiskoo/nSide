@@ -14,8 +14,8 @@ struct HVC_UxROM : Board {
     if(type.match("74*08")) chipType = ChipType::_7408;
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if((addr & 0x8000) == 0x0000) return cpu.mdr();
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if((addr & 0x8000) == 0x0000) return data;
     switch(chipType) {
     case ChipType::_7432:
       switch(addr & 0xc000) {
@@ -32,8 +32,8 @@ struct HVC_UxROM : Board {
 
   auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
-      // Bus conflicts
-      data &= readPRG(addr);
+      //Bus conflicts
+      data &= readPRG(addr, data);
       if(revision != Revision::UN1ROM) prgBank = data & 0x0f;
       if(revision == Revision::UN1ROM) prgBank = (data & 0x1c) >> 2;
     }

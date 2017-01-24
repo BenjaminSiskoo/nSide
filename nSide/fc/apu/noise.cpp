@@ -13,14 +13,14 @@ auto APU::Noise::clock() -> uint8 {
     uint feedback;
 
     //TODO: Check if the RP2A03E and prior versions support short mode.
-    if(shortMode && apu.version != APU::Version::RP2A03 && apu.version != APU::Version::RP2A03F) {
+    if(shortMode && apu0.version != APU::Version::RP2A03 && apu0.version != APU::Version::RP2A03F) {
       feedback = ((lfsr >> 0) & 1) ^ ((lfsr >> 6) & 1);
     } else {
       feedback = ((lfsr >> 0) & 1) ^ ((lfsr >> 1) & 1);
     }
 
     lfsr = (lfsr >> 1) | (feedback << 14);
-    periodCounter = system.region() != System::Region::PAL ? apu.noisePeriodTableNTSC[period] : apu.noisePeriodTablePAL[period];
+    periodCounter = system.region() != System::Region::PAL ? noisePeriodTableNTSC[period] : noisePeriodTablePAL[period];
   }
 
   return result;

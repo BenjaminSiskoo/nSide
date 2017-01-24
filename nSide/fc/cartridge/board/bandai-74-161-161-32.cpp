@@ -1,12 +1,12 @@
-  //BANDAI-74*161/161/32
+//BANDAI-74*161/161/32
 
 struct Bandai74_161_161_32 : Board {
   Bandai74_161_161_32(Markup::Node& boardNode) : Board(boardNode) {
     settings.mirror = boardNode["mirror/mode"].text() == "horizontal";
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if((addr & 0x8000) == 0x0000) return cpu.mdr();
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if((addr & 0x8000) == 0x0000) return data;
     if((addr & 0xc000) == 0x8000) return read(prgrom, (prgBank << 14) | (addr & 0x3fff));
     else                          return read(prgrom, (   0x0f << 14) | (addr & 0x3fff));
   }
@@ -14,7 +14,7 @@ struct Bandai74_161_161_32 : Board {
   auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
       //TODO: check for bus conflicts
-      data &= readPRG(addr);
+      data &= readPRG(addr, data);
       prgBank = (data & 0xf0) >> 4;
       chrBank = (data & 0x0f) >> 0;
     }

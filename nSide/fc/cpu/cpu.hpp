@@ -1,5 +1,5 @@
 struct CPU : Processor::MOS6502, Thread {
-  CPU();
+  CPU(bool side);
 
   static auto Enter() -> void;
   auto main() -> void;
@@ -37,9 +37,9 @@ struct CPU : Processor::MOS6502, Thread {
   vector<Thread*> coprocessors;
   vector<Thread*> peripherals;
 
-  bool side; // VS. System; 0: main, 1: sub
+  const bool side;  //0: main, 1: sub (VS. System only)
 
-//privileged:
+//private:
   struct IO {
     bool interruptPending;
     bool nmiPending;
@@ -56,4 +56,5 @@ struct CPU : Processor::MOS6502, Thread {
   } io;
 };
 
-extern CPU cpu;
+extern CPU cpu0;
+extern CPU cpu1;

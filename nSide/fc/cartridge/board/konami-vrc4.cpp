@@ -8,8 +8,8 @@ struct KonamiVRC4 : Board {
     return vrc4.main();
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if(addr < 0x6000) return cpu.mdr();
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if(addr < 0x6000) return data;
     if(addr < 0x8000) return read(prgram, addr);
     return read(prgrom, vrc4.prgAddress(addr));
   }

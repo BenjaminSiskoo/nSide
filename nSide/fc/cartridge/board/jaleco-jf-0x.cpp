@@ -22,9 +22,9 @@ struct JalecoJF0x : Board {
     settings.mirror = boardNode["mirror/mode"].text() == "horizontal";
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) return read(prgrom, (prgBank << 15) | (addr & 0x7fff));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

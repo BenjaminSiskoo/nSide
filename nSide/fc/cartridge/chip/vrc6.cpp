@@ -131,7 +131,7 @@ struct VRC6 : Chip {
     }
   }
 
-  auto ramRead(uint addr) -> uint8 {
+  auto ramRead(uint addr, uint8 data) -> uint8 {
     return board.read(board.prgram, addr & 0x1fff);
   }
 

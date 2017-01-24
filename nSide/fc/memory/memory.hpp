@@ -46,6 +46,7 @@ struct Bus {
   alwaysinline static auto mirror(uint addr, uint size) -> uint;
   alwaysinline static auto reduce(uint addr, uint mask) -> uint;
 
+  Bus(bool side);
   ~Bus();
 
   alwaysinline auto read(uint16 addr, uint8 data) -> uint8;
@@ -62,6 +63,8 @@ struct Bus {
   ) -> void;
   auto unmap(const string& addr) -> void;
 
+  const bool side;  //0: main, 1: sub (VS. System only)
+
 private:
   uint8* lookup = nullptr;
   uint32* target = nullptr;
@@ -71,4 +74,5 @@ private:
   uint16 counter[256];
 };
 
-extern Bus bus;
+extern Bus bus0;
+extern Bus bus1;

@@ -4,8 +4,8 @@ struct KonamiVRC7 : Board {
     settings.pinout.a1 = 1 << boardNode["chip/pinout/a1"].natural();
   }
 
-  auto readPRG(uint addr) -> uint8 {
-    if(addr < 0x6000) return cpu.mdr();
+  auto readPRG(uint addr, uint8 data) -> uint8 {
+    if(addr < 0x6000) return data;
     if(addr < 0x8000) return read(prgram, addr);
     return read(prgrom, vrc7.prgAddress(addr));
   }

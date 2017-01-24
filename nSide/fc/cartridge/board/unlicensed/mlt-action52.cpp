@@ -9,14 +9,14 @@ struct MLT_Action52 : Board {
     }
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000 && settings.connectedChips & (1 << prgChip)) {
-      uint targetBank = prgBank;
-      targetBank |= settings.chipMap[prgChip] << 5;
-      if(prgMode) return read(prgrom, (targetBank << 14) | (addr & 0x3fff));
-      else        return read(prgrom, (targetBank << 14) | (addr & 0x7fff));
+      uint bank = prgBank;
+      bank |= settings.chipMap[prgChip] << 5;
+      if(prgMode) return read(prgrom, (bank << 14) | (addr & 0x3fff));
+      else        return read(prgrom, (bank << 14) | (addr & 0x7fff));
     }
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

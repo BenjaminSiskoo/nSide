@@ -7,6 +7,11 @@ VSSystem vssystem;
 #include "control.cpp"
 #include "serialization.cpp"
 
+VSSystem::VSSystem() {
+  forceSubRAM = false;
+  gameCount = GameCount::Uni;
+}
+
 auto VSSystem::Enter() -> void {
   while(true) scheduler.synchronize(), vssystem.main();
 }
@@ -14,23 +19,16 @@ auto VSSystem::Enter() -> void {
 auto VSSystem::main() -> void {
   //if(++watchdog > system.cpuFrequency() * 4 / 3) {
   //  watchdog = 0;
-  //  cpu.reset();
-  //  //ppu.reset();
+  //  if(gameCount == GameCount::Dual) cpu0.reset();
+  //  cpu1.reset();
   //}
   step(1);
-  synchronize(cpu);
-}
-
-auto VSSystem::init() -> void {
-  forceSubRAM = false;
-  gameCount = GameCount::Uni;
+  if(gameCount == GameCount::Dual) synchronize(cpu0);
+  synchronize(cpu1);
 }
 
 auto VSSystem::load() -> bool {
   return true;
-}
-
-auto VSSystem::unload() -> void {
 }
 
 auto VSSystem::power() -> void {
@@ -38,11 +36,18 @@ auto VSSystem::power() -> void {
 
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;
-  reader = [](uint16 addr, uint8 data) -> uint8 { return vssystem.read(cpu.side, addr, data); };
-  writer = [](uint16 addr, uint8 data) -> void { vssystem.write(cpu.side, addr, data); };
-  bus.map(reader, writer, "4016-4017");
-  bus.map(reader, writer, "4020-5fff", 0, 0, 0x0020);
-  bus.map(reader, writer, "6000-7fff");
+
+  reader = [](uint16 addr, uint8 data) -> uint8 { return vssystem.read(0, addr, data); };
+  writer = [](uint16 addr, uint8 data) -> void { vssystem.write(0, addr, data); };
+  bus0.map(reader, writer, "4016-4017");
+  bus0.map(reader, writer, "4020-5fff", 0, 0, 0x0020);
+  bus0.map(reader, writer, "6000-7fff");
+
+  reader = [](uint16 addr, uint8 data) -> uint8 { return vssystem.read(1, addr, data); };
+  writer = [](uint16 addr, uint8 data) -> void { vssystem.write(1, addr, data); };
+  bus1.map(reader, writer, "4016-4017");
+  bus1.map(reader, writer, "4020-5fff", 0, 0, 0x0020);
+  bus1.map(reader, writer, "6000-7fff");
 
   ramSide = forceSubRAM ? 1 : 0;
   resetButtons();
@@ -92,13 +97,13 @@ auto VSSystem::read(bool side, uint16 addr, uint8 data) -> uint8 {
 
 auto VSSystem::write(bool side, uint16 addr, uint8 data) -> void {
   if(addr == 0x4016) {
-    cpu.writeCPU(addr, data);
+    (side ? cpu1 : cpu0).writeCPU(addr, data);
     latch(side, data.bit(0));
     if(side == 0 && !forceSubRAM) ramSide = !data.bit(1);
   }
 
   if(addr >= 0x4020 && addr <= 0x5fff) {
-    // increment coin counter
+    //increment coin counter
   }
 
   if(addr >= 0x6000 && addr <= 0x7fff) {

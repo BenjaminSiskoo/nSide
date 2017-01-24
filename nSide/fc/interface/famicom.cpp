@@ -1,6 +1,4 @@
 FamicomInterface::FamicomInterface() {
-  system.init();
-
   information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "Famicom";
@@ -457,7 +455,7 @@ auto FamicomInterface::videoColor(uint32 n) -> uint64 {
     return R << 32 | G << 16 | B << 0;
   };
 
-  if(ppu.ntsc()) {
+  if(ppu0.ntsc()) {
     double saturation = 2.0;
     double hue = 0.0;
     double contrast = 1.0;
@@ -466,7 +464,7 @@ auto FamicomInterface::videoColor(uint32 n) -> uint64 {
 
     return generateNTSCColor(n & 0x1ff, saturation, hue, contrast, brightness, gamma);
 
-  } else if(ppu.pal()) {
+  } else if(ppu0.pal()) {
     double saturation = 2.0;
     double hue = 0.0;
     double contrast = 1.0;
@@ -475,9 +473,9 @@ auto FamicomInterface::videoColor(uint32 n) -> uint64 {
 
     return generatePALColor(n & 0x1ff, saturation, hue, contrast, brightness, gamma);
 
-  } else if(ppu.rgb()) {
+  } else if(ppu0.rgb()) {
     const uint9* palette = nullptr;
-    switch(ppu.version) {
+    switch(ppu0.version) {
     case PPU::Version::RP2C03B:
     case PPU::Version::RP2C03G:
     case PPU::Version::RC2C03B:

@@ -41,10 +41,10 @@ struct Cartridge : Thread {
 //privileged:
   Board* board;
 
-  auto readPRG(uint addr) -> uint8;
+  auto readPRG(uint addr, uint8 data) -> uint8;
   auto writePRG(uint addr, uint8 data) -> void;
 
-  auto readCHR(uint addr) -> uint8;
+  auto readCHR(uint addr, uint8 data) -> uint8;
   auto writeCHR(uint addr, uint8 data) -> void;
 
   //scanline() is for debugging purposes only:

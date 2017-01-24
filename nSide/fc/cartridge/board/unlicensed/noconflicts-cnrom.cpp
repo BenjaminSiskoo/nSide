@@ -1,15 +1,14 @@
-// This board is intended for homebrew games that do not account for bus
-// conflicts. Many Sachen and Panesian games require this board, but they were
-// not the reason for its inclusion.
+//This board is intended for homebrew games that do not account for bus
+//conflicts. Many Sachen and Panesian games require this board, as well.
 
 struct NoConflicts_CNROM : Board {
   NoConflicts_CNROM(Markup::Node& boardNode) : Board(boardNode) {
     settings.mirror = boardNode["mirror/mode"].text() == "horizontal";
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) return read(prgrom, addr & 0x7fff);
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

@@ -8,9 +8,6 @@ PlayChoice10 playchoice10;
 #include "video-circuit.cpp"
 #include "serialization.cpp"
 
-auto PlayChoice10::init() -> void {
-}
-
 auto PlayChoice10::load(Markup::Node node) -> bool {
   if(auto firmware = node["pc10/cpu/rom/name"].text()) {
     if(auto fp = platform->open(ID::System, firmware, File::Read, File::Required)) {
@@ -37,9 +34,6 @@ auto PlayChoice10::load(Markup::Node node) -> bool {
   return true;
 }
 
-auto PlayChoice10::unload() -> void {
-}
-
 auto PlayChoice10::power() -> void {
   pc10cpu.power();
   videoCircuit.power();
@@ -49,7 +43,7 @@ auto PlayChoice10::power() -> void {
 
   reader = {&PlayChoice10::readController1, this};
   writer = {&PlayChoice10::latchControllers, this};
-  bus.map(reader, writer, "4016-4016");
+  bus0.map(reader, writer, "4016-4016");
 
   nmiDetected = false;
 
@@ -153,8 +147,8 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
   }
   case 0x04: {
     if(!cpuReset && data) {
-      cpu.reset();
-      apu.reset();
+      cpu0.reset();
+      apu0.reset();
     };
     cpuReset = data;
     break;
@@ -178,7 +172,7 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
     break;
   }
   case 0x0a: {
-    if(!ppuReset && data) ppu.reset();
+    if(!ppuReset && data) ppu0.reset();
     ppuReset = data;
     break;
   }
@@ -219,7 +213,7 @@ auto PlayChoice10::poll(uint input) -> int16 {
 auto PlayChoice10::readController1(uint16 addr, uint8 data) -> uint8 {
   auto gamepad = static_cast<Gamepad*>(peripherals.controllerPort1);
   uint counter = gamepad->counter;
-  uint8 input = cpu.readCPU(addr, data);
+  uint8 input = cpu0.readCPU(addr, data);
   switch(gamepad->latched ? 0 : counter) {
   case 2: data.bit(0) = controller1GameSelect; break;
   case 3: data.bit(0) = controller1Start; break;
@@ -231,7 +225,7 @@ auto PlayChoice10::readController1(uint16 addr, uint8 data) -> uint8 {
 auto PlayChoice10::latchControllers(uint16 addr, uint8 data) -> void {
   auto gamepad = static_cast<Gamepad*>(peripherals.controllerPort1);
   bool old_latched = gamepad->latched;
-  cpu.writeCPU(addr, data);
+  cpu0.writeCPU(addr, data);
   if(old_latched == data.bit(0)) return;
   if(gamepad->latched == 0) {
     controller1GameSelect = gameSelectStart & poll(GameSelect);

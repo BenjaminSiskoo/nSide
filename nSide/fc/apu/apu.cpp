@@ -2,7 +2,10 @@
 
 namespace Famicom {
 
-APU apu;
+APU apu0(0);
+APU apu1(1);
+
+#define bus (side ? bus1 : bus0)
 
 #include "envelope.cpp"
 #include "sweep.cpp"
@@ -12,7 +15,9 @@ APU apu;
 #include "dmc.cpp"
 #include "serialization.cpp"
 
-APU::APU() {
+#define cpu (side ? cpu1 : cpu0)
+
+APU::APU(bool side) : side(side) {
   for(uint amp : range(32)) {
     if(amp == 0) {
       pulseDAC[amp] = 0;
@@ -33,10 +38,16 @@ APU::APU() {
       }
     }
   }
+
+  dmc.setAPU(this);
 }
 
 auto APU::Enter() -> void {
-  while(true) scheduler.synchronize(), apu.main();
+  while(true) {
+    scheduler.synchronize();
+    if(apu0.active()) apu0.main();
+    if(apu1.active()) apu1.main();
+  }
 }
 
 auto APU::main() -> void {
@@ -158,28 +169,26 @@ auto APU::reset() -> void {
   setIRQ();
 }
 
-auto APU::readIO(uint16 addr) -> uint8 {
+auto APU::readIO(uint16 addr, uint8 data) -> uint8 {
   switch(addr) {
 
   case 0x4015: {
-    uint8 result = 0x00;
-    result |= pulse[0].lengthCounter ? 0x01 : 0;
-    result |= pulse[1].lengthCounter ? 0x02 : 0;
-    result |= triangle.lengthCounter ? 0x04 : 0;
-    result |=    noise.lengthCounter ? 0x08 : 0;
-    result |=      dmc.lengthCounter ? 0x10 : 0;
-    result |=       frame.irqPending ? 0x40 : 0;
-    result |=         dmc.irqPending ? 0x80 : 0;
+    data.bit(0) = pulse[0].lengthCounter > 0;
+    data.bit(1) = pulse[1].lengthCounter > 0;
+    data.bit(2) = triangle.lengthCounter > 0;
+    data.bit(3) =    noise.lengthCounter > 0;
+    data.bit(4) =      dmc.lengthCounter > 0;
+    data.bit(5) = 0;
+    data.bit(6) =       frame.irqPending;
+    data.bit(7) =         dmc.irqPending;
 
     frame.irqPending = false;
     setIRQ();
-
-    return result;
   }
 
   }
 
-  return cpu.mdr();
+  return data;
 }
 
 auto APU::writeIO(uint16 addr, uint8 data) -> void {
@@ -393,5 +402,8 @@ const uint16 APU::dmcPeriodTableNTSC[16] = {
 const uint16 APU::dmcPeriodTablePAL[16] = {
   398, 354, 316, 298, 276, 236, 210, 198, 176, 148, 132, 118,  98, 78, 66, 50,
 };
+
+#undef bus
+#undef cpu
 
 }

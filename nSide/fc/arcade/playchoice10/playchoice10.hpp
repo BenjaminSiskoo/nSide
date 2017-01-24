@@ -8,9 +8,7 @@ struct PlayChoice10 : Processor::Z80::Bus {
     GameSelect, Start, ChannelSelect, Enter, Reset, ServiceButton, Coin1, Coin2,
   };
 
-  auto init() -> void;
   auto load(Markup::Node node) -> bool;
-  auto unload() -> void;
   auto power() -> void;
 
   auto read(uint16 addr) -> uint8 override;

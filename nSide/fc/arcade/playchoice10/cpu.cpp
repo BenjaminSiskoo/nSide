@@ -19,7 +19,7 @@ auto PlayChoice10::CPU::main() -> void {
 auto PlayChoice10::CPU::step(uint clocks) -> void {
   Thread::step(clocks);
   synchronize(playchoice10.videoCircuit);
-  synchronize(cpu);
+  synchronize(cpu0);
 }
 
 auto PlayChoice10::CPU::setNMI(bool value) -> void {

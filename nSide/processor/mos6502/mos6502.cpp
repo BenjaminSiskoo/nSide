@@ -10,13 +10,13 @@ namespace Processor {
 #define L lastCycle();
 #define call(op) (this->*op)()
 
+#include "instruction.cpp"
 #include "instructions-read.cpp"
 #include "instructions-write.cpp"
 #include "instructions-rmw.cpp"
 #include "instructions-pc.cpp"
 #include "instructions-misc.cpp"
 #include "instructions-illegal.cpp"
-#include "switch.cpp"
 
 MOS6502::MOS6502(bool allowBCD) : allowBCD(allowBCD) {
 }

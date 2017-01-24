@@ -6,13 +6,13 @@ struct PAL_ZZ : Board {
     mmc3.main();
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) {
       addr = (mmc3.prgAddress(addr) & (0xffff | (bank << 16))) | (bank << 17);
       addr |= (prgA16Force == 0x03) << 16;
       return read(prgrom, addr);
     }
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
@@ -47,9 +47,8 @@ struct PAL_ZZ : Board {
   }
 
   auto cicReset() -> void {
-    // this register is cleared by the CIC reset line.
-    // On a Famicom or toploader, only a power cycle can clear it.
-    //TODO: Check if Europe got the toploader.
+    //this register is cleared by the CIC reset line.
+    //On a Famicom or toploader, only a power cycle can clear it.
     prgA16Force = 0;
     bank = 0;
   }

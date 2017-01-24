@@ -2,6 +2,9 @@
 
 namespace Famicom {
 
+#define cpu (system.model() == Model::VSSystem ? cpu1 : cpu0)
+#define ppu (system.model() == Model::VSSystem ? ppu1 : ppu0)
+
 #include "gamepad/gamepad.cpp"
 #include "joypair/joypair.cpp"
 #include "four-players/four-players.cpp"
@@ -28,5 +31,8 @@ auto Expansion::main() -> void {
   step(1);
   synchronize(cpu);
 }
+
+#undef cpu
+#undef ppu
 
 }

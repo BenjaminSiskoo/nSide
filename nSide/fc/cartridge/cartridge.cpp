@@ -4,6 +4,11 @@ namespace Famicom {
 
 #include "load.cpp"
 #include "save.cpp"
+
+#define cpu (system.model() == Model::VSSystem ? cpu1 : cpu0)
+#define apu (system.model() == Model::VSSystem ? apu1 : apu0)
+#define ppu (system.model() == Model::VSSystem ? ppu1 : ppu0)
+
 #include "chip/chip.cpp"
 #include "board/board.cpp"
 #include "serialization.cpp"
@@ -111,15 +116,15 @@ auto Cartridge::reset() -> void {
   board->reset();
 }
 
-auto Cartridge::readPRG(uint addr) -> uint8 {
-  return board->readPRG(addr);
+auto Cartridge::readPRG(uint addr, uint8 data) -> uint8 {
+  return board->readPRG(addr, data);
 }
 
 auto Cartridge::writePRG(uint addr, uint8 data) -> void {
   return board->writePRG(addr, data);
 }
 
-auto Cartridge::readCHR(uint addr) -> uint8 {
+auto Cartridge::readCHR(uint addr, uint8 data) -> uint8 {
   return board->readCHR(addr);
 }
 
@@ -130,5 +135,9 @@ auto Cartridge::writeCHR(uint addr, uint8 data) -> void {
 auto Cartridge::scanline(uint y) -> void {
   return board->scanline(y);
 }
+
+#undef cpu
+#undef apu
+#undef ppu
 
 }

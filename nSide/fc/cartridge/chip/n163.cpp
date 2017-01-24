@@ -17,13 +17,13 @@ struct N163 : Chip {
     tick();
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     switch(addr & 0xf800) {
     case 0x4800:
       if(revision == Revision::N129 || revision == Revision::N163) {
-        uint8 byte = ram.read(audioAddress);
+        data = ram.read(audioAddress);
         if(audioAutoIncrement) audioAddress++;
-        return byte;
+        return data;
       }
       break;
     case 0x5000: return irqCounter & 0xff;
@@ -36,7 +36,7 @@ struct N163 : Chip {
       return board.read(board.prgrom, (prgBank[(addr & 0x6000) >> 13] << 13) | (addr & 0x1fff));
     case 0xe000: case 0xe800: case 0xf000: case 0xf800:
       return board.read(board.prgrom, (0x3f << 13) | (addr & 0x1fff));
-    default: return cpu.mdr();
+    default: return data;
     }
   }
 
@@ -50,39 +50,39 @@ struct N163 : Chip {
 
   auto regWrite(uint addr, uint8 data) -> void {
     switch(addr & 0xf800) {
-    case 0x4800: // Audio
+    case 0x4800:  //Audio
       if(revision == Revision::N129 || revision == Revision::N163) {
         ram.write(audioAddress, data);
         if(audioAutoIncrement) audioAddress++;
       }
       break;
-    case 0x5000: // IRQ Low
+    case 0x5000:  //IRQ Low
       if(revision == Revision::N129 || revision == Revision::N163) {
         irqCounter = (irqCounter & 0xff00) | data;
         cpu.irqLine(0);
       }
       break;
-    case 0x5800: // IRQ High
+    case 0x5800:  //IRQ High
       if(revision == Revision::N129 || revision == Revision::N163) {
         irqCounter = (irqCounter & 0x00ff) | ((data & 0x7f) << 8);
         irqEnable = data & 0x80;
         cpu.irqLine(0);
       }
       break;
-    case 0x8000: case 0x8800: case 0x9000: case 0x9800: // CHR Select
+    case 0x8000: case 0x8800: case 0x9000: case 0x9800:  //CHR Select
     case 0xa000: case 0xa800: case 0xb000: case 0xb800:
       chrBank[(addr & 0x7800) >> 11] = data;
       break;
-    case 0xc000: // Nametable Select/RAM Enable
+    case 0xc000:  //Nametable Select/RAM Enable
       if(revision == Revision::N175) {
         ramEnable = data & 0x01;
       }
-    case 0xc800: case 0xd000: case 0xd800: // Nametable Select
+    case 0xc800: case 0xd000: case 0xd800:  //Nametable Select
       if(revision == Revision::N129 || revision == Revision::N163) {
         chrBank[(addr & 0x7800) >> 11] = data;
       }
       break;
-    case 0xe000: // PRG Select 8000
+    case 0xe000:  //PRG Select 8000
       prgBank[0] = data & 0x3f;
       if(revision == Revision::N129 || revision == Revision::N163) {
         audioDisable = data & 0x40;
@@ -90,16 +90,16 @@ struct N163 : Chip {
         mirror = (data & 0xc0) >> 6;
       }
       break;
-    case 0xe800: // PRG Select A000
+    case 0xe800:  //PRG Select A000
       prgBank[1] = data & 0x3f;
       if(revision == Revision::N129 || revision == Revision::N163) {
         chrramDisable = (data & 0xc0) >> 6;
       }
       break;
-    case 0xf000: // PRG Select C000
+    case 0xf000:  //PRG Select C000
       prgBank[2] = data & 0x3f;
       break;
-    case 0xf800: // Sound RAM Address/Write Protection for External RAM
+    case 0xf800:  //Sound RAM Address/Write Protection for External RAM
       if(revision == Revision::N129 || revision == Revision::N163) {
         audioAddress = data & 0x7f;
         audioAutoIncrement = data & 0x80;

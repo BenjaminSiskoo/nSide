@@ -17,10 +17,7 @@ auto FamicomBox::main() -> void {
     counter = 3 * 0x2000;
   }
   step(1);
-  if(clock() - cpu.clock() > Thread::Second / 1'000) synchronize(cpu);
-}
-
-auto FamicomBox::init() -> void {
+  if(clock() - cpu0.clock() > Thread::Second / 1'000) synchronize(cpu0);
 }
 
 auto FamicomBox::load(Markup::Node node) -> bool {
@@ -42,9 +39,6 @@ auto FamicomBox::load(Markup::Node node) -> bool {
   return true;
 }
 
-auto FamicomBox::unload() -> void {
-}
-
 auto FamicomBox::power() -> void {
   create(FamicomBox::Enter, system.colorburst() * 6.0);
 
@@ -63,14 +57,14 @@ auto FamicomBox::power() -> void {
 
   reader = {&FamicomBox::readSRAM, this};
   writer = {&FamicomBox::writeSRAM, this};
-  bus.map(reader, writer, "6000-7fff");
+  bus0.map(reader, writer, "6000-7fff");
 
   reader = {&FamicomBox::readCartridge, this};
   writer = {&FamicomBox::writeCartridge, this};
-  bus.map(reader, writer, "8000-ffff");
+  bus0.map(reader, writer, "8000-ffff");
   // The cartridge is only mapped to $8000-ffff, not $4018-ffff.
 
-  cpu.reset();  //Workaround for CPU jumping to reset vector at $fffc before FamicomBox
+  cpu0.reset();  //Workaround for CPU jumping to reset vector at $fffc before FamicomBox
 
   reset();
 }
@@ -81,12 +75,12 @@ auto FamicomBox::reset() -> void {
 
   reader = {&FamicomBox::readWRAM, this};
   writer = {&FamicomBox::writeWRAM, this};
-  bus.map(reader, writer, "0800-1fff");
+  bus0.map(reader, writer, "0800-1fff");
 
   reader = {&FamicomBox::readIO, this};
   writer = {&FamicomBox::writeIO, this};
-  bus.map(reader, writer, "4016-4017");
-  bus.map(reader, writer, "5000-5fff");
+  bus0.map(reader, writer, "4016-4017");
+  bus0.map(reader, writer, "5000-5fff");
 
   exceptionTrap = 0xff;
   ramProtect = 7;
@@ -103,12 +97,12 @@ auto FamicomBox::trap(Exception exceptionId) -> void {
   if(exceptionId != Exception::ControllerRead) print("Trap Exception ", (uint)exceptionId, "\n");
   if(!exceptionEnable.bit((uint)exceptionId)) return;
   exceptionTrap.bit((uint)exceptionId) = 0;
-  synchronize(cpu);
-  synchronize(apu);
+  synchronize(cpu0);
+  synchronize(apu0);
   synchronize(cartridge);
   cartridge.reset();
-  cpu.reset();
-  apu.reset();
+  cpu0.reset();
+  apu0.reset();
   reset();
 }
 
@@ -144,7 +138,7 @@ auto FamicomBox::pollInputs() -> void {
 
 auto FamicomBox::readWRAM(uint16 addr, uint8 data) -> uint8 {
   switch(addr & 0xf800) {
-  case 0x0000: return cpu.ram[addr];
+  case 0x0000: return cpu0.ram[addr];
   case 0x0800:
   case 0x1000:
   case 0x1800: return bios_ram[addr - 0x800];
@@ -237,7 +231,7 @@ auto FamicomBox::readCartridge(uint16 addr, uint8 data) -> uint8 {
     break;
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.readPRG(addr);
+    case  1: return cartridge.readPRG(addr, data);
     case  2: return data;
     case  3: return data;
     case  4: return data;
@@ -269,7 +263,7 @@ auto FamicomBox::readCartridge(uint16 addr, uint8 data) -> uint8 {
 auto FamicomBox::writeWRAM(uint16 addr, uint8 data) -> void {
   switch(addr & 0xf800) {
   case 0x0000: {
-    if(ramProtect >= 1) cpu.ram[addr] = data;
+    if(ramProtect >= 1) cpu0.ram[addr] = data;
     return;
   }
 
@@ -292,7 +286,7 @@ auto FamicomBox::writeWRAM(uint16 addr, uint8 data) -> void {
 }
 
 auto FamicomBox::writeIO(uint16 addr, uint8 data) -> void {
-  if(addr == 0x4016 || addr == 0x4017 && enableControllers) return cpu.writeCPU(addr, data);
+  if(addr == 0x4016 || addr == 0x4017 && enableControllers) return cpu0.writeCPU(addr, data);
 
   if(!registerLock) {
     switch(addr & 0xf007) {
@@ -383,13 +377,13 @@ auto FamicomBox::writeCartridge(uint16 addr, uint8 data) -> void {
 
 auto FamicomBox::readCHR(uint14 addr, uint8 data) -> uint8 {
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) {
-    if(addr & 0x2000) return ppu.readCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1);
+    if(addr & 0x2000) return ppu0.readCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1);
     return bios_chr[addr];
   }
   switch(cartridgeRowSelect) {
   case 1:
     switch(cartridgeSelect) {
-    case  1: return cartridge.readCHR(addr);
+    case  1: return cartridge.readCHR(addr, data);
     case  2: return data;
     case  3: return data;
     case  4: return data;
@@ -420,7 +414,7 @@ auto FamicomBox::readCHR(uint14 addr, uint8 data) -> uint8 {
 
 auto FamicomBox::writeCHR(uint14 addr, uint8 data) -> void {
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) {
-    if(addr & 0x2000) return ppu.writeCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1, data);
+    if(addr & 0x2000) return ppu0.writeCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1, data);
   }
   switch(cartridgeRowSelect) {
   case 1:

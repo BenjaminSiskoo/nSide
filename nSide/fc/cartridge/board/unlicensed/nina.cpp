@@ -18,12 +18,12 @@ struct Nina : Board {
     }
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) return read(prgrom, (prgBank << 15) | (addr & 0x7fff));
     if((addr & 0xe000) == 0x6000) {
       if(prgram.size() > 0) return read(prgram, addr);
     }
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {

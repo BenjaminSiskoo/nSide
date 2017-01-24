@@ -16,7 +16,8 @@ auto Peripherals::reset() -> void {
 }
 
 auto Peripherals::connect(uint port, uint device) -> void {
-  cpu.peripherals.reset();
+  cpu0.peripherals.reset();
+  cpu1.peripherals.reset();
 
   if(system.model() != Model::PlayChoice10) {
     if(port == ID::Port::Controller1) {
@@ -101,7 +102,11 @@ auto Peripherals::connect(uint port, uint device) -> void {
     }
   }
 
-  cpu.peripherals.append(controllerPort1);
-  cpu.peripherals.append(controllerPort2);
-  cpu.peripherals.append(expansionPort);
+  cpu0.peripherals.append(controllerPort1);
+  cpu0.peripherals.append(controllerPort2);
+  cpu0.peripherals.append(expansionPort);
+
+  cpu1.peripherals.append(controllerPort1);
+  cpu1.peripherals.append(controllerPort2);
+  cpu1.peripherals.append(expansionPort);
 }

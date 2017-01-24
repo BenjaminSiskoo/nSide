@@ -1,11 +1,9 @@
 PlayChoice10Interface::PlayChoice10Interface() {
-  system.init();
-
   information.devState     = DevState::Full;
   information.manufacturer = "Nintendo";
   information.name         = "PlayChoice-10";
 
-  information.capability.states = true;
+  information.capability.states = false;
   information.capability.cheats = true;
 
   media.append({ID::PlayChoice10, "PlayChoice-10", "pc10"});
@@ -135,7 +133,7 @@ auto PlayChoice10Interface::videoColor(uint32 n) -> uint64 {
 
   if(n < (1 << 9)) {
     const uint9* palette = nullptr;
-    switch(ppu.version) {
+    switch(ppu0.version) {
     case PPU::Version::RP2C03B:
     case PPU::Version::RP2C03G:
     case PPU::Version::RC2C03B:

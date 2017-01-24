@@ -5,17 +5,17 @@ struct ColorDreams74_377 : Board {
     settings.mirror = boardNode["mirror/mode"].text() == "horizontal";
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) return read(prgrom, (prgBank << 15) | (addr & 0x7fff));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
     if(addr & 0x8000) {
-      // Bus conflicts
-      data &= readPRG(addr);
-      // PRG and CHR bits are swapped relative to NES-GxROM.
-      // Additionally, up to 16 CHR banks are available instead of 4.
+      //Bus conflicts
+      data &= readPRG(addr, data);
+      //PRG and CHR bits are swapped relative to NES-GxROM.
+      //Additionally, up to 16 CHR banks are available instead of 4.
       prgBank = (data & 0x03) >> 0;
       chrBank = (data & 0xf0) >> 4;
     }

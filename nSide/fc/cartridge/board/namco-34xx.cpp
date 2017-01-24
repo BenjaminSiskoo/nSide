@@ -47,9 +47,9 @@ struct Namco34xx : Board {
     else return addr & 0x7fff;
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if(addr & 0x8000) return read(prgrom, prgAddress(addr));
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
@@ -144,5 +144,5 @@ struct Namco34xx : Board {
 
   N108 n108;
 
-  bool nametable; // for Namco3453, used only by Devil Man
+  bool nametable;  //for Namco3453, used only by Devil Man
 };

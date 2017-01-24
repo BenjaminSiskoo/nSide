@@ -18,23 +18,24 @@ struct BandaiFCG : Board {
     fcg.main();
   }
 
-  auto readPRG(uint addr) -> uint8 {
+  auto readPRG(uint addr, uint8 data) -> uint8 {
     if((addr & 0xe000) == 0x6000) {
       switch(revision) {
       case Revision::LZ93D50:
         //TODO: serial EEPROM support
-        return 0x00 | (cpu.mdr() & 0xef);
+        return 0x00 | (data & 0xef);
       case Revision::JUMP2:
-        return fcg.eepromI2C_SCL ? fcg.ramRead(addr) : cpu.mdr();
+        return fcg.eepromI2C_SCL ? fcg.ramRead(addr, data) : data;
       }
     }
     if((addr & 0x8000) == 0x8000) {
-      if(revision != Revision::JUMP2)
+      if(revision != Revision::JUMP2) {
         return read(prgrom, fcg.prgAddress(addr));
-      else
+      } else {
         return read(prgrom, fcg.prgAddress(addr) | ((fcg.chrBank[(ppu.io.chrAddressBus >> 10) & 3] & 1) << 18));
+      }
     }
-    return cpu.mdr();
+    return data;
   }
 
   auto writePRG(uint addr, uint8 data) -> void {
