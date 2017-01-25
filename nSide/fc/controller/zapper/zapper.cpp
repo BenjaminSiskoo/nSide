@@ -61,7 +61,7 @@ auto Zapper::main() -> void {
 }
 
 auto Zapper::data() -> uint3 {
-  if(system.model() != Model::VSSystem) {
+  if(!Model::VSSystem()) {
     bool newtrigger = platform->inputPoll(port, ID::Device::Zapper, Trigger);
     if(newtrigger && !triggerlock) {
       triggertime = 3;
@@ -119,7 +119,7 @@ auto Zapper::readLight() -> bool {
 auto Zapper::latch(bool data) -> void {
   if(latched == data) return;
   latched = data;
-  if(system.model() == Model::VSSystem && latched == 0) {
+  if(Model::VSSystem() && latched == 0) {
     counter = 0;
     trigger = platform->inputPoll(port, ID::Device::Zapper, Trigger);
     light = lighttime > 0;

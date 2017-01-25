@@ -69,10 +69,12 @@ auto APU::main() -> void {
 //output  = filter.runLopass(output);
   output  = sclamp<16>(output);
 
-  if(system.model() != Model::PlayChoice10 || playchoice10.apuOutput) {
-    stream->sample(output / 32768.0);
-  } else {
-    stream->sample(0.0);
+  if(stream) {
+    if(!Model::PlayChoice10() || playchoice10.apuOutput) {
+      stream->sample(output / 32768.0);
+    } else {
+      stream->sample(0.0);
+    }
   }
 
   tick();
@@ -96,10 +98,10 @@ auto APU::setSample(int16 sample) -> void {
 }
 
 auto APU::load(Markup::Node node) -> bool {
-  if(system.model() == Model::VSSystem) return true;
+  if(Model::VSSystem()) return true;
 
   string versionString;
-  if(system.model() == Model::Famicom) {
+  if(Model::Famicom()) {
     if(system.region() == System::Region::NTSC)  versionString = node["apu/ntsc-version"].text();
     if(system.region() == System::Region::PAL)   versionString = node["apu/pal-version"].text();
     if(system.region() == System::Region::Dendy) versionString = node["apu/dendy-version"].text();
@@ -133,7 +135,9 @@ auto APU::power() -> void {
   case System::Region::PAL:   clockDivider = 16.0; break;
   case System::Region::Dendy: clockDivider = 15.0; break;
   }
-  stream = Emulator::audio.createStream(1, (system.colorburst() * 6.0) / clockDivider);
+  if(!Model::VSSystem() || vssystem.gameCount != 2 || side == 0) {
+    stream = Emulator::audio.createStream(1, (system.colorburst() * 6.0) / clockDivider);
+  }
 
   filter.hipassStrong = 0;
   filter.hipassWeak = 0;

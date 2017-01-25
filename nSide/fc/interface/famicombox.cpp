@@ -261,7 +261,7 @@ auto FamicomBoxInterface::audioFrequency() -> double {
 }
 
 auto FamicomBoxInterface::load(uint id) -> bool {
-  return system.load(this, Model::FamicomBox);
+  return system.load(this, System::Model::FamicomBox);
 }
 
 auto FamicomBoxInterface::connect(uint port, uint device) -> void {

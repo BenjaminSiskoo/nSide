@@ -12,6 +12,9 @@ CartPal::CartPal() {
   database.gameGear = BML::unserialize(string::read(locate("Database/Game Gear.bml")));
   database.wonderSwan = BML::unserialize(string::read(locate("Database/WonderSwan.bml")));
   database.wonderSwanColor = BML::unserialize(string::read(locate("Database/WonderSwan Color.bml")));
+  database.vsSystem = BML::unserialize(string::read(locate("Database/VS. System.bml")));
+  database.playchoice10 = BML::unserialize(string::read(locate("Database/PlayChoice-10.bml")));
+  database.famicombox = BML::unserialize(string::read(locate("Database/FamicomBox.bml")));
   database.bsMemory = BML::unserialize(string::read(locate("Database/BS Memory.bml")));
   database.sufamiTurbo = BML::unserialize(string::read(locate("Database/Sufami Turbo.bml")));
 }
@@ -48,6 +51,9 @@ auto CartPal::manifest(string location) -> string {
   if(type == ".gg") return gameGearManifest(location);
   if(type == ".ws") return wonderSwanManifest(location);
   if(type == ".wsc") return wonderSwanColorManifest(location);
+  if(type == ".vs") return vsSystemManifest(location);
+  if(type == ".pc10") return playchoice10Manifest(location);
+  if(type == ".fcb") return famicomboxManifest(location);
   if(type == ".bs") return bsMemoryManifest(location);
   if(type == ".st") return sufamiTurboManifest(location);
 
@@ -89,6 +95,9 @@ auto CartPal::import(string location) -> string {
   if(type == ".gg") return gameGearImport(buffer, location);
   if(type == ".ws") return wonderSwanImport(buffer, location);
   if(type == ".wsc") return wonderSwanColorImport(buffer, location);
+  if(type == ".vs") return vsSystemImport(buffer, location);
+  if(type == ".pc10") return playchoice10Import(buffer, location);
+  if(type == ".fcb") return famicomboxImport(buffer, location);
   if(type == ".bs") return bsMemoryImport(buffer, location);
   if(type == ".st") return sufamiTurboImport(buffer, location);
 

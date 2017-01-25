@@ -1,6 +1,13 @@
 struct Interface;
 
 struct System {
+  enum class Model : uint {
+    Famicom,
+    VSSystem,
+    PlayChoice10,
+    FamicomBox,
+  };
+
   enum class Region : uint { NTSC = 0, PAL = 1, Dendy = 2 };
 
   inline auto loaded() const -> bool { return information.loaded; }
@@ -67,3 +74,8 @@ private:
 extern System system;
 extern Peripherals peripherals;
 extern Random random;
+
+auto Model::Famicom() -> bool { return system.model() == System::Model::Famicom; }
+auto Model::VSSystem() -> bool { return system.model() == System::Model::VSSystem; }
+auto Model::PlayChoice10() -> bool { return system.model() == System::Model::PlayChoice10; }
+auto Model::FamicomBox() -> bool { return system.model() == System::Model::FamicomBox; }

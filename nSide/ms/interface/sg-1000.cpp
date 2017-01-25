@@ -4,9 +4,6 @@ SG1000Interface::SG1000Interface() {
   information.name         = "SG-1000";
   information.overscan     = true;
 
-  information.capability.states = false;
-  information.capability.cheats = false;
-
   media.append({ID::SG1000, "SG-1000", "sg1000"});
 
   Port hardware{ID::Port::Hardware, "Hardware"};
@@ -37,14 +34,6 @@ SG1000Interface::SG1000Interface() {
   ports.append(move(hardware));
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
-}
-
-auto SG1000Interface::manifest() -> string {
-  return cartridge.manifest();
-}
-
-auto SG1000Interface::title() -> string {
-  return cartridge.title();
 }
 
 auto SG1000Interface::videoSize() -> VideoSize {
@@ -112,60 +101,7 @@ auto SG1000Interface::videoColor(uint32 color) -> uint64 {
   return r << 32 | g << 16 | b << 0;
 }
 
-auto SG1000Interface::audioFrequency() -> double {
-  return 44'100.0;
-}
-
-auto SG1000Interface::loaded() -> bool {
-  return system.loaded();
-}
-
-auto SG1000Interface::sha256() -> string {
-  return cartridge.sha256();
-}
-
 auto SG1000Interface::load(uint id) -> bool {
   if(id == ID::SG1000) return system.load(this, Model::SG1000);
-  return false;
-}
-
-auto SG1000Interface::save() -> void {
-  system.save();
-}
-
-auto SG1000Interface::unload() -> void {
-  save();
-  system.unload();
-}
-
-auto SG1000Interface::connect(uint port, uint device) -> void {
-  peripherals.connect(port, device);
-}
-
-auto SG1000Interface::power() -> void {
-  system.power();
-}
-
-auto SG1000Interface::run() -> void {
-  system.run();
-}
-
-auto SG1000Interface::serialize() -> serializer {
-  return {};
-}
-
-auto SG1000Interface::unserialize(serializer& s) -> bool {
-  return false;
-}
-
-auto SG1000Interface::cap(const string& name) -> bool {
-  return false;
-}
-
-auto SG1000Interface::get(const string& name) -> any {
-  return {};
-}
-
-auto SG1000Interface::set(const string& name, const any& value) -> bool {
   return false;
 }

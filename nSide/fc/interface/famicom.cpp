@@ -513,7 +513,7 @@ auto FamicomInterface::audioFrequency() -> double {
 }
 
 auto FamicomInterface::load(uint id) -> bool {
-  return system.load(this, Model::Famicom);
+  return system.load(this, System::Model::Famicom);
 }
 
 auto FamicomInterface::connect(uint port, uint device) -> void {

@@ -25,13 +25,6 @@ namespace Famicom {
   extern Scheduler scheduler;
   extern Cheat cheat;
 
-  enum class Model : uint {
-    Famicom,
-    VSSystem,
-    PlayChoice10,
-    FamicomBox,
-  };
-
   struct Thread : Emulator::Thread {
     auto create(auto (*entrypoint)() -> void, double frequency) -> void {
       Emulator::Thread::create(entrypoint, frequency);
@@ -41,6 +34,13 @@ namespace Famicom {
     inline auto synchronize(Thread& thread) -> void {
       if(clock() >= thread.clock()) scheduler.resume(thread);
     }
+  };
+
+  struct Model {
+    inline static auto Famicom() -> bool;
+    inline static auto VSSystem() -> bool;
+    inline static auto PlayChoice10() -> bool;
+    inline static auto FamicomBox() -> bool;
   };
 
   #include <fc/controller/controller.hpp>

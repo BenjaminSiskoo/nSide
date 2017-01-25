@@ -19,7 +19,7 @@ auto Peripherals::connect(uint port, uint device) -> void {
   cpu0.peripherals.reset();
   cpu1.peripherals.reset();
 
-  if(system.model() != Model::PlayChoice10) {
+  if(!Model::PlayChoice10()) {
     if(port == ID::Port::Controller1) {
       settings.controllerPort1 = device;
       if(!system.loaded()) return;
@@ -65,7 +65,7 @@ auto Peripherals::connect(uint port, uint device) -> void {
     }
   }
 
-  if(system.model() == Model::PlayChoice10) {
+  if(Model::PlayChoice10()) {
     if(port == ID::Port::Controller1) {
       settings.controllerPort1 = device;
       if(!system.loaded()) return;

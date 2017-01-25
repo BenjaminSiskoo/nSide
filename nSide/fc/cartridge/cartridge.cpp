@@ -5,9 +5,9 @@ namespace Famicom {
 #include "load.cpp"
 #include "save.cpp"
 
-#define cpu (system.model() == Model::VSSystem ? cpu1 : cpu0)
-#define apu (system.model() == Model::VSSystem ? apu1 : apu0)
-#define ppu (system.model() == Model::VSSystem ? ppu1 : ppu0)
+#define cpu (Model::VSSystem() ? cpu1 : cpu0)
+#define apu (Model::VSSystem() ? apu1 : apu0)
+#define ppu (Model::VSSystem() ? ppu1 : ppu0)
 
 #include "chip/chip.cpp"
 #include "board/board.cpp"
@@ -37,27 +37,28 @@ auto Cartridge::main() -> void {
 auto Cartridge::load() -> bool {
   information = Information();
 
-  switch(system.model()) {
-  case Model::Famicom:
+  if(Model::Famicom()) {
     if(auto pathID = platform->load(ID::Famicom, "Famicom", "fc")) {
       information.pathID = pathID();
     } else return false;
-    break;
-  case Model::VSSystem:
+  }
+
+  if(Model::VSSystem()) {
     if(auto pathID = platform->load(ID::VSSystem, "VS. System", "vs")) {
       information.pathID = pathID();
     } else return false;
-    break;
-  case Model::PlayChoice10:
+  }
+
+  if(Model::PlayChoice10()) {
     if(auto pathID = platform->load(ID::PlayChoice10, "PlayChoice-10", "pc10")) {
       information.pathID = pathID();
     } else return false;
-    break;
-  case Model::FamicomBox:
+  }
+
+  if(Model::FamicomBox()) {
     if(auto pathID = platform->load(ID::FamicomBox, "FamicomBox", "fcb")) {
       information.pathID = pathID();
     } else return false;
-    break;
   }
 
   if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {

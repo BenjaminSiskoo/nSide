@@ -173,7 +173,7 @@ auto PlayChoice10Interface::audioFrequency() -> double {
 }
 
 auto PlayChoice10Interface::load(uint id) -> bool {
-  return system.load(this, Model::PlayChoice10);
+  return system.load(this, System::Model::PlayChoice10);
 }
 
 auto PlayChoice10Interface::connect(uint port, uint device) -> void {

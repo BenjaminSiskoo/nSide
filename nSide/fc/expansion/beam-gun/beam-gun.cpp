@@ -65,7 +65,7 @@ auto BeamGun::data1() -> bool {
 }
 
 auto BeamGun::data2() -> uint5 {
-  if(system.model() != Model::VSSystem) {
+  if(!Model::VSSystem()) {
     bool newtrigger = platform->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
     if(newtrigger && !triggerlock) {
       triggertime = 3;
@@ -123,7 +123,7 @@ auto BeamGun::readLight() -> bool {
 auto BeamGun::write(uint3 data) -> void {
   if(latched == data.bit(0)) return;
   latched = data.bit(0);
-  if(system.model() == Model::VSSystem && latched == 0) {
+  if(Model::VSSystem() && latched == 0) {
     counter = 0;
     trigger = platform->inputPoll(ID::Port::Expansion, ID::Device::BeamGun, Trigger);
     light = lighttime > 0;

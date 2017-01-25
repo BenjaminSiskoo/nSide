@@ -138,7 +138,7 @@ auto VSSystemInterface::audioFrequency() -> double {
 }
 
 auto VSSystemInterface::load(uint id) -> bool {
-  return system.load(this, Model::VSSystem);
+  return system.load(this, System::Model::VSSystem);
 }
 
 auto VSSystemInterface::connect(uint port, uint device) -> void {

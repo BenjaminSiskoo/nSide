@@ -60,10 +60,10 @@ auto PPU::main() -> void {
 }
 
 auto PPU::load(Markup::Node node) -> bool {
-  if(system.model() == Model::VSSystem) return true;
+  if(Model::VSSystem()) return true;
 
   string versionString;
-  if(system.model() == Model::Famicom) {
+  if(Model::Famicom()) {
     if(system.region() == System::Region::NTSC)  versionString = node["ppu/ntsc-version"].text();
     if(system.region() == System::Region::PAL)   versionString = node["ppu/pal-version"].text();
     if(system.region() == System::Region::Dendy) versionString = node["ppu/dendy-version"].text();
@@ -169,15 +169,15 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::originX() -> uint {
-  return (system.model() == Model::VSSystem && vssystem.gameCount == 2 && ppu1.active()) ? 256 : 0;
+  return (Model::VSSystem() && vssystem.gameCount == 2) ? side * 256 : 0;
 }
 
 auto PPU::originY() -> uint {
-  return system.model() == Model::PlayChoice10 ? (playchoice10.screenConfig - 1) * 224 : 0;
+  return Model::PlayChoice10() ? (playchoice10.screenConfig - 1) * 224 : 0;
 }
 
 auto PPU::refresh() -> void {
-  if(system.model() == Model::PlayChoice10 && playchoice10.screenConfig == PlayChoice10::ScreenConfig::Single) {
+  if(Model::PlayChoice10() && playchoice10.screenConfig == PlayChoice10::ScreenConfig::Single) {
     if(playchoice10.display == 0) return;
   }
   auto output = this->output;

@@ -1,7 +1,7 @@
 ifndef name
   name := nSide
 endif
-#flags += -DSFC_SUPERGAMEBOY
+flags += -DSFC_SUPERGAMEBOY
 
 include a2600/GNUmakefile
 include fc/GNUmakefile
