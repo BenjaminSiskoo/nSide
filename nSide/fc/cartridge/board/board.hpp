@@ -24,6 +24,8 @@ struct Board {
 
   static Board* load(Markup::Node boardNode);
 
+  uint slot;
+
   Chip* chip = nullptr;
 
   MappedRAM prgrom;

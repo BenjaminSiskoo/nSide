@@ -157,7 +157,7 @@ auto PPU::reset() -> void {
 
 auto PPU::scanline() -> void {
   if(vcounter() == 0) frame();
-  cartridge.scanline(vcounter());
+  cartridgeSlot[bus.slot].scanline(vcounter());
 
   if(vcounter() == 241) {
     scheduler.exit(Scheduler::Event::Frame);

@@ -20,6 +20,7 @@ auto PlayChoice10::serialize(serializer& s) -> void {
   s.array(sram);
 
   s.integer(channel);
+  changeChannel(channel);
   s.integer(sramBank);
   s.integer(promTest);
   s.integer(promClock);

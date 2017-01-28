@@ -64,8 +64,6 @@ auto FamicomBox::power() -> void {
   bus0.map(reader, writer, "8000-ffff");
   // The cartridge is only mapped to $8000-ffff, not $4018-ffff.
 
-  cpu0.reset();  //Workaround for CPU jumping to reset vector at $fffc before FamicomBox
-
   reset();
 }
 
@@ -88,21 +86,30 @@ auto FamicomBox::reset() -> void {
   attractionTimer.bits(7,14) = 0xff;
   watchdog.bits(10,13) = 0x00;
 
-  cartridgeSelect = 0;
-  cartridgeRowSelect = 0;
+  changeSlot(0);
   registerLock = false;
+
+  synchronize(cpu0);
+  synchronize(apu0);
+  synchronize(cartridgeSlot[bus0.slot]);
+
+  cpu0.reset();
+  apu0.reset();
+  cartridgeSlot[bus0.slot].reset();
+}
+
+auto FamicomBox::changeSlot(uint4 newSlot) -> void {
+  if(newSlot == cartridgeSelect) return;
+  //if(cartridgeSelect > 0) scheduler.remove(cartridgeSlot[bus0.slot]);
+  cartridgeSelect = newSlot;
+  cartridgeRowSelect = (newSlot + 4) / 5;
+  //if(cartridgeSelect > 0 && cartridgeSelect <= cartridgeSlot.size()) bus0.slot = newSlot - 1;
+  //cartridgeSlot[bus0.slot].power();
 }
 
 auto FamicomBox::trap(Exception exceptionId) -> void {
-  if(exceptionId != Exception::ControllerRead) print("Trap Exception ", (uint)exceptionId, "\n");
   if(!exceptionEnable.bit((uint)exceptionId)) return;
   exceptionTrap.bit((uint)exceptionId) = 0;
-  synchronize(cpu0);
-  synchronize(apu0);
-  synchronize(cartridge);
-  cartridge.reset();
-  cpu0.reset();
-  apu0.reset();
   reset();
 }
 
@@ -225,37 +232,10 @@ auto FamicomBox::readSRAM(uint16 addr, uint8 data) -> uint8 {
 }
 
 auto FamicomBox::readCartridge(uint16 addr, uint8 data) -> uint8 {
-  switch(cartridgeRowSelect) {
-  case 0:
-    if(cartridgeSelect == 0) return bios_prg[addr & 0x7fff];
-    break;
-  case 1:
-    switch(cartridgeSelect) {
-    case  1: return cartridge.readPRG(addr, data);
-    case  2: return data;
-    case  3: return data;
-    case  4: return data;
-    case  5: return data;
-    }
-    break;
-  case 2:
-    switch(cartridgeSelect) {
-    case  6: return data;
-    case  7: return data;
-    case  8: return data;
-    case  9: return data;
-    case 10: return data;
-    }
-    break;
-  case 3:
-    switch(cartridgeSelect) {
-    case 11: return data;
-    case 12: return data;
-    case 13: return data;
-    case 14: return data;
-    case 15: return data;
-    }
-    break;
+  if(cartridgeSelect > cartridgeSlot.size()) return data;
+  if(cartridgeRowSelect == 0 && cartridgeSelect == 0) return bios_prg[addr & 0x7fff];
+  if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
+    return cartridgeSlot[cartridgeSelect - 1].readPRG(addr, data);
   }
   return data;
 }
@@ -312,7 +292,7 @@ auto FamicomBox::writeIO(uint16 addr, uint8 data) -> void {
     }
 
     case 0x5004: {  //Cartridge selection register
-      cartridgeSelect = data.bits(0,3);
+      changeSlot(data.bits(0,3));
       cartridgeRowSelect = data.bits(4,5);
       registerLock |= data.bit(6);
       break;
@@ -344,106 +324,33 @@ auto FamicomBox::writeSRAM(uint16 addr, uint8 data) -> void {
 }
 
 auto FamicomBox::writeCartridge(uint16 addr, uint8 data) -> void {
-  switch(cartridgeRowSelect) {
-  case 1:
-    switch(cartridgeSelect) {
-    case  1: return cartridge.writePRG(addr, data);
-    case  2: return;
-    case  3: return;
-    case  4: return;
-    case  5: return;
-    }
-    break;
-  case 2:
-    switch(cartridgeSelect) {
-    case  6: return;
-    case  7: return;
-    case  8: return;
-    case  9: return;
-    case 10: return;
-    }
-    break;
-  case 3:
-    switch(cartridgeSelect) {
-    case 11: return;
-    case 12: return;
-    case 13: return;
-    case 14: return;
-    case 15: return;
-    }
-    break;
+  if(cartridgeSelect > cartridgeSlot.size()) return;
+  if(cartridgeRowSelect == 0 && cartridgeSelect == 0) return;
+  if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
+    return cartridgeSlot[cartridgeSelect - 1].writePRG(addr, data);
   }
 }
 
 auto FamicomBox::readCHR(uint14 addr, uint8 data) -> uint8 {
+  if(cartridgeSelect > cartridgeSlot.size()) return data;
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) {
     if(addr & 0x2000) return ppu0.readCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1);
     return bios_chr[addr];
   }
-  switch(cartridgeRowSelect) {
-  case 1:
-    switch(cartridgeSelect) {
-    case  1: return cartridge.readCHR(addr, data);
-    case  2: return data;
-    case  3: return data;
-    case  4: return data;
-    case  5: return data;
-    }
-    break;
-  case 2:
-    switch(cartridgeSelect) {
-    case  6: return data;
-    case  7: return data;
-    case  8: return data;
-    case  9: return data;
-    case 10: return data;
-    }
-    break;
-  case 3:
-    switch(cartridgeSelect) {
-    case 11: return data;
-    case 12: return data;
-    case 13: return data;
-    case 14: return data;
-    case 15: return data;
-    }
-    break;
+  if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
+    return cartridgeSlot[cartridgeSelect - 1].readCHR(addr, data);
   }
   return data;
 }
 
 auto FamicomBox::writeCHR(uint14 addr, uint8 data) -> void {
+  if(cartridgeSelect > cartridgeSlot.size()) return;
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) {
     if(addr & 0x2000) return ppu0.writeCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1, data);
+    return;
   }
-  switch(cartridgeRowSelect) {
-  case 1:
-    switch(cartridgeSelect) {
-    case  1: return cartridge.writeCHR(addr, data);
-    case  2: return;
-    case  3: return;
-    case  4: return;
-    case  5: return;
-    }
-    break;
-  case 2:
-    switch(cartridgeSelect) {
-    case  6: return;
-    case  7: return;
-    case  8: return;
-    case  9: return;
-    case 10: return;
-    }
-    break;
-  case 3:
-    switch(cartridgeSelect) {
-    case 11: return;
-    case 12: return;
-    case 13: return;
-    case 14: return;
-    case 15: return;
-    }
-    break;
+  if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
+    return cartridgeSlot[cartridgeSelect - 1].writeCHR(addr, data);
   }
 }
 

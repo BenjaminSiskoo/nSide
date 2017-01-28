@@ -6,7 +6,7 @@ auto System::serialize() -> serializer {
   char hash[64] = {};
   char description[512] = {};
   memory::copy(&version, (const char*)Emulator::SerializerVersion, Emulator::SerializerVersion.size());
-  memory::copy(&hash, (const char*)cartridge.sha256(), 64);
+  memory::copy(&hash, (const char*)cartridgeSlot[model() == Model::VSSystem].sha256(), 64);
 
   s.integer(signature);
   s.array(version);
@@ -43,7 +43,7 @@ auto System::serialize(serializer& s) -> void {
 }
 
 auto System::serializeAll(serializer& s) -> void {
-  cartridge.serialize(s);
+  for(auto& cartridge : cartridgeSlot) cartridge.serialize(s);
   system.serialize(s);
   random.serialize(s);
 

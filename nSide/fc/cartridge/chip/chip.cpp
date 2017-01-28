@@ -1,3 +1,7 @@
+#define cpu (Model::VSSystem() && board.slot ? cpu1 : cpu0)
+#define apu (Model::VSSystem() && board.slot ? apu1 : apu0)
+#define ppu (Model::VSSystem() && board.slot ? ppu1 : ppu0)
+
 #include "fcg.cpp"
 #include "g101.cpp"
 #include "ifh3001.cpp"
@@ -15,6 +19,10 @@
 #include "vrc4.cpp"
 #include "vrc6.cpp"
 #include "vrc7.cpp"
+
+#undef cpu
+#undef apu
+#undef ppu
 
 Chip::Chip(Board& board) : board(board) {
 }

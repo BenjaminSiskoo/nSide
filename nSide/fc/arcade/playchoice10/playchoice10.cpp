@@ -74,16 +74,16 @@ auto PlayChoice10::read(uint16 addr) -> uint8 {
   if(addr < 0x9000) return sram[(addr & 0x03ff) | (sramBank << 10)];
   if(addr < 0x9800) return 0x00;  //VRAM is write-only
   if(addr < 0xc000) return 0x00;  //open bus
-  if(channel != 0) return 0xff;
-  if(addr < 0xe000) return cartridge.board->instrom.read(addr & 0x1fff);
+  if(channel >= cartridgeSlot.size()) return 0xff;
+  if(addr < 0xe000) return cartridgeSlot[bus0.slot].board->instrom.read(addr & 0x1fff);
 
   //PROM
   uint8 data = 0xe7;
   uint8 byte;
   if(!promTest || !promAddress.bit(6)) {
-    byte = cartridge.board->keyrom.read((promAddress & 0x3f) >> 3);
+    byte = cartridgeSlot[bus0.slot].board->keyrom.read((promAddress & 0x3f) >> 3);
   } else {
-    byte = promAddress.bit(4) ? (uint8)0x00 : cartridge.board->keyrom.read(8);
+    byte = promAddress.bit(4) ? (uint8)0x00 : cartridgeSlot[bus0.slot].board->keyrom.read(8);
   }
   data.bit(3) = !byte.bit(promAddress & 7);
   data.bit(4) = !promAddress.bit(5);
@@ -177,19 +177,27 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
     break;
   }
   case 0x0b: {
-    channel.bit(0) = data;
+    uint4 newChannel = channel;
+    newChannel.bit(0) = data;
+    changeChannel(newChannel);
     break;
   }
   case 0x0c: {
-    channel.bit(1) = data;
+    uint4 newChannel = channel;
+    newChannel.bit(1) = data;
+    changeChannel(newChannel);
     break;
   }
   case 0x0d: {
-    channel.bit(2) = data;
+    uint4 newChannel = channel;
+    newChannel.bit(2) = data;
+    changeChannel(newChannel);
     break;
   }
   case 0x0e: {
-    channel.bit(3) = data;
+    uint4 newChannel = channel;
+    newChannel.bit(3) = data;
+    changeChannel(newChannel);
     break;
   }
   case 0x0f: {
@@ -204,6 +212,14 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
   case 0x12: break;
   case 0x13: break;
   }
+}
+
+auto PlayChoice10::changeChannel(uint4 newChannel) -> void {
+  if(newChannel == channel) return;
+  scheduler.remove(cartridgeSlot[channel]);
+  channel = newChannel;
+  if(channel < cartridgeSlot.size()) bus0.slot = channel;
+  cartridgeSlot[bus0.slot].power();
 }
 
 auto PlayChoice10::poll(uint input) -> int16 {

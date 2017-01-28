@@ -5,14 +5,18 @@ namespace Famicom {
 #include "load.cpp"
 #include "save.cpp"
 
-#define cpu (Model::VSSystem() ? cpu1 : cpu0)
-#define apu (Model::VSSystem() ? apu1 : apu0)
-#define ppu (Model::VSSystem() ? ppu1 : ppu0)
-
 #include "chip/chip.cpp"
+
+#define cpu (Model::VSSystem() && slot ? cpu1 : cpu0)
+#define apu (Model::VSSystem() && slot ? apu1 : apu0)
+#define ppu (Model::VSSystem() && slot ? ppu1 : ppu0)
+
 #include "board/board.cpp"
 #include "serialization.cpp"
-Cartridge cartridge;
+vector<Cartridge> cartridgeSlot;
+
+Cartridge::Cartridge(uint slot) : slot(slot) {
+}
 
 auto Cartridge::manifest() const -> string {
   string manifest = information.manifest.cartridge;
@@ -27,7 +31,11 @@ auto Cartridge::title() const -> string {
 }
 
 auto Cartridge::Enter() -> void {
-  while(true) scheduler.synchronize(), cartridge.main();
+  while(true) {
+    scheduler.synchronize();
+    if(cartridgeSlot[bus0.slot].active()) cartridgeSlot[bus0.slot].main();
+    if(cartridgeSlot[bus1.slot].active()) cartridgeSlot[bus1.slot].main();
+  }
 }
 
 auto Cartridge::main() -> void {

@@ -17,6 +17,7 @@ struct FamicomBox : Thread {
   auto power() -> void;
 
   auto reset() -> void;
+  auto changeSlot(uint4 newSlot) -> void;
   auto trap(Exception exceptionId) -> void;
   auto pollInputs() -> void;
 

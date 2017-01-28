@@ -46,7 +46,6 @@ struct Bus {
   alwaysinline static auto mirror(uint addr, uint size) -> uint;
   alwaysinline static auto reduce(uint addr, uint mask) -> uint;
 
-  Bus(bool side);
   ~Bus();
 
   alwaysinline auto read(uint16 addr, uint8 data) -> uint8;
@@ -63,7 +62,7 @@ struct Bus {
   ) -> void;
   auto unmap(const string& addr) -> void;
 
-  const bool side;  //0: main, 1: sub (VS. System only)
+  uint slot;  //for PlayChoice-10 and FamicomBox. VS. System: 0=main, 1=sub
 
 private:
   uint8* lookup = nullptr;

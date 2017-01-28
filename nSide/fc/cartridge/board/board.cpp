@@ -48,7 +48,6 @@
 #include "unlicensed/single-chip.cpp"
 
 Board::Board(Markup::Node& boardNode) {
-  cartridge.board = this;
 }
 
 Board::~Board() {
@@ -84,11 +83,11 @@ auto Board::main() -> void {
 
 auto Board::tick() -> void {
   switch(system.region()) {
-  case System::Region::NTSC:  cartridge.step(12); break;
-  case System::Region::PAL:   cartridge.step(16); break;
-  case System::Region::Dendy: cartridge.step(15); break;
+  case System::Region::NTSC:  cartridgeSlot[slot].step(12); break;
+  case System::Region::PAL:   cartridgeSlot[slot].step(16); break;
+  case System::Region::Dendy: cartridgeSlot[slot].step(15); break;
   }
-  cartridge.synchronize(cpu);
+  cartridgeSlot[slot].synchronize(cpu);
 }
 
 auto Board::readCHR(uint addr) -> uint8 {

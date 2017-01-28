@@ -4,7 +4,7 @@ auto CPU::step(uint clocks) -> void {
 
   synchronize(apu);
   synchronize(ppu);
-  synchronize(cartridge);
+  synchronize(cartridgeSlot[bus.slot]);
   for(auto coprocessor : coprocessors) synchronize(*coprocessor);
 }
 

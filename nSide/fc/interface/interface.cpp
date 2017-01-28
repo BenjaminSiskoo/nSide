@@ -13,11 +13,11 @@ Interface::Interface() {
 }
 
 auto Interface::manifest() -> string {
-  return cartridge.manifest();
+  return cartridgeSlot[Model::VSSystem()].manifest();
 }
 
 auto Interface::title() -> string {
-  return cartridge.title();
+  return cartridgeSlot[Model::VSSystem()].title();
 }
 
 auto Interface::loaded() -> bool {
@@ -25,7 +25,7 @@ auto Interface::loaded() -> bool {
 }
 
 auto Interface::sha256() -> string {
-  return cartridge.sha256();
+  return cartridgeSlot[Model::VSSystem()].sha256();
 }
 
 auto Interface::save() -> void {
@@ -86,6 +86,7 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
+  auto& cartridge = cartridgeSlot[Model::VSSystem()];
   string pathname = {platform->path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 

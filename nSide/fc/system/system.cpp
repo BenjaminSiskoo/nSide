@@ -32,14 +32,14 @@ auto System::runToSave() -> void {
     scheduler.synchronize(ppu1);
   }
 
-  scheduler.synchronize(cartridge);
-
-  if(model() != Model::VSSystem) {
+  if(model() != Model::VSSystem || vssystem.gameCount == 2) {
+    scheduler.synchronize(cartridgeSlot[bus0.slot]);
     for(auto coprocessor : cpu0.coprocessors) scheduler.synchronize(*coprocessor);
     for(auto peripheral : cpu0.peripherals) scheduler.synchronize(*peripheral);
   }
 
   if(model() == Model::VSSystem) {
+    scheduler.synchronize(cartridgeSlot[bus1.slot]);
     for(auto coprocessor : cpu1.coprocessors) scheduler.synchronize(*coprocessor);
     for(auto peripheral : cpu1.peripherals) scheduler.synchronize(*peripheral);
   }
@@ -56,11 +56,26 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
   auto document = BML::unserialize(information.manifest);
   auto system = document["system"];
 
+  bus0.slot = 0;
   bus0.reset();
+  bus1.slot = 1;
   bus1.reset();
-  if(!cartridge.load()) return false;
+  cartridgeSlot.append(Cartridge(0));
+  if(model == Model::VSSystem) cartridgeSlot.append(Cartridge(1));
+  if(!cartridgeSlot[model == Model::VSSystem].load()) return false;
 
-  switch(cartridge.region()) {
+  if(model == Model::PlayChoice10) for(uint slot : range(1, 10)) {
+    auto cartridge = Cartridge(slot);
+    if(!cartridge.load()) break;
+    cartridgeSlot.append(cartridge);
+  }
+  if(model == Model::FamicomBox)   for(uint slot : range(1, 15)) {
+    auto cartridge = Cartridge(slot);
+    if(!cartridge.load()) break;
+    cartridgeSlot.append(cartridge);
+  }
+
+  switch(cartridgeSlot[model == Model::VSSystem].region()) {
   case Cartridge::Region::NTSC:  information.region = Region::NTSC;  break;
   case Cartridge::Region::PAL:   information.region = Region::PAL;   break;
   case Cartridge::Region::Dendy: information.region = Region::Dendy; break;
@@ -109,14 +124,23 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
 
 auto System::save() -> void {
   if(!loaded()) return;
-  cartridge.save();
+  if(model() != Model::VSSystem) {
+    for(auto& cartridge : cartridgeSlot) cartridge.save();
+  } else {
+    cartridgeSlot[2 - vssystem.gameCount].save();
+  }
 }
 
 auto System::unload() -> void {
   if(!loaded()) return;
   peripherals.unload();
 
-  cartridge.unload();
+  if(model() != Model::VSSystem) {
+    for(auto& cartridge : cartridgeSlot) cartridge.unload();
+  } else {
+    cartridgeSlot[2 - vssystem.gameCount].unload();
+  }
+  cartridgeSlot.reset();
   information.loaded = false;
 }
 
@@ -131,15 +155,16 @@ auto System::power() -> void {
   Emulator::audio.setInterface(interface);
 
   scheduler.reset();
-  cartridge.power();
 
   if(model() != Model::VSSystem || vssystem.gameCount == 2) {
+    cartridgeSlot[bus0.slot].power();
     cpu0.power();
     apu0.power();
     ppu0.power();
   }
 
   if(model() == Model::VSSystem) {
+    cartridgeSlot[bus1.slot].power();
     cpu1.power();
     apu1.power();
     ppu1.power();

@@ -54,8 +54,8 @@ namespace Famicom {
   #include <fc/ppu/ppu.hpp>
 
   #include <fc/system/system.hpp>
-  #include <fc/arcade/arcade.hpp>
   #include <fc/cartridge/cartridge.hpp>
+  #include <fc/arcade/arcade.hpp>
 
   #include <fc/memory/memory-inline.hpp>
   #include <fc/ppu/counter/counter-inline.hpp>

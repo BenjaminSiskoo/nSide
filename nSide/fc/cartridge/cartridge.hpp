@@ -4,6 +4,8 @@
 struct Cartridge : Thread {
   enum class Region : uint { NTSC, PAL, Dendy };
 
+  Cartridge(uint slot);
+
   static void Enter();
   void main();
 
@@ -39,7 +41,8 @@ struct Cartridge : Thread {
   } information;
 
 //privileged:
-  Board* board;
+  shared_pointer<Board> board;
+  const uint slot;
 
   auto readPRG(uint addr, uint8 data) -> uint8;
   auto writePRG(uint addr, uint8 data) -> void;
@@ -66,4 +69,4 @@ private:
   friend class Interface;
 };
 
-extern Cartridge cartridge;
+extern vector<Cartridge> cartridgeSlot;
