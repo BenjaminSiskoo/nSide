@@ -20,8 +20,8 @@ struct HVC_ExROM : Board {
     mmc5.writePRG(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
-    return mmc5.readCHR(addr);
+  auto readCHR(uint addr, uint8 data) -> uint8 {
+    return mmc5.readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

@@ -20,13 +20,13 @@ struct IremG101 : Board {
     if((addr & 0xe000) == 0x6000) return write(prgram, addr & 0x1fff, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) switch(settings.mirror) {
     case 0: return ppu.readCIRAM(g101.ciramAddress(addr));
     case 1: return ppu.readCIRAM((addr & 0x03ff) | 0x0400);
     case 2: return ppu.readCIRAM((addr & 0x03ff) | 0x0800);
     }
-    return Board::readCHR(g101.chrAddress(addr));
+    return Board::readCHR(g101.chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

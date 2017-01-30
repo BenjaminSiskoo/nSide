@@ -22,11 +22,11 @@ struct KonamiVRC2 : Board {
     return vrc2.regWrite(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(vrc2.ciramAddress(addr));
     addr = vrc2.chrAddress(addr);
     addr = ((addr >> settings.pinout.chrShift) & ~0x3ff) | (addr & 0x3ff);
-    return Board::readCHR(addr);
+    return Board::readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

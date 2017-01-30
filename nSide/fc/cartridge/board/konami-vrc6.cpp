@@ -21,9 +21,9 @@ struct KonamiVRC6 : Board {
     return vrc6.regWrite(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(vrc6.ciramAddress(addr));
-    return Board::readCHR(vrc6.chrAddress(addr));
+    return Board::readCHR(vrc6.chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

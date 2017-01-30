@@ -26,9 +26,9 @@ struct HVC_AxROM : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM((mirrorSelect << 10) | (addr & 0x03ff));
-    return Board::readCHR(addr);
+    return Board::readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

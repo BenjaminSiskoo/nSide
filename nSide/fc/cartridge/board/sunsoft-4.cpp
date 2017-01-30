@@ -35,14 +35,17 @@ struct Sunsoft4 : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) {
       addr = ciramAddress(addr);
-      if(nametableMode) return Board::readCHR(((ntromBank[(addr & 0x0400) >> 10] | 0x80) << 10) | (addr & 0x03FF));
-      else              return ppu.readCIRAM(addr);
+      if(nametableMode) {
+        return Board::readCHR(((ntromBank[(addr & 0x0400) >> 10] | 0x80) << 10) | (addr & 0x03FF), data);
+      } else {
+        return ppu.readCIRAM(addr);
+      }
     }
     addr = (chrBank[(addr & 0x1800) >> 11] << 11) | (addr & 0x07ff);
-    return Board::readCHR(addr);
+    return Board::readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

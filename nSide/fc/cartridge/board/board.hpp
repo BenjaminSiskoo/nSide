@@ -12,7 +12,7 @@ struct Board {
   virtual uint8 readPRG(uint addr, uint8 data) = 0;
   virtual void writePRG(uint addr, uint8 data) = 0;
 
-  virtual auto readCHR(uint addr) -> uint8;
+  virtual auto readCHR(uint addr, uint8 data) -> uint8;
   virtual auto writeCHR(uint addr, uint8 data) -> void;
 
   virtual inline auto scanline(uint y) -> void {}

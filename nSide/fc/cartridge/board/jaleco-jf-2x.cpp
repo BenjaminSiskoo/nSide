@@ -28,9 +28,9 @@ struct JalecoJF2x : Board {
     if((addr & 0xe000) == 0x6000) return ss88006.ramWrite(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(ss88006.ciramAddress(addr));
-    return Board::readCHR(ss88006.chrAddress(addr));
+    return Board::readCHR(ss88006.chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

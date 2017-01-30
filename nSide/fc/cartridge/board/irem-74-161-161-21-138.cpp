@@ -18,7 +18,7 @@ struct Irem74_161_161_21_138 : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ciramRead(addr);
     if((addr & 0x1800) == 0x0000) return read(chrrom, (addr & 0x07ff) | (chrBank << 11));
     return read(chrram, addr);

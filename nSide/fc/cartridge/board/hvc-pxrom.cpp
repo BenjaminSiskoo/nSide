@@ -41,13 +41,13 @@ struct HVC_PxROM : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
     bool region = addr & 0x1000;
     uint bank = chrBank[region][latch[region]];
     if((addr & 0x0ff8) == 0x0fd8) latch[region] = 0;
     if((addr & 0x0ff8) == 0x0fe8) latch[region] = 1;
-    return Board::readCHR((bank * 0x1000) | (addr & 0x0fff));
+    return Board::readCHR((bank * 0x1000) | (addr & 0x0fff), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

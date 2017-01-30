@@ -90,10 +90,10 @@ auto Board::tick() -> void {
   cartridgeSlot[slot].synchronize(cpu);
 }
 
-auto Board::readCHR(uint addr) -> uint8 {
+auto Board::readCHR(uint addr, uint8 data) -> uint8 {
   if(chrram.size()) return read(chrram, addr);
   if(chrrom.size()) return read(chrrom, addr);
-  return ppu.io.mdr;
+  return data;
 }
 
 auto Board::writeCHR(uint addr, uint8 data) -> void {

@@ -29,8 +29,8 @@ auto CartPal::vsSystemManifest(vector<uint8_t>& buffer, string location, uint* p
   }
 
   if(settings["cart-pal/UseHeuristics"].boolean() && !markup) {
-    FamicomCartridge cartridge{(uint8*)buffer.data(), buffer.size()};
-    if(auto markup = cartridge.markup) {
+    VSSystemCartridge cartridge{(uint8*)buffer.data(), buffer.size()};
+    if(markup = cartridge.markup) {
       markup.append("\n");
       markup.append("information\n");
       markup.append("  title:  ", Location::prefix(location), "\n");

@@ -137,7 +137,7 @@ auto FamicomBox::pollInputs() -> void {
   //The Keyswitch has 6 positions: 1 OFF ON 2 3 4.
   //Keyswitch positions:
   //1,   0x20: Game Title & Count Display
-  //OFF, 0x01: Attract mode: play games in coin mode and free play mode
+  //OFF, 0x01: Attract mode; play games in coin mode and free play mode
   //ON,  0x02: Key mode: play games, Other modes: black screen
   //2,   0x04: Free Play Mode (for testing)
   //3,   0x08: Self Check Screen Display

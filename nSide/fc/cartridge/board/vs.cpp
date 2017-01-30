@@ -83,18 +83,18 @@ struct VS : Board {
     if((addr & 0xe000) == 0x6000 && prgram.size() > 0) return write(prgram, addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(addr);
     switch(chipType) {
     case ChipType::None:
-      if(chrrom.size() < bank << 13) return ppu.io.mdr;
+      if(chrrom.size() < bank << 13) return data;
       return read(chrrom, ((bank << 13) + (addr & 0x1fff)));
     case ChipType::_74HC32:
-      return Board::readCHR(addr);
+      return Board::readCHR(addr, data);
     case ChipType::MMC1:
-      return Board::readCHR(mmc1.chrAddress(addr));
+      return Board::readCHR(mmc1.chrAddress(addr), data);
     case ChipType::N108:
-      return Board::readCHR(n108.chrAddress(addr));
+      return Board::readCHR(n108.chrAddress(addr), data);
     }
   }
 

@@ -35,19 +35,20 @@ struct HVC_TxROM : Board {
     if(addr & 0x8000) return mmc3.regWrite(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(revision == Revision::TR1ROM || revision == Revision::TVROM) {
       if(addr & 0x2000) return read(chrram, addr);
       return read(chrrom, mmc3.chrAddress(addr));
     }
     if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
     if(revision == Revision::TQROM) {
-      if(mmc3.chrAddress(addr) & (0x40 << 10))
+      if(mmc3.chrAddress(addr) & (0x40 << 10)) {
         return read(chrram, mmc3.chrAddress(addr));
-      else
+      } else {
         return read(chrrom, mmc3.chrAddress(addr));
+      }
     }
-    return Board::readCHR(mmc3.chrAddress(addr));
+    return Board::readCHR(mmc3.chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

@@ -74,7 +74,7 @@ struct Namco34xx : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(revision == Revision::DRROM) {
       if(addr & 0x2000) {
         if(!(addr & 0x0800)) return ppu.readCIRAM(addr & 0x07ff);
@@ -83,7 +83,7 @@ struct Namco34xx : Board {
       return read(chrrom, n108.chrAddress(addr));
     }
     if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
-    return Board::readCHR(chrAddress(addr));
+    return Board::readCHR(chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

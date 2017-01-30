@@ -23,9 +23,9 @@ struct PAL_ZZ : Board {
     if(addr & 0x8000) return mmc3.regWrite(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(mmc3.ciramAddress(addr));
-    return Board::readCHR((mmc3.chrAddress(addr) & 0x1ffff) | (bank << 17));
+    return Board::readCHR((mmc3.chrAddress(addr) & 0x1ffff) | (bank << 17), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

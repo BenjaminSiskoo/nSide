@@ -31,6 +31,7 @@ Settings settings;
 #include "heuristics/game-boy-advance.cpp"
 #include "heuristics/game-gear.cpp"
 #include "heuristics/wonderswan.cpp"
+#include "heuristics/vs-system.cpp"
 #include "heuristics/bs-memory.cpp"
 #include "heuristics/sufami-turbo.cpp"
 

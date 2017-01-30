@@ -63,10 +63,10 @@ struct BandaiFCG : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(fcg.ciramAddress(addr));
-    if(chrrom.size()) return Board::readCHR(fcg.chrAddress(addr));
-    if(chrram.size()) return Board::readCHR(addr);
+    if(chrrom.size()) return Board::readCHR(fcg.chrAddress(addr), data);
+    if(chrram.size()) return Board::readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

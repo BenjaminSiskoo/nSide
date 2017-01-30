@@ -11,7 +11,7 @@ struct SingleChip : Board {
   auto writePRG(uint addr, uint8 data) -> void {
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     addr = ((addr & (1 << settings.va10)) >> (settings.va10 - 10)) | (addr & 0x03ff);
     return ppu.readCIRAM(addr);
   }

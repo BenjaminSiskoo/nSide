@@ -17,10 +17,10 @@ struct NES_HKROM : Board {
     if(addr & 0x8000) return mmc6.regWrite(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     mmc6.irqTest(addr);
     if(addr & 0x2000) return ppu.readCIRAM(mmc6.ciramAddress(addr));
-    return Board::readCHR(mmc6.chrAddress(addr));
+    return Board::readCHR(mmc6.chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

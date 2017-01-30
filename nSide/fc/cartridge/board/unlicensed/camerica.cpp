@@ -48,9 +48,9 @@ struct Camerica : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
-    return Board::readCHR(addr);
+    return Board::readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

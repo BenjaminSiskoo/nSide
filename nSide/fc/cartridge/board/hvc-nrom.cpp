@@ -35,12 +35,12 @@ struct HVC_NROM : Board {
     if(revision == Revision::FAMILYBASIC && (addr & 0xe000) == 0x6000) write(prgram, addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
       return ppu.readCIRAM(addr & 0x07ff);
     }
-    return Board::readCHR(addr);
+    return Board::readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

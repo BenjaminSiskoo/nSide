@@ -15,8 +15,8 @@ struct Namco163 : Board {
     n163.writePRG(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
-    n163.readCHR(addr);
+  auto readCHR(uint addr, uint8 data) -> uint8 {
+    n163.readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

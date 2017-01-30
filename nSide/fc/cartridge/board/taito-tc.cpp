@@ -15,9 +15,9 @@ struct TaitoTC : Board {
     if(addr & 0x8000) return tc.regWrite(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(tc.ciramAddress(addr));
-    return Board::readCHR(tc.chrAddress(addr));
+    return Board::readCHR(tc.chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

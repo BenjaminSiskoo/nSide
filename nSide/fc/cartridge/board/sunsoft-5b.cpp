@@ -152,9 +152,9 @@ struct Sunsoft5B : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(ciramAddress(addr));
-    return Board::readCHR(chrAddress(addr));
+    return Board::readCHR(chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

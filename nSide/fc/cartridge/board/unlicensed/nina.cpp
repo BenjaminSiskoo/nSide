@@ -48,12 +48,12 @@ struct Nina : Board {
     if((addr & 0xe000) == 0x6000 && prgram.size() > 0) write(prgram, addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) {
       if(settings.mirror == 1) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
       return ppu.readCIRAM(addr);
     }
-    return Board::readCHR((addr & 0x0fff) | (chrBank[(addr & 0x1000) >> 12] << 12));
+    return Board::readCHR((addr & 0x0fff) | (chrBank[(addr & 0x1000) >> 12] << 12), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

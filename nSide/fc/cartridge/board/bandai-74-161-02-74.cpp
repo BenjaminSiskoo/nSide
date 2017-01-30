@@ -29,10 +29,10 @@ struct Bandai74_161_02_74 : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     chrAddressBusTest(addr);
     if(addr & 0x2000) return ppu.readCIRAM(addr & 0x07ff);
-    return Board::readCHR(chrAddress(addr));
+    return Board::readCHR(chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

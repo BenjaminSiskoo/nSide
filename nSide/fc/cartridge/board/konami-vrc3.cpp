@@ -18,12 +18,12 @@ struct KonamiVRC3 : Board {
     if(addr & 0x8000) return vrc3.regWrite(addr, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) {
       if(settings.mirror == 0) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
       return ppu.readCIRAM(addr);
     }
-    return Board::readCHR(addr);
+    return Board::readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

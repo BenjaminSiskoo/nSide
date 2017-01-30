@@ -134,7 +134,7 @@ auto Cartridge::writePRG(uint addr, uint8 data) -> void {
 }
 
 auto Cartridge::readCHR(uint addr, uint8 data) -> uint8 {
-  return board->readCHR(addr);
+  return board->readCHR(addr, data);
 }
 
 auto Cartridge::writeCHR(uint addr, uint8 data) -> void {

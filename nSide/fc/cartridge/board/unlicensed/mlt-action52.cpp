@@ -29,13 +29,13 @@ struct MLT_Action52 : Board {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) {
       if(mirror) addr = ((addr & 0x0800) >> 1) | (addr & 0x03ff);
       return ppu.readCIRAM(addr);
     }
     addr = (chrBank * 0x2000) + (addr & 0x1fff);
-    return Board::readCHR(addr);
+    return Board::readCHR(addr, data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

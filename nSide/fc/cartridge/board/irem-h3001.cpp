@@ -17,9 +17,9 @@ struct IremH3001 : Board {
     if((addr & 0xe000) == 0x6000) return write(prgram, addr & 0x1fff, data);
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) return ppu.readCIRAM(ifh3001.ciramAddress(addr));
-    return Board::readCHR(ifh3001.chrAddress(addr));
+    return Board::readCHR(ifh3001.chrAddress(addr), data);
   }
 
   auto writeCHR(uint addr, uint8 data) -> void {

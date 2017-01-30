@@ -117,7 +117,7 @@ struct N163 : Chip {
     }
   }
 
-  auto readCHR(uint addr) -> uint8 {
+  auto readCHR(uint addr, uint8 data) -> uint8 {
     if(addr & 0x2000) {
       if(revision == Revision::N175 || revision == Revision::N340) {
         return ppu.readCIRAM(ciramAddress(addr));
