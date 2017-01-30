@@ -136,7 +136,7 @@ auto FamicomBoxInterface::videoFrequency() -> double {
 }
 
 auto FamicomBoxInterface::videoColors() -> uint32 {
-  return 1 << 9;
+  return (1 << 9) << 1;
 }
 
 auto FamicomBoxInterface::videoColor(uint32 n) -> uint64 {
@@ -220,7 +220,7 @@ auto FamicomBoxInterface::videoColor(uint32 n) -> uint64 {
     double saturation = 2.0;
     double hue = 0.0;
     double contrast = 1.0;
-    double brightness = 1.0;
+    double brightness = n.bit(9) ? 0.4 : 1.0;
     double gamma = settings.colorEmulation ? 1.8 : 2.2;
 
     return generateNTSCColor(n & 0x1ff, saturation, hue, contrast, brightness, gamma);

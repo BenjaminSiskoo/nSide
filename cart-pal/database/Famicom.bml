@@ -2294,7 +2294,7 @@ cartridge sha256:1e6d5548a54a0db31a13e05b604afafd8f9402b47079d708e7bf2cf8582e2ac
   :  board:    097-1A
   :  region:   JPN
   :  revision: 1.0
-  :  name:     Takahashi Meijin no Bouken Shima
+  :  name:     Takahashi Meijin no Boukenjima
   :  title:    高橋名人の冒険島
 
 cartridge sha256:e31511ebbea6e664490660eca241d91d3fc427945386570e8f124e7272a2b72d
@@ -2310,7 +2310,7 @@ cartridge sha256:e31511ebbea6e664490660eca241d91d3fc427945386570e8f124e7272a2b72
   :  board:    HVC-TLROM-04
   :  region:   JPN
   :  revision: 1.0
-  :  name:     Takahashi Meijin no Bouken Shima II
+  :  name:     Takahashi Meijin no Boukenjima II
   :  title:    高橋名人の冒険島II
 
 cartridge sha256:c6ef86ee14ec274fd00cec39fd669f24fdc3b7348747bb13bc7425029ea73c56
@@ -2326,7 +2326,7 @@ cartridge sha256:c6ef86ee14ec274fd00cec39fd669f24fdc3b7348747bb13bc7425029ea73c5
   :  board:    HVC-TLROM-04
   :  region:   JPN
   :  revision: 1.0
-  :  name:     Takahashi Meijin no Bouken Shima III
+  :  name:     Takahashi Meijin no Boukenjima III
   :  title:    高橋名人の冒険島III
 
 cartridge sha256:9583caa45626da3899b725fad3fcf345acbecd77eae6b77dbb065343c995ff1d

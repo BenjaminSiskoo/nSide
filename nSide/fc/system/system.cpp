@@ -140,6 +140,9 @@ auto System::unload() -> void {
   } else {
     cartridgeSlot[2 - vssystem.gameCount].unload();
   }
+
+  if(model() == Model::FamicomBox) famicombox.unload();
+
   cartridgeSlot.reset();
   information.loaded = false;
 }

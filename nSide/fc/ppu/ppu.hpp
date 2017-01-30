@@ -39,9 +39,6 @@ struct PPU : Thread, PPUcounter {
   auto power() -> void;
   auto reset() -> void;
 
-  alwaysinline auto originX() -> uint;
-  alwaysinline auto originY() -> uint;
-
   auto extIn() -> uint4;
   auto extOut() -> uint4;
 

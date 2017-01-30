@@ -168,20 +168,15 @@ auto PPU::frame() -> void {
   //TODO: Verify whether putting the scheduler exit event at vcounter() == 241 reduces lag as opposed to here
 }
 
-auto PPU::originX() -> uint {
-  return (Model::VSSystem() && vssystem.gameCount == 2) ? side * 256 : 0;
-}
-
-auto PPU::originY() -> uint {
-  return Model::PlayChoice10() ? (playchoice10.screenConfig - 1) * 224 : 0;
-}
-
 auto PPU::refresh() -> void {
+  uint originX = (Model::VSSystem() && vssystem.gameCount == 2) ? side * 256 : 0;
+  uint originY = Model::PlayChoice10() ? (playchoice10.screenConfig - 1) * 224 : 0;
+  uint paletteIndex = Model::FamicomBox() ? 0 : side << 9;
   if(Model::PlayChoice10() && playchoice10.screenConfig == PlayChoice10::ScreenConfig::Single) {
     if(playchoice10.display == 0) return;
   }
   auto output = this->output;
-  Emulator::video.refreshRegion(output, 256 * sizeof(uint32), originX(), originY(), 256, 240, side << 9);
+  Emulator::video.refreshRegion(output, 256 * sizeof(uint32), originX, originY, 256, 240, paletteIndex);
 }
 
 //

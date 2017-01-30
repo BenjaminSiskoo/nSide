@@ -1,8 +1,10 @@
 struct FamicomBox : Thread {
+  shared_pointer<Emulator::Sprite> keyswitchSprite;
+
   enum class Exception : uint {
     Interrupt6_82Hz = 0,
     AttractionTimer = 1,
-    ControllerRead  = 2,
+    Controller      = 2,
     KeyswitchRotate = 3,
     Coin            = 4,
     Reset           = 5,
@@ -14,6 +16,7 @@ struct FamicomBox : Thread {
   auto main() -> void;
 
   auto load(Markup::Node node) -> bool;
+  auto unload() -> void;
   auto power() -> void;
 
   auto reset() -> void;
@@ -51,23 +54,32 @@ struct FamicomBox : Thread {
   uint8 test_ram[0x2000];
 
   uint10 dip;
-  uint6 keyswitch;
+  uint keyswitch;
 
   uint8 exceptionEnable;
   uint8 exceptionTrap;
+
+  uint4 ledSelect;
   uint3 ramProtect;
+  bool  ledFlash;
+
   bool zapperGND;
   bool warmboot;
   bool enableControllers;
   bool swapControllers;
 
-  uint counter;
   uint15 attractionTimer;
   uint14 watchdog;
 
   uint4 cartridgeSelect;
   uint2 cartridgeRowSelect;
   bool registerLock;
+
+  struct CoinModule {
+    uint timer;
+    bool min10;
+    bool min20;
+  } coinModule;
 };
 
 extern FamicomBox famicombox;

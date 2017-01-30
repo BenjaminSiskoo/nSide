@@ -13,17 +13,17 @@ system name:FamicomBox
   setting name:Self-test
     option value=0x0000 name:Only on power on
     option value=0x0001 name:Continuous
-  setting name:Coin time
+  setting name:Coin timer
     option value=0x0000 name:10 minutes
     option value=0x0002 name:20 minutes
   setting name:Menu time
     option value=0x0000 name:7 seconds
     option value=0x0008 name:12 seconds
   setting name:Attract time
-    option value=0x0000 name:12 seconds
-    option value=0x0010 name:23 seconds
-    option value=0x0020 name:17 seconds
-    option value=0x0030 name:7 seconds
+    option value=0x0000 name:12.3 seconds
+    option value=0x0010 name:17.4 seconds
+    option value=0x0020 name:22.6 seconds
+    option value=0x0030 name:7.2 seconds
   setting name:Mode
     option value=0x0080 name:Coin Mode
     option value=0x0000 name:Key Mode

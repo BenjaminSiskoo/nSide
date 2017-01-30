@@ -11,13 +11,11 @@ auto FamicomBox::Enter() -> void {
 }
 
 auto FamicomBox::main() -> void {
-  if(--counter == 0) {
-    if(--attractionTimer == 0x7fff) trap(Exception::AttractionTimer);
-    if(++watchdog        == 0x0000) trap(Exception::Watchdog);
-    counter = 3 * 0x2000;
-  }
-  step(1);
-  if(clock() - cpu0.clock() > Thread::Second / 1'000) synchronize(cpu0);
+  if(--attractionTimer == 0x7fff) trap(Exception::AttractionTimer);
+  if(++watchdog        == 0x0000) trap(Exception::Watchdog);
+  if(coinModule.timer && --coinModule.timer == 0) trap(Exception::Coin);
+  step(3 * 0x2000);
+  synchronize(cpu0);
 }
 
 auto FamicomBox::load(Markup::Node node) -> bool {
@@ -34,15 +32,20 @@ auto FamicomBox::load(Markup::Node node) -> bool {
   }
 
   dip = platform->dipSettings(node);
-  keyswitch = 1 << (1 - 1);
+  keyswitch = 1;
 
   return true;
+}
+
+auto FamicomBox::unload() -> void {
+  Emulator::video.removeSprite(keyswitchSprite);
 }
 
 auto FamicomBox::power() -> void {
   create(FamicomBox::Enter, system.colorburst() * 6.0);
 
   exceptionEnable = 0x00;
+  exceptionTrap = 0xff;
 
   zapperGND = false;
   warmboot = false;
@@ -52,22 +55,10 @@ auto FamicomBox::power() -> void {
   cartridgeSelect = 0;
   cartridgeRowSelect = 0;
 
-  function<auto (uint16, uint8) -> uint8> reader;
-  function<auto (uint16, uint8) -> void> writer;
+  coinModule.timer = 0;
+  coinModule.min10 = false;
+  coinModule.min20 = false;
 
-  reader = {&FamicomBox::readSRAM, this};
-  writer = {&FamicomBox::writeSRAM, this};
-  bus0.map(reader, writer, "6000-7fff");
-
-  reader = {&FamicomBox::readCartridge, this};
-  writer = {&FamicomBox::writeCartridge, this};
-  bus0.map(reader, writer, "8000-ffff");
-  // The cartridge is only mapped to $8000-ffff, not $4018-ffff.
-
-  reset();
-}
-
-auto FamicomBox::reset() -> void {
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;
 
@@ -80,9 +71,28 @@ auto FamicomBox::reset() -> void {
   bus0.map(reader, writer, "4016-4017");
   bus0.map(reader, writer, "5000-5fff");
 
-  exceptionTrap = 0xff;
-  ramProtect = 7;
-  counter = 3 * 0x2000;
+  reader = {&FamicomBox::readSRAM, this};
+  writer = {&FamicomBox::writeSRAM, this};
+  bus0.map(reader, writer, "6000-7fff");
+
+  reader = {&FamicomBox::readCartridge, this};
+  writer = {&FamicomBox::writeCartridge, this};
+  bus0.map(reader, writer, "8000-ffff");
+  // The cartridge is only mapped to $8000-ffff, not $4018-ffff.
+
+  keyswitchSprite = Emulator::video.createSprite(16, 16);
+  keyswitchSprite->setPixels(Resource::Sprite::FamicomBoxOff);
+  keyswitchSprite->setPosition(0, 224);
+  keyswitchSprite->setVisible(true);
+
+  reset();
+}
+
+auto FamicomBox::reset() -> void {
+  ledSelect  = 0;
+  ramProtect = 0;
+  ledFlash   = false;
+
   attractionTimer.bits(7,14) = 0xff;
   watchdog.bits(10,13) = 0x00;
 
@@ -124,22 +134,45 @@ auto FamicomBox::pollInputs() -> void {
   if(state && !resetButton) trap(Exception::Reset);
   resetButton = state;
 
+  //The Keyswitch has 6 positions: 1 OFF ON 2 3 4.
+  //Keyswitch positions:
+  //1,   0x20: Game Title & Count Display
+  //OFF, 0x01: Attract mode: play games in coin mode and free play mode
+  //ON,  0x02: Key mode: play games, Other modes: black screen
+  //2,   0x04: Free Play Mode (for testing)
+  //3,   0x08: Self Check Screen Display
+  //4,   0x10: Black screen
+  uint oldKeyswitch = keyswitch;
   state = platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomBoxControls, 1);
   if(state && !keyswitchLeft) {
-    if(keyswitch != 1 << 0) keyswitch >>= 1;
-    trap(Exception::KeyswitchRotate);
+    if(keyswitch > 0) keyswitch--, trap(Exception::KeyswitchRotate);
   }
   keyswitchLeft = state;
 
   state = platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomBoxControls, 2);
   if(state && !keyswitchRight) {
-    if(keyswitch != 1 << 5) keyswitch <<= 1;
-    trap(Exception::KeyswitchRotate);
+    if(keyswitch < 5) keyswitch++, trap(Exception::KeyswitchRotate);
   }
   keyswitchRight = state;
 
+  if(keyswitch != oldKeyswitch) {
+    switch(keyswitch) {
+    case 0: keyswitchSprite->setPixels(Resource::Sprite::FamicomBox1); break;
+    case 1: keyswitchSprite->setPixels(Resource::Sprite::FamicomBoxOff); break;
+    case 2: keyswitchSprite->setPixels(Resource::Sprite::FamicomBoxOn); break;
+    case 3: keyswitchSprite->setPixels(Resource::Sprite::FamicomBox2); break;
+    case 4: keyswitchSprite->setPixels(Resource::Sprite::FamicomBox3); break;
+    case 5: keyswitchSprite->setPixels(Resource::Sprite::FamicomBox4); break;
+    }
+  }
+
   state = platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomBoxControls, 3);
-  if(state && !coin) trap(Exception::Coin);
+  if(state && !coin) {
+    trap(Exception::Coin);
+    uint second = floor(system.colorburst() * 6.0 / (3 * 0x2000));
+    if(coinModule.min10) coinModule.timer += 10 * 60 * second;
+    if(coinModule.min20) coinModule.timer += 20 * 60 * second;
+  }
   coin = state;
 }
 
@@ -156,13 +189,13 @@ auto FamicomBox::readIO(uint16 addr, uint8 data) -> uint8 {
   if(addr == 0x4016 || addr == 0x4017) {
     watchdog.bits(10,13) = 0;
     if(!enableControllers) return data;
-    if(addr == 0x4017) data.bits(3,4) = dip.bit(9) ? Famicom::peripherals.expansionPort->data2().bits(1,2) : 0;
+    if(addr == 0x4017) data.bits(3,4) = dip.bit(9) ? Famicom::peripherals.expansionPort->data2().bits(3,4) : 0;
     if(swapControllers) addr ^= 1;
     switch(addr) {
     case 0x4016: data.bit(0) = Famicom::peripherals.controllerPort1->data().bit(0); break;
     case 0x4017: data.bit(0) = Famicom::peripherals.controllerPort2->data().bit(0); break;
     }
-    trap(Exception::ControllerRead);
+    if(addr == 0x4016 && data.bit(0)) trap(Exception::Controller);
     return data;
   }
 
@@ -188,7 +221,11 @@ auto FamicomBox::readIO(uint16 addr, uint8 data) -> uint8 {
 
     //Keyswitch position and coin module status
     case 0x5003: {
-      return keyswitch;
+      const uint6 keyswitchData[] = {0x20, 0x01, 0x02, 0x04, 0x08, 0x10};
+      data.bits(0,5) = keyswitchData[keyswitch];
+      data.bit (  6) = coinModule.timer > 0;  //Coin module pin 9
+      data.bit (  7) = 0;  //Coin module pin 10
+      return data;
     }
 
     //Test connector (25-pin) inputs 2, 15, 3, 16, 4, 17, 5, 18
@@ -210,12 +247,12 @@ auto FamicomBox::readIO(uint16 addr, uint8 data) -> uint8 {
 
     //Misc. status
     case 0x5007: {
-      data.bit(0) = 0;  //Must be 0. TODO: check if 1 is TV mode or a trap flag
-      data.bit(1) = 1;
+      data.bit(0) = cartridgeSelect > cartridgeSlot.size();  //Must be 0. Is 1 TV mode or a trap flag?
+      data.bit(1) = 1;  //Must be 1. Does 0 represent the keyswitch mid-turn?
       data.bit(2) = !zapperGND && settings.expansionPort == ID::Device::BeamGun;
       //data.bit(3);  //Expansion connector (50-pin) input pin 21 inverted
-      data.bit(4) = 0;
-      data.bit(5) = 0;
+      data.bit(4) = 0;  //CATV connector pin 8
+      data.bit(5) = 0;  //relay position: 0=A, 1=B
       //data.bit(6);  //Expansion connector (50-pin) input pin 22 inverted
       data.bit(7) = !warmboot;
       return data;
@@ -232,9 +269,9 @@ auto FamicomBox::readSRAM(uint16 addr, uint8 data) -> uint8 {
 }
 
 auto FamicomBox::readCartridge(uint16 addr, uint8 data) -> uint8 {
-  if(cartridgeSelect > cartridgeSlot.size()) return data;
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) return bios_prg[addr & 0x7fff];
   if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
+    if(cartridgeSelect > cartridgeSlot.size()) return data;
     return cartridgeSlot[cartridgeSelect - 1].readPRG(addr, data);
   }
   return data;
@@ -278,11 +315,21 @@ auto FamicomBox::writeIO(uint16 addr, uint8 data) -> void {
     }
 
     case 0x5001: {  //Coin module flags and CATV output
+      coinModule.min10 = data.bit(0);  //pin 1
+      coinModule.min20 = data.bit(1);  //pin 2
+      //data.bit(2): pin  3: always 0 except in test mode
+      //data.bit(3): pin  4: always 0 except in test mode
+      //data.bit(4): pin 12: always 0 except in test mode
+      //data.bit(5): pin 14: ???
+      //data.bit(6): CATV: 0=free, 1=pay?
+      //data.bit(7): CATV: 0=OK, 1=controller error?
       break;
     }
 
     case 0x5002: {  //Cartridge slot LED and RAM protect register
+      ledSelect  = data.bits(0,3);
       ramProtect = data.bits(4,6);
+      ledFlash   = data.bit (  7);
       break;
     }
 
@@ -324,32 +371,32 @@ auto FamicomBox::writeSRAM(uint16 addr, uint8 data) -> void {
 }
 
 auto FamicomBox::writeCartridge(uint16 addr, uint8 data) -> void {
-  if(cartridgeSelect > cartridgeSlot.size()) return;
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) return;
   if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
+    if(cartridgeSelect > cartridgeSlot.size()) return;
     return cartridgeSlot[cartridgeSelect - 1].writePRG(addr, data);
   }
 }
 
 auto FamicomBox::readCHR(uint14 addr, uint8 data) -> uint8 {
-  if(cartridgeSelect > cartridgeSlot.size()) return data;
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) {
     if(addr & 0x2000) return ppu0.readCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1);
     return bios_chr[addr];
   }
   if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
+    if(cartridgeSelect > cartridgeSlot.size()) return data;
     return cartridgeSlot[cartridgeSelect - 1].readCHR(addr, data);
   }
   return data;
 }
 
 auto FamicomBox::writeCHR(uint14 addr, uint8 data) -> void {
-  if(cartridgeSelect > cartridgeSlot.size()) return;
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) {
     if(addr & 0x2000) return ppu0.writeCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1, data);
     return;
   }
   if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
+    if(cartridgeSelect > cartridgeSlot.size()) return;
     return cartridgeSlot[cartridgeSelect - 1].writeCHR(addr, data);
   }
 }
