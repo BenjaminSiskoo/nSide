@@ -180,7 +180,16 @@ L rd = readPC();
   //While other LAX opcodes decode to LDA and LDX, this one decodes
   //to LDA, LDX, and TAX, causing line noise on the data bus to interfere.
   //http://atariage.com/forums/topic/168616-lxa-stable/
-  r.a = r.x = (r.a | (rand() & 0xff)) & rd;
+
+  //LXA is safe to use if the argument is 0x00 (lxa #$00) or if the accumulator
+  //is 0xff prior to execution (lda #$ff...lxa #$??). All other combinations are
+  //subject to corruption.
+  //http://csdb.dk/release/?id=143981
+
+  //blargg's and hex_usr's NES consoles both run the LXA opcode as if it is LAX,
+  //but it is reality that this opcode is unreliable.
+  uint8 error = 0x00;  //rand()
+  r.a = r.x = (r.a | (error & 0xff)) & rd;
   r.p.n = (r.a & 0x80);
   r.p.z = (r.a == 0);
 }

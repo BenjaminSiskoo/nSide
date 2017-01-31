@@ -248,7 +248,7 @@ auto FamicomBox::readIO(uint16 addr, uint8 data) -> uint8 {
     //Misc. status
     case 0x5007: {
       data.bit(0) = cartridgeSelect > cartridgeSlot.size();  //Must be 0. Is 1 TV mode or a trap flag?
-      data.bit(1) = 1;  //Must be 1. Does 0 represent the keyswitch mid-turn?
+      data.bit(1) = 1;  //When this is 0, the keyswitch is mid-turn.
       data.bit(2) = !zapperGND && settings.expansionPort == ID::Device::BeamGun;
       //data.bit(3);  //Expansion connector (50-pin) input pin 21 inverted
       data.bit(4) = 0;  //CATV connector pin 8

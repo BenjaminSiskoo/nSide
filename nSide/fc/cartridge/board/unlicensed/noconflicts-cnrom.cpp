@@ -7,7 +7,7 @@ struct NoConflicts_CNROM : Board {
   }
 
   auto readPRG(uint addr, uint8 data) -> uint8 {
-    if(addr & 0x8000) return read(prgrom, addr & 0x7fff);
+    if(addr & 0x8000) return read(prgrom, addr);
     return data;
   }
 
