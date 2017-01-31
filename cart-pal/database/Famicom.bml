@@ -148,6 +148,22 @@ cartridge sha256:54526dc9444c0eb4b0e5814f98b5e522bcb9881a6f2c0644fc7a21ca8c03502
   :  name:     Armadillo
   :  title:    アルマジロ
 
+cartridge sha256:f3601248633f47a0ef10723e42a1072c76dd487d7ddf943e618611bb7cfec737
+  :board region=ntsc id:SUNSOFT-1
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x4000
+  :
+  :information
+  :  serial:   SUN-ATL-4900
+  :  board:    4041
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Atlantis no Nazo
+  :  title:    アトランチスの謎
+
 cartridge sha256:2b4ac20082e2f45a8f8fd4922a0e995829719a523e118a9eec891c3206adf25b
   :board region=ntsc id:HVC-CNROM
   :  security pass=0x3
@@ -1182,6 +1198,24 @@ cartridge sha256:f837e0807ade4bb8036d40746e2433ed66986f043fc2be722e765e45a676cd5
   :  revision: 1.0
   :  name:     Goonies, The
   :  title:    グーニーズ
+
+cartridge sha256:2974ad16b994cfdc9418310ced6c7f4ed64433063d12439a7b37a816f797dd0e
+  :board region=ntsc id:KONAMI-VRC-4
+  :  chip type=VRC4
+  :    pinout a0=1 a1=0
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :    ram name=work.ram size=0x800 volatile
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   KON-RC832
+  :  board:    351406
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Gradius II
+  :  title:    Gradius II
 
 cartridge sha256:0d895a031dd38f2661ba2af4a1b3c7b9753632b1530ea28eec936cf3fda8bf54
   :board region=ntsc id:HVC-NROM-256
@@ -3546,6 +3580,36 @@ cartridge sha256:56cb5897c539b6874e311a314767df85186184690f10d9982b02cb90ff60653
   :  name:     Double Dare
   :  title:    Double Dare
 
+cartridge sha256:8f2f9ba926280edd3652745e1d04a30ecce64089fbf3f022a35b4039a2dd7b66
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-WD-USA
+  :  board:    NES-SLROM-05
+  :  revision: 1.0
+  :  name:     Double Dragon
+  :  title:    Double Dragon
+
+cartridge sha256:c564704993cf79c94db5c2954792e99e86100586d0ef1d4bf1aefc6d008d4c0f
+  :board region=ntsc id:NES-TL1ROM
+  :  chip type=MMC3B
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-W2-USA
+  :  board:    NES-TL1ROM-02
+  :  revision: 1.1
+  :  name:     Double Dragon II - The Revenge
+  :  title:    Double Dragon II: The Revenge
+
 cartridge sha256:5860e217030f9da957d487b3ca59000d5f4d79bf23486bad08205c5aa4d992ea
   :board region=ntsc id:NES-SFROM
   :  chip type=MMC1A
@@ -3922,6 +3986,21 @@ cartridge sha256:9f559f83b9b5179137069bae0ca4b8eacf84378892b598044b88ef50681b58b
   :  name:     Golgo 13 - Top Secret Episode
   :  title:    Golgo 13: Top Secret Episode
 
+cartridge sha256:6918d7cbb81bfcd20d95bb08bcf137c7ea80ae9f0c12b92bfdcc90a6cf9752a0
+  :board region=ntsc id:NES-CNROM
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   NES-GR-USA
+  :  board:    NES-CN-ROM-256-01
+  :  revision: 1.0
+  :  name:     Gradius
+  :  title:    Gradius
+
 cartridge sha256:4628f32db9b826d19fe5dd8e2c45a9f70e1041f15b7b44b06dee2f01731566e8
   :board region=ntsc id:NES-GNROM
   :  mirror mode=vertical
@@ -4155,6 +4234,21 @@ cartridge sha256:24fca0fe86464c807ab5d58a2d56155a3fa1994e9bd78d119e3f8f84c8aee78
   :  name:     Kirby's Adventure
   :  title:    Kirby's Adventure
   //  title:    L'aventure de Kirby
+
+cartridge sha256:0ba5e69962f6576d3729aa967092a7e8c98d00213cd98026dee343bff67b4177
+  :board region=ntsc id:NES-NROM-256
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   NES-SX-USA
+  :  board:    NES-NROM-256-04
+  :  revision: 1.0
+  :  name:     Kung Fu
+  :  title:    Kung Fu
 
 cartridge sha256:ac9d9f60f68c020c99b5bb1b91c723f16ac59091676826bced466b7ee4c97209
   :board region=ntsc id:NES-SLROM
@@ -5061,6 +5155,21 @@ cartridge sha256:6a0c8be0f6445d9d777080955c7aa8fbff7497633b878a36c8139ec13dabfb8
   :  name:     Soccer
   :  title:    Soccer
 
+cartridge sha256:842478f0d9f01c6c547672a7e4dc4a33ed2c900f92e4b318f4d5941ba548b355
+  :board region=ntsc id:NES-CNROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   NES-KE-USA
+  :  board:    NES-CN-ROM-256-04
+  :  revision: 1.0
+  :  name:     Solomon's Key
+  :  title:    Solomon's Key
+
 cartridge sha256:1c3a2806b546230c5560f7cfe229fd8aef0c14460d1c6e79bcb14ab713ae983f
   :board region=ntsc id:NES-SGROM
   :  chip type=MMC1B2
@@ -5339,6 +5448,36 @@ cartridge sha256:6d10e95fcbf4cd1179293106d526373ea43a0c2b8531e694288b147310d617c
   :  revision: 1.0
   :  name:     TaleSpin
   :  title:    Disney's TaleSpin
+
+cartridge sha256:d2b56b27912cfc03756c94df6667fdf923c8a3746fa37e4632eeb4134ef4c200
+  :board region=ntsc id:NES-SLROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-TW-USA
+  :  board:    NES-SLROM-04
+  :  revision: 1.0
+  :  name:     Tecmo Bowl
+  :  title:    Tecmo Bowl
+
+cartridge sha256:d088f4b91a03dd6a618245fffb492bcda127c7faa6d880596aa5e751fdac0181
+  :board region=ntsc id:NES-SLRROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-TW-USA
+  :  board:    NES-SLRROM-01
+  :  revision: 1.1
+  :  name:     Tecmo Bowl
+  :  title:    Tecmo Bowl
 
 cartridge sha256:892468d05a1097769d14e0ed4822267760d85dbfc79d83a0235878109f839dd1
   :board region=ntsc id:KONAMI-SLROM

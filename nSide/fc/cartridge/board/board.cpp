@@ -32,6 +32,7 @@
 #include "nes-hkrom.cpp"
 #include "nes-qj.cpp"
 #include "pal-zz.cpp"
+#include "sunsoft-1.cpp"
 #include "sunsoft-4.cpp"
 #include "sunsoft-5b.cpp"
 #include "taito-tc.cpp"
@@ -303,6 +304,7 @@ Board* Board::load(Markup::Node boardNode) {
   if(type == "NAMCOT-3451") return new Namco34xx(boardNode);
   if(type == "NAMCOT-3453") return new Namco34xx(boardNode);
 
+  if(type == "SUNSOFT-1" ) return new Sunsoft1(boardNode);
   if(type == "SUNSOFT-4" ) return new Sunsoft4(boardNode);
   if(type == "SUNSOFT-5B") return new Sunsoft5B(boardNode);
 

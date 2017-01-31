@@ -224,6 +224,7 @@ Changes from higan: Famicom
     NAMCOT-175
     NAMCOT-340
     NAMCOT-34xx            // SkyKid (JPN), The Quest of Ki (JPN)
+    SUNSOFT-1              // アトランチスの謎 (Atlantis no Nazo) (JPN)
     SUNSOFT-4              // After Burner (JPN)
     TAITO-TC0190FMC
     TAITO-TC0350FMR
