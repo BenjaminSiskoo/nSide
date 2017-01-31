@@ -54,7 +54,7 @@ auto CartPal::famicomImport(vector<uint8_t>& buffer, string location) -> string 
   || buffer.data()[1] != 'E'
   || buffer.data()[2] != 'S'
   || buffer.data()[3] !=  26) has_ines_header = false;
-  unsigned offset = has_ines_header ? 16 : 0;
+  uint offset = 0;
 
   if(has_ines_header) {
     if(buffer.data()[7] & 0x01) return vsSystemImport(buffer, location);

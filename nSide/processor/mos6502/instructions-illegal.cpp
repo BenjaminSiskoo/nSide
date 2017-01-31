@@ -177,6 +177,7 @@ L rd = read(abs.w + r.y);
 
 auto MOS6502::op_lxa_immediate() -> void {
 L rd = readPC();
+
   //While other LAX opcodes decode to LDA and LDX, this one decodes
   //to LDA, LDX, and TAX, causing line noise on the data bus to interfere.
   //http://atariage.com/forums/topic/168616-lxa-stable/
@@ -187,9 +188,10 @@ L rd = readPC();
   //http://csdb.dk/release/?id=143981
 
   //blargg's and hex_usr's NES consoles both run the LXA opcode as if it is LAX,
-  //but it is reality that this opcode is unreliable.
-  uint8 error = 0x00;  //rand()
-  r.a = r.x = (r.a | error) & rd;
+  //(noise is 0xff on both) but it is reality that this opcode is unreliable.
+  uint8 noise = 0x00;  //rand()
+
+  r.a = r.x = (r.a | noise) & rd;
   r.p.n = (r.a & 0x80);
   r.p.z = (r.a == 0);
 }
@@ -235,10 +237,12 @@ L write(abs.w + r.y, r.a & r.x & (abs.h + 1));
 
 auto MOS6502::op_xaa_immediate() -> void {
   rd = readPC();
+
   //XAA/ANE should be used with an argument of 0x00 (xaa #$00) or when the
   //accumulator is 0xff prior to execution (lda #$ff...xaa #$??). All other
   //combinations are subject to corruption.
   //http://csdb.dk/release/?id=143981
-  uint8 error = 0xff;//rand()
-  r.a = (r.a | error) & r.x & rd;
+  uint8 noise = 0x00;  //rand()
+
+  r.a = (r.a | noise) & r.x & rd;
 }
