@@ -189,7 +189,7 @@ L rd = readPC();
   //blargg's and hex_usr's NES consoles both run the LXA opcode as if it is LAX,
   //but it is reality that this opcode is unreliable.
   uint8 error = 0x00;  //rand()
-  r.a = r.x = (r.a | (error & 0xff)) & rd;
+  r.a = r.x = (r.a | error) & rd;
   r.p.n = (r.a & 0x80);
   r.p.z = (r.a == 0);
 }
@@ -235,5 +235,10 @@ L write(abs.w + r.y, r.a & r.x & (abs.h + 1));
 
 auto MOS6502::op_xaa_immediate() -> void {
   rd = readPC();
-  r.a = (r.a | (rand() & 0xff)) & r.x & rd;
+  //XAA/ANE should be used with an argument of 0x00 (xaa #$00) or when the
+  //accumulator is 0xff prior to execution (lda #$ff...xaa #$??). All other
+  //combinations are subject to corruption.
+  //http://csdb.dk/release/?id=143981
+  uint8 error = 0xff;//rand()
+  r.a = (r.a | error) & r.x & rd;
 }
