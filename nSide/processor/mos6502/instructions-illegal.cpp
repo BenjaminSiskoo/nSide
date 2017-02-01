@@ -188,8 +188,9 @@ L rd = readPC();
   //http://csdb.dk/release/?id=143981
 
   //blargg's and hex_usr's NES consoles both run the LXA opcode as if it is LAX,
-  //(noise is 0xff on both) but it is reality that this opcode is unreliable.
-  uint8 noise = 0x00;  //rand()
+  //(noise is 0xff on both), but that can vary based on temperature and other
+  //things.
+  uint8 noise = lxaNoise;
 
   r.a = r.x = (r.a | noise) & rd;
   r.p.n = (r.a & 0x80);
@@ -242,7 +243,7 @@ auto MOS6502::op_xaa_immediate() -> void {
   //accumulator is 0xff prior to execution (lda #$ff...xaa #$??). All other
   //combinations are subject to corruption.
   //http://csdb.dk/release/?id=143981
-  uint8 noise = 0x00;  //rand()
+  uint8 noise = xaaNoise;
 
   r.a = (r.a | noise) & r.x & rd;
 }

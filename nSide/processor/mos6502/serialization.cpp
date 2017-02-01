@@ -12,4 +12,7 @@ auto MOS6502::serialize(serializer& s) -> void {
   s.integer(rd);
   s.integer(zp);
   s.integer(aa);
+
+  s.integer(xaaNoise);
+  s.integer(lxaNoise);
 }

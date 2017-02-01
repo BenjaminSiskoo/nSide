@@ -148,6 +148,9 @@ struct MOS6502 {
   uint8 rd, zp;
   uint16 aa;
 
+  uint8 xaaNoise;
+  uint8 lxaNoise;
+
   const bool allowBCD;
 };
 
