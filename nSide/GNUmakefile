@@ -6,23 +6,24 @@ endif
 ifeq ($(target),tomoko)
   $(error "tomoko is unsupported; it is only a reference for nSide's UI")
 endif
+objects := libco emulator audio video resource
+build := release
 # console := true
 
-flags += -I. -I.. -O3
-objects := libco emulator audio video resource
+flags += -I. -I..
 
-# profile-guided optimization mode
-# pgo := instrument
-# pgo := optimize
-
-ifeq ($(pgo),instrument)
-  flags += -fprofile-generate
+ifeq ($(build),release)
+  flags += -O3
+  link += -s
+else ifeq ($(build),debug)
+  flags += -g
+else ifeq ($(build),instrument)
+  flags += -O3 -fprofile-generate
   link += -lgcov
-else ifeq ($(pgo),optimize)
-  flags += -fprofile-use
+else ifeq ($(build),optimize)
+  flags += -O3 -fprofile-use
 endif
 
-# platform
 ifeq ($(platform),windows)
   ifeq ($(console),true)
     link += -mconsole

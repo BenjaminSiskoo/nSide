@@ -3814,6 +3814,36 @@ cartridge sha256:e9f4c9d1b7c66c6af83f2db5d4f704cf5f4b3c86e26a49c05539237807d8875
   :  name:     Excitebike
   :  title:    Excitebike
 
+cartridge sha256:52f7e7309f1f53f632912182f3a65f574c949392ab92f55c2494a7e648ef5ccb
+  :board region=ntsc id:NES-SGROM
+  :  chip type=MMC1B1
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-FX-USA
+  :  board:    NES-SGROM-02
+  :  revision: 1.0
+  :  name:     Faxanadu
+  :  title:    Faxanadu
+
+cartridge sha256:58f2ba801354a8e5b32e7d1cbcc740b8dc838e7d48c3d2f3eedea36b49b1a518
+  :board region=ntsc id:NES-SGROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-FX-USA
+  :  board:    NES-SGROM-04
+  :  revision: 1.1
+  :  name:     Faxanadu
+  :  title:    Faxanadu
+
 cartridge sha256:c0c98471130cd09c82af6ead5e706c9299cc2cb4584016a5e5eb0c8897380172
   :board region=ntsc id:NES-SLROM
   :  chip type=MMC1B2
@@ -3861,6 +3891,21 @@ cartridge sha256:04264565cf33f4bd1b23a3f7a1be1487a548c7f6b85323c68af754b0927b0a5
   :  revision: 1.0
   :  name:     Fist of the North Star
   :  title:    Fist of the North Star
+
+cartridge sha256:8da82a28be164453d1f8aa293fc8b02aaede397b52622a14ead331e475e5ca2f
+  :board region=ntsc id:NES-TLROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x40000
+  :
+  :information
+  :  serial:   NES-FT-USA
+  :  board:    NES-TLROM-03
+  :  revision: 1.0
+  :  name:     Flintstones - The Surprise at Dinosaur Peak!, The
+  :  title:    The Flintstones: The Surprise at Dinosaur Peak!
 
 cartridge sha256:7e94b4fe8c33439779bb653d007ba4678dd589636ffbc87d1535629578a64d5e
   :board region=ntsc id:NES-CNROM
@@ -4525,7 +4570,7 @@ cartridge sha256:1e588d435e75d80c5c0b578b4fa8d196f2cf4346c11c9a7b7e435d768828ad0
   :  board:    NES-SGROM-04
   :  revision: 1.0
   :  name:     Mega Man 2
-  :  title:    Mega Man 2
+  :  title:    Mega Man II
 
 cartridge sha256:5b85c1ff632c6ac34742ac87b9c8ddee9a13827caf1212ecfa1d11f1f9dece50
   :board region=ntsc id:NES-TLROM
@@ -4540,7 +4585,7 @@ cartridge sha256:5b85c1ff632c6ac34742ac87b9c8ddee9a13827caf1212ecfa1d11f1f9dece5
   :  board:    NES-TLROM-03
   :  revision: 1.0
   :  name:     Mega Man 3
-  :  title:    Mega Man 3
+  :  title:    Mega Man III
 
 cartridge sha256:a1fda74d03a9dd0c168b1ecae66803d78723cf7ccd85a482dedf017b97e660e8
   :board region=ntsc id:NES-TGROM
@@ -4555,7 +4600,7 @@ cartridge sha256:a1fda74d03a9dd0c168b1ecae66803d78723cf7ccd85a482dedf017b97e660e
   :  board:    NES-TGROM-01
   :  revision: 1.0
   :  name:     Mega Man 4
-  :  title:    Mega Man 4
+  :  title:    Mega Man IV
 
 cartridge sha256:ed8bc89c9cd44bf566666451779d7db2da3d9c211ff2a4824372c172b554e05b
   :board region=ntsc id:NES-TGROM
@@ -4570,7 +4615,7 @@ cartridge sha256:ed8bc89c9cd44bf566666451779d7db2da3d9c211ff2a4824372c172b554e05
   :  board:    NES-TGROM-01
   :  revision: 1.1
   :  name:     Mega Man 4
-  :  title:    Mega Man 4
+  :  title:    Mega Man IV
 
 cartridge sha256:4ddb728c3a007f1aa7184b60a1355cfd376cae46edc007fd48e6bcf41207cdb7
   :board region=ntsc id:NES-TLROM
@@ -4585,7 +4630,7 @@ cartridge sha256:4ddb728c3a007f1aa7184b60a1355cfd376cae46edc007fd48e6bcf41207cdb
   :  board:    NES-TLROM-03
   :  revision: 1.0
   :  name:     Mega Man 5
-  :  title:    Mega Man 5
+  :  title:    Mega Man V
 
 cartridge sha256:2037babe50fed7a13b6f6559914cb81497245c9477592e6f8da183df09a3609a
   :board region=ntsc id:NES-TGROM
@@ -4600,7 +4645,23 @@ cartridge sha256:2037babe50fed7a13b6f6559914cb81497245c9477592e6f8da183df09a3609
   :  board:    NES-TGROM-01
   :  revision: 1.0
   :  name:     Mega Man 6
-  :  title:    Mega Man 6
+  :  title:    Mega Man VI
+
+cartridge sha256:f6d29afbd7ddad33672852232791a396695de2e77dccb83088a8d6b139d8c9cb
+  :board region=ntsc id:KONAMI-UNROM
+  :  chip type=74HC32
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-ME-USA
+  :  board:    351320
+  :  revision: 1.0
+  :  name:     Metal Gear
+  :  title:    Metal Gear
 
 cartridge sha256:649db8035018f2512ccea70aca6606c3b3a6988cd9ed43953b38dc5103dec7bb
   :board region=ntsc id:NES-SNROM
@@ -5109,6 +5170,22 @@ cartridge sha256:9bef1813dbcfa003b3b1978a66a8da3ff59c93dd74f1332801515aa4b633c51
   :  name:     Rygar
   :  title:    Rygar
 
+cartridge sha256:fe4043430276177b739137ee7ed8e6cb75e751732a3f796ce03708d3ef1755e8
+  :board region=ntsc id:KONAMI-UNROM
+  :  chip type=74HC32
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   NES-DI-USA
+  :  board:    351320
+  :  revision: 1.0
+  :  name:     Skate or Die!
+  :  title:    Skate or Die!
+
 cartridge sha256:51958d12a19e7c573fab26b85fe81d57330ff6668d630c6bc95c7c563c441e93
   :board region=ntsc id:NES-SHROM
   :  chip type=MMC1
@@ -5478,6 +5555,22 @@ cartridge sha256:d088f4b91a03dd6a618245fffb492bcda127c7faa6d880596aa5e751fdac018
   :  revision: 1.1
   :  name:     Tecmo Bowl
   :  title:    Tecmo Bowl
+
+cartridge sha256:cd5ad84e6bba35c19098c6f9783b568e4f1218582a12ec0513e5fafbdabb0303
+  :board region=ntsc id:NES-TLROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :    ram name=save.ram size=0x2000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   NES-4U-USA
+  :  board:    NES-TKROM-10
+  :  revision: 1.0
+  :  name:     Tecmo Super Bowl
+  :  title:    Tecmo Super Bowl
 
 cartridge sha256:892468d05a1097769d14e0ed4822267760d85dbfc79d83a0235878109f839dd1
   :board region=ntsc id:KONAMI-SLROM
@@ -5900,6 +5993,21 @@ cartridge sha256:56a169bb3a6101057fb278f2febd58cb1dbf056e5aaeb709c51a55ce4cfac20
   :  revision: 1.0
   :  name:     Yoshi
   :  title:    Yoshi
+
+cartridge sha256:24b117a0830fcb91d88d9150ff89a374134a9ddebd5eedcb5df21eab580eb2c0
+  :board region=ntsc id:NES-TFROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x10000
+  :
+  :information
+  :  serial:   NES-CH-USA
+  :  board:    NES-TFROM-03
+  :  revision: 1.0
+  :  name:     Yoshi's Cookie
+  :  title:    Yoshi's Cookie
 
 cartridge sha256:4cfc55e1521e58039d502f2a5ff16c233b84c0a05b1048185c75c971f3814c16
   :board region=ntsc id:NES-SKROM

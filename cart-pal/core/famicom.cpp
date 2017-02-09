@@ -58,7 +58,7 @@ auto CartPal::famicomImport(vector<uint8_t>& buffer, string location) -> string 
 
   if(has_ines_header) {
     if(buffer.data()[7] & 0x01) return vsSystemImport(buffer, location);
-    if((buffer.data()[7] & 0x0c) == 0x08) { // NES 2.0
+    if((buffer.data()[7] & 0x0c) == 0x08) {  //NES 2.0
       if(buffer.data()[7] & 0x02) return playchoice10Import(buffer, location);
     }
   }

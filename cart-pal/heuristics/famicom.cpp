@@ -42,8 +42,8 @@ FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
   vs      = data[7].bit(0);
   nes2    = (data[7] & 0x0c) == 0x08;
   if(!nes2) {
-    // ignore the last 9 bytes of headers that have "DiskDude!" or other
-    // messages written there
+    //ignore the last 9 bytes of headers that have "DiskDude!" or other
+    //messages written there
     if(data[12] == 0 && data[13] == 0 && data[14] == 0 && data[15] == 0) {
       prgram = data[8] * 0x2000;
       region = data[9].bit(0);
@@ -58,10 +58,10 @@ FamicomCartridge::FamicomCartridge(const uint8* data, uint size) {
     submapper = data[8].bits(4,7);
     prgrom += data[9].bits(0,3) * 0x400000;
     chrrom += data[9].bits(4,7) * 0x200000;
-    prgram  = (data[10].bits(0,3) == 0 ? 0 : 64) << data[10].bits(0,3); // no battery
-    prgram += (data[10].bits(4,7) == 0 ? 0 : 64) << data[10].bits(4,7); // battery
-    chrram  = (data[11].bits(0,3) == 0 ? 0 : 64) << data[11].bits(0,3); // no battery
-    chrram += (data[11].bits(4,7) == 0 ? 0 : 64) << data[11].bits(4,7); // battery
+    prgram  = (data[10].bits(0,3) == 0 ? 0 : 64) << data[10].bits(0,3);  //no battery
+    prgram += (data[10].bits(4,7) == 0 ? 0 : 64) << data[10].bits(4,7);  //battery
+    chrram  = (data[11].bits(0,3) == 0 ? 0 : 64) << data[11].bits(0,3);  //no battery
+    chrram += (data[11].bits(4,7) == 0 ? 0 : 64) << data[11].bits(4,7);  //battery
     region = data[12].bit(0);
     ppu = data[13].bits(0,3);
   }
