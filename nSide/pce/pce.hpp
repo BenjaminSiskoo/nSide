@@ -1,7 +1,8 @@
 #pragma once
 
+//based on higan's PC Engine emulator by byuu
 //license: GPLv3
-//started: 2017-01-11
+//original project started: 2017-01-11
 
 #include <emulator/emulator.hpp>
 #include <emulator/thread.hpp>
@@ -11,7 +12,7 @@
 
 namespace PCEngine {
   #define platform Emulator::platform
-  using File = Emulator::File;
+  namespace File = Emulator::File;
   using Scheduler = Emulator::Scheduler;
   extern Scheduler scheduler;
 

@@ -13,6 +13,11 @@ Interface::Interface() {
   information.capability.states = false;
   information.capability.cheats = false;
 
+  regions.append({"Autodetect"});
+  regions.append({"NTSC-J"});
+  regions.append({"NTSC-U"});
+  regions.append({"PAL"});
+
   media.append({ID::MegaDrive, "Mega Drive", "md"});
 
   Port hardware{ID::Port::Hardware, "Hardware"};
@@ -149,6 +154,7 @@ auto Interface::save() -> void {
 }
 
 auto Interface::unload() -> void {
+  save();
   system.unload();
 }
 

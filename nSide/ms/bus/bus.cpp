@@ -34,7 +34,7 @@ auto Bus::in(uint8 addr) -> uint8 {
       data.bit(6) = disableCartridge;
       data.bit(7) = disableExpansion;
       return data;
-    } else {
+    } else {  //officially port $3f
       return 0xff;  //SMS1 = MDR, SMS2 = 0xff
     }
   }

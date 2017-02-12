@@ -1,8 +1,9 @@
+build := release
 include ../nall/GNUmakefile
 include ../hiro/GNUmakefile
 
 name := cart-pal
-flags += -I.. -O3
+flags += -I..
 link +=
 
 ifeq ($(platform),windows)

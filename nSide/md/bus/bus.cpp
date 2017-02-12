@@ -51,7 +51,12 @@ auto BusCPU::writeWord(uint24 addr, uint16 data) -> void {
 
 auto BusCPU::readIO(uint24 addr) -> uint16 {
   switch(addr & ~1) {
-  case 0xa10000: return 0x00a0;  //Overseas NTSC (North America), no Mega-CD
+  case 0xa10000: return (
+    !Region::NTSCJ() << 7  //0 = domestic (Japan); 1 = export
+  | Region::PAL() << 6     //0 = NTSC; 1 = PAL
+  | 1 << 5                 //0 = Mega CD connected; 1 = no expansion connected
+  | 0 << 0                 //0 = Model 1; 1 = Model 2+
+  );
 
   case 0xa10002: return peripherals.controllerPort1->readData();
   case 0xa10004: return peripherals.controllerPort2->readData();
