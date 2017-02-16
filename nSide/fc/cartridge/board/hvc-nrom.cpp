@@ -7,6 +7,13 @@
 //HVC-RTROM
 //HVC-SROM
 //HVC-STROM
+//NAMCOT-3301
+//NAMCOT-3302
+//NAMCOT-3303
+//NAMCOT-3304
+//NAMCOT-3305
+//NAMCOT-3311
+//NAMCOT-3312
 
 struct HVC_NROM : Board {
   HVC_NROM(Markup::Node& boardNode) : Board(boardNode) {
@@ -18,6 +25,7 @@ struct HVC_NROM : Board {
     if(type.match("*RTROM*"      )) revision = Revision::RTROM;
     if(type.match("*SROM*"       )) revision = Revision::SROM;
     if(type.match("*STROM*"      )) revision = Revision::STROM;
+    if(type.match("NAMCOT-33??"  )) revision = Revision::Namco33xx;
     if(revision == Revision::HROM) {
       settings.mirror = 0;
     } else {
@@ -63,6 +71,7 @@ struct HVC_NROM : Board {
     RTROM,
     SROM,
     STROM,
+    Namco33xx,
   } revision;
 
   struct Settings {
