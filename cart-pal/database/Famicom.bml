@@ -900,6 +900,22 @@ cartridge sha256:4dd1ccb16d8af15d5cb029f69cf8551c5c720a69ec314bd618be892f0fc20f8
   :  name:     Family Jockey
   :  title:    ファミリージョッキー
 
+cartridge sha256:72da13d5a63520d307b28beb096235b89a98d1d53993fb36625449e7588379a3
+  :board region=ntsc id:BANDAI-CNROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   FT-02
+  :  board:    BA-ランニング
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Family Trainer 2 - Running Stadium
+  :  title:    ファミリートレーナー2 ランニングスタジアム
+
 cartridge sha256:27c6e9bf1de790ce831a4e9211c897fab813b2f4447a897efaad905f2488d761
   :board region=ntsc id:BANDAI-PT-554
   :  mirror mode=horizontal
