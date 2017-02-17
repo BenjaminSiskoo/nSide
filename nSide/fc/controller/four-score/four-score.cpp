@@ -29,8 +29,8 @@ auto FourScore::data() -> uint3 {
   case 15: return (B.right & !B.left);
   case 16: return 0;
   case 17: return 0;
-  case 18: return port == 1;
-  case 19: return port == 0;
+  case 18: return port == ID::Port::Controller2;
+  case 19: return port == ID::Port::Controller1;
   case 20: return 0;
   case 21: return 0;
   case 22: return 0;

@@ -122,8 +122,8 @@ auto APU::load(Markup::Node node) -> bool {
   if(versionString == "RP2A07G")        version = Version::RP2A07G;
 
   //Dendy
-  if(versionString == "UA6527P")        version = Version::UA6527P;
   if(versionString == "TA-03NP1-6527P") version = Version::TA_03NP1_6527P;
+  if(versionString == "UA6527P")        version = Version::UA6527P;
 
   return true;
 }

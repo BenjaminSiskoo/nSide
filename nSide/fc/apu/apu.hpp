@@ -15,8 +15,8 @@ struct APU : Thread {
     RP2A07G,
 
     //Dendy
-    UA6527P,
     TA_03NP1_6527P,
+    UA6527P,
   } version;
 
   APU(bool side);

@@ -112,10 +112,16 @@ auto Program::deviceChanged(uint port, uint device) -> void {
     port == 2 ? presentation->inputPort3 :
                 presentation->inputPort4
   );
+
+  auto emulatorPort = inputManager->emulator->ports[port];
+  auto emulatorDevice = emulatorPort.devices[device];
+  string path = string{emulator->information.name, "/", emulatorPort.name}.replace(" ", "");
+  settings[path].setValue(emulatorDevice.name);
+
   uint localDevice = 0;
   for(uint i : range(device)) {
-    //Check if device is available for this port by checking its name's length
-    if(inputManager->emulator->ports[port].devices[i].name) localDevice++;
+    //Check if device is available for this port
+    if(emulatorPort.devices[i].name) localDevice++;
   }
   ((MenuRadioItem)portMenu.action(localDevice)).setChecked();
 }
