@@ -13,6 +13,8 @@ namespace Processor {
 auto Z80::power() -> void {
   memory::fill(&r, sizeof(Registers));
   r.hlp = &r.hl;
+  bus->request(false);
+  bus->grant(false);
 }
 
 auto Z80::reset() -> void {

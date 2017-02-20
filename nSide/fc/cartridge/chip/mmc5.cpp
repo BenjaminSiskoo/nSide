@@ -296,6 +296,8 @@ struct MMC5 : Chip {
   }
 
   auto readCHR(uint addr, uint8 data) -> uint8 {
+    auto& memory = board.chrram.size() ? board.chrram : board.chrrom;
+
     chrAccess[0] = chrAccess[1];
     chrAccess[1] = chrAccess[2];
     chrAccess[2] = chrAccess[3];
@@ -310,7 +312,7 @@ struct MMC5 : Chip {
     if(inFrame == false) {
       vsFetch = false;
       if(addr & 0x2000) return ciramRead(addr);
-      return board.read(board.chrrom, (chrActive ? chrBGAddress(addr) : chrOBJAddress(addr)));
+      return board.read(memory, chrActive ? chrBGAddress(addr) : chrOBJAddress(addr));
     }
 
     bool bgFetch = (hcounter < 256 || hcounter >= 320);
@@ -332,10 +334,11 @@ struct MMC5 : Chip {
       data = ciramRead(addr);
       if(bgFetch && exramMode == 1) data = exattr;
     } else {
-      if(vsFetch) data = board.read(board.chrrom, (chrVerticalSplitAddress(addr)));
-      else if(sprite_8x16 ? bgFetch : chrActive) data = board.read(board.chrrom, (chrBGAddress(addr)));
-      else data = board.read(board.chrrom, (chrOBJAddress(addr)));
-      if(bgFetch && exramMode == 1) data = board.read(board.chrrom, (exbank * 0x1000 + (addr & 0x0fff)));
+           if(bgFetch && exramMode == 1)         addr = exbank * 0x1000 + (addr & 0x0fff);
+      else if(vsFetch)                           addr = chrVerticalSplitAddress(addr);
+      else if(sprite_8x16 ? bgFetch : chrActive) addr = chrBGAddress(addr);
+      else                                       addr = chrOBJAddress(addr);
+      data = board.read(memory, addr);
     }
 
     hcounter += 2;
@@ -349,6 +352,8 @@ struct MMC5 : Chip {
       case 1: return ppu.writeCIRAM(0x0400 | (addr & 0x03ff), data);
       case 2: ram.write(addr & 0x03ff, data); break;
       }
+    } else {
+      board.write(board.chrram, chrActive ? chrBGAddress(addr) : chrOBJAddress(addr), data);
     }
   }
 

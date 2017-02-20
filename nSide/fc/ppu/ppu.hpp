@@ -2,6 +2,7 @@ struct PPU : Thread, PPUcounter {
   enum class Version : uint {
     //YIQ
     RP2C02C,
+    RP2C02E,
     RP2C02G,
 
     //RGB

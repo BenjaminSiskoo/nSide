@@ -53,6 +53,7 @@ auto PPU::readIO(uint16 addr, uint8 data) -> uint8 {
   case 4: {
     switch(version) {
     case Version::RP2C02C:
+    case Version::RP2C02E:
       return io.mdr;
     default:
       io.mdr = oam[io.oamAddress];
@@ -130,12 +131,12 @@ auto PPU::writeIO(uint16 addr, uint8 data) -> void {
 
   //OAMADDR
   case 3: {
-    if(version != Version::RP2C07) {
-      // below corruption code only applies for preferred CPU-PPU alignment.
-      // on an actual Famicom/NES, waiting a while after writing to OAM will
-      // make this corruption happen because the OAM will have decayed at the
-      // spot being written to.
-      for(int i = 0; i < 8; i++) oam[((addr & 0xf800) >> 8) + i] = oam[(io.oamAddress & 0xf8) + i];
+    if(ntsc()) {
+      //below corruption code only applies for preferred CPU-PPU alignment.
+      //on an actual Famicom/NES, waiting a while after writing to OAM will
+      //make this corruption happen because the OAM will have decayed at the
+      //spot being written to.
+      memory::copy(oam + ((addr & 0xf800) >> 8), 8, oam + (io.oamAddress & 0xf8), 8);
     }
     io.oamAddress = data;
     return;

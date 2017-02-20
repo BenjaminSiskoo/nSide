@@ -45,15 +45,15 @@ auto MOS6502::power() -> void {
   r.y = 0x00;
   r.s = 0x00;
   r.p = 0x04;
+
+  xaaNoise = random();
+  lxaNoise = random();
 }
 
 auto MOS6502::reset() -> void {
   r.mdr = 0x00;
   r.s -= 3;
   r.p.i = 1;
-
-  xaaNoise = random();
-  lxaNoise = random();
 }
 
 #undef L

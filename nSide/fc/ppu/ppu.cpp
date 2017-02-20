@@ -73,6 +73,7 @@ auto PPU::load(Markup::Node node) -> bool {
 
   //YIQ
   if(versionString == "RP2C02C")     version = Version::RP2C02C;
+  if(versionString == "RP2C02E")     version = Version::RP2C02E;
   if(versionString == "RP2C02G")     version = Version::RP2C02G;
 
   //RGB

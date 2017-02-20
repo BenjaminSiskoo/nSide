@@ -27,6 +27,9 @@ L readZP(zp + r.x);
 }
 
 auto MOS6502::op_stp() -> void {
+  readPC();
+  r.pc = 0xffff;
+  r.mdr = 0xff;
   while(true) idle();
 }
 

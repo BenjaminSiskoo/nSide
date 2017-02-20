@@ -7,7 +7,7 @@ struct PSG : Thread {
   auto main() -> void;
   auto step(uint clocks) -> void;
 
-  auto data(uint8 data) -> void;
+  auto write(uint8 data) -> void;
 
   auto power() -> void;
 };

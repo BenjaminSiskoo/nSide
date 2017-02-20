@@ -49,11 +49,7 @@ auto CPU::power() -> void {
   writer = {&CPU::writeCPU, this};
   bus.map(reader, writer, "4000-4017");
 
-  for(auto addr : range(0x0800)) ram[addr] = 0xff;
-  ram[0x0008] = 0xf7;
-  ram[0x0009] = 0xef;
-  ram[0x000a] = 0xdf;
-  ram[0x000f] = 0xbf;
+  for(auto& byte : ram) byte = random(0x55);
 
   reset();
 }

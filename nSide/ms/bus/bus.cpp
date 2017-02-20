@@ -39,11 +39,11 @@ auto Bus::in(uint8 addr) -> uint8 {
     }
   }
 
-  case 1: {  //officially ports $7e and $7f
+  case 1: {
     return !addr.bit(0) ? vdp.vcounter() : vdp.hcounter();
   }
 
-  case 2: {  //officially ports $be and $bf
+  case 2: {
     return !addr.bit(0) ? vdp.data() : vdp.status();
   }
 
@@ -132,11 +132,11 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
     break;
   }
 
-  case 1: {  //officially port $7f
-    return psg.data(data);
+  case 1: {
+    return psg.write(data);
   }
 
-  case 2: {  //officially ports $be and $bf
+  case 2: {
     return !addr.bit(0) ? vdp.data(data) : vdp.control(data);
   }
 

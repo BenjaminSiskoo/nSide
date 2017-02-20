@@ -7,6 +7,7 @@
 #include <emulator/emulator.hpp>
 #include <emulator/thread.hpp>
 #include <emulator/scheduler.hpp>
+#include <emulator/cheat.hpp>
 
 #include <processor/huc6280/huc6280.hpp>
 
@@ -14,7 +15,9 @@ namespace PCEngine {
   #define platform Emulator::platform
   namespace File = Emulator::File;
   using Scheduler = Emulator::Scheduler;
+  using Cheat = Emulator::Cheat;
   extern Scheduler scheduler;
+  extern Cheat cheat;
 
   struct Thread : Emulator::Thread {
     auto create(auto (*entrypoint)() -> void, double frequency) -> void {
