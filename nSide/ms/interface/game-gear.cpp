@@ -36,7 +36,7 @@ auto GameGearInterface::videoSize(uint width, uint height, bool arc, bool intSca
 }
 
 auto GameGearInterface::videoFrequency() -> double {
-  return (system.colorburst() * 6.0) / (262.0 * 1368.0);
+  return (system.colorburst() * 15.0) / (262.0 * 1710.0 * 2.0);
 }
 
 auto GameGearInterface::videoColors() -> uint32 {
@@ -56,6 +56,6 @@ auto GameGearInterface::videoColor(uint32 color) -> uint64 {
 }
 
 auto GameGearInterface::load(uint id) -> bool {
-  if(id == ID::GameGear) return system.load(this, Model::GameGear);
+  if(id == ID::GameGear) return system.load(this, System::Model::GameGear);
   return false;
 }

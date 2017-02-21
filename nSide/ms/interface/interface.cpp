@@ -21,7 +21,7 @@ auto Interface::title() -> string {
 }
 
 auto Interface::audioFrequency() -> double {
-  return system.colorburst();
+  return system.colorburst() / 16.0;
 }
 
 auto Interface::loaded() -> bool {

@@ -8,22 +8,22 @@ Cartridge cartridge;
 auto Cartridge::load() -> bool {
   information = {};
 
-  switch(system.model()) {
-  case Model::SG1000:
+  if(Model::SG1000()) {
     if(auto pathID = platform->load(ID::SG1000, "SG-1000", "sg")) {
       information.pathID = pathID();
     } else return false;
-    break;
-  case Model::MasterSystem:
+  }
+
+  if(Model::MasterSystem()) {
     if(auto pathID = platform->load(ID::MasterSystem, "Master System", "ms")) {
       information.pathID = pathID();
     } else return false;
-    break;
-  case Model::GameGear:
+  }
+
+  if(Model::GameGear()) {
     if(auto pathID = platform->load(ID::GameGear, "Game Gear", "gg")) {
       information.pathID = pathID();
     } else return false;
-    break;
   }
 
   if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {

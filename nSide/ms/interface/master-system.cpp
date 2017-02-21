@@ -58,8 +58,8 @@ auto MasterSystemInterface::videoSize(uint width, uint height, bool arc, bool in
 
 auto MasterSystemInterface::videoFrequency() -> double {
   switch(system.region()) { default:
-  case System::Region::NTSC: return (system.colorburst() * 6.0) / (262.0 * 1368.0);
-  case System::Region::PAL:  return (system.colorburst() * 6.0) / (312.0 * 1368.0);
+  case System::Region::NTSC: return (system.colorburst() * 15.0) / (262.0 * 1710.0 * 2.0);
+  case System::Region::PAL:  return (system.colorburst() * 15.0) / (312.0 * 1710.0 * 2.0);
   }
 }
 
@@ -80,6 +80,6 @@ auto MasterSystemInterface::videoColor(uint32 color) -> uint64 {
 }
 
 auto MasterSystemInterface::load(uint id) -> bool {
-  if(id == ID::MasterSystem) return system.load(this, Model::MasterSystem);
+  if(id == ID::MasterSystem) return system.load(this, System::Model::MasterSystem);
   return false;
 }

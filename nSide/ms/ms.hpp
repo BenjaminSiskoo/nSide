@@ -17,12 +17,6 @@ namespace MasterSystem {
   extern Scheduler scheduler;
   struct Interface;
 
-  enum class Model : uint {
-    SG1000,
-    MasterSystem,
-    GameGear,
-  };
-
   struct Thread : Emulator::Thread {
     auto create(auto (*entrypoint)() -> void, double frequency) -> void {
       Emulator::Thread::create(entrypoint, frequency);
@@ -32,6 +26,12 @@ namespace MasterSystem {
     inline auto synchronize(Thread& thread) -> void {
       if(clock() >= thread.clock()) scheduler.resume(thread);
     }
+  };
+
+  struct Model {
+    inline static auto SG1000() -> bool;
+    inline static auto MasterSystem() -> bool;
+    inline static auto GameGear() -> bool;
   };
 
   #include <ms/controller/controller.hpp>

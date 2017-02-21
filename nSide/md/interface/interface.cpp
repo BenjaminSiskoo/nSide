@@ -98,7 +98,7 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
 }
 
 auto Interface::videoFrequency() -> double {
-  return 60.0;
+  return system.colorburst() * 15.0 / (262.0 * 1710.0 * 2.0);
 }
 
 auto Interface::videoColors() -> uint32 {

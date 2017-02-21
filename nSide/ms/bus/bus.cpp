@@ -19,13 +19,13 @@ auto Bus::in(uint8 addr) -> uint8 {
   switch(addr >> 6) {
 
   case 0: {
-    if(system.model() == Model::GameGear && (addr < 0x06)) {
+    if(Model::GameGear() && (addr < 0x06)) {
       if(addr == 0x00) {
         bool start = !platform->inputPoll(ID::Port::Hardware, ID::Device::GameGearControls, 6);
         return start << 7 | 0x7f;
       }
       return 0xff;  //Ports $03, $04, and $05 are for the Gear to Gear Cable
-    } else if(!addr.bit(0)) {  //officially port $3e
+    } else if(!addr.bit(0)) {
       uint8 data = 0x00;
       data.bit(2) = disableIO;
       data.bit(3) = disableBIOS;
@@ -34,7 +34,7 @@ auto Bus::in(uint8 addr) -> uint8 {
       data.bit(6) = disableCartridge;
       data.bit(7) = disableExpansion;
       return data;
-    } else {  //officially port $3f
+    } else {
       return 0xff;  //SMS1 = MDR, SMS2 = 0xff
     }
   }
@@ -48,9 +48,7 @@ auto Bus::in(uint8 addr) -> uint8 {
   }
 
   case 3: {
-    switch(system.model()) {
-
-    case Model::SG1000: {
+    if(Model::SG1000()) {
       auto port1 = peripherals.controllerPort1->readData();
       auto port2 = peripherals.controllerPort2->readData();
       if(addr.bit(0) == 0) {
@@ -60,7 +58,7 @@ auto Bus::in(uint8 addr) -> uint8 {
       }
     }
 
-    case Model::MasterSystem: {
+    if(Model::MasterSystem()) {
       bool reset = !platform->inputPoll(ID::Port::Hardware, ID::Device::MasterSystemControls, 0);
       auto port1 = peripherals.controllerPort1->readData();
       auto port2 = peripherals.controllerPort2->readData();
@@ -71,7 +69,7 @@ auto Bus::in(uint8 addr) -> uint8 {
       }
     }
 
-    case Model::GameGear: {
+    if(Model::GameGear()) {
       bool up    = !platform->inputPoll(ID::Port::Hardware, ID::Device::GameGearControls, 0);
       bool down  = !platform->inputPoll(ID::Port::Hardware, ID::Device::GameGearControls, 1);
       bool left  = !platform->inputPoll(ID::Port::Hardware, ID::Device::GameGearControls, 2);
@@ -87,8 +85,6 @@ auto Bus::in(uint8 addr) -> uint8 {
       }
     }
 
-    }
-
     unreachable;
   }
 
@@ -98,6 +94,10 @@ auto Bus::in(uint8 addr) -> uint8 {
 }
 
 auto Bus::out(uint8 addr, uint8 data) -> void {
+  if(addr == 0x06) {
+    if(Model::GameGear()) return psg.balance(data);
+  }
+
   switch(addr >> 6) {
 
   case 0: {
@@ -148,7 +148,7 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
 }
 
 auto Bus::power() -> void {
-  ramMask = system.model() == Model::SG1000 ? 0x3ff : 0x1fff;
+  ramMask = Model::SG1000() ? 0x3ff : 0x1fff;
   disableIO        = false;
   disableBIOS      = true;
   disableRAM       = false;
@@ -156,5 +156,4 @@ auto Bus::power() -> void {
   disableCartridge = false;
   disableExpansion = true;
 }
-
 }

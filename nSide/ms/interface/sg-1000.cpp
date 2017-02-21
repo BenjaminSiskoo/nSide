@@ -102,6 +102,6 @@ auto SG1000Interface::videoColor(uint32 color) -> uint64 {
 }
 
 auto SG1000Interface::load(uint id) -> bool {
-  if(id == ID::SG1000) return system.load(this, Model::SG1000);
+  if(id == ID::SG1000) return system.load(this, System::Model::SG1000);
   return false;
 }
