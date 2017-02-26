@@ -1,5 +1,5 @@
 GameGearInterface::GameGearInterface() {
-  information.devState     = DevState::Alpha;
+  information.devState     = DevState::Full;
   information.manufacturer = "Sega";
   information.name         = "Game Gear";
   information.overscan     = false;

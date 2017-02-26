@@ -12,10 +12,6 @@ struct Interface {
     string manufacturer;
     string name;
     bool overscan;
-    struct Capability {
-      bool states;
-      bool cheats;
-    } capability;
   } information;
 
   struct Region {

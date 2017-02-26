@@ -2,11 +2,10 @@ auto PSG::Noise::run() -> void {
   auto latch = clock;
 
   counter++;
-  if(rate < 3) {
-    clock ^= counter & ((16 << rate) - 1) == 0;
-  } else {
-    clock ^= psg.tone2.clock;
-  }
+  if(rate == 0) output ^= !counter.bits(0,3);
+  if(rate == 1) output ^= !counter.bits(0,4);
+  if(rate == 2) output ^= !counter.bits(0,5);
+  if(rate == 3) output ^= psg.tone2.clock;
 
   if(!latch && clock) {
     auto eor = enable ? ~lfsr >> 3 : 0;

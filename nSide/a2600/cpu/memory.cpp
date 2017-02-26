@@ -9,6 +9,10 @@ auto CPU::read(uint16 addr) -> uint8 {
     if((addr & 0x1000) == 0x1000) r.mdr = cartridge.access(addr, r.mdr);
   } while(io.rdyLine == 0);
 
+  if(cheat) {
+    if(auto result = cheat.find<1>(addr, r.mdr)) return result();
+  }
+
   return r.mdr;
 }
 

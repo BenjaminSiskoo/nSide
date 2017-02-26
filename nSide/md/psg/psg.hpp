@@ -30,13 +30,13 @@ private:
     auto run() -> void;
     auto power() -> void;
 
-    uint4   volume;
-    uint6   counter;
-    uint1   enable;
-    uint2   rate;
-    uint16  lfsr;
-    uint1   clock;
-    uint1   output;
+    uint4  volume;
+    uint6  counter;
+    uint1  enable;
+    uint2  rate;
+    uint16 lfsr;
+    uint1  clock;
+    uint1  output;
   } noise;
 
   uint3  select;

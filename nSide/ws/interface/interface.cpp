@@ -7,9 +7,6 @@ Settings settings;
 #include "wonderswan-color.cpp"
 
 Interface::Interface() {
-  information.capability.states = true;
-  information.capability.cheats = true;
-
   Port hardware{ID::Port::Hardware, "Hardware"};
 
   { Device device{ID::Device::HorizontalControls, "Horizontal Controls"};

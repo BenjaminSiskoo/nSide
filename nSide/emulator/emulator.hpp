@@ -14,7 +14,7 @@ namespace Emulator {
   static const string Name           = "nSide";
   static const string OriginalName   = "higan";
   static const string Version        = "009.12";
-  static const string FromVersion    = "102.09";
+  static const string FromVersion    = "102.10";
   static const string Author         = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string License        = "GPLv3";
@@ -27,7 +27,7 @@ namespace Emulator {
     "AWJ (Super Famicom PPUcounter NTSC/PAL timing)",
     "Bisqwit (Famicom PPU color generation for NTSC systems)",
     "blargg (Famicom testing, Super Famicom testing and Balanced DSP)",
-    "Cydrak (ST-018 discoveries and bug fixes, Game Boy Advance emulation)",
+    "Cydrak (ST-018 discoveries and bug fixes, Game Boy Advance emulation, Mega Drive sound)",
     "_Demo_",
     "Derrick Sobodash",
     "DMV27",

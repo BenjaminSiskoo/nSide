@@ -3,9 +3,6 @@ FamicomBoxInterface::FamicomBoxInterface() {
   information.manufacturer = "Nintendo";
   information.name         = "FamicomBox";
 
-  information.capability.states = true;
-  information.capability.cheats = false;
-
   media.append({ID::FamicomBox, "FamicomBox", "fcb"});
 
   Port hardware{ID::Port::Hardware, "Hardware"};

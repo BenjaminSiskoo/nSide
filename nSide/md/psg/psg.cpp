@@ -25,10 +25,10 @@ auto PSG::main() -> void {
 
   lowpass += (output - lowpass) * 20.0 / 256.0;
   output = output * 2.0 / 6.0 + lowpass * 3.0 / 4.0;
-  output = sclamp<16>(output);
+  output = sclamp<16>(output - 32768);
 
-  step(1);
   stream->sample(output / 32768.0);
+  step(1);
 }
 
 auto PSG::step(uint clocks) -> void {

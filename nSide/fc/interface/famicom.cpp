@@ -3,9 +3,6 @@ FamicomInterface::FamicomInterface() {
   information.manufacturer = "Nintendo";
   information.name         = "Famicom";
 
-  information.capability.states = true;
-  information.capability.cheats = true;
-
   media.append({ID::Famicom, "Famicom", "fc"});
 
   Port hardware{ID::Port::Hardware, "Hardware"};

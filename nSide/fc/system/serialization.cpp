@@ -59,6 +59,7 @@ auto System::serializeAll(serializer& s) -> void {
   }
 
   if(model() == Model::PlayChoice10) playchoice10.serialize(s);
+  if(model() == Model::FamicomBox)   famicombox.serialize(s);
 }
 
 //perform dry-run state save:

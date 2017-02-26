@@ -18,6 +18,9 @@ struct Z80 {
     virtual auto in(uint8 addr) -> uint8 = 0;
     virtual auto out(uint8 addr, uint8 data) -> void = 0;
 
+    //serialization.cpp
+    virtual auto serialize(serializer&) -> void;
+
   private:
     bool _requested;
     bool _granted;
@@ -207,15 +210,15 @@ struct Z80 {
   auto instructionXOR_a_n() -> void;
   auto instructionXOR_a_r(uint8&) -> void;
 
+  //serialization.cpp
+  auto serialize(serializer&) -> void;
+
   //disassembler.cpp
   auto disassemble(uint16 pc) -> string;
   auto disassemble(uint16 pc, uint8 prefix, uint8 code) -> string;
   auto disassembleCB(uint16 pc, uint8 prefix, uint8 code) -> string;
   auto disassembleCBd(uint16 pc, uint8 prefix, int8 d, uint8 code) -> string;
   auto disassembleED(uint16 pc, uint8 prefix, uint8 code) -> string;
-
-  //serialization.cpp
-  auto serialize(serializer&) -> void;
 
   struct Registers {
     union Pair {
@@ -234,11 +237,11 @@ struct Z80 {
     uint16 sp;
     uint16 pc;
 
-    boolean ei;    //EI instruction executed
-    boolean halt;  //HALT instruction executed
-    boolean iff1;  //interrupt flip-flop 1
-    boolean iff2;  //interrupt flip-flop 2
-    uint2 im;      //interrupt mode (0-2)
+    bool ei;    //EI instruction executed
+    bool halt;  //HALT instruction executed
+    bool iff1;  //interrupt flip-flop 1
+    bool iff2;  //interrupt flip-flop 2
+    uint2 im;   //interrupt mode (0-2)
 
     Pair* hlp = nullptr;
   } r;

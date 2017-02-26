@@ -3,9 +3,6 @@ PlayChoice10Interface::PlayChoice10Interface() {
   information.manufacturer = "Nintendo";
   information.name         = "PlayChoice-10";
 
-  information.capability.states = false;
-  information.capability.cheats = true;
-
   media.append({ID::PlayChoice10, "PlayChoice-10", "pc10"});
 
   Port hardware{ID::Port::Hardware, "Hardware"};

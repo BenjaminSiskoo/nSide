@@ -3,9 +3,6 @@ VSSystemInterface::VSSystemInterface() {
   information.manufacturer = "Nintendo";
   information.name         = "VS. System";
 
-  information.capability.states = true;
-  information.capability.cheats = true;
-
   media.append({ID::VSSystem, "VS. System", "vs"});
 
   Port hardware{ID::Port::Hardware, "Hardware"};

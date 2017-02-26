@@ -10,9 +10,6 @@ Interface::Interface() {
   information.name         = "Atari 2600";
   information.overscan     = true;
 
-  information.capability.states = true;
-  information.capability.cheats = false;
-
   media.append({ID::Atari2600, "Atari 2600", "a26"});
 
   Port hardware{ID::Port::Hardware, "Hardware"};
