@@ -32,7 +32,7 @@ auto VDP::run() -> void {
   if(planeA.output.priority) if(auto color = planeA.output.color) output = color;
   if(sprite.output.priority) if(auto color = sprite.output.color) output = color;
 
-  outputPixel(cram[output] | intensity << 9);
+  outputPixel(cram.read(output) | intensity << 9);
   state.x++;
 }
 
