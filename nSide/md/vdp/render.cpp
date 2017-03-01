@@ -1,6 +1,14 @@
+auto VDP::frame() -> void {
+  latch.overscan = io.overscan;
+}
+
 auto VDP::scanline() -> void {
-  state.x = 0;
   if(++state.y >= 262) state.y = 0;
+  if(state.y == 0) frame();
+  state.x = 0;
+  state.hcounter = 0;
+
+  latch.displayWidth = io.displayWidth;
 
   if(state.y < screenHeight()) {
     planeA.scanline(state.y);
@@ -37,10 +45,9 @@ auto VDP::run() -> void {
 }
 
 auto VDP::outputPixel(uint11 color) -> void {
-  uint pixelWidth = screenWidth() == 256 ? 5 : 4;
-  for(auto n : range(pixelWidth)) {
+  for(auto n : range(pixelWidth())) {
     state.output[   0 + n] = color;
     state.output[1280 + n] = color;
   }
-  state.output += pixelWidth;
+  state.output += pixelWidth();
 }
