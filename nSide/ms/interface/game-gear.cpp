@@ -35,10 +35,6 @@ auto GameGearInterface::videoSize(uint width, uint height, bool arc, bool intSca
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto GameGearInterface::videoFrequency() -> double {
-  return (system.colorburst() * 15.0) / (262.0 * 1710.0 * 2.0);
-}
-
 auto GameGearInterface::videoColors() -> uint32 {
   return 1 << 12;
 }

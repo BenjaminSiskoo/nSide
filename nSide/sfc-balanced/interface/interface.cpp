@@ -147,13 +147,6 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto Interface::videoFrequency() -> double {
-  switch(system.region()) { default:
-  case System::Region::NTSC: return (system.colorburst() * 6.0) / (262.0 * 1364.0 - 4.0);
-  case System::Region::PAL:  return (system.colorburst() * 6.0) / (312.0 * 1364.0);
-  }
-}
-
 auto Interface::videoColors() -> uint32 {
   return 1 << 19;
 }
@@ -182,10 +175,6 @@ auto Interface::videoColor(uint32 color) -> uint64 {
   }
 
   return R << 32 | G << 16 | B << 0;
-}
-
-auto Interface::audioFrequency() -> double {
-  return 32040.0;
 }
 
 auto Interface::loaded() -> bool {

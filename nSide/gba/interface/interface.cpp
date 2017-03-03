@@ -68,10 +68,6 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto Interface::videoFrequency() -> double {
-  return 16777216.0 / (228.0 * 1232.0);
-}
-
 auto Interface::videoColors() -> uint32 {
   return 1 << 15;
 }
@@ -96,10 +92,6 @@ auto Interface::videoColor(uint32 color) -> uint64 {
   }
 
   return r << 32 | g << 16 | b << 0;
-}
-
-auto Interface::audioFrequency() -> double {
-  return 16777216.0 / 512.0;
 }
 
 auto Interface::loaded() -> bool {

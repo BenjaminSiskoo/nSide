@@ -128,10 +128,6 @@ auto FamicomBoxInterface::videoSize(uint width, uint height, bool arc, bool intS
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto FamicomBoxInterface::videoFrequency() -> double {
-  return (system.colorburst() * 6.0) / (262.0 * 1364.0 - 4.0);
-}
-
 auto FamicomBoxInterface::videoColors() -> uint32 {
   return (1 << 9) << 1;
 }
@@ -251,10 +247,6 @@ auto FamicomBoxInterface::videoColor(uint32 n) -> uint64 {
     }
     return generateRGBColor(n & 0x1ff, palette);
   }
-}
-
-auto FamicomBoxInterface::audioFrequency() -> double {
-  return (system.colorburst() * 6.0) / 12.0;
 }
 
 auto FamicomBoxInterface::load(uint id) -> bool {

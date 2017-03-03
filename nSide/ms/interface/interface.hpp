@@ -29,8 +29,6 @@ struct Interface : Emulator::Interface {
   auto manifest() -> string override;
   auto title() -> string override;
 
-  auto audioFrequency() -> double override;
-
   auto loaded() -> bool override;
   auto save() -> void override;
   auto unload() -> void override;
@@ -56,7 +54,6 @@ struct SG1000Interface : Interface {
 
   auto videoSize() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
-  auto videoFrequency() -> double override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -70,7 +67,6 @@ struct MasterSystemInterface : Interface {
 
   auto videoSize() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
-  auto videoFrequency() -> double override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -84,7 +80,6 @@ struct GameGearInterface : Interface {
 
   auto videoSize() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
-  auto videoFrequency() -> double override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 

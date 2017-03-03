@@ -18,10 +18,6 @@ auto Interface::title() -> string {
   return cartridge.title();
 }
 
-auto Interface::audioFrequency() -> double {
-  return system.colorburst() / 16.0;
-}
-
 auto Interface::loaded() -> bool {
   return system.loaded();
 }

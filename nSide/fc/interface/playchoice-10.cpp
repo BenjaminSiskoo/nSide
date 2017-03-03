@@ -67,10 +67,6 @@ auto PlayChoice10Interface::videoSize(uint width, uint height, bool arc, bool in
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto PlayChoice10Interface::videoFrequency() -> double {
-  return (system.colorburst() * 6.0) / (262.0 * 1364.0);
-}
-
 auto PlayChoice10Interface::videoColors() -> uint32 {
   return (1 << 9) + (1 << 8);
 }
@@ -158,14 +154,6 @@ auto PlayChoice10Interface::videoColor(uint32 n) -> uint64 {
     return generateRGBColor(n & 0x1ff, palette);
   } else {
     return generatePC10Color(n - (1 << 9));
-  }
-}
-
-auto PlayChoice10Interface::audioFrequency() -> double {
-  switch(system.region()) { default:
-  case System::Region::NTSC:  return (system.colorburst() * 6.0) / 12.0;
-  case System::Region::PAL:   return (system.colorburst() * 6.0) / 16.0;
-  case System::Region::Dendy: return (system.colorburst() * 6.0) / 15.0;
   }
 }
 

@@ -56,13 +56,6 @@ auto MasterSystemInterface::videoSize(uint width, uint height, bool arc, bool in
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto MasterSystemInterface::videoFrequency() -> double {
-  switch(system.region()) { default:
-  case System::Region::NTSC: return (system.colorburst() * 15.0) / (262.0 * 1710.0 * 2.0);
-  case System::Region::PAL:  return (system.colorburst() * 15.0) / (312.0 * 1710.0 * 2.0);
-  }
-}
-
 auto MasterSystemInterface::videoColors() -> uint32 {
   return 1 << 6;
 }

@@ -55,13 +55,6 @@ auto SG1000Interface::videoSize(uint width, uint height, bool arc, bool intScale
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto SG1000Interface::videoFrequency() -> double {
-  switch(system.region()) { default:
-  case System::Region::NTSC: return (system.colorburst() * 6.0) / (262.0 * 1368.0);
-  case System::Region::PAL:  return (system.colorburst() * 6.0) / (312.0 * 1368.0);
-  }
-}
-
 auto SG1000Interface::videoColors() -> uint32 {
   return 1 << 4;
 }

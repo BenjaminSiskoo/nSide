@@ -94,10 +94,6 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto Interface::videoFrequency() -> double {
-  return system.colorburst() * 15.0 / (262.0 * 1710.0 * 2.0);
-}
-
 auto Interface::videoColors() -> uint32 {
   return (1 << 9) * 3;
 }
@@ -128,10 +124,6 @@ auto Interface::videoColor(uint32 color) -> uint64 {
   uint64 b = image::normalize(B, 4, 16) + image::normalize(B, 4, 16) / 14;
 
   return r << 32 | g << 16 | b << 0;
-}
-
-auto Interface::audioFrequency() -> double {
-  return 52'000.0;
 }
 
 auto Interface::loaded() -> bool {

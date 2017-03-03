@@ -304,14 +304,6 @@ auto FamicomInterface::videoSize(uint width, uint height, bool arc, bool intScal
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto FamicomInterface::videoFrequency() -> double {
-  switch(system.region()) { default:
-  case System::Region::NTSC:  return (system.colorburst() * 6.0) / (262.0 * 1364.0 - 4.0);
-  case System::Region::PAL:   return (system.colorburst() * 6.0) / (312.0 * 1705.0);
-  case System::Region::Dendy: return (system.colorburst() * 6.0) / (312.0 * 1705.0);
-  }
-}
-
 auto FamicomInterface::videoColors() -> uint32 {
   return 1 << 9;
 }
@@ -498,14 +490,6 @@ auto FamicomInterface::videoColor(uint32 n) -> uint64 {
       break;
     }
     return generateRGBColor(n & 0x1ff, palette);
-  }
-}
-
-auto FamicomInterface::audioFrequency() -> double {
-  switch(system.region()) { default:
-  case System::Region::NTSC:  return (system.colorburst() * 6.0) / 12.0;
-  case System::Region::PAL:   return (system.colorburst() * 6.0) / 16.0;
-  case System::Region::Dendy: return (system.colorburst() * 6.0) / 15.0;
   }
 }
 

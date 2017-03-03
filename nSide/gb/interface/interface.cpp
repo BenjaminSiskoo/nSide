@@ -46,14 +46,6 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto Interface::videoFrequency() -> double {
-  return 4'194'304.0 / (154.0 * 456.0);
-}
-
-auto Interface::audioFrequency() -> double {
-  return 4'194'304.0 / 2.0;
-}
-
 auto Interface::loaded() -> bool {
   return system.loaded();
 }

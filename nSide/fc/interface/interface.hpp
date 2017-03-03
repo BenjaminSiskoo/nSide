@@ -78,11 +78,8 @@ struct FamicomInterface : Interface {
 
   auto videoSize() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
-  auto videoFrequency() -> double override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
-
-  auto audioFrequency() -> double override;
 
   auto load(uint id) -> bool override;
 
@@ -94,11 +91,8 @@ struct VSSystemInterface : Interface {
 
   auto videoSize() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
-  auto videoFrequency() -> double override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
-
-  auto audioFrequency() -> double override;
 
   auto load(uint id) -> bool override;
 
@@ -110,11 +104,8 @@ struct PlayChoice10Interface : Interface {
 
   auto videoSize() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
-  auto videoFrequency() -> double override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
-
-  auto audioFrequency() -> double override;
 
   auto load(uint id) -> bool override;
 
@@ -126,11 +117,8 @@ struct FamicomBoxInterface : Interface {
 
   auto videoSize() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
-  auto videoFrequency() -> double override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
-
-  auto audioFrequency() -> double override;
 
   auto load(uint id) -> bool override;
 

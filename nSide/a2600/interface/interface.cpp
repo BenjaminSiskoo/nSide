@@ -72,14 +72,6 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto Interface::videoFrequency() -> double {
-  switch(system.region()) { default:
-  case System::Region::NTSC:  return system.colorburst() / (262.0 * 228.0);
-  case System::Region::PAL:   return system.colorburst() / (312.0 * 228.0);
-  case System::Region::SECAM: return system.colorburst() / (312.0 * 228.0);
-  }
-}
-
 auto Interface::videoColors() -> uint32 {
   return 1 << 7;
 }
@@ -205,10 +197,6 @@ auto Interface::videoColor(uint32 n) -> uint64 {
   } else if(system.region() == System::Region::SECAM) {
     return generateSECAMColor(n, gamma);
   }
-}
-
-auto Interface::audioFrequency() -> double {
-  return system.colorburst() / 114.0;
 }
 
 auto Interface::loaded() -> bool {

@@ -65,10 +65,6 @@ auto VSSystemInterface::videoSize(uint width, uint height, bool arc, bool intSca
   return {(uint)(w * m), (uint)(h * m)};
 }
 
-auto VSSystemInterface::videoFrequency() -> double {
-  return (system.colorburst() * 6.0) / (262.0 * 1364.0);
-}
-
 auto VSSystemInterface::videoColors() -> uint32 {
   return (1 << 9) << 1;
 }
@@ -128,10 +124,6 @@ auto VSSystemInterface::videoColor(uint32 n) -> uint64 {
     break;
   }
   return palette ? generateRGBColor(n & 0x1ff, palette) : (uint64)0ull;
-}
-
-auto VSSystemInterface::audioFrequency() -> double {
-  return (system.colorburst() * 6.0) / 12.0;
 }
 
 auto VSSystemInterface::load(uint id) -> bool {
