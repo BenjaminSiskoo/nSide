@@ -2,6 +2,7 @@
 
 struct CPU : Processor::M68K, Thread {
   enum class Interrupt : uint {
+    Reset,
     HorizontalBlank,
     VerticalBlank,
   };
@@ -9,7 +10,6 @@ struct CPU : Processor::M68K, Thread {
   using Thread::synchronize;
 
   static auto Enter() -> void;
-  auto boot() -> void;
   auto main() -> void;
   auto step(uint clocks) -> void override;
   auto synchronize() -> void;
@@ -18,6 +18,9 @@ struct CPU : Processor::M68K, Thread {
   auto lower(Interrupt) -> void;
 
   auto power() -> void;
+
+  //serialization.cpp
+  auto serialize(serializer&) -> void;
 
   vector<Thread*> peripherals;
 

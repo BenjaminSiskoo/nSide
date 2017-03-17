@@ -7,15 +7,19 @@ struct APU : Processor::Z80, Thread {
 
   auto enable(bool) -> void;
   auto power() -> void;
+  auto reset() -> void;
 
   auto setNMI(bool value) -> void;
   auto setINT(bool value) -> void;
 
+  //serialization.cpp
+  auto serialize(serializer&) -> void;
+
 private:
   struct State {
-    boolean enabled;
-    boolean nmiLine;
-    boolean intLine;
+    uint1 enabled;
+    uint1 nmiLine;
+    uint1 intLine;
   } state;
 };
 

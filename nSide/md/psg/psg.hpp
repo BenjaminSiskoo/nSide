@@ -12,11 +12,17 @@ struct PSG : Thread {
   //io.cpp
   auto write(uint8 data) -> void;
 
+  //serialization.cpp
+  auto serialize(serializer&) -> void;
+
 private:
   struct Tone {
     //tone.cpp
     auto run() -> void;
     auto power() -> void;
+
+    //serialization.cpp
+    auto serialize(serializer&) -> void;
 
     uint4  volume;
     uint10 counter;
@@ -29,6 +35,9 @@ private:
     auto run() -> void;
     auto power() -> void;
 
+    //serialization.cpp
+    auto serialize(serializer&) -> void;
+
     uint4  volume;
     uint10 counter;
     uint10 pitch;
@@ -39,9 +48,8 @@ private:
     uint1  output;
   } noise;
 
-  uint3  select;
-  int    lowpass;
-  uint16 levels[16];
+  uint3 select;
+  int16 levels[16];
 };
 
 extern PSG psg;

@@ -53,7 +53,7 @@ auto TIA::load(Markup::Node node) -> bool {
 
 auto TIA::power() -> void {
   create(Enter, system.colorburst());
-  stream = Emulator::audio.createStream(1, system.colorburst() / 114.0);
+  stream = Emulator::audio.createStream(1, frequency() / 114.0);
   memory::fill(output, 160 * 228 * sizeof(uint32));
 
   io.playerMissile0Color   = 0x00;

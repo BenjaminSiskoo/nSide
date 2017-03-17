@@ -7,6 +7,7 @@ YM2612 ym2612;
 #include "timer.cpp"
 #include "channel.cpp"
 #include "constants.cpp"
+#include "serialization.cpp"
 
 auto YM2612::Enter() -> void {
   while(true) scheduler.synchronize(), ym2612.main();
@@ -42,7 +43,7 @@ auto YM2612::main() -> void {
     }
   }
 
-  step(1);
+  step(144);
 }
 
 auto YM2612::sample() -> void {
@@ -137,22 +138,14 @@ auto YM2612::sample() -> void {
       accumulator += out(0) + out(1) + out(2) + out(3);
     }
 
-    int voiceData = outMask & min(max(accumulator, -0x1ffff), +0x1ffff);
-    if(dac.enable && (&channel == &channels[5])) voiceData = dac.sample << 6;
+    int voiceData = sclamp<14>(accumulator) & outMask;
+    if(dac.enable && (&channel == &channels[5])) voiceData = (int)dac.sample - 0x80 << 6;
 
     if(channel.leftEnable ) left  += voiceData;
     if(channel.rightEnable) right += voiceData;
   }
 
-  int cutoff = 20;
-
-  lpfLeft = (left - lpfLeft) * cutoff / 256;
-  lpfRight = (right - lpfRight) * cutoff / 256;
-
-  left = left * 2 / 6 + lpfLeft * 3 / 4;
-  right = right * 2 / 6 + lpfRight * 3 / 4;
-
-  stream->sample(left / 32768.0, right / 32768.0);
+  stream->sample(sclamp<16>(left) / 32768.0, sclamp<16>(right) / 32768.0);
 }
 
 auto YM2612::step(uint clocks) -> void {
@@ -162,16 +155,15 @@ auto YM2612::step(uint clocks) -> void {
 }
 
 auto YM2612::power() -> void {
-  create(YM2612::Enter, system.colorburst() * 15.0 / 7.0 / 144.0);
-  stream = Emulator::audio.createStream(2, frequency());
+  create(YM2612::Enter, system.colorburst() * 15.0 / 7.0);
+  stream = Emulator::audio.createStream(2, frequency() / 144.0);
 
-  memory::fill(&io, sizeof(IO));
-  memory::fill(&lfo, sizeof(LFO));
-  memory::fill(&dac, sizeof(DAC));
-  memory::fill(&envelope, sizeof(Envelope));
-
-  timerA.power();
-  timerB.power();
+  io = {};
+  lfo = {};
+  dac = {};
+  envelope = {};
+  timerA = {};
+  timerB = {};
   for(auto& channel : channels) channel.power();
 
   const uint positive = 0;

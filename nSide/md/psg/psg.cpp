@@ -6,6 +6,7 @@ PSG psg;
 #include "io.cpp"
 #include "tone.cpp"
 #include "noise.cpp"
+#include "serialization.cpp"
 
 auto PSG::Enter() -> void {
   while(true) scheduler.synchronize(), psg.main();
@@ -18,16 +19,12 @@ auto PSG::main() -> void {
   noise.run();
 
   int output = 0;
-  if(tone0.output) output += levels[tone0.volume];
-  if(tone1.output) output += levels[tone1.volume];
-  if(tone2.output) output += levels[tone2.volume];
-  if(noise.output) output += levels[noise.volume];
+  output += levels[tone0.volume] * tone0.output;
+  output += levels[tone1.volume] * tone1.output;
+  output += levels[tone2.volume] * tone2.output;
+  output += levels[noise.volume] * noise.output;
 
-  lowpass += (output - lowpass) * 20 / 256;
-  output = output * 2 / 6 + lowpass * 3 / 4;
-  output = sclamp<16>(output - 32768);
-
-  stream->sample(output / 32768.0);
+  stream->sample(sclamp<16>(output) / 32768.0);
   step(1);
 }
 
@@ -40,11 +37,12 @@ auto PSG::step(uint clocks) -> void {
 auto PSG::power() -> void {
   create(PSG::Enter, system.colorburst() / 16.0);
   stream = Emulator::audio.createStream(1, frequency());
+  stream->addLowPassFilter(20000.0, 3);
+  stream->addHighPassFilter(20.0, 3);
 
   select = 0;
-  lowpass = 0;
   for(auto n : range(15)) {
-    levels[n] = 0x1000 * pow(2, n * -2.0 / 6.0) + 0.5;
+    levels[n] = 0x2000 * pow(2, n * -2.0 / 6.0) + 0.5;
   }
   levels[15] = 0;
 

@@ -15,9 +15,6 @@ auto PSG::Tone::serialize(serializer& s) -> void {
   s.integer(counter);
   s.integer(pitch);
   s.integer(output);
-
-  s.integer(left);
-  s.integer(right);
 }
 
 auto PSG::Noise::serialize(serializer& s) -> void {
@@ -29,7 +26,4 @@ auto PSG::Noise::serialize(serializer& s) -> void {
   s.integer(lfsr);
   s.integer(clock);
   s.integer(output);
-
-  s.integer(left);
-  s.integer(right);
 }
