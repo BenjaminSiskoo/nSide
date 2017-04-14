@@ -24,7 +24,7 @@ namespace Emulator {
     "Andreas Naive (S-DD1 decompression algorithm)",
     //"Ange Albertini (higan logo)",  //not used in nSide
     "anomie",
-    "AWJ (Super Famicom PPUcounter NTSC/PAL timing)",
+    "AWJ (Super Famicom PPUcounter NTSC/PAL timing, MMC5 CHR banking)",
     "Bisqwit (Famicom PPU color generation for NTSC systems)",
     "blargg (Famicom testing, Super Famicom testing and Balanced DSP)",
     "Cydrak (ST-018 discoveries and bug fixes, Game Boy Advance emulation, Mega Drive sound)",
@@ -42,6 +42,7 @@ namespace Emulator {
     "kevtris (Famicom PPU voltage levels)",
     "kode54",
     "krom",
+    "loopy (MMC5 CHR banking)",
     "LostTemplar (ST-018 program ROM analysis)",
     "Matthew Callis",
     "Nach",

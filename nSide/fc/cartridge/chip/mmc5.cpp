@@ -101,9 +101,9 @@ struct MMC5 : Chip {
       return;
     }
 
-    switch(addr) {
+    switch(addr & 0xe007) {
     case 0x2000: {
-      sprite_8x16 = data & 0x20;
+      sprite8x16 = data & 0x20;
       break;
     }
 
@@ -112,7 +112,9 @@ struct MMC5 : Chip {
       if((data & 0x18) == 0) blank();
       break;
     }
+    }
 
+    switch(addr) {
     case 0x5100: prgMode = data & 3; break;
     case 0x5101: chrMode = data & 3; break;
 
@@ -312,7 +314,7 @@ struct MMC5 : Chip {
     if(inFrame == false) {
       vsFetch = false;
       if(addr & 0x2000) return ciramRead(addr);
-      return board.read(memory, chrActive ? chrBGAddress(addr) : chrOBJAddress(addr));
+      return board.read(memory, sprite8x16 && chrActive ? chrBGAddress(addr) : chrOBJAddress(addr));
     }
 
     bool bgFetch = (hcounter < 256 || hcounter >= 320);
@@ -333,11 +335,13 @@ struct MMC5 : Chip {
     } else if((hcounter & 7) == 2) {
       data = ciramRead(addr);
       if(bgFetch && exramMode == 1) data = exattr;
+    } else if(addr & 0x2000) {
+      data = ciramRead(addr);
     } else {
-           if(bgFetch && exramMode == 1)         addr = exbank * 0x1000 + (addr & 0x0fff);
-      else if(vsFetch)                           addr = chrVerticalSplitAddress(addr);
-      else if(sprite_8x16 ? bgFetch : chrActive) addr = chrBGAddress(addr);
-      else                                       addr = chrOBJAddress(addr);
+           if(bgFetch && exramMode == 1) addr = exbank * 0x1000 + (addr & 0x0fff);
+      else if(vsFetch)                   addr = chrVerticalSplitAddress(addr);
+      else if(sprite8x16 && bgFetch)     addr = chrBGAddress(addr);
+      else                               addr = chrOBJAddress(addr);
       data = board.read(memory, addr);
     }
 
@@ -353,7 +357,7 @@ struct MMC5 : Chip {
       case 2: ram.write(addr & 0x03ff, data); break;
       }
     } else {
-      board.write(board.chrram, chrActive ? chrBGAddress(addr) : chrOBJAddress(addr), data);
+      board.write(board.chrram, sprite8x16 && chrActive ? chrBGAddress(addr) : chrOBJAddress(addr), data);
     }
   }
 
@@ -397,7 +401,7 @@ struct MMC5 : Chip {
     hcounter = 0;
     for(auto& n : chrAccess) n = 0;
     chrActive = 0;
-    sprite_8x16 = 0;
+    sprite8x16 = 0;
 
     exbank = 0;
     exattr = 0;
@@ -442,7 +446,7 @@ struct MMC5 : Chip {
     s.integer(hcounter);
     for(auto& n : chrAccess) s.integer(n);
     s.integer(chrActive);
-    s.integer(sprite_8x16);
+    s.integer(sprite8x16);
 
     s.integer(exbank);
     s.integer(exattr);
@@ -499,7 +503,7 @@ struct MMC5 : Chip {
   uint hcounter;
   uint16 chrAccess[4];
   bool chrActive;
-  bool sprite_8x16;
+  bool sprite8x16;
 
   uint8 exbank;
   uint8 exattr;
