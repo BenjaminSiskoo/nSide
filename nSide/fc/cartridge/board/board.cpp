@@ -119,7 +119,8 @@ Board* Board::load(Markup::Node boardNode) {
 
   if(slice(type,0,4) == "HVC-"
   || slice(type,0,4) == "NES-"
-  || slice(type,0,4) == "PAL-") {
+  || slice(type,0,4) == "PAL-"
+  || slice(type,0,4) == "SSS-") {
     type = slice(type,4);
     if(type == "AMROM"   ) return new HVC_AxROM(boardNode);
     if(type == "ANROM"   ) return new HVC_AxROM(boardNode);

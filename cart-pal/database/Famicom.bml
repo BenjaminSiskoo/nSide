@@ -617,7 +617,23 @@ cartridge sha256:71ca865ba15da47e7002d02886ae9548ee935e2b1f8623b78c4975f3ce30cfa
   :  revision: 1.0
   :  name:     Downtown - Nekketsu Koushin Kyoku - Soreyuke Daiundoukai
   :  title:    ダウンタウン 熱血行進曲 それゆけ大運動会
- 
+
+cartridge sha256:d2fbe8b10f762099d320016ddfd4d2961a591fe6dfaaab2efbeb77282264d06a
+  :board region=ntsc id:HVC-SEROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   HVC-VU
+  :  board:    SE-01A
+  :  region:   JPN
+  :  revision: 1.1
+  :  name:     Dr. Mario
+  :  title:    ドクターマリオ
+
 cartridge sha256:d36b8989cbaf9ceafd91d15edd7b990dce6f9aede1bf9ac696ea8d288ec53d44
   :board region=ntsc id:BANDAI-FCG-1
   :  chip type=FCG-1
@@ -1215,6 +1231,22 @@ cartridge sha256:f837e0807ade4bb8036d40746e2433ed66986f043fc2be722e765e45a676cd5
   :  name:     Goonies, The
   :  title:    グーニーズ
 
+cartridge sha256:02f300a653509b84a4565742aeda5b76e79a2fa36ef5f9d903b2607db1586813
+  :board region=ntsc id:KONAMI-CNROM
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   KON-RC810
+  :  board:    302041A
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Gradius
+  :  title:    Gradius
+
 cartridge sha256:2974ad16b994cfdc9418310ced6c7f4ed64433063d12439a7b37a816f797dd0e
   :board region=ntsc id:KONAMI-VRC-4
   :  chip type=VRC4
@@ -1296,6 +1328,23 @@ cartridge sha256:1c1ad2992f728c7fb6a8f3980b1a0f8e01e5b24a0c43c713300846d87be5987
   :  revision: 1.0
   :  name:     Holy Diver
   :  title:    ホーリーダイヴァー
+
+cartridge sha256:5cfc1c6d83afd59de8b359e6dbbfc866dc64436dbd46efd336ccc869ef48e2da
+  :board region=ntsc id:HVC-TKROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x80000
+  :    ram name=save.ram size=0x2000
+  :  chr
+  :    rom name=character.rom size=0x40000
+  :
+  :information
+  :  serial:   HVC-KI
+  :  board:    HVC-TKROM-03
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Hoshi no Kirby - Yume no Izumi no Monogatari
+  :  title:    星のカービィ 夢の泉の物語
 
 cartridge sha256:4604ba6e93ae7846f6cb8b2e37a79187e84f3c549f3619670269592c5aaa4612
   :board region=ntsc id:HVC-UNROM
@@ -1678,6 +1727,23 @@ cartridge sha256:0cc334007d3eae698cdcd034d12ec9bab2b5266e85bc703cf24ccb4e2d63b65
   :  name:     Mario Bros.
   :  title:    マリオブラザーズ
 
+cartridge sha256:5466a034f58b05117c19d80e1017162b932e60ba5986bf5f80fefeae713d467f
+  :board region=ntsc id:HVC-SNROM
+  :  chip type=MMC1B3
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :    ram name=save.ram size=0x2000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   HVC-UG
+  :  board:    HVC-SNROM-09
+  :  region:   JPN
+  :  revision: 1.1
+  :  name:     Mario Open Golf
+  :  title:    マリオオープンゴルフ
+
 cartridge sha256:4ac0926d1e4704e75e7dfc27c4d990ebdbe685002b9af1a80a385604f3cb162c
   :board region=ntsc id:IREM-BNROM
   :  mirror mode=horizontal
@@ -1890,6 +1956,22 @@ cartridge sha256:648cf7ac553517573cc9b3955ab50566a91974b2348154910bfa53ef15d55b5
   :  revision: 1.0
   :  name:     Ninja Jajamaru - Ginga Daisakusen
   :  title:    忍者じゃじゃ丸 銀河大作戦
+
+cartridge sha256:eedfe7bee4cac374fd453fd3c35337a2edb6187e85eac6636b0b2e3c68c7e881
+  :board region=ntsc id:HVC-SLROM
+  :  chip type=MMC1A
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   TCF-NY
+  :  board:    HVC-SLROM-03
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Ninja Ryuukenden
+  :  title:    忍者龍剣伝
 
 cartridge sha256:e506900cde4b49a1d234c8508f4fee3ad7c5f9b3fa710c49597395994dcbabb7
   :board region=ntsc id:HVC-NROM-128
@@ -2150,6 +2232,22 @@ cartridge sha256:05117c775581eb63f7686f58c24f1c9da0fa0669eede1e7bad12eed40e58935
   :  name:     RockMan
   :  title:    ロックマン
 
+cartridge sha256:0ae05be9d303da7270647f7a0725c3cb851b1b335718d8462a1f9ab69a5e0153
+  :board region=ntsc id:HVC-SGROM
+  :  chip type=MMC1B2
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :  chr
+  :    ram name=character.ram size=0x2000 volatile
+  :
+  :information
+  :  serial:   CAP-XR
+  :  board:    HVC-SGROM-03
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     RockMan 2 - Dr. Wily no Nazo
+  :  title:    ロックマン２ Dr.ワイリーの謎
+
 cartridge sha256:5483658872ee75b6324cd631045241f14c76084d93799cf51495a9a2039a3800
   :board region=ntsc id:HVC-TLROM
   :  chip type=MMC3B
@@ -2231,6 +2329,22 @@ cartridge sha256:b47462459841d2aae3e2b10ca85aca70a395e0ba7f1ad51a10f758bedda894f
   :  revision: 1.0
   :  name:     Soccer League - Winner's Cup
   :  title:    サッカーリーグ ウィナーズカップ
+
+cartridge sha256:b020181cbc376000de7f9218775d9493fc445d10fb2592cb4b8f42b4ba415c2b
+  :board region=ntsc id:HVC-CNROM
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   TCF-SK
+  :  board:    097-1A
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Solomon no Kagi
+  :  title:    ソロモンの鍵
 
 cartridge sha256:a9cf92ec1a080faa195d0b3dcb48fbb5ee3362f0f2f14e14e4257def48ac4346
   :board region=ntsc id:HVC-CNROM
@@ -2314,6 +2428,23 @@ cartridge sha256:7fa8e9125baa2590019db90f1446d501a27e520b2593e87dff71e74906bfbad
   :  revision: 1.1
   :  name:     Super Mario Bros. 3
   :  title:    スーパーマリオブラザーズ3
+
+cartridge sha256:77a65e9091193b776fc1006686ba2769a8f4a825e6e913b2a00cb722a471c1f3
+  :board region=ntsc id:HVC-TSROM
+  :  chip type=MMC3C
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :    ram name=work.ram size=0x2000 volatile
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   HVC-MT
+  :  board:    HVC-TSROM-04
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Super Mario USA
+  :  title:    スーパーマリオUSA
 
 cartridge sha256:fb6298bb3519faaee26f75e6e071ab109398f06ab381bbb9f3edf299cd694292
   :board region=ntsc id:NAMCOT-3311
@@ -2526,6 +2657,22 @@ cartridge sha256:5ec7c3e91bfd5800073286ee978b1d152c19f924837788eb72700c7c01261fa
   :  name:     Tower of Druaga, The
   :  title:    ドルアーガの塔: The Tower of Druaga
 
+cartridge sha256:fcccf437e952aa44784961899ca17d6f6116e088cca7e5cab910bcd9054b8fa4
+  :board region=ntsc id:HVC-CNROM
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x8000
+  :  chr
+  :    rom name=character.rom size=0x8000
+  :
+  :information
+  :  serial:   TCF-TM
+  :  board:    CN-04B
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Tsuppari Oozumou
+  :  title:    つっぱり大相撲
+
 cartridge sha256:a0a9d57cbace21bf9c85c2b85e86656317f0768d7772acc90c7411ab1dbff2bf
   :board region=ntsc id:FDS
   :  prg
@@ -2719,6 +2866,38 @@ cartridge sha256:78b4525668842d06dc347b1146cb51dc9bb4a9d268c3c141e09c15fd01a1556
   :  revision: 1.1
   :  name:     Xevious
   :  title:    ゼビウス
+
+cartridge sha256:dbe10104fc90c36ff7c95424cb192dfd9619fb7c1238bbae8da87e0bc9cc5a4e
+  :board region=ntsc id:KONAMI-NROM-128
+  :  mirror mode=vertical
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   KON-RC802
+  :  board:    450067A
+  :  region:   JPN
+  :  revision: 1.2
+  :  name:     Yie Ar Kung-Fu
+  :  title:    イーアルカンフー
+
+cartridge sha256:0624c93899a588232f9193db0d560291b15636727813a4cd6c3dab8b7f74badb
+  :board region=ntsc id:KONAMI-NROM-128
+  :  mirror mode=horizontal
+  :  prg
+  :    rom name=program.rom size=0x4000
+  :  chr
+  :    rom name=character.rom size=0x2000
+  :
+  :information
+  :  serial:   KON-RC802
+  :  board:    450068A
+  :  region:   JPN
+  :  revision: 1.4
+  :  name:     Yie Ar Kung-Fu
+  :  title:    イーアルカンフー
 
 cartridge sha256:703411cb92283840c096d7e1e422582ecda18bd9b27604a253cb0b0702383043
   :board region=ntsc id:JALECO-JF-11

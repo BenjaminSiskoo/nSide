@@ -2,9 +2,11 @@
 
 //based on higan's Famicom emulator by byuu and Ryphecha,
 //with contributions from:
+// AWJ     (MMC5 CHR banking)
 // Bisqwit (PPU color generation for NTSC systems)
 // FitzRoy (Bug-testing)
 // kevtris (PPU voltage levels in Bisqwit's color formula)
+// loopy   (MMC5 CHR banking)
 // hex_usr (Many code organization changes, PPU timing fixes, mapper implementations, controllers, etc.)
 //license: GPLv3
 //original project started: 2011-09-05
