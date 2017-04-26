@@ -20,6 +20,10 @@ extern Emulator::Interface* emulator;
 #include "input/input.hpp"
 #include "presentation/presentation.hpp"
 #include "home/home.hpp"
+#include "theme/theme.hpp"
+#include "graphics/graphics.hpp"
+#include "sound/sound.hpp"
+#include "controls/controls.hpp"
 
 auto locate(string name) -> string;
 auto locateSystem(string name) -> string;

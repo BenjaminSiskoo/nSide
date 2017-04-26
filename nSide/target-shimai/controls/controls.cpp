@@ -1,4 +1,19 @@
-auto Home::Input::reset() -> void {
+#include "../shimai.hpp"
+#include "fc/interface/interface.hpp"
+unique_pointer<Controls> controls;
+
+Controls::Controls() {
+  controls = this;
+}
+
+auto Controls::reset() -> void {
+  for(auto& emulator : program->emulators) {
+    if(emulator->information.name == "Famicom") {
+      inputManager->bind(emulator);
+      break;
+    }
+  }
+
   up     = false;
   down   = false;
   left   = false;
@@ -15,31 +30,31 @@ auto Home::Input::reset() -> void {
   previousA      = false;
   previousSelect = false;
   previousStart  = false;
+
+  onPressUp     = {};
+  onPressDown   = {};
+  onPressLeft   = {};
+  onPressRight  = {};
+  onPressB      = {};
+  onPressA      = {};
+  onPressSelect = {};
+  onPressStart  = {};
 }
 
-auto Home::Input::run() -> void {
+auto Controls::run() -> void {
   poll();
 
-  if(home->graphics.cursorReady()) {
-    if(left && !previousLeft) {
-      home->gameCursor = (home->gameCursor + home->gameList.size() - 1) % home->gameList.size();
-      home->theme.updateActiveGameCard();
-    }
-
-    if(right && !previousRight) {
-      home->gameCursor = (home->gameCursor + 1) % home->gameList.size();
-      home->theme.updateActiveGameCard();
-    }
-
-    if(a || start) {
-      program->mediumQueue.append(home->gamePath(home->gameCursor));
-      program->loadMedium();
-      program->updateVideoShader();
-    }
-  }
+  if(onPressUp     && up     && !previousUp    ) onPressUp    ();
+  if(onPressDown   && down   && !previousDown  ) onPressDown  ();
+  if(onPressLeft   && left   && !previousLeft  ) onPressLeft  ();
+  if(onPressRight  && right  && !previousRight ) onPressRight ();
+  if(onPressB      && b      && !previousB     ) onPressB     ();
+  if(onPressA      && a      && !previousA     ) onPressA     ();
+  if(onPressSelect && select && !previousSelect) onPressSelect();
+  if(onPressStart  && start  && !previousStart ) onPressStart ();
 }
 
-auto Home::Input::poll() -> void {
+auto Controls::poll() -> void {
   uint port1 = Famicom::ID::Port::Controller1;
   uint gamepad = Famicom::ID::Device::Gamepad;
   enum : uint {Up, Down, Left, Right, B, A, Select, Start};

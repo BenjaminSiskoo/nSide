@@ -780,7 +780,7 @@ cartridge sha256:e9f4c9d1b7c66c6af83f2db5d4f704cf5f4b3c86e26a49c05539237807d8875
   :  region:   JPN
   :  revision: 1.0
   :  name:     Excitebike
-  :  title:    Excitebike
+  :  title:    エキサイトバイク
 
 cartridge sha256:e9aab85fd91822b9dc7a89997eda3415e45a07fe21580c0df4765ce392e63824
   :board region=ntsc id:HVC-RROM
@@ -1245,7 +1245,7 @@ cartridge sha256:02f300a653509b84a4565742aeda5b76e79a2fa36ef5f9d903b2607db158681
   :  region:   JPN
   :  revision: 1.0
   :  name:     Gradius
-  :  title:    Gradius
+  :  title:    グラディウス
 
 cartridge sha256:2974ad16b994cfdc9418310ced6c7f4ed64433063d12439a7b37a816f797dd0e
   :board region=ntsc id:KONAMI-VRC-4
@@ -2246,7 +2246,7 @@ cartridge sha256:0ae05be9d303da7270647f7a0725c3cb851b1b335718d8462a1f9ab69a5e015
   :  region:   JPN
   :  revision: 1.0
   :  name:     RockMan 2 - Dr. Wily no Nazo
-  :  title:    ロックマン２ Dr.ワイリーの謎
+  :  title:    ロックマン2 Dr.ワイリーの謎
 
 cartridge sha256:5483658872ee75b6324cd631045241f14c76084d93799cf51495a9a2039a3800
   :board region=ntsc id:HVC-TLROM
@@ -2881,7 +2881,7 @@ cartridge sha256:dbe10104fc90c36ff7c95424cb192dfd9619fb7c1238bbae8da87e0bc9cc5a4
   :  region:   JPN
   :  revision: 1.2
   :  name:     Yie Ar Kung-Fu
-  :  title:    イーアルカンフー
+  :  title:    イー・アル・カンフー
 
 cartridge sha256:0624c93899a588232f9193db0d560291b15636727813a4cd6c3dab8b7f74badb
   :board region=ntsc id:KONAMI-NROM-128
@@ -2897,7 +2897,7 @@ cartridge sha256:0624c93899a588232f9193db0d560291b15636727813a4cd6c3dab8b7f74bad
   :  region:   JPN
   :  revision: 1.4
   :  name:     Yie Ar Kung-Fu
-  :  title:    イーアルカンフー
+  :  title:    イー・アル・カンフー
 
 cartridge sha256:703411cb92283840c096d7e1e422582ecda18bd9b27604a253cb0b0702383043
   :board region=ntsc id:JALECO-JF-11

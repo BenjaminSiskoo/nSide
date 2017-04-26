@@ -1,4 +1,11 @@
-auto Home::Theme::load(string themeName) -> void {
+#include "../shimai.hpp"
+unique_pointer<Theme> theme;
+
+Theme::Theme() {
+  theme = this;
+}
+
+auto Theme::load(string themeName) -> void {
   name = themeName;
 
   string path = {"Themes/", name, "/"};
@@ -6,7 +13,7 @@ auto Home::Theme::load(string themeName) -> void {
 
   backgroundColor = 0xff000000 | manifest["theme/background-color"].natural();
 
-  double scale = home->graphics.buffer.height() / 240.0;
+  double scale = graphics->buffer.height() / 240.0;
   uint w,h;
 
   image texture;
@@ -28,8 +35,12 @@ auto Home::Theme::load(string themeName) -> void {
     return img;
   };
 
+  extract("fontLatin", fontLatin, true);
+  extract("fontKana",  fontKana,  true);
+
   extract("menubarU", menubarU, true);
   extract("menubarL", menubarL, true);
+  extract("captionTitle", captionTitle, true);
   extract("gameCard", gameCardBase, true);
   extract("gameCardActive", gameCardActiveBase, true);
 
@@ -60,17 +71,28 @@ auto Home::Theme::load(string themeName) -> void {
 
   loadBoxes();
   gameCards.reset();
-  for(uint id : range(home->gameList.size())) gameCards.append(loadGameCard(id, false));
+  for(uint id : range(home->games.size())) gameCards.append(loadGameCard(id, false));
   updateActiveGameCard();
+
+  bool audioValid = false;
+  if(bgm = vfs::fs::file::open(locate({path, "bgm.pcm"}), vfs::file::mode::read)) {
+    if(bgm->size() >= 8) {
+      uint32 header = bgm->readm(4);
+      if(header == 0x4d535531) {  //"MSU1"
+        audioValid = true;
+      }
+    }
+  }
+  if(!audioValid) bgm.reset();
 }
 
-auto Home::Theme::loadBoxes() -> void {
+auto Theme::loadBoxes() -> void {
   boxes.reset();
-  for(uint gameID : range(home->gameList.size())) {
+  for(uint gameID : range(home->games.size())) {
     image& box = boxes(gameID);
-    box.load(string{home->gamePath(gameID), "box.png"});
+    box.load(string{home->games[gameID].path(), "box.png"});
 
-    double scale = home->graphics.buffer.height() / 240.0;
+    double scale = graphics->buffer.height() / 240.0;
 
     uint boundX = 2 * scale;
     uint boundY = 2 * scale;
@@ -88,12 +110,12 @@ auto Home::Theme::loadBoxes() -> void {
   }
 }
 
-auto Home::Theme::loadGameCard(uint gameID, bool active) -> image {
+auto Theme::loadGameCard(uint gameID, bool active) -> image {
   image card{active ? gameCardActiveBase : gameCardBase};
 
   image& box = boxes[gameID];
   if(box) {
-    double scale = home->graphics.buffer.height() / 240.0;
+    double scale = graphics->buffer.height() / 240.0;
 
     uint boundX = 2 * scale;
     uint boundY = 2 * scale;
@@ -108,6 +130,6 @@ auto Home::Theme::loadGameCard(uint gameID, bool active) -> image {
   return card;
 }
 
-auto Home::Theme::updateActiveGameCard() -> void {
+auto Theme::updateActiveGameCard() -> void {
   gameCardActive = loadGameCard(home->gameCursor, true);
 }

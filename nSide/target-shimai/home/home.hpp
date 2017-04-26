@@ -1,88 +1,28 @@
 struct Home {
   Home();
 
+  struct Game {
+    auto path() -> string;
+
+    string basename;
+    string name;
+    string title;
+  };
+  vector<Game> games;
+
   auto reset() -> void;
   auto run() -> void;
 
-  auto gamePath(uint index) -> string;
+  auto game() -> Game&;
 
-  //video.cpp
-  struct Graphics {
-    auto initialize() -> void;
-    auto reset() -> void;
-    auto run() -> void;
+  auto setCursor(int cursor) -> void;
 
-    auto cursorReady() -> bool;
+  auto cursorLeft() -> void;
+  auto cursorRight() -> void;
+  auto loadGame() -> void;
 
-    image buffer;
-    double gameCursorPosition;
-    double gameScroll;
-  } graphics;
-
-  //audio.cpp
-  struct Sound {
-    auto reset() -> void;
-    auto run() -> void;
-
-    shared_pointer<Emulator::Stream> stream;
-    vfs::shared::file audioFile;
-    uint playOffset = 0;
-    uint loopOffset;
-  } sound;
-
-  //input.cpp
-  struct Input {
-    auto reset() -> void;
-    auto run() -> void;
-    auto poll() -> void;
-
-    bool up;
-    bool down;
-    bool left;
-    bool right;
-    bool b;
-    bool a;
-    bool select;
-    bool start;
-    bool previousUp;
-    bool previousDown;
-    bool previousLeft;
-    bool previousRight;
-    bool previousB;
-    bool previousA;
-    bool previousSelect;
-    bool previousStart;
-  } input;
-
-  //theme.cpp
-  struct Theme {
-    auto load(string themeName) -> void;
-    auto loadBoxes() -> void;
-
-    auto loadGameCard(uint gameID, bool active) -> image;
-    auto updateActiveGameCard() -> void;
-
-    string name;
-
-    uint backgroundColor;
-
-    image menubarU;
-    image menubarL;
-    image gameCardBase;
-    image gameCardActiveBase;
-    image gameCursor;
-    vector<image> boxes;
-    vector<image> gameCards;
-    image gameCardActive;
-  } theme;
-  string console;
-  string_vector gameList;
+  string system;
   uint gameCursor;
-
-  uint updateTimer;
-
-  Emulator::Interface* famicom;
-
 };
 
 extern unique_pointer<Home> home;

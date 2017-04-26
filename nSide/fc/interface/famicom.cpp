@@ -498,28 +498,18 @@ auto FamicomInterface::load(uint id) -> bool {
 }
 
 auto FamicomInterface::connect(uint port, uint device) -> void {
+  uint oppositePort = port == ID::Port::Controller1 ? ID::Port::Controller2 : ID::Port::Controller1;
+
   if((port == ID::Port::Controller1 && settings.controllerPort1 == ID::Device::FourScore)
   || (port == ID::Port::Controller2 && settings.controllerPort2 == ID::Device::FourScore)) {
-    switch(port) {
-    case ID::Port::Controller1:
-      platform->deviceChanged(ID::Port::Controller2, ID::Device::None);
-      break;
-    case ID::Port::Controller2:
-      platform->deviceChanged(ID::Port::Controller1, ID::Device::None);
-      break;
-    }
+    platform->deviceChanged(oppositePort, ID::Device::None);
   }
 
   peripherals.connect(port, device);
 
-  if(device == ID::Device::FourScore || device == ID::Device::FourScore) {
-    switch(port) {
-    case ID::Port::Controller1:
-      platform->deviceChanged(ID::Port::Controller2, ID::Device::FourScore);
-      break;
-    case ID::Port::Controller2:
-      platform->deviceChanged(ID::Port::Controller1, ID::Device::FourScore);
-      break;
-    }
+  if(device == ID::Device::FourScore
+  &&((port == ID::Port::Controller1 && settings.controllerPort2 != ID::Device::FourScore)
+  || (port == ID::Port::Controller2 && settings.controllerPort1 != ID::Device::FourScore))) {
+    platform->deviceChanged(oppositePort, ID::Device::FourScore);
   }
 }

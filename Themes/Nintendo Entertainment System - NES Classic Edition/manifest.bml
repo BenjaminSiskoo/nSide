@@ -5,6 +5,7 @@ theme name:Nintendo Entertainment System: NES Classic Edition
   sprites
     menubarU       x=1   y=43  w=432 h=40
     menubarL       x=1   y=1   w=432 h=40
+    captionTitle   x=1   y=205 w=342 h=22
     gameCard       x=345 y=205 w=82  h=90
     gameCardActive x=429 y=261 w=82  h=90
     cursorGame1    x=457 y=667 w=32 h=32

@@ -21,7 +21,8 @@ include ws/GNUmakefile
 include processor/GNUmakefile
 
 ui_objects := ui-shimai ui-program ui-configuration ui-input
-ui_objects += ui-presentation ui-home
+ui_objects += ui-presentation ui-home ui-theme
+ui_objects += ui-graphics ui-sound ui-controls
 ui_objects += ruby hiro
 ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
 
@@ -69,6 +70,10 @@ obj/ui-input.o: $(ui)/input/input.cpp $(call rwildcard,$(ui)/)
 obj/ui-library.o: $(ui)/library/library.cpp $(call rwildcard,$(ui)/)
 obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)
 obj/ui-home.o: $(ui)/home/home.cpp $(call rwildcard,$(ui)/)
+obj/ui-theme.o: $(ui)/theme/theme.cpp $(call rwildcard,$(ui)/)
+obj/ui-graphics.o: $(ui)/graphics/graphics.cpp $(call rwildcard,$(ui)/)
+obj/ui-sound.o: $(ui)/sound/sound.cpp $(call rwildcard,$(ui)/)
+obj/ui-controls.o: $(ui)/controls/controls.cpp $(call rwildcard,$(ui)/)
 
 obj/ui-resource.o:
 	windres data/shimai.rc obj/ui-resource.o
