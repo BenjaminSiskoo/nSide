@@ -1,7 +1,8 @@
 theme name:Nintendo Classic Mini: Family Computer
   //TODO: This background color is taken from the Famicom Mini website.
   //Extract the actual background color value from the encrypted Lua scripts.
-  background-color=0xfcfcf2
+  background-color: 0xfcfcf2
+  font-color:       0x000000
   sprites
     menubarU       x=1   y=43  w=432 h=40
     menubarL       x=1   y=1   w=432 h=40

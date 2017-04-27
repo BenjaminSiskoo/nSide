@@ -132,6 +132,7 @@ auto Video::resize(uint width, uint height) -> void {
 auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_y, uint width, uint height, uint paletteOffset) -> void {
   pitch >>= 2;  //bytes to words
 
+  palette += paletteOffset;
   if(!effects.scanlines) {
     int increment;
     switch(effects.rotation) {
@@ -151,14 +152,14 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
 
       if(!effects.interframeBlending) {
         for(uint x : range(width)) {
-          auto color = palette[*source++ + paletteOffset];
+          auto color = palette[*source++];
           *target = color;
           target += increment;
         }
       } else {
         for(uint x : range(width)) {
           auto a = *target;
-          auto b = palette[*source++ + paletteOffset];
+          auto b = palette[*source++];
           *target = (a + b - ((a ^ b) & 0x01010101)) >> 1;
           target += increment;
         }
@@ -172,14 +173,14 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
 
       if(!effects.interframeBlending) {
         for(uint x : range(width)) {
-          auto color = palette[*source++ + paletteOffset];
+          auto color = palette[*source++];
           *targetLo++ = color;
           *targetHi++ = (255 << 24) | ((color & 0xfefefe) >> 1);
         }
       } else {
         for(uint x : range(width)) {
           auto a = *targetLo;
-          auto b = palette[*source++ + paletteOffset];
+          auto b = palette[*source++];
           *targetLo++ = (a + b - ((a ^ b) & 0x01010101)) >> 1;
           auto c = *targetHi;
           auto d = (255 << 24) | ((b & 0xfefefe) >> 1);
@@ -188,6 +189,7 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
       }
     }
   }
+  palette -= paletteOffset;
 
   if(effects.colorBleed) {
     for(uint y : range(height)) {

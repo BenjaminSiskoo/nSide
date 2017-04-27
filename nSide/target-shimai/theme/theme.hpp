@@ -9,10 +9,7 @@ struct Theme {
 
   string name;
 
-  uint backgroundColor;
-
-  image fontLatin;
-  image fontKana;
+  uint64 backgroundColor;
 
   image menubarU;
   image menubarL;
@@ -23,6 +20,15 @@ struct Theme {
   vector<image> boxes;
   vector<image> gameCards;
   image gameCardActive;
+
+  struct Font {
+    auto load() -> void;
+
+    uint64 color;
+
+    vector<shared_pointer<image>> glyphs;
+    shared_pointer<image> u[1'114'112];
+  } font;
 
   vfs::shared::file bgm;
 };

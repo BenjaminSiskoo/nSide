@@ -1,4 +1,4 @@
-Graphics::Sprite::Sprite() {
+Sprite::Sprite() {
   img = nullptr;
 
   x = 0;
@@ -7,11 +7,11 @@ Graphics::Sprite::Sprite() {
   oy = 0;
 }
 
-Graphics::Sprite::Sprite(any x, any y, any ox, any oy, image& img) {
+Sprite::Sprite(any x, any y, any ox, any oy, image& img) {
   set(x, y, ox, oy, img);
 }
 
-auto Graphics::Sprite::set(any _x, any _y, any _ox, any _oy) -> void {
+auto Sprite::set(any _x, any _y, any _ox, any _oy) -> void {
   if(_x.is<int>())    x = _x.get<int>();
   if(_x.is<uint>())   x = _x.get<uint>();
   if(_x.is<double>()) x = _x.get<double>() * graphics->buffer.width();
@@ -29,15 +29,15 @@ auto Graphics::Sprite::set(any _x, any _y, any _ox, any _oy) -> void {
   if(_oy.is<double>()) oy = _oy.get<double>() * img->height();
 }
 
-auto Graphics::Sprite::set(any x, any y, any ox, any oy, image& _img) -> void {
+auto Sprite::set(any x, any y, any ox, any oy, image& _img) -> void {
   img = &_img;
   set(x, y, ox, oy);
 }
 
-auto Graphics::Sprite::width() -> uint {
+auto Sprite::width() -> uint {
   return img ? img->width() : 0;
 }
 
-auto Graphics::Sprite::height() -> uint {
+auto Sprite::height() -> uint {
   return img ? img->height() : 0;
 }

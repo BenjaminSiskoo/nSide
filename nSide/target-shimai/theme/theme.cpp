@@ -1,4 +1,5 @@
 #include "../shimai.hpp"
+#include "font.cpp"
 unique_pointer<Theme> theme;
 
 Theme::Theme() {
@@ -12,6 +13,7 @@ auto Theme::load(string themeName) -> void {
   auto manifest = BML::unserialize(file::read(locate({path, "manifest.bml"})));
 
   backgroundColor = 0xff000000 | manifest["theme/background-color"].natural();
+  font.color      = 0xff000000 | manifest["theme/font-color"].natural();
 
   double scale = graphics->buffer.height() / 240.0;
   uint w,h;
@@ -34,9 +36,6 @@ auto Theme::load(string themeName) -> void {
     if(doScale) img.scale(img.width() * scale, img.height() * scale, false);
     return img;
   };
-
-  extract("fontLatin", fontLatin, true);
-  extract("fontKana",  fontKana,  true);
 
   extract("menubarU", menubarU, true);
   extract("menubarL", menubarL, true);
@@ -84,6 +83,8 @@ auto Theme::load(string themeName) -> void {
     }
   }
   if(!audioValid) bgm.reset();
+
+  font.load();
 }
 
 auto Theme::loadBoxes() -> void {

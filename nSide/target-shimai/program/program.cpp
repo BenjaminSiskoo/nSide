@@ -41,9 +41,10 @@ Program::Program(string_vector args) {
   emulators.append(new Famicom::PlayChoice10Interface);
   emulators.append(new Famicom::FamicomBoxInterface);
 
-  new Home;
   new Presentation;
   presentation->setVisible();
+
+  new Home;
 
   video = Video::create(settings["Video/Driver"].text());
   video->set(Video::Handle, presentation->viewport.handle());

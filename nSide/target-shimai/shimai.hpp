@@ -18,12 +18,12 @@ extern Emulator::Interface* emulator;
 #include "program/program.hpp"
 #include "configuration/configuration.hpp"
 #include "input/input.hpp"
-#include "presentation/presentation.hpp"
-#include "home/home.hpp"
-#include "theme/theme.hpp"
 #include "graphics/graphics.hpp"
 #include "sound/sound.hpp"
 #include "controls/controls.hpp"
+#include "theme/theme.hpp"
+#include "home/home.hpp"
+#include "presentation/presentation.hpp"
 
 auto locate(string name) -> string;
 auto locateSystem(string name) -> string;

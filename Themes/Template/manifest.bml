@@ -1,4 +1,5 @@
 theme name:Template
-  background-color=0x000000  //0xRRGGBB
+  background-color: 0x000000  //0xRRGGBB
+  font-color:       0xffffff  //0xRRGGBB
   credits
     :Put credits here

@@ -1,7 +1,8 @@
 theme name:Nintendo Entertainment System: NES Classic Edition
   //TODO: This background color is taken from the NES Classic website.
   //Extract the actual background color value from the encrypted Lua scripts.
-  background-color=0x00153d
+  background-color: 0x00153d
+  font-color:       0xffffff
   sprites
     menubarU       x=1   y=43  w=432 h=40
     menubarL       x=1   y=1   w=432 h=40
