@@ -46,8 +46,8 @@ auto MOS6502::power() -> void {
   r.s = 0x00;
   r.p = 0x04;
 
-  xaaNoise = random();
-  lxaNoise = random();
+  xaaNoise = nall::random();
+  lxaNoise = nall::random();
 }
 
 auto MOS6502::reset() -> void {

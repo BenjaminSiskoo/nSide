@@ -60,10 +60,10 @@ auto Home::reset() -> void {
   sound->reset();
   controls->reset();
 
-  controls->onPressLeft  = {&cursorLeft,  this};
-  controls->onPressRight = {&cursorRight, this};
-  controls->onPressA     = {&loadGame, this};
-  controls->onPressStart = {&loadGame, this};
+  controls->onPressLeft  = {&Home::cursorLeft,  this};
+  controls->onPressRight = {&Home::cursorRight, this};
+  controls->onPressA     = {&Home::loadGame, this};
+  controls->onPressStart = {&Home::loadGame, this};
 }
 
 auto Home::run() -> void {
@@ -96,7 +96,7 @@ auto Home::loadSprites(vector<Sprite*>& sprites) -> void {
 
   cursorSprite.set(0.5, 0.5, 0.5, 0.5, theme->gameCursor);
 
-  graphics->drawTextCenter(game().title, captionTitleText);
+  setCursor(gameCursor);
 
   sprites.append(&menubarU);
   sprites.append(&menubarL);
@@ -114,7 +114,7 @@ auto Home::updateSprites() -> void {
 
   uint gameCount = home->games.size();
 
-  const double gameScrollRate = 1.0 / 16.0;
+  const double gameScrollRate = 1.0 / 8.0;
   double targetCursorPosition;
   if(gameCount >= maxVisibleCards) {
     //Why trueFmod is needed: When the first game is selected while the last
@@ -177,16 +177,6 @@ auto Home::updateSprites() -> void {
   #undef trueMod
 };
 
-auto Home::setCursor(int cursor) -> void {
-  gameCursor = cursor;
-  theme->updateActiveGameCard();
-  graphics->drawTextCenter(game().title, captionTitleText);
-};
-
-auto Home::cursorReady() -> bool {
-  return fmod(home->gameScroll + home->gameCursorPosition, home->games.size()) == home->gameCursor;
-};
-
 auto Home::cursorLeft() -> void {
   if(cursorReady()) setCursor((gameCursor + games.size() - 1) % games.size());
 };
@@ -206,6 +196,16 @@ auto Home::loadGame() -> void {
 auto Home::Game::path() -> string {
   return {settings["Library/Location"].text(), home->system, "/", basename};
 }
+
+auto Home::setCursor(int cursor) -> void {
+  gameCursor = cursor;
+  theme->updateActiveGameCard(cursor);
+  graphics->drawTextCenter(game().title, captionTitleText);
+};
+
+auto Home::cursorReady() -> bool {
+  return fmod(home->gameScroll + home->gameCursorPosition, home->games.size()) == home->gameCursor;
+};
 
 #undef maxVisibleCards
 #undef maxSelectableCards

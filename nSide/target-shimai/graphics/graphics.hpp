@@ -22,7 +22,7 @@ struct Graphics {
   auto reset() -> void;
   auto run() -> void;
 
-  auto drawTextCenter(string& text, image& img) -> void;
+  auto drawTextCenter(string_view text, image& img) -> void;
 
   image buffer;
   uint step;

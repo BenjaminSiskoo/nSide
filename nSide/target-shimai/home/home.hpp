@@ -17,14 +17,17 @@ struct Home {
 
   auto loadSprites(vector<Sprite*>& sprites) -> void;
   auto updateSprites() -> void;
-  auto setCursor(int cursor) -> void;
-  auto cursorReady() -> bool;
 
   auto cursorLeft() -> void;
   auto cursorRight() -> void;
   auto loadGame() -> void;
 
   string system;
+
+private:
+  auto setCursor(int cursor) -> void;
+  auto cursorReady() -> bool;
+
   uint gameCursor;
   double gameCursorPosition;
   double gameScroll;

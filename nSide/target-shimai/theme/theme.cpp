@@ -71,7 +71,6 @@ auto Theme::load(string themeName) -> void {
   loadBoxes();
   gameCards.reset();
   for(uint id : range(home->games.size())) gameCards.append(loadGameCard(id, false));
-  updateActiveGameCard();
 
   bool audioValid = false;
   if(bgm = vfs::fs::file::open(locate({path, "bgm.pcm"}), vfs::file::mode::read)) {
@@ -131,6 +130,6 @@ auto Theme::loadGameCard(uint gameID, bool active) -> image {
   return card;
 }
 
-auto Theme::updateActiveGameCard() -> void {
-  gameCardActive = loadGameCard(home->gameCursor, true);
+auto Theme::updateActiveGameCard(uint cursor) -> void {
+  gameCardActive = loadGameCard(cursor, true);
 }

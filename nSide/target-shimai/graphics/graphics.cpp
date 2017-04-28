@@ -57,7 +57,7 @@ auto Graphics::run() -> void {
   if(step++ >= sampleRate) step = 0;
 }
 
-auto Graphics::drawTextCenter(string& text, image& img) -> void {
+auto Graphics::drawTextCenter(string_view text, image& img) -> void {
   img.fill(0x00000000);
 
   vector<uint32_t> codepoints;
