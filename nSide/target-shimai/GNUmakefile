@@ -76,7 +76,7 @@ obj/ui-home.o: $(ui)/home/home.cpp $(call rwildcard,$(ui)/)
 obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)
 
 obj/ui-resource.o:
-	windres data/shimai.rc obj/ui-resource.o
+	$(windres) data/shimai.rc obj/ui-resource.o
 
 # targets
 build: $(objects)

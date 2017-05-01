@@ -3,6 +3,7 @@
 namespace SuperFamicom {
 
 Settings settings;
+Debugger debugger;
 
 Interface::Interface() {
   system.init();

@@ -11,7 +11,6 @@ ConsoleWindow::ConsoleWindow() {
   menuEmulation.setText("&Emulation");
     menuEmulationReloadCartridge.setText("Reload Cartridge");
     menuEmulationPowerCycle.setText("Power Cycle");
-    menuEmulationReset.setText("Reset");
     menuEmulationSynchronizeAudio.setText("Synchronize Audio");
     menuEmulationSynchronizeAudio.setChecked(settings["Audio/Synchronize"].boolean());
     menuEmulationMuteAudio.setText("Mute Audio");
@@ -77,11 +76,6 @@ ConsoleWindow::ConsoleWindow() {
   menuEmulationPowerCycle.onActivate([&] {
     emulator->power();
     print("System power cycled\n");
-  });
-
-  menuEmulationReset.onActivate([&] {
-    emulator->reset();
-    print("System reset\n");
   });
 
   menuEmulationSynchronizeAudio.onToggle([&] {

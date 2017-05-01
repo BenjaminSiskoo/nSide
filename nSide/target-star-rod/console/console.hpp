@@ -3,7 +3,6 @@ struct ConsoleWindow : Window {
     Menu menuEmulation{&menuBar};
       MenuItem menuEmulationReloadCartridge{&menuEmulation};
       MenuItem menuEmulationPowerCycle{&menuEmulation};
-      MenuItem menuEmulationReset{&menuEmulation};
       MenuSeparator menuEmulationSeparator{&menuEmulation};
       MenuCheckItem menuEmulationSynchronizeAudio{&menuEmulation};
       MenuCheckItem menuEmulationMuteAudio{&menuEmulation};
