@@ -8,11 +8,10 @@ Graphics::Graphics() {
 
 auto Graphics::initialize() -> void {
   buffer.allocate(854, 480);
+  scale = buffer.height() / 240.0;
 }
 
 auto Graphics::reset() -> void {
-  double scale = buffer.height() / 240.0;
-
   video->set(Video::Filter, settings["Video/Shader"].text() == "None" ? Video::FilterNearest : Video::FilterLinear);
   video->set(Video::Shader, (string)"");
   step = 0;

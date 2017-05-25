@@ -30,20 +30,45 @@ BGViewer::BGViewer() {
     case SFC::PPU::Background::ID::BG4: bg = &SFC::ppu.bg4; break;
     }
     uint x = position.x(), y = position.y() + scroll.position() * 8, mode = bg->io.mode;
-    uint tile = 0, address = 0;
+    uint tile = 0, dataAddress = 0, nameAddress = 0;
     if(mode != SFC::PPU::Background::Mode::Mode7) {
       tile = bg->getTile(x, y) & 0x03ff;
-      x /= 8, y /= 8;
-      address = bg->io.tiledataAddress + tile * (16 << mode);
+
+      bool hires = (SFC::ppu.io.bgMode == 5 || SFC::ppu.io.bgMode == 6);
+      uint tileHeight = (bg->io.tileSize == SFC::PPU::Background::TileSize::Size8x8 ? 3 : 4);
+      uint tileWidth = (!hires ? tileHeight : 4);
+      uint width = (!hires ? 256 : 512);
+      uint maskX = (tileHeight == 3 ? width : width << 1);
+      uint maskY = maskX;
+      if(bg->io.screenSize & 1) maskX <<= 1;
+      if(bg->io.screenSize & 2) maskY <<= 1;
+      maskX--;
+      maskY--;
+
+      uint screenX = (bg->io.screenSize & 1 ? 32 << 5 : 0);
+      uint screenY = (bg->io.screenSize & 2 ? 32 << 5 : 0);
+      if(bg->io.screenSize == 3) screenY <<= 1;
+
+      x = (x & maskX) >> tileWidth;
+      y = (y & maskY) >> tileHeight;
+
+      uint16 offset = ((y & 0x1f) << 5) + (x & 0x1f);
+      if(x & 0x20) offset += screenX;
+      if(y & 0x20) offset += screenY;
+
+      nameAddress = (bg->io.screenAddress + offset) << 1;
+      dataAddress = (bg->io.tiledataAddress << 1) + tile * (16 << mode);
     } else {
-      x /= 8, y /= 8;
+      x >>= 3, y >>= 3;
       tile = SFC::ppu.vram[y * 128 + x].byte(0) & 0x03ff;
-      address = tile * 8 * 8 * 2 + 1;
+      nameAddress = (((y & 0x7f) * 128 + (x & 0x7f)) << 1) + 0;
+      dataAddress = ((tile * 8 * 8) << 1) + 1;
     }
     string output = { x, ", ", y, ", " };
     output.append(
       "Tile: 0x", hex(tile, 4L), ", ",
-      "Address: 0x", hex(address, 4L)
+      "Data Address: 0x", hex(dataAddress, 4L), ", ",
+      "Name Address: 0x", hex(nameAddress, 4L)
     );
     statusBar.setText(output);
   });

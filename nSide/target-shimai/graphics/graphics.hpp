@@ -25,6 +25,7 @@ struct Graphics {
   auto drawTextCenter(string_view text, image& img) -> void;
 
   image buffer;
+  double scale;
   uint step;
 
   vector<Sprite*> sprites;

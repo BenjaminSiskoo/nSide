@@ -9,6 +9,7 @@ PropertiesViewer::PropertiesViewer() {
   layout.setMargin(5);
   sourceLabel.setText("Source:");
   sourceSelection.append(ComboButtonItem().setText("PPU"));
+  sourceSelection.append(ComboButtonItem().setText("CPU"));
   sourceSelection.append(ComboButtonItem().setText("DMA"));
   autoUpdate.setText("Auto");
   update.setText("Update");
@@ -155,6 +156,38 @@ auto PropertiesViewer::updateProperties() -> void {
       "  Blend Mode   = ", SFC::ppu.screen.io.blendMode   ? "Enabled" : "Disabled", "\n",
       "  Window Color Below Mask = ", SFC::ppu.window.io.col.belowMask ? "Enabled" : "Disabled", "\n",
       "  Window Color Above Mask = ", SFC::ppu.window.io.col.aboveMask ? "Enabled" : "Disabled", "\n",
+      "\n"
+    );
+
+    break;
+  }
+  
+  case CPU: {
+    output.append("$4200  NMITIMEN\n"
+      "  Auto Joypad Poll = ", SFC::cpu.io.autoJoypadPoll, "\n",
+      "  Horz IRQ = ", SFC::cpu.io.hirqEnabled ? "Enabled" : "Disabled", "\n",
+      "  Vert IRQ = ", SFC::cpu.io.virqEnabled ? "Enabled" : "Disabled", "\n",
+      "  NMI      = ", SFC::cpu.io.nmiEnabled  ? "Enabled" : "Disabled", "\n",
+      "\n"
+    );
+
+    output.append("$4202  WRMPYA\n"
+                  "$4203  WRMPYB\n"
+      "  Multiplicand 1 = ", SFC::cpu.io.wrmpya, "\n",
+      "  Multiplicand 2 = ", SFC::cpu.io.wrmpyb, "\n",
+      "\n"
+    );
+
+    output.append("$4204  WRDIVL\n"
+                  "$4205  WRDIVH\n"
+                  "$4206  WRDIVB\n"
+      "  Dividend = ", SFC::cpu.io.wrdiva, "\n",
+      "  Divisor  = ", SFC::cpu.io.wrdivb, "\n",
+      "\n"
+    );
+
+    output.append("$420d  MEMSEL\n"
+      "  ROM Speed = ", SFC::cpu.io.romSpeed == 6 ? "Fast" : "Slow", "\n",
       "\n"
     );
 

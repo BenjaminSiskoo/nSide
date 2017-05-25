@@ -19,6 +19,7 @@ struct Program : Emulator::Platform {
   auto unloadMedium() -> void;
 
   //state.cpp
+  auto stateName(uint slot) -> string;
   auto loadState(uint slot) -> bool;
   auto saveState(uint slot) -> bool;
 

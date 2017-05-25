@@ -95,12 +95,13 @@ auto CPUDebugger::opcodeLength(uint24 addr) -> uint {
 }
 
 auto CPUDebugger::updateDisassembly() -> void {
-  string line[15];
+  const int middle = 15;
+  string line[middle * 2 + 1];
   string text = SFC::cpu.disassemble(opcodePC, SFC::cpu.r.e, SFC::cpu.r.p.m, SFC::cpu.r.p.x);
-  line[7] = { "> ", text };
+  line[middle] = { "> ", text };
 
   int addr = opcodePC;
-  for(int o = 6; o >= 0; o--) {
+  for(int o = middle - 1; o >= 0; o--) {
     for(int b = 1; b <= 4; b++) {
       if(addr - b >= 0 && (debugger->cpuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
@@ -112,7 +113,7 @@ auto CPUDebugger::updateDisassembly() -> void {
   }
 
   addr = opcodePC;
-  for(int o = 8; o <= 14; o++) {
+  for(int o = middle + 1; o <= middle * 2; o++) {
     for(int b = 1; b <= 4; b++) {
       if(addr + b <= 0xffffff && (debugger->cpuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;

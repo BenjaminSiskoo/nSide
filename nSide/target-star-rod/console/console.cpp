@@ -8,56 +8,124 @@ ConsoleWindow::ConsoleWindow() {
   setTitle({"Console - star-rod v", Emulator::Version});
   setGeometry({64, 640, 640, 400});
 
-  menuEmulation.setText("&Emulation");
-    menuEmulationReloadCartridge.setText("Reload Cartridge");
-    menuEmulationPowerCycle.setText("Power Cycle");
-    menuEmulationSynchronizeAudio.setText("Synchronize Audio");
-    menuEmulationSynchronizeAudio.setChecked(settings["Audio/Synchronize"].boolean());
-    menuEmulationMuteAudio.setText("Mute Audio");
-    menuEmulationMuteAudio.setChecked(settings["Audio/Mute"].boolean());
+  emulationMenu.setText("&Emulation");
+  reloadCartridge.setText("Reload Cartridge").onActivate([&] {
+    program->loadMedium(*emulator, emulator->media[0]);
+  });
+  powerCycle.setText("Power Cycle").onActivate([&] {
+    emulator->power();
+    print("System power cycled\n");
+  });
+  synchronizeAudio.setText("Synchronize Audio").setChecked(settings["Audio/Synchronize"].boolean()).onToggle([&] {
+    audio->set(Audio::Synchronize, settings["Audio/Synchronize"].setValue(synchronizeAudio.checked()));
+  });
+  muteAudio.setText("Mute Audio").setChecked(settings["Audio/Mute"].boolean()).onToggle([&] {
+    settings["Audio/Mute"].setValue(muteAudio.checked());
+  });
 
-  menuDebug.setText("&Debug");
-    menuDebugCPU.setText("CPU");
-    menuDebugCPU.setChecked(debugger->debug.cpu);
-    menuDebugSMP.setText("SMP");
-    menuDebugSMP.setChecked(debugger->debug.smp);
+  debugMenu.setText("&Debug");
+  debugCPU.setText("CPU").setChecked(debugger->debug.cpu).onToggle([&] {
+    debugger->debug.cpu = debugCPU.checked();
+  });
+  debugSMP.setText("SMP").setChecked(debugger->debug.smp).onToggle([&] {
+    debugger->debug.smp = debugSMP.checked();
+  });
 
-  menuTracer.setText("&Tracer");
-    menuTracerEnable.setText("Enable");
-    menuTracerMask.setChecked(tracer->mask);
-    menuTracerMask.setText("Mask");
-    menuTracerMaskReset.setText("Reset Mask");
+  tracerMenu.setText("&Tracer");
+  tracerEnable.setText("Enable").onToggle([&] {
+    tracer->enable(tracerEnable.checked());
+  });
+  tracerMask.setText("Mask").setChecked(tracer->mask).onToggle([&] {
+    tracer->mask = tracerMask.checked();
+  });
+  tracerMaskReset.setText("Reset Mask").onActivate([&] {
+    tracer->resetMask();
+    debugger->print("Tracer mask reset\n");
+  });
 
-  menuWindows.setText("&Windows");
-    menuWindowsPresentation.setText("Video");
-    menuWindowsCPUDebugger.setText("CPU Debugger");
-    menuWindowsSMPDebugger.setText("SMP Debugger");
-    menuWindowsMemoryEditor.setText("Memory Editor");
-    menuWindowsBreakpointEditor.setText("Breakpoint Editor");
-    menuWindowsPropertiesViewer.setText("Properties Viewer");
-    menuWindowsVRAMViewer.setText("VRAM Viewer");
-    menuWindowsBGViewer.setText("BG Viewer");
-    menuWindowsPaletteViewer.setText("Palette Viewer");
+  windowsMenu.setText("&Windows");
+  windowsPresentation.setText("Video").onActivate([&] {
+    presentation->setVisible();
+    presentation->setFocused();
+  });
+  windowsCPUDebugger.setText("CPU Debugger").onActivate([&] {
+    cpuDebugger->setVisible();
+    cpuDebugger->setFocused();
+  });
+  windowsSMPDebugger.setText("SMP Debugger").onActivate([&] {
+    smpDebugger->setVisible();
+    smpDebugger->setFocused();
+  });
+  windowsMemoryEditor.setText("Memory Editor").onActivate([&] {
+    memoryEditor->updateView();
+    memoryEditor->setVisible();
+    memoryEditor->setFocused();
+  });
+  windowsBreakpointEditor.setText("Breakpoint Editor").onActivate([&] {
+    breakpointEditor->setVisible();
+    breakpointEditor->setFocused();
+  });
+  windowsPropertiesViewer.setText("Properties Viewer").onActivate([&] {
+    propertiesViewer->setVisible();
+    propertiesViewer->setFocused();
+  });
+  windowsVRAMViewer.setText("VRAM Viewer").onActivate([&] {
+    vramViewer->setVisible();
+    vramViewer->setFocused();
+  });
+  windowsBGViewer.setText("BG Viewer").onActivate([&] {
+    bgViewer->setVisible();
+    bgViewer->setFocused();
+  });
+  windowsPaletteViewer.setText("Palette Viewer").onActivate([&] {
+    paletteViewer->setVisible();
+    paletteViewer->setFocused();
+  });
 
-  menuState.setText("&State");
-    menuStateSave1.setText("Save - Slot 1");
-    menuStateSave2.setText("Save - Slot 2");
-    menuStateSave3.setText("Save - Slot 3");
-    menuStateSave4.setText("Save - Slot 4");
-    menuStateSave5.setText("Save - Slot 5");
-    menuStateLoad1.setText("Load - Slot 1");
-    menuStateLoad2.setText("Load - Slot 2");
-    menuStateLoad3.setText("Load - Slot 3");
-    menuStateLoad4.setText("Load - Slot 4");
-    menuStateLoad5.setText("Load - Slot 5");
+  stateMenu.setText("&State");
+  saveStateMenu.setText("Save");
+  saveSlot0.setText("Slot 0").onActivate([&] { program->saveState(0); });
+  saveSlot1.setText("Slot 1").onActivate([&] { program->saveState(1); });
+  saveSlot2.setText("Slot 2").onActivate([&] { program->saveState(2); });
+  saveSlot3.setText("Slot 3").onActivate([&] { program->saveState(3); });
+  saveSlot4.setText("Slot 4").onActivate([&] { program->saveState(4); });
+  saveSlot5.setText("Slot 5").onActivate([&] { program->saveState(5); });
+  saveSlot6.setText("Slot 6").onActivate([&] { program->saveState(6); });
+  saveSlot7.setText("Slot 7").onActivate([&] { program->saveState(7); });
+  saveSlot8.setText("Slot 8").onActivate([&] { program->saveState(8); });
+  saveSlot9.setText("Slot 9").onActivate([&] { program->saveState(9); });
+  loadStateMenu.setText("Load");
+  loadSlot0.setText("Slot 0").onActivate([&] { program->loadState(0); });
+  loadSlot1.setText("Slot 1").onActivate([&] { program->loadState(1); });
+  loadSlot2.setText("Slot 2").onActivate([&] { program->loadState(2); });
+  loadSlot3.setText("Slot 3").onActivate([&] { program->loadState(3); });
+  loadSlot4.setText("Slot 4").onActivate([&] { program->loadState(4); });
+  loadSlot5.setText("Slot 5").onActivate([&] { program->loadState(5); });
+  loadSlot6.setText("Slot 6").onActivate([&] { program->loadState(6); });
+  loadSlot7.setText("Slot 7").onActivate([&] { program->loadState(7); });
+  loadSlot8.setText("Slot 8").onActivate([&] { program->loadState(8); });
+  loadSlot9.setText("Slot 9").onActivate([&] { program->loadState(9); });
 
-  menuHelp.setText("&Help");
-    menuHelpAbout.setText("About ...");
+  helpMenu.setText("&Help");
+  about.setText("About ...").onActivate([&] { aboutWindow->setVisible(); });
 
   layout.setMargin(5);
-  runButton.setText("Run");
-  stepButton.setText("Step");
-  clearButton.setText("Clear");
+  runButton.setText("Run").onActivate([&] {
+    if(debugger->paused) {
+      print("\n");
+      debugger->resume();
+    } else {
+      debugger->suspend();
+    }
+  });
+  stepButton.setText("Step").onActivate([&] {
+    debugger->flags.step = true;
+    debugger->resume();
+  });
+  clearButton.setText("Clear").onActivate([&] {
+    console.setText("");
+  });
+
   console.setFont(Font().setFamily(Font::Mono));
 
   onClose([&] {
@@ -67,111 +135,6 @@ ConsoleWindow::ConsoleWindow() {
     } else {
       Application::quit();
     }
-  });
-
-  menuEmulationReloadCartridge.onActivate([&] {
-    program->loadMedium(*emulator, emulator->media[0]);
-  });
-
-  menuEmulationPowerCycle.onActivate([&] {
-    emulator->power();
-    print("System power cycled\n");
-  });
-
-  menuEmulationSynchronizeAudio.onToggle([&] {
-    audio->set(Audio::Synchronize, settings["Audio/Synchronize"].setValue(menuEmulationSynchronizeAudio.checked()));
-  });
-
-  menuEmulationMuteAudio.onToggle([&] {
-    settings["Audio/Mute"].setValue(menuEmulationMuteAudio.checked());
-  });
-
-  menuDebugCPU.onToggle([&] { debugger->debug.cpu = menuDebugCPU.checked(); });
-  menuDebugSMP.onToggle([&] { debugger->debug.smp = menuDebugSMP.checked(); });
-
-  menuTracerEnable.onToggle([&] { tracer->enable(menuTracerEnable.checked()); });
-  menuTracerMask.onToggle([&] { tracer->mask = menuTracerMask.checked(); });
-  menuTracerMaskReset.onActivate([&] {
-    tracer->resetMask();
-    debugger->print("Tracer mask reset\n");
-  });
-
-  menuWindowsPresentation.onActivate([&] {
-    presentation->setVisible();
-    presentation->setFocused();
-  });
-
-  menuWindowsCPUDebugger.onActivate([&] {
-    cpuDebugger->setVisible();
-    cpuDebugger->setFocused();
-  });
-
-  menuWindowsSMPDebugger.onActivate([&] {
-    smpDebugger->setVisible();
-    smpDebugger->setFocused();
-  });
-
-  menuWindowsMemoryEditor.onActivate([&] {
-    memoryEditor->updateView();
-    memoryEditor->setVisible();
-    memoryEditor->setFocused();
-  });
-
-  menuWindowsBreakpointEditor.onActivate([&] {
-    breakpointEditor->setVisible();
-    breakpointEditor->setFocused();
-  });
-
-  menuWindowsPropertiesViewer.onActivate([&] {
-    propertiesViewer->setVisible();
-    propertiesViewer->setFocused();
-  });
-
-  menuWindowsVRAMViewer.onActivate([&] {
-    vramViewer->setVisible();
-    vramViewer->setFocused();
-  });
-
-  menuWindowsBGViewer.onActivate([&] {
-    bgViewer->setVisible();
-    bgViewer->setFocused();
-  });
-
-  menuWindowsPaletteViewer.onActivate([&] {
-    paletteViewer->setVisible();
-    paletteViewer->setFocused();
-  });
-
-  menuStateSave1.onActivate([&] { program->saveState(1); });
-  menuStateSave2.onActivate([&] { program->saveState(2); });
-  menuStateSave3.onActivate([&] { program->saveState(3); });
-  menuStateSave4.onActivate([&] { program->saveState(4); });
-  menuStateSave5.onActivate([&] { program->saveState(5); });
-
-  menuStateLoad1.onActivate([&] { program->loadState(1); });
-  menuStateLoad2.onActivate([&] { program->loadState(2); });
-  menuStateLoad3.onActivate([&] { program->loadState(3); });
-  menuStateLoad4.onActivate([&] { program->loadState(4); });
-  menuStateLoad5.onActivate([&] { program->loadState(5); });
-
-  menuHelpAbout.onActivate([&] { aboutWindow->setVisible(); });
-
-  runButton.onActivate([&] {
-    if(debugger->paused) {
-      print("\n");
-      debugger->resume();
-    } else {
-      debugger->suspend();
-    }
-  });
-
-  stepButton.onActivate([&] {
-    debugger->flags.step = true;
-    debugger->resume();
-  });
-
-  clearButton.onActivate([&] {
-    console.setText("");
   });
 }
 

@@ -28,8 +28,8 @@ VRAMViewer::VRAMViewer() {
     if((x >= 256 && mode >= 1)) { statusBar.setText(""); return; }
     if((y >= 256 && mode >= 2)) { statusBar.setText(""); return; }
     if((x >= 128 && mode >= 3)) { statusBar.setText(""); return; }
+    x >>= 3, y >>= 3;
     string output = { x, ", ", y, ", " };
-    x /= 8, y /= 8;
     uint tile = 0, address = 0;
     switch(mode) {
     case SFC::PPU::Background::Mode::BPP2:

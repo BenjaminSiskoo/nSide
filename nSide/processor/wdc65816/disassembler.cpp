@@ -59,7 +59,7 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
     a = (r.db << 16) + (arg & 0xffff);
     break;
   case OPTYPE_ADDR_PC:
-    a = addr.bits(23,16) + (arg & 0xffff);
+    a = (addr.bits(23,16) << 16) + (arg & 0xffff);
     break;
   case OPTYPE_ADDRX:
     a = (r.db << 16) + (arg & 0xffff) + r.x;
@@ -68,10 +68,10 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
     a = (r.db << 16) + (arg & 0xffff) + r.y;
     break;
   case OPTYPE_IADDR_PC:
-    a = addr.bits(23,16) + (arg & 0xffff);
+    a = (addr.bits(23,16) << 16) + (arg & 0xffff);
     break;
   case OPTYPE_IADDRX:
-    a = addr.bits(23,16) + ((arg + r.x) & 0xffff);
+    a = (addr.bits(23,16) << 16) + ((arg + r.x) & 0xffff);
     break;
   case OPTYPE_ILADDR:
     a = arg;
@@ -90,11 +90,11 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
     a = (r.db << 16) + dreadw(arg) + r.y;
     break;
   case OPTYPE_RELB:
-    a  = addr.bits(23,16) + ((addr + 2) & 0xffff);
+    a  = (addr.bits(23,16) << 16) + ((addr + 2) & 0xffff);
     a += int8(arg);
     break;
   case OPTYPE_RELW:
-    a  = addr.bits(23,16) + ((addr + 3) & 0xffff);
+    a  = (addr.bits(23,16) << 16) + ((addr + 3) & 0xffff);
     a += (int16)arg;
     break;
   }
