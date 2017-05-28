@@ -69,6 +69,17 @@ auto InputManager::appendHotkeys() -> void {
   }
 
   { auto hotkey = new InputHotkey;
+    hotkey->name = "Save BMP Screenshot";
+    hotkey->press = [] {
+      if(!::emulator) return;
+      uint counter = directory::files(program->mediumPaths.right(), "screenshot????.bmp").size();
+      Emulator::video.screenshot({program->mediumPaths.right(), "screenshot", pad(counter, 4, '0'), ".bmp"});
+      program->showMessage("Screenshot saved");
+    };
+    hotkeys.append(hotkey);
+  }
+
+  { auto hotkey = new InputHotkey;
     hotkey->name = "Export Memory";
     hotkey->press = [] {
       if(!::emulator) return;

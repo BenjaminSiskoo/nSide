@@ -34,6 +34,8 @@ struct Video {
   auto refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_y, uint width, uint height, uint paletteOffset = 0) -> void;
   auto clear() -> void;
 
+  auto screenshot(string path) -> void;
+
 private:
   Interface* interface = nullptr;
   vector<shared_pointer<Sprite>> sprites;

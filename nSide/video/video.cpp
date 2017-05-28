@@ -1,4 +1,5 @@
 #include <emulator/emulator.hpp>
+#include <nall/encode/bmp.hpp>
 
 namespace Emulator {
 
@@ -231,6 +232,10 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
 
 auto Video::clear() -> void {
   memory::fill(output, width * (height << effects.scanlines) * sizeof(uint32));
+}
+
+auto Video::screenshot(string path) -> void {
+  Encode::BMP::create(path, (uint32_t*)output, width, height, false);
 }
 
 }

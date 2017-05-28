@@ -10,6 +10,7 @@ ConsoleWindow::ConsoleWindow() {
 
   emulationMenu.setText("&Emulation");
   reloadCartridge.setText("Reload Cartridge").onActivate([&] {
+    program->mediumQueue.append(program->mediumPaths(1));
     program->loadMedium(*emulator, emulator->media[0]);
   });
   powerCycle.setText("Power Cycle").onActivate([&] {
