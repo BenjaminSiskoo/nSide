@@ -1,5 +1,5 @@
 #include <emulator/emulator.hpp>
-#include <nall/encode/bmp.hpp>
+#include <ramus/encode/png.hpp>
 
 namespace Emulator {
 
@@ -235,7 +235,7 @@ auto Video::clear() -> void {
 }
 
 auto Video::screenshot(string path) -> void {
-  Encode::BMP::create(path, (uint32_t*)output, width, height, false);
+  ramus::Encode::PNG::create(path, (uint32_t*)output, width, height, false);
 }
 
 }
