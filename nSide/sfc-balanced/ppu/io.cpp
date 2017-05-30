@@ -25,11 +25,11 @@ auto PPU::readVRAM() -> uint16 {
 auto PPU::writeVRAM(bool byte, uint8 data) -> void {
   if(!io.displayDisable && cpu.vcounter() < vdisp()) return;
   auto addr = addressVRAM();
+  debug(ppu.vram.write, addr << 1 | byte, data);
   vram[addr].byte(byte) = data;
   tiledataCache.tiledataState[Background::Mode::BPP2][(addr & vram.mask) >> 3] = 1;
   tiledataCache.tiledataState[Background::Mode::BPP4][(addr & vram.mask) >> 4] = 1;
   tiledataCache.tiledataState[Background::Mode::BPP8][(addr & vram.mask) >> 5] = 1;
-  debug(ppu.vram.write, addr << 1 | byte, data);
 }
 
 auto PPU::readOAM(uint10 addr) -> uint8 {
@@ -41,8 +41,8 @@ auto PPU::readOAM(uint10 addr) -> uint8 {
 
 auto PPU::writeOAM(uint10 addr, uint8 data) -> void {
   if(!io.displayDisable && cpu.vcounter() < vdisp()) addr = latch.oamAddress;
-  obj.oam.write(addr, data);
   debug(ppu.oam.write, addr, data);
+  obj.oam.write(addr, data);
 }
 
 auto PPU::readCGRAM(bool byte, uint8 addr) -> uint8 {
@@ -60,9 +60,9 @@ auto PPU::writeCGRAM(uint8 addr, uint15 data) -> void {
   && cpu.vcounter() > 0 && cpu.vcounter() < vdisp()
   && cpu.hcounter() >= 88 && cpu.hcounter() < 1096
   ) addr = latch.cgramAddress;
-  screen.cgram[addr] = data;
   debug(ppu.cgram.write, addr << 1 | 0, data.byte(0));
   debug(ppu.cgram.write, addr << 1 | 1, data.byte(1));
+  screen.cgram[addr] = data;
 }
 
 auto PPU::readIO(uint24 addr, uint8 data) -> uint8 {

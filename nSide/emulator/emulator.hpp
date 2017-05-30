@@ -14,7 +14,7 @@ namespace Emulator {
   static const string Name           = "nSide";
   static const string OriginalName   = "higan";
   static const string Version        = "009.12";
-  static const string FromVersion    = "102.17";
+  static const string FromVersion    = "102.18";
   static const string Author         = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string License        = "GPLv3";
@@ -23,10 +23,9 @@ namespace Emulator {
     "Alyosha_TAS (Atari 2600 PIA, TIA, timing details)",
     "Andreas Naive (S-DD1 decompression algorithm)",
     //"Ange Albertini (higan logo)",  //not used in nSide
-    "anomie",
     "AWJ (Super Famicom PPUcounter NTSC/PAL timing, MMC5 CHR banking)",
     "Bisqwit (Famicom PPU color generation for NTSC systems)",
-    "blargg (Famicom testing, Super Famicom testing and Balanced DSP)",
+    "blargg (Famicom testing, Super Famicom MUL/DIV and Balanced DSP)",
     "Cydrak (ST-018 discoveries and bug fixes, Game Boy Advance emulation, Mega Drive sound)",
     "_Demo_",
     "Derrick Sobodash",
@@ -42,21 +41,26 @@ namespace Emulator {
     "kevtris (Famicom PPU voltage levels)",
     "kode54",
     "krom",
-    "loopy (MMC5 CHR banking)",
     "LostTemplar (ST-018 program ROM analysis)",
     "Matthew Callis",
-    "Nach",
-    "neviksti (SPC7110 decompression algorithm)",
+    "MerryMage (nall: elliptic curve cryptography)"
+    "Nach (libco: setjmp jmpbuf support)",
+    "OV2 (ruby: XAudio2 support)"
     "Overload (Cx4 data ROM dump)",
     "RedDwarf",
     "Richard Bannister",
-    "Ryphecha (Famicom emulation)",
+    "Ryphecha (Famicom APU emulation)",
     "segher (Cx4 reverse engineering)",
     "tetsuo55",
     "TRAC",
     "trap15 (WonderSwan information and fixes)",
     "wareya (WASAPI driver)",
     "zones",
+    "anomie (No longer used: sample-based DSP implementation)",
+    "blargg (No longer used: snes_ntsc library)",
+    "loopy (No longer used: MMC5 CHR banking)",
+    "neviksti (No longer used: SPC7110 decompression support)",
+    "Ryphecha (No longer used: polyphase audio resampler)",
   };
 
   //incremented only when serialization format changes

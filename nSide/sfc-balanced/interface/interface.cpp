@@ -133,17 +133,21 @@ auto Interface::videoSize() -> VideoSize {
 
 auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   double w = 256;
+  double h = 240;
+  double m;
+
   if(arc) {
     double squarePixelRate = system.region() == System::Region::NTSC
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    //note: PAL SNES multiples colorburst by 4/5 to make clock rate
+    //note: PAL SNES multiples colorburst by 4/5 to make clock rate;
+    //this operation was already done within system.cpp.
     w *= squarePixelRate / (system.colorburst() * 6.0 / (2.0 + 2.0));
   }
-  uint h = 240;
-  double m;
-  if(intScale) m = min((uint)(width / w), height / h);
-  else         m = min(width / w, height / (double)h);
+
+  if(intScale) m = min(  (uint)(width / w),   (uint)(height / h));
+  else         m = min((double)(width / w), (double)(height / h));
+
   return {(uint)(w * m), (uint)(h * m)};
 }
 
@@ -157,7 +161,9 @@ auto Interface::videoColor(uint32 color) -> uint64 {
   uint b = color.bits(10,14);
   uint l = color.bits(15,18);
 
-  double L = (1.0 + l) / 16.0 * (l ? 1.0 : 0.5);
+  //luma=0 is not 100% black; but it's much darker than normal linear scaling
+  //exact effect seems to be analog; requires > 24-bit color depth to represent accurately
+  double L = (1.0 + l) / 16.0 * (l ? 1.0 : 0.25);
   uint64 R = L * image::normalize(r, 5, 16);
   uint64 G = L * image::normalize(g, 5, 16);
   uint64 B = L * image::normalize(b, 5, 16);
