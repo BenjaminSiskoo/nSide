@@ -108,21 +108,52 @@ public:
     //IDAT
     chunk.reset();
     chunk.name = FourCC::IDAT;
+
     vector<uint8_t> idatData;
     idatData.reserve((width * bytesPerPixel + bytesPerPixel) * height);
     for(auto y : range(height)) {
-      idatData.append((uint8_t)Filter::None);
+      auto filterType = Filter::Paeth;
+      idatData.append((uint8_t)filterType);
       const uint32_t* p = data + y * width;
       for(auto x : range(width)) {
-        uint32_t color = *p++;
-        if((info.colorType & 3) == 2) {
-          idatData.append(color >> 16);  //R
-          idatData.append(color >>  8);  //G
-          idatData.append(color >>  0);  //B
+        uint32_t ac = x == 0 ? 0x00000000 : *(p - 1);
+        uint32_t bc = y == 0 ? 0x00000000 : *(p - width);
+        uint32_t cc = x == 0 || y == 0 ? 0x00000000 : *(p - width - 1);
+
+        uint32_t current = *p++;
+        for(uint i : range(bytesPerPixel)) {
+          uint8_t a = ac >> (i << 3);
+          uint8_t b = bc >> (i << 3);
+          uint8_t c = cc >> (i << 3);
+          uint8_t compare;
+          switch(filterType) {
+          case Filter::None:    compare = 0x00; break;
+          case Filter::Sub:     compare = a; break;
+          case Filter::Up:      compare = b; break;
+          case Filter::Average: compare = (a + b) / 2; break;
+          case Filter::Paeth:
+            int paeth = a + b - c;
+            int pa = abs(paeth - (int)a);
+            int pb = abs(paeth - (int)b);
+            int pc = abs(paeth - (int)c);
+                 if(pa <= pb && pa <= pc) compare = a;
+            else if(pb <= pc)             compare = b;
+            else                          compare = c;
+            break;
+          }
+          uint8_t byte = current >> (i << 3);
+          current &= ~0 ^ 0xff << (i << 3);
+          current |= ((byte - compare) & 0xff) << (i << 3);
         }
-        if(info.colorType & 4) idatData.append(color >> 24);  //A
+        if((info.colorType & 3) == 2) {
+          idatData.append(current >> 16);  //R
+          idatData.append(current >>  8);  //G
+          idatData.append(current >>  0);  //B
+        }
+        if(info.colorType & 4) idatData.append(current >> 24);  //A
       }
     }
+
     chunk.append(0x78);
     chunk.append(0x5e);
     chunk.append(ramus::Encode::deflate(idatData));
