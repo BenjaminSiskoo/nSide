@@ -72,8 +72,14 @@ auto InputManager::appendHotkeys() -> void {
     hotkey->name = "Save Screenshot";
     hotkey->press = [] {
       if(!::emulator) return;
-      uint counter = directory::files(program->mediumPaths.right(), "screenshot????.png").size();
-      Emulator::video.screenshot({program->mediumPaths.right(), "screenshot", pad(counter, 4, '0'), ".png"});
+
+      auto time = chrono::timestamp();
+      string filename = {
+        "screenshot-",
+        chrono::local::datetime(time).replace(":", ";").replace(" ", "-"),
+        ".png"
+      };
+      Emulator::video.screenshot({program->mediumPaths.right(), filename});
       program->showMessage("Screenshot saved");
     };
     hotkeys.append(hotkey);
