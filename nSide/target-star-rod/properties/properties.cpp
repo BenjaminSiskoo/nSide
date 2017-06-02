@@ -115,6 +115,20 @@ auto PropertiesViewer::updateProperties() -> void {
       "\n"
     );
 
+    output.append("$2126  WH0\n"
+                  "$2127  WH1\n"
+      "Window One Left  = 0x", hex(SFC::ppu.window.io.oneLeft, 2L), "\n"
+      "Window One Right = 0x", hex(SFC::ppu.window.io.oneRight, 2L), "\n"
+      "\n"
+    );
+
+    output.append("$2128  WH2\n"
+                  "$2129  WH3\n"
+      "Window Two Left  = 0x", hex(SFC::ppu.window.io.twoLeft, 2L), "\n"
+      "Window Two Right = 0x", hex(SFC::ppu.window.io.twoRight, 2L), "\n"
+      "\n"
+    );
+
     output.append("$212c  TM\n"
       "  BG1 Above = ", SFC::ppu.bg1.io.aboveEnable ? "Enabled" : "Disabled", "\n",
       "  BG2 Above = ", SFC::ppu.bg2.io.aboveEnable ? "Enabled" : "Disabled", "\n",

@@ -39,7 +39,7 @@ struct PNG {
   } info;
 
 protected:
-  enum class FourCC : uint {
+  enum class FourCC : uint32_t {
     IHDR = 0x49484452,
     PLTE = 0x504c5445,
     IDAT = 0x49444154,
@@ -87,6 +87,7 @@ public:
     auto write = [&](file& fp, Chunk& chunk) -> void {
       nall::Hash::CRC32 hash;
       for(uint i : rrange(4)) hash.input((uint32_t)chunk.name >> (i << 3));
+      hash.input(chunk.data);
       fp.writem(chunk.data.size(), 4);
       fp.writem((uint32_t)chunk.name, 4);
       fp.write(chunk.data.data(), chunk.data.size());
