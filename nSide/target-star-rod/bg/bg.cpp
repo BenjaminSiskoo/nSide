@@ -6,19 +6,18 @@ BGViewer::BGViewer() {
   setTitle("BG Viewer");
   statusBar.setFont(Font().setBold());
   statusBar.setVisible();
-
   layout.setMargin(5);
+
   bgLabel.setText("Mode:");
   bgSelection.append(ComboButtonItem().setText("BG1"));
   bgSelection.append(ComboButtonItem().setText("BG2"));
   bgSelection.append(ComboButtonItem().setText("BG3"));
   bgSelection.append(ComboButtonItem().setText("BG4"));
-  autoUpdate.setText("Auto");
-  update.setText("Update");
-  canvas.setSize({1024, 512});
-
   bgSelection.onChange({ &BGViewer::bgChanged, this });
-  update.onActivate({ &BGViewer::updateTiles, this });
+  autoUpdate.setText("Auto");
+  update.setText("Update").onActivate({ &BGViewer::updateTiles, this });
+
+  canvas.setSize({1024, 512});
 
   canvas.onMouseLeave([&] { statusBar.setText(""); });
   canvas.onMouseMove([&](Position position) {
@@ -73,9 +72,7 @@ BGViewer::BGViewer() {
     statusBar.setText(output);
   });
 
-  scroll.setLength(1);
-  scroll.setPosition(0);
-  scroll.onChange({ &BGViewer::updateTiles, this });
+  scroll.setLength(1).setPosition(0).onChange({ &BGViewer::updateTiles, this });
 
   bgChanged();
 
@@ -130,78 +127,28 @@ auto BGViewer::updateTiles() -> void {
         if(tileWidth  && (tileX & 1) ^ mirrorX) tileID +=  1;
         if(tileHeight && (tileY & 1) ^ mirrorY) tileID += 16;
         sp = SFC::ppu.vram.data + (bg->io.tiledataAddress + tileID * pitch);
-        switch(bg->io.mode) {
-        case SFC::PPU::Background::Mode::BPP2:
-          for(uint y : (!mirrorY ? range(8) : rrange(8))) {
-            uint16 d[] = { sp[0] };
-            for(uint x : (!mirrorX ? range(8) : rrange(8))) {
-              color = 0;
-              color += d[0] & 0x0080 ? 1 : 0;
-              color += d[0] & 0x8000 ? 2 : 0;
-              for(auto& b : d) b <<= 1;
-              color += palette << 2;
-              color = SFC::ppu.screen.cgram[color];
-              color = (255u << 24) |
-                (image::normalize(color >>  0 & 31, 5, 8) << 16) |
-                (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
-                (image::normalize(color >> 10 & 31, 5, 8) <<  0);
-              dp[(canvasTileY * 8 + y) * 1024 + (tileX * 8 + x)] = color;
+        for(uint y : (!mirrorY ? range(8) : rrange(8))) {
+          uint16 d[] = { sp[0], sp[8], sp[16], sp[24] };
+          for(uint x : (!mirrorX ? range(8) : rrange(8))) {
+            color = 0;
+            for(uint p : range(1 << bg->io.mode)) {
+              color += d[p] & 0x0080 ? 1 << (p << 1) : 0;
+              color += d[p] & 0x8000 ? 2 << (p << 1) : 0;
             }
-            sp++;
+            for(auto& b : d) b <<= 1;
+            color += (palette << (2 << bg->io.mode)) & 0xff;
+            color = SFC::ppu.screen.cgram[color];
+            color = (255u << 24) |
+              (image::normalize(color >>  0 & 31, 5, 8) << 16) |
+              (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
+              (image::normalize(color >> 10 & 31, 5, 8) <<  0);
+            dp[(canvasTileY * 8 + y) * 1024 + (tileX * 8 + x)] = color;
           }
-          break;
-
-        case SFC::PPU::Background::Mode::BPP4:
-          for(uint y : (!mirrorY ? range(8) : rrange(8))) {
-            uint16 d[] = { sp[0], sp[8] };
-            for(uint x : (!mirrorX ? range(8) : rrange(8))) {
-              color = 0;
-              color += d[0] & 0x0080 ? 1 : 0;
-              color += d[0] & 0x8000 ? 2 : 0;
-              color += d[1] & 0x0080 ? 4 : 0;
-              color += d[1] & 0x8000 ? 8 : 0;
-              for(auto& b : d) b <<= 1;
-              color += palette << 4;
-              color = SFC::ppu.screen.cgram[color];
-              color = (255u << 24) |
-                (image::normalize(color >>  0 & 31, 5, 8) << 16) |
-                (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
-                (image::normalize(color >> 10 & 31, 5, 8) <<  0);
-              dp[(canvasTileY * 8 + y) * 1024 + (tileX * 8 + x)] = color;
-            }
-            sp++;
-          }
-          break;
-
-        case SFC::PPU::Background::Mode::BPP8:
-          for(uint y : (!mirrorY ? range(8) : rrange(8))) {
-            uint16 d[] = { sp[0], sp[8], sp[16], sp[24] };
-            for(uint x : (!mirrorX ? range(8) : rrange(8))) {
-              color = 0;
-              color += d[0] & 0x0080 ?   1 : 0;
-              color += d[0] & 0x8000 ?   2 : 0;
-              color += d[1] & 0x0080 ?   4 : 0;
-              color += d[1] & 0x8000 ?   8 : 0;
-              color += d[2] & 0x0080 ?  16 : 0;
-              color += d[2] & 0x8000 ?  32 : 0;
-              color += d[3] & 0x0080 ?  64 : 0;
-              color += d[3] & 0x8000 ? 128 : 0;
-              for(auto& b : d) b <<= 1;
-              color = SFC::ppu.screen.cgram[color];
-              color = (255u << 24) |
-                (image::normalize(color >>  0 & 31, 5, 8) << 16) |
-                (image::normalize(color >>  5 & 31, 5, 8) <<  8) |
-                (image::normalize(color >> 10 & 31, 5, 8) <<  0);
-              dp[(canvasTileY * 8 + y) * 1024 + (tileX * 8 + x)] = color;
-            }
-            sp++;
-          }
-          break;
-
+          sp++;
         }
       }
     }
-  } else {
+  } else if(bg->io.mode == SFC::PPU::Background::Mode::Mode7) {
     scroll.setLength(64 + 1);
     for(uint tileY : range(scroll.position(), scroll.position() + 64)) {
       canvasTileY = tileY - scroll.position();
