@@ -8,7 +8,7 @@ SMPDebugger::SMPDebugger() {
   opcodePC = 0xffc0;
 
   setTitle("SMP Debugger");
-  setGeometry({128, 128, 520, 260});
+  setGeometry({128, 128, 350, 260});
 
   layout.setMargin(5);
   stepInto.setText("Step Into");
@@ -49,30 +49,34 @@ auto SMPDebugger::opcodeLength(uint16 addr) -> uint {
 }
 
 auto SMPDebugger::updateDisassembly() -> void {
-  string line[15];
+  const int middle = 7;
+  string line[middle * 2 + 1];
 
-  line[7] = { "> ", SFC::smp.disassemble(opcodePC, SFC::smp.regs.p.p) };
-  //line[7][31] = 0;
+  bool p = debugger->cpuUsage.data[opcodePC] & Usage::P;
+  string text = SFC::smp.disassemble(opcodePC, p);
+  line[middle] = { "> ", slice(text, 0, 30) };
 
   int addr = opcodePC;
-  for(int o = 6; o >= 0; o--) {
+  for(int o = middle - 1; o >= 0; o--) {
     for(int b = 1; b <= 3; b++) {
       if(addr - b >= 0 && (debugger->apuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        line[o] = { "  ", SFC::smp.disassemble(addr, SFC::smp.regs.p.p) };
-        //line[o][31] = 0;
+        p = debugger->cpuUsage.data[addr] & Usage::P;
+        text = SFC::smp.disassemble(addr, p);
+        line[o] = { "  ", slice(text, 0, 30) };
         break;
       }
     }
   }
 
   addr = opcodePC;
-  for(int o = 8; o <= 14; o++) {
+  for(int o = middle + 1; o <= middle * 2; o++) {
     for(int b = 1; b <= 3; b++) {
       if(addr - b <= 0xffff && (debugger->apuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        line[o] = { "  ", SFC::smp.disassemble(addr, SFC::smp.regs.p.p) };
-        //line[o][31] = 0;
+        p = debugger->cpuUsage.data[addr] & Usage::P;
+        text = SFC::smp.disassemble(addr, p);
+        line[o] = { "  ", slice(text, 0, 30) };
         break;
       }
     }

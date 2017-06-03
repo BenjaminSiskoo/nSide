@@ -1,5 +1,7 @@
 struct Usage {
   enum : uint { Read = 4, Write = 2, Exec = 1 };
+  enum : uint { E = 128, M = 64, X = 32 };
+  enum : uint { P = 128 };
   uint8_t* data;
   uint size;
 

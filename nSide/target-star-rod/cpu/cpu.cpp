@@ -8,7 +8,7 @@ CPUDebugger::CPUDebugger() {
   opcodePC = 0x008000;
 
   setTitle("CPU Debugger");
-  setGeometry({128, 128, 620, 260});
+  setGeometry({128, 128, 384, 260});
 
   layout.setMargin(5);
   stepInto.setText("Step Into");
@@ -95,18 +95,25 @@ auto CPUDebugger::opcodeLength(uint24 addr) -> uint {
 }
 
 auto CPUDebugger::updateDisassembly() -> void {
-  const int middle = 15;
+  const int middle = 7;
   string line[middle * 2 + 1];
-  string text = SFC::cpu.disassemble(opcodePC, SFC::cpu.r.e, SFC::cpu.r.p.m, SFC::cpu.r.p.x);
-  line[middle] = { "> ", text };
+
+  bool e = debugger->cpuUsage.data[opcodePC] & Usage::E;
+  bool m = debugger->cpuUsage.data[opcodePC] & Usage::M;
+  bool x = debugger->cpuUsage.data[opcodePC] & Usage::X;
+  string text = SFC::cpu.disassemble(opcodePC, e, m, x);
+  line[middle] = { "> ", slice(text, 0, 7 + 22) };
 
   int addr = opcodePC;
   for(int o = middle - 1; o >= 0; o--) {
     for(int b = 1; b <= 4; b++) {
       if(addr - b >= 0 && (debugger->cpuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        text = SFC::cpu.disassemble(addr, SFC::cpu.r.e, SFC::cpu.r.p.m, SFC::cpu.r.p.x);
-        line[o] = { "  ", text };
+        e = debugger->cpuUsage.data[addr] & Usage::E;
+        m = debugger->cpuUsage.data[addr] & Usage::M;
+        x = debugger->cpuUsage.data[addr] & Usage::X;
+        text = SFC::cpu.disassemble(addr, e, m, x);
+        line[o] = { "  ", slice(text, 0, 7 + 22) };
         break;
       }
     }
@@ -117,8 +124,11 @@ auto CPUDebugger::updateDisassembly() -> void {
     for(int b = 1; b <= 4; b++) {
       if(addr + b <= 0xffffff && (debugger->cpuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        text = SFC::cpu.disassemble(addr, SFC::cpu.r.e, SFC::cpu.r.p.m, SFC::cpu.r.p.x);
-        line[o] = { "  ", text };
+        e = debugger->cpuUsage.data[addr] & Usage::E;
+        m = debugger->cpuUsage.data[addr] & Usage::M;
+        x = debugger->cpuUsage.data[addr] & Usage::X;
+        text = SFC::cpu.disassemble(addr, e, m, x);
+        line[o] = { "  ", slice(text, 0, 7 + 22) };
         break;
       }
     }

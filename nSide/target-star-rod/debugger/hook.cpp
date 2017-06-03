@@ -3,6 +3,9 @@
 
 auto Debugger::cpu_execute(uint24 addr) -> void {
   cpuUsage.data[addr] |= Usage::Exec;
+  if(SFC::cpu.r.e) cpuUsage.data[addr] |= Usage::E;
+  if(SFC::cpu.r.p.m) cpuUsage.data[addr] |= Usage::M;
+  if(SFC::cpu.r.p.x) cpuUsage.data[addr] |= Usage::X;
   cpuDebugger->opcodePC = addr;
   bool breakpointHit = breakpointEditor->testExecCPU(addr);
 
@@ -72,6 +75,7 @@ auto Debugger::cpu_irq() -> void {
 
 auto Debugger::smp_execute(uint16 addr) -> void {
   apuUsage.data[addr] |= Usage::Exec;
+  if(SFC::smp.regs.p.p) apuUsage.data[addr] |= Usage::P;
   smpDebugger->opcodePC = addr;
   bool breakpointHit = breakpointEditor->testExecSMP(addr);
 
