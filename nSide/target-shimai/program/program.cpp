@@ -10,7 +10,11 @@
 #include <md/interface/interface.hpp>
 #include <pce/interface/interface.hpp>
 #include <gb/interface/interface.hpp>
+#if defined(PROFILE_BALANCED)
+#include <gba-balanced/interface/interface.hpp>
+#else
 #include <gba/interface/interface.hpp>
+#endif
 #include <ws/interface/interface.hpp>
 #include "interface.cpp"
 #include "medium.cpp"
@@ -44,8 +48,6 @@ Program::Program(string_vector args) {
   new Presentation;
   presentation->setVisible();
 
-  new Home;
-
   video = Video::create(settings["Video/Driver"].text());
   video->set(Video::Handle, presentation->viewport.handle());
   video->set(Video::Synchronize, settings["Video/Synchronize"].boolean());
@@ -66,6 +68,12 @@ Program::Program(string_vector args) {
   if(!input->init()) input = Input::create("None");
 
   new InputManager;
+  new Theme;
+  new Graphics;
+  new Sound;
+  new Controls;
+
+  new Home;
 
   presentation->setFocused();
 

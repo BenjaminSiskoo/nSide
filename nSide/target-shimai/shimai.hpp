@@ -22,6 +22,7 @@ extern Emulator::Interface* emulator;
 #include "sound/sound.hpp"
 #include "controls/controls.hpp"
 #include "theme/theme.hpp"
+#include "scene/scene.hpp"
 #include "home/home.hpp"
 #include "presentation/presentation.hpp"
 

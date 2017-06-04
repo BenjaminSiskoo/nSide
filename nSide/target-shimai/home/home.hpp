@@ -1,26 +1,29 @@
-struct Home {
+struct Home : Scene {
   Home();
 
-  struct Game {
+  auto reset() -> void;
+  auto run() -> void;
+
+  auto loadSprites(vector<Sprite*>& sprites) -> void;
+  auto updateSprites() -> void;
+
+  struct Medium {
     auto path() -> string;
 
     string basename;
     string name;
     string title;
   };
-  vector<Game> games;
+  vector<Medium> media;
 
-  auto reset() -> void;
-  auto run() -> void;
-
-  auto game() -> Game&;
-
-  auto loadSprites(vector<Sprite*>& sprites) -> void;
-  auto updateSprites() -> void;
-
+  auto cursorUp() -> void;
+  auto cursorDown() -> void;
   auto cursorLeft() -> void;
   auto cursorRight() -> void;
-  auto loadGame() -> void;
+  auto confirm() -> void;
+  auto loadMedium() -> void;
+
+  auto medium() -> Medium&;
 
   string system;
 
@@ -29,8 +32,12 @@ private:
   auto cursorReady() -> bool;
 
   uint gameCursor;
-  double gameCursorPosition;
   double gameScroll;
+
+  uint settingsCursor;
+
+  double cursorPosition;
+  bool settingsActive;
 
   Sprite menubarU;
   Sprite menubarL;
@@ -38,6 +45,7 @@ private:
   Sprite captionTitleContents;
   image captionTitleText;
   vector<Sprite> gameCards;
+  vector<Sprite> settingsButtons;
   Sprite cursorSprite;
 };
 

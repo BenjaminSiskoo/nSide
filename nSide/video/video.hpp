@@ -58,8 +58,24 @@ private:
     uint2 rotation = 0;
   } effects;
 
+//friend class Raster;
   friend class Sprite;
 };
+
+/*
+struct Raster {
+  Raster();
+
+  auto reset() -> void;
+  auto reset(uint x, uint y) -> void;
+  auto pixel(uint64 color) -> void;
+
+private:
+  uint32* position = nullptr;
+
+  friend class Video;
+};
+*/
 
 struct Sprite {
   Sprite(uint width, uint height);

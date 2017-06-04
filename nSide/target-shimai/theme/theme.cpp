@@ -15,8 +15,8 @@ auto Theme::load(string themeName) -> void {
   backgroundColor = 0xff000000 | manifest["theme/background-color"].natural();
   font.color      = 0xff000000 | manifest["theme/font-color"].natural();
 
-  double scale = graphics->buffer.height() / 240.0;
-  uint w,h;
+  double scale = graphics->scale;
+  uint x,w,h;
 
   image texture;
   if(file::exists(locate({path, "graphics.png"}))) texture.load(locate({path, "graphics.png"}));
@@ -37,16 +37,27 @@ auto Theme::load(string themeName) -> void {
     return img;
   };
 
-  extract("menubarU", menubarU, true);
-  extract("menubarL", menubarL, true);
-  extract("captionTitle", captionTitle, true);
-  extract("gameCard", gameCardBase, true);
-  extract("gameCardActive", gameCardActiveBase, true);
+  extract("menubarU",        menubarU,           true);
+  extract("menubarL",        menubarL,           true);
+  extract("captionTitle",    captionTitle,       true);
+  extract("gameCard",        gameCardBase,       true);
+  extract("gameCardActive",  gameCardActiveBase, true);
+  extract("settingsDisplay", settingsDisplay,    true);
+  extract("settingsOption",  settingsOption,     true);
+
+//image settingsBack;
+//extract("settingsBack", settingsBack, false);
+//w = 2 * 32 * scale;
+//h = settingsBack.height() * scale;
+//settingsBack.scale(w, h, false);
+//x = (menubarU.width() - w) / 2;
+//menubarU.impose(image::blend::sourceAlpha, x, 0, settingsBack, 0, 0, w, h);
+
+  image cursorPart;
 
   gameCursor.allocate(gameCardBase.width() + 8 * scale, gameCardBase.height() + 8 * scale);
   gameCursor.fill(0x00000000);
-  image cursorPart;
-  static auto imposeCursorPart = [&](string id, uint x, uint y) -> void {
+  static auto imposeGameCursorPart = [&](string id, uint x, uint y) -> void {
     extract({"cursorGame", id}, cursorPart, false);
     cursorPart.crop(1, 1, 30, 30);
     cursorPart.scale(w, h, false);
@@ -54,23 +65,51 @@ auto Theme::load(string themeName) -> void {
   };
   w = 10 * scale;
   h = 10 * scale;
-  imposeCursorPart("1", 0,                      0);
-  imposeCursorPart("3", gameCursor.width() - w, 0);
-  imposeCursorPart("7", 0,                      gameCursor.height() - h);
-  imposeCursorPart("9", gameCursor.width() - w, gameCursor.height() - h);
+  imposeGameCursorPart("1", 0,                      0);
+  imposeGameCursorPart("3", gameCursor.width() - w, 0);
+  imposeGameCursorPart("7", 0,                      gameCursor.height() - h);
+  imposeGameCursorPart("9", gameCursor.width() - w, gameCursor.height() - h);
   w = gameCursor.width() - 16 * scale;
   h = 10 * scale;
-  imposeCursorPart("2", 8 * scale, 0);
-  imposeCursorPart("8", 8 * scale, gameCursor.height() - h);
+  imposeGameCursorPart("2", 8 * scale, 0);
+  imposeGameCursorPart("8", 8 * scale, gameCursor.height() - h);
   w = 10 * scale;
   h = gameCursor.height() - 16 * scale;
-  imposeCursorPart("4", 0,                      8 * scale);
-  imposeCursorPart("6", gameCursor.width() - w, 8 * scale);
+  imposeGameCursorPart("4", 0,                      8 * scale);
+  imposeGameCursorPart("6", gameCursor.width() - w, 8 * scale);
   gameCursor.crop(scale * 2, scale * 2, gameCursor.width() - scale * 2, gameCursor.height() - scale * 2);
+
+  settingsCursor.allocate((32 + (2 + 3) * 2) * scale, (23 + (2 + 3) * 2) * scale);
+  settingsCursor.fill(0x00000000);
+  static auto imposeSettingsCursorPart = [&](string id, uint x, uint y) -> void {
+    extract({"cursorSettings", id}, cursorPart, false);
+    cursorPart.crop(1, 1, 30, 30);
+    cursorPart.scale(w, h, false);
+    settingsCursor.impose(image::blend::sourceAlpha, x, y, cursorPart, 0, 0, w, h);
+  };
+  w = 10 * scale;
+  h = 10 * scale;
+  imposeSettingsCursorPart("1", 0,                          0);
+  imposeSettingsCursorPart("3", settingsCursor.width() - w, 0);
+  imposeSettingsCursorPart("7", 0,                          settingsCursor.height() - h);
+  imposeSettingsCursorPart("9", settingsCursor.width() - w, settingsCursor.height() - h);
+  w = settingsCursor.width() - 16 * scale;
+  h = 10 * scale;
+  imposeSettingsCursorPart("2", 8 * scale, 0);
+  imposeSettingsCursorPart("8", 8 * scale, settingsCursor.height() - h);
+  w = 10 * scale;
+  h = settingsCursor.height() - 16 * scale;
+  imposeSettingsCursorPart("4", 0,                          8 * scale);
+  imposeSettingsCursorPart("6", settingsCursor.width() - w, 8 * scale);
+  extract("cursorSettingsBack", cursorPart, false);
+  w = 32 * scale;
+  h = 23 * scale;
+  cursorPart.scale(w, h, false);
+  settingsCursor.impose(image::blend::sourceAlpha, 5 * scale, 5 * scale, cursorPart, 0, 0, w, h);
 
   loadBoxes();
   gameCards.reset();
-  for(uint id : range(home->games.size())) gameCards.append(loadGameCard(id, false));
+  for(uint id : range(home->media.size())) gameCards.append(loadGameCard(id, false));
 
   bool audioValid = false;
   if(bgm = vfs::fs::file::open(locate({path, "bgm.pcm"}), vfs::file::mode::read)) {
@@ -88,16 +127,14 @@ auto Theme::load(string themeName) -> void {
 
 auto Theme::loadBoxes() -> void {
   boxes.reset();
-  for(uint gameID : range(home->games.size())) {
-    image& box = boxes(gameID);
-    box.load(string{home->games[gameID].path(), "box.png"});
+  for(uint mediumID : range(home->media.size())) {
+    image& box = boxes(mediumID);
+    box.load(string{home->media[mediumID].path(), "box.png"});
 
-    double scale = graphics->buffer.height() / 240.0;
-
-    uint boundX = 2 * scale;
-    uint boundY = 2 * scale;
-    uint boundW = gameCardBase.width () - boundX -  4 * scale;
-    uint boundH = gameCardBase.height() - boundY - 20 * scale;
+    uint boundX = 2 * graphics->scale;
+    uint boundY = 2 * graphics->scale;
+    uint boundW = gameCardBase.width () - boundX -  4 * graphics->scale;
+    uint boundH = gameCardBase.height() - boundY - 20 * graphics->scale;
 
     uint rectW = boundW;
     uint rectH = boundH;
@@ -110,17 +147,15 @@ auto Theme::loadBoxes() -> void {
   }
 }
 
-auto Theme::loadGameCard(uint gameID, bool active) -> image {
+auto Theme::loadGameCard(uint mediumID, bool active) -> image {
   image card{active ? gameCardActiveBase : gameCardBase};
 
-  image& box = boxes[gameID];
+  image& box = boxes[mediumID];
   if(box) {
-    double scale = graphics->buffer.height() / 240.0;
-
-    uint boundX = 2 * scale;
-    uint boundY = 2 * scale;
-    uint boundW = card.width () - boundX -  4 * scale;
-    uint boundH = card.height() - boundY - 20 * scale;
+    uint boundX = 2 * graphics->scale;
+    uint boundY = 2 * graphics->scale;
+    uint boundW = card.width () - boundX -  4 * graphics->scale;
+    uint boundH = card.height() - boundY - 20 * graphics->scale;
 
     uint rectX = boundX + boundW / 2 - box.width () / 2;
     uint rectY = boundY + boundH / 2 - box.height() / 2;

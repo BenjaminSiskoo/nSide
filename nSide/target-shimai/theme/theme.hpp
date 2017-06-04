@@ -4,7 +4,7 @@ struct Theme {
   auto load(string themeName) -> void;
   auto loadBoxes() -> void;
 
-  auto loadGameCard(uint gameID, bool active) -> image;
+  auto loadGameCard(uint mediumID, bool active) -> image;
   auto updateActiveGameCard(uint cursor) -> void;
 
   string name;
@@ -16,7 +16,10 @@ struct Theme {
   image captionTitle;
   image gameCardBase;
   image gameCardActiveBase;
+  image settingsDisplay;
+  image settingsOption;
   image gameCursor;
+  image settingsCursor;
   vector<image> boxes;
   vector<image> gameCards;
   image gameCardActive;
