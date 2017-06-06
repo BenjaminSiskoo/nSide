@@ -14,6 +14,7 @@ auto WDC65816::serialize(serializer& s) -> void {
   s.integer(r.e);
   s.integer(r.irq);
   s.integer(r.wai);
+  s.integer(r.stp);
   s.integer(r.mdr);
   s.integer(r.vector);
 

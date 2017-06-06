@@ -95,7 +95,7 @@ auto CPUDebugger::opcodeLength(uint24 addr) -> uint {
 }
 
 auto CPUDebugger::updateDisassembly() -> void {
-  const int middle = 7;
+  const int middle = 8;
   string line[middle * 2 + 1];
 
   bool e = debugger->cpuUsage.data[opcodePC] & Usage::E;

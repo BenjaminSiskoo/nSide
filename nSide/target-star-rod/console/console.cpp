@@ -12,6 +12,7 @@ ConsoleWindow::ConsoleWindow() {
   reloadCartridge.setText("Reload Cartridge").onActivate([&] {
     program->mediumQueue.append(program->mediumPaths(1));
     program->loadMedium(*emulator, emulator->media[0]);
+    debugger->resetUsage();
   });
   powerCycle.setText("Power Cycle").onActivate([&] {
     emulator->power();
@@ -143,5 +144,5 @@ auto ConsoleWindow::print(const string& text) -> void {
   string output = console.text();
   output.append(text);
   console.setText(output);
-  console.cursor().setOffset(~0);
+  console.setCursor({INT_MAX, 0});
 }

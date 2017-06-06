@@ -42,7 +42,7 @@ auto HotkeySettings::reloadMappings() -> void {
 auto HotkeySettings::refreshMappings() -> void {
   uint position = 0;
   for(auto& hotkey : inputManager->hotkeys) {
-    mappingList.item(position).cell(1).setText(hotkey->assignmentName());
+    mappingList.item(position).cell(1).setText(hotkey->displayName());
     position++;
   }
   mappingList.resizeColumns();

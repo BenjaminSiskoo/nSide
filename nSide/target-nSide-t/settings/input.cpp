@@ -119,7 +119,7 @@ auto InputSettings::reloadMappings() -> void {
 auto InputSettings::refreshMappings() -> void {
   uint position = 0;
   for(auto& mapping : activeDevice().mappings) {
-    mappingList.item(position).cell(1).setText(mapping.assignmentName());
+    mappingList.item(position).cell(1).setText(mapping.displayName());
     position++;
   }
   mappingList.resizeColumns();

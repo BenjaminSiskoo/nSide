@@ -5,11 +5,9 @@ flags += -DSFC_SUPERGAMEBOY
 
 include a2600/GNUmakefile
 include fc/GNUmakefile
-ifndef profile
+ifneq ($(profile),balanced)
   include sfc/GNUmakefile
-else ifeq ($(profile),accuracy)
-  include sfc/GNUmakefile
-else ifeq ($(profile),balanced)
+else
   include sfc-balanced/GNUmakefile
 endif
 include ms/GNUmakefile
