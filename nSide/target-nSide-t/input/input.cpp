@@ -6,7 +6,9 @@ unique_pointer<InputManager> inputManager;
 auto InputMapping::bind() -> void {
   mappings.reset();
 
-  auto list = assignment.split(logic() == Logic::AND ? "&" : "|");
+  if(assignment.find("&")) logic = Logic::AND;
+  if(assignment.find("|")) logic = Logic::OR;
+  auto list = assignment.split(logic == Logic::AND ? "&" : "|");
   for(auto& item : list) {
     auto token = item.split("/");
     if(token.size() < 3) continue;  //skip invalid mappings
@@ -39,14 +41,14 @@ auto InputMapping::bind() -> void {
 
 //append new mapping to mappings list
 auto InputMapping::bind(string mapping) -> void {
-  auto list = assignment.split(logic() == Logic::AND ? "&" : "|");
+  auto list = assignment.split(logic == Logic::AND ? "&" : "|");
   if(list.find(mapping)) return;  //already in the mappings list
   if(!assignment || assignment == "None") {
     //create new mapping
     assignment = mapping;
   } else {
     //add additional mapping
-    assignment.append(logic() == Logic::AND ? "&" : "|");
+    assignment.append(logic == Logic::AND ? "&" : "|");
     assignment.append(mapping);
   }
   bind();
@@ -102,15 +104,22 @@ auto InputMapping::bind(shared_pointer<HID::Device> device, uint group, uint inp
   return false;
 }
 
+auto InputMapping::toggleLogic() -> void {
+  logic = logic == Logic::AND ? Logic::OR : Logic::AND;
+  if(logic == Logic::AND) assignment.replace("|", "&");
+  else                    assignment.replace("&", "|");
+  bind();
+}
+
 auto InputMapping::poll() -> int16 {
   if(!mappings) return 0;
 
   if(isDigital()) {
-    bool result = logic() == Logic::AND ? 1 : 0;
+    bool result = logic == Logic::AND ? 1 : 0;
 
     for(auto& mapping : mappings) {
       auto value = mapping.device->group(mapping.group).input(mapping.input).value();
-      bool output = logic() == Logic::AND ? 0 : 1;
+      bool output = logic == Logic::AND ? 0 : 1;
 
       if(mapping.device->isKeyboard() && mapping.group == HID::Keyboard::GroupID::Button) output = value != 0;
       if(mapping.device->isMouse() && mapping.group == HID::Mouse::GroupID::Button) output = value != 0;
@@ -122,8 +131,8 @@ auto InputMapping::poll() -> int16 {
         if(mapping.qualifier == Qualifier::Hi) output = value > +16384;
       }
 
-      if(logic() == Logic::AND) result &= output;
-      if(logic() == Logic::OR ) result |= output;
+      if(logic == Logic::AND) result &= output;
+      if(logic == Logic::OR ) result |= output;
     }
 
     return result;
@@ -179,10 +188,10 @@ auto InputMapping::displayName() -> string {
     if(mapping.qualifier == Qualifier::Lo) path.append(".Lo");
     if(mapping.qualifier == Qualifier::Hi) path.append(".Hi");
     if(mapping.qualifier == Qualifier::Rumble) path.append(".Rumble");
-    path.append(logic() == Logic::AND ? " and " : " or ");
+    path.append(logic == Logic::AND ? " and " : " or ");
   }
 
-  return path.trimRight(logic() == Logic::AND ? " and " : " or ", 1L);
+  return path.trimRight(logic == Logic::AND ? " and " : " or ", 1L);
 }
 
 //

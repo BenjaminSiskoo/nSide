@@ -2,6 +2,7 @@ struct InputMapping {
   auto bind() -> void;
   auto bind(string mapping) -> void;
   auto bind(shared_pointer<HID::Device> device, uint group, uint input, int16 oldValue, int16 newValue) -> bool;
+  auto toggleLogic() -> void;
   auto poll() -> int16;
   auto rumble(bool enable) -> void;
   auto unbind() -> void;
@@ -12,14 +13,15 @@ struct InputMapping {
 
   auto displayName() -> string;
 
+  enum class Logic : uint { AND, OR };
+  enum class Qualifier : uint { None, Lo, Hi, Rumble };
+
   string path;  //configuration file key path
   string name;  //input name (human readable)
   uint type = 0;
   string assignment = "None";
+  Logic logic = Logic::OR;
 
-  enum class Logic : uint { AND, OR };
-  enum class Qualifier : uint { None, Lo, Hi, Rumble };
-  virtual auto logic() const -> Logic { return Logic::OR; }
   struct Mapping {
     shared_pointer<HID::Device> device;
     uint group = 0;
@@ -30,7 +32,7 @@ struct InputMapping {
 };
 
 struct InputHotkey : InputMapping {
-  auto logic() const -> Logic override { return Logic::AND; }
+  Logic logic = Logic::AND;
 
   function<auto () -> void> press;
   function<auto () -> void> release;

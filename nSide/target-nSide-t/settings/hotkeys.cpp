@@ -7,6 +7,12 @@ HotkeySettings::HotkeySettings(TabFrame* parent) : TabFrameItem(parent) {
   mappingList.onChange([&] {
     eraseButton.setEnabled((bool)mappingList.selected());
   });
+  toggleLogicButton.setText("Toggle AND/OR").onActivate([&] {
+    if(auto item = mappingList.selected()) {
+      inputManager->hotkeys[item.offset()]->toggleLogic();
+      refreshMappings();
+    }
+  });
   resetButton.setText("Reset").onActivate([&] {
     if(MessageDialog("Are you sure you want to erase all hotkey mappings?").setParent(*settingsManager).question() == "Yes") {
       for(auto& mapping : inputManager->hotkeys) mapping->unbind();

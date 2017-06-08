@@ -107,6 +107,7 @@ struct HotkeySettings : TabFrameItem {
   VerticalLayout layout{this};
     TableView mappingList{&layout, Size{~0, ~0}};
     HorizontalLayout controlLayout{&layout, Size{~0, 0}};
+      Button toggleLogicButton{&controlLayout, Size{100, 0}};
       Widget spacer{&controlLayout, Size{~0, 0}};
       Button resetButton{&controlLayout, Size{80, 0}};
       Button eraseButton{&controlLayout, Size{80, 0}};
