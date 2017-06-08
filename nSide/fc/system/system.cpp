@@ -16,6 +16,7 @@ auto System::run() -> void {
     if(model() != Model::VSSystem || vssystem.gameCount == 2) ppu0.refresh();
     if(model() == Model::VSSystem) ppu1.refresh();
     if(model() == Model::PlayChoice10) playchoice10.videoCircuit.refresh();
+    Emulator::video.refreshFinal();
   }
 }
 

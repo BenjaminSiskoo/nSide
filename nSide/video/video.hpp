@@ -11,7 +11,7 @@ struct Video {
     ColorBleed,
     InterframeBlending,
     Scanlines,
-    Rotation,
+    RotateLeft,
   };
 
   ~Video();
@@ -32,6 +32,7 @@ struct Video {
   auto refresh(uint32* input, uint pitch, uint width, uint height) -> void;
   auto resize(uint width, uint height) -> void;
   auto refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_y, uint width, uint height, uint paletteOffset = 0) -> void;
+  auto refreshFinal() -> void;
   auto clear() -> void;
 
   auto screenshot(string path) -> void;
@@ -40,7 +41,8 @@ private:
   Interface* interface = nullptr;
   vector<shared_pointer<Sprite>> sprites;
 
-  uint32* output = nullptr;
+  uint32* buffer = nullptr;
+  uint32* rotate = nullptr;
   uint32* palette = nullptr;
 
   uint width = 0;
@@ -55,7 +57,7 @@ private:
     bool colorBleed = false;
     bool interframeBlending = false;
     bool scanlines = false;
-    uint2 rotation = 0;
+    bool rotateLeft = false;
   } effects;
 
 //friend class Raster;

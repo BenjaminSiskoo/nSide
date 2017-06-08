@@ -11,8 +11,7 @@ struct ID {
   };};
 
   struct Device { enum : uint {
-    HorizontalControls,
-    VerticalControls,
+    Controls,
   };};
 };
 
@@ -24,7 +23,7 @@ struct Interface : Emulator::Interface {
   auto manifest() -> string override;
   auto title() -> string override;
 
-  auto videoSize() -> VideoSize override;
+  auto videoResolution() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
@@ -34,10 +33,8 @@ struct Interface : Emulator::Interface {
   auto save() -> void override;
   auto unload() -> void override;
 
-  auto connect(uint port, uint device) -> void override;
   auto power() -> void override;
   auto run() -> void override;
-  auto rotate() -> void override;
 
   auto serialize() -> serializer override;
   auto unserialize(serializer&) -> bool override;
@@ -55,6 +52,7 @@ struct Interface : Emulator::Interface {
 struct Settings {
   bool blurEmulation = true;
   bool colorEmulation = true;
+  bool rotateLeft = false;
 };
 
 extern Settings settings;

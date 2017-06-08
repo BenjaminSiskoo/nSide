@@ -61,25 +61,21 @@ auto CPU::readIO(uint32 addr) -> uint8 {
 
   //KEYINPUT
   case 0x04000130: {
-    uint port = ID::Port::Hardware;
-    uint device = !system.orientation() ? ID::Device::HorizontalControls : ID::Device::VerticalControls;
-    static const uint lookupHorizontal[] = {5, 4, 8, 9, 3, 2, 0, 1};
-    static const uint lookupVertical[]   = {5, 4, 8, 9, 0, 1, 2, 3};
-    const uint* lookup = !system.orientation() ? lookupHorizontal : lookupVertical;
+    static const uint landscape[] = {5, 4, 8, 9, 3, 2, 0, 1};
+    static const uint portrait[]  = {5, 4, 8, 9, 0, 1, 2, 3};
+    auto lookup = !settings.rotateLeft ? landscape : portrait;
     if(auto result = player.keyinput()) return result() >> 0;
     uint8 result = 0;
-    for(uint n = 0; n < 8; n++) result |= platform->inputPoll(port, device, lookup[n]) << n;
+    for(uint n = 0; n < 8; n++) result |= platform->inputPoll(0, 0, lookup[n]) << n;
     if((result & 0xc0) == 0xc0) result &= (uint8)~0xc0;  //up+down cannot be pressed simultaneously
     if((result & 0x30) == 0x30) result &= (uint8)~0x30;  //left+right cannot be pressed simultaneously
     return result ^ 0xff;
   }
   case 0x04000131: {
     if(auto result = player.keyinput()) return result() >> 8;
-    uint port = ID::Port::Hardware;
-    uint device = !system.orientation() ? ID::Device::HorizontalControls : ID::Device::VerticalControls;
     uint8 result = 0;
-    result |= platform->inputPoll(port, device, 7) << 0;
-    result |= platform->inputPoll(port, device, 6) << 1;
+    result |= platform->inputPoll(0, 0, 7) << 0;
+    result |= platform->inputPoll(0, 0, 6) << 1;
     return result ^ 0x03;
   }
 

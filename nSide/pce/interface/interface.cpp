@@ -39,8 +39,8 @@ auto Interface::title() -> string {
   return cartridge.title();
 }
 
-auto Interface::videoSize() -> VideoSize {
-  return {1140, 242};
+auto Interface::videoResolution() -> VideoSize {
+  return {1140, 240};
 }
 
 auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
@@ -49,7 +49,7 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
     w = round(w * (squarePixelRate / (system.colorburst() * 6.0 / 4.0)));
   }
-  double h = 242;
+  double h = 240;
   double m = min(width / w, height / h);
   if(intScale) m = floor(m);
   return {(uint)(w * m), (uint)(h * m)};

@@ -36,7 +36,7 @@ SG1000Interface::SG1000Interface() {
   ports.append(move(controllerPort2));
 }
 
-auto SG1000Interface::videoSize() -> VideoSize {
+auto SG1000Interface::videoResolution() -> VideoSize {
   return {256, 192};
 }
 

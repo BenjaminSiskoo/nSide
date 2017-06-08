@@ -53,7 +53,7 @@ auto Interface::title() -> string {
   return cartridge.title();
 }
 
-auto Interface::videoSize() -> VideoSize {
+auto Interface::videoResolution() -> VideoSize {
   return {160, 228};
 }
 

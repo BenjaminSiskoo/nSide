@@ -4,6 +4,15 @@ auto Program::powerCycle() -> void {
   showMessage("Power cycled");
 }
 
+auto Program::rotateDisplay() -> void {
+  if(!emulator) return;
+  if(!emulator->cap("Rotate Display")) return showMessage("Display rotation not supported");
+  auto rotate = emulator->get("Rotate Display");
+  emulator->set("Rotate Display", !rotate.get<bool>());
+  presentation->resizeViewport();
+  showMessage("Display rotated");
+}
+
 auto Program::connectDevices() -> void {
   if(!emulator) return;
   for(auto& port : emulator->ports) {
@@ -16,11 +25,6 @@ auto Program::connectDevices() -> void {
       }
     }
   }
-}
-
-auto Program::rotate() -> void {
-  if(!emulator) return;
-  emulator->rotate();
 }
 
 auto Program::showMessage(const string& text) -> void {

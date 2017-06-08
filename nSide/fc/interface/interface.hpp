@@ -76,7 +76,7 @@ struct Interface : Emulator::Interface {
 struct FamicomInterface : Interface {
   FamicomInterface();
 
-  auto videoSize() -> VideoSize override;
+  auto videoResolution() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
@@ -89,7 +89,7 @@ struct FamicomInterface : Interface {
 struct VSSystemInterface : Interface {
   VSSystemInterface();
 
-  auto videoSize() -> VideoSize override;
+  auto videoResolution() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
@@ -102,7 +102,7 @@ struct VSSystemInterface : Interface {
 struct PlayChoice10Interface : Interface {
   PlayChoice10Interface();
 
-  auto videoSize() -> VideoSize override;
+  auto videoResolution() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
@@ -115,7 +115,7 @@ struct PlayChoice10Interface : Interface {
 struct FamicomBoxInterface : Interface {
   FamicomBoxInterface();
 
-  auto videoSize() -> VideoSize override;
+  auto videoResolution() -> VideoSize override;
   auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;

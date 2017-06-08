@@ -28,7 +28,7 @@ auto PPU::main() -> void {
         if(l.screenTwoEnable) renderScreenTwo();
         if(l.spriteEnable) renderSprite();
       }
-      output[s.vclk * 224 + s.hclk] = s.pixel.color;
+      output[s.vclk * 224 + x] = s.pixel.color;
       step(1);
     }
     step(32);
@@ -76,7 +76,7 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::refresh() -> void {
-  Emulator::video.refreshRegion(output, 224 * sizeof(uint32), 0, (224 - 144) / 2, 224, 144);
+  Emulator::video.refresh(output, 224 * sizeof(uint32), 224, 144);
 }
 
 auto PPU::step(uint clocks) -> void {

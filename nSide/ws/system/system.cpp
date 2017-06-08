@@ -34,7 +34,7 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
   if(!cartridge.load()) return false;
 
   serializeInit();
-  _orientation = cartridge.information.orientation;
+  settings.rotateLeft = cartridge.information.orientation;
   this->interface = interface;
   return _loaded = true;
 }
@@ -58,7 +58,6 @@ auto System::unload() -> void {
 auto System::power() -> void {
   Emulator::video.reset();
   Emulator::video.setInterface(interface);
-  Emulator::video.resize(224, 224);
   configureVideoPalette();
   configureVideoEffects();
 
@@ -97,20 +96,24 @@ auto System::runToSave() -> void {
 }
 
 auto System::pollKeypad() -> void {
-  uint port = ID::Port::Hardware;
-  uint device = !_orientation ? ID::Device::HorizontalControls : ID::Device::VerticalControls;
+  const uint landscape[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  const uint portrait [] = {7, 4, 5, 6, 3, 0, 1, 2, 8, 9, 10};
 
-  keypad.y1 = platform->inputPoll(port, device, 0);
-  keypad.y2 = platform->inputPoll(port, device, 1);
-  keypad.y3 = platform->inputPoll(port, device, 2);
-  keypad.y4 = platform->inputPoll(port, device, 3);
-  keypad.x1 = platform->inputPoll(port, device, 4);
-  keypad.x2 = platform->inputPoll(port, device, 5);
-  keypad.x3 = platform->inputPoll(port, device, 6);
-  keypad.x4 = platform->inputPoll(port, device, 7);
-  keypad.b = platform->inputPoll(port, device, 8);
-  keypad.a = platform->inputPoll(port, device, 9);
-  keypad.start = platform->inputPoll(port, device, 10);
+  uint port = ID::Port::Hardware;
+  uint device = ID::Device::Controls;
+  auto id = !settings.rotateLeft ? landscape : portrait;
+
+  keypad.y1 = platform->inputPoll(port, device, id[0]);
+  keypad.y2 = platform->inputPoll(port, device, id[1]);
+  keypad.y3 = platform->inputPoll(port, device, id[2]);
+  keypad.y4 = platform->inputPoll(port, device, id[3]);
+  keypad.x1 = platform->inputPoll(port, device, id[4]);
+  keypad.x2 = platform->inputPoll(port, device, id[5]);
+  keypad.x3 = platform->inputPoll(port, device, id[6]);
+  keypad.x4 = platform->inputPoll(port, device, id[7]);
+  keypad.b = platform->inputPoll(port, device, id[8]);
+  keypad.a = platform->inputPoll(port, device, id[9]);
+  keypad.start = platform->inputPoll(port, device, id[10]);
 
   if(keypad.y1 || keypad.y2 || keypad.y3 || keypad.y4
   || keypad.x1 || keypad.x2 || keypad.x3 || keypad.x4
@@ -118,11 +121,6 @@ auto System::pollKeypad() -> void {
   ) {
     cpu.raise(CPU::Interrupt::Input);
   }
-}
-
-auto System::rotate() -> void {
-  _orientation = !_orientation;
-  configureVideoEffects();
 }
 
 }

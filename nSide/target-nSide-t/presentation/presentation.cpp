@@ -82,7 +82,20 @@ Presentation::Presentation() {
     statusBar.setVisible(showStatusBar.checked());
     if(visible()) resizeViewport();
   });
-  showConfiguration.setText("Configuration ...").onActivate([&] { settingsManager->show(2); });
+  showConfiguration.setText("Configuration ...").onActivate([&] {
+    //if no emulation core active; default to hotkeys panel
+    if(!emulator) return settingsManager->show(3);
+
+    //default to input panel with current core's input settings active
+    for(auto item : settingsManager->input.emulatorList.items()) {
+      if(systemMenu.text() == item.text()) {
+        item.setSelected();
+        settingsManager->input.emulatorList.doChange();
+        break;
+      }
+    }
+    settingsManager->show(2);
+  });
 
   toolsMenu.setText("Tools").setVisible(false);
   saveStateMenu.setText("Save State");

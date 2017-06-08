@@ -50,7 +50,7 @@ PlayChoice10Interface::PlayChoice10Interface() {
   ports.append(move(expansionPort));
 }
 
-auto PlayChoice10Interface::videoSize() -> VideoSize {
+auto PlayChoice10Interface::videoResolution() -> VideoSize {
   return {256, 240 + (playchoice10.screenConfig - 1) * 224};
 }
 

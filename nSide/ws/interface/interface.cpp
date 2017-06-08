@@ -9,22 +9,7 @@ Settings settings;
 Interface::Interface() {
   Port hardware{ID::Port::Hardware, "Hardware"};
 
-  { Device device{ID::Device::HorizontalControls, "Horizontal Controls"};
-    device.inputs.append({0, "Y1"});
-    device.inputs.append({0, "Y2"});
-    device.inputs.append({0, "Y3"});
-    device.inputs.append({0, "Y4"});
-    device.inputs.append({0, "X1"});
-    device.inputs.append({0, "X2"});
-    device.inputs.append({0, "X3"});
-    device.inputs.append({0, "X4"});
-    device.inputs.append({0, "B"});
-    device.inputs.append({0, "A"});
-    device.inputs.append({0, "Start"});
-    hardware.devices.append(device);
-  }
-
-  { Device device{ID::Device::VerticalControls, "Vertical Controls"};
+  { Device device{ID::Device::Controls, "Controls"};
     device.inputs.append({0, "Y1"});
     device.inputs.append({0, "Y2"});
     device.inputs.append({0, "Y3"});
@@ -50,13 +35,17 @@ auto Interface::title() -> string {
   return cartridge.information.title;
 }
 
-auto Interface::videoSize() -> VideoSize {
-  return {224, 224};
+auto Interface::videoResolution() -> VideoSize {
+  if(!settings.rotateLeft) {
+    return {224, 144};
+  } else {
+    return {144, 224};
+  }
 }
 
 auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
-  uint w = 224;
-  uint h = 224;
+  uint w = videoResolution().width;
+  uint h = videoResolution().height;
   double m;
   if(intScale) m = min(width / w, height / h);
   else         m = min(width / (double)w, height / (double)h);
@@ -80,21 +69,12 @@ auto Interface::unload() -> void {
   system.unload();
 }
 
-auto Interface::connect(uint port, uint device) -> void {
-  if(port == 0 && system.orientation() != device) system.rotate();
-}
-
 auto Interface::power() -> void {
   system.power();
 }
 
 auto Interface::run() -> void {
   system.run();
-}
-
-auto Interface::rotate() -> void {
-  system.rotate();
-  platform->deviceChanged(0, system.orientation());
 }
 
 auto Interface::serialize() -> serializer {
@@ -113,12 +93,14 @@ auto Interface::cheatSet(const string_vector& list) -> void {
 auto Interface::cap(const string& name) -> bool {
   if(name == "Blur Emulation") return true;
   if(name == "Color Emulation") return true;
+  if(name == "Rotate Display") return true;
   return false;
 }
 
 auto Interface::get(const string& name) -> any {
   if(name == "Blur Emulation") return settings.blurEmulation;
   if(name == "Color Emulation") return settings.colorEmulation;
+  if(name == "Rotate Display") return settings.rotateLeft;
   return {};
 }
 
@@ -132,6 +114,12 @@ auto Interface::set(const string& name, const any& value) -> bool {
   if(name == "Color Emulation" && value.is<bool>()) {
     settings.colorEmulation = value.get<bool>();
     system.configureVideoPalette();
+    return true;
+  }
+
+  if(name == "Rotate Display" && value.is<bool>()) {
+    settings.rotateLeft = value.get<bool>();
+    system.configureVideoEffects();
     return true;
   }
 

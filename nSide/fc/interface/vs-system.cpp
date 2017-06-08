@@ -48,7 +48,7 @@ VSSystemInterface::VSSystemInterface() {
   ports.append(move(controllerPort2));
 }
 
-auto VSSystemInterface::videoSize() -> VideoSize {
+auto VSSystemInterface::videoResolution() -> VideoSize {
   return {256 * vssystem.gameCount, 240};
 }
 

@@ -5,7 +5,6 @@ namespace MegaDrive {
 Settings settings;
 
 Interface::Interface() {
-  information.devState     = DevState::Alpha;
   information.manufacturer = "Sega";
   information.name         = "Mega Drive";
   information.overscan     = true;
@@ -77,7 +76,7 @@ auto Interface::title() -> string {
   return cartridge.title();
 }
 
-auto Interface::videoSize() -> VideoSize {
+auto Interface::videoResolution() -> VideoSize {
   return {1280, 480};
 }
 

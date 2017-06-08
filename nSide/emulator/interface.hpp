@@ -49,7 +49,7 @@ struct Interface {
 
   //video information
   struct VideoSize { uint width, height; };
-  virtual auto videoSize() -> VideoSize = 0;
+  virtual auto videoResolution() -> VideoSize = 0;
   virtual auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize = 0;
   virtual auto videoColors() -> uint32 = 0;
   virtual auto videoColor(uint32 color) -> uint64 = 0;
@@ -65,11 +65,10 @@ struct Interface {
   virtual auto connect(uint port, uint device) -> void {}
   virtual auto power() -> void {}
   virtual auto run() -> void {}
-  virtual auto rotate() -> void {}
 
   //time functions
   virtual auto rtc() -> bool { return false; }
-  virtual auto rtcsync() -> void {}
+  virtual auto rtcSynchronize() -> void {}
 
   //state functions
   virtual auto serialize() -> serializer = 0;

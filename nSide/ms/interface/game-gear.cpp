@@ -22,7 +22,7 @@ GameGearInterface::GameGearInterface() {
   ports.append(move(hardware));
 }
 
-auto GameGearInterface::videoSize() -> VideoSize {
+auto GameGearInterface::videoResolution() -> VideoSize {
   return {160, 144};
 }
 

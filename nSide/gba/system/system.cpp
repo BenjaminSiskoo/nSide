@@ -36,7 +36,6 @@ auto System::load(Emulator::Interface* interface) -> bool {
   if(!cartridge.load()) return false;
 
   serializeInit();
-  _orientation = 0;
   this->interface = interface;
   return _loaded = true;
 }
@@ -55,7 +54,6 @@ auto System::unload() -> void {
 auto System::power() -> void {
   Emulator::video.reset();
   Emulator::video.setInterface(interface);
-  Emulator::video.resize(240, 240);
   configureVideoPalette();
   configureVideoEffects();
 
@@ -70,11 +68,6 @@ auto System::power() -> void {
   apu.power();
   cartridge.power();
   scheduler.primary(cpu);
-}
-
-auto System::rotate() -> void {
-  _orientation = !_orientation;
-  configureVideoEffects();
 }
 
 }

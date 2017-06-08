@@ -13,15 +13,17 @@ Video::~Video() {
 auto Video::reset() -> void {
   interface = nullptr;
   sprites.reset();
-  delete output;
-  output = nullptr;
+  delete buffer;
+  buffer = nullptr;
+  delete rotate;
+  rotate = nullptr;
   delete palette;
   palette = nullptr;
   width = 0;
   height = 0;
   effects.colorBleed = false;
   effects.interframeBlending = false;
-  effects.rotation = 0;
+  effects.rotateLeft = false;
 }
 
 auto Video::setInterface(Interface* interface) -> void {
@@ -93,10 +95,8 @@ auto Video::setEffect(Effect effect, const any& value) -> void {
     resize(this->width, this->height);
   }
 
-  if(effect == Effect::Rotation) {
-    if(value.is<int>())   effects.rotation = value.get<int>();
-    if(value.is<uint>())  effects.rotation = value.get<uint>();
-    if(value.is<uint2>()) effects.rotation = value.get<uint2>();
+  if(effect == Effect::RotateLeft && value.is<bool>()) {
+    effects.rotateLeft = value.get<bool>();
   }
 }
 
@@ -119,50 +119,41 @@ auto Video::removeSprite(shared_pointer<Sprite> sprite) -> bool {
 auto Video::refresh(uint32* input, uint pitch, uint width, uint height) -> void {
   resize(width, height);
   refreshRegion(input, pitch, 0, 0, width, height);
+  refreshFinal();
 }
 
 auto Video::resize(uint width, uint height) -> void {
   if(this->width != width || this->height != height) {
-    delete output;
-    output = new uint32[width * (height << effects.scanlines)]();
+    delete buffer;
+    delete rotate;
+    buffer = new uint32[width * (height << effects.scanlines)]();
+    rotate = new uint32[(height << effects.scanlines) * width]();
     this->width = width;
     this->height = height;
   }
 }
 
 auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_y, uint width, uint height, uint paletteOffset) -> void {
+  auto output = buffer;
   pitch >>= 2;  //bytes to words
 
   palette += paletteOffset;
   if(!effects.scanlines) {
-    int increment;
-    switch(effects.rotation) {
-    case 0: increment =  1;            break;
-    case 1: increment =  this->height; break;
-    case 2: increment = -1;            break;
-    case 3: increment = -this->height; break;
-    }
+    int increment = 1;
     for(uint y : range(height)) {
       uint32* source = input + y * pitch;
       uint32* target = output + (origin_y + y) * this->width + origin_x;
-      switch(effects.rotation) {
-      case 1: target = output + (this->height - 1 - origin_y - y); break;
-      case 2: target = output + (this->height - 1 - origin_y - y) * this->width + this->width - 1 - origin_x; break;
-      case 3: target = output + (this->width - 1 - origin_x) * this->height + origin_y + y; break;
-      }
 
       if(!effects.interframeBlending) {
         for(uint x : range(width)) {
           auto color = palette[*source++];
-          *target = color;
-          target += increment;
+          *target++ = color;
         }
       } else {
         for(uint x : range(width)) {
           auto a = *target;
           auto b = palette[*source++];
-          *target = (a + b - ((a ^ b) & 0x01010101)) >> 1;
-          target += increment;
+          *target++ = (a + b - ((a ^ b) & 0x01010101)) >> 1;
         }
       }
     }
@@ -191,16 +182,34 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
     }
   }
   palette -= paletteOffset;
+}
+
+auto Video::refreshFinal() -> void {
+  auto output = buffer;
+  uint width  = this->width;
+  uint height = this->height << effects.scanlines;
 
   if(effects.colorBleed) {
     for(uint y : range(height)) {
-      auto target = output + (origin_y + y) * this->width + origin_x;
+      auto target = output + y * width;
       for(uint x : range(width)) {
         auto a = target[x];
         auto b = target[x + (x != width - 1)];
         target[x] = (a + b - ((a ^ b) & 0x01010101)) >> 1;
       }
     }
+  }
+
+  if(effects.rotateLeft) {
+    for(uint y : range(height)) {
+      auto source = buffer + y * width;
+      for(uint x : range(width)) {
+        auto target = rotate + (width - 1 - x) * height + y;
+        *target = *source++;
+      }
+    }
+    output = rotate;
+    swap(width, height);
   }
 
   for(auto& sprite : sprites) {
@@ -220,22 +229,21 @@ auto Video::refreshRegion(uint32* input, uint pitch, uint origin_x, uint origin_
     }
   }
 
-  if(!effects.rotation.bit(0)) {
-    platform->videoRefresh(output, this->width * sizeof(uint32), this->width, this->height << effects.scanlines);
-  } else {
-    platform->videoRefresh(
-      output, (this->height << effects.scanlines) * sizeof(uint32),
-      this->height << effects.scanlines, this->width
-    );
-  }
+  platform->videoRefresh(output, width * sizeof(uint32), width, height << effects.scanlines);
 }
 
 auto Video::clear() -> void {
-  memory::fill(output, width * (height << effects.scanlines) * sizeof(uint32));
+  memory::fill(buffer, width * (height << effects.scanlines) * sizeof(uint32));
 }
 
 auto Video::screenshot(string path) -> void {
-  ramus::Encode::PNG::create(path, (uint32_t*)output, width, height, false);
+  uint width = this->width;
+  uint height = this->height << effects.scanlines;
+  if(!effects.rotateLeft) {
+    ramus::Encode::PNG::create(path, (uint32_t*)buffer, width, height, false);
+  } else {
+    ramus::Encode::PNG::create(path, (uint32_t*)rotate, height, width, false);
+  }
 }
 
 }

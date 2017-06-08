@@ -16,7 +16,6 @@ struct BIOS {
 
 struct System {
   auto loaded() const -> bool { return _loaded; }
-  auto orientation() const -> bool { return _orientation; }
 
   auto run() -> void;
   auto runToSave() -> void;
@@ -24,9 +23,7 @@ struct System {
   auto load(Emulator::Interface*) -> bool;
   auto save() -> void;
   auto unload() -> void;
-
   auto power() -> void;
-  auto rotate() -> void;
 
   //video.cpp
   auto configureVideoPalette() -> void;
@@ -48,7 +45,6 @@ private:
   } information;
 
   bool _loaded = false;
-  bool _orientation = 0;  //0 = horizontal, 1 = vertical
   uint _serializeSize = 0;
 };
 

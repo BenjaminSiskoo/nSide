@@ -285,7 +285,7 @@ FamicomInterface::FamicomInterface() {
   ports.append(move(expansionPort));
 }
 
-auto FamicomInterface::videoSize() -> VideoSize {
+auto FamicomInterface::videoResolution() -> VideoSize {
   return {256, 240};
 }
 
