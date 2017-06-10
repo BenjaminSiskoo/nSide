@@ -14,7 +14,7 @@ CPU cpu1(1);
 #include "timing.cpp"
 #include "serialization.cpp"
 
-CPU::CPU(bool side) : Processor::MOS6502(false), side(side) {
+CPU::CPU(bool side) : Processor::MOS6502(), side(side) {
 }
 
 auto CPU::Enter() -> void {
@@ -35,6 +35,7 @@ auto CPU::load(Markup::Node node) -> bool {
 }
 
 auto CPU::power() -> void {
+  MOS6502::BCD = 0;
   MOS6502::power();
   coprocessors.reset();
 

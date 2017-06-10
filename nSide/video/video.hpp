@@ -67,13 +67,18 @@ private:
 /*
 struct Raster {
   Raster();
+  Raster(uint x, uint y, uint width, uint height);
 
   auto reset() -> void;
-  auto reset(uint x, uint y) -> void;
-  auto pixel(uint64 color) -> void;
+  auto pixel(uint32 color) -> void;
+  auto scanline() -> void;
 
 private:
   uint32* position = nullptr;
+  uint originX;
+  uint originY;
+  uint width;
+  uint height;
 
   friend class Video;
 };

@@ -1,39 +1,37 @@
 Raster::Raster() {
+  originX = 0;
+  originY = 0;
+  width  = video.width;
+  height = video.height;
+  reset();
+}
+
+Raster::Raster(uint _x, uint _y, uint _width, uint _height) {
+  assert(_x <= video.width  - _width);
+  assert(_y <= video.height - _height);
+  originX = _x;
+  originY = _y;
+  width  = _width;
+  height = _height;
   reset();
 }
 
 auto Raster::reset() -> void {
-  position = video.output;
-  if(video.effects.rotateLeft) {
-    position += (video.width - 1) * video.height;
-  }
+  position = video.buffer + (originY * video.width + originX);
 }
 
-auto Raster::reset(uint x, uint y) -> void {
-  position = video.output + (y * video.width + x);
-}
-
-auto Raster::pixel(uint64 color) -> void {
-  auto crush = [](uint64 color) -> uint32 {
-    return (
-      color.byte(1) <<  0
-    | color.byte(3) <<  8
-    | color.byte(5) << 16
-    | color.byte(7) << 24
-    );
-  };
-
+auto Raster::pixel(uint32 color) -> void {
   if(!video.effects.interframeBlending) {
-    *position = crush(color);
+    *position++ = video.palette[color];
   } else {
     auto a = *position;
-    auto b = crush(color);
-    *position = (a + b - ((a ^ b) & 0x01010101)) >> 1;
+    auto b = video.palette[color];
+    *position++ = (a + b - ((a ^ b) & 0x01010101)) >> 1;
   }
+}
 
-  if(!video.effects.rotateLeft) {
-    position += 1;
-  } else {
-    position -= this->height;
-  }
+auto Raster::scanline() -> void {
+  assert((position - video.buffer) % video.width == originX);
+  uint y = ((position - video.buffer - originX + video.width - 1) / video.width * video.width);
+  position = video.buffer + y + originX;
 }

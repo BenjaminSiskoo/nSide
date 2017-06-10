@@ -6,6 +6,7 @@ unique_pointer<InputManager> inputManager;
 auto InputMapping::bind() -> void {
   mappings.reset();
 
+  logic = defaultLogic();
   if(assignment.find("&")) logic = Logic::AND;
   if(assignment.find("|")) logic = Logic::OR;
   auto list = assignment.split(logic == Logic::AND ? "&" : "|");

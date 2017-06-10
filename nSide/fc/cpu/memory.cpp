@@ -20,6 +20,6 @@ auto CPU::write(uint16 addr, uint8 data) -> void {
   step(system.region() == System::Region::NTSC ? 12 : system.region() == System::Region::PAL ? 16 : 15);
 }
 
-auto CPU::readDisassembler(uint16 addr) -> uint8 {
+auto CPU::readDebugger(uint16 addr) -> uint8 {
   return bus.read(addr, r.mdr);
 }

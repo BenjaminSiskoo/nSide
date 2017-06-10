@@ -51,7 +51,11 @@ PlayChoice10Interface::PlayChoice10Interface() {
 }
 
 auto PlayChoice10Interface::videoResolution() -> VideoSize {
-  return {256, 240 + (playchoice10.screenConfig - 1) * 224};
+  if(playchoice10.screenConfig == PlayChoice10::ScreenConfig::Dual) {
+    return {256, 240 + 224};
+  } else {
+    return {256, 240};
+  }
 }
 
 auto PlayChoice10Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {

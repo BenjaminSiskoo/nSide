@@ -22,6 +22,7 @@ struct InputMapping {
   string assignment = "None";
   Logic logic = Logic::OR;
 
+  virtual auto defaultLogic() -> Logic const { return Logic::OR; }
   struct Mapping {
     shared_pointer<HID::Device> device;
     uint group = 0;
@@ -32,7 +33,7 @@ struct InputMapping {
 };
 
 struct InputHotkey : InputMapping {
-  Logic logic = Logic::AND;
+  auto defaultLogic() -> Logic const override { return Logic::AND; }
 
   function<auto () -> void> press;
   function<auto () -> void> release;

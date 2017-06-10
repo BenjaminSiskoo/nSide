@@ -10,7 +10,7 @@ struct CPU : Processor::MOS6502, Thread {
   //memory.cpp
   auto read(uint16 addr) -> uint8 override;
   auto write(uint16 addr, uint8 data) -> void override;
-  auto readDisassembler(uint16 addr) -> uint8 override;
+  auto readDebugger(uint16 addr) -> uint8 override;
 
   //mmio.cpp
   auto readCPU(uint16 addr, uint8 data) -> uint8;

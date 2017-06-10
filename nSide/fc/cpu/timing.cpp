@@ -12,7 +12,7 @@ auto CPU::lastCycle() -> void {
   io.interruptPending = ((io.irqLine | io.apuLine) & ~r.p.i) | io.nmiPending;
 }
 
-auto CPU::nmi(uint16 &vector) -> void {
+auto CPU::nmi(uint16& vector) -> void {
   if(io.nmiPending) {
     io.nmiPending = false;
     vector = 0xfffa;

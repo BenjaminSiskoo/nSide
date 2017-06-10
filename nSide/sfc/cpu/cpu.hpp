@@ -44,7 +44,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   auto read(uint24 addr) -> uint8 override;
   auto write(uint24 addr, uint8 data) -> void override;
   alwaysinline auto speed(uint24 addr) const -> uint;
-  auto readDisassembler(uint24 addr) -> uint8 override;
+  auto readDebugger(uint24 addr) -> uint8 override;
 
   //io.cpp
   auto readAPU(uint24 addr, uint8 data) -> uint8;

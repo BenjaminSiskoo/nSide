@@ -288,8 +288,8 @@ auto Presentation::resizeViewport() -> void {
     aspectCorrection = settings["Video/AspectCorrection"].boolean();
     if(emulator) {
       auto size = emulator->videoSize(aspectCorrection ? 384 : 326, 242, true, true);
-      windowWidth  = (size.width  > 326 ? 384 : (size.width  > 320 ? 326 : 320)) * scale;
-      windowHeight = (size.height > 242 ? 288 : (size.height > 240 ? 242 : 240)) * scale;
+      windowWidth  = (size.width  > 326 ? 384 : (size.width > 320 ? 326 : 320)) * scale;
+      windowHeight = (size.height > 240 ? 288 : 240) * scale;
     } else {
       windowWidth  = 320 * scale;
       windowHeight = 240 * scale;
