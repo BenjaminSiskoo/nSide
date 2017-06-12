@@ -150,8 +150,8 @@ inline auto compress(const uint8_t* source, uint length) -> BitBuffer {
     return hash;
   };
 
-  const uint8_t* top = source + length - MIN_MATCH;
-  while(source < top) {
+  const uint8_t* end = source + length;
+  while(source < end - MIN_MATCH) {
     const uint8_t** bucket = &hashtable[hash(source) & (HASH_SIZE - 1)];
     const uint8_t* subs = *bucket;
     *bucket = source;
@@ -159,14 +159,14 @@ inline auto compress(const uint8_t* source, uint length) -> BitBuffer {
       source += MIN_MATCH;
       const uint8_t* m = subs + MIN_MATCH;
       int matchLength = MIN_MATCH;
-      while(*source == *m && matchLength < MAX_MATCH) source++, m++, matchLength++;
+      while(*source == *m && matchLength < MAX_MATCH && source < end) source++, m++, matchLength++;
       match(buffer, source - matchLength - subs, matchLength);
     } else {
       literal(buffer, *source++);
     }
   }
 
-  while(source < top + MIN_MATCH) literal(buffer, *source++);
+  while(source < end) literal(buffer, *source++);
 
   deflateFinishBlock(buffer);
 

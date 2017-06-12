@@ -183,13 +183,13 @@ auto PPU::refresh() -> void {
 //
 
 auto PPU::extIn() -> uint4 {
-  if( io.masterSelect) return 0;  //always 0 in slave mode
   if(!io.masterSelect) return 0;  //EXT pins are tied to ground
+  if( io.masterSelect) return 0;  //always 0 in slave mode
 }
 
 auto PPU::extOut() -> uint4 {
-  if( io.masterSelect) return _extOut;
   if(!io.masterSelect) return 0;  //does not output anything in master mode
+  if( io.masterSelect) return _extOut;
 }
 
 // Arcade RGB palettes

@@ -14,7 +14,7 @@ auto Z80::power() -> void {
   memory::fill(&r, sizeof(Registers));
   r.hlp = &r.hl;
   bus->request(false);
-  bus->grant(false);
+  bus->grant(true);
 }
 
 auto Z80::reset() -> void {

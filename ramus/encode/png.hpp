@@ -111,7 +111,7 @@ public:
     chunk.name = FourCC::IDAT;
 
     vector<uint8_t> idatData;
-    idatData.reserve((width * bytesPerPixel + bytesPerPixel) * height);
+    idatData.reserve((1 + width * bytesPerPixel) * height);
     for(auto y : range(height)) {
       auto filterType = Filter::Paeth;
       idatData.append((uint8_t)filterType);

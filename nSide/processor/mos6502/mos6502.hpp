@@ -28,7 +28,7 @@ struct MOS6502 {
   auto pull() -> uint8;
 
   //instruction.cpp
-  auto interrupt() -> void;
+  auto interrupt(uint16 vector) -> void;
   auto instruction() -> void;
 
   //instructions.cpp
