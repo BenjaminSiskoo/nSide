@@ -160,6 +160,7 @@ struct PPU : Thread, PPUcounter {
   } l;
 
 privileged:
+//Emulator::Raster raster;
   uint32* output = nullptr;
 
   uint4 _extOut;

@@ -3,6 +3,7 @@
 
 namespace Emulator {
 
+//#include "raster.cpp"
 #include "sprite.cpp"
 Video video;
 
@@ -28,6 +29,11 @@ auto Video::reset() -> void {
 
 auto Video::setInterface(Interface* interface) -> void {
   this->interface = interface;
+//if(interface) {
+//  uint width  = interface->videoResolution().width;
+//  uint height = interface->videoResolution().height;
+//  resize(width, height);
+//}
 }
 
 auto Video::setPalette() -> void {

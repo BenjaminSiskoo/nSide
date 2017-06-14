@@ -116,6 +116,10 @@ auto PPU::reset() -> void {
   create(Enter, system.colorburst() * 6.0);
   PPUcounter::reset();
   memory::fill(output, 256 * 240 * sizeof(uint32));
+  
+//uint originX = (Model::VSSystem() && vssystem.gameCount == 2) ? side * 256 : 0;
+//uint originY = Model::PlayChoice10() ? (playchoice10.screenConfig - 1) * 224 : 0;
+//raster = Emulator::Raster(originX, originY, 256, 240);
 
   function<auto (uint16, uint8) -> uint8> reader{&PPU::readIO, this};
   function<auto (uint16, uint8) -> void> writer{&PPU::writeIO, this};

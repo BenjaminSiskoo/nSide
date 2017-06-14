@@ -1,6 +1,6 @@
 ﻿nSide v009r12 (2017-01-19)
 
-A fork of higan v100 by byuu (http://byuu.org/emulation/higan/), which was
+A fork of higan v102 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
 
 nSide adds new devices to the Famicom emulator's controller ports. The supported
@@ -33,17 +33,15 @@ including ones that use the NES Four Score such as A Nightmare on Elm Street. If
 the expansion slot is set to Gamepad, JoyPair, or 4-Players Adaptor, this can
 result in controller inputs meant for Player 3 controlling Player 1 as well.
 
-The Export Memory functions for the Famicom and Super Famicom emulators now
-export a limited selection of PPU registers in BML format and expansion chip
-memory (except for the NEC DSPs). The Game Boy and Game Boy Advance emulators
-will also dump their RAMs but not registers.
-(This function was removed in higan v094r06. Preserved in nSide for the benefit
-of 3rd-party tools that depend on it)
+The interface also has a Save Screenshot function, which can save a screenshot
+in PNG format at any time while a game is running. Please be aware that the PNG
+compression is somewhat poor.
 
 nSide uses different directories for storing configuration settings, save
-states, and shaders so as to not conflict with higan. However, nSide will import
+states, and shaders so as not to conflict with higan. However, nSide will import
 higan's settings upon first load.
-In Windows, the configuration files are in "%LocalAppData%\nSide".
+In Linux or BSD, the configuration files will be in "~/.local/share/nSide/".
+In Windows, the configuration files will be in "%LocalAppData%\nSide\".
 
 You will need the GBA BIOS to play Game Boy Advance games. This is no different
 from higan.
@@ -100,9 +98,6 @@ Super Famicom:
   in existence will be able to run.
   All official SA-1 games will work, but homebrew writers are advised to use
   flash cartridges on their actual Super Famicoms or SNESes instead.
-  *Magical Drop (JPN) (1.0) does not play voice effects, and it hangs when
-  trying to show the Game Over screen in Endless Mode (とことんモード).
-  Known to affect actual hardware.
   *Super Bonk's demo sequence is mis-timed. Bonk falls short of entering a pipe,
   which ruins the rest of the demo as he continues reading inputs and gets stuck
   in the area above the pipe.
@@ -112,6 +107,7 @@ Master System:
   *Many, many bugs. This core is still in alpha.
 
 Mega Drive:
+  *Super Street Fighter II: The New Challengers has missing sprites.
   *Many, many bugs. This core is still in alpha.
 
 PC Engine:
@@ -125,12 +121,8 @@ Game Boy:
   Inherited from higan v094.
 
 Game Boy Advance:
-  *The Classic NES Series games will not work. Loading them would cause higan
-  to hang, and so too do they cause nSide to hang.
-  There is still much to know about the Game Boy Advance's inner workings, so
-  it is recommended that you either use mGBA (by endrift) to play these games,
-  or play the original Famicom/NES versions instead.
-  Inherited from higan v095.
+  *The audio in many games is lacking. There is still much to know about how the
+  Game Boy Advance generates audio.
 
 Game Gear:
   *Many, many bugs. This core is still in alpha.
@@ -154,10 +146,10 @@ PlayChoice-10:
 Changes from higan: General
 ===========================
    Changed "higan" to "nSide" and added a Contributors field on the
-  Configuration Settings Advanced tab and Cocoa About box. This list has 34
-  names of people who contributed to higan (and whose contributions appear in
-  nSide), but there may still be more that I am missing, so let me know on
-  byuu's forums if you or someone else needs to be credited.
+  Configuration Settings Advanced tab and Cocoa About box. This list has
+  multiple names of people who contributed to higan (and whose contributions
+  appear in nSide), but there may still be more that I am missing, so let me
+  know on byuu's forums if you or someone else needs to be credited.
 
    Reformatted the "About" text to show contributors to higan and show which
   program nSide branched from.
@@ -387,9 +379,9 @@ Changes from higan: Famicom
   Panel device, the VS. Panel. The VS. Panel also controls the service button
   and coin slots. It is connected automatically and cannot be disconnected.
    VS. games are stored in a separate "VS. System" folder in the library. The
-  VS. manifest format selects the PPU revision in "cartridge/vs/ppu/revision"
+  VS. manifest format selects the PPU revision in "side/ppu/revision"
   and specifies DIP switch settings in the same format as the Nintendo Super
-  System's DIP switch settings ("cartridge/vs/setting/option/value").
+  System's DIP switch settings ("side/setting/option/value").
 
    Added support for loading games with the .pc10 extension.
   The PlayChoice-10 loads the BIOS from the PlayChoice-10.sys folder and throws
@@ -418,7 +410,7 @@ Changes from higan: processor/r6502 (affects Famicom)
   NOP #imm now advances the program counter properly, fixing Puzznic's columns
   of corruption bug.
    Added support for the unofficial opcodes ALR, ANC, AXS, DCP, ISC (ISB), LAX,
-  RLA, RRA, SAX, SHA, SHX, SHY, SLO, SRE, and STP (KIL).
+  LXA, RLA, RRA, SAX, SHA, SHX, SHY, SLO, SRE, STP (KIL), and XAA (ANE).
 
 =================================
 Changes from higan: Super Famicom
@@ -468,24 +460,12 @@ Changes from higan: Game Boy Advance
   long, the longest of any file dumped by any emulator's exportMemory function).
 
    Added cheat code support. In the Game Boy Advance, it is slightly annoying
-  to use compared to the Famicom, Super Famicom, and Game Boy. A cheat code
+  to use compared to the Famicom, Super Famicom, and Game Boy; a cheat code
   will only take effect if its data width matches the CPU's access width
   exactly (8-bit, 16-bit, or 32-bit).
 
    Added video rotation to support games such as Dr. Mario & Puzzle League.
   This support is emulator-agnostic.
-
-==============================
-Changes from higan: WonderSwan
-==============================
-   Changed video rotation to be emulator-agnostic.
-
-=========================
-Changes from higan: Video
-=========================
-   Added emulator-agnistic video rotation for use with the Game Boy Advance and
-  WonderSwan, activated by a hotkey in the UI. It can support 0°, 90°, 180°,
-  and 270° rotation. While in use, scanline emulation will be disabled.
 
 ============================
 Changes from higan: cart-pal
@@ -518,4 +498,4 @@ Changes from higan: cart-pal
   JALECO-JF-16 (Cosmo Carrier), among other things.
 
 No version of nSide will be called "v010" until the Famicom emulator has proper
-sprite priority evaluation.
+sprite priority evaluation, or until the Atari 2600 is properly emulated.

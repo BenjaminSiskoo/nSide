@@ -74,7 +74,9 @@ auto Cartridge::power() -> void {
 
 auto Cartridge::read(uint24 addr) -> uint16 {
   if(addr.bit(21) && ram.size && ramEnable) {
-    uint16 data = rom.data[addr + 0 & rom.mask] << 8;
+    //Temporarily support 16-bit RAM until icarus/cart-pal can distinguish
+    //between 8-bit and 16-bit RAM
+    uint16 data = ram.data[addr + 0 & ram.mask] << 8;
     return data | ram.data[addr + 1 & ram.mask] << 0;
   } else {
     addr = bank[addr >> 19 & 7] << 19 | (addr & 0x7ffff);
@@ -86,6 +88,9 @@ auto Cartridge::read(uint24 addr) -> uint16 {
 auto Cartridge::write(uint24 addr, uint16 data) -> void {
   //emulating RAM write protect bit breaks some commercial software
   if(addr.bit(21) && ram.size && ramEnable /* && ramWritable */) {
+    //Temporarily support 16-bit RAM until icarus/cart-pal can distinguish
+    //between 8-bit and 16-bit RAM
+    ram.data[addr + 0 & ram.mask] = data >> 8;
     ram.data[addr + 1 & ram.mask] = data >> 0;
   }
 }

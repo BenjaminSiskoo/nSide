@@ -12,6 +12,7 @@
 // Dr. Decapitator   (DSP-1,2,3,4, ST-010,011 ROM dumps)
 // FirebrandX
 // FitzRoy
+// ilari             (Super Famicom CPU MDR tests)
 // GIGO
 // Jonas Quinn       (DSP fixes, Game Boy fixes)
 // kode54
@@ -21,10 +22,12 @@
 // Nach
 // neviksti          (SPC7110 decompression algorithm)
 // Overload          (Cx4 data ROM dump)
+// p4plus2           (Super Famicom CPU MDR tests)
 // RedDwarf
 // Richard Bannister
 // segher            (Cx4 reverse engineering)
 // tetsuo55
+// Total             (Super Famicom CPU MDR tests)
 // TRAC
 // zones
 // hex_usr           (exportMemory PPU register/expansion chip support, Super Scope turbo cursor)

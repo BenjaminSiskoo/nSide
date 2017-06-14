@@ -1,3 +1,27 @@
+enum : uint {
+  OPTYPE_DP = 0,    //dp
+  OPTYPE_DPX,       //dp,x
+  OPTYPE_DPY,       //dp,y
+  OPTYPE_IDP,       //(dp)
+  OPTYPE_IDPX,      //(dp,x)
+  OPTYPE_IDPY,      //(dp),y
+  OPTYPE_ILDP,      //[dp]
+  OPTYPE_ILDPY,     //[dp],y
+  OPTYPE_ADDR,      //addr
+  OPTYPE_ADDRX,     //addr,x
+  OPTYPE_ADDRY,     //addr,y
+  OPTYPE_IADDRX,    //(addr,x)
+  OPTYPE_ILADDR,    //[addr]
+  OPTYPE_LONG,      //long
+  OPTYPE_LONGX,     //long, x
+  OPTYPE_SR,        //sr,s
+  OPTYPE_ISRY,      //(sr,s),y
+  OPTYPE_ADDR_PC,   //pbr:addr
+  OPTYPE_IADDR_PC,  //pbr:(addr)
+  OPTYPE_RELB,      //relb
+  OPTYPE_RELW,      //relw
+};
+
 auto WDC65816::dreadb(uint24 addr) -> uint8 {
   if((addr & 0x40ffff) >= 0x2000 && (addr & 0x40ffff) <= 0x5fff) {
     //$00-3f|80-bf:2000-5fff
@@ -27,33 +51,33 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
 
   switch(mode) {
   case OPTYPE_DP:
-    a = (r.d + (arg & 0xffff)) & 0xffff;
+    a = (r.d.w + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_DPX:
-    a = (r.d + r.x + (arg & 0xffff)) & 0xffff;
+    a = (r.d.w + r.x.w + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_DPY:
-    a = (r.d + r.y + (arg & 0xffff)) & 0xffff;
+    a = (r.d.w + r.y.w + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_IDP:
-    arg = (r.d + (arg & 0xffff)) & 0xffff;
+    arg = (r.d.w + (arg & 0xffff)) & 0xffff;
     a = (r.db << 16) + dreadw(arg);
     break;
   case OPTYPE_IDPX:
-    arg = (r.d + r.x + (arg & 0xffff)) & 0xffff;
+    arg = (r.d.w + r.x.w + (arg & 0xffff)) & 0xffff;
     a = (r.db << 16) + dreadw(arg);
     break;
   case OPTYPE_IDPY:
-    arg = (r.d + (arg & 0xffff)) & 0xffff;
-    a = (r.db << 16) + dreadw(arg) + r.y;
+    arg = (r.d.w + (arg & 0xffff)) & 0xffff;
+    a = (r.db << 16) + dreadw(arg) + r.y.w;
     break;
   case OPTYPE_ILDP:
-    arg = (r.d + (arg & 0xffff)) & 0xffff;
+    arg = (r.d.w + (arg & 0xffff)) & 0xffff;
     a = dreadl(arg);
     break;
   case OPTYPE_ILDPY:
-    arg = (r.d + (arg & 0xffff)) & 0xffff;
-    a = dreadl(arg) + r.y;
+    arg = (r.d.w + (arg & 0xffff)) & 0xffff;
+    a = dreadl(arg) + r.y.w;
     break;
   case OPTYPE_ADDR:
     a = (r.db << 16) + (arg & 0xffff);
@@ -62,16 +86,16 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
     a = (addr.bits(23,16) << 16) + (arg & 0xffff);
     break;
   case OPTYPE_ADDRX:
-    a = (r.db << 16) + (arg & 0xffff) + r.x;
+    a = (r.db << 16) + (arg & 0xffff) + r.x.w;
     break;
   case OPTYPE_ADDRY:
-    a = (r.db << 16) + (arg & 0xffff) + r.y;
+    a = (r.db << 16) + (arg & 0xffff) + r.y.w;
     break;
   case OPTYPE_IADDR_PC:
     a = (addr.bits(23,16) << 16) + (arg & 0xffff);
     break;
   case OPTYPE_IADDRX:
-    a = (addr.bits(23,16) << 16) + ((arg + r.x) & 0xffff);
+    a = (addr.bits(23,16) << 16) + ((arg + r.x.w) & 0xffff);
     break;
   case OPTYPE_ILADDR:
     a = arg;
@@ -80,21 +104,21 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
     a = arg;
     break;
   case OPTYPE_LONGX:
-    a = (arg + r.x);
+    a = (arg + r.x.w);
     break;
   case OPTYPE_SR:
-    a = (r.s + (arg & 0xff)) & 0xffff;
+    a = (r.s.w + (arg & 0xff)) & 0xffff;
     break;
   case OPTYPE_ISRY:
-    arg = (r.s + (arg & 0xff)) & 0xffff;
-    a = (r.db << 16) + dreadw(arg) + r.y;
+    arg = (r.s.w + (arg & 0xff)) & 0xffff;
+    a = (r.db << 16) + dreadw(arg) + r.y.w;
     break;
   case OPTYPE_RELB:
-    a  = (addr.bits(23,16) << 16) + ((addr + 2) & 0xffff);
+    a  = (addr.bits(23,16) << 16) + ((addr.bits(15,0) + 2) & 0xffff);
     a += int8(arg);
     break;
   case OPTYPE_RELW:
-    a  = (addr.bits(23,16) << 16) + ((addr + 3) & 0xffff);
+    a  = (addr.bits(23,16) << 16) + ((addr.bits(15,0) + 3) & 0xffff);
     a += (int16)arg;
     break;
   }
@@ -109,9 +133,9 @@ auto WDC65816::disassemble() -> string {
 auto WDC65816::disassemble(uint24 addr, bool e, bool m, bool x) -> string {
   string s;
 
-  Reg24 pc;
+  Long pc;
   pc.d = addr;
-  s = {hex(pc, 6), " "};
+  s = {hex(pc.d, 6), " "};
 
   uint8 op  = dreadb(pc.d); pc.w++;
   uint8 op0 = dreadb(pc.d); pc.w++;

@@ -52,20 +52,32 @@ auto PPU::renderPixel() -> void {
     if(palette == 0 || objectPriority == 0) palette = objectPalette;
   }
 
-  if(version >= Version::RP2C07 && (x < 2 || x >= 254 || vcounter() <= 0)) {
+//const uint offset = side << 9;
+//if(vcounter() == 0 && x == 0) raster.reset();
+//if(x == 0) raster.scanline();
+
+  if(pal() && (x < 2 || x >= 254 || vcounter() <= 0)) {
+  //return raster.pixel(offset + ((io.emphasis << 6) | 0x1d));
     output[vcounter() * 256 + x] = (io.emphasis << 6) | 0x1d;
     return;
-  } else if(!enable()) {
-    if((io.v.addressHi & 0x3f) != 0x3f) palette = extIn();
-    else palette = io.v.addressLo;
+  }
+
+  if(!enable()) {
+    if((io.v.addressHi & 0x3f) != 0x3f) {
+      palette = extIn();
+    } else {
+      palette = io.v.addressLo;
+    }
     _extOut = io.v.addressLo;
   } else {
     if(!palette) palette = extIn();
     _extOut = 0;
   }
   if(!Model::PlayChoice10() || playchoice10.ppuOutput) {
+  //raster.pixel(offset + (io.emphasis << 6 | readCGRAM(palette)));
     output[vcounter() * 256 + x] = io.emphasis << 6 | readCGRAM(palette);
   } else {
+  //raster.pixel(offset + 0x0f);
     output[vcounter() * 256 + x] = 0x0f;
   }
 }

@@ -14,7 +14,7 @@ namespace Emulator {
   static const string Name           = "nSide";
   static const string OriginalName   = "higan";
   static const string Version        = "009.12";
-  static const string FromVersion    = "102.23";
+  static const string FromVersion    = "102.24";
   static const string Author         = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string License        = "GPLv3";
@@ -36,6 +36,7 @@ namespace Emulator {
     "FitzRoy (Famicom, Super Famicom bug-testing)",
     "gekkio (Game Boy STAT IRQ and other fixes)",
     "GIGO",
+    "ilari (Super Famicom CPU MDR tests)",
     "jchadwick (Game Boy Advance fixes)",
     "Jonas Quinn (Super Famicom DSP, Game Boy, Game Boy Advance fixes)",
     "kevtris (Famicom PPU voltage levels)",
@@ -47,11 +48,13 @@ namespace Emulator {
     "Nach (libco: setjmp jmpbuf support)",
     "OV2 (ruby: XAudio2 support)"
     "Overload (Cx4 data ROM dump)",
+    "p4plus2 (Super Famicom CPU MDR tests)",
     "RedDwarf",
     "Richard Bannister",
     "Ryphecha (Famicom APU emulation)",
     "segher (Cx4 reverse engineering)",
     "tetsuo55",
+    "Total (Super Famicom CPU MDR tests)",
     "TRAC",
     "trap15 (WonderSwan information and fixes)",
     "wareya (WASAPI driver)",
@@ -64,7 +67,7 @@ namespace Emulator {
   };
 
   //incremented only when serialization format changes
-  static const string SerializerVersion = "009.12(102r23)";
+  static const string SerializerVersion = "009.12(102r24)";
 
   namespace Constants {
     namespace Colorburst {
