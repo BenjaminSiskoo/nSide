@@ -51,51 +51,51 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
 
   switch(mode) {
   case OPTYPE_DP:
-    a = (r.d.w + (arg & 0xffff)) & 0xffff;
+    a = (r.d + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_DPX:
-    a = (r.d.w + r.x.w + (arg & 0xffff)) & 0xffff;
+    a = (r.d + r.x + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_DPY:
-    a = (r.d.w + r.y.w + (arg & 0xffff)) & 0xffff;
+    a = (r.d + r.y + (arg & 0xffff)) & 0xffff;
     break;
   case OPTYPE_IDP:
-    arg = (r.d.w + (arg & 0xffff)) & 0xffff;
-    a = (r.db << 16) + dreadw(arg);
+    arg = (r.d + (arg & 0xffff)) & 0xffff;
+    a = (r.b << 16) + dreadw(arg);
     break;
   case OPTYPE_IDPX:
-    arg = (r.d.w + r.x.w + (arg & 0xffff)) & 0xffff;
-    a = (r.db << 16) + dreadw(arg);
+    arg = (r.d + r.x + (arg & 0xffff)) & 0xffff;
+    a = (r.b << 16) + dreadw(arg);
     break;
   case OPTYPE_IDPY:
-    arg = (r.d.w + (arg & 0xffff)) & 0xffff;
-    a = (r.db << 16) + dreadw(arg) + r.y.w;
+    arg = (r.d + (arg & 0xffff)) & 0xffff;
+    a = (r.b << 16) + dreadw(arg) + r.y;
     break;
   case OPTYPE_ILDP:
-    arg = (r.d.w + (arg & 0xffff)) & 0xffff;
+    arg = (r.d + (arg & 0xffff)) & 0xffff;
     a = dreadl(arg);
     break;
   case OPTYPE_ILDPY:
-    arg = (r.d.w + (arg & 0xffff)) & 0xffff;
-    a = dreadl(arg) + r.y.w;
+    arg = (r.d + (arg & 0xffff)) & 0xffff;
+    a = dreadl(arg) + r.y;
     break;
   case OPTYPE_ADDR:
-    a = (r.db << 16) + (arg & 0xffff);
+    a = (r.b << 16) + (arg & 0xffff);
     break;
   case OPTYPE_ADDR_PC:
-    a = (addr.bits(23,16) << 16) + (arg & 0xffff);
+    a = (addr & 0xff0000) + (arg & 0xffff);
     break;
   case OPTYPE_ADDRX:
-    a = (r.db << 16) + (arg & 0xffff) + r.x.w;
+    a = (r.b << 16) + (arg & 0xffff) + r.x;
     break;
   case OPTYPE_ADDRY:
-    a = (r.db << 16) + (arg & 0xffff) + r.y.w;
+    a = (r.b << 16) + (arg & 0xffff) + r.y;
     break;
   case OPTYPE_IADDR_PC:
-    a = (addr.bits(23,16) << 16) + (arg & 0xffff);
+    a = (addr & 0xff0000) + (arg & 0xffff);
     break;
   case OPTYPE_IADDRX:
-    a = (addr.bits(23,16) << 16) + ((arg + r.x.w) & 0xffff);
+    a = (addr & 0xff0000) + ((arg + r.x) & 0xffff);
     break;
   case OPTYPE_ILADDR:
     a = arg;
@@ -104,21 +104,21 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
     a = arg;
     break;
   case OPTYPE_LONGX:
-    a = (arg + r.x.w);
+    a = (arg + r.x);
     break;
   case OPTYPE_SR:
-    a = (r.s.w + (arg & 0xff)) & 0xffff;
+    a = (r.s + (arg & 0xff)) & 0xffff;
     break;
   case OPTYPE_ISRY:
-    arg = (r.s.w + (arg & 0xff)) & 0xffff;
-    a = (r.db << 16) + dreadw(arg) + r.y.w;
+    arg = (r.s + (arg & 0xff)) & 0xffff;
+    a = (r.b << 16) + dreadw(arg) + r.y;
     break;
   case OPTYPE_RELB:
-    a  = (addr.bits(23,16) << 16) + ((addr.bits(15,0) + 2) & 0xffff);
+    a  = (addr & 0xff0000) + (((addr & 0xffff) + 2) & 0xffff);
     a += int8(arg);
     break;
   case OPTYPE_RELW:
-    a  = (addr.bits(23,16) << 16) + ((addr.bits(15,0) + 3) & 0xffff);
+    a  = (addr & 0xff0000) + (((addr & 0xffff) + 3) & 0xffff);
     a += (int16)arg;
     break;
   }
@@ -127,20 +127,19 @@ auto WDC65816::decode(uint8 mode, uint24 addr, uint24 arg) -> uint24 {
 }
 
 auto WDC65816::disassemble() -> string {
-  return disassemble(r.pc.d, r.e, r.p.m, r.p.x);
+  return disassemble(r.pc, r.e, r.p.m, r.p.x);
 }
 
 auto WDC65816::disassemble(uint24 addr, bool e, bool m, bool x) -> string {
   string s;
 
-  Long pc;
-  pc.d = addr;
-  s = {hex(pc.d, 6), " "};
+  uint24 pc = addr;
+  s = {hex(pc, 6), " "};
 
-  uint8 op  = dreadb(pc.d); pc.w++;
-  uint8 op0 = dreadb(pc.d); pc.w++;
-  uint8 op1 = dreadb(pc.d); pc.w++;
-  uint8 op2 = dreadb(pc.d);
+  uint8 op  = dreadb(pc); pc.bits(0,15)++;
+  uint8 op0 = dreadb(pc); pc.bits(0,15)++;
+  uint8 op1 = dreadb(pc); pc.bits(0,15)++;
+  uint8 op2 = dreadb(pc);
 
   #define op8  ((op0))
   #define op16 ((op0) | (op1 << 8))
@@ -427,8 +426,8 @@ auto WDC65816::disassemble(uint24 addr, bool e, bool m, bool x) -> string {
   #undef x8
 
   s.append(t, " A:{0} X:{1} Y:{2} S:{3} D:{4} B:{5} ", string_format{
-    hex(r.a.w, 4), hex(r.x.w, 4), hex(r.y.w, 4),
-    hex(r.s.w, 4), hex(r.d.w, 4), hex(r.db,  2)
+    hex(r.a, 4), hex(r.x, 4), hex(r.y, 4),
+    hex(r.s, 4), hex(r.d, 4), hex(r.b, 2)
   });
 
   if(r.e) {

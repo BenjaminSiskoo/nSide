@@ -11,33 +11,22 @@ CPUDebugger::CPUDebugger() {
   setGeometry({128, 128, 384, 260});
 
   layout.setMargin(5);
-  stepInto.setText("Step Into");
-  stepNMI.setText("NMI");
-  stepIRQ.setText("IRQ");
-  autoUpdate.setText("Auto");
-  update.setText("Update");
-  disassembly.setFont(Font().setFamily(Font::Mono));
-  registers.setFont(Font().setFamily(Font::Mono));
-  registers.setText(" ");
-
-  stepInto.onActivate([&] {
+  stepInto.setText("Step Into").onActivate([&] {
     debugger->flags.cpu.stepInto = true;
     debugger->resume();
   });
-
-  stepNMI.onActivate([&] {
+  stepNMI.setText("NMI").onActivate([&] {
     debugger->flags.cpu.nmi = true;
     debugger->resume();
   });
-
-  stepIRQ.onActivate([&] {
+  stepIRQ.setText("IRQ").onActivate([&] {
     debugger->flags.cpu.irq = true;
     debugger->resume();
   });
-
-  update.onActivate({ &CPUDebugger::updateDisassembly, this });
-
-  registers.onActivate([&] {
+  autoUpdate.setText("Auto");
+  update.setText("Update").onActivate({ &CPUDebugger::updateDisassembly, this });
+  disassembly.setFont(Font().setFamily(Font::Mono));
+  registers.setFont(Font().setFamily(Font::Mono)).setText(" ").onActivate([&] {
     cpuRegisterEditor->loadRegisters();
     cpuRegisterEditor->setVisible();
   });
@@ -143,8 +132,8 @@ auto CPUDebugger::updateDisassembly() -> void {
 
   disassembly.setText(output);
   registers.setText({
-     "A:", hex(SFC::cpu.r.a.w, 4L), " X:", hex(SFC::cpu.r.x.w, 4L), " Y:", hex(SFC::cpu.r.y.w, 4L),
-    " S:", hex(SFC::cpu.r.s.w, 4L), " D:", hex(SFC::cpu.r.d.w, 4L), " DB:", hex(SFC::cpu.r.db, 2L), " ",
+     "A:", hex(SFC::cpu.r.a, 4L), " X:", hex(SFC::cpu.r.x, 4L), " Y:", hex(SFC::cpu.r.y, 4L),
+    " S:", hex(SFC::cpu.r.s, 4L), " D:", hex(SFC::cpu.r.d, 4L), " B:", hex(SFC::cpu.r.b, 2L), " ",
     SFC::cpu.r.p.n ? "N" : "n", SFC::cpu.r.p.v ? "V" : "v",
     SFC::cpu.r.e ? (SFC::cpu.r.p.m ? "1" : "0") : (SFC::cpu.r.p.m ? "M" : "m"),
     SFC::cpu.r.e ? (SFC::cpu.r.p.x ? "B" : "b") : (SFC::cpu.r.p.x ? "X" : "x"),

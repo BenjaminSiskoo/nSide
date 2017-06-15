@@ -15,8 +15,8 @@ CPURegisterEditor::CPURegisterEditor() {
   regSValue.setFont(Font().setFamily(Font::Mono));
   regDLabel.setText("D:");
   regDValue.setFont(Font().setFamily(Font::Mono));
-  regDBLabel.setText("DB:");
-  regDBValue.setFont(Font().setFamily(Font::Mono));
+  regBLabel.setText("B:");
+  regBValue.setFont(Font().setFamily(Font::Mono));
   flagN.setText("N");
   flagV.setText("V");
   flagM.setText("M");
@@ -26,54 +26,24 @@ CPURegisterEditor::CPURegisterEditor() {
   flagZ.setText("Z");
   flagC.setText("C");
   flagE.setText("E");
-  update.setText("Update");
-
-  loadRegisters();
-
-  layout.append(primaryLayout, {~0, 0}, 5);
-    primaryLayout.append(regALabel, {0, 0}, 5);
-    primaryLayout.append(regAValue, {0, 0}, 5);
-    primaryLayout.append(regXLabel, {0, 0}, 5);
-    primaryLayout.append(regXValue, {0, 0}, 5);
-    primaryLayout.append(regYLabel, {0, 0}, 5);
-    primaryLayout.append(regYValue, {0, 0}, 5);
-    primaryLayout.append(regSLabel, {0, 0}, 5);
-    primaryLayout.append(regSValue, {0, 0}, 5);
-    primaryLayout.append(regDLabel, {0, 0}, 5);
-    primaryLayout.append(regDValue, {0, 0}, 5);
-    primaryLayout.append(regDBLabel, {0, 0}, 5);
-    primaryLayout.append(regDBValue, {0, 0});
-  layout.append(secondaryLayout, {~0, 0}, 5);
-    secondaryLayout.append(flagN, {0, 0}, 5);
-    secondaryLayout.append(flagV, {0, 0}, 5);
-    secondaryLayout.append(flagM, {0, 0}, 5);
-    secondaryLayout.append(flagX, {0, 0}, 5);
-    secondaryLayout.append(flagD, {0, 0}, 5);
-    secondaryLayout.append(flagI, {0, 0}, 5);
-    secondaryLayout.append(flagZ, {0, 0}, 5);
-    secondaryLayout.append(flagC, {0, 0});
-  layout.append(tertiaryLayout, {~0, 0});
-    tertiaryLayout.append(flagE, {0, 0}, 5);
-    tertiaryLayout.append(spacer, {~0, 0});
-    tertiaryLayout.append(update, {80, 0});
-  append(layout);
-
-  update.onActivate([&] {
+  update.setText("Update").onActivate([&] {
     saveRegisters();
     cpuDebugger->updateDisassembly();
     setVisible(false);
   });
 
+  loadRegisters();
+
   setGeometry({{128, 128}, layout.minimumSize()});
 }
 
 void CPURegisterEditor::loadRegisters() {
-  regAValue.setText(hex(SFC::cpu.r.a.w, 4L));
-  regXValue.setText(hex(SFC::cpu.r.x.w, 4L));
-  regYValue.setText(hex(SFC::cpu.r.y.w, 4L));
-  regSValue.setText(hex(SFC::cpu.r.s.w, 4L));
-  regDValue.setText(hex(SFC::cpu.r.d.w, 4L));
-  regDBValue.setText(hex(SFC::cpu.r.db, 2L));
+  regAValue.setText(hex(SFC::cpu.r.a, 4L));
+  regXValue.setText(hex(SFC::cpu.r.x, 4L));
+  regYValue.setText(hex(SFC::cpu.r.y, 4L));
+  regSValue.setText(hex(SFC::cpu.r.s, 4L));
+  regDValue.setText(hex(SFC::cpu.r.d, 4L));
+  regBValue.setText(hex(SFC::cpu.r.b, 2L));
   flagN.setChecked(SFC::cpu.r.p.n);
   flagV.setChecked(SFC::cpu.r.p.v);
   flagM.setChecked(SFC::cpu.r.p.m);
@@ -86,12 +56,12 @@ void CPURegisterEditor::loadRegisters() {
 }
 
 void CPURegisterEditor::saveRegisters() {
-  SFC::cpu.r.a.w = regAValue.text().hex();
-  SFC::cpu.r.x.w = regXValue.text().hex();
-  SFC::cpu.r.y.w = regYValue.text().hex();
-  SFC::cpu.r.s.w = regSValue.text().hex();
-  SFC::cpu.r.d.w = regDValue.text().hex();
-  SFC::cpu.r.db = regDBValue.text().hex();
+  SFC::cpu.r.a = regAValue.text().hex();
+  SFC::cpu.r.x = regXValue.text().hex();
+  SFC::cpu.r.y = regYValue.text().hex();
+  SFC::cpu.r.s = regSValue.text().hex();
+  SFC::cpu.r.d = regDValue.text().hex();
+  SFC::cpu.r.b = regBValue.text().hex();
   SFC::cpu.r.p.n = flagN.checked();
   SFC::cpu.r.p.v = flagV.checked();
   SFC::cpu.r.p.m = flagM.checked();
