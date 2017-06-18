@@ -27,40 +27,42 @@ struct MOS6502 {
   auto push(uint8 data) -> void;
   auto pull() -> uint8;
 
+  //algorithms.cpp
+  using fp = auto (MOS6502::*)(uint8) -> uint8;
+  auto algorithmADC(uint8) -> uint8;
+  auto algorithmAND(uint8) -> uint8;
+  auto algorithmASL(uint8) -> uint8;
+  auto algorithmBIT(uint8) -> uint8;
+  auto algorithmCMP(uint8) -> uint8;
+  auto algorithmCPX(uint8) -> uint8;
+  auto algorithmCPY(uint8) -> uint8;
+  auto algorithmDEC(uint8) -> uint8;
+  auto algorithmEOR(uint8) -> uint8;
+  auto algorithmINC(uint8) -> uint8;
+  auto algorithmLD (uint8) -> uint8;
+  auto algorithmLSR(uint8) -> uint8;
+  auto algorithmORA(uint8) -> uint8;
+  auto algorithmROL(uint8) -> uint8;
+  auto algorithmROR(uint8) -> uint8;
+  auto algorithmSBC(uint8) -> uint8;
+
+  auto algorithmALR(uint8) -> uint8;
+  auto algorithmANC(uint8) -> uint8;
+  auto algorithmARR(uint8) -> uint8;
+  auto algorithmAXS(uint8) -> uint8;
+  auto algorithmDCP(uint8) -> uint8;
+  auto algorithmISC(uint8) -> uint8;
+  auto algorithmRLA(uint8) -> uint8;
+  auto algorithmRRA(uint8) -> uint8;
+  auto algorithmSLO(uint8) -> uint8;
+  auto algorithmSRE(uint8) -> uint8;
+  auto algorithmXAA(uint8) -> uint8;
+
   //instruction.cpp
   auto interrupt() -> void;
   auto instruction() -> void;
 
   //instructions.cpp
-  using fp = auto (MOS6502::*)(uint8) -> uint8;
-  auto ADC(uint8) -> uint8;
-  auto AND(uint8) -> uint8;
-  auto ASL(uint8) -> uint8;
-  auto BIT(uint8) -> uint8;
-  auto CMP(uint8) -> uint8;
-  auto CPX(uint8) -> uint8;
-  auto CPY(uint8) -> uint8;
-  auto DEC(uint8) -> uint8;
-  auto EOR(uint8) -> uint8;
-  auto INC(uint8) -> uint8;
-  auto LD (uint8) -> uint8;
-  auto LSR(uint8) -> uint8;
-  auto ORA(uint8) -> uint8;
-  auto ROL(uint8) -> uint8;
-  auto ROR(uint8) -> uint8;
-  auto SBC(uint8) -> uint8;
-
-  auto ALR(uint8) -> uint8;
-  auto ANC(uint8) -> uint8;
-  auto ARR(uint8) -> uint8;
-  auto AXS(uint8) -> uint8;
-  auto DCP(uint8) -> uint8;
-  auto ISC(uint8) -> uint8;
-  auto RLA(uint8) -> uint8;
-  auto RRA(uint8) -> uint8;
-  auto SLO(uint8) -> uint8;
-  auto SRE(uint8) -> uint8;
-  auto XAA(uint8) -> uint8;
 
   auto instructionAbsoluteModify(fp alu) -> void;
   auto instructionAbsoluteModify(fp alu, uint8 index) -> void;

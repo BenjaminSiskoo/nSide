@@ -144,11 +144,11 @@ auto SPC700::op_set_addr_bit() {
   case 0:  //orc  addr:bit
   case 1:  //orc !addr:bit
     idle();
-    regs.p.c |= (rd & (1 << bit)) ^ (bool)(opcode & 0x20);
+    regs.p.c |= (bool)(rd & (1 << bit)) ^ (bool)(opcode & 0x20);
     break;
   case 2:  //and  addr:bit
   case 3:  //and !addr:bit
-    regs.p.c &= (rd & (1 << bit)) ^ (bool)(opcode & 0x20);
+    regs.p.c &= (bool)(rd & (1 << bit)) ^ (bool)(opcode & 0x20);
     break;
   case 4:  //eor  addr:bit
     idle();
