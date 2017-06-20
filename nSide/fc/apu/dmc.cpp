@@ -63,8 +63,7 @@ auto APU::DMC::clock() -> uint8 {
       }
     }
 
-    if(system.region() != System::Region::PAL) periodCounter = dmcPeriodTableNTSC[period];
-    else                                       periodCounter = dmcPeriodTablePAL[period];
+    periodCounter = !Region::PAL() ? dmcPeriodTableNTSC[period] : dmcPeriodTablePAL[period];
   }
 
   if(lengthCounter > 0 && !dmaBufferValid && dmaDelayCounter == 0) {
@@ -83,8 +82,7 @@ auto APU::DMC::reset() -> void {
   irqPending = 0;
 
   period = 0;
-  if(system.region() != System::Region::PAL) periodCounter = dmcPeriodTableNTSC[0];
-  else                                       periodCounter = dmcPeriodTablePAL[0];
+  periodCounter = !Region::PAL() ? dmcPeriodTableNTSC[0] : dmcPeriodTablePAL[0];
   irqEnable = 0;
   loopMode = 0;
   dacLatch = 0;

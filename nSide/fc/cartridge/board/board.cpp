@@ -83,11 +83,9 @@ auto Board::main() -> void {
 }
 
 auto Board::tick() -> void {
-  switch(system.region()) {
-  case System::Region::NTSC:  cartridgeSlot[slot].step(12); break;
-  case System::Region::PAL:   cartridgeSlot[slot].step(16); break;
-  case System::Region::Dendy: cartridgeSlot[slot].step(15); break;
-  }
+  if(Region::NTSC ()) cartridgeSlot[slot].step(12);
+  if(Region::PAL  ()) cartridgeSlot[slot].step(16);
+  if(Region::Dendy()) cartridgeSlot[slot].step(15);
   cartridgeSlot[slot].synchronize(cpu);
 }
 

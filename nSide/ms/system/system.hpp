@@ -1,6 +1,6 @@
 struct System {
   enum class Model : uint { SG1000, MasterSystem, GameGear };
-  enum class Region : uint { NTSC = 0, PAL = 1 };
+  enum class Region : uint { NTSC, PAL };
 
   auto loaded() const -> bool { return information.loaded; }
   auto model() const -> Model { return information.model; }
@@ -30,8 +30,8 @@ private:
     bool loaded = false;
     Model model = Model::SG1000;
     Region region = Region::NTSC;
+    double colorburst = Emulator::Constants::Colorburst::NTSC;
     string manifest;
-    double colorburst = 0.0;
     uint serializeSize = 0;
   } information;
 };
@@ -51,3 +51,6 @@ extern Peripherals peripherals;
 auto Model::SG1000() -> bool { return system.model() == System::Model::SG1000; }
 auto Model::MasterSystem() -> bool { return system.model() == System::Model::MasterSystem; }
 auto Model::GameGear() -> bool { return system.model() == System::Model::GameGear; }
+
+auto Region::NTSC() -> bool { return system.region() == System::Region::NTSC; }
+auto Region::PAL() -> bool { return system.region() == System::Region::PAL; }

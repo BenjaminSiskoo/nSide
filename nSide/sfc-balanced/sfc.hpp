@@ -42,6 +42,11 @@ namespace SuperFamicom {
     }
   };
 
+  struct Region {
+    static inline auto NTSC() -> bool;
+    static inline auto PAL() -> bool;
+  };
+
   #include <sfc-balanced/memory/memory.hpp>
   #include <sfc-balanced/ppu/counter/counter.hpp>
 

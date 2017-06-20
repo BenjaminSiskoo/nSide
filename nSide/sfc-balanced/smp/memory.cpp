@@ -14,7 +14,7 @@ auto SMP::readPort(uint2 port) const -> uint8 {
 }
 
 auto SMP::writePort(uint2 port, uint8 data) -> void {
-  io.port[port] = dsp.apuram[0xf4 + port] = data;
+  io.port[port] = data;
 }
 
 auto SMP::readBus(uint16 addr) -> uint8 {

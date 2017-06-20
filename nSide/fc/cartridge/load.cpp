@@ -1,9 +1,11 @@
 auto Cartridge::loadCartridge(Markup::Node node) -> void {
   information.title.cartridge = node["information/title"].text();
   auto boardNode = node["board"];
-  if(boardNode["region"].text() == "ntsc")  information.region = Region::NTSC;
-  if(boardNode["region"].text() == "pal")   information.region = Region::PAL;
-  if(boardNode["region"].text() == "dendy") information.region = Region::Dendy;
+  if(!region() || region() == "Auto") {
+    if(boardNode["region"].text() == "ntsc") information.region = "NTSC";
+    if(boardNode["region"].text() == "pal") information.region = "PAL";
+    if(boardNode["region"].text() == "dendy") information.region = "Dendy";
+  }
 
   if(Model::VSSystem()) setupVS(node, boardNode);
 

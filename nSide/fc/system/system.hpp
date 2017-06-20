@@ -8,7 +8,7 @@ struct System {
     FamicomBox,
   };
 
-  enum class Region : uint { NTSC = 0, PAL = 1, Dendy = 2 };
+  enum class Region : uint { NTSC, PAL, Dendy };
 
   inline auto loaded() const -> bool { return information.loaded; }
   inline auto model() const -> Model { return information.model; }
@@ -40,7 +40,7 @@ private:
     bool loaded = false;
     Model model = Model::Famicom;
     Region region = Region::NTSC;
-    double colorburst = 0.0;
+    double colorburst = Emulator::Constants::Colorburst::NTSC;
   } information;
 
   uint serializeSize = 0;
@@ -79,3 +79,7 @@ auto Model::Famicom() -> bool { return system.model() == System::Model::Famicom;
 auto Model::VSSystem() -> bool { return system.model() == System::Model::VSSystem; }
 auto Model::PlayChoice10() -> bool { return system.model() == System::Model::PlayChoice10; }
 auto Model::FamicomBox() -> bool { return system.model() == System::Model::FamicomBox; }
+
+auto Region::NTSC() -> bool { return system.region() == System::Region::NTSC; }
+auto Region::PAL() -> bool { return system.region() == System::Region::PAL; }
+auto Region::Dendy() -> bool { return system.region() == System::Region::Dendy; }

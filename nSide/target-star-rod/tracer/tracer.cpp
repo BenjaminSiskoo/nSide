@@ -43,11 +43,13 @@ auto Tracer::enable(bool state) -> void {
     return;
   }
 
+  directory::create({program->mediumPaths(1), "debug/"});
+
   //try not to overwrite existing traces: scan from 001-999.
   //if all files exist, use 000, even if it overwrites another log.
   uint n = 1;
   do {
-    if(file::exists({program->mediumPaths(1), "debug/trace-", pad(n, 3L, '0'), ".log"}) == false) break;
+    if(!file::exists({program->mediumPaths(1), "debug/trace-", pad(n, 3L, '0'), ".log"})) break;
   } while(++n <= 999);
 
   string filename = {program->mediumPaths(1), "debug/trace-", pad(n, 3L, '0'), ".log"};

@@ -58,6 +58,9 @@ auto SMP::power() -> void {
   //$00f2
   io.dspAddr = 0x00;
 
+  //$00f4-$00f7
+  for(auto& byte : io.port) byte = 0x00;
+
   //$00f8,$00f9
   io.ram00f8 = 0x00;
   io.ram00f9 = 0x00;

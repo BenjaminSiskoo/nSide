@@ -7,7 +7,7 @@ struct Program : Emulator::Platform {
   //interface.cpp
   auto path(uint id) -> string override;
   auto open(uint id, string name, vfs::file::mode mode, bool required) -> vfs::shared::file override;
-  auto load(uint id, string name, string type) -> maybe<uint> override;
+  auto load(uint id, string name, string type, string_vector options = {}) -> Emulator::Platform::Load override;
   auto videoRefresh(const uint32* data, uint pitch, uint width, uint height) -> void override;
   auto audioSample(const double* samples, uint channels) -> void override;
   auto inputPoll(uint port, uint device, uint input) -> int16 override;
@@ -28,8 +28,8 @@ struct Program : Emulator::Platform {
 
   //utility.cpp
   auto powerCycle() -> void;
+  auto rotateDisplay() -> void;
   auto connectDevices() -> void;
-  auto rotate() -> void;
   auto showMessage(const string& text) -> void;
   auto updateVideoPalette() -> void;
   auto updateVideoShader() -> void;

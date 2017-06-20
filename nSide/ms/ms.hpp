@@ -36,6 +36,11 @@ namespace MasterSystem {
     inline static auto GameGear() -> bool;
   };
 
+  struct Region {
+    inline static auto NTSC() -> bool;
+    inline static auto PAL() -> bool;
+  };
+
   #include <ms/controller/controller.hpp>
 
   #include <ms/cpu/cpu.hpp>

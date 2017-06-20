@@ -3,7 +3,16 @@ unique_pointer<BreakpointEditor> breakpointEditor;
 
 BreakpointEntry::BreakpointEntry() {
   static uint id = 1;
-  enable.setText({ "#", id++ });
+
+  enable.setText({ "#", id++ }).onToggle([&] {
+    bool flag = !enable.checked();
+    addr.setEnabled(flag);
+    data.setEnabled(flag);
+    type.setEnabled(flag);
+    source.setEnabled(flag);
+    breakpointEditor->synchronize();
+  });
+
   addr.setFont(Font().setFamily(Font::Mono));
   data.setFont(Font().setFamily(Font::Mono));
   type.append(ComboButtonItem().setText("Read"));
@@ -14,21 +23,6 @@ BreakpointEntry::BreakpointEntry() {
   source.append(ComboButtonItem().setText("VRAM"));
   source.append(ComboButtonItem().setText("OAM"));
   source.append(ComboButtonItem().setText("CGRAM"));
-
-  append(enable, {0, 0}, 5);
-  append(addr, {50, 0}, 5);
-  append(data, {25, 0}, 5);
-  append(type, {0, 0}, 5);
-  append(source, {0, 0});
-
-  enable.onToggle([&] {
-    bool flag = !enable.checked();
-    addr.setEnabled(flag);
-    data.setEnabled(flag);
-    type.setEnabled(flag);
-    source.setEnabled(flag);
-    breakpointEditor->synchronize();
-  });
 }
 
 BreakpointEditor::BreakpointEditor() {
@@ -36,9 +30,9 @@ BreakpointEditor::BreakpointEditor() {
   setTitle("Breakpoint Editor");
 
   layout.setMargin(5);
-  for(auto &bp : breakpointEntry) layout.append(bp, {0, 0}, 5);
+  for(auto &bp : breakpointEntry) layout.append(bp, {0, 0});
 
-  setGeometry({128, 128, layout.minimumSize().width(), layout.minimumSize().height()});
+  setGeometry({{128, 128}, layout.minimumSize()});
   synchronize();
 }
 

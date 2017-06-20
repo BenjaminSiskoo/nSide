@@ -80,11 +80,9 @@ auto APU::main() -> void {
 }
 
 auto APU::tick() -> void {
-  switch(system.region()) {
-  case System::Region::NTSC:  Thread::step(12); break;
-  case System::Region::PAL:   Thread::step(16); break;
-  case System::Region::Dendy: Thread::step(15); break;
-  }
+  if(Region::NTSC ()) Thread::step(12);
+  if(Region::PAL  ()) Thread::step(16);
+  if(Region::Dendy()) Thread::step(15);
   synchronize(cpu);
 }
 
@@ -129,11 +127,10 @@ auto APU::load(Markup::Node node) -> bool {
 
 auto APU::power() -> void {
   double clockDivider;
-  switch(system.region()) {
-  case System::Region::NTSC:  clockDivider = 12.0; break;
-  case System::Region::PAL:   clockDivider = 16.0; break;
-  case System::Region::Dendy: clockDivider = 15.0; break;
-  }
+  if(Region::NTSC ()) clockDivider = 12.0;
+  if(Region::PAL  ()) clockDivider = 16.0;
+  if(Region::Dendy()) clockDivider = 15.0;
+
   if(!Model::VSSystem() || vssystem.gameCount != 2 || side == 0) {
     stream = Emulator::audio.createStream(1, (system.colorburst() * 6.0) / clockDivider);
     stream->addLowPassFilter(20000.0, 3);
@@ -327,7 +324,7 @@ auto APU::writeIO(uint16 addr, uint8 data) -> void {
       frame.irqPending = false;
       setIRQ();
     }
-    frame.divider = system.region() != System::Region::PAL ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
+    frame.divider = !Region::PAL() ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
     return;
   }
 

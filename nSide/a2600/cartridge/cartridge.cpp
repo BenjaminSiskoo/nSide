@@ -8,8 +8,9 @@ Cartridge cartridge;
 auto Cartridge::load() -> bool {
   information = Information();
 
-  if(auto pathID = platform->load(ID::Atari2600, "Atari 2600", "a26")) {
-    information.pathID = pathID();
+  if(auto loaded = platform->load(ID::Atari2600, "Atari 2600", "a26", {"Auto", "NTSC", "PAL"})) {
+    information.pathID = loaded.pathID();
+    information.region = loaded.option();
   } else return false;
 
   if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {
@@ -18,9 +19,12 @@ auto Cartridge::load() -> bool {
 
   auto document = BML::unserialize(information.manifest);
   information.title = document["information/title"].text();
-  if(document["board/region"].text() == "ntsc")  information.region = Region::NTSC;
-  if(document["board/region"].text() == "pal")   information.region = Region::PAL;
-  if(document["board/region"].text() == "secam") information.region = Region::SECAM;
+
+  if(!region() || region() == "Auto") {
+    if(document["board/region"].text() == "ntsc") information.region = "NTSC";
+    if(document["board/region"].text() == "pal") information.region = "PAL";
+    if(document["board/region"].text() == "secam") information.region = "SECAM";
+  }
 
   if(auto node = document["board/rom"]) {
     rom.size = node["size"].natural();

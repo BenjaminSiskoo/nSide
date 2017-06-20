@@ -10,20 +10,22 @@ auto Cartridge::load() -> bool {
   information = {};
 
   if(Model::SG1000()) {
-    if(auto pathID = platform->load(ID::SG1000, "SG-1000", "sg")) {
-      information.pathID = pathID();
+    if(auto loaded = platform->load(ID::SG1000, "SG-1000", "sg", {"NTSC", "PAL"})) {
+      information.pathID = loaded.pathID();
+      information.region = loaded.option();
     } else return false;
   }
 
   if(Model::MasterSystem()) {
-    if(auto pathID = platform->load(ID::MasterSystem, "Master System", "ms")) {
-      information.pathID = pathID();
+    if(auto loaded = platform->load(ID::MasterSystem, "Master System", "ms", {"NTSC", "PAL"})) {
+      information.pathID = loaded.pathID();
+      information.region = loaded.option();
     } else return false;
   }
 
   if(Model::GameGear()) {
-    if(auto pathID = platform->load(ID::GameGear, "Game Gear", "gg")) {
-      information.pathID = pathID();
+    if(auto loaded = platform->load(ID::GameGear, "Game Gear", "gg")) {
+      information.pathID = loaded.pathID();
     } else return false;
   }
 

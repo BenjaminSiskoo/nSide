@@ -61,9 +61,9 @@ auto InputManager::appendHotkeys() -> void {
   }
 
   { auto hotkey = new InputHotkey;
-    hotkey->name = "Rotate";
+    hotkey->name = "Rotate Display";
     hotkey->press = [] {
-      program->rotate();
+      program->rotateDisplay();
     };
     hotkeys.append(hotkey);
   }

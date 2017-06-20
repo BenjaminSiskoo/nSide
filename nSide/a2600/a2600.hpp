@@ -32,6 +32,12 @@ namespace Atari2600 {
     }
   };
 
+  struct Region {
+    static inline auto NTSC() -> bool;
+    static inline auto PAL() -> bool;
+    static inline auto SECAM() -> bool;
+  };
+
   #include <a2600/controller/controller.hpp>
 
   #include <a2600/cpu/cpu.hpp>

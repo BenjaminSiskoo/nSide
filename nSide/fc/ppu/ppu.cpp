@@ -21,8 +21,8 @@ PPU::~PPU() {
 }
 
 auto PPU::step(uint clocks) -> void {
-  const uint vbl = system.region() != System::Region::Dendy ? 241 : 291;
-  const uint pre = system.region() == System::Region::NTSC ? 261 : 311;
+  const uint vbl = !Region::Dendy() ? 241 : 291;
+  const uint pre =  Region::NTSC () ? 261 : 311;
 
   while(clocks--) {
     if(vcounter() == vbl - 1 && hcounter() == 340) io.nmiHold = 1;
@@ -64,9 +64,9 @@ auto PPU::load(Markup::Node node) -> bool {
 
   string versionString;
   if(Model::Famicom()) {
-    if(system.region() == System::Region::NTSC)  versionString = node["ppu/ntsc-version"].text();
-    if(system.region() == System::Region::PAL)   versionString = node["ppu/pal-version"].text();
-    if(system.region() == System::Region::Dendy) versionString = node["ppu/dendy-version"].text();
+    if(Region::NTSC ()) versionString = node["ppu/ntsc-version"].text();
+    if(Region::PAL  ()) versionString = node["ppu/pal-version"].text();
+    if(Region::Dendy()) versionString = node["ppu/dendy-version"].text();
   } else {
     versionString = node["ppu/version"].text();
   }

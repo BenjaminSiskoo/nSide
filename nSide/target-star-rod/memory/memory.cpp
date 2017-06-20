@@ -6,35 +6,25 @@ MemoryEditor::MemoryEditor() {
   setTitle("Memory Editor");
   setGeometry({128, 128, 585, 235});
 
+  layout.setMargin(5);
   gotoLabel.setText("Goto:");
-  gotoAddress.setFont(Font().setFamily(Font::Mono));
+  gotoAddress.setFont(Font().setFamily(Font::Mono)).onChange([&] {
+    editor.setAddress(gotoAddress.text().hex());
+    editor.update();
+  }).onActivate([&] {
+    gotoAddress.doChange();
+  });
   source.append(ComboButtonItem().setText("CPU-Bus"));
   source.append(ComboButtonItem().setText("APU-Bus"));
   source.append(ComboButtonItem().setText("VRAM"));
   source.append(ComboButtonItem().setText("OAM"));
   source.append(ComboButtonItem().setText("CGRAM"));
-  exportMemory.setText("Export");
-  autoUpdate.setText("Auto");
-  update.setText("Update");
-  editor.setFont(Font().setFamily(Font::Mono));
-  editor.setColumns(16);
-  editor.setRows(16);
-
-  layout.setMargin(5);
-
-  gotoAddress.onChange([&] {
-    editor.setAddress(gotoAddress.text().hex());
-    editor.update();
-  });
-
-  gotoAddress.onActivate([&] {
-    gotoAddress.doChange();
-  });
-
-  update.onActivate({ &MemoryEditor::updateView, this });
-
   source.onChange({ &MemoryEditor::selectSource, this });
-  exportMemory.onActivate({ &MemoryEditor::exportMemoryToDisk, this });
+  exportMemory.setText("Export").onActivate({ &MemoryEditor::exportMemoryToDisk, this });
+  autoUpdate.setText("Auto");
+  update.setText("Update").onActivate({ &MemoryEditor::updateView, this });
+  editor.setFont(Font().setFamily(Font::Mono));
+  editor.setColumns(16).setRows(16);
   editor.onRead({ &MemoryEditor::read, this });
   editor.onWrite({ &MemoryEditor::write, this });
 }
@@ -58,9 +48,11 @@ auto MemoryEditor::write(uint addr, uint8_t data) -> void {
     SFC::cartridge.rom.writeProtect(false);
     cpuDebugger->write(addr, data);
     SFC::cartridge.rom.writeProtect(true);
+    debugger->cpuUsage.data[addr] = 0;
     break;
   case APU:
     smpDebugger->write(addr, data);
+    debugger->apuUsage.data[addr] = 0;
     break;
   case VRAM:
     SFC::ppu.vram[(addr & 0xffff) >> 1].byte(addr & 1) = data;
@@ -88,6 +80,7 @@ auto MemoryEditor::selectSource() -> void {
 
 auto MemoryEditor::exportMemoryToDisk() -> void {
   string filename = {program->mediumPaths(1), "debug/"};
+  directory::create(filename);
   switch(source.selected().offset()) {
   case CPU:   filename.append("work.ram"); break;
   case APU:   filename.append("apu.ram"); break;

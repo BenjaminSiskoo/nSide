@@ -1,4 +1,4 @@
-void DSP::serialize(serializer& s) {
+auto DSP::serialize(serializer& s) -> void {
   Thread::serialize(s);
 
   s.array(apuram);

@@ -70,20 +70,29 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
     if(!cartridge.load()) break;
     cartridgeSlot.append(cartridge);
   }
-  if(model == Model::FamicomBox)   for(uint slot : range(1, 15)) {
+  if(model == Model::FamicomBox) for(uint slot : range(1, 15)) {
     auto cartridge = Cartridge(slot);
     if(!cartridge.load()) break;
     cartridgeSlot.append(cartridge);
   }
 
-  switch(cartridgeSlot[model == Model::VSSystem].region()) {
-  case Cartridge::Region::NTSC:  information.region = Region::NTSC;  break;
-  case Cartridge::Region::PAL:   information.region = Region::PAL;   break;
-  case Cartridge::Region::Dendy: information.region = Region::Dendy; break;
+  if(model == Model::Famicom) {
+    if(cartridgeSlot[0].region() == "NTSC") {
+      information.region = Region::NTSC;
+      information.colorburst = Emulator::Constants::Colorburst::NTSC;
+    }
+    if(cartridgeSlot[0].region() == "PAL") {
+      information.region = Region::PAL;
+      information.colorburst = Emulator::Constants::Colorburst::PAL;
+    }
+    if(cartridgeSlot[0].region() == "Dendy") {
+      information.region = Region::Dendy;
+      information.colorburst = Emulator::Constants::Colorburst::PAL;
+    }
+  } else {
+    information.region = Region::NTSC;
+    information.colorburst = Emulator::Constants::Colorburst::NTSC;
   }
-  if(system["region"].text() == "NTSC" ) information.region = Region::NTSC;
-  if(system["region"].text() == "PAL"  ) information.region = Region::PAL;
-  if(system["region"].text() == "Dendy") information.region = Region::Dendy;
 
   if(!cpu0.load(system)) return false;
   if(!apu0.load(system)) return false;
@@ -94,10 +103,6 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
     if(!apu1.load(system)) return false;
     if(!ppu1.load(system)) return false;
   }
-
-  information.colorburst = region() == Region::NTSC
-  ? Emulator::Constants::Colorburst::NTSC
-  : Emulator::Constants::Colorburst::PAL;
 
   switch(model) {
 

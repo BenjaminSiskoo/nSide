@@ -2,16 +2,14 @@
 #include "board/board.hpp"
 
 struct Cartridge : Thread {
-  enum class Region : uint { NTSC, PAL, Dendy };
-
   Cartridge(uint slot);
 
   static void Enter();
   void main();
 
   auto pathID() const -> uint { return information.pathID; }
+  auto region() const -> string { return information.region; }
   auto sha256() const -> string { return information.sha256; }
-  auto region() const -> Region { return information.region; }
   auto manifest() const -> string;
   auto title() const -> string;
 
@@ -26,8 +24,8 @@ struct Cartridge : Thread {
 
   struct Information {
     uint pathID = 0;
+    string region;
     string sha256;
-    Region region = Region::NTSC;
 
     struct Manifest {
       string cartridge;

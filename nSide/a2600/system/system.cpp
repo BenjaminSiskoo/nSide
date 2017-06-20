@@ -10,7 +10,7 @@ Cheat cheat;
 #include "serialization.cpp"
 
 auto System::load(Emulator::Interface* interface) -> bool {
-  information = Information();
+  information = {};
 
   if(auto fp = platform->open(ID::System, "manifest.bml", File::Read, File::Required)) {
     information.manifest = fp->reads();
@@ -21,22 +21,22 @@ auto System::load(Emulator::Interface* interface) -> bool {
 
   if(!cartridge.load()) return false;
 
-  switch(cartridge.region()) {
-  case Cartridge::Region::NTSC:  information.region = Region::NTSC;  break;
-  case Cartridge::Region::PAL:   information.region = Region::PAL;   break;
-  case Cartridge::Region::SECAM: information.region = Region::SECAM; break;
+  if(cartridge.region() == "NTSC") {
+    information.region = Region::NTSC;
+    information.colorburst = Emulator::Constants::Colorburst::NTSC;
   }
-  if(system["region"].text() == "NTSC" ) information.region = Region::NTSC;
-  if(system["region"].text() == "PAL"  ) information.region = Region::PAL;
-  if(system["region"].text() == "SECAM") information.region = Region::SECAM;
+  if(cartridge.region() == "PAL") {
+    information.region = Region::PAL;
+    information.colorburst = Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
+  }
+  if(cartridge.region() == "SECAM") {
+    information.region = Region::SECAM;
+    information.colorburst = Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
+  }
 
   if(!cpu.load(system)) return false;
   if(!pia.load(system)) return false;
   if(!tia.load(system)) return false;
-
-  information.colorburst = region() == Region::NTSC
-  ? Emulator::Constants::Colorburst::NTSC
-  : Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
 
   serializeInit();
   this->interface = interface;

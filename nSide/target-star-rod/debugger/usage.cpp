@@ -44,6 +44,8 @@ auto Debugger::loadUsage() -> void {
 }
 
 auto Debugger::saveUsage() -> void {
+  directory::create({program->mediumPaths(1), "debug/"});
+
   string filename;
   filename = {program->mediumPaths(1), "debug/usage.cpu"};
   file::write(filename, cpuUsage.data, cpuUsage.size);

@@ -45,6 +45,12 @@ namespace Famicom {
     inline static auto FamicomBox() -> bool;
   };
 
+  struct Region {
+    static inline auto NTSC() -> bool;
+    static inline auto PAL() -> bool;
+    static inline auto Dendy() -> bool;
+  };
+
   #include <fc/controller/controller.hpp>
   #include <fc/expansion/expansion.hpp>
 

@@ -1,9 +1,7 @@
 struct Cartridge {
-  enum class Region : uint { NTSC, PAL, SECAM };
-
   auto pathID() const -> uint { return information.pathID; }
+  auto region() const -> string { return information.region; }
   auto sha256() const -> string { return information.sha256; }
-  auto region() const -> Region { return information.region; }
   auto manifest() const -> string { return information.manifest; }
   auto title() const -> string { return information.title; }
 
@@ -19,8 +17,8 @@ struct Cartridge {
 
   struct Information {
     uint pathID = 0;
+    string region;
     string sha256;
-    Region region = Region::NTSC;
     string manifest;
     string title;
   } information;

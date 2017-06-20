@@ -1,14 +1,16 @@
 struct BreakpointEntry : HorizontalLayout {
-  CheckLabel enable;
-  LineEdit addr;
-  LineEdit data;
-  ComboButton type;
-  ComboButton source;
-
   BreakpointEntry();
+
+  CheckLabel enable{this, Size{0, 0}};
+  LineEdit addr{this, Size{50, 0}};
+  LineEdit data{this, Size{25, 0}};
+  ComboButton type{this, Size{0, 0}};
+  ComboButton source{this, Size{0, 0}};
 };
 
 struct BreakpointEditor : Window {
+  BreakpointEditor();
+
   VerticalLayout layout{this};
   BreakpointEntry breakpointEntry[8];
 
@@ -53,8 +55,6 @@ struct BreakpointEditor : Window {
 
   auto testReadCGRAM(uint16 addr) -> bool;
   auto testWriteCGRAM(uint16 addr, uint8 data) -> bool;
-
-  BreakpointEditor();
 };
 
 extern unique_pointer<BreakpointEditor> breakpointEditor;
