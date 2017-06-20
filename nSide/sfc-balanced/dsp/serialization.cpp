@@ -9,6 +9,7 @@ static auto dsp_state_load(unsigned char** in, void* out, size_t size) -> void {
 }
 
 auto DSP::serialize(serializer &s) -> void {
+  s.array(apuram);
   s.integer(clock);
   s.array(samplebuffer);
 

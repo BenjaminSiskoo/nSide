@@ -146,11 +146,11 @@ auto MOS6502::algorithmSBC(uint8 i) -> uint8 {
 //
 
 auto MOS6502::algorithmALR(uint8 i) -> uint8 {
-  return LSR(AND(i));
+  return algorithmLSR(algorithmAND(i));
 }
 
 auto MOS6502::algorithmANC(uint8 i) -> uint8 {
-  uint8 o = AND(i);
+  uint8 o = algorithmAND(i);
   C = N;
   return o;
 }
@@ -174,38 +174,38 @@ auto MOS6502::algorithmAXS(uint8 i) -> uint8 {
 }
 
 auto MOS6502::algorithmDCP(uint8 i) -> uint8 {
-  uint8 o = DEC(i);
-  A = CMP(o);
+  uint8 o = algorithmDEC(i);
+  A = algorithmCMP(o);
   return o;
 }
 
 auto MOS6502::algorithmISC(uint8 i) -> uint8 {
-  uint8 o = INC(i);
-  A = SBC(o);
+  uint8 o = algorithmINC(i);
+  A = algorithmSBC(o);
   return o;
 }
 
 auto MOS6502::algorithmRLA(uint8 i) -> uint8 {
-  uint8 o = ROL(i);
-  A = AND(o);
+  uint8 o = algorithmROL(i);
+  A = algorithmAND(o);
   return o;
 }
 
 auto MOS6502::algorithmRRA(uint8 i) -> uint8 {
-  uint8 o = ROR(i);
-  A = ADC(o);
+  uint8 o = algorithmROR(i);
+  A = algorithmADC(o);
   return o;
 }
 
 auto MOS6502::algorithmSLO(uint8 i) -> uint8 {
-  uint8 o = ASL(i);
-  A = ORA(o);
+  uint8 o = algorithmASL(i);
+  A = algorithmORA(o);
   return o;
 }
 
 auto MOS6502::algorithmSRE(uint8 i) -> uint8 {
-  uint8 o = LSR(i);
-  A = EOR(o);
+  uint8 o = algorithmLSR(i);
+  A = algorithmEOR(o);
   return o;
 }
 

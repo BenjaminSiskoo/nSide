@@ -75,7 +75,7 @@ auto Debugger::cpu_irq() -> void {
 
 auto Debugger::smp_execute(uint16 addr) -> void {
   apuUsage.data[addr] |= Usage::Exec;
-  if(SFC::smp.regs.p.p) apuUsage.data[addr] |= Usage::P;
+  if(SFC::smp.r.p.p) apuUsage.data[addr] |= Usage::P;
   smpDebugger->opcodePC = addr;
   bool breakpointHit = breakpointEditor->testExecSMP(addr);
 
@@ -84,7 +84,7 @@ auto Debugger::smp_execute(uint16 addr) -> void {
   || flags.smp.stepInto
   || breakpointHit
   ) {
-    string text = SFC::smp.disassemble(addr, SFC::smp.regs.p.p);
+    string text = SFC::smp.disassemble(addr, SFC::smp.r.p.p);
 
     if(debug.smp && tracer->enabled()) tracer->print(text, "\n");
     if((debug.smp && flags.step) || flags.smp.stepInto || breakpointHit) {
@@ -107,7 +107,7 @@ auto Debugger::smp_read(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testReadSMP(addr);
 
   if(breakpointHit) {
-    print(SFC::smp.disassemble(smpDebugger->opcodePC, SFC::smp.regs.p.p), "\n");
+    print(SFC::smp.disassemble(smpDebugger->opcodePC, SFC::smp.r.p.p), "\n");
     suspend();
     SFC::scheduler.exit(SFC::Scheduler::Event::Debugger);
   }
@@ -118,7 +118,7 @@ auto Debugger::smp_write(uint16 addr, uint8 data) -> void {
   bool breakpointHit = breakpointEditor->testWriteSMP(addr, data);
 
   if(breakpointHit) {
-    print(SFC::smp.disassemble(smpDebugger->opcodePC, SFC::smp.regs.p.p), "\n");
+    print(SFC::smp.disassemble(smpDebugger->opcodePC, SFC::smp.r.p.p), "\n");
     suspend();
     SFC::scheduler.exit(SFC::Scheduler::Event::Debugger);
   }

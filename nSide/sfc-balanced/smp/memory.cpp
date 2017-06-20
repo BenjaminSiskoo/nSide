@@ -1,20 +1,20 @@
 alwaysinline auto SMP::readRAM(uint16 addr) -> uint8 {
   if(addr >= 0xffc0 && io.iplromEnable) return iplrom[addr & 0x3f];
   if(io.ramDisable) return 0x5a;  //0xff on mini-SNES
-  return apuram[addr];
+  return dsp.apuram[addr];
 }
 
 alwaysinline auto SMP::writeRAM(uint16 addr, uint8 data) -> void {
   //writes to $ffc0-$ffff always go to apuram, even if the iplrom is enabled
-  if(io.ramWritable && !io.ramDisable) apuram[addr] = data;
+  if(io.ramWritable && !io.ramDisable) dsp.apuram[addr] = data;
 }
 
 auto SMP::readPort(uint2 port) const -> uint8 {
-  return apuram[0xf4 + port];
+  return io.port[port];
 }
 
 auto SMP::writePort(uint2 port, uint8 data) -> void {
-  apuram[0xf4 + port] = data;
+  io.port[port] = dsp.apuram[0xf4 + port] = data;
 }
 
 auto SMP::readBus(uint16 addr) -> uint8 {
@@ -197,5 +197,5 @@ auto SMP::write(uint16 addr, uint8 data) -> void {
 auto SMP::readDisassembler(uint16 addr) -> uint8 {
   if((addr & 0xfff0) == 0x00f0) return 0x00;
   if((addr & 0xffc0) == 0xffc0 && io.iplromEnable) return iplrom[addr & 0x3f];
-  return apuram[addr];
+  return dsp.apuram[addr];
 }

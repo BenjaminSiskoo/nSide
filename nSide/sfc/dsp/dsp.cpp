@@ -232,6 +232,8 @@ auto DSP::power() -> void {
   create(Enter, 32040.0 * 768.0);
   stream = Emulator::audio.createStream(2, frequency() / 768.0);
 
+  for(auto& byte : apuram) byte = random(0x00);
+
   memory::fill(&state, sizeof(State));
   state.noise = 0x4000;
   state.echoHistoryOffset = 0;

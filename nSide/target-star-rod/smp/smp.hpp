@@ -2,12 +2,12 @@ struct SMPDebugger : Window {
   uint16 opcodePC;
 
   VerticalLayout layout{this};
-    HorizontalLayout controlLayout{&layout, Size{~0, 0}, 5};
-      Button stepInto{&controlLayout, Size{80, 0}, 5};
+    HorizontalLayout controlLayout{&layout, Size{~0, 0}};
+      Button stepInto{&controlLayout, Size{80, 0}};
       Widget spacer{&controlLayout, Size{~0, 0}};
-      CheckLabel autoUpdate{&controlLayout, Size{0, 0}, 5};
+      CheckLabel autoUpdate{&controlLayout, Size{0, 0}};
       Button update{&controlLayout, Size{80, 0}};
-    TextEdit disassembly{&layout, Size{~0, ~0}, 5};
+    TextEdit disassembly{&layout, Size{~0, ~0}};
     Button registers{&layout, Size{~0, 0}};
 
   auto read(uint16 addr) -> uint8;
@@ -19,28 +19,28 @@ struct SMPDebugger : Window {
 };
 
 struct SMPRegisterEditor : Window {
-  VerticalLayout layout;
-    HorizontalLayout primaryLayout;
-      Label regALabel;
-      LineEdit regAValue;
-      Label regXLabel;
-      LineEdit regXValue;
-      Label regYLabel;
-      LineEdit regYValue;
-      Label regSLabel;
-      LineEdit regSValue;
-    HorizontalLayout secondaryLayout;
-      CheckLabel flagN;
-      CheckLabel flagV;
-      CheckLabel flagP;
-      CheckLabel flagB;
-      CheckLabel flagH;
-      CheckLabel flagI;
-      CheckLabel flagZ;
-      CheckLabel flagC;
-    HorizontalLayout tertiaryLayout;
-      Widget spacer;
-      Button update;
+  VerticalLayout layout{this};
+    HorizontalLayout primaryLayout{&layout, Size{~0, 0}};
+      Label    regALabel{&primaryLayout, Size{0, 0}};
+      LineEdit regAValue{&primaryLayout, Size{0, 0}};
+      Label    regXLabel{&primaryLayout, Size{0, 0}};
+      LineEdit regXValue{&primaryLayout, Size{0, 0}};
+      Label    regYLabel{&primaryLayout, Size{0, 0}};
+      LineEdit regYValue{&primaryLayout, Size{0, 0}};
+      Label    regSLabel{&primaryLayout, Size{0, 0}};
+      LineEdit regSValue{&primaryLayout, Size{0, 0}};
+    HorizontalLayout secondaryLayout{&layout, Size{~0, 0}};
+      CheckLabel flagN{&secondaryLayout, Size{0, 0}};
+      CheckLabel flagV{&secondaryLayout, Size{0, 0}};
+      CheckLabel flagP{&secondaryLayout, Size{0, 0}};
+      CheckLabel flagB{&secondaryLayout, Size{0, 0}};
+      CheckLabel flagH{&secondaryLayout, Size{0, 0}};
+      CheckLabel flagI{&secondaryLayout, Size{0, 0}};
+      CheckLabel flagZ{&secondaryLayout, Size{0, 0}};
+      CheckLabel flagC{&secondaryLayout, Size{0, 0}};
+    HorizontalLayout tertiaryLayout{&layout, Size{~0, 0}};
+      Widget spacer{&tertiaryLayout, Size{~0, 0}};
+      Button update{&tertiaryLayout, Size{80, 0}};
 
   auto loadRegisters() -> void;
   auto saveRegisters() -> void;

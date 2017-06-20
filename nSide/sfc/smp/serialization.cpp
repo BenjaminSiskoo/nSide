@@ -2,8 +2,6 @@ auto SMP::serialize(serializer& s) -> void {
   SPC700::serialize(s);
   Thread::serialize(s);
 
-  s.array(apuram);
-
   s.integer(io.clockCounter);
   s.integer(io.dspCounter);
   s.integer(io.timerStep);
@@ -18,6 +16,8 @@ auto SMP::serialize(serializer& s) -> void {
   s.integer(io.iplromEnable);
 
   s.integer(io.dspAddr);
+
+  s.array(io.port);
 
   s.integer(io.ram00f8);
   s.integer(io.ram00f9);

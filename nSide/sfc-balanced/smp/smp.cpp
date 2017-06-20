@@ -19,7 +19,7 @@ auto SMP::Enter() -> void {
 auto SMP::main() -> void {
   if(r.wai) return instructionWAI();
   if(r.stp) return instructionSTP();
-  debug(smp.execute, regs.pc);
+  debug(smp.execute, r.pc.w);
   instruction();
 }
 
@@ -39,12 +39,6 @@ auto SMP::power() -> void {
 
   r.pc.byte.l = iplrom[62];
   r.pc.byte.h = iplrom[63];
-
-  for(auto& byte : apuram) byte = random(0x00);
-  apuram[0x00f4] = 0x00;
-  apuram[0x00f5] = 0x00;
-  apuram[0x00f6] = 0x00;
-  apuram[0x00f7] = 0x00;
 
   io.clockCounter = 0;
   io.dspCounter = 0;

@@ -21,68 +21,43 @@ SMPRegisterEditor::SMPRegisterEditor() {
   flagI.setText("I");
   flagZ.setText("Z");
   flagC.setText("C");
-  update.setText("Update");
-
-  loadRegisters();
-
-  layout.append(primaryLayout, {~0, 0}, 5);
-    primaryLayout.append(regALabel, {0, 0}, 5);
-    primaryLayout.append(regAValue, {0, 0}, 5);
-    primaryLayout.append(regXLabel, {0, 0}, 5);
-    primaryLayout.append(regXValue, {0, 0}, 5);
-    primaryLayout.append(regYLabel, {0, 0}, 5);
-    primaryLayout.append(regYValue, {0, 0}, 5);
-    primaryLayout.append(regSLabel, {0, 0}, 5);
-    primaryLayout.append(regSValue, {0, 0});
-  layout.append(secondaryLayout, {~0, 0}, 5);
-    secondaryLayout.append(flagN, {0, 0}, 5);
-    secondaryLayout.append(flagV, {0, 0}, 5);
-    secondaryLayout.append(flagP, {0, 0}, 5);
-    secondaryLayout.append(flagB, {0, 0}, 5);
-    secondaryLayout.append(flagH, {0, 0}, 5);
-    secondaryLayout.append(flagI, {0, 0}, 5);
-    secondaryLayout.append(flagZ, {0, 0}, 5);
-    secondaryLayout.append(flagC, {0, 0});
-  layout.append(tertiaryLayout, {~0, 0});
-    tertiaryLayout.append(spacer, {~0, 0});
-    tertiaryLayout.append(update, {80, 0});
-  append(layout);
-
-  update.onActivate([&] {
+  update.setText("Update").onActivate([&] {
     saveRegisters();
     smpDebugger->updateDisassembly();
     setVisible(false);
   });
 
+  loadRegisters();
+
   setGeometry({{128, 128}, layout.minimumSize()});
 }
 
 auto SMPRegisterEditor::loadRegisters() -> void {
-  regAValue.setText(hex(SFC::smp.regs.a, 2L));
-  regXValue.setText(hex(SFC::smp.regs.x, 2L));
-  regYValue.setText(hex(SFC::smp.regs.y, 2L));
-  regSValue.setText(hex(SFC::smp.regs.s, 2L));
-  flagN.setChecked(SFC::smp.regs.p.n);
-  flagV.setChecked(SFC::smp.regs.p.v);
-  flagP.setChecked(SFC::smp.regs.p.p);
-  flagB.setChecked(SFC::smp.regs.p.b);
-  flagH.setChecked(SFC::smp.regs.p.h);
-  flagI.setChecked(SFC::smp.regs.p.i);
-  flagZ.setChecked(SFC::smp.regs.p.z);
-  flagC.setChecked(SFC::smp.regs.p.c);
+  regAValue.setText(hex(SFC::smp.r.ya.byte.l, 2L));
+  regXValue.setText(hex(SFC::smp.r.x, 2L));
+  regYValue.setText(hex(SFC::smp.r.ya.byte.h, 2L));
+  regSValue.setText(hex(SFC::smp.r.s, 2L));
+  flagN.setChecked(SFC::smp.r.p.n);
+  flagV.setChecked(SFC::smp.r.p.v);
+  flagP.setChecked(SFC::smp.r.p.p);
+  flagB.setChecked(SFC::smp.r.p.b);
+  flagH.setChecked(SFC::smp.r.p.h);
+  flagI.setChecked(SFC::smp.r.p.i);
+  flagZ.setChecked(SFC::smp.r.p.z);
+  flagC.setChecked(SFC::smp.r.p.c);
 }
 
 auto SMPRegisterEditor::saveRegisters() -> void {
-  SFC::smp.regs.a = regAValue.text().hex();
-  SFC::smp.regs.x = regXValue.text().hex();
-  SFC::smp.regs.y = regYValue.text().hex();
-  SFC::smp.regs.s = regSValue.text().hex();
-  SFC::smp.regs.p.n = flagN.checked();
-  SFC::smp.regs.p.v = flagV.checked();
-  SFC::smp.regs.p.p = flagP.checked();
-  SFC::smp.regs.p.b = flagB.checked();
-  SFC::smp.regs.p.h = flagH.checked();
-  SFC::smp.regs.p.i = flagI.checked();
-  SFC::smp.regs.p.z = flagZ.checked();
-  SFC::smp.regs.p.c = flagC.checked();
+  SFC::smp.r.ya.byte.l = regAValue.text().hex();
+  SFC::smp.r.x = regXValue.text().hex();
+  SFC::smp.r.ya.byte.h = regYValue.text().hex();
+  SFC::smp.r.s = regSValue.text().hex();
+  SFC::smp.r.p.n = flagN.checked();
+  SFC::smp.r.p.v = flagV.checked();
+  SFC::smp.r.p.p = flagP.checked();
+  SFC::smp.r.p.b = flagB.checked();
+  SFC::smp.r.p.h = flagH.checked();
+  SFC::smp.r.p.i = flagI.checked();
+  SFC::smp.r.p.z = flagZ.checked();
+  SFC::smp.r.p.c = flagC.checked();
 }

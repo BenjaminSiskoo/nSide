@@ -15,7 +15,6 @@ struct SMP : Processor::SPC700, Thread {
   auto serialize(serializer&) -> void;
 
   uint8 iplrom[64];
-  uint8 apuram[64 * 1024];
 
 privileged:
   struct IO {
@@ -37,6 +36,9 @@ privileged:
 
     //$00f2
     uint8 dspAddr;
+
+    //$00f4-$00f7
+    uint8 port[4];
 
     //$00f8,$00f9
     uint8 ram00f8;

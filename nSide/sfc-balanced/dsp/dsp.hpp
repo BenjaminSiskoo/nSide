@@ -17,6 +17,7 @@ struct DSP {
 
   auto serialize(serializer&) -> void;
 
+  uint8 apuram[64 * 1024];
   int64 clock;
 
 private:

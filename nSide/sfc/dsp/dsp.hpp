@@ -18,6 +18,8 @@ struct DSP : Thread {
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
+  uint8 apuram[64 * 1024];
+
 privileged:
   enum GlobalRegister : uint {
     MVOLL = 0x0c, MVOLR = 0x1c,

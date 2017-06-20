@@ -11,21 +11,14 @@ SMPDebugger::SMPDebugger() {
   setGeometry({128, 128, 350, 260});
 
   layout.setMargin(5);
-  stepInto.setText("Step Into");
-  autoUpdate.setText("Auto");
-  update.setText("Update");
-  disassembly.setFont(Font().setFamily(Font::Mono));
-  registers.setFont(Font().setFamily(Font::Mono));
-  registers.setText(" ");
-
-  stepInto.onActivate([&] {
+  stepInto.setText("Step Into").onActivate([&] {
     debugger->flags.smp.stepInto = true;
     debugger->resume();
   });
-
-  update.onActivate({ &SMPDebugger::updateDisassembly, this });
-
-  registers.onActivate([&] {
+  autoUpdate.setText("Auto");
+  update.setText("Update").onActivate({ &SMPDebugger::updateDisassembly, this });
+  disassembly.setFont(Font().setFamily(Font::Mono));
+  registers.setFont(Font().setFamily(Font::Mono)).setText(" ").onActivate([&] {
     smpRegisterEditor->loadRegisters();
     smpRegisterEditor->setVisible();
   });
@@ -91,12 +84,12 @@ auto SMPDebugger::updateDisassembly() -> void {
 
   disassembly.setText(output);
   registers.setText({
-    "YA:", hex(SFC::smp.regs.y, 2L), hex(SFC::smp.regs.a, 2L),
-    " A:", hex(SFC::smp.regs.a, 2L), " X:", hex(SFC::smp.regs.x, 2L),
-    " Y:", hex(SFC::smp.regs.y, 2L), " S:01", hex(SFC::smp.regs.s, 2L), " ",
-    SFC::smp.regs.p.n ? "N" : "n", SFC::smp.regs.p.v ? "V" : "v",
-    SFC::smp.regs.p.p ? "P" : "p", SFC::smp.regs.p.b ? "B" : "b",
-    SFC::smp.regs.p.h ? "H" : "h", SFC::smp.regs.p.i ? "I" : "i",
-    SFC::smp.regs.p.z ? "Z" : "z", SFC::smp.regs.p.c ? "C" : "c",
+    "YA:", hex(SFC::smp.r.ya.w, 4L),
+    " A:", hex(SFC::smp.r.ya.byte.l, 2L), " X:", hex(SFC::smp.r.x, 2L),
+    " Y:", hex(SFC::smp.r.ya.byte.h, 2L), " S:01", hex(SFC::smp.r.s, 2L), " ",
+    SFC::smp.r.p.n ? "N" : "n", SFC::smp.r.p.v ? "V" : "v",
+    SFC::smp.r.p.p ? "P" : "p", SFC::smp.r.p.b ? "B" : "b",
+    SFC::smp.r.p.h ? "H" : "h", SFC::smp.r.p.i ? "I" : "i",
+    SFC::smp.r.p.z ? "Z" : "z", SFC::smp.r.p.c ? "C" : "c",
   });
 }

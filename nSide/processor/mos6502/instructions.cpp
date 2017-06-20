@@ -266,14 +266,14 @@ L A = X = S = read(absolute + index) & S;
 auto MOS6502::instructionLAXAbsolute() -> void {
   uint16 absolute = operand();
   absolute |= operand() << 8;
-L A = X = LD(read(absolute));
+L A = X = algorithmLD(read(absolute));
 }
 
 auto MOS6502::instructionLAXAbsolute(uint8 index) -> void {
   uint16 absolute = operand();
   absolute |= operand() << 8;
   idlePageCrossed(absolute, absolute + index);
-L A = X = LD(read(absolute + index));
+L A = X = algorithmLD(read(absolute + index));
 }
 
 auto MOS6502::instructionLAXIndirectX() -> void {
@@ -281,7 +281,7 @@ auto MOS6502::instructionLAXIndirectX() -> void {
   load(zeroPage);
   uint16 absolute = load(zeroPage + X + 0);
   absolute |= load(zeroPage + X + 1) << 8;
-L A = X = LD(read(absolute));
+L A = X = algorithmLD(read(absolute));
 }
 
 auto MOS6502::instructionLAXIndirectY() -> void {
@@ -289,18 +289,18 @@ auto MOS6502::instructionLAXIndirectY() -> void {
   uint16 absolute = load(zeroPage + 0);
   absolute |= load(zeroPage + 1) << 8;
   idlePageCrossed(absolute, absolute + Y);
-L A = X = LD(read(absolute + Y));
+L A = X = algorithmLD(read(absolute + Y));
 }
 
 auto MOS6502::instructionLAXZeroPage() -> void {
   auto zeroPage = operand();
-L A = X = LD(load(zeroPage));
+L A = X = algorithmLD(load(zeroPage));
 }
 
 auto MOS6502::instructionLAXZeroPage(uint8 index) -> void {
   auto zeroPage = operand();
   load(zeroPage);
-L A = X = LD(load(zeroPage + index));
+L A = X = algorithmLD(load(zeroPage + index));
 }
 
 auto MOS6502::instructionLXAImmediate() -> void {
@@ -317,7 +317,7 @@ auto MOS6502::instructionLXAImmediate() -> void {
   //(noise is 0xff on both), but that can vary based on temperature and other
   //things.
 
-L A = X = LD((A | lxaNoise) & operand());
+L A = X = algorithmLD((A | lxaNoise) & operand());
 }
 
 auto MOS6502::instructionNOPAbsolute() -> void {
