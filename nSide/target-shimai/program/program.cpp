@@ -10,11 +10,7 @@
 #include <md/interface/interface.hpp>
 #include <pce/interface/interface.hpp>
 #include <gb/interface/interface.hpp>
-#if defined(PROFILE_BALANCED)
-#include <gba-balanced/interface/interface.hpp>
-#else
 #include <gba/interface/interface.hpp>
-#endif
 #include <ws/interface/interface.hpp>
 #include "interface.cpp"
 #include "medium.cpp"
@@ -85,7 +81,7 @@ Program::Program(string_vector args) {
   for(auto& argument : args) {
     if(argument == "--fullscreen") {
       presentation->toggleFullScreen();
-    } else if(directory::exists(argument.split(":", 1L).right())) {
+    } else if(directory::exists(argument.split("|", 1L).right())) {
       if(!argument.transform("\\", "/").endsWith("/")) argument.append("/");
       mediumQueue.append(argument);
     } else if(file::exists(argument)) {

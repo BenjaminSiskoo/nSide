@@ -1,4 +1,4 @@
-system region=auto name:Master System
+system name:Master System
   cpu
     ram name=work.ram size=0x2000 volatile
   psg

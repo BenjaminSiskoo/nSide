@@ -46,7 +46,7 @@ auto Cartridge::load() -> bool {
   information = Information();
 
   if(Model::Famicom()) {
-    if(auto loaded = platform->load(ID::Famicom, "Famicom", "fc", {"NTSC", "PAL", "Dendy"})) {
+    if(auto loaded = platform->load(ID::Famicom, "Famicom", "fc", {"Auto", "NTSC", "PAL", "Dendy"})) {
       information.pathID = loaded.pathID();
       information.region = loaded.option();
     } else return false;

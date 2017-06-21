@@ -50,7 +50,7 @@ Program::Program(string_vector args) {
 
   args.takeLeft();  //ignore program location in argument parsing
   for(auto& argument : args) {
-    if(directory::exists(argument.split(":", 1L).right())) {
+    if(directory::exists(argument.split("|", 1L).right())) {
       if(!argument.transform("\\", "/").endsWith("/")) argument.append("/");
       mediumQueue.append(argument);
     }

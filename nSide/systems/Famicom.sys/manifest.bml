@@ -1,4 +1,4 @@
-system region=auto name:Famicom
+system name:Famicom
   cpu
     ram name=work.ram size=0x800 volatile
   ppu ntsc-version=RP2C02G pal-version=RP2C07 dendy-version=UA6538

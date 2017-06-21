@@ -23,7 +23,7 @@ auto Program::open(uint id, string name, vfs::file::mode mode, bool required) ->
 auto Program::load(uint id, string name, string type, string_vector options) -> Emulator::Platform::Load {
   string location, option;
   if(mediumQueue) {
-    auto entry = mediumQueue.takeLeft().split(":", 1L);
+    auto entry = mediumQueue.takeLeft().split("|", 1L);
     location = entry.right().transform("\\", "/");
     if(!location.endsWith("/")) location.append("/");
     if(entry.size() == 2) option = entry.left();
