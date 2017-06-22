@@ -6,6 +6,7 @@ struct VDP : Thread {
   auto step(uint clocks) -> void;
   auto refresh() -> void;
 
+  auto load(Markup::Node) -> bool;
   auto power() -> void;
 
   //io.cpp

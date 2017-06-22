@@ -7,6 +7,7 @@ struct PSG : Thread {
   auto main() -> void;
   auto step(uint clocks) -> void;
 
+  auto load(Markup::Node) -> bool;
   auto power() -> void;
 
   //io.cpp

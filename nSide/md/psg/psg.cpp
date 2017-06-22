@@ -34,6 +34,15 @@ auto PSG::step(uint clocks) -> void {
   synchronize(apu);
 }
 
+auto PSG::load(Markup::Node node) -> bool {
+  uint volume = node["psg/volume"].natural();
+  for(auto n : range(15)) {
+    levels[n] = volume * pow(2, n * -2.0 / 6.0) + 0.5;
+  }
+  levels[15] = 0;
+  return true;
+}
+
 auto PSG::power() -> void {
   create(PSG::Enter, system.colorburst() / 16.0);
   stream = Emulator::audio.createStream(1, frequency());
@@ -41,10 +50,6 @@ auto PSG::power() -> void {
   stream->addHighPassFilter(20.0, 3);
 
   select = 0;
-  for(auto n : range(15)) {
-    levels[n] = 0x2000 * pow(2, n * -2.0 / 6.0) + 0.5;
-  }
-  levels[15] = 0;
 
   tone0.power();
   tone1.power();

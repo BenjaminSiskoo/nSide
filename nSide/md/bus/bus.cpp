@@ -6,6 +6,10 @@ BusCPU busCPU;
 BusAPU busAPU;
 #include "serialization.cpp"
 
+auto BusCPU::load(Markup::Node node) -> bool {
+  return true;
+}
+
 auto BusCPU::readByte(uint24 addr) -> uint16 {
   if(addr >= 0x000000 && addr <= 0x3fffff) return cartridge.read(addr & ~1).byte(!addr.bit(0));
   if(addr >= 0xa00000 && addr <= 0xa0ffff) return busAPU.granted() ? busAPU.read(addr) : (uint8)0x0000;

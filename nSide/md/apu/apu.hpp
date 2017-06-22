@@ -7,6 +7,7 @@ struct APU : Processor::Z80, Thread {
   auto synchronizing() const -> bool override;
 
   auto enable(bool) -> void;
+  auto load(Markup::Node) -> bool;
   auto power() -> void;
   auto reset() -> void;
 

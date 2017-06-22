@@ -17,6 +17,7 @@ struct CPU : Processor::M68K, Thread {
   auto raise(Interrupt) -> void;
   auto lower(Interrupt) -> void;
 
+  auto load(Markup::Node) -> bool;
   auto power() -> void;
 
   //serialization.cpp

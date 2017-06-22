@@ -8,6 +8,7 @@ struct YM2612 : Thread {
   auto sample() -> void;
   auto step(uint clocks) -> void;
 
+  auto load(Markup::Node) -> bool;
   auto power() -> void;
 
   //io.cpp

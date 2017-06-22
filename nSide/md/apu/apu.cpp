@@ -51,6 +51,10 @@ auto APU::enable(bool value) -> void {
   state.enabled = value;
 }
 
+auto APU::load(Markup::Node node) -> bool {
+  return true;
+}
+
 auto APU::power() -> void {
   Z80::bus = &busAPU;
   Z80::power();

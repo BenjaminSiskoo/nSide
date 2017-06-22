@@ -28,6 +28,14 @@ auto System::load(Emulator::Interface* interface, maybe<Region> region) -> bool 
   } else return false;
 
   auto document = BML::unserialize(information.manifest);
+  auto system = document["system"];
+
+  if(!busCPU.load(system)) return false;
+  if(!cpu.load(system)) return false;
+  if(!apu.load(system)) return false;
+  if(!vdp.load(system)) return false;
+  if(!psg.load(system)) return false;
+  if(!ym2612.load(system)) return false;
   if(!cartridge.load()) return false;
 
   if(cartridge.region() == "NTSC-J") {

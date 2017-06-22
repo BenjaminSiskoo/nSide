@@ -1,4 +1,6 @@
 struct BusCPU : Processor::M68K::Bus {
+  auto load(Markup::Node) -> bool;
+
   auto readByte(uint24 addr) -> uint16 override;
   auto readWord(uint24 addr) -> uint16 override;
   auto writeByte(uint24 addr, uint16 data) -> void override;

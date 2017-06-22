@@ -65,6 +65,10 @@ auto CPU::lower(Interrupt interrupt) -> void {
   state.interruptPending.bit((uint)interrupt) = 0;
 }
 
+auto CPU::load(Markup::Node node) -> bool {
+  return true;
+}
+
 auto CPU::power() -> void {
   M68K::bus = &busCPU;
   M68K::power();

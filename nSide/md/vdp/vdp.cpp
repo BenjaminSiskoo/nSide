@@ -66,6 +66,10 @@ auto VDP::refresh() -> void {
   Emulator::video.refresh(buffer, 1280 * sizeof(uint32), 1280, 480);
 }
 
+auto VDP::load(Markup::Node node) -> bool {
+  return true;
+}
+
 auto VDP::power() -> void {
   create(VDP::Enter, system.colorburst() * 15.0 / 2.0);
 
