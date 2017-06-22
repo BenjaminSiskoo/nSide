@@ -22,6 +22,10 @@ auto PlayChoice10::CPU::step(uint clocks) -> void {
   synchronize(cpu0);
 }
 
+auto PlayChoice10::CPU::synchronizing() const -> bool {
+  return scheduler.synchronizing();
+}
+
 auto PlayChoice10::CPU::setNMI(bool value) -> void {
   state.nmiLine = value;
 }

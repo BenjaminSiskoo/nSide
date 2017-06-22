@@ -13,8 +13,8 @@ using namespace nall;
 namespace Emulator {
   static const string Name           = "nSide";
   static const string OriginalName   = "higan";
-  static const string Version        = "009.12";
-  static const string FromVersion    = "102.28";
+  static const string Version        = "009.13";
+  static const string FromVersion    = "103";
   static const string Author         = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string License        = "GPLv3";
@@ -67,7 +67,7 @@ namespace Emulator {
   };
 
   //incremented only when serialization format changes
-  static const string SerializerVersion = "009.12(102r28)";
+  static const string SerializerVersion = "009.13(103)";
 
   namespace Constants {
     namespace Colorburst {

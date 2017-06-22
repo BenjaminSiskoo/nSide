@@ -1989,38 +1989,6 @@ cartridge sha256:e506900cde4b49a1d234c8508f4fee3ad7c5f9b3fa710c49597395994dcbabb
   :  name:     Nuts & Milk
   :  title:    ナッツ&ミルク
 
-cartridge sha256:6d2887d978262401f315836411537a208272cba7721f598308d92983f1f5731a
-  :board region=ntsc id:IREM-G101
-  :  chip type=G-101
-  :  prg
-  :    rom name=program.rom size=0x20000
-  :  chr
-  :    rom name=character.rom size=0x20000
-  :
-  :information
-  :  serial:   IF-20
-  :  board:    FC-00-016
-  :  region:   JPN
-  :  revision: 1.0
-  :  name:     Paaman - Enban o Torikaese!!
-  :  title:    パーマン えんばんを とりかえせ!!
-
-cartridge sha256:ece3f1fefbcc9c4a6da801d931a5bda85241975d96b5b4931bcd635bc3e0f1a5
-  :board region=ntsc id:IREM-G101
-  :  chip type=G-101
-  :  prg
-  :    rom name=program.rom size=0x40000
-  :  chr
-  :    rom name=character.rom size=0x20000
-  :
-  :information
-  :  serial:   IF-25
-  :  board:    FC-00-018
-  :  region:   JPN
-  :  revision: 1.0
-  :  name:     Paaman Part 2 - Himitsu Kessha Madoodan o Taose!
-  :  title:    パーマン2 秘密結社マドー団をたおせ!
-
 cartridge sha256:15a2652861a1fb58c526a0d6fb1fcd24943bd1213cd54f87d01c96a83718e396
   :board region=ntsc id:NAMCOT-3305
   :  mirror mode=vertical
@@ -2084,6 +2052,38 @@ cartridge sha256:be59fd441e2509b67359cd02cadfa825ced0ec7fda8edb9c101d90fc7a793e6
   :  revision: 1.0
   :  name:     Pachi Com
   :  title:    パチコン
+
+cartridge sha256:6d2887d978262401f315836411537a208272cba7721f598308d92983f1f5731a
+  :board region=ntsc id:IREM-G101
+  :  chip type=G-101
+  :  prg
+  :    rom name=program.rom size=0x20000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   IF-20
+  :  board:    FC-00-016
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Perman - Enban o Torikaese!!
+  :  title:    パーマン えんばんを とりかえせ!!
+
+cartridge sha256:ece3f1fefbcc9c4a6da801d931a5bda85241975d96b5b4931bcd635bc3e0f1a5
+  :board region=ntsc id:IREM-G101
+  :  chip type=G-101
+  :  prg
+  :    rom name=program.rom size=0x40000
+  :  chr
+  :    rom name=character.rom size=0x20000
+  :
+  :information
+  :  serial:   IF-25
+  :  board:    FC-00-018
+  :  region:   JPN
+  :  revision: 1.0
+  :  name:     Perman Part 2 - Himitsu Kessha Madoodan o Taose!
+  :  title:    パーマン2 秘密結社マドー団をたおせ!
 
 cartridge sha256:910ba4505b46a99b3779d84fd22ba8b18f3a649b0c1a11706c4609d06ce0bc18
   :board region=ntsc id:HVC-STROM

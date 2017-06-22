@@ -65,7 +65,7 @@ auto PPU::readIO(uint16 addr, uint8 data) -> uint8 {
 
   //PPUDATA
   case 7: {
-    if(enable() && (vcounter() <= 240 || vcounter() == (system.region() == System::Region::NTSC ? 261 : 311))) return 0x00;
+    if(enable() && (vcounter() <= 240 || vcounter() == vlines() - 1)) return 0x00;
 
     addr = (uint14)io.v.address;
     if(addr <= 0x3eff) {

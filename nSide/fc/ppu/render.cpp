@@ -86,8 +86,7 @@ auto PPU::renderSprite() -> void {
   if(!enable()) return;
 
   uint n = l.oamIterator++;
-  uint lastScanline = system.region() == System::Region::NTSC ? 261 : 311;
-  int ly = vcounter() == lastScanline ? -1 : (int)vcounter();
+  int ly = vcounter() == vlines() - 1 ? -1 : (int)vcounter();
   uint y = ly - oam[n * 4 + 0];
 
   if(y >= io.spriteHeight) return;
@@ -105,9 +104,8 @@ auto PPU::renderSprite() -> void {
 }
 
 auto PPU::renderScanline() -> void {
-  uint lastScanline = system.region() == System::Region::NTSC ? 261 : 311;
   //Vblank
-  if((vcounter() >= 240 && vcounter() < lastScanline)) return step(341), scanline();
+  if((vcounter() >= 240 && vcounter() < vlines() - 1)) return step(341), scanline();
 
   l.oamIterator = 0;
   l.oamCounter = 0;
@@ -190,7 +188,7 @@ auto PPU::renderScanline() -> void {
     l.oam[sprite].tiledataHi = loadCHR(tileaddr + 8);
     step(2);
 
-    if(enable() && sprite == 6 && vcounter() == lastScanline) {
+    if(enable() && sprite == 6 && vcounter() == vlines() - 1) {
       //305
       io.v.address = io.t.address;
     }

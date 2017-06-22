@@ -8,7 +8,7 @@ Cartridge cartridge;
 auto Cartridge::load() -> bool {
   information = Information();
 
-  if(auto loaded = platform->load(ID::Atari2600, "Atari 2600", "a26", {"Auto", "NTSC", "PAL"})) {
+  if(auto loaded = platform->load(ID::Atari2600, "Atari 2600", "a26", {"Auto", "NTSC", "PAL", "SECAM"})) {
     information.pathID = loaded.pathID();
     information.region = loaded.option();
   } else return false;

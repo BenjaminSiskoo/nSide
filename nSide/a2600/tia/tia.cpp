@@ -22,7 +22,7 @@ auto TIA::step(uint clocks) -> void {
       io.hcounter = 0;
       if(io.vcounter < 511) io.vcounter++;
       //Safe-guard against software that does not use VSYNC properly
-      if(io.vcounter >= (system.region() == System::Region::NTSC ? 262 : 312)) io.vcounter = 0;
+      if(io.vcounter >= (Region::NTSC() ? 262 : 312)) io.vcounter = 0;
     }
     Thread::step(1);
     synchronize(cpu);

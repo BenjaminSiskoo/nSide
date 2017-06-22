@@ -22,7 +22,7 @@ PPU::~PPU() {
 
 auto PPU::step(uint clocks) -> void {
   const uint vbl = !Region::Dendy() ? 241 : 291;
-  const uint pre =  Region::NTSC () ? 261 : 311;
+  const uint L = vlines();
 
   while(clocks--) {
     if(vcounter() == vbl - 1 && hcounter() == 340) io.nmiHold = 1;
@@ -31,12 +31,12 @@ auto PPU::step(uint clocks) -> void {
     if(vcounter() == vbl && hcounter() ==   1) io.nmiFlag = io.nmiHold;
     if(vcounter() == vbl && hcounter() ==   2) cpu.nmiLine(io.nmiEnable && io.nmiFlag);
 
-    if(vcounter() == pre - 1 && hcounter() == 340) io.nmiHold = 0;
-    if(vcounter() == pre     && hcounter() ==   1) io.nmiFlag = io.nmiHold;
-    if(vcounter() == pre     && hcounter() ==   1) io.spriteZeroHit = 0, io.spriteOverflow = 0;
-    if(vcounter() == pre     && hcounter() ==   2) cpu.nmiLine(io.nmiEnable && io.nmiFlag);
+    if(vcounter() == L-2 && hcounter() == 340) io.nmiHold = 0;
+    if(vcounter() == L-1 && hcounter() ==   1) io.nmiFlag = io.nmiHold;
+    if(vcounter() == L-1 && hcounter() ==   1) io.spriteZeroHit = 0, io.spriteOverflow = 0;
+    if(vcounter() == L-1 && hcounter() ==   2) cpu.nmiLine(io.nmiEnable && io.nmiFlag);
 
-    Thread::step(system.region() == System::Region::NTSC ? 4 : 5);
+    Thread::step(Region::NTSC() ? 4 : 5);
     synchronize(cpu);
 
     for(uint i = 0; i < 8; i++) {

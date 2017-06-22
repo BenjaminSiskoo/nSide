@@ -46,7 +46,8 @@ struct PlayChoice10 : Processor::Z80::Bus {
   struct CPU : Processor::Z80, Thread {
     static auto Enter() -> void;
     auto main() -> void;
-    auto step(uint clocks) -> void;
+    auto step(uint clocks) -> void override;
+    auto synchronizing() const -> bool override;
 
     auto setNMI(bool value) -> void;
     auto setINT(bool value) -> void;

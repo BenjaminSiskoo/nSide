@@ -29,6 +29,8 @@ struct PPU : Thread, PPUcounter {
   alwaysinline auto pal()  const -> bool { return version >= Version::RP2C07  && version <= Version::UA6538;  }
   alwaysinline auto rgb()  const -> bool { return version >= Version::RP2C03B && version <= Version::RC2C05_05; }
 
+  inline auto vlines() const -> uint { return Region::NTSC() ? 262 : 312; }
+
   PPU(bool side);
   ~PPU();
 

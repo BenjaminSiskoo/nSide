@@ -1,6 +1,6 @@
-﻿nSide v009r12 (2017-01-19)
+﻿nSide v009r13 (2017-06-21)
 
-A fork of higan v102 by byuu (http://byuu.org/emulation/higan/), which was
+A fork of higan v103 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
 
 nSide adds new devices to the Famicom emulator's controller ports. The supported
@@ -107,7 +107,6 @@ Master System:
   *Many, many bugs. This core is still in alpha.
 
 Mega Drive:
-  *Super Street Fighter II: The New Challengers has missing sprites.
   *Many, many bugs. This core is still in alpha.
 
 PC Engine:
@@ -142,6 +141,10 @@ PlayChoice-10:
   running for 20 more seconds even when the timer runs out, albeit with no sound
   (which is a separate disable that works correctly).
 
+No version of nSide will be called "v010" until the Famicom emulator has proper
+sprite priority evaluation, or until the Atari 2600 is properly emulated,
+whichever comes first.
+
 ===========================
 Changes from higan: General
 ===========================
@@ -159,6 +162,11 @@ Changes from higan: General
    Renamed the tomoko-based UI to "nSide-t".
 
    Renamed icarus to "cart-pal".
+
+   Added ramus, a library of functions rejected from nall.
+
+   Added a Save Screenshot hotkey. Screenshots will be saved in PNG format with
+  somewhat poor compression.
 
 ===========================
 Changes from higan: Famicom
@@ -399,16 +407,9 @@ Changes from higan: Famicom
   of lack of true DualSystem support. The height is set to 464 if using the
   PlayChoice-10's dual screen mode (set in PlayChoice-10.sys/manifest.bml).
 
-=====================================================
-Changes from higan: processor/r6502 (affects Famicom)
-=====================================================
-   BRK was improperly clearing the Decimal flag when it should leave it alone.
-  Only the interrupt flag is set now.
-   An NMI can now redirect a BRK if it occurs after BRK's 4th cycle (after
-  pushing the return vector into the stack but before pushing register P).
-   Opcode 0x80 was being treated as NOP abs, when it should be NOP #imm.
-  NOP #imm now advances the program counter properly, fixing Puzznic's columns
-  of corruption bug.
+=======================================================
+Changes from higan: processor/mos6502 (affects Famicom)
+=======================================================
    Added support for the unofficial opcodes ALR, ANC, AXS, DCP, ISC (ISB), LAX,
   LXA, RLA, RRA, SAX, SHA, SHX, SHY, SLO, SRE, STP (KIL), and XAA (ANE).
 
@@ -420,18 +421,21 @@ Changes from higan: Super Famicom
    Added a second cursor design that will be shown whenever the Super Scope is
   in Turbo mode. This is not just a simple recolor.
 
-============================================================
-Changes from higan: processor/r65816 (affects Super Famicom)
-============================================================
+   Moved the APU RAM from the SMP to the DSP. This is just an implementation
+  detail and has no or very little observable effect.
+
+==============================================================
+Changes from higan: processor/wdc65816 (affects Super Famicom)
+==============================================================
    Changed the decode() function in the disassembler to take 3 arguments instead
   of 2. The new argument is the address of the opcode being decoded. In higan,
   this function uses the program counter to figure out the opcode's location,
   which produces incorrect results for opcodes with relative addresses such as
   branching opcodes.
 
-=========================================================
-Changes from higan: processor/z80 (affects Master System)
-=========================================================
+===========================================================================
+Changes from higan: processor/z80 (affects PC10, Master System, Mega Drive)
+===========================================================================
    Supported "ld A,i"'s and "ld A,r"'s unique flag effects, including setting
   the zero flag if i or r are 0x00 when being copied into A. This is needed for
   PlayChoice-10 emulation.
@@ -464,9 +468,6 @@ Changes from higan: Game Boy Advance
   will only take effect if its data width matches the CPU's access width
   exactly (8-bit, 16-bit, or 32-bit).
 
-   Added video rotation to support games such as Dr. Mario & Puzzle League.
-  This support is emulator-agnostic.
-
 ============================
 Changes from higan: cart-pal
 ============================
@@ -496,6 +497,3 @@ Changes from higan: cart-pal
    Added preliminary support for NES 2.0. This allows submappers to influence
   purification of Konami VRC games, distinguish between IREM-HOLYDIVER and
   JALECO-JF-16 (Cosmo Carrier), among other things.
-
-No version of nSide will be called "v010" until the Famicom emulator has proper
-sprite priority evaluation, or until the Atari 2600 is properly emulated.

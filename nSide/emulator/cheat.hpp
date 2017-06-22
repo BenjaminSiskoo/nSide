@@ -26,7 +26,7 @@ struct Cheat {
     reset();
     for(auto& entry : list) {
       for(auto code : entry.split("+")) {
-        auto part = code.split("/");
+        auto part = code.transform("=?", "//").split("/");
         //reject cheats where the data is an odd number of digits long
         if(part[1].size() & 1) continue;
         //reject cheats with mismatched data and comp sizes

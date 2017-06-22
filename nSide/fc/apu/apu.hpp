@@ -182,7 +182,7 @@ struct APU : Thread {
 
     enum : uint {
       NtscPeriod = 14915,  //~(21.477MHz / 6 / 240hz)
-      PalPeriod  = 18473,  //conjectural
+      PalPeriod  = 18473,  //conjectural ((26.602MHz / 6 / 240hz))
     };
 
     bool irqPending;

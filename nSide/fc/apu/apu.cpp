@@ -99,9 +99,9 @@ auto APU::load(Markup::Node node) -> bool {
 
   string versionString;
   if(Model::Famicom()) {
-    if(system.region() == System::Region::NTSC)  versionString = node["apu/ntsc-version"].text();
-    if(system.region() == System::Region::PAL)   versionString = node["apu/pal-version"].text();
-    if(system.region() == System::Region::Dendy) versionString = node["apu/dendy-version"].text();
+    if(Region::NTSC ()) versionString = node["apu/ntsc-version"].text();
+    if(Region::PAL  ()) versionString = node["apu/pal-version"].text();
+    if(Region::Dendy()) versionString = node["apu/dendy-version"].text();
   } else {
     versionString = node["apu/version"].text();
   }
@@ -349,7 +349,7 @@ auto APU::clockFrameCounter() -> void {
   noise.envelope.clock();
 
   if(frame.counter == 0) {
-    if(frame.mode & 2) frame.divider += system.region() == System::Region::NTSC ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
+    if(frame.mode & 2) frame.divider += Region::NTSC() ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
     if(frame.mode == 0) {
       frame.irqPending = true;
       setIRQ();
@@ -361,7 +361,7 @@ auto APU::clockFrameCounterDivider() -> void {
   frame.divider -= 2;
   if(frame.divider <= 0) {
     clockFrameCounter();
-    frame.divider += system.region() == System::Region::NTSC ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
+    frame.divider += Region::NTSC() ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
   }
 }
 

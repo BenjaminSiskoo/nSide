@@ -118,6 +118,7 @@ auto VDP::readControlPort() -> uint16 {
   result |= (state.vcounter >= screenHeight()) << 3;  //vertical blank
   result |= (state.vcounter >= screenHeight() || state.hcounter >= 1280) << 2;  //horizontal blank
   result |= io.command.bit(5) << 1;  //DMA active
+  result |= Region::PAL() << 0;
   return result;
 }
 

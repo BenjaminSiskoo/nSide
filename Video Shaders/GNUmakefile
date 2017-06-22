@@ -1,5 +1,7 @@
+prefix := $(HOME)/.local
+
 install:
-	if [ -d /usr/share/nSide/Video\ Shaders ]; then sudo rm -r /usr/share/nSide/Video\ Shaders; fi
-	sudo mkdir -p /usr/share/nSide/Video\ Shaders
-	sudo cp -r *.shader /usr/share/nSide/Video\ Shaders
-	sudo chmod -R 777 /usr/share/nSide/Video\ Shaders
+	if [ -d $(prefix)/share/nSide/Video\ Shaders ]; then rm -r $(prefix)/share/nSide/Video\ Shaders; fi
+	mkdir -p $(prefix)/share/nSide/Video\ Shaders
+	cp -r *.shader $(prefix)/share/nSide/Video\ Shaders
+	chmod -R 777 $(prefix)/share/nSide/Video\ Shaders

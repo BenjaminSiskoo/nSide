@@ -4,7 +4,7 @@ auto TIA::frame() -> void {
 auto TIA::scanline() -> void {
   if(io.vcounter == 0) frame();
 
-  if(io.vcounter == 228 + (system.region() == System::Region::NTSC ? 19 : 44)) {
+  if(io.vcounter == 228 + (Region::NTSC() ? 19 : 44)) {
     //dirty hack to prevent controls for hardware switches from being polled
     //19912 (262 * 228 / 3) times as fast as joystick/paddle controls and other emulators' controls
     pia.updateIO();
@@ -20,7 +20,7 @@ auto TIA::runVideo() -> void {
     missile[i].position = (player[i].position + offset) % 160;
   }
 
-  uint offsetY = system.region() == System::Region::NTSC ? 19 : 37;
+  uint offsetY = Region::NTSC() ? 19 : 37;
   if(hblank() || io.vcounter < offsetY) return;
 
   uint x = io.hcounter - 68;
