@@ -30,6 +30,8 @@ struct Cartridge {
   struct Memory {
     uint8* data = nullptr;
     uint size = 0;
+    uint24 addrLo = 0;
+    uint24 addrHi = 0;
     uint mask = 0;
   };
 

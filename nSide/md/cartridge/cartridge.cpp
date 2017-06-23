@@ -22,9 +22,12 @@ auto Cartridge::load() -> bool {
 
   if(auto node = document["board/rom"]) {
     rom.size = node["size"].natural();
-    rom.mask = bit::round(rom.size) - 1;
+    auto addrRange = node["map/address"].text().split("-", 1L);
+    rom.addrLo = addrRange(0).hex();
+    rom.addrHi = addrRange(1).hex();
+    rom.mask = 0;
     if(rom.size) {
-      rom.data = new uint8[rom.mask + 1];
+      rom.data = new uint8[rom.size];
       if(auto name = node["name"].text()) {
         if(auto fp = platform->open(pathID(), name, File::Read, File::Required)) {
           fp->read(rom.data, rom.size);
@@ -35,9 +38,12 @@ auto Cartridge::load() -> bool {
 
   if(auto node = document["board/ram"]) {
     ram.size = node["size"].natural();
-    ram.mask = bit::round(ram.size) - 1;
+    auto addrRange = node["map/address"].text().split("-", 1L);
+    ram.addrLo = addrRange(0).hex();
+    ram.addrHi = addrRange(1).hex();
+    ram.mask = node["map/mask"].natural();
     if(ram.size) {
-      ram.data = new uint8[ram.mask + 1];
+      ram.data = new uint8[ram.size];
       if(auto name = node["name"].text()) {
         if(auto fp = platform->open(pathID(), name, File::Read)) {
           fp->read(ram.data, ram.size);
@@ -73,26 +79,54 @@ auto Cartridge::power() -> void {
   for(auto n : range(8)) bank[n] = n;
 }
 
-auto Cartridge::read(uint24 addr) -> uint16 {
-  if(addr.bit(21) && ram.size && ramEnable) {
-    //Temporarily support 16-bit RAM until icarus/cart-pal can distinguish
-    //between 8-bit and 16-bit RAM
-    uint16 data = ram.data[addr + 0 & ram.mask] << 8;
-    return data | ram.data[addr + 1 & ram.mask] << 0;
-  } else {
-    addr = bank[addr >> 19 & 7] << 19 | (addr & 0x7ffff);
-    uint16 data = rom.data[addr + 0 & rom.mask] << 8;
-    return data | rom.data[addr + 1 & rom.mask] << 0;
+
+alwaysinline auto mirror(uint addr, uint size) -> uint {
+  if(size == 0) return 0;
+  uint base = 0;
+  uint mask = 1 << 23;
+  while(addr >= size) {
+    while(!(addr & mask)) mask >>= 1;
+    addr -= mask;
+    if(size > mask) {
+      size -= mask;
+      base += mask;
+    }
+    mask >>= 1;
   }
+  return base + addr;
+}
+
+auto Cartridge::read(uint24 addr) -> uint16 {
+  uint16 data = 0x0000;
+  if(addr >= rom.addrLo && addr <= rom.addrHi) {
+    uint24 romAddr = mirror(bank[addr >> 19 & 7] << 19 | (addr & 0x7ffff), rom.size);
+    data.byte(1) = rom.data[romAddr + 0];
+    data.byte(0) = rom.data[romAddr + 1];
+  }
+  if(ram.size && addr >= ram.addrLo && addr <= ram.addrHi && ramEnable) {
+    if(ram.mask & 1) addr >>= 1;
+    addr = mirror(addr, ram.size);
+    if(ram.mask & 1) {
+      data.byte(1 - ram.addrLo.bit(0)) = ram.data[addr];
+    } else {
+      data.byte(1) = ram.data[addr + 0];
+      data.byte(0) = ram.data[addr + 1];
+    }
+  }
+  return data;
 }
 
 auto Cartridge::write(uint24 addr, uint16 data) -> void {
   //emulating RAM write protect bit breaks some commercial software
-  if(addr.bit(21) && ram.size && ramEnable /* && ramWritable */) {
-    //Temporarily support 16-bit RAM until icarus/cart-pal can distinguish
-    //between 8-bit and 16-bit RAM
-    ram.data[addr + 0 & ram.mask] = data >> 8;
-    ram.data[addr + 1 & ram.mask] = data >> 0;
+  if(ram.size && addr >= ram.addrLo && addr <= ram.addrHi && ramEnable /* && ramWritable */) {
+    if(ram.mask & 1) addr >>= 1;
+    addr = mirror(addr, ram.size);
+    if(ram.mask & 1) {
+      ram.data[addr] = data.byte(1 - ram.addrLo.bit(0));
+    } else {
+      ram.data[addr + 0] = data.byte(1);
+      ram.data[addr + 1] = data.byte(0);
+    }
   }
 }
 
