@@ -119,7 +119,7 @@ auto FamicomBoxInterface::videoSize(uint width, uint height, bool arc, bool intS
   double w = 256;
   if(arc) {
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    w *= squarePixelRate / (system.colorburst() * 6.0 / 4.0);
+    w *= squarePixelRate / (system.frequency() / ppu0.rate());
   }
   int h = 240;
   double m;

@@ -1,4 +1,6 @@
 struct CPU : Processor::MOS6502, Thread {
+  inline auto rate() const -> uint { return Region::PAL() ? 16 : Region::Dendy() ? 15 : 12; }
+
   CPU(bool side);
 
   static auto Enter() -> void;

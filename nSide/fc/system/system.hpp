@@ -8,12 +8,12 @@ struct System {
     FamicomBox,
   };
 
-  enum class Region : uint { NTSC, PAL, Dendy };
+  enum class Region : uint { NTSCJ, NTSCU, PAL, Dendy };
 
-  inline auto loaded() const -> bool { return information.loaded; }
-  inline auto model() const -> Model { return information.model; }
-  inline auto region() const -> Region { return information.region; }
-  inline auto colorburst() const -> double { return information.colorburst; }
+  auto loaded() const -> bool { return information.loaded; }
+  auto model() const -> Model { return information.model; }
+  auto region() const -> Region { return information.region; }
+  auto frequency() const -> double { return information.frequency; }
 
   auto run() -> void;
   auto runToSave() -> void;
@@ -39,8 +39,8 @@ private:
     string manifest;
     bool loaded = false;
     Model model = Model::Famicom;
-    Region region = Region::NTSC;
-    double colorburst = Emulator::Constants::Colorburst::NTSC;
+    Region region = Region::NTSCJ;
+    double frequency = Emulator::Constants::Colorburst::NTSC * 6.0;
   } information;
 
   uint serializeSize = 0;
@@ -80,6 +80,7 @@ auto Model::VSSystem() -> bool { return system.model() == System::Model::VSSyste
 auto Model::PlayChoice10() -> bool { return system.model() == System::Model::PlayChoice10; }
 auto Model::FamicomBox() -> bool { return system.model() == System::Model::FamicomBox; }
 
-auto Region::NTSC() -> bool { return system.region() == System::Region::NTSC; }
+auto Region::NTSCJ() -> bool { return system.region() == System::Region::NTSCJ; }
+auto Region::NTSCU() -> bool { return system.region() == System::Region::NTSCU; }
 auto Region::PAL() -> bool { return system.region() == System::Region::PAL; }
 auto Region::Dendy() -> bool { return system.region() == System::Region::Dendy; }

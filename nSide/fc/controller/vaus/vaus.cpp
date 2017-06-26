@@ -1,5 +1,5 @@
 Vaus::Vaus(uint port) : Controller(port) {
-  create(Controller::Enter, system.colorburst() * 6.0);
+  create(Controller::Enter, system.frequency());
   latched = 0;
   counter = 0;
 

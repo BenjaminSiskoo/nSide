@@ -84,7 +84,11 @@ auto Interface::videoResolution() -> VideoSize {
 auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   double w = 320;
   if(arc) {
-    double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
+    double squarePixelRate = system.region() != System::Region::PAL
+    ? 135.0 / 22.0 * 1'000'000.0
+    : 7'375'000.0;
+    //note: PAL system multiplies colorburst by 4/5 to make clock rate;
+    //this operation was already done within system.cpp.
     w *= squarePixelRate / (system.colorburst() * 15.0 / 8.0);
   }
   uint h = 240;

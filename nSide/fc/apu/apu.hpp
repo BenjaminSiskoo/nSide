@@ -19,6 +19,9 @@ struct APU : Thread {
     UA6527P,
   } version;
 
+  inline auto rate() const -> uint { return Region::PAL() ? 16 : Region::Dendy() ? 15 : 12; }
+
+  //apu.cpp
   APU(bool side);
 
   static auto Enter() -> void;
@@ -34,6 +37,7 @@ struct APU : Thread {
   auto readIO(uint16 addr, uint8 data) -> uint8;
   auto writeIO(uint16 addr, uint8 data) -> void;
 
+  //serialization.cpp
   auto serialize(serializer&) -> void;
 
   const bool side;  //0: main, 1: sub (VS. System only)

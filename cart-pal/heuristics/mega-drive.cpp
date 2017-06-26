@@ -9,6 +9,30 @@ struct MegaDriveCartridge {
 };
 
 MegaDriveCartridge::MegaDriveCartridge(string location, uint8_t* data, uint size) {
+  char _regions[17] = {0};
+  memory::copy(_regions, data + 0x0001f0, 16);
+  string regionCodes{_regions};
+  regionCodes.trimRight(" ");
+
+  string_vector regions;
+
+  if(regionCodes == "JAPAN") {
+    regions.append("ntsc-j");
+  } else if(regionCodes == "EUROPE") {
+    regions.append("pal");
+  } else {
+    if(regionCodes.find("J")) regions.append("ntsc-j");
+    if(regionCodes.find("U")) regions.append("ntsc-u");
+    if(regionCodes.find("E")) regions.append("pal");
+    if(regionCodes == "W") regions.append("ntsc-j", "ntsc-u", "pal");
+    if(regionCodes.size() == 1 && regionCodes != "E" && regionCodes.hex()) {
+      uint regionBitfield = regionCodes.hex();
+      if(regionBitfield & 0x01) regions.append("ntsc-j");
+      if(regionBitfield & 0x04) regions.append("ntsc-u");
+      if(regionBitfield & 0x08) regions.append("pal");
+    }
+  }
+
   manifest.append(
     "board region=", regions[0], "  //\"", regionCodes, "\"\n"
     "  rom name=program.rom size=0x", hex(size), "\n"

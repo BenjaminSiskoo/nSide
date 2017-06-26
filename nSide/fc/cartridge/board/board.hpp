@@ -1,4 +1,6 @@
 struct Board {
+  inline auto rate() const -> uint { return Region::PAL() ? 16 : Region::Dendy() ? 15 : 12; }
+
   Board(Markup::Node& boardNode);
   virtual ~Board();
 

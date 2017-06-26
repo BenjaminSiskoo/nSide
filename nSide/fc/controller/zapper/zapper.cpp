@@ -1,5 +1,5 @@
 Zapper::Zapper(uint port) : Controller(port) {
-  create(Controller::Enter, system.colorburst() * 6.0);
+  create(Controller::Enter, system.frequency());
   sprite = Emulator::video.createSprite(16, 16);
   sprite->setPixels(Resource::Sprite::CrosshairRedSmall);
 

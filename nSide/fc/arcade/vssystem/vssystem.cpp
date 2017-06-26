@@ -32,7 +32,7 @@ auto VSSystem::load() -> bool {
 }
 
 auto VSSystem::power() -> void {
-  create(VSSystem::Enter, system.colorburst() * 6.0);
+  create(VSSystem::Enter, system.frequency());
 
   function<auto (uint16, uint8) -> uint8> reader;
   function<auto (uint16, uint8) -> void> writer;

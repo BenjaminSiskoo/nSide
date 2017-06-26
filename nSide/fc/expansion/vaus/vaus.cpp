@@ -1,5 +1,5 @@
 VausE::VausE() {
-  create(Expansion::Enter, system.colorburst() * 6.0);
+  create(Expansion::Enter, system.frequency());
   latched = 0;
   counter = 0;
 

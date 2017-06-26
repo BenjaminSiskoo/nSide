@@ -8,7 +8,7 @@ Cartridge cartridge;
 auto Cartridge::load() -> bool {
   information = {};
 
-  if(auto loaded = platform->load(ID::MegaDrive, "Mega Drive", "md", {"NTSC-J", "NTSC-U", "PAL"})) {
+  if(auto loaded = platform->load(ID::MegaDrive, "Mega Drive", "md", {"Auto", "NTSC-J", "NTSC-U", "PAL"})) {
     information.pathID = loaded.pathID();
     information.region = loaded.option();
   } else return false;
@@ -19,6 +19,12 @@ auto Cartridge::load() -> bool {
 
   auto document = BML::unserialize(information.manifest);
   information.title = document["information/title"].text();
+
+  if(!region() || region() == "Auto") {
+    if(document["board/region"].text() == "ntsc-j") information.region = "NTSC-J";
+    if(document["board/region"].text() == "ntsc-u") information.region = "NTSC-U";
+    if(document["board/region"].text() == "pal") information.region = "PAL";
+  }
 
   if(auto node = document["board/rom"]) {
     rom.size = node["size"].natural();
@@ -78,7 +84,6 @@ auto Cartridge::power() -> void {
   ramWritable = 1;
   for(auto n : range(8)) bank[n] = n;
 }
-
 
 alwaysinline auto mirror(uint addr, uint size) -> uint {
   if(size == 0) return 0;

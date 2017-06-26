@@ -176,7 +176,7 @@ auto PPU::writeIO(uint16 addr, uint8 data) -> void {
 
   //PPUDATA
   case 7: {
-    if(enable() && (vcounter() <= 240 || vcounter() == (!Region::PAL() ? 261 : 311))) return;
+    if(enable() && (vcounter() <= 240 || vcounter() == vlines() - 1)) return;
 
     addr = (uint14)io.v.address;
     if(addr <= 0x3eff) {

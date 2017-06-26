@@ -2,7 +2,8 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
   information.title.cartridge = node["information/title"].text();
   auto boardNode = node["board"];
   if(!region() || region() == "Auto") {
-    if(boardNode["region"].text() == "ntsc") information.region = "NTSC";
+    if(boardNode["region"].text() == "ntsc-j") information.region = "NTSC-J";
+    if(boardNode["region"].text() == "ntsc-u") information.region = "NTSC-U";
     if(boardNode["region"].text() == "pal") information.region = "PAL";
     if(boardNode["region"].text() == "dendy") information.region = "Dendy";
   }

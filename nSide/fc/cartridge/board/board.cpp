@@ -83,9 +83,7 @@ auto Board::main() -> void {
 }
 
 auto Board::tick() -> void {
-  if(Region::NTSC ()) cartridgeSlot[slot].step(12);
-  if(Region::PAL  ()) cartridgeSlot[slot].step(16);
-  if(Region::Dendy()) cartridgeSlot[slot].step(15);
+  cartridgeSlot[slot].step(rate());
   cartridgeSlot[slot].synchronize(cpu);
 }
 

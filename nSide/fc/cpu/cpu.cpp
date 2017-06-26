@@ -56,7 +56,7 @@ auto CPU::power() -> void {
 }
 
 auto CPU::reset() -> void {
-  create(Enter, system.colorburst() * 6.0);
+  create(Enter, system.frequency());
   MOS6502::reset();
 
   //CPU

@@ -12,8 +12,8 @@ auto PPUcounter::tick(uint clocks) -> void {
 auto PPUcounter::vcounterTick() -> void {
   status.vcounter++;
 
-  if((system.region() == System::Region::NTSC && status.vcounter == 262)
-  || (system.region() != System::Region::NTSC && status.vcounter == 312)
+  if(((Region::NTSCJ() || Region::NTSCU()) && status.vcounter == 262)
+  || ((Region::PAL  () || Region::Dendy()) && status.vcounter == 312)
   ) {
     status.vcounter = 0;
     status.field = !status.field;

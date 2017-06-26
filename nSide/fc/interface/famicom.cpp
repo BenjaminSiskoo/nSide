@@ -292,10 +292,10 @@ auto FamicomInterface::videoResolution() -> VideoSize {
 auto FamicomInterface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
   double w = 256;
   if(arc) {
-    double squarePixelRate = system.region() == System::Region::NTSC
+    double squarePixelRate = Famicom::Region::NTSCJ() || Famicom::Region::NTSCU()
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    w *= squarePixelRate / (system.colorburst() * 6.0 / (system.region() == System::Region::NTSC ? 4.0 : 5.0));
+    w *= squarePixelRate / (system.frequency() / ppu0.rate());
   }
   int h = 240;
   double m;

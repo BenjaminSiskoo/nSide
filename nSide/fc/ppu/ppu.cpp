@@ -36,7 +36,7 @@ auto PPU::step(uint clocks) -> void {
     if(vcounter() == L-1 && hcounter() ==   1) io.spriteZeroHit = 0, io.spriteOverflow = 0;
     if(vcounter() == L-1 && hcounter() ==   2) cpu.nmiLine(io.nmiEnable && io.nmiFlag);
 
-    Thread::step(Region::NTSC() ? 4 : 5);
+    Thread::step(rate());
     synchronize(cpu);
 
     for(uint i = 0; i < 8; i++) {
@@ -64,8 +64,8 @@ auto PPU::load(Markup::Node node) -> bool {
 
   string versionString;
   if(Model::Famicom()) {
-    if(Region::NTSC ()) versionString = node["ppu/ntsc-version"].text();
-    if(Region::PAL  ()) versionString = node["ppu/pal-version"].text();
+    if(Region::NTSCJ() || Region::NTSCU()) versionString = node["ppu/ntsc-version"].text();
+    if(Region::PAL()) versionString = node["ppu/pal-version"].text();
     if(Region::Dendy()) versionString = node["ppu/dendy-version"].text();
   } else {
     versionString = node["ppu/version"].text();
@@ -113,7 +113,7 @@ auto PPU::power() -> void {
 }
 
 auto PPU::reset() -> void {
-  create(Enter, system.colorburst() * 6.0);
+  create(Enter, system.frequency());
   PPUcounter::reset();
   memory::fill(output, 256 * 240 * sizeof(uint32));
   

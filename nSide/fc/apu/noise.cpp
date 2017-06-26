@@ -20,7 +20,7 @@ auto APU::Noise::clock() -> uint8 {
     }
 
     lfsr = (lfsr >> 1) | (feedback << 14);
-    periodCounter = !Region::PAL() ? noisePeriodTableNTSC[period] : noisePeriodTablePAL[period];
+    periodCounter = Region::PAL() ? noisePeriodTablePAL[period] : noisePeriodTableNTSC[period];
   }
 
   return result;

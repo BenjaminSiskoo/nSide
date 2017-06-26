@@ -46,7 +46,7 @@ auto Cartridge::load() -> bool {
   information = Information();
 
   if(Model::Famicom()) {
-    if(auto loaded = platform->load(ID::Famicom, "Famicom", "fc", {"Auto", "NTSC", "PAL", "Dendy"})) {
+    if(auto loaded = platform->load(ID::Famicom, "Famicom", "fc", {"Auto", "NTSC-J", "NTSC-U", "PAL", "Dendy"})) {
       information.pathID = loaded.pathID();
       information.region = loaded.option();
     } else return false;
@@ -55,21 +55,21 @@ auto Cartridge::load() -> bool {
   if(Model::VSSystem()) {
     if(auto loaded = platform->load(ID::VSSystem, "VS. System", "vs")) {
       information.pathID = loaded.pathID();
-      information.region = "NTSC";
+      information.region = "NTSC-J";
     } else return false;
   }
 
   if(Model::PlayChoice10()) {
     if(auto loaded = platform->load(ID::PlayChoice10, "PlayChoice-10", "pc10")) {
       information.pathID = loaded.pathID();
-      information.region = "NTSC";
+      information.region = "NTSC-U";
     } else return false;
   }
 
   if(Model::FamicomBox()) {
     if(auto loaded = platform->load(ID::FamicomBox, "FamicomBox", "fcb")) {
       information.pathID = loaded.pathID();
-      information.region = "NTSC";
+      information.region = "NTSC-J";
     } else return false;
   }
 
@@ -119,7 +119,7 @@ auto Cartridge::unload() -> void {
 }
 
 auto Cartridge::power() -> void {
-  create(Cartridge::Enter, system.colorburst() * 6.0);
+  create(Cartridge::Enter, system.frequency());
   board->power();
 
   reset();

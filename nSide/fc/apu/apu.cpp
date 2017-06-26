@@ -80,9 +80,7 @@ auto APU::main() -> void {
 }
 
 auto APU::tick() -> void {
-  if(Region::NTSC ()) Thread::step(12);
-  if(Region::PAL  ()) Thread::step(16);
-  if(Region::Dendy()) Thread::step(15);
+  Thread::step(rate());
   synchronize(cpu);
 }
 
@@ -99,8 +97,8 @@ auto APU::load(Markup::Node node) -> bool {
 
   string versionString;
   if(Model::Famicom()) {
-    if(Region::NTSC ()) versionString = node["apu/ntsc-version"].text();
-    if(Region::PAL  ()) versionString = node["apu/pal-version"].text();
+    if(Region::NTSCJ() || Region::NTSCU()) versionString = node["apu/ntsc-version"].text();
+    if(Region::PAL()) versionString = node["apu/pal-version"].text();
     if(Region::Dendy()) versionString = node["apu/dendy-version"].text();
   } else {
     versionString = node["apu/version"].text();
@@ -126,15 +124,12 @@ auto APU::load(Markup::Node node) -> bool {
 }
 
 auto APU::power() -> void {
-  double clockDivider;
-  if(Region::NTSC ()) clockDivider = 12.0;
-  if(Region::PAL  ()) clockDivider = 16.0;
-  if(Region::Dendy()) clockDivider = 15.0;
-
   if(!Model::VSSystem() || vssystem.gameCount != 2 || side == 0) {
-    stream = Emulator::audio.createStream(1, (system.colorburst() * 6.0) / clockDivider);
-    stream->addLowPassFilter(20000.0, 3);
-    stream->addHighPassFilter(20.0, 3);
+    stream = Emulator::audio.createStream(1, system.frequency() / rate());
+    stream->addFilter(Emulator::Filter::Order::First, Emulator::Filter::Type::HighPass, 90.0);
+    stream->addFilter(Emulator::Filter::Order::First, Emulator::Filter::Type::HighPass, 440.0);
+    stream->addFilter(Emulator::Filter::Order::First, Emulator::Filter::Type::LowPass, 14000.0);
+    stream->addFilter(Emulator::Filter::Order::Second, Emulator::Filter::Type::LowPass, 20000.0, 3);
   }
 
   pulse[0].power();
@@ -147,7 +142,7 @@ auto APU::power() -> void {
 }
 
 auto APU::reset() -> void {
-  create(APU::Enter, system.colorburst() * 6.0);
+  create(APU::Enter, system.frequency());
 
   pulse[0].reset();
   pulse[1].reset();
@@ -349,7 +344,12 @@ auto APU::clockFrameCounter() -> void {
   noise.envelope.clock();
 
   if(frame.counter == 0) {
-    if(frame.mode & 2) frame.divider += Region::NTSC() ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
+    if(frame.mode & 2) {
+      if(Region::NTSCJ()) frame.divider += FrameCounter::NtscPeriod;
+      if(Region::NTSCU()) frame.divider += FrameCounter::NtscPeriod;
+      if(Region::PAL  ()) frame.divider += FrameCounter::PalPeriod;
+      if(Region::Dendy()) frame.divider += FrameCounter::PalPeriod;
+    }
     if(frame.mode == 0) {
       frame.irqPending = true;
       setIRQ();
@@ -361,7 +361,10 @@ auto APU::clockFrameCounterDivider() -> void {
   frame.divider -= 2;
   if(frame.divider <= 0) {
     clockFrameCounter();
-    frame.divider += Region::NTSC() ? FrameCounter::NtscPeriod : FrameCounter::PalPeriod;
+    if(Region::NTSCJ()) frame.divider += FrameCounter::NtscPeriod;
+    if(Region::NTSCU()) frame.divider += FrameCounter::NtscPeriod;
+    if(Region::PAL  ()) frame.divider += FrameCounter::PalPeriod;
+    if(Region::Dendy()) frame.divider += FrameCounter::PalPeriod;
   }
 }
 

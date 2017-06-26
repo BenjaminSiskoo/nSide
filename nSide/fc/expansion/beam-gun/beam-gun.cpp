@@ -1,5 +1,5 @@
 BeamGun::BeamGun() {
-  create(Expansion::Enter, system.colorburst() * 6.0);
+  create(Expansion::Enter, system.frequency());
   sprite = Emulator::video.createSprite(16, 16);
   sprite->setPixels(Resource::Sprite::CrosshairGreenSmall);
 

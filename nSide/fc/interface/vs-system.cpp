@@ -20,11 +20,6 @@ VSSystemInterface::VSSystemInterface() {
     hardware.devices.append(device);
   }
 
-  { Device device{ID::Device::None, "None"};
-    controllerPort1.devices.append(device);
-    controllerPort2.devices.append(device);
-  }
-
   { Device device{ID::Device::Gamepad, "Gamepad"};
     device.inputs.append({0, "Up"    });
     device.inputs.append({0, "Down"  });
@@ -56,7 +51,7 @@ auto VSSystemInterface::videoSize(uint width, uint height, bool arc, bool intSca
   double w = 256;
   if(arc) {
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    w *= squarePixelRate / (system.colorburst() * 6.0 / 4.0);
+    w *= squarePixelRate / (system.frequency() / ppu1.rate());
   }
   int h = 240 / vssystem.gameCount;
   double m;

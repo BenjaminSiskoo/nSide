@@ -42,7 +42,7 @@ auto FamicomBox::unload() -> void {
 }
 
 auto FamicomBox::power() -> void {
-  create(FamicomBox::Enter, system.colorburst() * 6.0);
+  create(FamicomBox::Enter, system.frequency());
 
   exceptionEnable = 0x00;
   exceptionTrap = 0xff;
@@ -169,7 +169,7 @@ auto FamicomBox::pollInputs() -> void {
   state = platform->inputPoll(ID::Port::Hardware, ID::Device::FamicomBoxControls, 3);
   if(state && !coin) {
     trap(Exception::Coin);
-    uint second = floor(system.colorburst() * 6.0 / (3 * 0x2000));
+    uint second = floor(system.frequency() / (3 * 0x2000));
     if(coinModule.min10) coinModule.timer += 10 * 60 * second;
     if(coinModule.min20) coinModule.timer += 20 * 60 * second;
   }

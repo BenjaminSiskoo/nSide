@@ -77,21 +77,25 @@ auto System::load(Emulator::Interface* interface, Model model) -> bool {
   }
 
   if(model == Model::Famicom) {
-    if(cartridgeSlot[0].region() == "NTSC") {
-      information.region = Region::NTSC;
-      information.colorburst = Emulator::Constants::Colorburst::NTSC;
+    if(cartridgeSlot[0].region() == "NTSC-J") {
+      information.region = Region::NTSCJ;
+      information.frequency = Emulator::Constants::Colorburst::NTSC * 6.0;
+    }
+    if(cartridgeSlot[0].region() == "NTSC-U") {
+      information.region = Region::NTSCU;
+      information.frequency = Emulator::Constants::Colorburst::NTSC * 6.0;
     }
     if(cartridgeSlot[0].region() == "PAL") {
       information.region = Region::PAL;
-      information.colorburst = Emulator::Constants::Colorburst::PAL;
+      information.frequency = Emulator::Constants::Colorburst::PAL * 6.0;
     }
     if(cartridgeSlot[0].region() == "Dendy") {
       information.region = Region::Dendy;
-      information.colorburst = Emulator::Constants::Colorburst::PAL;
+      information.frequency = Emulator::Constants::Colorburst::PAL * 6.0;
     }
   } else {
-    information.region = Region::NTSC;
-    information.colorburst = Emulator::Constants::Colorburst::NTSC;
+    information.region = model == Model::PlayChoice10 ? Region::NTSCU : Region::NTSCJ;
+    information.frequency = Emulator::Constants::Colorburst::NTSC * 6.0;
   }
 
   if(!cpu0.load(system)) return false;

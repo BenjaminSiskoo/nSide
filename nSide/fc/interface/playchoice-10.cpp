@@ -22,10 +22,6 @@ PlayChoice10Interface::PlayChoice10Interface() {
     hardware.devices.append(device);
   }
 
-  { Device device{ID::Device::None, "None"};
-    expansionPort.devices.append(device);
-  }
-
   { Device device{ID::Device::Gamepad, "Gamepad"};
     device.inputs.append({0, "Up"   });
     device.inputs.append({0, "Down" });
@@ -35,6 +31,10 @@ PlayChoice10Interface::PlayChoice10Interface() {
     device.inputs.append({0, "A"    });
     controllerPort1.devices.append(device);
     controllerPort2.devices.append(device);
+  }
+
+  { Device device{ID::Device::None, "None"};
+    expansionPort.devices.append(device);
   }
 
   { Device device{ID::Device::BeamGun, "Zapper"};
@@ -62,7 +62,7 @@ auto PlayChoice10Interface::videoSize(uint width, uint height, bool arc, bool in
   double w = 256 / playchoice10.screenConfig;
   if(arc) {
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    w *= squarePixelRate / (system.colorburst() * 6.0 / 4.0);
+    w *= squarePixelRate / (system.frequency() / ppu0.rate());
   }
   int h = playchoice10.screenConfig == 2 ? (240 + 224) / 2 : 240;
   double m;
