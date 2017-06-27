@@ -58,15 +58,14 @@ auto APU::load(Markup::Node node) -> bool {
 auto APU::power() -> void {
   Z80::bus = &busAPU;
   Z80::power();
-  create(APU::Enter, system.colorburst());
-  memory::fill(&state, sizeof(State));
+  reset();
 }
 
 auto APU::reset() -> void {
   Z80::reset();
-  create(APU::Enter, system.colorburst());
-  memory::fill(&r, sizeof(Registers));
-  memory::fill(&state, sizeof(State));
+  bus->grant(false);
+  create(APU::Enter, system.frequency() / 15.0);
+  state = {};
 }
 
 }

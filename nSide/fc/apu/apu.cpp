@@ -194,6 +194,9 @@ auto APU::writeIO(uint16 addr, uint8 data) -> void {
     pulse[n].envelope.loopMode = data & 0x20;
     pulse[n].envelope.useSpeedAsVolume = data & 0x10;
     pulse[n].envelope.speed = data & 0x0f;
+    if(version == APU::Version::UA6527P) {
+      pulse[n].duty = pulse[n].duty.bit(0) << 1 | pulse[n].duty.bit(1) << 0;
+    }
     return;
   }
 

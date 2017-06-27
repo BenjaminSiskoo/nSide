@@ -87,9 +87,7 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
     double squarePixelRate = system.region() != System::Region::PAL
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    //note: PAL system multiplies colorburst by 4/5 to make clock rate;
-    //this operation was already done within system.cpp.
-    w *= squarePixelRate / (system.colorburst() * 15.0 / 8.0);
+    w *= squarePixelRate / (system.frequency() / 8.0);
   }
   uint h = 240;
   double m;
@@ -152,7 +150,9 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  peripherals.connect(port, device);
+  if(port == ID::Port::Controller1) controllerPort1.connect(settings.controllerPort1 = device);
+  if(port == ID::Port::Controller2) controllerPort2.connect(settings.controllerPort2 = device);
+  if(port == ID::Port::Extension) extensionPort.connect(settings.extensionPort = device);
 }
 
 auto Interface::power() -> void {

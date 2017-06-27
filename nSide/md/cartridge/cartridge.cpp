@@ -29,8 +29,8 @@ auto Cartridge::load() -> bool {
   if(auto node = document["board/rom"]) {
     rom.size = node["size"].natural();
     auto addrRange = node["map/address"].text().split("-", 1L);
-    rom.addrLo = addrRange(0).hex();
-    rom.addrHi = addrRange(1).hex();
+    rom.addrLo = addrRange(0) ? addrRange(0).hex() : 0x000000;
+    rom.addrHi = addrRange(1) ? addrRange(1).hex() : 0x3fffff;
     rom.mask = 0;
     if(rom.size) {
       rom.data = new uint8[rom.size];
@@ -45,8 +45,8 @@ auto Cartridge::load() -> bool {
   if(auto node = document["board/ram"]) {
     ram.size = node["size"].natural();
     auto addrRange = node["map/address"].text().split("-", 1L);
-    ram.addrLo = addrRange(0).hex();
-    ram.addrHi = addrRange(1).hex();
+    ram.addrLo = addrRange(0) ? addrRange(0).hex() : 0x200000;
+    ram.addrHi = addrRange(1) ? addrRange(1).hex() : 0x3fffff;
     ram.mask = node["map/mask"].natural();
     if(ram.size) {
       ram.data = new uint8[ram.size];
