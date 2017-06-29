@@ -1039,7 +1039,7 @@ auto M68K::instructionSBCD(EffectiveAddress with, EffectiveAddress from) -> void
 
   write<Byte>(with, result);
 
-  r.c = (adjustLo && clip<Byte>(result) >= 0xfa) || adjustHi;
+  r.c = c;
   r.v = v;
   r.z = clip<Byte>(result) ? 0 : r.z;
   r.n = sign<Byte>(result) < 0;
