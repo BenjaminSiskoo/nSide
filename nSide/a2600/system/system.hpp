@@ -5,15 +5,15 @@ struct System {
 
   inline auto loaded() const -> bool { return information.loaded; }
   inline auto region() const -> Region { return information.region; }
-  inline auto colorburst() const -> double { return information.colorburst; }
+  inline auto frequency() const -> double { return information.frequency; }
+
+  auto run() -> void;
+  auto runToSave() -> void;
 
   auto load(Emulator::Interface*) -> bool;
   auto save() -> void;
   auto unload() -> void;
   auto power() -> void;
-
-  auto run() -> void;
-  auto runToSave() -> void;
 
   //video.cpp
   auto configureVideoPalette() -> void;
@@ -30,7 +30,7 @@ private:
     string manifest;
     bool loaded = false;
     Region region = Region::NTSC;
-    double colorburst = Emulator::Constants::Colorburst::NTSC;
+    double frequency = Emulator::Constants::Colorburst::NTSC;
   } information;
 
   uint serializeSize = 0;
@@ -42,17 +42,7 @@ private:
   friend class Cartridge;
 };
 
-struct Peripherals {
-  auto unload() -> void;
-  auto reset() -> void;
-  auto connect(uint port, uint device) -> void;
-
-  Controller* controllerPort1 = nullptr;
-  Controller* controllerPort2 = nullptr;
-};
-
 extern System system;
-extern Peripherals peripherals;
 
 auto Region::NTSC() -> bool { return system.region() == System::Region::NTSC; }
 auto Region::PAL() -> bool { return system.region() == System::Region::PAL; }

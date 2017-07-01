@@ -16,8 +16,6 @@
 //  9:  inpt1/3  $0039.d7   $003b.d7
 
 struct Controller : Thread {
-  enum : uint { Port1 = 0, Port2 = 1 };
-
   Controller(uint port);
   virtual ~Controller();
   static auto Enter() -> void;
@@ -30,5 +28,19 @@ struct Controller : Thread {
 
   const uint port;
 };
+
+struct ControllerPort {
+  auto connect(uint deviceID) -> void;
+
+  auto power(uint port) -> void;
+  auto unload() -> void;
+  auto serialize(serializer&) -> void;
+
+  uint port;
+  Controller* device = nullptr;
+};
+
+extern ControllerPort controllerPort1;
+extern ControllerPort controllerPort2;
 
 #include "joystick/joystick.hpp"

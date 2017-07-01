@@ -3,8 +3,8 @@ auto PIA::readIO(uint7 addr, uint8 data) -> uint8 {
 
   case 0x00: {  //SWCHA
     data = (io.swcha & io.swacnt) | (data & ~io.swacnt);
-    data |= (Atari2600::peripherals.controllerPort1->direction() << 4) & ~io.swacnt;
-    data |= (Atari2600::peripherals.controllerPort2->direction() << 0) & ~io.swacnt;
+    data |= (controllerPort1.device->direction() << 4) & ~io.swacnt;
+    data |= (controllerPort2.device->direction() << 0) & ~io.swacnt;
     break;
   }
 

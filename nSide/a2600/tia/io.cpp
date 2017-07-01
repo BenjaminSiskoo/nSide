@@ -58,37 +58,37 @@ auto TIA::readIO(uint6 addr, uint8 data) -> uint8 {
 
   //INPT0
   case 0x8: {
-    data.bit(7) = peripherals.controllerPort1->pot0();
+    data.bit(7) = controllerPort1.device->pot0();
     break;
   }
 
   //INPT1
   case 0x9: {
-    data.bit(7) = peripherals.controllerPort1->pot1();
+    data.bit(7) = controllerPort1.device->pot1();
     break;
   }
 
   //INPT2
   case 0xa: {
-    data.bit(7) = peripherals.controllerPort2->pot0();
+    data.bit(7) = controllerPort2.device->pot0();
     break;
   }
 
   //INPT3
   case 0xb: {
-    data.bit(7) = peripherals.controllerPort2->pot1();
+    data.bit(7) = controllerPort2.device->pot1();
     break;
   }
 
   //INPT4
   case 0xc: {
-    data.bit(7) = peripherals.controllerPort1->fire();
+    data.bit(7) = controllerPort1.device->fire();
     break;
   }
 
   //INPT5
   case 0xd: {
-    data.bit(7) = peripherals.controllerPort2->fire();
+    data.bit(7) = controllerPort2.device->fire();
     break;
   }
 

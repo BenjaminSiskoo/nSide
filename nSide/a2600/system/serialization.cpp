@@ -47,6 +47,9 @@ auto System::serializeAll(serializer& s) -> void {
   system.serialize(s);
   cpu.serialize(s);
   tia.serialize(s);
+
+  controllerPort1.serialize(s);
+  controllerPort2.serialize(s);
 }
 
 //perform dry-run state save:

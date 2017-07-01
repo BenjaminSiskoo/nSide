@@ -52,7 +52,7 @@ auto TIA::load(Markup::Node node) -> bool {
 }
 
 auto TIA::power() -> void {
-  create(Enter, system.colorburst());
+  create(Enter, system.frequency());
   stream = Emulator::audio.createStream(1, frequency() / 114.0);
   memory::fill(output, 160 * 228 * sizeof(uint32));
 

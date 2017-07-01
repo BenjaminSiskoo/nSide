@@ -63,7 +63,7 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
     double squarePixelRate = system.region() == System::Region::NTSC
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    w *= squarePixelRate / system.colorburst();
+    w *= squarePixelRate / system.frequency();
   }
   uint h = 228;
   double m;
@@ -221,7 +221,8 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  Atari2600::peripherals.connect(port, device);
+  if(port == ID::Port::Controller1) controllerPort1.connect(settings.controllerPort1 = device);
+  if(port == ID::Port::Controller2) controllerPort2.connect(settings.controllerPort2 = device);
 }
 
 auto Interface::power() -> void {

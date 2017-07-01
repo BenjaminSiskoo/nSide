@@ -140,9 +140,7 @@ auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> V
     double squarePixelRate = system.region() == System::Region::NTSC
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    //note: PAL SNES multiples colorburst by 4/5 to make clock rate;
-    //this operation was already done within system.cpp.
-    w *= squarePixelRate / (system.colorburst() * 6.0 / (2.0 + 2.0));
+    w *= squarePixelRate / (system.cpuFrequency() / (2.0 + 2.0));
   }
 
   if(intScale) m = min(  (uint)(width / w),   (uint)(height / h));
@@ -209,7 +207,9 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  peripherals.connect(port, device);
+  if(port == ID::Port::Controller1) controllerPort1.connect(settings.controllerPort1 = device);
+  if(port == ID::Port::Controller2) controllerPort2.connect(settings.controllerPort2 = device);
+  if(port == ID::Port::Expansion) expansionPort.connect(settings.expansionPort = device);
 }
 
 auto Interface::power() -> void {

@@ -6,8 +6,18 @@ System system;
 Scheduler scheduler;
 Cheat cheat;
 #include "video.cpp"
-#include "peripherals.cpp"
 #include "serialization.cpp"
+
+auto System::run() -> void {
+  if(scheduler.enter() == Scheduler::Event::Frame) tia.refresh();
+}
+
+auto System::runToSave() -> void {
+  scheduler.synchronize(cpu);
+  scheduler.synchronize(pia);
+  scheduler.synchronize(tia);
+  for(auto peripheral : pia.peripherals) scheduler.synchronize(*peripheral);
+}
 
 auto System::load(Emulator::Interface* interface) -> bool {
   information = {};
@@ -23,15 +33,15 @@ auto System::load(Emulator::Interface* interface) -> bool {
 
   if(cartridge.region() == "NTSC") {
     information.region = Region::NTSC;
-    information.colorburst = Emulator::Constants::Colorburst::NTSC;
+    information.frequency = Emulator::Constants::Colorburst::NTSC;
   }
   if(cartridge.region() == "PAL") {
     information.region = Region::PAL;
-    information.colorburst = Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
+    information.frequency = Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
   }
   if(cartridge.region() == "SECAM") {
     information.region = Region::SECAM;
-    information.colorburst = Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
+    information.frequency = Emulator::Constants::Colorburst::PAL * 4.0 / 5.0;
   }
 
   if(!cpu.load(system)) return false;
@@ -45,12 +55,16 @@ auto System::load(Emulator::Interface* interface) -> bool {
 
 auto System::save() -> void {
   if(!loaded()) return;
+
   cartridge.save();
 }
 
 auto System::unload() -> void {
   if(!loaded()) return;
-  peripherals.unload();
+
+  pia.peripherals.reset();
+  controllerPort1.unload();
+  controllerPort2.unload();
 
   cartridge.unload();
   information.loaded = false;
@@ -71,18 +85,11 @@ auto System::power() -> void {
   tia.power();
   scheduler.primary(cpu);
 
-  peripherals.reset();
-}
+  controllerPort1.power(ID::Port::Controller1);
+  controllerPort2.power(ID::Port::Controller2);
 
-auto System::run() -> void {
-  if(scheduler.enter() == Scheduler::Event::Frame) tia.refresh();
-}
-
-auto System::runToSave() -> void {
-  scheduler.synchronize(cpu);
-  scheduler.synchronize(pia);
-  scheduler.synchronize(tia);
-  for(auto peripheral : pia.peripherals) scheduler.synchronize(*peripheral);
+  controllerPort1.connect(settings.controllerPort1);
+  controllerPort2.connect(settings.controllerPort2);
 }
 
 }
