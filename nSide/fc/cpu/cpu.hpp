@@ -58,5 +58,5 @@ struct CPU : Processor::MOS6502, Thread {
   } io;
 };
 
-extern CPU cpu0;
-extern CPU cpu1;
+extern CPU cpuM;
+extern CPU cpuS;

@@ -55,20 +55,13 @@ auto Bus::in(uint8 addr) -> uint8 {
   }
 
   case 3: {
-    if(Model::SG1000()) {
-      auto port1 = peripherals.controllerPort1->readData();
-      auto port2 = peripherals.controllerPort2->readData();
-      if(addr.bit(0) == 0) {
-        return port1.bits(0,5) << 0 | port2.bits(0,1) << 6;
-      } else {
-        return port2.bits(2,5) << 0 | 1 << 4 | 1 << 5 | port1.bit(6) << 6 | port2.bit(6) << 7;
+    if(Model::SG1000() || Model::MasterSystem()) {
+      bool reset = 1;
+      if(Model::MasterSystem()) {
+        reset = !platform->inputPoll(ID::Port::Hardware, ID::Device::MasterSystemControls, 0);
       }
-    }
-
-    if(Model::MasterSystem()) {
-      bool reset = !platform->inputPoll(ID::Port::Hardware, ID::Device::MasterSystemControls, 0);
-      auto port1 = peripherals.controllerPort1->readData();
-      auto port2 = peripherals.controllerPort2->readData();
+      auto port1 = controllerPort1.device->readData();
+      auto port2 = controllerPort2.device->readData();
       if(addr.bit(0) == 0) {
         return port1.bits(0,5) << 0 | port2.bits(0,1) << 6;
       } else {
@@ -130,10 +123,10 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
       data1.bit(6) = data.bit(5);
       data2.bit(5) = data.bit(6);
       data2.bit(6) = data.bit(7);
-      MasterSystem::peripherals.controllerPort1->writeControl(control1);
-      MasterSystem::peripherals.controllerPort2->writeControl(control2);
-      MasterSystem::peripherals.controllerPort1->writeData(data1);
-      MasterSystem::peripherals.controllerPort2->writeData(data2);
+      controllerPort1.device->writeControl(control1);
+      controllerPort2.device->writeControl(control2);
+      controllerPort1.device->writeData(data1);
+      controllerPort2.device->writeData(data2);
       */
     }
     break;

@@ -1,4 +1,4 @@
-#define cpu (apu->side ? cpu1 : cpu0)
+#define cpu (apu->side ? cpuS : cpuM)
 
 auto APU::DMC::setAPU(APU* hostAPU) -> void {
   apu = hostAPU;

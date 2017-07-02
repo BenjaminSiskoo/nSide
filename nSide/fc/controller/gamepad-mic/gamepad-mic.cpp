@@ -1,4 +1,4 @@
-GamepadMic::GamepadMic(uint port) : Controller(port) {
+GamepadMic::GamepadMic(bool side, uint port) : Controller(side, port) {
   latched = 0;
   counter = 0;
 }

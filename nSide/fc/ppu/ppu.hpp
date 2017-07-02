@@ -177,5 +177,5 @@ privileged:
   friend class System;
 };
 
-extern PPU ppu0;
-extern PPU ppu1;
+extern PPU ppuM;
+extern PPU ppuS;

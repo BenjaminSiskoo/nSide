@@ -24,25 +24,26 @@ struct VSSystem : Thread {
 
   bool forceSubRAM;
   uint gameCount;
+  bool swapControllersM;
+  bool swapControllersS;
 
 private:
   uint8 ram[0x800];
   bool ramSide; // 0: main, 1: sub
 
-  bool swapControllers;
-  uint8 mainDip;
-  uint8 subDip;
+  uint8 dipM;
+  uint8 dipS;
   uint watchdog;
 
   //control.cpp
-  bool mainControlLatched;
-  uint mainControlCounter1;
-  uint mainControlCounter2;
-  bool mainButtons[4];
-  bool subControlLatched;
-  uint subControlCounter1;
-  uint subControlCounter2;
-  bool subButtons[4];
+  bool controlLatchedM;
+  uint controlCounterM1;
+  uint controlCounterM2;
+  bool buttonsM[4];
+  bool controlLatchedS;
+  uint controlCounterS1;
+  uint controlCounterS2;
+  bool buttonsS[4];
 
   auto resetButtons() -> void;
   auto poll(bool side, uint input) -> int16;

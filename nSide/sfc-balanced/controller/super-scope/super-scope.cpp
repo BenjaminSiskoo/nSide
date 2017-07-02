@@ -11,7 +11,7 @@
 //Note that no commercial game ever utilizes a Super Scope in port 1.
 
 SuperScope::SuperScope(uint port) : Controller(port) {
-  create(Controller::Enter, 21'477'272);
+  create(Controller::Enter, system.cpuFrequency());
   sprite = Emulator::video.createSprite(32, 32);
   sprite->setPixels(Resource::Sprite::CrosshairGreen);
 

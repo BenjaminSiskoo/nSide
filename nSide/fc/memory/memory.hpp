@@ -73,5 +73,5 @@ private:
   uint16 counter[256];
 };
 
-extern Bus bus0;
-extern Bus bus1;
+extern Bus busM;
+extern Bus busS;

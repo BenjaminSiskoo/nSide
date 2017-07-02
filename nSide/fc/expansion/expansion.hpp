@@ -32,6 +32,18 @@ struct Expansion : Thread {
   virtual auto write(uint3 data) -> void {}
 };
 
+struct ExpansionPort {
+  auto connect(uint deviceID) -> void;
+
+  auto power() -> void;
+  auto unload() -> void;
+  auto serialize(serializer&) -> void;
+
+  Expansion* device = nullptr;
+};
+
+extern ExpansionPort expansionPort;
+
 #include "gamepad/gamepad.hpp"
 #include "joypair/joypair.hpp"
 #include "four-players/four-players.hpp"

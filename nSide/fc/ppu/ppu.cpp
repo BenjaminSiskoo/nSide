@@ -2,11 +2,11 @@
 
 namespace Famicom {
 
-PPU ppu0(0);
-PPU ppu1(1);
+PPU ppuM(0);
+PPU ppuS(1);
 
-#define bus (side ? bus1 : bus0)
-#define cpu (side ? cpu1 : cpu0)
+#define bus (side ? busS : busM)
+#define cpu (side ? cpuS : cpuM)
 
 #include "io.cpp"
 #include "render.cpp"
@@ -50,8 +50,8 @@ auto PPU::step(uint clocks) -> void {
 auto PPU::Enter() -> void {
   while(true) {
     scheduler.synchronize();
-    if(ppu0.active()) ppu0.main();
-    if(ppu1.active()) ppu1.main();
+    if(ppuM.active()) ppuM.main();
+    if(ppuS.active()) ppuS.main();
   }
 }
 

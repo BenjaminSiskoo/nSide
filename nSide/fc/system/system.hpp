@@ -52,16 +52,6 @@ private:
   friend class Cartridge;
 };
 
-struct Peripherals {
-  auto unload() -> void;
-  auto reset() -> void;
-  auto connect(uint port, uint device) -> void;
-
-  Controller* controllerPort1 = nullptr;
-  Controller* controllerPort2 = nullptr;
-  Expansion* expansionPort = nullptr;
-};
-
 struct Random {
   auto seed(uint seed) -> void;
   auto operator()(uint result) -> uint;
@@ -72,7 +62,6 @@ private:
 };
 
 extern System system;
-extern Peripherals peripherals;
 extern Random random;
 
 auto Model::Famicom() -> bool { return system.model() == System::Model::Famicom; }

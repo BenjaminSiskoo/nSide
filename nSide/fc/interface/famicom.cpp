@@ -295,7 +295,7 @@ auto FamicomInterface::videoSize(uint width, uint height, bool arc, bool intScal
     double squarePixelRate = Famicom::Region::NTSCJ() || Famicom::Region::NTSCU()
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    w *= squarePixelRate / (system.frequency() / ppu0.rate());
+    w *= squarePixelRate / (system.frequency() / ppuM.rate());
   }
   int h = 240;
   double m;
@@ -444,7 +444,7 @@ auto FamicomInterface::videoColor(uint32 n) -> uint64 {
     return R << 32 | G << 16 | B << 0;
   };
 
-  if(ppu0.ntsc()) {
+  if(ppuM.ntsc()) {
     double saturation = 2.0;
     double hue = 0.0;
     double contrast = 1.0;
@@ -453,7 +453,7 @@ auto FamicomInterface::videoColor(uint32 n) -> uint64 {
 
     return generateNTSCColor(n & 0x1ff, saturation, hue, contrast, brightness, gamma);
 
-  } else if(ppu0.pal()) {
+  } else if(ppuM.pal()) {
     double saturation = 2.0;
     double hue = 0.0;
     double contrast = 1.0;
@@ -462,9 +462,9 @@ auto FamicomInterface::videoColor(uint32 n) -> uint64 {
 
     return generatePALColor(n & 0x1ff, saturation, hue, contrast, brightness, gamma);
 
-  } else if(ppu0.rgb()) {
+  } else if(ppuM.rgb()) {
     const uint9* palette = nullptr;
-    switch(ppu0.version) {
+    switch(ppuM.version) {
     case PPU::Version::RP2C03B:
     case PPU::Version::RP2C03G:
     case PPU::Version::RC2C03B:
@@ -498,18 +498,25 @@ auto FamicomInterface::load(uint id) -> bool {
 }
 
 auto FamicomInterface::connect(uint port, uint device) -> void {
-  uint oppositePort = port == ID::Port::Controller1 ? ID::Port::Controller2 : ID::Port::Controller1;
-
-  if((port == ID::Port::Controller1 && settings.controllerPort1 == ID::Device::FourScore)
-  || (port == ID::Port::Controller2 && settings.controllerPort2 == ID::Device::FourScore)) {
-    platform->deviceChanged(oppositePort, ID::Device::None);
+  if(port == ID::Port::Controller1) {
+    if(settings.controllerPort1 == ID::Device::FourScore) {
+      platform->deviceChanged(ID::Port::Controller2, ID::Device::None);
+    }
+    controllerPortM1.connect(settings.controllerPort1 = device);
+    if(device == ID::Device::FourScore) {
+      platform->deviceChanged(ID::Port::Controller2, ID::Device::FourScore);
+    }
   }
 
-  peripherals.connect(port, device);
-
-  if(device == ID::Device::FourScore
-  &&((port == ID::Port::Controller1 && settings.controllerPort2 != ID::Device::FourScore)
-  || (port == ID::Port::Controller2 && settings.controllerPort1 != ID::Device::FourScore))) {
-    platform->deviceChanged(oppositePort, ID::Device::FourScore);
+  if(port == ID::Port::Controller2) {
+    if(settings.controllerPort2 == ID::Device::FourScore) {
+      platform->deviceChanged(ID::Port::Controller1, ID::Device::None);
+    }
+    controllerPortM2.connect(settings.controllerPort2 = device);
+    if(device == ID::Device::FourScore) {
+      platform->deviceChanged(ID::Port::Controller1, ID::Device::FourScore);
+    }
   }
+
+  if(port == ID::Port::Expansion) expansionPort.connect(settings.expansionPort = device);
 }

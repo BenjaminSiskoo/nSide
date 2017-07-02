@@ -35,6 +35,7 @@ VSSystemInterface::VSSystemInterface() {
     device.inputs.append({1, "X-axis" });
     device.inputs.append({1, "Y-axis" });
     device.inputs.append({0, "Trigger"});
+    controllerPort1.devices.append(device);
     controllerPort2.devices.append(device);
   }
 
@@ -51,7 +52,7 @@ auto VSSystemInterface::videoSize(uint width, uint height, bool arc, bool intSca
   double w = 256;
   if(arc) {
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    w *= squarePixelRate / (system.frequency() / ppu1.rate());
+    w *= squarePixelRate / (system.frequency() / ppuS.rate());
   }
   int h = 240 / vssystem.gameCount;
   double m;
@@ -93,7 +94,7 @@ auto VSSystemInterface::videoColor(uint32 n) -> uint64 {
   };
 
   const uint9* palette = nullptr;
-  switch((n < (1 << 9) ? ppu0 : ppu1).version) {
+  switch((n < (1 << 9) ? ppuM : ppuS).version) {
   case PPU::Version::RP2C03B:
   case PPU::Version::RP2C03G:
   case PPU::Version::RC2C03B:
@@ -123,7 +124,4 @@ auto VSSystemInterface::videoColor(uint32 n) -> uint64 {
 
 auto VSSystemInterface::load(uint id) -> bool {
   return system.load(this, System::Model::VSSystem);
-}
-
-auto VSSystemInterface::connect(uint port, uint device) -> void {
 }

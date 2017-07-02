@@ -3,7 +3,7 @@ struct Vaus : Controller {
     Control, Fire,
   };
 
-  Vaus(uint port);
+  Vaus(bool side, uint port);
 
   auto main() -> void;
   auto data() -> uint3;

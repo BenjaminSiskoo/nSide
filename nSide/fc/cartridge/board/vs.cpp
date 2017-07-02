@@ -66,12 +66,12 @@ struct VS : Board {
   auto writePRG(uint addr, uint8 data) -> void {
     switch(chipType) {
     case ChipType::None:
-      if(addr == 0x4016) bank = (data & 0x04) >> 2;
+      if(addr == 0x4016) bank = data.bit(2);
       break;
     case ChipType::_74HC32:
       //TODO: Check if VS. UNROM has bus conflicts
       //data &= readPRG(addr, data);
-      if(addr & 0x8000) bank = data & 0x0f;
+      if(addr & 0x8000) bank = data.bits(0,3);
       break;
     case ChipType::MMC1:
       if(addr & 0x8000) return mmc1.mmioWrite(addr, data);

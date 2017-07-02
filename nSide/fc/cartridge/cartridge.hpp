@@ -55,7 +55,7 @@ struct Cartridge : Thread {
 private:
   //load.cpp
   auto loadCartridge(Markup::Node) -> void;
-  auto setupVS(Markup::Node&, Markup::Node&) -> void;
+  auto setupVS(Markup::Node&, uint) -> void;
 
   auto loadMemory(MappedRAM&, Markup::Node, bool required, maybe<uint> id = nothing) -> void;
 

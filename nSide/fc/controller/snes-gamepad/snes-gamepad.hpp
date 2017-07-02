@@ -3,7 +3,7 @@ struct SNESGamepad : Controller {
     Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
   };
 
-  SNESGamepad(uint port);
+  SNESGamepad(bool side, uint port);
 
   auto data() -> uint3;
   auto latch(bool data) -> void;

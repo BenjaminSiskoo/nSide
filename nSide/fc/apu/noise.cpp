@@ -1,3 +1,7 @@
+auto APU::Noise::setAPU(APU* hostAPU) -> void {
+  apu = hostAPU;
+}
+
 auto APU::Noise::clockLength() -> void {
   if(envelope.loopMode == 0) {
     if(lengthCounter > 0) lengthCounter--;
@@ -13,7 +17,7 @@ auto APU::Noise::clock() -> uint8 {
     uint feedback;
 
     //TODO: Check if the RP2A03E and prior versions support short mode.
-    if(shortMode && apu0.version != APU::Version::RP2A03 && apu0.version != APU::Version::RP2A03F) {
+    if(shortMode && apu->version != APU::Version::RP2A03 && apu->version != APU::Version::RP2A03F) {
       feedback = ((lfsr >> 0) & 1) ^ ((lfsr >> 6) & 1);
     } else {
       feedback = ((lfsr >> 0) & 1) ^ ((lfsr >> 1) & 1);

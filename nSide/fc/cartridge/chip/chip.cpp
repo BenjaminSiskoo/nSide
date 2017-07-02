@@ -1,6 +1,6 @@
-#define cpu (Model::VSSystem() && board.slot ? cpu1 : cpu0)
-#define apu (Model::VSSystem() && board.slot ? apu1 : apu0)
-#define ppu (Model::VSSystem() && board.slot ? ppu1 : ppu0)
+#define cpu (Model::VSSystem() && board.slot ? cpuS : cpuM)
+#define apu (Model::VSSystem() && board.slot ? apuS : apuM)
+#define ppu (Model::VSSystem() && board.slot ? ppuS : ppuM)
 
 #include "fcg.cpp"
 #include "g101.cpp"

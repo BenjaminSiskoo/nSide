@@ -13,11 +13,11 @@ Interface::Interface() {
 }
 
 auto Interface::manifest() -> string {
-  return cartridgeSlot[Model::VSSystem()].manifest();
+  return cartridgeSlot[0].manifest();
 }
 
 auto Interface::title() -> string {
-  return cartridgeSlot[Model::VSSystem()].title();
+  return cartridgeSlot[0].title();
 }
 
 auto Interface::loaded() -> bool {
@@ -25,7 +25,7 @@ auto Interface::loaded() -> bool {
 }
 
 auto Interface::sha256() -> string {
-  return cartridgeSlot[Model::VSSystem()].sha256();
+  return cartridgeSlot[0].sha256();
 }
 
 auto Interface::save() -> void {
@@ -86,11 +86,13 @@ auto Interface::set(const string& name, const any& value) -> bool {
 }
 
 auto Interface::exportMemory() -> void {
-  auto& cartridge = cartridgeSlot[Model::VSSystem()];
+  if(Model::VSSystem()) return;
+
+  auto& cartridge = cartridgeSlot[0];
   string pathname = {platform->path(cartridge.pathID()), "debug/"};
   directory::create(pathname);
 
-  if(auto fp = platform->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpu0.ram, 0x800);
+  if(auto fp = platform->open(cartridge.pathID(), "debug/work.ram", File::Write)) fp->write(cpuM.ram, 0x800);
   if(cartridge.board->prgram.size()) if(auto fp = platform->open(cartridge.pathID(), "debug/program.ram", File::Write)) {
     fp->write(cartridge.board->prgram.data(), cartridge.board->prgram.size());
   }

@@ -2,12 +2,14 @@
 
 namespace Famicom {
 
-CPU cpu0(0);
-CPU cpu1(1);
+CPU cpuM(0);
+CPU cpuS(1);
 
-#define bus (side ? bus1 : bus0)
-#define apu (side ? apu1 : apu0)
-#define ppu (side ? ppu1 : ppu0)
+#define bus (side ? busS : busM)
+#define apu (side ? apuS : apuM)
+#define ppu (side ? ppuS : ppuM)
+#define controllerPort1 (side ? controllerPortS1 : controllerPortM1)
+#define controllerPort2 (side ? controllerPortS2 : controllerPortM2)
 
 #include "memory.cpp"
 #include "io.cpp"
@@ -20,8 +22,8 @@ CPU::CPU(bool side) : Processor::MOS6502(), side(side) {
 auto CPU::Enter() -> void {
   while(true) {
     scheduler.synchronize();
-    if(cpu0.active()) cpu0.main();
-    if(cpu1.active()) cpu1.main();
+    if(cpuM.active()) cpuM.main();
+    if(cpuS.active()) cpuS.main();
   }
 }
 
@@ -80,5 +82,7 @@ auto CPU::reset() -> void {
 #undef bus
 #undef apu
 #undef ppu
+#undef controllerPort1
+#undef controllerPort2
 
 }

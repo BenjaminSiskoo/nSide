@@ -26,26 +26,26 @@ SMPDebugger::SMPDebugger() {
 
 auto SMPDebugger::read(uint16 addr) -> uint8 {
   if((addr & 0xfff0) == 0x00f0) return ~0;  //$00f0-00ff  MMIO
-  return SFC::smp.readBus(addr);
+  return SFC::smp.busRead(addr);
 }
 
 auto SMPDebugger::write(uint16 addr, uint8 data) -> void {
   if((addr & 0xfff0) == 0x00f0) return;  //$00f0-00ff  MMIO
-  return SFC::smp.writeBus(addr, data);
+  return SFC::smp.busWrite(addr, data);
 }
 
 auto SMPDebugger::opcodeLength(uint16 addr) -> uint {
   static uint lengthTable[256] = {
     0
   };
-  return lengthTable[SFC::smp.readBus(addr)];
+  return lengthTable[SFC::smp.busRead(addr)];
 }
 
 auto SMPDebugger::updateDisassembly() -> void {
   const int middle = 7;
   string line[middle * 2 + 1];
 
-  bool p = debugger->cpuUsage.data[opcodePC] & Usage::P;
+  bool p = debugger->apuUsage.data[opcodePC] & Usage::P;
   string text = SFC::smp.disassemble(opcodePC, p);
   line[middle] = { "> ", slice(text, 0, 30) };
 
@@ -54,7 +54,7 @@ auto SMPDebugger::updateDisassembly() -> void {
     for(int b = 1; b <= 3; b++) {
       if(addr - b >= 0 && (debugger->apuUsage.data[addr - b] & Usage::Exec)) {
         addr -= b;
-        p = debugger->cpuUsage.data[addr] & Usage::P;
+        p = debugger->apuUsage.data[addr] & Usage::P;
         text = SFC::smp.disassemble(addr, p);
         line[o] = { "  ", slice(text, 0, 30) };
         break;
@@ -67,7 +67,7 @@ auto SMPDebugger::updateDisassembly() -> void {
     for(int b = 1; b <= 3; b++) {
       if(addr - b <= 0xffff && (debugger->apuUsage.data[addr + b] & Usage::Exec)) {
         addr += b;
-        p = debugger->cpuUsage.data[addr] & Usage::P;
+        p = debugger->apuUsage.data[addr] & Usage::P;
         text = SFC::smp.disassemble(addr, p);
         line[o] = { "  ", slice(text, 0, 30) };
         break;

@@ -33,7 +33,7 @@ struct Interface : Emulator::Interface {
   auto save() -> void override;
   auto unload() -> void override;
 
-  auto connect(uint port, uint device) -> void override;
+  auto connect(uint port, uint device) -> void override {}
   auto power() -> void override;
   auto run() -> void override;
 
@@ -58,6 +58,8 @@ struct SG1000Interface : Interface {
   auto videoColor(uint32 color) -> uint64 override;
 
   auto load(uint id) -> bool override;
+
+  auto connect(uint port, uint device) -> void override;
 };
 
 struct MasterSystemInterface : Interface {
@@ -71,6 +73,8 @@ struct MasterSystemInterface : Interface {
   auto videoColor(uint32 color) -> uint64 override;
 
   auto load(uint id) -> bool override;
+
+  auto connect(uint port, uint device) -> void override;
 };
 
 struct GameGearInterface : Interface {

@@ -1,4 +1,4 @@
-PowerPad::PowerPad(uint port) : Controller(port) {
+PowerPad::PowerPad(bool side, uint port) : Controller(side, port) {
   latched = 0;
   counter = 0;
 

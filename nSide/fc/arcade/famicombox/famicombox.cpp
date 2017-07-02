@@ -15,7 +15,7 @@ auto FamicomBox::main() -> void {
   if(++watchdog        == 0x0000) trap(Exception::Watchdog);
   if(coinModule.timer && --coinModule.timer == 0) trap(Exception::Coin);
   step(3 * 0x2000);
-  synchronize(cpu0);
+  synchronize(cpuM);
 }
 
 auto FamicomBox::load(Markup::Node node) -> bool {
@@ -64,20 +64,20 @@ auto FamicomBox::power() -> void {
 
   reader = {&FamicomBox::readWRAM, this};
   writer = {&FamicomBox::writeWRAM, this};
-  bus0.map(reader, writer, "0800-1fff");
+  busM.map(reader, writer, "0800-1fff");
 
   reader = {&FamicomBox::readIO, this};
   writer = {&FamicomBox::writeIO, this};
-  bus0.map(reader, writer, "4016-4017");
-  bus0.map(reader, writer, "5000-5fff");
+  busM.map(reader, writer, "4016-4017");
+  busM.map(reader, writer, "5000-5fff");
 
   reader = {&FamicomBox::readSRAM, this};
   writer = {&FamicomBox::writeSRAM, this};
-  bus0.map(reader, writer, "6000-7fff");
+  busM.map(reader, writer, "6000-7fff");
 
   reader = {&FamicomBox::readCartridge, this};
   writer = {&FamicomBox::writeCartridge, this};
-  bus0.map(reader, writer, "8000-ffff");
+  busM.map(reader, writer, "8000-ffff");
   // The cartridge is only mapped to $8000-ffff, not $4018-ffff.
 
   keyswitchSprite = Emulator::video.createSprite(16, 16);
@@ -99,22 +99,22 @@ auto FamicomBox::reset() -> void {
   changeSlot(0);
   registerLock = false;
 
-  synchronize(cpu0);
-  synchronize(apu0);
-  synchronize(cartridgeSlot[bus0.slot]);
+  synchronize(cpuM);
+  synchronize(apuM);
+  synchronize(cartridgeSlot[busM.slot]);
 
-  cpu0.reset();
-  apu0.reset();
-  cartridgeSlot[bus0.slot].reset();
+  cpuM.reset();
+  apuM.reset();
+  cartridgeSlot[busM.slot].reset();
 }
 
 auto FamicomBox::changeSlot(uint4 newSlot) -> void {
   if(newSlot == cartridgeSelect) return;
-  //if(cartridgeSelect > 0) scheduler.remove(cartridgeSlot[bus0.slot]);
+  //if(cartridgeSelect > 0) scheduler.remove(cartridgeSlot[busM.slot]);
   cartridgeSelect = newSlot;
   cartridgeRowSelect = (newSlot + 4) / 5;
-  //if(cartridgeSelect > 0 && cartridgeSelect <= cartridgeSlot.size()) bus0.slot = newSlot - 1;
-  //cartridgeSlot[bus0.slot].power();
+  //if(cartridgeSelect > 0 && cartridgeSelect <= cartridgeSlot.size()) busM.slot = newSlot - 1;
+  //cartridgeSlot[busM.slot].power();
 }
 
 auto FamicomBox::trap(Exception exceptionId) -> void {
@@ -178,7 +178,7 @@ auto FamicomBox::pollInputs() -> void {
 
 auto FamicomBox::readWRAM(uint16 addr, uint8 data) -> uint8 {
   switch(addr & 0xf800) {
-  case 0x0000: return cpu0.ram[addr];
+  case 0x0000: return cpuM.ram[addr];
   case 0x0800:
   case 0x1000:
   case 0x1800: return bios_ram[addr - 0x800];
@@ -189,11 +189,11 @@ auto FamicomBox::readIO(uint16 addr, uint8 data) -> uint8 {
   if(addr == 0x4016 || addr == 0x4017) {
     watchdog.bits(10,13) = 0;
     if(!enableControllers) return data;
-    if(addr == 0x4017) data.bits(3,4) = dip.bit(9) ? Famicom::peripherals.expansionPort->data2().bits(3,4) : 0;
+    if(addr == 0x4017) data.bits(3,4) = dip.bit(9) ? expansionPort.device->data2().bits(3,4) : 0;
     if(swapControllers) addr ^= 1;
     switch(addr) {
-    case 0x4016: data.bit(0) = Famicom::peripherals.controllerPort1->data().bit(0); break;
-    case 0x4017: data.bit(0) = Famicom::peripherals.controllerPort2->data().bit(0); break;
+    case 0x4016: data.bit(0) = controllerPortM1.device->data().bit(0); break;
+    case 0x4017: data.bit(0) = controllerPortM2.device->data().bit(0); break;
     }
     if(addr == 0x4016 && data.bit(0)) trap(Exception::Controller);
     return data;
@@ -280,7 +280,7 @@ auto FamicomBox::readCartridge(uint16 addr, uint8 data) -> uint8 {
 auto FamicomBox::writeWRAM(uint16 addr, uint8 data) -> void {
   switch(addr & 0xf800) {
   case 0x0000: {
-    if(ramProtect >= 1) cpu0.ram[addr] = data;
+    if(ramProtect >= 1) cpuM.ram[addr] = data;
     return;
   }
 
@@ -303,7 +303,7 @@ auto FamicomBox::writeWRAM(uint16 addr, uint8 data) -> void {
 }
 
 auto FamicomBox::writeIO(uint16 addr, uint8 data) -> void {
-  if(addr == 0x4016 || addr == 0x4017 && enableControllers) return cpu0.writeCPU(addr, data);
+  if(addr == 0x4016 || addr == 0x4017 && enableControllers) return cpuM.writeCPU(addr, data);
 
   if(!registerLock) {
     switch(addr & 0xf007) {
@@ -380,7 +380,7 @@ auto FamicomBox::writeCartridge(uint16 addr, uint8 data) -> void {
 
 auto FamicomBox::readCHR(uint14 addr, uint8 data) -> uint8 {
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) {
-    if(addr & 0x2000) return ppu0.readCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1);
+    if(addr & 0x2000) return ppuM.readCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1);
     return bios_chr[addr];
   }
   if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {
@@ -392,7 +392,7 @@ auto FamicomBox::readCHR(uint14 addr, uint8 data) -> uint8 {
 
 auto FamicomBox::writeCHR(uint14 addr, uint8 data) -> void {
   if(cartridgeRowSelect == 0 && cartridgeSelect == 0) {
-    if(addr & 0x2000) return ppu0.writeCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1, data);
+    if(addr & 0x2000) return ppuM.writeCIRAM((addr & 0x3ff) | (addr & 0x800) >> 1, data);
     return;
   }
   if(cartridgeSelect >= cartridgeRowSelect * 5 - 4 && cartridgeSelect <= cartridgeRowSelect * 5) {

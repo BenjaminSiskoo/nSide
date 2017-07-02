@@ -1,4 +1,4 @@
-SNESGamepad::SNESGamepad(uint port) : Controller(port) {
+SNESGamepad::SNESGamepad(bool side, uint port) : Controller(side, port) {
   latched = 0;
   counter = 0;
 }

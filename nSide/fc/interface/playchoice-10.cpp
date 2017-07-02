@@ -62,7 +62,7 @@ auto PlayChoice10Interface::videoSize(uint width, uint height, bool arc, bool in
   double w = 256 / playchoice10.screenConfig;
   if(arc) {
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    w *= squarePixelRate / (system.frequency() / ppu0.rate());
+    w *= squarePixelRate / (system.frequency() / ppuM.rate());
   }
   int h = playchoice10.screenConfig == 2 ? (240 + 224) / 2 : 240;
   double m;
@@ -130,7 +130,7 @@ auto PlayChoice10Interface::videoColor(uint32 n) -> uint64 {
 
   if(n < (1 << 9)) {
     const uint9* palette = nullptr;
-    switch(ppu0.version) {
+    switch(ppuM.version) {
     case PPU::Version::RP2C03B:
     case PPU::Version::RP2C03G:
     case PPU::Version::RC2C03B:
@@ -166,5 +166,5 @@ auto PlayChoice10Interface::load(uint id) -> bool {
 }
 
 auto PlayChoice10Interface::connect(uint port, uint device) -> void {
-  peripherals.connect(port, device);
+  if(port == ID::Port::Expansion) expansionPort.connect(settings.expansionPort = device);
 }

@@ -1,14 +1,14 @@
 auto VSSystem::resetButtons() -> void {
-  mainControlLatched = 0;
-  mainControlCounter1 = 0;
-  mainControlCounter2 = 0;
+  controlLatchedM = 0;
+  controlCounterM1 = 0;
+  controlCounterM2 = 0;
 
-  subControlLatched = 0;
-  subControlCounter1 = 0;
-  subControlCounter2 = 0;
+  controlLatchedS = 0;
+  controlCounterS1 = 0;
+  controlCounterS2 = 0;
 
-  for(bool& button : mainButtons) button = false;
-  for(bool& button : subButtons) button = false;
+  for(bool& button : buttonsM) button = false;
+  for(bool& button : buttonsS) button = false;
 }
 
 auto VSSystem::poll(bool side, uint input) -> int16 {
@@ -16,22 +16,26 @@ auto VSSystem::poll(bool side, uint input) -> int16 {
 }
 
 auto VSSystem::data1(bool side) -> bool {
-  uint& counter = side == 0 ? mainControlCounter1 : subControlCounter1;
-  bool* buttons = side == 0 ? mainButtons : subButtons;
+  uint counter = side ? controlCounterS1++ : controlCounterM1++;
+  bool* buttons = side ? buttonsS : buttonsM;
   bool data;
-  if(!swapControllers) data = peripherals.controllerPort1->data() & 0x01;
-  else                 data = peripherals.controllerPort2->data() & 0x01;
+  data = (side
+  ? (swapControllersS ? controllerPortS2 : controllerPortS1)
+  : (swapControllersM ? controllerPortM2 : controllerPortM1)
+  ).device->data().bit(0);
   if(counter == 2) return buttons[Button1];
   if(counter == 3) return buttons[Button3];
   return data;
 }
 
 auto VSSystem::data2(bool side) -> bool {
-  uint& counter = side == 0 ? mainControlCounter2 : subControlCounter2;
-  bool* buttons = side == 0 ? mainButtons : subButtons;
+  uint counter = side ? controlCounterS2++ : controlCounterM2++;
+  bool* buttons = side ? buttonsS : buttonsM;
   bool data;
-  if(!swapControllers) data = peripherals.controllerPort2->data() & 0x01;
-  else                 data = peripherals.controllerPort1->data() & 0x01;
+  data = (side
+  ? (swapControllersS ? controllerPortS1 : controllerPortS2)
+  : (swapControllersM ? controllerPortM1 : controllerPortM2)
+  ).device->data().bit(0);
   if(counter == 2) return buttons[Button2];
   if(counter == 3) return buttons[Button4];
   return data;
@@ -39,22 +43,22 @@ auto VSSystem::data2(bool side) -> bool {
 
 auto VSSystem::latch(bool side, bool data) -> void {
   if(side == 0) {
-    if(mainControlLatched == data) return;
-    mainControlLatched = data;
-    mainControlCounter1 = 0;
-    mainControlCounter2 = 0;
+    if(controlLatchedM == data) return;
+    controlLatchedM = data;
+    controlCounterM1 = 0;
+    controlCounterM2 = 0;
 
-    if(mainControlLatched == 0) {
-      for(uint i : {Button1, Button2, Button3, Button4}) mainButtons[i] = poll(0, i);
+    if(controlLatchedM == 0) {
+      for(uint i : {Button1, Button2, Button3, Button4}) buttonsM[i] = poll(0, i);
     }
   } else {
-    if(subControlLatched == data) return;
-    subControlLatched = data;
-    subControlCounter1 = 0;
-    subControlCounter2 = 0;
+    if(controlLatchedS == data) return;
+    controlLatchedS = data;
+    controlCounterS1 = 0;
+    controlCounterS2 = 0;
 
-    if(subControlLatched == 0) {
-      for(uint i : {Button1, Button2, Button3, Button4}) subButtons[i] = poll(1, i);
+    if(controlLatchedS == 0) {
+      for(uint i : {Button1, Button2, Button3, Button4}) buttonsS[i] = poll(1, i);
     }
   }
 }

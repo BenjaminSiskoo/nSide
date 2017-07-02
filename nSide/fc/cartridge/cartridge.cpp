@@ -7,9 +7,9 @@ namespace Famicom {
 
 #include "chip/chip.cpp"
 
-#define cpu (Model::VSSystem() && slot ? cpu1 : cpu0)
-#define apu (Model::VSSystem() && slot ? apu1 : apu0)
-#define ppu (Model::VSSystem() && slot ? ppu1 : ppu0)
+#define cpu (Model::VSSystem() && slot ? cpuS : cpuM)
+#define apu (Model::VSSystem() && slot ? apuS : apuM)
+#define ppu (Model::VSSystem() && slot ? ppuS : ppuM)
 
 #include "board/board.cpp"
 #include "serialization.cpp"
@@ -33,8 +33,8 @@ auto Cartridge::title() const -> string {
 auto Cartridge::Enter() -> void {
   while(true) {
     scheduler.synchronize();
-    if(cartridgeSlot[bus0.slot].active()) cartridgeSlot[bus0.slot].main();
-    if(cartridgeSlot[bus1.slot].active()) cartridgeSlot[bus1.slot].main();
+    if(cartridgeSlot[busM.slot].active()) cartridgeSlot[busM.slot].main();
+    if(cartridgeSlot[busS.slot].active()) cartridgeSlot[busS.slot].main();
   }
 }
 
@@ -76,13 +76,13 @@ auto Cartridge::load() -> bool {
   if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {
     information.manifest.cartridge = fp->reads();
   } else return false;
+
   auto document = BML::unserialize(information.manifest.cartridge);
   loadCartridge(document);
-  if(!board) return false;
+  if(!board) return Model::VSSystem() && cartridgeSlot[1].board;
 
   //Famicom Disk System
   if(false) {
-
   }
 
   //Famicom

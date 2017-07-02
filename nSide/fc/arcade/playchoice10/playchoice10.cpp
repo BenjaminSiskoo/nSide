@@ -43,7 +43,7 @@ auto PlayChoice10::power() -> void {
 
   reader = {&PlayChoice10::readController1, this};
   writer = {&PlayChoice10::latchControllers, this};
-  bus0.map(reader, writer, "4016-4016");
+  busM.map(reader, writer, "4016-4016");
 
   nmiDetected = false;
 
@@ -75,15 +75,15 @@ auto PlayChoice10::read(uint16 addr) -> uint8 {
   if(addr < 0x9800) return 0x00;  //VRAM is write-only
   if(addr < 0xc000) return 0x00;  //open bus
   if(channel >= cartridgeSlot.size()) return 0xff;
-  if(addr < 0xe000) return cartridgeSlot[bus0.slot].board->instrom.read(addr & 0x1fff);
+  if(addr < 0xe000) return cartridgeSlot[busM.slot].board->instrom.read(addr & 0x1fff);
 
   //PROM
   uint8 data = 0xe7;
   uint8 byte;
   if(!promTest || !promAddress.bit(6)) {
-    byte = cartridgeSlot[bus0.slot].board->keyrom.read((promAddress & 0x3f) >> 3);
+    byte = cartridgeSlot[busM.slot].board->keyrom.read((promAddress & 0x3f) >> 3);
   } else {
-    byte = promAddress.bit(4) ? (uint8)0x00 : cartridgeSlot[bus0.slot].board->keyrom.read(8);
+    byte = promAddress.bit(4) ? (uint8)0x00 : cartridgeSlot[busM.slot].board->keyrom.read(8);
   }
   data.bit(3) = !byte.bit(promAddress & 7);
   data.bit(4) = !promAddress.bit(5);
@@ -147,8 +147,8 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
   }
   case 0x04: {
     if(!cpuReset && data) {
-      cpu0.reset();
-      apu0.reset();
+      cpuM.reset();
+      apuM.reset();
     };
     cpuReset = data;
     break;
@@ -172,7 +172,7 @@ auto PlayChoice10::out(uint8 addr, uint8 data) -> void {
     break;
   }
   case 0x0a: {
-    if(!ppuReset && data) ppu0.reset();
+    if(!ppuReset && data) ppuM.reset();
     ppuReset = data;
     break;
   }
@@ -218,8 +218,8 @@ auto PlayChoice10::changeChannel(uint4 newChannel) -> void {
   if(newChannel == channel) return;
   scheduler.remove(cartridgeSlot[channel]);
   channel = newChannel;
-  if(channel < cartridgeSlot.size()) bus0.slot = channel;
-  cartridgeSlot[bus0.slot].power();
+  if(channel < cartridgeSlot.size()) busM.slot = channel;
+  cartridgeSlot[busM.slot].power();
 }
 
 auto PlayChoice10::poll(uint input) -> int16 {
@@ -227,9 +227,9 @@ auto PlayChoice10::poll(uint input) -> int16 {
 }
 
 auto PlayChoice10::readController1(uint16 addr, uint8 data) -> uint8 {
-  auto gamepad = static_cast<Gamepad*>(peripherals.controllerPort1);
+  auto gamepad = static_cast<Gamepad*>(controllerPortM1.device);
   uint counter = gamepad->counter;
-  uint8 input = cpu0.readCPU(addr, data);
+  uint8 input = cpuM.readCPU(addr, data);
   switch(gamepad->latched ? 0 : counter) {
   case 2: data.bit(0) = controller1GameSelect; break;
   case 3: data.bit(0) = controller1Start; break;
@@ -239,9 +239,9 @@ auto PlayChoice10::readController1(uint16 addr, uint8 data) -> uint8 {
 }
 
 auto PlayChoice10::latchControllers(uint16 addr, uint8 data) -> void {
-  auto gamepad = static_cast<Gamepad*>(peripherals.controllerPort1);
+  auto gamepad = static_cast<Gamepad*>(controllerPortM1.device);
   bool old_latched = gamepad->latched;
-  cpu0.writeCPU(addr, data);
+  cpuM.writeCPU(addr, data);
   if(old_latched == data.bit(0)) return;
   if(gamepad->latched == 0) {
     controller1GameSelect = gameSelectStart & poll(GameSelect);

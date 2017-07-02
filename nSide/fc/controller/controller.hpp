@@ -17,9 +17,7 @@
 //  7:  gnd
 
 struct Controller : Thread {
-  enum : uint { Port1 = 0, Port2 = 1 };
-
-  Controller(uint port);
+  Controller(bool side, uint port);
   virtual ~Controller();
   static auto Enter() -> void;
 
@@ -28,8 +26,26 @@ struct Controller : Thread {
   virtual auto mic() -> bool { return 0; }
   virtual auto latch(bool data) -> void {}
 
+  const bool side;
   const uint port;
 };
+
+struct ControllerPort {
+  auto connect(uint deviceID) -> void;
+
+  auto power(bool side, uint port) -> void;
+  auto unload() -> void;
+  auto serialize(serializer&) -> void;
+
+  bool side;
+  uint port;
+  Controller* device = nullptr;
+};
+
+extern ControllerPort controllerPortM1;
+extern ControllerPort controllerPortM2;
+extern ControllerPort controllerPortS1;
+extern ControllerPort controllerPortS2;
 
 #include "gamepad/gamepad.hpp"
 #include "gamepad-mic/gamepad-mic.hpp"

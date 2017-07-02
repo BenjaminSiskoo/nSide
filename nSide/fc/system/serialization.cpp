@@ -46,19 +46,25 @@ auto System::serializeAll(serializer& s) -> void {
   system.serialize(s);
   random.serialize(s);
 
-  cpu0.serialize(s);
-  apu0.serialize(s);
-  ppu0.serialize(s);
+  cpuM.serialize(s);
+  apuM.serialize(s);
+  ppuM.serialize(s);
 
   if(model() == Model::VSSystem) {
-    cpu1.serialize(s);
-    apu1.serialize(s);
-    ppu1.serialize(s);
+    cpuS.serialize(s);
+    apuS.serialize(s);
+    ppuS.serialize(s);
     vssystem.serialize(s);
   }
 
   if(model() == Model::PlayChoice10) playchoice10.serialize(s);
   if(model() == Model::FamicomBox)   famicombox.serialize(s);
+
+  controllerPortM1.serialize(s);
+  controllerPortM2.serialize(s);
+  if(model() != Model::VSSystem) expansionPort.serialize(s);
+  if(model() == Model::VSSystem) controllerPortS1.serialize(s);
+  if(model() == Model::VSSystem) controllerPortS2.serialize(s);
 }
 
 //perform dry-run state save:

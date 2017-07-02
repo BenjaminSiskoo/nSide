@@ -46,7 +46,6 @@ auto CPUDebugger::read(uint24 addr) -> uint8 {
 auto CPUDebugger::write(uint24 addr, uint8 data) -> void {
   if((addr & 0x40e000) == 0x2000) return;  //$00-3f|80-bf:2000-3fff  MMIO
   if((addr & 0x40e000) == 0x4000) return;  //$00-3f|80-bf:4000-5fff  MMIO
-  if((addr & 0x40e000) == 0x0000) addr = 0x7e0000 | (addr & 0x1fff);  //$00-3f:80-bf:0000-1fff WRAM
   return SFC::bus.write(mirror(addr), data);
 }
 

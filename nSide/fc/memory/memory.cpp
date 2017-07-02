@@ -2,8 +2,8 @@
 
 namespace Famicom {
 
-Bus bus0;
-Bus bus1;
+Bus busM;
+Bus busS;
 
 Bus::~Bus() {
   if(lookup) delete[] lookup;

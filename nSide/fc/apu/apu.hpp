@@ -124,6 +124,8 @@ struct APU : Thread {
   } triangle;
 
   struct Noise {
+    auto setAPU(APU*) -> void;
+
     auto clockLength() -> void;
     auto clock() -> uint8;
 
@@ -141,6 +143,8 @@ struct APU : Thread {
 
     bool shortMode;
     uint15 lfsr;
+
+    APU* apu;
   } noise;
 
   struct DMC {
@@ -214,5 +218,5 @@ struct APU : Thread {
   static const uint16 noisePeriodTablePAL[16];
 };
 
-extern APU apu0;
-extern APU apu1;
+extern APU apuM;
+extern APU apuS;

@@ -36,21 +36,11 @@ private:
   } information;
 };
 
-struct Peripherals {
-  auto unload() -> void;
-  auto reset() -> void;
-  auto connect(uint port, uint device) -> void;
-
-  Controller* controllerPort1 = nullptr;
-  Controller* controllerPort2 = nullptr;
-};
-
 extern System system;
-extern Peripherals peripherals;
 
-auto Model::SG1000() -> bool { return system.model() == System::Model::SG1000; }
 auto Model::MasterSystem() -> bool { return system.model() == System::Model::MasterSystem; }
 auto Model::GameGear() -> bool { return system.model() == System::Model::GameGear; }
 
+auto Model::SG1000() -> bool { return system.model() == System::Model::SG1000; }
 auto Region::NTSC() -> bool { return system.region() == System::Region::NTSC; }
 auto Region::PAL() -> bool { return system.region() == System::Region::PAL; }

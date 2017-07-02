@@ -2,10 +2,10 @@
 
 namespace Famicom {
 
-APU apu0(0);
-APU apu1(1);
+APU apuM(0);
+APU apuS(1);
 
-#define bus (side ? bus1 : bus0)
+#define bus (side ? busS : busM)
 
 #include "envelope.cpp"
 #include "sweep.cpp"
@@ -15,7 +15,7 @@ APU apu1(1);
 #include "dmc.cpp"
 #include "serialization.cpp"
 
-#define cpu (side ? cpu1 : cpu0)
+#define cpu (side ? cpuS : cpuM)
 
 APU::APU(bool side) : side(side) {
   for(uint amp : range(32)) {
@@ -39,14 +39,15 @@ APU::APU(bool side) : side(side) {
     }
   }
 
+  noise.setAPU(this);
   dmc.setAPU(this);
 }
 
 auto APU::Enter() -> void {
   while(true) {
     scheduler.synchronize();
-    if(apu0.active()) apu0.main();
-    if(apu1.active()) apu1.main();
+    if(apuM.active()) apuM.main();
+    if(apuS.active()) apuS.main();
   }
 }
 

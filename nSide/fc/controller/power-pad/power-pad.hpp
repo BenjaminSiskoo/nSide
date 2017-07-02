@@ -1,5 +1,5 @@
 struct PowerPad : Controller {
-  PowerPad(uint port);
+  PowerPad(bool side, uint port);
 
   auto data() -> uint3;
   auto latch(bool data) -> void;

@@ -3,7 +3,7 @@ struct Mouse : Controller {
     X, Y, Left, Right,
   };
 
-  Mouse(uint port);
+  Mouse(bool side, uint port);
 
   auto data() -> uint3;
   auto latch(bool data) -> void;

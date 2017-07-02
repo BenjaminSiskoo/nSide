@@ -2,6 +2,7 @@
 
 struct DSP : Thread {
   shared_pointer<Emulator::Stream> stream;
+  uint8 apuram[64 * 1024];
 
   DSP();
 
@@ -17,8 +18,6 @@ struct DSP : Thread {
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
-
-  uint8 apuram[64 * 1024];
 
 privileged:
   enum GlobalRegister : uint {
