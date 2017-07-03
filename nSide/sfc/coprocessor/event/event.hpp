@@ -24,7 +24,7 @@ struct Event : Thread {
   enum class Board : uint { CampusChallenge92, Powerfest94 } board;
   uint timer;
 
-privileged:
+private:
   uint8 status;
   uint8 select;
 

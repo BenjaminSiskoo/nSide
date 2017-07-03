@@ -57,14 +57,18 @@ auto System::load(Emulator::Interface* interface, maybe<Region> region) -> bool 
 
 auto System::save() -> void {
   if(!loaded()) return;
+
   cartridge.save();
 }
 
 auto System::unload() -> void {
   if(!loaded()) return;
+
+  cpu.peripherals.reset();
   controllerPort1.unload();
   controllerPort2.unload();
   extensionPort.unload();
+
   cartridge.unload();
   information.loaded = false;
 }

@@ -38,9 +38,9 @@ private:
 
 extern System system;
 
+auto Model::SG1000() -> bool { return system.model() == System::Model::SG1000; }
 auto Model::MasterSystem() -> bool { return system.model() == System::Model::MasterSystem; }
 auto Model::GameGear() -> bool { return system.model() == System::Model::GameGear; }
 
-auto Model::SG1000() -> bool { return system.model() == System::Model::SG1000; }
 auto Region::NTSC() -> bool { return system.region() == System::Region::NTSC; }
 auto Region::PAL() -> bool { return system.region() == System::Region::PAL; }

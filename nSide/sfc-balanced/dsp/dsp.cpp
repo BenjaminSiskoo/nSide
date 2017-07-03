@@ -16,7 +16,7 @@ auto DSP::step(uint clocks) -> void {
 
 auto DSP::main() -> void {
   spc_dsp.run(1);
-  step(3 * 8);
+  step(2);
 
   int count = spc_dsp.sample_count();
   if(count > 0) {
@@ -47,7 +47,7 @@ auto DSP::power() -> void {
 //spc_dsp.set_output(samplebuffer, 8192);  //power()
 
   clock = 0;
-  stream = Emulator::audio.createStream(2, smp.frequency() / 768.0);
+  stream = Emulator::audio.createStream(2, system.apuFrequency() / 768.0);
 
   spc_dsp.soft_reset();
   spc_dsp.set_output(samplebuffer, 8192);  //reset()
