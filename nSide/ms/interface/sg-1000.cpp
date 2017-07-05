@@ -40,19 +40,26 @@ auto SG1000Interface::videoResolution() -> VideoSize {
   return {256, 192};
 }
 
-auto SG1000Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
-  double w = 256;
-  if(arc) {
+auto SG1000Interface::videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropHorizontal, uint cropVertical) -> VideoSize {
+  double pixelAspectRatio = 1.0;
+  if(aspectCorrection) {
     double squarePixelRate = system.region() == System::Region::NTSC
     ? 135.0 / 22.0 * 1'000'000.0
     : 7'375'000.0;
-    w *= squarePixelRate / (system.colorburst() * 3.0 / (system.region() == System::Region::NTSC ? 2.0 : 2.0));
+    pixelAspectRatio = squarePixelRate / (system.colorburst() * 3.0 / 2.0);
   }
-  uint h = 192;
-  double m;
-  if(intScale) m = min((uint)(width / w), height / h);
-  else         m = min((width / w), height / (double)h);
-  return {(uint)(w * m), (uint)(h * m)};
+  double widthDivider = (256 - cropHorizontal * 2) * pixelAspectRatio;
+  double heightDivider = (192 - max(int(cropVertical - 24), 0) * 2);
+  double multiplier = integerScale
+  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
+  : min(double(width / widthDivider), double(height / heightDivider));
+  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
+}
+
+auto SG1000Interface::videoCrop(const uint32*& data, uint& width, uint& height, uint cropHorizontal, uint cropVertical) -> void {
+  data += cropVertical * 256 + cropHorizontal;
+  width -= cropHorizontal * 2;
+  height -= max(int(cropVertical - 24), 0) * 2;
 }
 
 auto SG1000Interface::videoColors() -> uint32 {

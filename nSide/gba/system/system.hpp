@@ -16,6 +16,7 @@ struct BIOS {
 
 struct System {
   auto loaded() const -> bool { return _loaded; }
+  auto frequency() const -> double { return 16 * 1024 * 1024; }
 
   auto run() -> void;
   auto runToSave() -> void;

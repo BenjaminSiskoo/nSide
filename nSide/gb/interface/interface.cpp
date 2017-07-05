@@ -37,13 +37,13 @@ auto Interface::videoResolution() -> VideoSize {
   return {160, 144};
 }
 
-auto Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
-  uint w = 160;
-  uint h = 144;
-  double m;
-  if(intScale) m = min(width / w, height / h);
-  else         m = min(width / (double)w, height / (double)h);
-  return {(uint)(w * m), (uint)(h * m)};
+auto Interface::videoSize(uint width, uint height, bool, bool integerScale, uint, uint) -> VideoSize {
+  double widthDivider = 160;
+  double heightDivider = 144;
+  double multiplier = integerScale
+  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
+  : min(double(width / widthDivider), double(height / heightDivider));
+  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
 }
 
 auto Interface::loaded() -> bool {

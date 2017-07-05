@@ -1,29 +1,28 @@
-auto Program::stateName(uint slot, bool manager) -> string {
+auto Program::stateName(uint slot) -> string {
   return {
-    mediumPaths(1), Emulator::Name, "/states/",
-    manager ? "managed/" : "quick/",
+    mediumPaths(1), Emulator::Name, "/states/quick/",
     "slot-", slot, ".bst"
   };
 }
 
-auto Program::loadState(uint slot, bool manager) -> bool {
+auto Program::loadState(uint slot) -> bool {
   if(!emulator) return false;
-  auto location = stateName(slot, manager);
+  auto location = stateName(slot);
   auto memory = file::read(location);
-  if(memory.size() == 0) return showMessage({"Slot ", slot, " does not exist"}), false;
+  if(memory.size() == 0) return false;
   serializer s(memory.data(), memory.size());
-  if(emulator->unserialize(s) == false) return showMessage({"Slot ", slot, " state incompatible"}), false;
-  return showMessage({"Loaded from slot ", slot}), true;
+  if(emulator->unserialize(s) == false) return false;
+  return true;
 }
 
-auto Program::saveState(uint slot, bool manager) -> bool {
+auto Program::saveState(uint slot) -> bool {
   if(!emulator) return false;
-  auto location = stateName(slot, manager);
+  auto location = stateName(slot);
   serializer s = emulator->serialize();
-  if(s.size() == 0) return showMessage({"Failed to save state to slot ", slot}), false;
+  if(s.size() == 0) return false;
   directory::create(Location::path(location));
   if(file::write(location, s.data(), s.size()) == false) {
-    return showMessage({"Unable to write to slot ", slot}), false;
+    return false;
   }
-  return showMessage({"Saved to slot ", slot}), true;
+  return true;
 }

@@ -2,13 +2,12 @@
 
 namespace GameBoyAdvance {
 
-#include "bios.cpp"
-#include "video.cpp"
-#include "serialization.cpp"
-BIOS bios;
 System system;
 Scheduler scheduler;
 Cheat cheat;
+#include "bios.cpp"
+#include "video.cpp"
+#include "serialization.cpp"
 
 auto System::run() -> void {
   if(scheduler.enter() == Scheduler::Event::Frame) ppu.refresh();

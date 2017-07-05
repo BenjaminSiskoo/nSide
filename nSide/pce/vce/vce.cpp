@@ -56,7 +56,7 @@ auto VCE::step(uint clocks) -> void {
 auto VCE::refresh() -> void {
   //1365 * 13 represents what nearly every commercial developer used, while
   //1365 * 11 approximates what is actually visible on the TV as shown by ccovell.
-  Emulator::video.refresh(buffer + 1365 * 11, 1365 * sizeof(uint32), 1140, 240);
+  Emulator::video.refresh(buffer + 1365 * 11, 1365 * sizeof(uint32), 1120, 240);
 }
 
 auto VCE::power() -> void {

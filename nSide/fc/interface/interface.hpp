@@ -78,7 +78,8 @@ struct FamicomInterface : Interface {
   FamicomInterface();
 
   auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
+  auto videoCrop(const uint32*& data, uint& width, uint& height, uint cropWidth, uint cropHeight) -> void override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -91,7 +92,7 @@ struct VSSystemInterface : Interface {
   VSSystemInterface();
 
   auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -102,7 +103,7 @@ struct PlayChoice10Interface : Interface {
   PlayChoice10Interface();
 
   auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -115,7 +116,8 @@ struct FamicomBoxInterface : Interface {
   FamicomBoxInterface();
 
   auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
+  auto videoCrop(const uint32*& data, uint& width, uint& height, uint cropWidth, uint cropHeight) -> void override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 

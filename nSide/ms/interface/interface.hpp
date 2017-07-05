@@ -53,7 +53,8 @@ struct SG1000Interface : Interface {
   SG1000Interface();
 
   auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
+  auto videoCrop(const uint32*& data, uint& width, uint& height, uint cropWidth, uint cropHeight) -> void override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -68,7 +69,8 @@ struct MasterSystemInterface : Interface {
   MasterSystemInterface();
 
   auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
+  auto videoCrop(const uint32*& data, uint& width, uint& height, uint cropWidth, uint cropHeight) -> void override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -83,7 +85,7 @@ struct GameGearInterface : Interface {
   GameGearInterface();
 
   auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoSize(uint width, uint height, bool, bool integerScale, uint, uint) -> VideoSize override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 

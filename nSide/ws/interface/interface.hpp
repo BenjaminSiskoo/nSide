@@ -23,7 +23,7 @@ struct Interface : Emulator::Interface {
   auto title() -> string override;
 
   auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize override;
+  auto videoSize(uint width, uint height, bool, bool integerScale, uint, uint) -> VideoSize override;
 
   auto loaded() -> bool override;
   auto sha256() -> string override;

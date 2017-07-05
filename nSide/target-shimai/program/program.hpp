@@ -22,9 +22,9 @@ struct Program : Emulator::Platform {
   auto unloadMedium() -> void;
 
   //state.cpp
-  auto stateName(uint slot, bool manager = false) -> string;
-  auto loadState(uint slot, bool manager = false) -> bool;
-  auto saveState(uint slot, bool manager = false) -> bool;
+  auto stateName(uint slot) -> string;
+  auto loadState(uint slot) -> bool;
+  auto saveState(uint slot) -> bool;
 
   //utility.cpp
   auto powerCycle() -> void;

@@ -1,4 +1,6 @@
 auto InputManager::appendHotkeys() -> void {
+  static int quickStateSlot = 0;
+
   { auto hotkey = new InputHotkey;
     hotkey->name = "Toggle Fullscreen";
     hotkey->press = [] {
@@ -16,17 +18,35 @@ auto InputManager::appendHotkeys() -> void {
   }
 
   { auto hotkey = new InputHotkey;
-    hotkey->name = "Save State";
+    hotkey->name = "Save Quick State";
     hotkey->press = [] {
-      program->saveState(0);
+      program->saveState(quickStateSlot);
     };
     hotkeys.append(hotkey);
   }
 
   { auto hotkey = new InputHotkey;
-    hotkey->name = "Load State";
+    hotkey->name = "Load Quick State";
     hotkey->press = [] {
-      program->loadState(0);
+      program->loadState(quickStateSlot);
+    };
+    hotkeys.append(hotkey);
+  }
+
+  { auto hotkey = new InputHotkey;
+    hotkey->name = "Decrement Quick State";
+    hotkey->press = [&] {
+      if(--quickStateSlot < 0) quickStateSlot = 9;
+      program->showMessage({"Selected quick slot ", quickStateSlot});
+    };
+    hotkeys.append(hotkey);
+  }
+
+  { auto hotkey = new InputHotkey;
+    hotkey->name = "Increment Quick State";
+    hotkey->press = [&] {
+      if(++quickStateSlot > 9) quickStateSlot = 0;
+      program->showMessage({"Selected quick slot ", quickStateSlot});
     };
     hotkeys.append(hotkey);
   }

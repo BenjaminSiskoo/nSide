@@ -124,7 +124,7 @@ struct APU : Thread {
   } triangle;
 
   struct Noise {
-    auto setAPU(APU*) -> void;
+    Noise(APU& apu);
 
     auto clockLength() -> void;
     auto clock() -> uint8;
@@ -144,11 +144,11 @@ struct APU : Thread {
     bool shortMode;
     uint15 lfsr;
 
-    APU* apu;
+    APU& apu;
   } noise;
 
   struct DMC {
-    auto setAPU(APU*) -> void;
+    DMC(APU& apu);
 
     auto start() -> void;
     auto stop() -> void;
@@ -182,7 +182,7 @@ struct APU : Thread {
     bool sampleValid;
     uint8 sample;
 
-    APU* apu;
+    APU& apu;
   } dmc;
 
   struct FrameCounter {

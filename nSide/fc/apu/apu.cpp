@@ -17,7 +17,7 @@ APU apuS(1);
 
 #define cpu (side ? cpuS : cpuM)
 
-APU::APU(bool side) : side(side) {
+APU::APU(bool side) : side(side), noise(*this), dmc(*this) {
   for(uint amp : range(32)) {
     if(amp == 0) {
       pulseDAC[amp] = 0;
@@ -38,9 +38,6 @@ APU::APU(bool side) : side(side) {
       }
     }
   }
-
-  noise.setAPU(this);
-  dmc.setAPU(this);
 }
 
 auto APU::Enter() -> void {

@@ -54,6 +54,7 @@ Presentation::Presentation() {
   });
   maskOverscan.setText("Mask Overscan").setChecked(settings["Video/Overscan/Mask"].boolean()).onToggle([&] {
     settings["Video/Overscan/Mask"].setValue(maskOverscan.checked());
+    resizeViewport();
   });
   videoShaderMenu.setText("Video Shader");
   videoShaderNone.setText("None").onActivate([&] {
@@ -98,7 +99,7 @@ Presentation::Presentation() {
   });
 
   toolsMenu.setText("Tools").setVisible(false);
-  saveStateMenu.setText("Save State");
+  saveStateMenu.setText("Save Quickstate");
   saveSlot0.setText("Slot 0").onActivate([&] { program->saveState(0); });
   saveSlot1.setText("Slot 1").onActivate([&] { program->saveState(1); });
   saveSlot2.setText("Slot 2").onActivate([&] { program->saveState(2); });
@@ -109,7 +110,7 @@ Presentation::Presentation() {
   saveSlot7.setText("Slot 7").onActivate([&] { program->saveState(7); });
   saveSlot8.setText("Slot 8").onActivate([&] { program->saveState(8); });
   saveSlot9.setText("Slot 9").onActivate([&] { program->saveState(9); });
-  loadStateMenu.setText("Load State");
+  loadStateMenu.setText("Load Quickstate");
   loadSlot0.setText("Slot 0").onActivate([&] { program->loadState(0); });
   loadSlot1.setText("Slot 1").onActivate([&] { program->loadState(1); });
   loadSlot2.setText("Slot 2").onActivate([&] { program->loadState(2); });
@@ -283,19 +284,19 @@ auto Presentation::resizeViewport() -> void {
 
   uint windowWidth = 0, windowHeight = 0;
   bool aspectCorrection = true;
-  bool integerScaling = true;
+  bool integerScale = true;
   if(!fullScreen()) {
     aspectCorrection = settings["Video/AspectCorrection"].boolean();
     if(emulator) {
-      auto size = emulator->videoSize(aspectCorrection ? 384 : 326, 242, true, true);
-      windowWidth  = (size.width  > 326 ? 384 : (size.width > 320 ? 326 : 320)) * scale;
+      auto size = emulator->videoSize(aspectCorrection ? 384 : 320, 240, true, true);
+      windowWidth  = (size.width  > 320 ? 384 : 320) * scale;
       windowHeight = (size.height > 240 ? 288 : 240) * scale;
     } else {
       windowWidth  = 320 * scale;
       windowHeight = 240 * scale;
     }
   } else {
-    integerScaling = settings["Video/Shader"].text() == "None";
+    integerScale = settings["Video/Shader"].text() == "None";
     windowWidth  = geometry().width();
     windowHeight = geometry().height();
   }
@@ -304,7 +305,12 @@ auto Presentation::resizeViewport() -> void {
   if(!emulator) {
     viewport.setGeometry({0, 0, windowWidth, windowHeight});
   } else {
-    auto videoSize = emulator->videoSize(windowWidth, windowHeight, aspectCorrection, integerScaling);
+    uint overscanWidth = 0, overscanHeight = 0;
+    if(emulator->information.overscan && settings["Video/Overscan/Mask"].boolean()) {
+      overscanWidth  = settings["Video/Overscan/Horizontal"].natural();
+      overscanHeight = settings["Video/Overscan/Vertical"  ].natural();
+    }
+    auto videoSize = emulator->videoSize(windowWidth, windowHeight, aspectCorrection, integerScale, overscanWidth, overscanHeight);
     viewport.setGeometry({
       (windowWidth - videoSize.width) / 2, (windowHeight - videoSize.height) / 2,
       videoSize.width, videoSize.height

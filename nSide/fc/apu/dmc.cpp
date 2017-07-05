@@ -1,7 +1,6 @@
-#define cpu (apu->side ? cpuS : cpuM)
+#define cpu (apu.side ? cpuS : cpuM)
 
-auto APU::DMC::setAPU(APU* hostAPU) -> void {
-  apu = hostAPU;
+APU::DMC::DMC(APU& apu) : apu(apu) {
 }
 
 auto APU::DMC::start() -> void {
@@ -40,7 +39,7 @@ auto APU::DMC::clock() -> uint8 {
           start();
         } else if(irqEnable) {
           irqPending = true;
-          apu->setIRQ();
+          apu.setIRQ();
         }
       }
     }

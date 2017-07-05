@@ -58,17 +58,18 @@ auto PlayChoice10Interface::videoResolution() -> VideoSize {
   }
 }
 
-auto PlayChoice10Interface::videoSize(uint width, uint height, bool arc, bool intScale) -> VideoSize {
-  double w = 256 / playchoice10.screenConfig;
-  if(arc) {
+auto PlayChoice10Interface::videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropHorizontal, uint cropVertical) -> VideoSize {
+  double pixelAspectRatio = 1.0;
+  if(aspectCorrection) {
     double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    w *= squarePixelRate / (system.frequency() / ppuM.rate());
+    pixelAspectRatio = squarePixelRate / (system.frequency() / ppuS.rate());
   }
-  int h = playchoice10.screenConfig == 2 ? (240 + 224) / 2 : 240;
-  double m;
-  if(intScale) m = min((uint)(width / w), height / h);
-  else         m = min(width / w, height / (double)h);
-  return {(uint)(w * m), (uint)(h * m)};
+  double widthDivider = 256 * pixelAspectRatio;
+  double heightDivider = playchoice10.screenConfig == 2 ? (240 + 224) / 2 : 240;
+  double multiplier = integerScale
+  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
+  : min(double(width / widthDivider), double(height / heightDivider));
+  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
 }
 
 auto PlayChoice10Interface::videoColors() -> uint32 {

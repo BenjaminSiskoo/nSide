@@ -71,13 +71,13 @@ auto Presentation::resizeViewport() -> void {
 
   uint windowWidth = 0, windowHeight = 0;
   bool aspectCorrection = true;
-  bool integerScaling = true;
+  bool integerScale = true;
   if(!fullScreen()) {
     aspectCorrection = settings["Video/AspectCorrection"].boolean();
     windowWidth  = ceil(1280.0 * scale / 3.0);
     windowHeight = ceil( 720.0 * scale / 3.0);
   } else {
-    integerScaling = settings["Video/Shader"].text() == "None";
+    integerScale = settings["Video/Shader"].text() == "None";
     windowWidth  = geometry().width();
     windowHeight = geometry().height();
   }
@@ -86,7 +86,12 @@ auto Presentation::resizeViewport() -> void {
   if(!emulator) {
     viewport.setGeometry({0, 0, windowWidth, windowHeight});
   } else {
-    auto videoSize = emulator->videoSize(windowWidth, windowHeight, aspectCorrection, integerScaling);
+    uint overscanWidth = 0, overscanHeight = 0;
+    if(emulator->information.overscan && settings["Video/Overscan/Mask"].boolean()) {
+      overscanWidth  = settings["Video/Overscan/Horizontal"].natural();
+      overscanHeight = settings["Video/Overscan/Vertical"  ].natural();
+    }
+    auto videoSize = emulator->videoSize(windowWidth, windowHeight, aspectCorrection, integerScale, overscanWidth, overscanHeight);
     viewport.setGeometry({
       (windowWidth - videoSize.width) / 2, (windowHeight - videoSize.height) / 2,
       videoSize.width, videoSize.height
