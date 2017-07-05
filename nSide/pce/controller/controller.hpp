@@ -22,3 +22,4 @@ struct ControllerPort {
 extern ControllerPort controllerPort;
 
 #include "gamepad/gamepad.hpp"
+#include "multitap/multitap.hpp"

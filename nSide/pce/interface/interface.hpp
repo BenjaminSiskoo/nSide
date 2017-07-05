@@ -14,6 +14,7 @@ struct ID {
   struct Device { enum : uint {
     None,
     Gamepad,
+    Multitap,
   };};
 };
 

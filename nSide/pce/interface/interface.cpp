@@ -28,6 +28,20 @@ Interface::Interface() {
     controllerPort.devices.append(device);
   }
 
+  { Device device{ID::Device::Multitap, "Multitap"};
+    for(uint p = 1; p <= 5; p++) {
+      device.inputs.append({0, {"Port ", p, " - ", "Up"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Down"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Left"  }});
+      device.inputs.append({0, {"Port ", p, " - ", "Right" }});
+      device.inputs.append({0, {"Port ", p, " - ", "II"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "I"     }});
+      device.inputs.append({0, {"Port ", p, " - ", "Select"}});
+      device.inputs.append({0, {"Port ", p, " - ", "Run"   }});
+    }
+    controllerPort2.devices.append(device);
+  }
+
   ports.append(move(controllerPort));
 }
 

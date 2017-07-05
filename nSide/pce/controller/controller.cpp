@@ -4,6 +4,7 @@ namespace PCEngine {
 
 ControllerPort controllerPort;
 #include "gamepad/gamepad.cpp"
+#include "multitap/multitap.cpp"
 
 Controller::Controller() {
   if(!handle()) create(Controller::Enter, 1);
@@ -34,6 +35,7 @@ auto ControllerPort::connect(uint deviceID) -> void {
   switch(deviceID) { default:
   case ID::Device::None: device = new Controller; break;
   case ID::Device::Gamepad: device = new Gamepad; break;
+  case ID::Device::Multitap: device = new Multitap; break;
   }
 
   cpu.peripherals.reset();
