@@ -39,7 +39,7 @@ Interface::Interface() {
       device.inputs.append({0, {"Port ", p, " - ", "Select"}});
       device.inputs.append({0, {"Port ", p, " - ", "Run"   }});
     }
-    controllerPort2.devices.append(device);
+    controllerPort.devices.append(device);
   }
 
   ports.append(move(controllerPort));
