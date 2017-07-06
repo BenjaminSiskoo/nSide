@@ -2,7 +2,7 @@ struct Presentation : Window {
   Presentation();
   auto updateEmulator() -> void;
   auto clearViewport() -> void;
-  auto resizeViewport() -> void;
+  auto resizeViewport(bool onSize = false) -> void;
   auto toggleFullScreen() -> void;
   auto drawMenu() -> void;
 
