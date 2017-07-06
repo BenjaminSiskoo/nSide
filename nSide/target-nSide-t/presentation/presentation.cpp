@@ -308,6 +308,11 @@ auto Presentation::resizeViewport(bool onSize) -> void {
       emulatorWidth *= multiplier;
       emulatorHeight *= multiplier;
       setSize({viewportWidth = emulatorWidth, viewportHeight = emulatorHeight});
+    } else if(settings["Video/Windowed/IntegralScaling"].boolean()) {
+      uint multiplier = min(viewportWidth / emulatorWidth, viewportHeight / emulatorHeight);
+      emulatorWidth *= multiplier;
+      emulatorHeight *= multiplier;
+      if(!onSize) setSize({viewportWidth, viewportHeight});
     } else {
       double multiplier = min(viewportWidth / emulatorWidth, viewportHeight / emulatorHeight);
       emulatorWidth *= multiplier;
