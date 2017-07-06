@@ -127,32 +127,12 @@ auto Interface::title() -> string {
   return cartridge.title();
 }
 
-auto Interface::videoResolution() -> VideoSize {
-  return {512, 480};
-}
-
-auto Interface::videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropHorizontal, uint cropVertical) -> VideoSize {
-  double pixelAspectRatio = 1.0;
-  if(aspectCorrection) {
-    double squarePixelRate = system.region() == System::Region::NTSC
-    ? 135.0 / 22.0 * 1'000'000.0
-    : 7'375'000.0;
-    pixelAspectRatio = squarePixelRate / (system.cpuFrequency() / (2.0 + 2.0));
-  }
-  double widthDivider = (256 - cropHorizontal * 2) * pixelAspectRatio;
-  double heightDivider = (240 - cropVertical * 2);
-  double multiplier = integerScale
-  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
-  : min(double(width / widthDivider), double(height / heightDivider));
-  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
-}
-
-auto Interface::videoCrop(const uint32*& data, uint& width, uint& height, uint cropHorizontal, uint cropVertical) -> void {
-  cropHorizontal *= 2;
-  cropVertical *= 2;
-  data += cropVertical * 512 + cropHorizontal;
-  width -= cropHorizontal * 2;
-  height -= cropVertical * 2;
+auto Interface::videoResolution() -> VideoResolution {
+  double squarePixelRate = system.region() == System::Region::NTSC
+  ? 135.0 / 22.0 * 1'000'000.0
+  : 7'375'000.0;
+  double pixelAspectRatio = squarePixelRate / (system.cpuFrequency() / (2.0 + 2.0));
+  return {256, 240, 512, 480, pixelAspectRatio};
 }
 
 auto Interface::videoColors() -> uint32 {

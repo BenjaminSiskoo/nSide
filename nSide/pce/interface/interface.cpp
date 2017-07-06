@@ -53,29 +53,11 @@ auto Interface::title() -> string {
   return cartridge.title();
 }
 
-auto Interface::videoResolution() -> VideoSize {
-  return {1120, 240};
-}
-
-auto Interface::videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropHorizontal, uint cropVertical) -> VideoSize {
-  double pixelAspectRatio = 1.0;
-  if(aspectCorrection) {
-    double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    pixelAspectRatio = squarePixelRate / (system.colorburst() * 6.0 / 4.0);
-  }
-  double widthDivider = (280 - cropHorizontal * 2) * pixelAspectRatio;
-  double heightDivider = (240 - cropVertical * 2);
-  double multiplier = integerScale
-  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
-  : min(double(width / widthDivider), double(height / heightDivider));
-  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
-}
-
-auto Interface::videoCrop(const uint32*& data, uint& width, uint& height, uint cropHorizontal, uint cropVertical) -> void {
-  cropHorizontal *= 4;
-  data += cropVertical * 1120 + cropHorizontal;
-  width -= cropHorizontal * 2;
-  height -= cropVertical * 2;
+auto Interface::videoResolution() -> VideoResolution {
+  double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
+  double pixelAspectRatio = squarePixelRate / (system.colorburst() * 6.0 / 4.0);
+  pixelAspectRatio = round(pixelAspectRatio * 7.0) / 7.0;
+  return {280, 240, 1120, 240, pixelAspectRatio};
 }
 
 auto Interface::videoColors() -> uint32 {

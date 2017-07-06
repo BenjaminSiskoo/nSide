@@ -285,30 +285,12 @@ FamicomInterface::FamicomInterface() {
   ports.append(move(expansionPort));
 }
 
-auto FamicomInterface::videoResolution() -> VideoSize {
-  return {256, 240};
-}
-
-auto FamicomInterface::videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropHorizontal, uint cropVertical) -> VideoSize {
-  double pixelAspectRatio = 1.0;
-  if(aspectCorrection) {
-    double squarePixelRate = Famicom::Region::NTSCJ() || Famicom::Region::NTSCU()
-    ? 135.0 / 22.0 * 1'000'000.0
-    : 7'375'000.0;
-    pixelAspectRatio = squarePixelRate / (system.frequency() / ppuM.rate());
-  }
-  double widthDivider = (256 - cropHorizontal * 2) * pixelAspectRatio;
-  double heightDivider = (240 - cropVertical * 2);
-  double multiplier = integerScale
-  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
-  : min(double(width / widthDivider), double(height / heightDivider));
-  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
-}
-
-auto FamicomInterface::videoCrop(const uint32*& data, uint& width, uint& height, uint cropHorizontal, uint cropVertical) -> void {
-  data += cropVertical * 256 + cropHorizontal;
-  width -= cropHorizontal * 2;
-  height -= cropVertical * 2;
+auto FamicomInterface::videoResolution() -> VideoResolution {
+  double squarePixelRate = Famicom::Region::NTSCJ() || Famicom::Region::NTSCU()
+  ? 135.0 / 22.0 * 1'000'000.0
+  : 7'375'000.0;
+  double pixelAspectRatio = squarePixelRate / (system.frequency() / ppuM.rate());
+  return {256, 240, 256, 240, pixelAspectRatio};
 }
 
 auto FamicomInterface::videoColors() -> uint32 {

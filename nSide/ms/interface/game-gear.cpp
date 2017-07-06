@@ -22,17 +22,8 @@ GameGearInterface::GameGearInterface() {
   ports.append(move(hardware));
 }
 
-auto GameGearInterface::videoResolution() -> VideoSize {
-  return {160, 144};
-}
-
-auto GameGearInterface::videoSize(uint width, uint height, bool, bool integerScale, uint, uint) -> VideoSize {
-  double widthDivider = 160;
-  double heightDivider = 144;
-  double multiplier = integerScale
-  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
-  : min(double(width / widthDivider), double(height / heightDivider));
-  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
+auto GameGearInterface::videoResolution() -> VideoResolution {
+  return {160, 144, 160, 144, 1.0};
 }
 
 auto GameGearInterface::videoColors() -> uint32 {

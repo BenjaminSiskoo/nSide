@@ -27,13 +27,17 @@ auto Gamepad::latch(bool data) -> void {
   counter = 0;
 
   if(latched == 0) {
-    a      = platform->inputPoll(port, ID::Device::Gamepad, A);
-    b      = platform->inputPoll(port, ID::Device::Gamepad, B);
-    select = platform->inputPoll(port, ID::Device::Gamepad, Select);
-    start  = platform->inputPoll(port, ID::Device::Gamepad, Start);
     up     = platform->inputPoll(port, ID::Device::Gamepad, Up);
     down   = platform->inputPoll(port, ID::Device::Gamepad, Down);
     left   = platform->inputPoll(port, ID::Device::Gamepad, Left);
     right  = platform->inputPoll(port, ID::Device::Gamepad, Right);
+    b      = platform->inputPoll(port, ID::Device::Gamepad, B);
+    a      = platform->inputPoll(port, ID::Device::Gamepad, A);
+    if(!Model::VSSystem()) {
+      select = platform->inputPoll(port, ID::Device::Gamepad, Select);
+      start  = platform->inputPoll(port, ID::Device::Gamepad, Start);
+    } else {
+      select = start = 0;
+    }
   }
 }

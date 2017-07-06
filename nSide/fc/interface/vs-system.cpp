@@ -44,22 +44,16 @@ VSSystemInterface::VSSystemInterface() {
   ports.append(move(controllerPort2));
 }
 
-auto VSSystemInterface::videoResolution() -> VideoSize {
-  return {256 * vssystem.gameCount, 240};
-}
+auto VSSystemInterface::videoResolution() -> VideoResolution {
+  uint width = 256;
+  uint height = 240 / vssystem.gameCount;
+  uint internalWidth = 256 * vssystem.gameCount;
+  uint internalHeight = 240;
 
-auto VSSystemInterface::videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropHorizontal, uint cropVertical) -> VideoSize {
-  double pixelAspectRatio = 1.0;
-  if(aspectCorrection) {
-    double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    pixelAspectRatio = squarePixelRate / (system.frequency() / ppuS.rate());
-  }
-  double widthDivider = 256 * pixelAspectRatio;
-  double heightDivider = uint(240 / vssystem.gameCount);
-  double multiplier = integerScale
-  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
-  : min(double(width / widthDivider), double(height / heightDivider));
-  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
+  double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
+  double pixelAspectRatio = squarePixelRate / (system.frequency() / ppuS.rate());
+
+  return {width, height, internalWidth, internalHeight, pixelAspectRatio};
 }
 
 auto VSSystemInterface::videoColors() -> uint32 {

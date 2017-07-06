@@ -68,7 +68,7 @@ auto VSSystem::read(bool side, uint16 addr, uint8 data) -> uint8 {
     data.bits(3,4) = (side ? dipS : dipM).bits(0,1);
     data.bit (  5) = poll(side, Coin1);
     data.bit (  6) = poll(side, Coin2);
-    data.bit (  7) = side;
+    data.bit (  7) = !side;
     return data;
   }
 

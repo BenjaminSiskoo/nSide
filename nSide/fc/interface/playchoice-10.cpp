@@ -50,26 +50,16 @@ PlayChoice10Interface::PlayChoice10Interface() {
   ports.append(move(expansionPort));
 }
 
-auto PlayChoice10Interface::videoResolution() -> VideoSize {
-  if(playchoice10.screenConfig == PlayChoice10::ScreenConfig::Dual) {
-    return {256, 240 + 224};
-  } else {
-    return {256, 240};
-  }
-}
+auto PlayChoice10Interface::videoResolution() -> VideoResolution {
+  uint width = 256 / playchoice10.screenConfig;
+  uint height = playchoice10.screenConfig == PlayChoice10::ScreenConfig::Dual ? (240 + 224) / 2 : 240;
+  uint internalWidth = 256;
+  uint internalHeight = 240 + 224 * (playchoice10.screenConfig - 1);
 
-auto PlayChoice10Interface::videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropHorizontal, uint cropVertical) -> VideoSize {
-  double pixelAspectRatio = 1.0;
-  if(aspectCorrection) {
-    double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
-    pixelAspectRatio = squarePixelRate / (system.frequency() / ppuS.rate());
-  }
-  double widthDivider = 256 * pixelAspectRatio;
-  double heightDivider = playchoice10.screenConfig == 2 ? (240 + 224) / 2 : 240;
-  double multiplier = integerScale
-  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
-  : min(double(width / widthDivider), double(height / heightDivider));
-  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
+  double squarePixelRate = 135.0 / 22.0 * 1'000'000.0;
+  double pixelAspectRatio = squarePixelRate / (system.frequency() / ppuM.rate());
+
+  return {width, height, internalWidth, internalHeight, pixelAspectRatio};
 }
 
 auto PlayChoice10Interface::videoColors() -> uint32 {

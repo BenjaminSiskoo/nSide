@@ -31,13 +31,10 @@ struct Presentation : Window {
       MenuItem unloadSystem{&systemMenu};
     Menu settingsMenu{&menuBar};
       Menu videoScaleMenu{&settingsMenu};
-        MenuRadioItem videoScaleTiny{&videoScaleMenu};
         MenuRadioItem videoScaleSmall{&videoScaleMenu};
         MenuRadioItem videoScaleMedium{&videoScaleMenu};
         MenuRadioItem videoScaleLarge{&videoScaleMenu};
-          Group videoScales{&videoScaleTiny, &videoScaleSmall, &videoScaleMedium, &videoScaleLarge};
-        MenuSeparator videoScaleSeparator{&videoScaleMenu};
-        MenuCheckItem aspectCorrection{&videoScaleMenu};
+          Group videoScales{&videoScaleSmall, &videoScaleMedium, &videoScaleLarge};
       Menu videoEmulationMenu{&settingsMenu};
         MenuCheckItem blurEmulation{&videoEmulationMenu};
         MenuCheckItem colorEmulation{&videoEmulationMenu};

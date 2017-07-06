@@ -40,21 +40,12 @@ auto Interface::title() -> string {
   return cartridge.title();
 }
 
-auto Interface::videoResolution() -> VideoSize {
+auto Interface::videoResolution() -> VideoResolution {
   if(!settings.rotateLeft) {
-    return {240, 160};
+    return {240, 160, 240, 160, 1.0};
   } else {
-    return {160, 240};
+    return {160, 240, 160, 240, 1.0};
   }
-}
-
-auto Interface::videoSize(uint width, uint height, bool, bool integerScale, uint, uint) -> VideoSize {
-  double widthDivider = videoResolution().width;
-  double heightDivider = videoResolution().height;
-  double multiplier = integerScale
-  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
-  : min(double(width / widthDivider), double(height / heightDivider));
-  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
 }
 
 auto Interface::videoColors() -> uint32 {

@@ -36,30 +36,12 @@ SG1000Interface::SG1000Interface() {
   ports.append(move(controllerPort2));
 }
 
-auto SG1000Interface::videoResolution() -> VideoSize {
-  return {256, 192};
-}
-
-auto SG1000Interface::videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropHorizontal, uint cropVertical) -> VideoSize {
-  double pixelAspectRatio = 1.0;
-  if(aspectCorrection) {
-    double squarePixelRate = system.region() == System::Region::NTSC
-    ? 135.0 / 22.0 * 1'000'000.0
-    : 7'375'000.0;
-    pixelAspectRatio = squarePixelRate / (system.colorburst() * 3.0 / 2.0);
-  }
-  double widthDivider = (256 - cropHorizontal * 2) * pixelAspectRatio;
-  double heightDivider = (192 - max(int(cropVertical - 24), 0) * 2);
-  double multiplier = integerScale
-  ? min(  uint(width / widthDivider),   uint(height / heightDivider))
-  : min(double(width / widthDivider), double(height / heightDivider));
-  return {uint(widthDivider * multiplier), uint(heightDivider * multiplier)};
-}
-
-auto SG1000Interface::videoCrop(const uint32*& data, uint& width, uint& height, uint cropHorizontal, uint cropVertical) -> void {
-  data += cropVertical * 256 + cropHorizontal;
-  width -= cropHorizontal * 2;
-  height -= max(int(cropVertical - 24), 0) * 2;
+auto SG1000Interface::videoResolution() -> VideoResolution {
+  double squarePixelRate = system.region() == System::Region::NTSC
+  ? 135.0 / 22.0 * 1'000'000.0
+  : 7'375'000.0;
+  double pixelAspectRatio = squarePixelRate / (system.colorburst() * 3.0 / 2.0);
+  return {256, 192, 256, 192, pixelAspectRatio};
 }
 
 auto SG1000Interface::videoColors() -> uint32 {

@@ -77,9 +77,7 @@ struct Interface : Emulator::Interface {
 struct FamicomInterface : Interface {
   FamicomInterface();
 
-  auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
-  auto videoCrop(const uint32*& data, uint& width, uint& height, uint cropWidth, uint cropHeight) -> void override;
+  auto videoResolution() -> VideoResolution override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -91,8 +89,7 @@ struct FamicomInterface : Interface {
 struct VSSystemInterface : Interface {
   VSSystemInterface();
 
-  auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
+  auto videoResolution() -> VideoResolution override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -102,8 +99,7 @@ struct VSSystemInterface : Interface {
 struct PlayChoice10Interface : Interface {
   PlayChoice10Interface();
 
-  auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
+  auto videoResolution() -> VideoResolution override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -115,9 +111,7 @@ struct PlayChoice10Interface : Interface {
 struct FamicomBoxInterface : Interface {
   FamicomBoxInterface();
 
-  auto videoResolution() -> VideoSize override;
-  auto videoSize(uint width, uint height, bool aspectCorrection, bool integerScale, uint cropWidth, uint cropHeight) -> VideoSize override;
-  auto videoCrop(const uint32*& data, uint& width, uint& height, uint cropWidth, uint cropHeight) -> void override;
+  auto videoResolution() -> VideoResolution override;
   auto videoColors() -> uint32 override;
   auto videoColor(uint32 color) -> uint64 override;
 
@@ -130,9 +124,9 @@ struct Settings {
   bool colorEmulation = true;
   bool scanlineEmulation = true;
 
-  uint controllerPort1 = 0;
-  uint controllerPort2 = 0;
-  uint expansionPort = 0;
+  uint controllerPort1 = ID::Device::None;
+  uint controllerPort2 = ID::Device::None;
+  uint expansionPort = ID::Device::None;
   bool random = true;
 };
 
