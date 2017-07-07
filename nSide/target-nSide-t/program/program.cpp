@@ -70,8 +70,6 @@ Program::Program(string_vector args) {
   new DipSwitches;
   new AboutWindow;
 
-  presentation->setFocused();
-
   updateVideoShader();
   updateAudioDriver();
   updateAudioEffects();

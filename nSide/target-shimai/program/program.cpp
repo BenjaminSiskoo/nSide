@@ -71,8 +71,6 @@ Program::Program(string_vector args) {
 
   new Home;
 
-  presentation->setFocused();
-
   updateVideoShader();
   updateAudioDriver();
   updateAudioEffects();

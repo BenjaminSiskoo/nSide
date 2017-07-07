@@ -14,7 +14,7 @@ struct Presentation : Window {
   auto refreshLibraryMenu() -> void;
   auto updateEmulator() -> void;
   auto clearViewport() -> void;
-  auto resizeViewport(bool onSize = false) -> void;
+  auto resizeViewport(bool resizeWindow = true) -> void;
   auto toggleFullScreen() -> void;
   //auto draw(image logo = {}) -> void;
   auto loadShaders() -> void;
@@ -34,12 +34,10 @@ struct Presentation : Window {
         MenuItem videoScaleSmall{&videoScaleMenu};
         MenuItem videoScaleMedium{&videoScaleMenu};
         MenuItem videoScaleLarge{&videoScaleMenu};
-        //Group videoScales{&videoScaleSmall, &videoScaleMedium, &videoScaleLarge};
       Menu videoEmulationMenu{&settingsMenu};
         MenuCheckItem blurEmulation{&videoEmulationMenu};
         MenuCheckItem colorEmulation{&videoEmulationMenu};
         MenuCheckItem scanlineEmulation{&videoEmulationMenu};
-        MenuCheckItem maskOverscan{&videoEmulationMenu};
       Menu videoShaderMenu{&settingsMenu};
         MenuRadioItem videoShaderNone{&videoShaderMenu};
         MenuRadioItem videoShaderBlur{&videoShaderMenu};
