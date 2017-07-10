@@ -65,10 +65,22 @@ auto Program::updateVideoShader() -> void {
   if(settings["Video/Driver"].text() == "OpenGL"
   && settings["Video/Shader"].text() != "None"
   && settings["Video/Shader"].text() != "Blur"
+  && settings["Video/Shader"].text() != "Auto"
   && directory::exists(settings["Video/Shader"].text())
   ) {
     video->set(Video::Filter, Video::FilterNearest);
     video->set(Video::Shader, settings["Video/Shader"].text());
+  } else if(emulator
+  && settings["Video/Driver"].text() == "OpenGL"
+  && settings["Video/Shader"].text() == "Auto") {
+    string pathname = locate({"Video Shaders/", emulator->information.name, ".shader/"});
+    if(directory::exists(pathname)) {
+      video->set(Video::Filter, Video::FilterNearest);
+      video->set(Video::Shader, pathname);
+    } else {
+      video->set(Video::Filter, Video::FilterNearest);
+      video->set(Video::Shader, (string)"");
+    }
   } else {
     video->set(Video::Filter, settings["Video/Shader"].text() == "Blur" ? Video::FilterLinear : Video::FilterNearest);
     video->set(Video::Shader, (string)"");
@@ -91,4 +103,18 @@ auto Program::updateAudioEffects() -> void {
 
   auto reverbEnable = settings["Audio/Reverb/Enable"].boolean();
   Emulator::audio.setReverb(reverbEnable);
+}
+
+auto Program::allowInput(bool hotkey) -> bool {
+  //exclusive mode creates its own top-level window: presentation window will not have focus
+  if(video->cap(Video::Exclusive)) {
+    auto value = video->get(Video::Exclusive);
+    if(value.is<bool>() && value.get<bool>()) return true;
+  }
+
+  if(presentation && presentation->focused()) return true;
+
+  if(!hotkey && settings["Input/FocusLoss/AllowInput"].boolean()) return true;
+
+  return false;
 }

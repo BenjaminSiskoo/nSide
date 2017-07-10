@@ -49,6 +49,10 @@ Presentation::Presentation() {
     settings["Video/Shader"].setValue("Blur");
     program->updateVideoShader();
   });
+  videoShaderAuto.setText("Auto").onActivate([&] {
+    settings["Video/Shader"].setValue("Auto");
+    program->updateVideoShader();
+  });
   loadShaders();
   synchronizeVideo.setText("Synchronize Video").setChecked(settings["Video/Synchronize"].boolean()).setVisible(false).onToggle([&] {
     settings["Video/Synchronize"].setValue(synchronizeVideo.checked());
@@ -296,7 +300,7 @@ auto Presentation::resizeViewport(bool resizeWindow) -> void {
       viewportHeight = resolution(1).natural();
     }
 
-    if(settings["Video/Windowed/AdaptiveSizing"].boolean() && resizeWindow) {
+    if(settings["Video/Windowed/Adaptive"].boolean() && resizeWindow) {
       uint multiplier = min(viewportWidth / emulatorWidth, viewportHeight / emulatorHeight);
       emulatorWidth *= multiplier;
       emulatorHeight *= multiplier;
@@ -339,13 +343,13 @@ auto Presentation::toggleFullScreen() -> void {
   if(!fullScreen()) {
     menuBar.setVisible(false);
     statusBar.setVisible(false);
-  //setResizable(true);
     setFullScreen(true);
+    video->set(Video::Exclusive, settings["Video/Fullscreen/Exclusive"].boolean());
     if(!input->acquired()) input->acquire();
   } else {
     if(input->acquired()) input->release();
+    video->set(Video::Exclusive, false);
     setFullScreen(false);
-  //setResizable(false);
     menuBar.setVisible(true);
     statusBar.setVisible(settings["UserInterface/ShowStatusBar"].boolean());
   }
@@ -391,7 +395,7 @@ auto Presentation::loadShaders() -> void {
 
   if(settings["Video/Driver"].text() == "OpenGL") {
     for(auto shader : directory::folders(pathname, "*.shader")) {
-      if(videoShaders.objectCount() == 2) videoShaderMenu.append(MenuSeparator());
+      if(videoShaders.objectCount() == 3) videoShaderMenu.append(MenuSeparator());
       MenuRadioItem item{&videoShaderMenu};
       item.setText(string{shader}.trimRight(".shader/", 1L)).onActivate([=] {
         settings["Video/Shader"].setValue({pathname, shader});
@@ -403,6 +407,7 @@ auto Presentation::loadShaders() -> void {
 
   if(settings["Video/Shader"].text() == "None") videoShaderNone.setChecked();
   if(settings["Video/Shader"].text() == "Blur") videoShaderBlur.setChecked();
+  if(settings["Video/Shader"].text() == "Auto") videoShaderAuto.setChecked();
 
   for(auto radioItem : videoShaders.objects<MenuRadioItem>()) {
     if(settings["Video/Shader"].text() == string{pathname, radioItem.text(), ".shader/"}) {

@@ -137,13 +137,13 @@ auto Presentation::resizeViewport(bool resizeWindow) -> void {
 
 auto Presentation::toggleFullScreen() -> void {
   if(!fullScreen()) {
-    setResizable(true);
     setFullScreen(true);
+    video->set(Video::Exclusive, settings["Video/Fullscreen/Exclusive"].boolean());
     if(!input->acquired()) input->acquire();
   } else {
     if(input->acquired()) input->release();
+    video->set(Video::Exclusive, false);
     setFullScreen(false);
-    setResizable(false);
   }
   resizeViewport();
 }

@@ -70,10 +70,6 @@ Program::Program(string_vector args) {
   new DipSwitches;
   new AboutWindow;
 
-  updateVideoShader();
-  updateAudioDriver();
-  updateAudioEffects();
-
   args.takeLeft();  //ignore program location in argument parsing
   for(auto& argument : args) {
     if(argument == "--fullscreen") {
@@ -88,6 +84,10 @@ Program::Program(string_vector args) {
     }
   }
   loadMedium();
+
+  updateVideoShader();
+  updateAudioDriver();
+  updateAudioEffects();
 }
 
 auto Program::main() -> void {
