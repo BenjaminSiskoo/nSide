@@ -98,7 +98,7 @@ auto Program::main() -> void {
 
   if(!emulator) return home->run();
 
-  if(!emulator->loaded() || pause || (!presentation->focused() && settings["Input/FocusLoss/Pause"].boolean())) {
+  if(!emulator->loaded() || pause || (!focused() && settings["Input/FocusLoss/Pause"].boolean())) {
     audio->clear();
     usleep(20 * 1000);
     return;

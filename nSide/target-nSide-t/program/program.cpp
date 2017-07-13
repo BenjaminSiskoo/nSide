@@ -70,6 +70,10 @@ Program::Program(string_vector args) {
   new DipSwitches;
   new AboutWindow;
 
+  updateVideoShader();  //Must be moved below the following block to support the "Auto" shader
+  updateAudioDriver();
+  updateAudioEffects();
+
   args.takeLeft();  //ignore program location in argument parsing
   for(auto& argument : args) {
     if(argument == "--fullscreen") {
@@ -84,10 +88,6 @@ Program::Program(string_vector args) {
     }
   }
   loadMedium();
-
-  updateVideoShader();
-  updateAudioDriver();
-  updateAudioEffects();
 }
 
 auto Program::main() -> void {
@@ -95,7 +95,7 @@ auto Program::main() -> void {
   inputManager->poll();
   inputManager->pollHotkeys();
 
-  if(!emulator || !emulator->loaded() || pause || (!presentation->focused() && settings["Input/FocusLoss/Pause"].boolean())) {
+  if(!emulator || !emulator->loaded() || pause || (!focused() && settings["Input/FocusLoss/Pause"].boolean())) {
     audio->clear();
     usleep(20 * 1000);
     return;

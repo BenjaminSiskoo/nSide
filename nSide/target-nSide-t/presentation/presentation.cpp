@@ -49,10 +49,10 @@ Presentation::Presentation() {
     settings["Video/Shader"].setValue("Blur");
     program->updateVideoShader();
   });
-  videoShaderAuto.setText("Auto").onActivate([&] {
-    settings["Video/Shader"].setValue("Auto");
-    program->updateVideoShader();
-  });
+//videoShaderAuto.setText("Auto").onActivate([&] {
+//  settings["Video/Shader"].setValue("Auto");
+//  program->updateVideoShader();
+//});
   loadShaders();
   synchronizeVideo.setText("Synchronize Video").setChecked(settings["Video/Synchronize"].boolean()).setVisible(false).onToggle([&] {
     settings["Video/Synchronize"].setValue(synchronizeVideo.checked());
@@ -395,7 +395,7 @@ auto Presentation::loadShaders() -> void {
 
   if(settings["Video/Driver"].text() == "OpenGL") {
     for(auto shader : directory::folders(pathname, "*.shader")) {
-      if(videoShaders.objectCount() == 3) videoShaderMenu.append(MenuSeparator());
+      if(videoShaders.objectCount() == 2/*3*/) videoShaderMenu.append(MenuSeparator());
       MenuRadioItem item{&videoShaderMenu};
       item.setText(string{shader}.trimRight(".shader/", 1L)).onActivate([=] {
         settings["Video/Shader"].setValue({pathname, shader});
@@ -407,7 +407,7 @@ auto Presentation::loadShaders() -> void {
 
   if(settings["Video/Shader"].text() == "None") videoShaderNone.setChecked();
   if(settings["Video/Shader"].text() == "Blur") videoShaderBlur.setChecked();
-  if(settings["Video/Shader"].text() == "Auto") videoShaderAuto.setChecked();
+//if(settings["Video/Shader"].text() == "Auto") videoShaderAuto.setChecked();
 
   for(auto radioItem : videoShaders.objects<MenuRadioItem>()) {
     if(settings["Video/Shader"].text() == string{pathname, radioItem.text(), ".shader/"}) {

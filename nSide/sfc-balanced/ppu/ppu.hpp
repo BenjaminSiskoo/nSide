@@ -16,7 +16,7 @@ struct PPU : Thread, PPUcounter {
 
   auto serialize(serializer&) -> void;
 
-  //mmio.cpp
+  //io.cpp
   alwaysinline auto addressVRAM() const -> uint16;
   alwaysinline auto readVRAM() -> uint16;
   alwaysinline auto writeVRAM(bool byte, uint8 data) -> void;
@@ -58,7 +58,8 @@ privileged:
     uint16 vram;
     uint8 oam;
     uint8 cgram;
-    uint8 bgofs;
+    uint8 bgofsPPU1;
+    uint3 bgofsPPU2;
     uint8 mode7;
     uint1 counters;
     uint1 hcounter;

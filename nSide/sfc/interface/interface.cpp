@@ -15,15 +15,10 @@ Interface::Interface() {
 
   media.append({ID::SuperFamicom, "Super Famicom", "sfc"});
 
-  Port hardware{ID::Port::Hardware, "Hardware"};
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
   Port expansionPort{ID::Port::Expansion, "Expansion Port"};
-
-  { Device device{ID::Device::Controls, "Controls"};
-    device.inputs.append({0, "Reset"});
-    hardware.devices.append(device);
-  }
+  Port hardware{ID::Port::Hardware, "Hardware"};
 
   { Device device{ID::Device::None, "None"};
     controllerPort1.devices.append(device);
@@ -113,10 +108,15 @@ Interface::Interface() {
     expansionPort.devices.append(device);
   }
 
-  ports.append(move(hardware));
+  { Device device{ID::Device::Controls, "Controls"};
+    device.inputs.append({0, "Reset"});
+    hardware.devices.append(device);
+  }
+
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
   ports.append(move(expansionPort));
+  ports.append(move(hardware));
 }
 
 auto Interface::manifest() -> string {

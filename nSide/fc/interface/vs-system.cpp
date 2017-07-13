@@ -5,20 +5,9 @@ VSSystemInterface::VSSystemInterface() {
 
   media.append({ID::VSSystem, "VS. System", "vs"});
 
-  Port hardware{ID::Port::Hardware, "Hardware"};
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
-
-  { Device device{ID::Device::VSSystemControls, "VS. System Controls"};
-    device.inputs.append({0, "Button 1"      });
-    device.inputs.append({0, "Button 2"      });
-    device.inputs.append({0, "Button 3"      });
-    device.inputs.append({0, "Button 4"      });
-    device.inputs.append({0, "Service Button"});
-    device.inputs.append({0, "Coin 1"        });
-    device.inputs.append({0, "Coin 2"        });
-    hardware.devices.append(device);
-  }
+  Port hardware{ID::Port::Hardware, "Hardware"};
 
   { Device device{ID::Device::Gamepad, "Gamepad"};
     device.inputs.append({0, "Up"    });
@@ -39,9 +28,20 @@ VSSystemInterface::VSSystemInterface() {
     controllerPort2.devices.append(device);
   }
 
-  ports.append(move(hardware));
+  { Device device{ID::Device::VSSystemControls, "VS. System Controls"};
+    device.inputs.append({0, "Button 1"      });
+    device.inputs.append({0, "Button 2"      });
+    device.inputs.append({0, "Button 3"      });
+    device.inputs.append({0, "Button 4"      });
+    device.inputs.append({0, "Service Button"});
+    device.inputs.append({0, "Coin 1"        });
+    device.inputs.append({0, "Coin 2"        });
+    hardware.devices.append(device);
+  }
+
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
+  ports.append(move(hardware));
 }
 
 auto VSSystemInterface::videoResolution() -> VideoResolution {

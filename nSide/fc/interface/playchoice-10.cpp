@@ -5,22 +5,10 @@ PlayChoice10Interface::PlayChoice10Interface() {
 
   media.append({ID::PlayChoice10, "PlayChoice-10", "pc10"});
 
-  Port hardware{ID::Port::Hardware, "Hardware"};
   Port controllerPort1{ID::Port::Controller1, "Controller Port 1"};
   Port controllerPort2{ID::Port::Controller2, "Controller Port 2"};
   Port expansionPort{ID::Port::Expansion, "Expansion Port"};
-
-  { Device device{ID::Device::PlayChoice10Controls, "PlayChoice-10 Controls"};
-    device.inputs.append({0, "Game Select"   });
-    device.inputs.append({0, "Start"         });
-    device.inputs.append({0, "Channel Select"});
-    device.inputs.append({0, "Enter"         });
-    device.inputs.append({0, "Reset"         });
-    device.inputs.append({0, "Service Button"});
-    device.inputs.append({0, "Coin 1"        });
-    device.inputs.append({0, "Coin 2"        });
-    hardware.devices.append(device);
-  }
+  Port hardware{ID::Port::Hardware, "Hardware"};
 
   { Device device{ID::Device::Gamepad, "Gamepad"};
     device.inputs.append({0, "Up"   });
@@ -44,10 +32,22 @@ PlayChoice10Interface::PlayChoice10Interface() {
     expansionPort.devices.append(device);
   }
 
-  ports.append(move(hardware));
+  { Device device{ID::Device::PlayChoice10Controls, "PlayChoice-10 Controls"};
+    device.inputs.append({0, "Game Select"   });
+    device.inputs.append({0, "Start"         });
+    device.inputs.append({0, "Channel Select"});
+    device.inputs.append({0, "Enter"         });
+    device.inputs.append({0, "Reset"         });
+    device.inputs.append({0, "Service Button"});
+    device.inputs.append({0, "Coin 1"        });
+    device.inputs.append({0, "Coin 2"        });
+    hardware.devices.append(device);
+  }
+
   ports.append(move(controllerPort1));
   ports.append(move(controllerPort2));
   ports.append(move(expansionPort));
+  ports.append(move(hardware));
 }
 
 auto PlayChoice10Interface::videoResolution() -> VideoResolution {

@@ -41,8 +41,8 @@ struct Presentation : Window {
       Menu videoShaderMenu{&settingsMenu};
         MenuRadioItem videoShaderNone{&videoShaderMenu};
         MenuRadioItem videoShaderBlur{&videoShaderMenu};
-        MenuRadioItem videoShaderAuto{&videoShaderMenu};
-        Group videoShaders{&videoShaderNone, &videoShaderBlur, &videoShaderAuto};
+      //MenuRadioItem videoShaderAuto{&videoShaderMenu};
+        Group videoShaders{&videoShaderNone, &videoShaderBlur/*, &videoShaderAuto*/};
       MenuSeparator videoSettingsSeparator{&settingsMenu};
       MenuCheckItem synchronizeVideo{&settingsMenu};
       MenuCheckItem synchronizeAudio{&settingsMenu};

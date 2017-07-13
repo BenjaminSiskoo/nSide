@@ -123,45 +123,45 @@ auto InputManager::appendHotkeys() -> void {
 }
 
 auto InputManager::pollHotkeys() -> void {
-  if(program->allowInput(true)) {
-    for(auto& hotkey : hotkeys) {
-      int16 state = hotkey->poll();
-      if(hotkey->state == 0 && state == 1 && hotkey->press) hotkey->press();
-      if(hotkey->state == 1 && state == 0 && hotkey->release) hotkey->release();
-      hotkey->state = state;
-    }
+  if(!program->focused()) return;
 
-    static shared_pointer<HID::Device> keyboard = nullptr;
-    if(!keyboard) {
+  for(auto& hotkey : hotkeys) {
+    int16 state = hotkey->poll();
+    if(hotkey->state == 0 && state == 1 && hotkey->press) hotkey->press();
+    if(hotkey->state == 1 && state == 0 && hotkey->release) hotkey->release();
+    hotkey->state = state;
+  }
+
+  static shared_pointer<HID::Device> keyboard = nullptr;
+  if(!keyboard) {
+    for(auto& device : inputManager->devices) {
+      if(device->isKeyboard()) keyboard = device;
+    }
+  }
+
+  //Unload/Quit hotkey
+  //Because stock higan and nSide don't have this hotkey and yield to the OS's
+  //global exit hotkey (Alt+F4 on Windows, etc.), which doesn't work in
+  //fullscreen. Key code 0 represents Escape in all of ruby's input drivers.
+  static bool previousEsc = 0;
+  auto esc = keyboard->group(0).input(0).value();
+  if(previousEsc == 0 && esc == 1) {
+    if(::emulator) program->unloadMedium();
+    else           program->quit();
+  }
+  previousEsc = esc;
+
+  if(settings["Input/Driver"].text() == "Windows") {
+    static shared_pointer<HID::Device> xinput1 = nullptr;
+    if(!xinput1) {
       for(auto& device : inputManager->devices) {
-        if(device->isKeyboard()) keyboard = device;
+        if(device->isJoypad() && device->id() == 0x1'045e'028e) xinput1 = device;
       }
     }
 
-    //Unload/Quit hotkey
-    //Because stock higan and nSide don't have this hotkey and yield to the OS's
-    //global exit hotkey (Alt+F4 on Windows, etc.), which doesn't work in
-    //fullscreen. Key code 0 represents Escape in all of ruby's input drivers.
-    static bool previousEsc = 0;
-    auto esc = keyboard->group(0).input(0).value();
-    if(previousEsc == 0 && esc == 1) {
-      if(::emulator) program->unloadMedium();
-      else           program->quit();
-    }
-    previousEsc = esc;
-
-    if(settings["Input/Driver"].text() == "Windows") {
-      static shared_pointer<HID::Device> xinput1 = nullptr;
-      if(!xinput1) {
-        for(auto& device : inputManager->devices) {
-          if(device->isJoypad() && device->id() == 0x1'045e'028e) xinput1 = device;
-        }
-      }
-
-      if(xinput1) {
-        auto guide = xinput1->group(HID::Joypad::GroupID::Button).input(10).value();
-        if(guide == 1 && ::emulator) program->unloadMedium();
-      }
+    if(xinput1) {
+      auto guide = xinput1->group(HID::Joypad::GroupID::Button).input(10).value();
+      if(guide == 1 && ::emulator) program->unloadMedium();
     }
   }
 }
