@@ -11,6 +11,12 @@ auto BusCPU::load(Markup::Node node) -> bool {
 }
 
 auto BusCPU::readByte(uint24 addr) -> uint16 {
+  auto data = readByte_(addr);
+  if(auto result = cheat.find<1>(addr, data)) data = result();
+  return data;
+}
+
+auto BusCPU::readByte_(uint24 addr) -> uint16 {
   if(addr >= 0x000000 && addr <= 0x3fffff) return cartridge.read(addr & ~1).byte(!addr.bit(0));
   if(addr >= 0xa00000 && addr <= 0xa0ffff) return busAPU.granted() ? busAPU.read(addr) : (uint8)0x0000;
   if(addr >= 0xa10000 && addr <= 0xa10fff) return readIO(addr & ~0xff00);
@@ -24,6 +30,12 @@ auto BusCPU::readByte(uint24 addr) -> uint16 {
 }
 
 auto BusCPU::readWord(uint24 addr) -> uint16 {
+  auto data = readWord_(addr);
+  if(auto result = cheat.find<2>(addr, data)) data = result();
+  return data;
+}
+
+auto BusCPU::readWord_(uint24 addr) -> uint16 {
   if(addr >= 0x000000 && addr <= 0x3fffff) return cartridge.read(addr);
   if(addr >= 0xa00000 && addr <= 0xa0ffff) return busAPU.granted() ? busAPU.read(addr) : (uint8)0x0000;
   if(addr >= 0xa10000 && addr <= 0xa10fff) return readIO(addr & ~0xff00) << 0;
