@@ -1,5 +1,12 @@
 struct CPUDebugger : Window {
-  uint24 opcodePC;
+  CPUDebugger();
+
+  auto mirror(uint24 addr) -> uint24;
+  auto read(uint24 addr) -> uint8;
+  auto write(uint24 addr, uint8 data) -> void;
+
+  auto opcodeLength(uint24 addr) -> uint;
+  auto updateDisassembly() -> void;
 
   VerticalLayout layout{this};
     HorizontalLayout controlLayout{&layout, Size{~0, 0}};
@@ -12,16 +19,15 @@ struct CPUDebugger : Window {
     TextEdit disassembly{&layout, Size{~0, ~0}};
     Button registers{&layout, Size{~0, 0}};
 
-  auto mirror(uint24 addr) -> uint24;
-  auto read(uint24 addr) -> uint8;
-  auto write(uint24 addr, uint8 data) -> void;
-
-  auto opcodeLength(uint24 addr) -> uint;
-  auto updateDisassembly() -> void;
-  CPUDebugger();
+  uint24 opcodePC;
 };
 
 struct CPURegisterEditor : Window {
+  CPURegisterEditor();
+
+  auto loadRegisters() -> void;
+  auto saveRegisters() -> void;
+
   VerticalLayout layout{this};
     HorizontalLayout primaryLayout{&layout, Size{~0, 0}};
       Label    regALabel{&primaryLayout, Size{0, 0}};
@@ -49,10 +55,6 @@ struct CPURegisterEditor : Window {
       CheckLabel flagE{&tertiaryLayout, Size{~0, 0}};
       Widget spacer{&tertiaryLayout, Size{0, 0}};
       Button update{&tertiaryLayout, Size{80, 0}};
-
-  auto loadRegisters() -> void;
-  auto saveRegisters() -> void;
-  CPURegisterEditor();
 };
 
 extern unique_pointer<CPUDebugger> cpuDebugger;

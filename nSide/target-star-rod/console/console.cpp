@@ -5,8 +5,9 @@ unique_pointer<ConsoleWindow> consoleWindow;
 
 ConsoleWindow::ConsoleWindow() {
   consoleWindow = this;
+
+  layout.setMargin(5);
   setTitle({"Console - star-rod v", Emulator::Version});
-  setGeometry({64, 640, 640, 400});
 
   emulationMenu.setText("&Emulation");
   reloadCartridge.setText("Reload Cartridge").onActivate([&] {
@@ -111,7 +112,6 @@ ConsoleWindow::ConsoleWindow() {
   helpMenu.setText("&Help");
   about.setText("About ...").onActivate([&] { aboutWindow->setVisible(); });
 
-  layout.setMargin(5);
   runButton.setText("Run").onActivate([&] {
     if(debugger->paused) {
       print("\n");
@@ -138,6 +138,9 @@ ConsoleWindow::ConsoleWindow() {
       Application::quit();
     }
   });
+
+  setSize({640, 400});
+  setAlignment({0.0, 1.0});
 }
 
 auto ConsoleWindow::print(const string& text) -> void {

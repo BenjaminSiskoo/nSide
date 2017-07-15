@@ -7,10 +7,9 @@ SMPDebugger::SMPDebugger() {
   smpDebugger = this;
   opcodePC = 0xffc0;
 
-  setTitle("SMP Debugger");
-  setGeometry({128, 128, 350, 260});
-
   layout.setMargin(5);
+  setTitle("SMP Debugger");
+
   stepInto.setText("Step Into").onActivate([&] {
     debugger->flags.smp.stepInto = true;
     debugger->resume();
@@ -22,6 +21,9 @@ SMPDebugger::SMPDebugger() {
     smpRegisterEditor->loadRegisters();
     smpRegisterEditor->setVisible();
   });
+
+  setSize({350, 260});
+  setAlignment({0.5, 0.0});
 }
 
 auto SMPDebugger::read(uint16 addr) -> uint8 {

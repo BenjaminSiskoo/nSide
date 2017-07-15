@@ -3,10 +3,10 @@ unique_pointer<PropertiesViewer> propertiesViewer;
 
 PropertiesViewer::PropertiesViewer() {
   propertiesViewer = this;
-  setTitle("Properties Viewer");
-  setGeometry({128, 128, 300, 400});
 
   layout.setMargin(5);
+  setTitle("Properties Viewer");
+
   sourceLabel.setText("Source:");
   sourceSelection.append(ComboButtonItem().setText("PPU"));
   sourceSelection.append(ComboButtonItem().setText("CPU"));
@@ -17,6 +17,8 @@ PropertiesViewer::PropertiesViewer() {
 
   sourceSelection.onChange({ &PropertiesViewer::updateProperties, this });
   update.onActivate({ &PropertiesViewer::updateProperties, this });
+
+  setGeometry({128, 128, 300, 400});
 }
 
 auto PropertiesViewer::updateProperties() -> void {

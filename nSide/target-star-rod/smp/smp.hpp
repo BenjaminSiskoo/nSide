@@ -1,5 +1,11 @@
 struct SMPDebugger : Window {
-  uint16 opcodePC;
+  SMPDebugger();
+
+  auto read(uint16 addr) -> uint8;
+  auto write(uint16 addr, uint8 data) -> void;
+
+  auto opcodeLength(uint16 addr) -> uint;
+  auto updateDisassembly() -> void;
 
   VerticalLayout layout{this};
     HorizontalLayout controlLayout{&layout, Size{~0, 0}};
@@ -10,15 +16,15 @@ struct SMPDebugger : Window {
     TextEdit disassembly{&layout, Size{~0, ~0}};
     Button registers{&layout, Size{~0, 0}};
 
-  auto read(uint16 addr) -> uint8;
-  auto write(uint16 addr, uint8 data) -> void;
-
-  auto opcodeLength(uint16 addr) -> uint;
-  auto updateDisassembly() -> void;
-  SMPDebugger();
+  uint16 opcodePC;
 };
 
 struct SMPRegisterEditor : Window {
+  SMPRegisterEditor();
+
+  auto loadRegisters() -> void;
+  auto saveRegisters() -> void;
+
   VerticalLayout layout{this};
     HorizontalLayout primaryLayout{&layout, Size{~0, 0}};
       Label    regALabel{&primaryLayout, Size{0, 0}};
@@ -41,10 +47,6 @@ struct SMPRegisterEditor : Window {
     HorizontalLayout tertiaryLayout{&layout, Size{~0, 0}};
       Widget spacer{&tertiaryLayout, Size{~0, 0}};
       Button update{&tertiaryLayout, Size{80, 0}};
-
-  auto loadRegisters() -> void;
-  auto saveRegisters() -> void;
-  SMPRegisterEditor();
 };
 
 extern unique_pointer<SMPDebugger> smpDebugger;

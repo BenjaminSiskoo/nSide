@@ -1,4 +1,8 @@
 struct PaletteViewer : Window {
+  PaletteViewer();
+
+  auto updateColors() -> void;
+
   VerticalLayout layout{this};
     HorizontalLayout controlLayout{&layout, Size{~0, 0}, 5};
       Widget spacer{&controlLayout, Size{~0, 0}};
@@ -7,9 +11,6 @@ struct PaletteViewer : Window {
     Canvas canvas{&layout, Size{256, 256}};
 
   StatusBar statusBar{this};
-
-  auto updateColors() -> void;
-  PaletteViewer();
 };
 
 extern unique_pointer<PaletteViewer> paletteViewer;

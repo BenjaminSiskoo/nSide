@@ -68,6 +68,7 @@ Program::Program(string_vector args) {
   propertiesViewer->updateProperties();
   vramViewer->updateTiles();
   bgViewer->updateTiles();
+  paletteViewer->updateColors();
 }
 
 auto Program::main() -> void {

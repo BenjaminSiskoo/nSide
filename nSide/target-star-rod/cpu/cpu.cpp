@@ -7,10 +7,9 @@ CPUDebugger::CPUDebugger() {
   cpuDebugger = this;
   opcodePC = 0x008000;
 
-  setTitle("CPU Debugger");
-  setGeometry({128, 128, 384, 260});
-
   layout.setMargin(5);
+  setTitle("CPU Debugger");
+
   stepInto.setText("Step Into").onActivate([&] {
     debugger->flags.cpu.stepInto = true;
     debugger->resume();
@@ -30,6 +29,9 @@ CPUDebugger::CPUDebugger() {
     cpuRegisterEditor->loadRegisters();
     cpuRegisterEditor->setVisible();
   });
+
+  setSize({384, 260});
+  setAlignment({0.25, 0.0});
 }
 
 auto CPUDebugger::mirror(uint24 addr) -> uint24 {

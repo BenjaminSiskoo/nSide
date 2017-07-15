@@ -3,16 +3,16 @@ unique_pointer<PaletteViewer> paletteViewer;
 
 PaletteViewer::PaletteViewer() {
   paletteViewer = this;
+
+  layout.setMargin(5);
   setTitle("Palette Viewer");
   statusBar.setFont(Font().setBold());
   statusBar.setVisible();
 
-  layout.setMargin(5);
   autoUpdate.setText("Auto");
-  update.setText("Update");
-  canvas.setSize({256, 256});
+  update.setText("Update").onActivate({ &PaletteViewer::updateColors, this });
 
-  update.onActivate({ &PaletteViewer::updateColors, this });
+  canvas.setSize({256, 256});
 
   canvas.onMouseLeave([&] { statusBar.setText(""); });
   canvas.onMouseMove([&](Position position) {
@@ -30,7 +30,8 @@ PaletteViewer::PaletteViewer() {
 
   updateColors();
 
-  setGeometry({{128, 128}, layout.minimumSize()});
+  setSize(layout.minimumSize());
+  setAlignment({0.75, 0.0});
 }
 
 auto PaletteViewer::updateColors() -> void {

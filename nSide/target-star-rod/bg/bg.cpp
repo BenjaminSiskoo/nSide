@@ -3,10 +3,10 @@ unique_pointer<BGViewer> bgViewer;
 
 BGViewer::BGViewer() {
   bgViewer = this;
-  setTitle("BG Viewer");
-  statusBar.setFont(Font().setBold());
-  statusBar.setVisible();
+
   layout.setMargin(5);
+  setTitle("BG Viewer");
+  statusBar.setFont(Font().setBold()).setVisible();
 
   bgLabel.setText("Mode:");
   bgSelection.append(ComboButtonItem().setText("BG1"));
@@ -76,7 +76,8 @@ BGViewer::BGViewer() {
 
   bgChanged();
 
-  setGeometry({{128, 128}, layout.minimumSize()});
+  setSize(layout.minimumSize());
+  setAlignment({1.0, 1.0});
 }
 
 auto BGViewer::bgChanged() -> void {

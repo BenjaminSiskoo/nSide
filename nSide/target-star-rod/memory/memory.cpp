@@ -3,10 +3,10 @@ unique_pointer<MemoryEditor> memoryEditor;
 
 MemoryEditor::MemoryEditor() {
   memoryEditor = this;
-  setTitle("Memory Editor");
-  setGeometry({128, 128, 585, 235});
 
   layout.setMargin(5);
+  setTitle("Memory Editor");
+
   gotoLabel.setText("Goto:");
   gotoAddress.setFont(Font().setFamily(Font::Mono)).onChange([&] {
     editor.setAddress(gotoAddress.text().hex());
@@ -27,6 +27,8 @@ MemoryEditor::MemoryEditor() {
   editor.setColumns(16).setRows(16);
   editor.onRead({ &MemoryEditor::read, this });
   editor.onWrite({ &MemoryEditor::write, this });
+
+  setGeometry({128, 128, 585, 235});
 }
 
 auto MemoryEditor::read(uint addr) -> uint8_t {

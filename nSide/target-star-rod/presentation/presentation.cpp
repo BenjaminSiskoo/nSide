@@ -6,9 +6,11 @@ Presentation::Presentation() {
   setTitle("Video");
   setBackgroundColor({0, 0, 0});
   setResizable(false);
-  setGeometry({64, 64, 512, 480});
   statusBar.setFont(Font().setBold());
   statusBar.setVisible();
+
+  setSize({512, 480});
+  setAlignment({0.0, 0.0});
 
   splash.allocate(512, 480);
   splash.verticalGradient(0xff00005f, 0xff000000, 512, 480, 256, 0);

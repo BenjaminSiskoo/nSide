@@ -1,4 +1,8 @@
 struct ConsoleWindow : Window {
+  ConsoleWindow();
+
+  auto print(const string& text) -> void;
+
   MenuBar menuBar{this};
     Menu emulationMenu{&menuBar};
       MenuItem reloadCartridge{&emulationMenu};
@@ -58,20 +62,16 @@ struct ConsoleWindow : Window {
       Widget spacer{&commandLayout, Size{~0, 0}};
       Button clearButton{&commandLayout, Size{80, ~0}};
     TextEdit console{&layout, Size{~0, ~0}};
-
-  auto print(const string& text) -> void;
-
-  ConsoleWindow();
 };
 
 struct AboutWindow : Window {
+  AboutWindow();
+
   VerticalLayout layout{this};
     Canvas canvas;
     Label title;
     Label version;
     Label website;
-
-  AboutWindow();
 };
 
 extern unique_pointer<ConsoleWindow> consoleWindow;

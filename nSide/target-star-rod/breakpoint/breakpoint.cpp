@@ -27,9 +27,10 @@ BreakpointEntry::BreakpointEntry() {
 
 BreakpointEditor::BreakpointEditor() {
   breakpointEditor = this;
-  setTitle("Breakpoint Editor");
 
   layout.setMargin(5);
+  setTitle("Breakpoint Editor");
+
   for(auto &bp : breakpointEntry) layout.append(bp, {0, 0});
 
   setGeometry({{128, 128}, layout.minimumSize()});

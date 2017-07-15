@@ -24,5 +24,5 @@ AboutWindow::AboutWindow() {
   logo.alphaBlend(backgroundColor().value());
   canvas.setIcon(logo);
 
-  setGeometry({{128, 128}, layout.minimumSize()});
+  setCentered();
 }

@@ -3,10 +3,11 @@ unique_pointer<VRAMViewer> vramViewer;
 
 VRAMViewer::VRAMViewer() {
   vramViewer = this;
+
+  layout.setMargin(5);
   setTitle("VRAM Viewer");
   statusBar.setFont(Font().setBold());
   statusBar.setVisible();
-  layout.setMargin(5);
 
   modeLabel.setText("Mode:");
   modeSelection.append(ComboButtonItem().setText("2BPP"));
@@ -56,7 +57,8 @@ VRAMViewer::VRAMViewer() {
 
   modeChanged();
 
-  setGeometry({{128, 128}, layout.minimumSize()});
+  setSize(layout.minimumSize());
+  setAlignment({1.0, 0.0});
 }
 
 auto VRAMViewer::modeChanged() -> void {

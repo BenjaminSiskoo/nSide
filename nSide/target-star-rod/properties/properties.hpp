@@ -1,17 +1,18 @@
 struct PropertiesViewer : Window {
-  VerticalLayout layout{this};
-    HorizontalLayout controlLayout{&layout, Size{~0, 0}, 5};
-      Label sourceLabel{&controlLayout, Size{0, 0}, 5};
-      ComboButton sourceSelection{&controlLayout, Size{0, 0}, 5};
-      Widget spacer{&controlLayout, Size{~0, 0}};
-      CheckLabel autoUpdate{&controlLayout, Size{0, 0}, 5};
-      Button update{&controlLayout, Size{0, 0}};
-    TextEdit properties{&layout, Size{~0, ~0}};
+  PropertiesViewer();
+
+  auto updateProperties() -> void;
 
   enum : uint { PPU, CPU, DMA };
 
-  auto updateProperties() -> void;
-  PropertiesViewer();
+  VerticalLayout layout{this};
+    HorizontalLayout controlLayout{&layout, Size{~0, 0}};
+      Label sourceLabel{&controlLayout, Size{0, 0}};
+      ComboButton sourceSelection{&controlLayout, Size{0, 0}};
+      Widget spacer{&controlLayout, Size{~0, 0}};
+      CheckLabel autoUpdate{&controlLayout, Size{0, 0}};
+      Button update{&controlLayout, Size{0, 0}};
+    TextEdit properties{&layout, Size{~0, ~0}};
 };
 
 extern unique_pointer<PropertiesViewer> propertiesViewer;
