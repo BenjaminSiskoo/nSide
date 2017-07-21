@@ -1,6 +1,9 @@
 struct Window {
   auto power() -> void;
 
+  alwaysinline auto buildTable(uint bg_id, bool screen) -> void;
+  auto buildTables(uint bg_id) -> void;
+
   auto serialize(serializer&) -> void;
 
   struct ID { enum : uint { COL = 5 }; };
@@ -31,6 +34,10 @@ struct Window {
     uint8 twoLeft;
     uint8 twoRight;
   } io;
+
+  struct Cache {
+    uint8 above[256], below[256];
+  } cache[6];
 
   friend class PPU;
 };

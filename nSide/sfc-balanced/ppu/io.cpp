@@ -27,9 +27,9 @@ auto PPU::writeVRAM(bool byte, uint8 data) -> void {
   auto addr = addressVRAM();
   debug(ppu.vram.write, addr << 1 | byte, data);
   vram[addr].byte(byte) = data;
-  tiledataCache.tiledataState[Background::Mode::BPP2][(addr & vram.mask) >> 3] = 1;
-  tiledataCache.tiledataState[Background::Mode::BPP4][(addr & vram.mask) >> 4] = 1;
-  tiledataCache.tiledataState[Background::Mode::BPP8][(addr & vram.mask) >> 5] = 1;
+  cache.tilevalid[Background::Mode::BPP2][(addr & vram.mask) >> 3] = 0;
+  cache.tilevalid[Background::Mode::BPP4][(addr & vram.mask) >> 4] = 0;
+  cache.tilevalid[Background::Mode::BPP8][(addr & vram.mask) >> 5] = 0;
 }
 
 auto PPU::readOAM(uint10 addr) -> uint8 {
@@ -55,7 +55,7 @@ auto PPU::readCGRAM(bool byte, uint8 addr) -> uint8 {
   return data;
 }
 
-auto PPU::writeCGRAM(uint8 addr, uint15 data) -> void {
+auto PPU::writeCGRAM(uint8 addr, uint16 data) -> void {
   if(!io.displayDisable
   && cpu.vcounter() > 0 && cpu.vcounter() < vdisp()
   && cpu.hcounter() >= 88 && cpu.hcounter() < 1096
@@ -626,11 +626,9 @@ auto PPU::writeIO(uint24 addr, uint8 data) -> void {
 
   //COLDATA
   case 0x2132: {
-    if(data.bit(5)) screen.io.colorRed   = data.bits(0,4);
-    if(data.bit(6)) screen.io.colorGreen = data.bits(0,4);
-    if(data.bit(7)) screen.io.colorBlue  = data.bits(0,4);
-
-    io.color_rgb = screen.fixedColor();
+    if(data.bit(5)) screen.io.color.bits( 0, 4) = data.bits(0,4);
+    if(data.bit(6)) screen.io.color.bits( 5, 9) = data.bits(0,4);
+    if(data.bit(7)) screen.io.color.bits(10,14) = data.bits(0,4);
     return;
   }
 

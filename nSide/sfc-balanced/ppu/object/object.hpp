@@ -24,10 +24,17 @@ struct Object {
   alwaysinline auto addressReset() -> void;
   alwaysinline auto setFirstSprite() -> void;
   auto power() -> void;
+  alwaysinline auto onScanline(uint id) -> bool;
+  alwaysinline auto loadTiles(uint id) -> void;
+  alwaysinline auto renderTile(uint n) -> void;
+  auto render() -> void;
+  auto renderRTO() -> void;
 
   auto serialize(serializer&) -> void;
 
   struct ID { enum : uint { OBJ = 4 }; };
+
+  const uint8 PRIORITY_NONE = ~1;
 
   OAM oam;
 
@@ -47,21 +54,15 @@ struct Object {
     bool rangeOver;
   } io;
 
-  /*
-  struct Item {
-    bool  valid;
-    uint7 index;
-  };
-
+  uint8 itemList[32];
   struct Tile {
-    bool   valid;
-    uint9  x;
+    uint16 x;
+    uint16 y;
     uint2  priority;
     uint8  palette;
-    uint1  hflip;
-    uint32 data;
-  };
-  */
+    bool   hflip;
+    uint16 tile;
+  } tileList[34];
 
   struct State {
     //uint x;
@@ -75,14 +76,16 @@ struct Object {
     //Tile tile[2][34];
   } t;
 
-  /*
   struct Output {
-    struct Pixel {
-      uint  priority;  //0 = none (transparent)
-      uint8 palette;
-    } above, below;
+    uint8 palette[256];
+    uint8 priority[256];
   } output;
-  */
+
+  struct Cache {
+    uint8  baseSize;
+    uint8  nameselect;
+    uint16 tiledataAddress;
+  } cache;
 
   friend class PPU;
 };

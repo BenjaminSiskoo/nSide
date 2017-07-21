@@ -23,14 +23,8 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(ppu2.version);
   s.integer(ppu2.mdr);
 
-  s.integer(line);
-
   s.integer(display.interlace);
   s.integer(display.overscan);
-
-  s.integer(cache.obj_baseSize);
-  s.integer(cache.obj_nameselect);
-  s.integer(cache.obj_tiledataAddress);
 
   s.array(io.bg_y);
 
@@ -82,8 +76,6 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(io.cgramAddress);
   s.integer(io.cgramAddressLatch);
 
-  s.integer(io.color_rgb);
-
   s.integer(io.extbg);
   s.integer(io.pseudoHires);
   s.integer(io.overscan);
@@ -92,40 +84,8 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(io.hcounter);
   s.integer(io.vcounter);
 
-  for(uint n : range(256)) {
-    s.integer(pixelCache[n].aboveColor);
-    s.integer(pixelCache[n].belowColor);
-    s.integer(pixelCache[n].aboveLayer);
-    s.integer(pixelCache[n].belowLayer);
-    s.integer(pixelCache[n].aboveColorExemption);
-    s.integer(pixelCache[n].belowColorExemption);
-    s.integer(pixelCache[n].abovePriority);
-    s.integer(pixelCache[n].belowPriority);
-  }
-
   //better to just take a small speed hit than store all of the tiledata cache ...
-  tiledataCache.flush();
-
-  for(uint n : range(6)) {
-    s.array(windowCache[n].above, 256);
-    s.array(windowCache[n].below, 256);
-  }
-
-  s.integer(activeSprite);
-
-  s.array(obj_itemList, 32);
-
-  for(uint n : range(34)) {
-    s.integer(obj_tileList[n].x);
-    s.integer(obj_tileList[n].y);
-    s.integer(obj_tileList[n].priority);
-    s.integer(obj_tileList[n].palette);
-    s.integer(obj_tileList[n].tile);
-    s.integer(obj_tileList[n].hflip);
-  }
-
-  s.array(obj_linePalette, 256);
-  s.array(obj_linePriority, 256);
+  cache.flush();
 
   bg1.serialize(s);
   bg2.serialize(s);
@@ -190,8 +150,26 @@ auto PPU::Object::serialize(serializer& s) -> void {
   s.integer(io.timeOver);
   s.integer(io.rangeOver);
 
+  s.array(itemList, 32);
+
+  for(uint n : range(34)) {
+    s.integer(tileList[n].x);
+    s.integer(tileList[n].y);
+    s.integer(tileList[n].priority);
+    s.integer(tileList[n].palette);
+    s.integer(tileList[n].tile);
+    s.integer(tileList[n].hflip);
+  }
+
   s.integer(t.itemCount);
   s.integer(t.tileCount);
+
+  s.array(output.palette, 256);
+  s.array(output.priority, 256);
+
+  s.integer(cache.baseSize);
+  s.integer(cache.nameselect);
+  s.integer(cache.tiledataAddress);
 }
 
 auto PPU::Window::serialize(serializer& s) -> void {
@@ -247,6 +225,11 @@ auto PPU::Window::serialize(serializer& s) -> void {
   s.integer(io.oneRight);
   s.integer(io.twoLeft);
   s.integer(io.twoRight);
+
+  for(uint n : range(6)) {
+    s.array(cache[n].above, 256);
+    s.array(cache[n].below, 256);
+  }
 }
 
 auto PPU::Screen::serialize(serializer& s) -> void {
@@ -264,9 +247,18 @@ auto PPU::Screen::serialize(serializer& s) -> void {
   s.integer(io.obj.colorEnable);
   s.integer(io.back.colorEnable);
 
-  s.integer(io.colorBlue);
-  s.integer(io.colorGreen);
-  s.integer(io.colorRed);
+  s.integer(io.color);
 
   s.integer(math.colorHalve);
+
+  for(uint n : range(256)) {
+    s.integer(output.above[n].color);
+    s.integer(output.above[n].priority);
+    s.integer(output.above[n].source);
+    s.integer(output.above[n].exemption);
+    s.integer(output.below[n].color);
+    s.integer(output.below[n].priority);
+    s.integer(output.below[n].source);
+    s.integer(output.below[n].exemption);
+  }
 }

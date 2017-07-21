@@ -12,7 +12,6 @@ struct PPU : Thread, PPUcounter {
   auto main() -> void;
   auto load(Markup::Node) -> bool;
   auto power() -> void;
-  auto reset() -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -23,7 +22,7 @@ struct PPU : Thread, PPUcounter {
   alwaysinline auto readOAM(uint10 addr) -> uint8;
   alwaysinline auto writeOAM(uint10 addr, uint8 data) -> void;
   alwaysinline auto readCGRAM(bool byte, uint8 addr) -> uint8;
-  alwaysinline auto writeCGRAM(uint8 addr, uint15 data) -> void;
+  alwaysinline auto writeCGRAM(uint8 addr, uint16 data) -> void;
   auto readIO(uint24 addr, uint8 data) -> uint8;
   auto writeIO(uint24 addr, uint8 data) -> void;
   auto latchCounters() -> void;
@@ -36,12 +35,15 @@ privileged:
     uint mask = 0x7fff;
   } vram;
 
+  uint32 buffer[512 * 512];
   uint32* output = nullptr;
 
   struct {
     bool interlace;
     bool overscan;
   } display;
+
+  auto renderScanline() -> void;
 
   auto scanline() -> void;
   auto frame() -> void;
@@ -51,8 +53,6 @@ privileged:
     uint version;
     uint8 mdr;
   } ppu1, ppu2;
-
-  auto renderLine() -> void;
 
   struct Latches {
     uint16 vram;
@@ -131,9 +131,6 @@ privileged:
     uint8 cgramAddress;
     uint1 cgramAddressLatch;
 
-    //$2132  COLDATA
-    uint16 color_rgb;
-
     //$2133  SETINI
     //overscan and interlace are checked once per frame to
     //determine if entire frame should be interlaced/non-interlace
@@ -151,29 +148,15 @@ privileged:
     uint16 vcounter;
   } io;
 
-  uint line;
-
-  struct {
-    //$2101
-    uint8  obj_baseSize;
-    uint8  obj_nameselect;
-    uint16 obj_tiledataAddress;
-
-    //$210d-$210e
-    uint16 hoffsetMode7, voffsetMode7;
-
-    //$211b-$2120
-    uint16 m7a, m7b, m7c, m7d, m7x, m7y;
-  } cache;
-
   uint16 mosaicTable[16][4096];
 
+  #include "cache/cache.hpp"
   #include "background/background.hpp"
   #include "screen/screen.hpp"
   #include "object/object.hpp"
   #include "window/window.hpp"
-  #include "render/render.hpp"
 
+  Cache cache;
   Background bg1;
   Background bg2;
   Background bg3;

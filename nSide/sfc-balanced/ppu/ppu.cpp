@@ -3,13 +3,12 @@
 namespace SuperFamicom {
 
 PPU ppu;
-
 #include "io.cpp"
+#include "cache/cache.cpp"
 #include "background/background.cpp"
 #include "object/object.cpp"
 #include "window/window.cpp"
 #include "screen/screen.cpp"
-#include "render/render.cpp"
 #include "serialization.cpp"
 
 PPU::PPU() :
@@ -20,11 +19,6 @@ bg4(Background::ID::BG4) {
   ppu1.version = 1;  //allowed values: 1
   ppu2.version = 3;  //allowed values: 1, 2, 3
 
-  output = new uint32[512 * 512];
-  output += 16 * 512;  //overscan offset
-
-  tiledataCache.allocate();
-
   for(uint l : range(16)) {
     for(uint i : range(4096)) {
       mosaicTable[l][i] = (i / (l + 1)) * (l + 1);
@@ -33,9 +27,6 @@ bg4(Background::ID::BG4) {
 }
 
 PPU::~PPU() {
-  output -= 16 * 512;
-  delete[] output;
-  tiledataCache.free();
 }
 
 auto PPU::step(uint clocks) -> void {
@@ -54,29 +45,43 @@ auto PPU::main() -> void {
   step(10);
 
   //H =   10 (cache mode7 registers + OAM address reset)
-  cache.hoffsetMode7 = io.hoffsetMode7;
-  cache.voffsetMode7 = io.voffsetMode7;
-  cache.m7a = io.m7a;
-  cache.m7b = io.m7b;
-  cache.m7c = io.m7c;
-  cache.m7d = io.m7d;
-  cache.m7x = io.m7x;
-  cache.m7y = io.m7y;
+  bg1.m7cache.hoffset = io.hoffsetMode7;
+  bg1.m7cache.voffset = io.voffsetMode7;
+  bg1.m7cache.a = io.m7a;
+  bg1.m7cache.b = io.m7b;
+  bg1.m7cache.c = io.m7c;
+  bg1.m7cache.d = io.m7d;
+  bg1.m7cache.x = io.m7x;
+  bg1.m7cache.y = io.m7y;
   if(vcounter() == vdisp() && !io.displayDisable) obj.addressReset();
   step(502);
 
   //H =  512 (render)
-  if(line == 0) obj_renderLine_rto();
-  if(line >= 1 && line < 240) renderLine();
+  if(vcounter() == 0) obj.renderRTO();
+  if(vcounter() >= 1 && vcounter() < 240) renderScanline();
   step(640);
 
   //H = 1152 (cache OBSEL)
-  if(cache.obj_baseSize != obj.io.baseSize) {
-    cache.obj_baseSize = obj.io.baseSize;
-  }
-  cache.obj_nameselect = obj.io.nameselect;
-  cache.obj_tiledataAddress = obj.io.tiledataAddress;
+  obj.cache.baseSize = obj.io.baseSize;
+  obj.cache.nameselect = obj.io.nameselect;
+  obj.cache.tiledataAddress = obj.io.tiledataAddress;
   step(lineclocks() - 1152);  //seek to start of next scanline
+}
+
+auto PPU::renderScanline() -> void {
+  bg1.scanline();
+  bg2.scanline();
+  bg3.scanline();
+  bg4.scanline();
+  if(io.displayDisable || vcounter() >= vdisp()) return screen.renderBlack();
+  screen.scanline();
+  bg1.render();
+  bg2.render();
+  bg3.render();
+  bg4.render();
+  obj.render();
+  screen.render();
+  obj.renderRTO();
 }
 
 auto PPU::load(Markup::Node node) -> bool {
@@ -90,14 +95,16 @@ auto PPU::load(Markup::Node node) -> bool {
 auto PPU::power() -> void {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memory::fill(output, 512 * 480 * sizeof(uint32));
+  memory::fill(buffer, 512 * 512 * sizeof(uint32));
+
+  output = buffer + 16 * 512;  //overscan offset
 
   function<auto (uint24, uint8) -> uint8> reader{&PPU::readIO, this};
   function<auto (uint24, uint8) -> void> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
   for(auto& n : vram.data) n = random(0x0000);
-  tiledataCache.flush();
+  cache.flush();
 
   //open bus support
   ppu1.mdr = random(0xff);
@@ -121,9 +128,9 @@ auto PPU::power() -> void {
   io.displayBrightness = 0;
 
   //$2101
-  cache.obj_baseSize = 0;
-  cache.obj_nameselect = 0;
-  cache.obj_tiledataAddress = 0x0000;
+  obj.cache.baseSize = 0;
+  obj.cache.nameselect = 0;
+  obj.cache.tiledataAddress = 0x0000;
 
   //$2102  OAMADDL
   //$2103  OAMADDH
@@ -180,9 +187,6 @@ auto PPU::power() -> void {
   io.cgramAddress = random(0x00);
   io.cgramAddressLatch = random(0);
 
-  //$2132  COLDATA
-  io.color_rgb = 0x0000;
-
   //$2133  SETINI
   io.extbg = random(false);
   io.pseudoHires = random(false);
@@ -213,9 +217,7 @@ auto PPU::power() -> void {
 }
 
 auto PPU::scanline() -> void {
-  line = vcounter();
-
-  if(line == 0) {
+  if(vcounter() == 0) {
     frame();
 
     //RTO flag reset
@@ -223,7 +225,7 @@ auto PPU::scanline() -> void {
     obj.io.rangeOver = false;
   }
 
-  if(line == 1) {
+  if(vcounter() == 1) {
     //mosaic reset
     for(int bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) io.bg_y[bg_id] = 1;
     io.mosaicCountdown = max(bg1.io.mosaic, bg2.io.mosaic, bg3.io.mosaic, bg4.io.mosaic) + 1;
@@ -237,13 +239,13 @@ auto PPU::scanline() -> void {
       case Background::ID::BG3: bg = &bg3; break;
       case Background::ID::BG4: bg = &bg4; break;
       }
-      if(!bg->io.mosaic || !io.mosaicCountdown) io.bg_y[bg_id] = line;
+      if(!bg->io.mosaic || !io.mosaicCountdown) io.bg_y[bg_id] = vcounter();
     }
     if(!io.mosaicCountdown) io.mosaicCountdown = max(bg1.io.mosaic, bg2.io.mosaic, bg3.io.mosaic, bg4.io.mosaic) + 1;
     io.mosaicCountdown--;
   }
 
-  if(line == 241) {
+  if(vcounter() == 241) {
     scheduler.exit(Scheduler::Event::Frame);
   }
 }
@@ -253,12 +255,9 @@ auto PPU::frame() -> void {
 }
 
 auto PPU::refresh() -> void {
-  auto output = this->output;
-  if(!overscan()) output -= 14 * 512;
-  auto pitch = 512; //1024 >> interlace();
-  auto width = 512;
-  auto height = 480; //!interlace() ? 240 : 480;
-  Emulator::video.refresh(output, pitch * sizeof(uint32), width, height);
+  auto data = output;
+  if(!overscan()) data -= 14 * 512;
+  Emulator::video.refresh(data, 512 * sizeof(uint32), 512, 480);
 }
 
 }

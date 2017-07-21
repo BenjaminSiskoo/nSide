@@ -3,7 +3,12 @@ struct Background {
 
   auto power() -> void;
 
-  auto getTile(uint x, uint y) -> uint16;
+  alwaysinline auto getTile(uint x, uint y) -> uint16;
+
+  auto scanline() -> void;
+  alwaysinline auto directColor(uint8 palette, uint16 tile) const -> uint16;
+  auto render() -> void;
+  alwaysinline auto renderMode7() -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -41,6 +46,16 @@ struct Background {
     uint paletteNumber;
     uint paletteIndex;
   };
+
+  struct {
+    uint16 hoffset, voffset;
+
+    uint16 a, b, c, d, x, y;
+  } m7cache;
+
+  uint16 tileWidth, tileHeight;
+  uint16 maskX,     maskY;
+  uint16 screenX,   screenY;
 
   friend class PPU;
 };
