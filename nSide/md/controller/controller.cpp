@@ -7,6 +7,7 @@ ControllerPort controllerPort2;
 ControllerPort extensionPort;
 #include "control-pad/control-pad.cpp"
 #include "fighting-pad-6b/fighting-pad-6b.cpp"
+#include "sega-tap/sega-tap.cpp"
 
 Controller::Controller(uint port) : port(port) {
   if(!handle()) create(Controller::Enter, 1);
@@ -40,6 +41,7 @@ auto ControllerPort::connect(uint deviceID) -> void {
   case ID::Device::None: device = new Controller(port); break;
   case ID::Device::ControlPad: device = new ControlPad(port); break;
   case ID::Device::FightingPad6B: device = new FightingPad6B(port); break;
+  case ID::Device::SegaTap: device = new SegaTap(port); break;
   }
 
   cpu.peripherals.reset();

@@ -58,6 +58,25 @@ Interface::Interface() {
     controllerPort2.devices.append(device);
   }
 
+  { Device device{ID::Device::SegaTap, "Sega Tap"};
+    for(char p = 'A'; p <= 'D'; p++) {
+      device.inputs.append({0, {"Port ", p, " - ", "Up"   }});
+      device.inputs.append({0, {"Port ", p, " - ", "Down" }});
+      device.inputs.append({0, {"Port ", p, " - ", "Left" }});
+      device.inputs.append({0, {"Port ", p, " - ", "Right"}});
+      device.inputs.append({0, {"Port ", p, " - ", "A"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "B"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "C"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "X"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Y"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Z"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Start"}});
+      device.inputs.append({0, {"Port ", p, " - ", "Mode" }});
+    }
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
+  }
+
   { Device device{ID::Device::Controls, "Controls"};
     device.inputs.append({0, "Reset"});
     hardware.devices.append(device);
@@ -78,7 +97,7 @@ auto Interface::title() -> string {
 }
 
 auto Interface::videoResolution() -> VideoResolution {
-  double squarePixelRate = system.region() != System::Region::PAL
+  double squarePixelRate = !MegaDrive::Region::PAL()
   ? 135.0 / 22.0 * 1'000'000.0
   : 7'375'000.0;
   double pixelAspectRatio = squarePixelRate / (system.frequency() / 8.0);
