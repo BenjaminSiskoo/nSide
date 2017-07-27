@@ -53,7 +53,7 @@ auto SegaTap::writeData(uint8 data) -> void {
     }
     while(index < 24) buffer[index++] = 0xf;
   } else if((th << 6 | tr << 5) ^ (data & 0x60)) {
-    if(!counter.bit(4)) counter++;
+    if(!counter.bit(5)) counter++;
   }
   tr     = data.bit(5);
   th     = data.bit(6);
