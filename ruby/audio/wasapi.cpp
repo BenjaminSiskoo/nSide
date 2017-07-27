@@ -4,159 +4,241 @@
 #include <audiopolicy.h>
 #include <devicetopology.h>
 #include <endpointvolume.h>
+#include <functiondiscoverykeys_devpkey.h>
 
 struct AudioWASAPI : Audio {
-  ~AudioWASAPI() { term(); }
+  AudioWASAPI() { initialize(); }
+  ~AudioWASAPI() { terminate(); }
 
-  struct {
-    bool exclusive = false;
-    uint latency = 80;
-    bool synchronize = true;
-  } settings;
+  auto ready() -> bool { return _ready; }
 
-  struct {
-    uint channels = 0;
-    uint frequency = 0;
-    uint mode = 0;
-    uint precision = 0;
-  } device;
-
-  auto cap(const string& name) -> bool {
-    if(name == Audio::Exclusive) return true;
-    if(name == Audio::Latency) return true;
-    if(name == Audio::Synchronize) return true;
-    if(name == Audio::Frequency) return true;
-    return false;
+  auto information() -> Information {
+    Information information;
+    for(auto& device : _devices) information.devices.append(device);
+    information.channels = {2};
+    information.frequencies = {(double)_frequency};
+    information.latencies = {0, 20, 40, 60, 80, 100};
+    return information;
   }
 
-  auto get(const string& name) -> any {
-    if(name == Audio::Exclusive) return settings.exclusive;
-    if(name == Audio::Latency) return settings.latency;
-    if(name == Audio::Synchronize) return settings.synchronize;
-    if(name == Audio::Frequency) return device.frequency;
-    return {};
+  auto exclusive() -> bool { return _exclusive; }
+  auto device() -> string { return _device; }
+  auto blocking() -> bool { return _blocking; }
+  auto channels() -> uint { return _channels; }
+  auto frequency() -> double { return (double)_frequency; }
+  auto latency() -> uint { return _latency; }
+
+  auto setExclusive(bool exclusive) -> bool {
+    if(_exclusive == exclusive) return true;
+    _exclusive = exclusive;
+    return initialize();
   }
 
-  auto set(const string& name, const any& value) -> bool {
-    if(name == Audio::Exclusive && value.get<bool>()) {
-      if(audioDevice) term(), init();
-      settings.exclusive = value.get<bool>();
-      return true;
-    }
-
-    if(name == Audio::Latency && value.get<uint>()) {
-      if(audioDevice) term(), init();
-      settings.latency = value.get<uint>();
-      return true;
-    }
-
-    if(name == Audio::Synchronize && value.is<bool>()) {
-      settings.synchronize = value.get<bool>();
-      return true;
-    }
-
-    return false;
+  auto setDevice(string device) -> bool {
+    if(_device == device) return true;
+    _device = device;
+    return initialize();
   }
 
-  auto sample(int16_t left, int16_t right) -> void {
-    queuedFrames.append((uint16_t)left << 0 | (uint16_t)right << 16);
-
-    if(!available() && queuedFrames.size() >= bufferSize) {
-      if(settings.synchronize) while(!available());  //wait for free sample slot
-      else queuedFrames.takeLeft();                  //drop sample (run ahead)
-    }
-
-    uint32_t cachedFrame = 0;
-    for(auto n : range(available())) {
-      if(queuedFrames) cachedFrame = queuedFrames.takeLeft();
-      write(cachedFrame >> 0, cachedFrame >> 16);
-    }
-  }
-
-  auto clear() -> void {
-    audioClient->Stop();
-    audioClient->Reset();
-    for(auto n : range(available())) write(0, 0);
-    audioClient->Start();
-  }
-
-  auto init() -> bool {
-    if(CoCreateInstance(CLSID_MMDeviceEnumerator, nullptr, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&enumerator) != S_OK) return false;
-    if(enumerator->GetDefaultAudioEndpoint(eRender, eConsole, &audioDevice) != S_OK) return false;
-    if(audioDevice->Activate(IID_IAudioClient, CLSCTX_ALL, nullptr, (void**)&audioClient) != S_OK) return false;
-
-    if(settings.exclusive) {
-      if(audioDevice->OpenPropertyStore(STGM_READ, &propertyStore) != S_OK) return false;
-      if(propertyStore->GetValue(PKEY_AudioEngine_DeviceFormat, &propVariant) != S_OK) return false;
-      waveFormat = (WAVEFORMATEX*)propVariant.blob.pBlobData;
-      if(audioClient->GetDevicePeriod(nullptr, &devicePeriod) != S_OK) return false;
-      auto latency = max(devicePeriod, (REFERENCE_TIME)settings.latency * 10'000);  //1ms to 100ns units
-      if(audioClient->Initialize(AUDCLNT_SHAREMODE_EXCLUSIVE, 0, latency, latency, waveFormat, nullptr) != S_OK) return false;
-      DWORD taskIndex = 0;
-      taskHandle = AvSetMmThreadCharacteristics(L"Pro Audio", &taskIndex);
-    } else {
-      if(audioClient->GetMixFormat(&waveFormat) != S_OK) return false;
-      if(audioClient->GetDevicePeriod(&devicePeriod, nullptr)) return false;
-      auto latency = max(devicePeriod, (REFERENCE_TIME)settings.latency * 10'000);  //1ms to 100ns units
-      if(audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, latency, 0, waveFormat, nullptr) != S_OK) return false;
-    }
-
-    if(audioClient->GetService(IID_IAudioRenderClient, (void**)&renderClient) != S_OK) return false;
-    if(audioClient->GetBufferSize(&bufferSize) != S_OK) return false;
-
-    device.channels = waveFormat->nChannels;
-    device.frequency = waveFormat->nSamplesPerSec;
-    device.mode = ((WAVEFORMATEXTENSIBLE*)waveFormat)->SubFormat.Data1;
-    device.precision = waveFormat->wBitsPerSample;
-
-    audioClient->Start();
+  auto setBlocking(bool blocking) -> bool {
+    if(_blocking == blocking) return true;
+    _blocking = blocking;
     return true;
   }
 
-  auto term() -> void {
-    if(audioClient) audioClient->Stop();
-    if(renderClient) renderClient->Release(), renderClient = nullptr;
-    if(waveFormat) CoTaskMemFree(waveFormat), waveFormat = nullptr;
-    if(audioClient) audioClient->Release(), audioClient = nullptr;
-    if(audioDevice) audioDevice->Release(), audioDevice = nullptr;
-    if(taskHandle) AvRevertMmThreadCharacteristics(taskHandle), taskHandle = nullptr;
+  auto setFrequency(double frequency) -> bool {
+    if(_frequency == frequency) return true;
+    _frequency = frequency;
+    return initialize();
+  }
+
+  auto setLatency(uint latency) -> bool {
+    if(_latency == latency) return true;
+    _latency = latency;
+    return initialize();
+  }
+
+  auto clear() -> void {
+    _queue.read = 0;
+    _queue.write = 0;
+    _queue.count = 0;
+    if(!_audioClient) return;
+    _audioClient->Stop();
+    _audioClient->Reset();
+    _audioClient->Start();
+  }
+
+  auto output(const double samples[]) -> void {
+    if(_queue.count < _bufferSize) {
+      for(uint n : range(_channels)) {
+        _queue.samples[_queue.write][n] = samples[n];
+      }
+      _queue.write++;
+      _queue.count++;
+    } else if(WaitForSingleObject(_eventHandle, _blocking ? INFINITE : 0) == WAIT_OBJECT_0) {
+      write();
+    }
   }
 
 private:
-  auto available() -> uint {
-    uint32_t padding = 0;
-    audioClient->GetCurrentPadding(&padding);
-    return bufferSize - padding;
-  }
+  auto initialize() -> bool {
+    terminate();
 
-  auto write(int16_t left, int16_t right) -> void {
-    if(renderClient->GetBuffer(1, &bufferData) != S_OK) return;
+    if(CoCreateInstance(CLSID_MMDeviceEnumerator, nullptr, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&_enumerator) != S_OK) return false;
 
-    if(device.channels >= 2 && device.mode == 1 && device.precision == 16) {
-      auto buffer = (int16_t*)bufferData;
-      buffer[0] = left;
-      buffer[1] = right;
+    //enumerate all audio endpoint devices, and select the first to match the device() name
+    IMMDeviceCollection* deviceCollection = nullptr;
+    if(_enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &deviceCollection) != S_OK) return false;
+    uint deviceCount = 0;
+    if(deviceCollection->GetCount(&deviceCount) != S_OK) return false;
+    for(uint deviceIndex : range(deviceCount)) {
+      IMMDevice* device = nullptr;
+      if(deviceCollection->Item(deviceIndex, &device) != S_OK) return false;
+      IPropertyStore* propertyStore = nullptr;
+      device->OpenPropertyStore(STGM_READ, &propertyStore);
+      PROPVARIANT propVariant;
+      propertyStore->GetValue(PKEY_Device_FriendlyName, &propVariant);
+      _devices.append((const char*)utf8_t(propVariant.pwszVal));
+      propertyStore->Release();
+      if(!_audioDevice && _devices.right() == _device) {
+        _audioDevice = device;
+      } else {
+        device->Release();
+      }
+    }
+    deviceCollection->Release();
+
+    //if no match is found, choose the default audio endpoint for the device()
+    if(!_audioDevice) {
+      if(_enumerator->GetDefaultAudioEndpoint(eRender, eConsole, &_audioDevice) != S_OK) return false;
     }
 
-    if(device.channels >= 2 && device.mode == 3 && device.precision == 32) {
-      auto buffer = (float*)bufferData;
-      buffer[0] = left  / 32768.0;
-      buffer[1] = right / 32768.0;
+    if(_audioDevice->Activate(IID_IAudioClient, CLSCTX_ALL, nullptr, (void**)&_audioClient) != S_OK) return false;
+
+    WAVEFORMATEXTENSIBLE waveFormat = {};
+    if(_exclusive) {
+      IPropertyStore* propertyStore = nullptr;
+      if(_audioDevice->OpenPropertyStore(STGM_READ, &propertyStore) != S_OK) return false;
+      PROPVARIANT propVariant;
+      if(propertyStore->GetValue(PKEY_AudioEngine_DeviceFormat, &propVariant) != S_OK) return false;
+      waveFormat = *(WAVEFORMATEXTENSIBLE*)propVariant.blob.pBlobData;
+      propertyStore->Release();
+      if(_audioClient->GetDevicePeriod(nullptr, &_devicePeriod) != S_OK) return false;
+      auto latency = max(_devicePeriod, (REFERENCE_TIME)_latency * 10'000);  //1ms to 100ns units
+      auto result = _audioClient->Initialize(AUDCLNT_SHAREMODE_EXCLUSIVE, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, latency, latency, &waveFormat.Format, nullptr);
+      if(result == AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED) {
+        if(_audioClient->GetBufferSize(&_bufferSize) != S_OK) return false;
+        _audioClient->Release();
+        latency = (REFERENCE_TIME)(10'000 * 1'000 * _bufferSize / waveFormat.Format.nSamplesPerSec);
+        if(_audioDevice->Activate(IID_IAudioClient, CLSCTX_ALL, nullptr, (void**)&_audioClient) != S_OK) return false;
+        result = _audioClient->Initialize(AUDCLNT_SHAREMODE_EXCLUSIVE, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, latency, latency, &waveFormat.Format, nullptr);
+      }
+      if(result != S_OK) return false;
+      DWORD taskIndex = 0;
+      _taskHandle = AvSetMmThreadCharacteristics(L"Pro Audio", &taskIndex);
+    } else {
+      WAVEFORMATEX* waveFormatEx = nullptr;
+      if(_audioClient->GetMixFormat(&waveFormatEx) != S_OK) return false;
+      waveFormat = *(WAVEFORMATEXTENSIBLE*)waveFormatEx;
+      CoTaskMemFree(waveFormatEx);
+      if(_audioClient->GetDevicePeriod(&_devicePeriod, nullptr)) return false;
+      auto latency = max(_devicePeriod, (REFERENCE_TIME)_latency * 10'000);  //1ms to 100ns units
+      if(_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, latency, 0, &waveFormat.Format, nullptr) != S_OK) return false;
     }
 
-    renderClient->ReleaseBuffer(1, 0);
+    _eventHandle = CreateEvent(nullptr, false, false, nullptr);
+    if(_audioClient->SetEventHandle(_eventHandle) != S_OK) return false;
+    if(_audioClient->GetService(IID_IAudioRenderClient, (void**)&_renderClient) != S_OK) return false;
+    if(_audioClient->GetBufferSize(&_bufferSize) != S_OK) return false;
+
+    _channels = waveFormat.Format.nChannels;
+    _frequency = waveFormat.Format.nSamplesPerSec;
+    _mode = waveFormat.SubFormat.Data1;
+    _precision = waveFormat.Format.wBitsPerSample;
+
+    clear();
+    return _ready = true;
   }
 
-  IMMDeviceEnumerator* enumerator = nullptr;
-  IMMDevice* audioDevice = nullptr;
-  IPropertyStore* propertyStore = nullptr;
-  IAudioClient* audioClient = nullptr;
-  IAudioRenderClient* renderClient = nullptr;
-  WAVEFORMATEX* waveFormat = nullptr;
-  PROPVARIANT propVariant;
-  HANDLE taskHandle = nullptr;
-  REFERENCE_TIME devicePeriod = 0;
-  uint32_t bufferSize = 0;  //in frames
-  uint8_t* bufferData = nullptr;
-  vector<uint32_t> queuedFrames;
+  auto terminate() -> void {
+    _devices.reset();
+    if(_audioClient) _audioClient->Stop();
+    if(_renderClient) _renderClient->Release(), _renderClient = nullptr;
+    if(_audioClient) _audioClient->Release(), _audioClient = nullptr;
+    if(_audioDevice) _audioDevice->Release(), _audioDevice = nullptr;
+    if(_eventHandle) CloseHandle(_eventHandle), _eventHandle = nullptr;
+    if(_taskHandle) AvRevertMmThreadCharacteristics(_taskHandle), _taskHandle = nullptr;
+  }
+
+  auto write() -> void {
+    uint32_t available = _bufferSize;
+    if(!_exclusive) {
+      uint32_t padding = 0;
+      _audioClient->GetCurrentPadding(&padding);
+      available = _bufferSize - padding;
+    }
+    uint32_t length = min(available, _queue.count);
+
+    uint8_t* buffer = nullptr;
+    if(_renderClient->GetBuffer(length, &buffer) == S_OK) {
+      uint bufferFlags = 0;
+      for(uint _ : range(length)) {
+        double samples[8] = {};
+        if(_queue.count) {
+          for(uint n : range(_channels)) {
+            samples[n] = _queue.samples[_queue.read][n];
+          }
+          _queue.read++;
+          _queue.count--;
+        }
+
+        if(_mode == 1 && _precision == 16) {
+          auto output = (int16_t*)buffer;
+          for(uint n : range(_channels)) *output++ = int16_t(samples[n] * 32768.0);
+          buffer = (uint8_t*)output;
+        } else if(_mode == 1 && _precision == 32) {
+          auto output = (int32_t*)buffer;
+          for(uint n : range(_channels)) *output++ = int32_t(samples[n] * 65536.0 * 32768.0);
+          buffer = (uint8_t*)output;
+        } else if(_mode == 3 && _precision == 32) {
+          auto output = (float*)buffer;
+          for(uint n : range(_channels)) *output++ = float(samples[n]);
+          buffer = (uint8_t*)output;
+        } else {
+          //output silence for unsupported sample formats
+          bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+          break;
+        }
+      }
+      _renderClient->ReleaseBuffer(length, bufferFlags);
+    }
+  }
+
+  bool _ready = false;
+  bool _exclusive = false;
+  string _device;
+  bool _blocking = true;
+  uint _channels = 2;
+  uint _frequency = 48000;
+  uint _latency = 20;
+
+  uint _mode = 0;
+  uint _precision = 0;
+
+  struct Queue {
+    double samples[65536][8];
+    uint16_t read;
+    uint16_t write;
+    uint16_t count;
+  } _queue;
+
+  IMMDeviceEnumerator* _enumerator = nullptr;
+  vector<string> _devices;
+  IMMDevice* _audioDevice = nullptr;
+  IAudioClient* _audioClient = nullptr;
+  IAudioRenderClient* _renderClient = nullptr;
+  HANDLE _eventHandle = nullptr;
+  HANDLE _taskHandle = nullptr;
+  REFERENCE_TIME _devicePeriod = 0;
+  uint32_t _bufferSize = 0;  //in frames
 };

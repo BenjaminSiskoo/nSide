@@ -66,21 +66,11 @@ using namespace ruby;
   #include <ruby/video/xshm.cpp>
 #endif
 
-#if defined(VIDEO_XV)
-  #include <ruby/video/xv.cpp>
+#if defined(VIDEO_XVIDEO)
+  #include <ruby/video/xvideo.cpp>
 #endif
 
 namespace ruby {
-
-const string Video::Exclusive = "Exclusive";
-const string Video::Handle = "Handle";
-const string Video::Synchronize = "Synchronize";
-const string Video::Depth = "Depth";
-const string Video::Filter = "Filter";
-const string Video::Shader = "Shader";
-
-const uint Video::FilterNearest = 0;
-const uint Video::FilterLinear = 1;
 
 auto Video::create(const string& driver) -> Video* {
   if(!driver) return create(optimalDriver());
@@ -121,8 +111,8 @@ auto Video::create(const string& driver) -> Video* {
   if(driver == "XShm") return new VideoXShm;
   #endif
 
-  #if defined(VIDEO_XV)
-  if(driver == "X-Video") return new VideoXv;
+  #if defined(VIDEO_XVIDEO)
+  if(driver == "XVideo") return new VideoXVideo;
   #endif
 
   return new Video;
@@ -143,8 +133,8 @@ auto Video::optimalDriver() -> string {
   return "OpenGL";
   #elif defined(VIDEO_GLX2)
   return "OpenGL2";
-  #elif defined(VIDEO_XV)
-  return "X-Video";
+  #elif defined(VIDEO_XVIDEO)
+  return "XVideo";
   #elif defined(VIDEO_XSHM)
   return "XShm";
   #elif defined(VIDEO_SDL)
@@ -169,8 +159,8 @@ auto Video::safestDriver() -> string {
   return "XShm";
   #elif defined(VIDEO_SDL)
   return "SDL";
-  #elif defined(VIDEO_XV)
-  return "X-Video";
+  #elif defined(VIDEO_XVIDEO)
+  return "XVideo";
   #elif defined(VIDEO_GLX2)
   return "OpenGL2";
   #elif defined(VIDEO_GLX)
@@ -211,8 +201,8 @@ auto Video::availableDrivers() -> string_vector {
   "OpenGL2",
   #endif
 
-  #if defined(VIDEO_XV)
-  "X-Video",
+  #if defined(VIDEO_XVIDEO)
+  "XVideo",
   #endif
 
   #if defined(VIDEO_XSHM)
@@ -236,6 +226,10 @@ auto Video::availableDrivers() -> string_vector {
 
 #if defined(AUDIO_AO)
   #include <ruby/audio/ao.cpp>
+#endif
+
+#if defined(AUDIO_ASIO)
+  #include <ruby/audio/asio.cpp>
 #endif
 
 #if defined(AUDIO_DIRECTSOUND)
@@ -268,13 +262,6 @@ auto Video::availableDrivers() -> string_vector {
 
 namespace ruby {
 
-const string Audio::Device = "Device";
-const string Audio::Exclusive = "Exclusive";
-const string Audio::Handle = "Handle";
-const string Audio::Synchronize = "Synchronize";
-const string Audio::Frequency = "Frequency";
-const string Audio::Latency = "Latency";
-
 auto Audio::create(const string& driver) -> Audio* {
   if(!driver) return create(optimalDriver());
 
@@ -286,8 +273,12 @@ auto Audio::create(const string& driver) -> Audio* {
   if(driver == "libao") return new AudioAO;
   #endif
 
+  #if defined(AUDIO_ASIO)
+  if(driver == "ASIO") return new AudioASIO;
+  #endif
+
   #if defined(AUDIO_DIRECTSOUND)
-  if(driver == "DirectSound") return new AudioDS;
+  if(driver == "DirectSound") return new AudioDirectSound;
   #endif
 
   #if defined(AUDIO_OPENAL)
@@ -318,7 +309,9 @@ auto Audio::create(const string& driver) -> Audio* {
 }
 
 auto Audio::optimalDriver() -> string {
-  #if defined(AUDIO_WASAPI)
+  #if defined(AUDIO_ASIO)
+  return "ASIO";
+  #elif defined(AUDIO_WASAPI)
   return "WASAPI";
   #elif defined(AUDIO_XAUDIO2)
   return "XAudio2";
@@ -360,6 +353,8 @@ auto Audio::safestDriver() -> string {
   return "PulseAudioSimple";
   #elif defined(AUDIO_AO)
   return "libao";
+  #elif defined(AUDIO_ASIO)
+  return "ASIO";
   #else
   return "None";
   #endif
@@ -367,6 +362,10 @@ auto Audio::safestDriver() -> string {
 
 auto Audio::availableDrivers() -> string_vector {
   return {
+
+  #if defined(AUDIO_ASIO)
+  "ASIO",
+  #endif
 
   #if defined(AUDIO_WASAPI)
   "WASAPI",
@@ -436,12 +435,6 @@ auto Audio::availableDrivers() -> string_vector {
 #endif
 
 namespace ruby {
-
-const string Input::Handle = "Handle";
-const string Input::KeyboardSupport = "KeyboardSupport";
-const string Input::MouseSupport = "MouseSupport";
-const string Input::JoypadSupport = "JoypadSupport";
-const string Input::JoypadRumbleSupport = "JoypadRumbleSupport";
 
 auto Input::create(const string& driver) -> Input* {
   if(!driver) return create(optimalDriver());

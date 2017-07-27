@@ -25,20 +25,20 @@ ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
 
 # platform
 ifeq ($(platform),windows)
-  ruby += video.direct3d video.wgl video.directdraw video.gdi
-  ruby += audio.wasapi audio.xaudio2 audio.directsound
+  ruby += video.wgl video.direct3d video.directdraw video.gdi
+  ruby += audio.asio audio.wasapi audio.xaudio2  #audio.directsound
   ruby += input.windows
 else ifeq ($(platform),macosx)
   ruby += video.cgl
   ruby += audio.openal
-  ruby += input.quartz input.carbon
+  ruby += #input.quartz input.carbon
 else ifeq ($(platform),linux)
-  ruby += video.glx video.xv video.xshm video.sdl
-  ruby += audio.alsa audio.openal audio.oss audio.pulseaudio audio.pulseaudiosimple audio.ao
-  ruby += input.udev input.sdl input.xlib
+  ruby += video.glx video.xvideo video.xshm video.sdl
+  ruby += audio.oss audio.openal  #audio.alsa audio.pulseaudio audio.pulseaudiosimple audio.ao
+  ruby += input.sdl input.xlib  #input.udev
 else ifeq ($(platform),bsd)
-  ruby += video.glx video.xv video.xshm video.sdl
-  ruby += audio.openal audio.oss
+  ruby += video.glx video.xvideo video.xshm video.sdl
+  ruby += audio.oss audio.openal
   ruby += input.sdl input.xlib
 endif
 

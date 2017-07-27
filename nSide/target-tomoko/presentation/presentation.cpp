@@ -84,11 +84,11 @@ Presentation::Presentation() {
   loadShaders();
   synchronizeVideo.setText("Synchronize Video").setChecked(settings["Video/Synchronize"].boolean()).setVisible(false).onToggle([&] {
     settings["Video/Synchronize"].setValue(synchronizeVideo.checked());
-    video->set(Video::Synchronize, synchronizeVideo.checked());
+    video->setBlocking(synchronizeVideo.checked());
   });
   synchronizeAudio.setText("Synchronize Audio").setChecked(settings["Audio/Synchronize"].boolean()).onToggle([&] {
     settings["Audio/Synchronize"].setValue(synchronizeAudio.checked());
-    audio->set(Audio::Synchronize, synchronizeAudio.checked());
+    audio->setBlocking(synchronizeAudio.checked());
   });
   muteAudio.setText("Mute Audio").setChecked(settings["Audio/Mute"].boolean()).onToggle([&] {
     settings["Audio/Mute"].setValue(muteAudio.checked());
@@ -99,20 +99,23 @@ Presentation::Presentation() {
     statusBar.setVisible(showStatusBar.checked());
     if(visible()) resizeViewport();
   });
-  showConfiguration.setText("Configuration ...").onActivate([&] {
-    //if no emulation core active; default to hotkeys panel
-    if(!emulator) return settingsManager->show(3);
-
-    //default to input panel with current core's input settings active
-    for(auto item : settingsManager->input.emulatorList.items()) {
-      if(systemMenu.text() == item.text()) {
-        item.setSelected();
-        settingsManager->input.emulatorList.doChange();
-        break;
+  showVideoSettings.setText("Video ...").onActivate([&] { settingsManager->show(0); });
+  showAudioSettings.setText("Audio ...").onActivate([&] { settingsManager->show(1); });
+  showInputSettings.setText("Input ...").onActivate([&] {
+    if(emulator) {
+      //default input panel to current core's input settings
+      for(auto item : settingsManager->input.emulatorList.items()) {
+        if(systemMenu.text() == item.text()) {
+          item.setSelected();
+          settingsManager->input.emulatorList.doChange();
+          break;
+        }
       }
     }
     settingsManager->show(2);
   });
+  showHotkeySettings.setText("Hotkeys ...").onActivate([&] { settingsManager->show(3); });
+  showAdvancedSettings.setText("Advanced ...").onActivate([&] { settingsManager->show(4); });
 
   toolsMenu.setText("Tools").setVisible(false);
   saveQuickStateMenu.setText("Save Quick State");
@@ -127,9 +130,9 @@ Presentation::Presentation() {
   loadSlot3.setText("Slot 3").onActivate([&] { program->loadState(3); });
   loadSlot4.setText("Slot 4").onActivate([&] { program->loadState(4); });
   loadSlot5.setText("Slot 5").onActivate([&] { program->loadState(5); });
-  cheatEditor.setText("Cheat Editor").onActivate([&] { toolsManager->show(0); });
-  stateManager.setText("State Manager").onActivate([&] { toolsManager->show(1); });
-  manifestViewer.setText("Manifest Viewer").onActivate([&] { toolsManager->show(2); });
+  cheatEditor.setText("Cheat Editor ...").onActivate([&] { toolsManager->show(0); });
+  stateManager.setText("State Manager ...").onActivate([&] { toolsManager->show(1); });
+  manifestViewer.setText("Manifest Viewer ...").onActivate([&] { toolsManager->show(2); });
 
   helpMenu.setText("Help");
   documentation.setText("Documentation ...").onActivate([&] {
@@ -229,7 +232,7 @@ auto Presentation::clearViewport() -> void {
     }
 
     video->unlock();
-    video->refresh();
+    video->output();
   }
 }
 
@@ -313,11 +316,11 @@ auto Presentation::toggleFullScreen() -> void {
     menuBar.setVisible(false);
     statusBar.setVisible(false);
     setFullScreen(true);
-    video->set(Video::Exclusive, settings["Video/Fullscreen/Exclusive"].boolean());
+    video->setExclusive(settings["Video/Fullscreen/Exclusive"].boolean());
     if(!input->acquired()) input->acquire();
   } else {
     if(input->acquired()) input->release();
-    video->set(Video::Exclusive, false);
+    video->setExclusive(false);
     setFullScreen(false);
     menuBar.setVisible(true);
     statusBar.setVisible(settings["UserInterface/ShowStatusBar"].boolean());

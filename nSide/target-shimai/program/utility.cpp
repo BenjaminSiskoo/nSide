@@ -59,8 +59,11 @@ auto Program::updateVideoShader() -> void {
 auto Program::updateAudioDriver() -> void {
   if(!audio) return;
   audio->clear();
-  audio->set(Audio::Exclusive, settings["Audio/Exclusive"].boolean());
-  audio->set(Audio::Latency, (uint)settings["Audio/Latency"].natural());
+  audio->setDevice(settings["Audio/Device"].text());
+  audio->setExclusive(settings["Audio/Exclusive"].boolean());
+  audio->setFrequency(settings["Audio/Frequency"].real());
+  audio->setLatency(settings["Audio/Latency"].natural());
+  Emulator::audio.setFrequency(settings["Audio/Frequency"].real());
 }
 
 auto Program::updateAudioEffects() -> void {
@@ -76,12 +79,7 @@ auto Program::updateAudioEffects() -> void {
 
 auto Program::focused() -> bool {
   //exclusive mode creates its own top-level window: presentation window will not have focus
-  if(video->cap(Video::Exclusive)) {
-    auto value = video->get(Video::Exclusive);
-    if(value.is<bool>() && value.get<bool>()) return true;
-  }
-
+  if(video->exclusive()) return true;
   if(presentation && presentation->focused()) return true;
-
   return false;
 }

@@ -4,37 +4,28 @@ AudioSettings::AudioSettings(TabFrame* parent) : TabFrameItem(parent) {
 
   layout.setMargin(5);
 
-  driverLabel.setFont(Font().setBold()).setText("Driver Settings");
+  driverLabel.setFont(Font().setBold()).setText("Driver");
 
-  latencyLabel.setText("Latency:");
-  latencyCombo.append(ComboButtonItem().setText("0ms"));
-  latencyCombo.append(ComboButtonItem().setText("20ms"));
-  latencyCombo.append(ComboButtonItem().setText("40ms"));
-  latencyCombo.append(ComboButtonItem().setText("60ms"));
-  latencyCombo.append(ComboButtonItem().setText("80ms"));
-  latencyCombo.append(ComboButtonItem().setText("100ms"));
-  switch(settings["Audio/Latency"].natural()) {
-  case   0: latencyCombo.item(0)->setSelected(); break;
-  case  20: latencyCombo.item(1)->setSelected(); break;
-  case  40: latencyCombo.item(2)->setSelected(); break;
-  case  60: latencyCombo.item(3)->setSelected(); break;
-  case  80: latencyCombo.item(4)->setSelected(); break;
-  case 100: latencyCombo.item(5)->setSelected(); break;
+  deviceLabel.setText("Device:");
+  deviceList.onChange([&] { updateDevice(); updateDriver(); });
+
+  //the device list never changes once a driver is activated;
+  //however, the available frequencies and latencies may change when the active device is changed
+  for(auto& device : audio->information().devices) {
+    deviceList.append(ComboButtonItem().setText(device));
+    if(device == settings["Audio/Device"].text()) {
+      deviceList.item(deviceList.itemCount() - 1).setSelected();
+    }
   }
-  latencyCombo.onChange([&] { updateDriver(); });
 
   frequencyLabel.setText("Frequency:");
-  auto frequencyValue = audio->get(Audio::Frequency).get<uint>(44100);
-  frequencyCombo.append(ComboButtonItem().setText({frequencyValue, "hz"}));
-  frequencyCombo.setEnabled(false);
+  frequencyList.onChange([&] { updateDriver(); });
 
-  resamplerLabel.setText("Resampler:");
-  resamplerCombo.append(ComboButtonItem().setText("IIR - Biquad"));
-  resamplerCombo.setEnabled(false);
+  latencyLabel.setText("Latency:");
+  latencyList.onChange([&] { updateDriver(); });
 
   exclusiveMode.setText("Exclusive mode");
   exclusiveMode.setChecked(settings["Audio/Exclusive"].boolean()).onToggle([&] { updateDriver(); });
-  if(!audio->cap(Audio::Exclusive)) exclusiveMode.remove();
 
   effectsLabel.setFont(Font().setBold()).setText("Effects");
 
@@ -48,27 +39,39 @@ AudioSettings::AudioSettings(TabFrame* parent) : TabFrameItem(parent) {
 
   reverbEnable.setText("Reverb").setChecked(settings["Audio/Reverb/Enable"].boolean()).onToggle([&] { updateEffects(); });
 
-  updateDriver();
-  updateEffects();
+  updateDevice();
+  updateDriver(true);
+  updateEffects(true);
 }
 
-auto AudioSettings::updateDriver() -> void {
-  if(auto item = latencyCombo.selected()) {
-    uint latency = 60;
-    if(item->offset() == 0) latency =   0;
-    if(item->offset() == 1) latency =  20;
-    if(item->offset() == 2) latency =  40;
-    if(item->offset() == 3) latency =  60;
-    if(item->offset() == 4) latency =  80;
-    if(item->offset() == 5) latency = 100;
-    settings["Audio/Latency"].setValue(latency);
+auto AudioSettings::updateDevice() -> void {
+  frequencyList.reset();
+  for(auto& frequency : audio->information().frequencies) {
+    frequencyList.append(ComboButtonItem().setText(frequency));
+    if(frequency == settings["Audio/Frequency"].real()) {
+      frequencyList.item(frequencyList.itemCount() - 1).setSelected();
+    }
   }
 
-  settings["Audio/Exclusive"].setValue(exclusiveMode.checked());
-  program->updateAudioDriver();
+  latencyList.reset();
+  for(auto& latency : audio->information().latencies) {
+    latencyList.append(ComboButtonItem().setText(latency));
+    if(latency == settings["Audio/Latency"].natural()) {
+      latencyList.item(latencyList.itemCount() - 1).setSelected();
+    }
+  }
 }
 
-auto AudioSettings::updateEffects() -> void {
+auto AudioSettings::updateDriver(bool initializing) -> void {
+  settings["Audio/Device"].setValue(deviceList.selected().text());
+  settings["Audio/Frequency"].setValue(frequencyList.selected().text());
+  settings["Audio/Latency"].setValue(latencyList.selected().text());
+  settings["Audio/Exclusive"].setValue(exclusiveMode.checked());
+
+  if(!initializing) program->updateAudioDriver();
+}
+
+auto AudioSettings::updateEffects(bool initializing) -> void {
   settings["Audio/Volume"].setValue(volumeSlider.position());
   volumeValue.setText({volumeSlider.position(), "%"});
 
@@ -77,5 +80,5 @@ auto AudioSettings::updateEffects() -> void {
 
   settings["Audio/Reverb/Enable"].setValue(reverbEnable.checked());
 
-  program->updateAudioEffects();
+  if(!initializing) program->updateAudioEffects();
 }

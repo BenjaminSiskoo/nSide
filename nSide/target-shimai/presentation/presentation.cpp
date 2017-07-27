@@ -57,7 +57,7 @@ auto Presentation::clearViewport() -> void {
     }
 
     video->unlock();
-    video->refresh();
+    video->output();
   }
 }
 
@@ -138,11 +138,11 @@ auto Presentation::resizeViewport(bool resizeWindow) -> void {
 auto Presentation::toggleFullScreen() -> void {
   if(!fullScreen()) {
     setFullScreen(true);
-    video->set(Video::Exclusive, settings["Video/Fullscreen/Exclusive"].boolean());
+    video->setExclusive(settings["Video/Fullscreen/Exclusive"].boolean());
     if(!input->acquired()) input->acquire();
   } else {
     if(input->acquired()) input->release();
-    video->set(Video::Exclusive, false);
+    video->setExclusive(false);
     setFullScreen(false);
   }
   resizeViewport();

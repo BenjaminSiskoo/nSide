@@ -19,6 +19,6 @@ SettingsDialog::SettingsDialog() {
     settings["cart-pal/UseDatabase"].setValue(useDatabaseOption.checked());
   });
 
-  setTitle("cart-pal Settings");
+  setTitle("Settings");
   setSize({480, layout.minimumSize().height()});
 }

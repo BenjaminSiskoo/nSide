@@ -9,9 +9,7 @@ struct MegaDriveCartridge {
 };
 
 MegaDriveCartridge::MegaDriveCartridge(string location, uint8_t* data, uint size) {
-  char _regions[17] = {0};
-  memory::copy(_regions, data + 0x0001f0, 16);
-  string regionCodes{_regions};
+  string regionCodes = slice((char*)data + 0x0001f0, 0, 16);
   regionCodes.trimRight(" ");
 
   string_vector regions;

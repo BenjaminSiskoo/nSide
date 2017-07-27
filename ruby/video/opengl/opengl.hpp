@@ -1,15 +1,19 @@
 #if defined(DISPLAY_XORG)
   #include <GL/gl.h>
   #include <GL/glx.h>
-  #define glGetProcAddress(name) (*glXGetProcAddress)((const GLubyte*)(name))
+  #ifndef glGetProcAddress
+    #define glGetProcAddress(name) (*glXGetProcAddress)((const GLubyte*)(name))
+  #endif
 #elif defined(DISPLAY_QUARTZ)
   #include <OpenGL/gl3.h>
 #elif defined(DISPLAY_WINDOWS)
   #include <GL/gl.h>
   #include <GL/glext.h>
-  #define glGetProcAddress(name) wglGetProcAddress(name)
+  #ifndef glGetProcAddress
+    #define glGetProcAddress(name) wglGetProcAddress(name)
+  #endif
 #else
-  #error "ruby::OpenGL: unsupported platform"
+  #error "ruby::OpenGL3: unsupported platform"
 #endif
 
 #include "bind.hpp"
@@ -23,8 +27,8 @@ struct OpenGLTexture {
   auto getType() const -> GLuint;
 
   GLuint texture = 0;
-  unsigned width = 0;
-  unsigned height = 0;
+  uint width = 0;
+  uint height = 0;
   GLuint format = GL_RGBA8;
   GLuint filter = GL_LINEAR;
   GLuint wrap = GL_CLAMP_TO_BORDER;
@@ -32,9 +36,9 @@ struct OpenGLTexture {
 
 struct OpenGLSurface : OpenGLTexture {
   auto allocate() -> void;
-  auto size(unsigned width, unsigned height) -> void;
+  auto size(uint width, uint height) -> void;
   auto release() -> void;
-  auto render(unsigned sourceWidth, unsigned sourceHeight, unsigned targetWidth, unsigned targetHeight) -> void;
+  auto render(uint sourceWidth, uint sourceHeight, uint targetWidth, uint targetHeight) -> void;
 
   GLuint program = 0;
   GLuint framebuffer = 0;
@@ -51,10 +55,10 @@ struct OpenGLProgram : OpenGLSurface {
   auto parse(OpenGL* instance, string& source) -> void;
   auto release() -> void;
 
-  unsigned phase = 0;   //frame counter
-  unsigned modulo = 0;  //frame counter modulus
-  unsigned absoluteWidth = 0;
-  unsigned absoluteHeight = 0;
+  uint phase = 0;   //frame counter
+  uint modulo = 0;  //frame counter modulus
+  uint absoluteWidth = 0;
+  uint absoluteHeight = 0;
   double relativeWidth = 0;
   double relativeHeight = 0;
   vector<OpenGLTexture> pixmaps;
@@ -62,18 +66,18 @@ struct OpenGLProgram : OpenGLSurface {
 
 struct OpenGL : OpenGLProgram {
   auto shader(const string& pathname) -> void;
-  auto allocateHistory(unsigned size) -> void;
-  auto lock(uint32_t*& data, unsigned& pitch) -> bool;
+  auto allocateHistory(uint size) -> void;
   auto clear() -> void;
-  auto refresh() -> void;
-  auto init() -> bool;
-  auto term() -> void;
+  auto lock(uint32_t*& data, uint& pitch) -> bool;
+  auto output() -> void;
+  auto initialize() -> bool;
+  auto terminate() -> void;
 
   vector<OpenGLProgram> programs;
   vector<OpenGLTexture> history;
   GLuint inputFormat = GL_RGBA8;
-  unsigned outputWidth = 0;
-  unsigned outputHeight = 0;
+  uint outputWidth = 0;
+  uint outputHeight = 0;
   struct Setting {
     string name;
     string value;
