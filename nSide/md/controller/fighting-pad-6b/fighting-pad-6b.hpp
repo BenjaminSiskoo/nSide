@@ -10,7 +10,7 @@ struct FightingPad6B : Controller {
   auto writeData(uint8 data) -> void override;
 
   boolean select;
-  boolean latch;
   uint3 counter;
   uint timeout;
+  boolean latch;
 };

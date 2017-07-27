@@ -20,6 +20,7 @@ struct ID {
     ControlPad,
     FightingPad6B,
     SegaTap,
+    EA4WayPlay,
   };};
 };
 

@@ -77,6 +77,28 @@ Interface::Interface() {
     controllerPort2.devices.append(device);
   }
 
+  { Device device{ID::Device::EA4WayPlay, "EA 4 Way Play"};
+    for(uint p = 1; p <= 4; p++) {
+      device.inputs.append({0, {"Port ", p, " - ", "Up"   }});
+      device.inputs.append({0, {"Port ", p, " - ", "Down" }});
+      device.inputs.append({0, {"Port ", p, " - ", "Left" }});
+      device.inputs.append({0, {"Port ", p, " - ", "Right"}});
+      device.inputs.append({0, {"Port ", p, " - ", "A"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "B"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "C"    }});
+    //device.inputs.append({0, {"Port ", p, " - ", "X"    }});
+    //device.inputs.append({0, {"Port ", p, " - ", "Y"    }});
+    //device.inputs.append({0, {"Port ", p, " - ", "Z"    }});
+      device.inputs.append({0, {"Port ", p, " - ", "Start"}});
+    //device.inputs.append({0, {"Port ", p, " - ", "Mode" }});
+    }
+    controllerPort1.devices.append(device);
+  }
+
+  { Device device{ID::Device::EA4WayPlay, "EA 4 Way Play"};
+    controllerPort2.devices.append(device);
+  }
+
   { Device device{ID::Device::Controls, "Controls"};
     device.inputs.append({0, "Reset"});
     hardware.devices.append(device);
@@ -158,8 +180,26 @@ auto Interface::unload() -> void {
 }
 
 auto Interface::connect(uint port, uint device) -> void {
-  if(port == ID::Port::Controller1) controllerPort1.connect(settings.controllerPort1 = device);
-  if(port == ID::Port::Controller2) controllerPort2.connect(settings.controllerPort2 = device);
+  if(port == ID::Port::Controller1) {
+    if(settings.controllerPort1 == ID::Device::EA4WayPlay) {
+      platform->deviceChanged(ID::Port::Controller2, ID::Device::None);
+    }
+    controllerPort1.connect(settings.controllerPort1 = device);
+    if(device == ID::Device::EA4WayPlay) {
+      platform->deviceChanged(ID::Port::Controller2, ID::Device::EA4WayPlay);
+    }
+  }
+
+  if(port == ID::Port::Controller2) {
+    if(settings.controllerPort2 == ID::Device::EA4WayPlay) {
+      platform->deviceChanged(ID::Port::Controller1, ID::Device::None);
+    }
+    controllerPort2.connect(settings.controllerPort2 = device);
+    if(device == ID::Device::EA4WayPlay) {
+      platform->deviceChanged(ID::Port::Controller1, ID::Device::EA4WayPlay);
+    }
+  }
+
   if(port == ID::Port::Extension) extensionPort.connect(settings.extensionPort = device);
 }
 

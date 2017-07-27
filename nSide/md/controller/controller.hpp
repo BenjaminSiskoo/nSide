@@ -50,3 +50,4 @@ extern ControllerPort extensionPort;
 #include "control-pad/control-pad.hpp"
 #include "fighting-pad-6b/fighting-pad-6b.hpp"
 #include "sega-tap/sega-tap.hpp"
+#include "ea-4-way-play/ea-4-way-play.hpp"

@@ -8,6 +8,7 @@ ControllerPort extensionPort;
 #include "control-pad/control-pad.cpp"
 #include "fighting-pad-6b/fighting-pad-6b.cpp"
 #include "sega-tap/sega-tap.cpp"
+#include "ea-4-way-play/ea-4-way-play.cpp"
 
 Controller::Controller(uint port) : port(port) {
   if(!handle()) create(Controller::Enter, 1);
@@ -42,6 +43,27 @@ auto ControllerPort::connect(uint deviceID) -> void {
   case ID::Device::ControlPad: device = new ControlPad(port); break;
   case ID::Device::FightingPad6B: device = new FightingPad6B(port); break;
   case ID::Device::SegaTap: device = new SegaTap(port); break;
+  case ID::Device::EA4WayPlay: device = new EA4WayPlay(port); break;
+  }
+
+  //The EA 4 Way Play is a single device that consumes both controller ports.
+  //Do now allow only half of an EA 4 Way Play to be connected.
+  if(port == ID::Port::Controller1 || port == ID::Port::Controller2) {
+    auto& oppositePort = (port == ID::Port::Controller1
+    ? controllerPort2
+    : controllerPort1
+    );
+    auto& oppositeDeviceID = (port == ID::Port::Controller1
+    ? settings.controllerPort2
+    : settings.controllerPort1
+    );
+    if(deviceID == ID::Device::EA4WayPlay && oppositeDeviceID != ID::Device::EA4WayPlay) {
+      oppositePort.connect(oppositeDeviceID = ID::Device::EA4WayPlay);
+      return;
+    } else if(deviceID != ID::Device::EA4WayPlay && oppositeDeviceID == ID::Device::EA4WayPlay) {
+      oppositePort.connect(oppositeDeviceID = ID::Device::None);
+      return;
+    }
   }
 
   cpu.peripherals.reset();

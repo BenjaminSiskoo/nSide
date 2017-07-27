@@ -1,6 +1,8 @@
 FightingPad6B::FightingPad6B(uint port) : Controller(port) {
   create(Controller::Enter, 1'000'000.0);
   select = 1;
+  counter = 0;
+  timeout = 0;
 }
 
 auto FightingPad6B::main() -> void {
@@ -25,7 +27,7 @@ auto FightingPad6B::readData() -> uint8 {
     }
     data.bit(4) = platform->inputPoll(port, ID::Device::FightingPad6B, A);
     data.bit(5) = platform->inputPoll(port, ID::Device::FightingPad6B, Start);
-  } else if(select == 1) {
+  } else {
     if(counter != 3) {
       data.bit(0) = platform->inputPoll(port, ID::Device::FightingPad6B, Up);
       data.bit(1) = platform->inputPoll(port, ID::Device::FightingPad6B, Down);
