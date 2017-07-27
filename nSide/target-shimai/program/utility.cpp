@@ -48,11 +48,11 @@ auto Program::updateVideoShader() -> void {
   && settings["Video/Shader"].text() != "Blur"
   && directory::exists(settings["Video/Shader"].text())
   ) {
-    video->set(Video::Filter, Video::FilterNearest);
-    video->set(Video::Shader, settings["Video/Shader"].text());
+    video->setSmooth(false);
+    video->setShader(settings["Video/Shader"].text());
   } else {
-    video->set(Video::Filter, settings["Video/Shader"].text() == "Blur" ? Video::FilterLinear : Video::FilterNearest);
-    video->set(Video::Shader, (string)"");
+    video->setSmooth(settings["Video/Shader"].text() == "Blur");
+    video->setShader("");
   }
 }
 

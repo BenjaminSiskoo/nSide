@@ -12,8 +12,8 @@ auto Graphics::initialize() -> void {
 }
 
 auto Graphics::reset() -> void {
-  video->set(Video::Filter, settings["Video/Shader"].text() == "None" ? Video::FilterNearest : Video::FilterLinear);
-  video->set(Video::Shader, (string)"");
+  video->setSmooth(settings["Video/Shader"].text() != "None");
+  video->setShader("");
   step = 0;
 
   sprites.reset();
@@ -21,7 +21,7 @@ auto Graphics::reset() -> void {
 }
 
 auto Graphics::run() -> void {
-  uint sampleRate = audio->get(Audio::Frequency).get<uint>(44100) / 60;
+  uint sampleRate = audio->frequency() / 60;
 
   if(step == 0) {
     home->updateSprites();

@@ -1,7 +1,8 @@
 struct InputMapping {
   auto bind() -> void;
-  auto append(string mapping) -> bool;
+  auto bind(string mapping) -> void;
   auto bind(shared_pointer<HID::Device> device, uint group, uint input, int16 oldValue, int16 newValue) -> bool;
+  auto toggleLogic() -> void;
   auto poll() -> int16;
   auto rumble(bool enable) -> void;
   auto unbind() -> void;
@@ -10,30 +11,32 @@ struct InputMapping {
   auto isAnalog() const -> bool { return type == 1; }
   auto isRumble() const -> bool { return type == 2; }
 
-  auto assignmentName() -> string;
+  auto displayName() -> string;
+
+  enum class Logic : uint { AND, OR };
+  enum class Qualifier : uint { None, Lo, Hi, Rumble };
 
   string path;  //configuration file key path
   string name;  //input name (human readable)
   uint type = 0;
   string assignment = "None";
+  Logic logic = Logic::OR;
 
-  virtual auto logic() const -> bool { return 0; }
-
-  enum class Qualifier : uint { None, Lo, Hi, Rumble };
-  struct Input {
-    shared_pointer<HID::Device> device = nullptr;
+  virtual auto defaultLogic() -> Logic const { return Logic::OR; }
+  struct Mapping {
+    shared_pointer<HID::Device> device;
     uint group = 0;
     uint input = 0;
     Qualifier qualifier = Qualifier::None;
   };
-  vector<Input> inputList;
+  vector<Mapping> mappings;
 };
 
 struct InputHotkey : InputMapping {
+  auto defaultLogic() -> Logic const override { return Logic::AND; }
+
   function<auto () -> void> press;
   function<auto () -> void> release;
-
-  auto logic() const -> bool { return 1; }
 
   int16 state = 0;
 };

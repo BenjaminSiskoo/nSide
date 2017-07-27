@@ -25,6 +25,7 @@ struct Program : Emulator::Platform {
 
   //utility.cpp
   auto message(const string& text) -> void;
+  auto updateAudioEffects() -> void;
 
   vector<string> mediumQueue;  //for command-line and drag-and-drop loading
   vector<string> mediumPaths;  //for keeping track of loaded folder locations

@@ -7,7 +7,6 @@ unique_pointer<Program> program;
 
 Program::Program(string_vector args) {
   program = this;
-  Application::onMain({&Program::main, this});
 
   Emulator::platform = this;
   emulator = new SFC::Interface;
@@ -32,21 +31,22 @@ Program::Program(string_vector args) {
   higan_settings = BML::unserialize(string::read(locateHigan("settings.bml")));
 
   video = Video::create();
-  video->set(Video::Handle, presentation->viewport.handle());
-  if(!video->init()) video = Video::create("None");
-  video->set(Video::Synchronize, settings["Video/Synchronize"].boolean());
-  video->set(Video::Filter, Video::FilterNearest);
+  video->setContext(presentation->viewport.handle());
+  video->setBlocking(settings["Video/Synchronize"].boolean());
+  video->setSmooth(false);
+  if(!video->ready()) debugger->print("Failed to initialize video driver\n");
 
   audio = Audio::create();
-  audio->set(Audio::Handle, presentation->viewport.handle());
-  audio->set(Audio::Synchronize, settings["Audio/Synchronize"].boolean());
-  audio->set(Audio::Exclusive, false);
-  audio->set(Audio::Latency, 80u);
-  if(!audio->init()) audio = Audio::create("None");
+  audio->setExclusive(false);
+  audio->setContext(presentation->viewport.handle());
+  audio->setDevice("");
+  audio->setBlocking(settings["Audio/Synchronize"].boolean());
+  audio->setChannels(2);
+  if(!audio->ready()) debugger->print("Failed to initialize audio driver\n");
 
   input = Input::create();
-  input->set(Input::Handle, presentation->viewport.handle());
-  if(!input->init()) input = Input::create("None");
+  input->setContext(presentation->viewport.handle());
+  if(!input->ready()) debugger->print("Failed to initialize input driver\n");
 
   args.takeLeft();  //ignore program location in argument parsing
   for(auto& argument : args) {
@@ -69,6 +69,8 @@ Program::Program(string_vector args) {
   vramViewer->updateTiles();
   bgViewer->updateTiles();
   paletteViewer->updateColors();
+
+  Application::onMain({&Program::main, this});
 }
 
 auto Program::main() -> void {

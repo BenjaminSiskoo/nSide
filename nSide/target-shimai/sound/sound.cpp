@@ -13,7 +13,7 @@ auto Sound::reset() -> void {
     theme->bgm->seek(playOffset);
   }
 
-  Emulator::audio.reset(2, audio->get(Audio::Frequency).get<uint>(44100));
+  Emulator::audio.reset(2, audio->frequency());
   stream = Emulator::audio.createStream(2, 44'100.0);
 }
 

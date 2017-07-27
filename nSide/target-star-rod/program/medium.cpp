@@ -18,7 +18,7 @@ auto Program::loadMedium(Emulator::Interface& interface, const Emulator::Interfa
   mediumPaths.append(locateSystem({medium.name, ".sys/"}));
   debugger->print(medium.name, "\n");
 
-  Emulator::audio.reset(2, audio->get(Audio::Frequency).get<uint>(44100));
+  Emulator::audio.reset(2, audio->frequency());
   emulator->connect(SFC::ID::Port::Controller1, SFC::ID::Device::Gamepad);
   emulator->connect(SFC::ID::Port::Controller2, SFC::ID::Device::None);
   emulator->load(medium.id);

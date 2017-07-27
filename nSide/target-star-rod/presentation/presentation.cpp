@@ -30,6 +30,6 @@ auto Presentation::drawSplashScreen() -> void {
       memcpy((uint8_t*)output + y * pitch, splash.data() + y * splash.pitch(), 512 * sizeof(uint32_t));
     }
     video->unlock();
-    video->refresh();
+    video->output();
   }
 }

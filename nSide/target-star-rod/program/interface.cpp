@@ -24,8 +24,7 @@ auto Program::load(uint id, string name, string type, string_vector options) -> 
   string location, option;
   if(mediumQueue) {
     auto entry = mediumQueue.takeLeft().split("|", 1L);
-    location = entry.right().transform("\\", "/");
-    if(!location.endsWith("/")) location.append("/");
+    location = entry.right();
     if(entry.size() == 2) option = entry.left();
   } else {
     BrowserDialog dialog;
@@ -59,7 +58,7 @@ auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint heig
     }
 
     video->unlock();
-    video->refresh();
+    video->output();
   }
 
   /*
@@ -91,10 +90,7 @@ auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint heig
 }
 
 auto Program::audioSample(const double* samples, uint channels) -> void {
-  if(settings["Audio/Mute"].boolean()) return audio->sample(0, 0);
-  int16 left  = sclamp<16>(samples[0] * 32768.0);
-  int16 right = sclamp<16>(samples[1] * 32768.0);
-  audio->sample(left, right);
+  audio->output(samples);
 }
 
 auto Program::inputPoll(uint port, uint device, uint input) -> int16 {

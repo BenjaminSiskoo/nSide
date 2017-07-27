@@ -96,7 +96,9 @@ auto Presentation::resizeViewport(bool resizeWindow) -> void {
       viewportHeight = resolution(1).natural();
     }
 
-    if(settings["Video/Windowed/AdaptiveSizing"].boolean() && resizeWindow) {
+    if(!emulator) {
+      setSize({emulatorWidth = viewportWidth, emulatorHeight = viewportHeight});
+    } else if(settings["Video/Windowed/AdaptiveSizing"].boolean() && resizeWindow) {
       uint multiplier = min(viewportWidth / emulatorWidth, viewportHeight / emulatorHeight);
       emulatorWidth *= multiplier;
       emulatorHeight *= multiplier;
@@ -139,9 +141,11 @@ auto Presentation::toggleFullScreen() -> void {
   if(!fullScreen()) {
     setFullScreen(true);
     video->setExclusive(settings["Video/Fullscreen/Exclusive"].boolean());
+    if(video->exclusive()) setVisible(false);
     if(!input->acquired()) input->acquire();
   } else {
     if(input->acquired()) input->release();
+    if(video->exclusive()) setVisible(true);
     video->setExclusive(false);
     setFullScreen(false);
   }
