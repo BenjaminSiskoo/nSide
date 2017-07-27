@@ -218,7 +218,7 @@ auto Presentation::updateEmulator() -> void {
     Group devices;
     for(auto& device : port.devices) {
       MenuRadioItem item{&menu};
-      item.setText(device.name).onActivate([=] {
+      item.setText(device.name).setProperty("deviceID", device.id).onActivate([=] {
         auto path = string{emulator->information.name, "/", port.name}.replace(" ", "");
         settings[path].setValue(device.name);
         emulator->connect(port.id, device.id);

@@ -114,6 +114,15 @@ auto Program::inputRumble(uint port, uint device, uint input, bool enable) -> vo
 }
 
 auto Program::deviceChanged(uint port, uint device) -> void {
+  //The Master System's port IDs are for Hardware, Controller1, and Controller2 in that order.
+  //However, Controller1 and Controller2 are initialized and listed before Hardware.
+  for(uint i : range(inputManager->emulator->ports.size())) {
+    if(inputManager->emulator->ports[i].id == port) {
+      port = i;
+      break;
+    }
+  }
+
   Menu& portMenu = (
     port == 0 ? presentation->inputPort1 :
     port == 1 ? presentation->inputPort2 :
@@ -121,17 +130,15 @@ auto Program::deviceChanged(uint port, uint device) -> void {
                 presentation->inputPort4
   );
 
-  auto emulatorPort = inputManager->emulator->ports[port];
-  auto emulatorDevice = emulatorPort.devices[device];
-  string path = string{emulator->information.name, "/", emulatorPort.name}.replace(" ", "");
-  settings[path].setValue(emulatorDevice.name);
-
-  uint localDevice = 0;
-  for(uint i : range(device)) {
-    //Check if device is available for this port
-    if(emulatorPort.devices[i].name) localDevice++;
+  for(auto& menuItem_ : portMenu.actions()) {
+    MenuRadioItem menuItem{menuItem_};
+    if(menuItem.property("deviceID").natural() == device) {
+      string path = string{emulator->information.name, "/", portMenu.text()}.replace(" ", "");
+      settings[path].setValue(menuItem.text());
+      menuItem.setChecked();
+      break;
+    }
   }
-  ((MenuRadioItem)portMenu.action(localDevice)).setChecked();
 }
 
 auto Program::dipSettings(Markup::Node node) -> uint {
