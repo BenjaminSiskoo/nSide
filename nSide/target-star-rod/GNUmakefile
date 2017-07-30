@@ -26,7 +26,7 @@ ui_objects += $(if $(call streq,$(platform),windows),star-rod-resource)
 ifeq ($(platform),windows)
   ruby := video.wgl audio.xaudio2 input.windows
 else ifeq ($(platform),macosx)
-  ruby := video.cgl audio.openal  #input.quartz
+  ruby := video.cgl audio.openal input.quartz
 else ifeq ($(platform),linux)
   ruby := video.xshm audio.openal input.sdl
 else ifeq ($(platform),bsd)

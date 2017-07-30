@@ -14,7 +14,7 @@ namespace Emulator {
   static const string Name           = "nSide";
   static const string OriginalName   = "higan";
   static const string Version        = "009.13";
-  static const string FromVersion    = "103.20";
+  static const string FromVersion    = "103.22";
   static const string Author         = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string License        = "GPLv3";
