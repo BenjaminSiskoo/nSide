@@ -1,6 +1,6 @@
 struct EA4WayPlay : Controller {
   enum : uint {
-  //Up, Down, Left, Right, A, B, C, X, Y, Z, Start, Mode,
+  //Up, Down, Left, Right, A, B, C, X, Y, Z, Mode, Start,
     Up, Down, Left, Right, A, B, C, Start,
   };
 

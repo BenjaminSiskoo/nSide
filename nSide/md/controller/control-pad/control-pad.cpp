@@ -1,5 +1,4 @@
 ControlPad::ControlPad(uint port) : Controller(port) {
-  select = 1;
 }
 
 auto ControlPad::readData() -> uint8 {
@@ -8,8 +7,7 @@ auto ControlPad::readData() -> uint8 {
   if(select == 0) {
     data.bit(0) = platform->inputPoll(port, ID::Device::ControlPad, Up);
     data.bit(1) = platform->inputPoll(port, ID::Device::ControlPad, Down);
-    data.bit(2) = 1;
-    data.bit(3) = 1;
+    data.bits(2,3) = ~0;
     data.bit(4) = platform->inputPoll(port, ID::Device::ControlPad, A);
     data.bit(5) = platform->inputPoll(port, ID::Device::ControlPad, Start);
   } else {
@@ -27,5 +25,5 @@ auto ControlPad::readData() -> uint8 {
 
 auto ControlPad::writeData(uint8 data) -> void {
   select = data.bit(6);
-  latch  = data.bit(7);
+  latch = data.bit(7);
 }

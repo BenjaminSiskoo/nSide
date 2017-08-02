@@ -8,6 +8,6 @@ struct ControlPad : Controller {
   auto readData() -> uint8 override;
   auto writeData(uint8 data) -> void override;
 
-  boolean select;
-  boolean latch;
+  uint1 select = 1;
+  uint1 latch;
 };

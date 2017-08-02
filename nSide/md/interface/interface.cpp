@@ -41,7 +41,7 @@ Interface::Interface() {
     controllerPort2.devices.append(device);
   }
 
-  { Device device{ID::Device::FightingPad6B, "Fighting Pad 6B"};
+  { Device device{ID::Device::FightingPad, "Fighting Pad"};
     device.inputs.append({0, "Up"   });
     device.inputs.append({0, "Down" });
     device.inputs.append({0, "Left" });
@@ -52,8 +52,8 @@ Interface::Interface() {
     device.inputs.append({0, "X"    });
     device.inputs.append({0, "Y"    });
     device.inputs.append({0, "Z"    });
-    device.inputs.append({0, "Start"});
     device.inputs.append({0, "Mode" });
+    device.inputs.append({0, "Start"});
     controllerPort1.devices.append(device);
     controllerPort2.devices.append(device);
   }
@@ -70,8 +70,8 @@ Interface::Interface() {
       device.inputs.append({0, {"Port ", p, " - ", "X"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Y"    }});
       device.inputs.append({0, {"Port ", p, " - ", "Z"    }});
-      device.inputs.append({0, {"Port ", p, " - ", "Start"}});
       device.inputs.append({0, {"Port ", p, " - ", "Mode" }});
+      device.inputs.append({0, {"Port ", p, " - ", "Start"}});
     }
     controllerPort1.devices.append(device);
     controllerPort2.devices.append(device);
@@ -89,8 +89,8 @@ Interface::Interface() {
     //device.inputs.append({0, {"Port ", p, " - ", "X"    }});
     //device.inputs.append({0, {"Port ", p, " - ", "Y"    }});
     //device.inputs.append({0, {"Port ", p, " - ", "Z"    }});
-      device.inputs.append({0, {"Port ", p, " - ", "Start"}});
     //device.inputs.append({0, {"Port ", p, " - ", "Mode" }});
+      device.inputs.append({0, {"Port ", p, " - ", "Start"}});
     }
     controllerPort1.devices.append(device);
   }

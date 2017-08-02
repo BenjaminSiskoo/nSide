@@ -6,7 +6,7 @@ ControllerPort controllerPort1;
 ControllerPort controllerPort2;
 ControllerPort extensionPort;
 #include "control-pad/control-pad.cpp"
-#include "fighting-pad-6b/fighting-pad-6b.cpp"
+#include "fighting-pad/fighting-pad.cpp"
 #include "sega-tap/sega-tap.cpp"
 #include "ea-4-way-play/ea-4-way-play.cpp"
 
@@ -41,7 +41,7 @@ auto ControllerPort::connect(uint deviceID) -> void {
   switch(deviceID) { default:
   case ID::Device::None: device = new Controller(port); break;
   case ID::Device::ControlPad: device = new ControlPad(port); break;
-  case ID::Device::FightingPad6B: device = new FightingPad6B(port); break;
+  case ID::Device::FightingPad: device = new FightingPad(port); break;
   case ID::Device::SegaTap: device = new SegaTap(port); break;
   case ID::Device::EA4WayPlay: device = new EA4WayPlay(port); break;
   }
