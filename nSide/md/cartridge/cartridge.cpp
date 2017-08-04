@@ -108,7 +108,7 @@ auto Cartridge::read(uint24 addr) -> uint16 {
     data.byte(1) = rom.data[romAddr + 0];
     data.byte(0) = rom.data[romAddr + 1];
   }
-  if(ram.size && addr >= ram.addrLo && addr <= ram.addrHi && ramEnable) {
+  if(ram.size && addr >= (ram.addrLo & ~1) && addr <= (ram.addrHi | 1) && ramEnable) {
     if(ram.mask & 1) addr >>= 1;
     addr = mirror(addr, ram.size);
     if(ram.mask & 1) {
@@ -123,7 +123,7 @@ auto Cartridge::read(uint24 addr) -> uint16 {
 
 auto Cartridge::write(uint24 addr, uint16 data) -> void {
   //emulating RAM write protect bit breaks some commercial software
-  if(ram.size && addr >= ram.addrLo && addr <= ram.addrHi && ramEnable /* && ramWritable */) {
+  if(ram.size && addr >= (ram.addrLo & ~1) && addr <= (ram.addrHi | 1) && ramEnable /* && ramWritable */) {
     if(ram.mask & 1) addr >>= 1;
     addr = mirror(addr, ram.size);
     if(ram.mask & 1) {
