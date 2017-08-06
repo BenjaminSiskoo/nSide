@@ -27,7 +27,7 @@ auto InputManager::appendHotkeys() -> void {
 
   { auto hotkey = new InputHotkey;
     hotkey->name = "Load Quick State";
-    hotkey->press = [] {
+    hotkey->press = [&] {
       program->loadState(quickStateSlot);
     };
     hotkeys.append(hotkey);

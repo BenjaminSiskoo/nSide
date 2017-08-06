@@ -55,9 +55,11 @@ Presentation::Presentation() {
 //});
   loadShaders();
   synchronizeVideo.setText("Synchronize Video").setChecked(settings["Video/Synchronize"].boolean()).setVisible(false).onToggle([&] {
+    settings["Video/Synchronize"].setValue(synchronizeVideo.checked());
     video->setBlocking(synchronizeVideo.checked());
   });
   synchronizeAudio.setText("Synchronize Audio").setChecked(settings["Audio/Synchronize"].boolean()).onToggle([&] {
+    settings["Audio/Synchronize"].setValue(synchronizeAudio.checked());
     audio->setBlocking(synchronizeAudio.checked());
   });
   muteAudio.setText("Mute Audio").setChecked(settings["Audio/Mute"].boolean()).onToggle([&] {
@@ -286,6 +288,7 @@ auto Presentation::resizeViewport(bool resizeWindow) -> void {
       emulatorHeight -= overscanVertical * 2;
     }
   }
+
   if(!fullScreen()) {
     if(settings["Video/Windowed/AspectCorrection"].boolean()) emulatorWidth *= aspectCorrection;
 

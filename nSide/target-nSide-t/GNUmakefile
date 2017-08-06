@@ -34,7 +34,7 @@ else ifeq ($(platform),macosx)
   ruby += input.quartz input.carbon
 else ifeq ($(platform),linux)
   ruby += video.glx video.xvideo video.xshm video.sdl
-  ruby += audio.oss audio.openal audio.alsa audio.pulseaudio audio.pulseaudiosimple audio.ao
+  ruby += audio.oss audio.alsa audio.openal audio.pulseaudio audio.pulseaudiosimple audio.ao
   ruby += input.sdl input.xlib input.udev
 else ifeq ($(platform),bsd)
   ruby += video.glx video.xvideo video.xshm video.sdl

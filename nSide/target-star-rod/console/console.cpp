@@ -20,6 +20,7 @@ ConsoleWindow::ConsoleWindow() {
     print("System power cycled\n");
   });
   synchronizeAudio.setText("Synchronize Audio").setChecked(settings["Audio/Synchronize"].boolean()).onToggle([&] {
+    settings["Audio/Synchronize"].setValue(synchronizeAudio.checked());
     audio->setBlocking(synchronizeAudio.checked());
   });
   muteAudio.setText("Mute Audio").setChecked(settings["Audio/Mute"].boolean()).onToggle([&] {

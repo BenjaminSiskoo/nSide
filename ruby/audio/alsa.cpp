@@ -146,7 +146,7 @@ private:
   auto queryDevices() -> string_vector {
     string_vector devices;
 
-    const char** list;
+    char** list;
     if(snd_device_name_hint(-1, "pcm", (void***)&list) == 0) {
       uint index = 0;
       while(list[index]) {

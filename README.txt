@@ -443,9 +443,14 @@ Changes from higan: processor/z80 (affects PC10, Master System, Mega Drive)
 ==============================
 Changes from higan: Mega Drive
 ==============================
-   Added support for the Fighting Pad 6B, the 6-button controller. While higan
-  allows mapping the X, Y, and Z buttons but not MODE, they are never actually
-  polled in higan.
+   Added support for the Sega Tap and EA 4 Way Play, both differing and
+  incompatible multitaps by Sega and Electronic Arts. Only the former supports
+  the Fighting Pad's extra buttons.
+
+   Added cheat code support. In the Mega Drive, it is slightly annoying
+  to use compared to other consoles beside the Game Boy Advance; a cheat code
+  will only take effect if its data width matches the CPU's access width
+  exactly (8-bit or 16-bit).
 
 ============================
 Changes from higan: Game Boy
@@ -464,7 +469,7 @@ Changes from higan: Game Boy Advance
   long, the longest of any file dumped by any emulator's exportMemory function).
 
    Added cheat code support. In the Game Boy Advance, it is slightly annoying
-  to use compared to the Famicom, Super Famicom, and Game Boy; a cheat code
+  to use compared to other consoles beside the Mega Drive; a cheat code
   will only take effect if its data width matches the CPU's access width
   exactly (8-bit, 16-bit, or 32-bit).
 
