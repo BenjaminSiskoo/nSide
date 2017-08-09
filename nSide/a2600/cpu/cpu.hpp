@@ -24,7 +24,7 @@ struct CPU : Processor::MOS6502, Thread {
 
   auto nmi(uint16&) -> void {}
 
-privileged:
+private:
   struct IO {
     bool rdyLine;
   } io;

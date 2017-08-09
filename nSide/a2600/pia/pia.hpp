@@ -28,7 +28,7 @@ struct PIA : Thread {
   uint8 ram[128];
   vector<Thread*> peripherals;
 
-privileged:
+private:
   struct TVType { enum : bool { Monochrome, Color };};
   struct Difficulty { enum : bool { B, A };};
 

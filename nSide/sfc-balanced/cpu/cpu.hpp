@@ -82,7 +82,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   vector<Thread*> coprocessors;
   vector<Thread*> peripherals;
 
-privileged:
+debug_private:
   uint version = 2;  //allowed: 1, 2
   uint clockCounter;
 

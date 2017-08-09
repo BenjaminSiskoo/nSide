@@ -16,7 +16,7 @@ struct SMP : Processor::SPC700, Thread {
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
-privileged:
+debug_private:
   struct IO {
     //timing
     uint clockCounter;

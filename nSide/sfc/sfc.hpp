@@ -17,6 +17,7 @@
 // Jonas Quinn       (DSP fixes, Game Boy fixes)
 // kode54
 // krom
+// Ladida            (HDMA timing discovery)
 // LostTemplar       (ST-018 program ROM analysis)
 // Matthew Callis
 // Nach
@@ -39,7 +40,7 @@
 #include <emulator/scheduler.hpp>
 #include <emulator/cheat.hpp>
 
-#include <processor/arm/arm.hpp>
+#include <processor/arm7tdmi/arm7tdmi.hpp>
 #include <processor/gsu/gsu.hpp>
 #include <processor/hg51b/hg51b.hpp>
 #include <processor/spc700/spc700.hpp>

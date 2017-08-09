@@ -1,7 +1,4 @@
-struct CPU : Processor::ARM, Thread, IO {
-  using ARM::read;
-  using ARM::write;
-
+struct CPU : Processor::ARM7TDMI, Thread, IO {
   struct Interrupt { enum : uint {
     VBlank       = 0x0001,
     HBlank       = 0x0002,
@@ -38,9 +35,9 @@ struct CPU : Processor::ARM, Thread, IO {
   auto prefetchRead() -> uint16;
 
   //bus.cpp
-  auto _idle() -> void override;
-  auto _read(uint mode, uint32 addr) -> uint32 override;
-  auto _write(uint mode, uint32 addr, uint32 word) -> void override;
+  auto sleep() -> void override;
+  auto get(uint mode, uint32 addr) -> uint32 override;
+  auto set(uint mode, uint32 addr, uint32 word) -> void override;
   auto _wait(uint mode, uint32 addr) -> uint;
 
   //io.cpp

@@ -4,10 +4,10 @@ namespace Emulator {
 
 #if defined(DEBUGGER)
   #define debug(id, ...) if(debugger.id) debugger.id(__VA_ARGS__)
-  #define privileged public
+  #define debug_private public
 #else
   #define debug(id, ...)
-  #define privileged private
+  #define debug_private private
 #endif
 
 }

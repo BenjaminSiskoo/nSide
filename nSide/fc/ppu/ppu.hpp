@@ -162,7 +162,7 @@ struct PPU : Thread, PPUcounter {
     OAM soam[8];  //secondary
   } l;
 
-privileged:
+private:
 //Emulator::Raster raster;
   uint32* output = nullptr;
 

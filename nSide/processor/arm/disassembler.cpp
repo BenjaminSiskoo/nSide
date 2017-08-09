@@ -162,7 +162,7 @@ auto ARM::disassembleInstructionARM(uint32 pc) -> string {
   //load_immediate()
   //ldr{condition}s(h,b) rd,[rn{,+/-offset}]{!}
   //ldr{condition}s(h,b) rd,[rn]{,+/-offset}
-  if((instruction & 0x0e5000b0) == 0x005000b0) {
+  if((instruction & 0x0e5000d0) == 0x005000d0) {
     uint4 condition = instruction >> 28;
     uint1 pre = instruction >> 24;
     uint1 up = instruction >> 23;

@@ -20,7 +20,7 @@ struct TIA : Thread {
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
-privileged:
+private:
   struct IO {
     uint8 hcounter;
     uint vcounter;  //not actually in TIA; needed for rendering
