@@ -11,7 +11,7 @@ static const string _conditions[] = {
 #define _comp(mode) (mode >=  8 && mode <= 11)
 #define _math(mode) (mode <=  7 || mode == 12 || mode == 14)
 
-auto ARM7TDMI::disassemble(maybe<uint32> pc, maybe<uint1> thumb) -> string {
+auto ARM7TDMI::disassemble(maybe<uint32> pc, maybe<boolean> thumb) -> string {
   if(!pc) pc = pipeline.execute.address;
   if(!thumb) thumb = cpsr().t;
 
@@ -44,7 +44,7 @@ auto ARM7TDMI::disassembleRegisters() -> string {
   output.append(hex(cpsr().m, 2L));
   if(cpsr().m == PSR::USR || cpsr().m == PSR::SYS) return output;
 
-  output.append("spsr:");
+  output.append(" spsr:");
   output.append(spsr().n ? "N" : "n");
   output.append(spsr().z ? "Z" : "z");
   output.append(spsr().c ? "C" : "c");

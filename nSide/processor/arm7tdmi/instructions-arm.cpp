@@ -2,22 +2,22 @@ auto ARM7TDMI::armALU(uint4 mode, uint4 d, uint4 n, uint32 rm) -> void {
   uint32 rn = r(n);
 
   switch(mode) {
-  case  0: r(d) = BIT(rn & rm);          break;  //AND
-  case  1: r(d) = BIT(rn ^ rm);          break;  //EOR
-  case  2: r(d) = SUB(rn, rm, 1);        break;  //SUB
-  case  3: r(d) = SUB(rm, rn, 1);        break;  //RSB
-  case  4: r(d) = ADD(rn, rm, 0);        break;  //ADD
+  case  0: r(d) = BIT(rn & rm); break;  //AND
+  case  1: r(d) = BIT(rn ^ rm); break;  //EOR
+  case  2: r(d) = SUB(rn, rm, 1); break;  //SUB
+  case  3: r(d) = SUB(rm, rn, 1); break;  //RSB
+  case  4: r(d) = ADD(rn, rm, 0); break;  //ADD
   case  5: r(d) = ADD(rn, rm, cpsr().c); break;  //ADC
   case  6: r(d) = SUB(rn, rm, cpsr().c); break;  //SBC
   case  7: r(d) = SUB(rm, rn, cpsr().c); break;  //RSC
-  case  8:        BIT(rn & rm);          break;  //TST
-  case  9:        BIT(rn ^ rm);          break;  //TEQ
-  case 10:        SUB(rn, rm, 1);        break;  //CMP
-  case 11:        ADD(rn, rm, 0);        break;  //CMN
-  case 12: r(d) = BIT(rn | rm);          break;  //ORR
-  case 13: r(d) = BIT(rm);                      break;  //MOV
-  case 14: r(d) = BIT(rn & ~rm);         break;  //BIC
-  case 15: r(d) = BIT(~rm);                     break;  //MVN
+  case  8:        BIT(rn & rm); break;  //TST
+  case  9:        BIT(rn ^ rm); break;  //TEQ
+  case 10:        SUB(rn, rm, 1); break;  //CMP
+  case 11:        ADD(rn, rm, 0); break;  //CMN
+  case 12: r(d) = BIT(rn | rm); break;  //ORR
+  case 13: r(d) = BIT(rm); break;  //MOV
+  case 14: r(d) = BIT(rn & ~rm); break;  //BIC
+  case 15: r(d) = BIT(~rm); break;  //MVN
   }
 
   if(exception() && d == 15 && opcode.bit(20)) {
