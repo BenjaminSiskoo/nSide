@@ -72,7 +72,6 @@ auto System::power() -> void {
   Emulator::audio.setInterface(interface);
 
   scheduler.reset();
-  bus.power();
   cartridge.power();
   cpu.power();
   vdp.power();

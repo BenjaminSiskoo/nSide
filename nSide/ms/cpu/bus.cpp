@@ -1,45 +1,46 @@
-#include <ms/ms.hpp>
+auto CPU::read(uint16 addr) -> uint8 {
+  uint8 data;
 
-namespace MasterSystem {
+  if(auto result = cartridge.read(addr)) {
+    data = result();
+  } else if(addr >= 0xc000) {
+    data = ram[addr & 0x1fff];
+  }
 
-Bus bus;
-#include "serialization.cpp"
+  if(auto result = cheat.find<1>(addr, data)) {
+    data = result();
+  }
 
-auto Bus::read(uint16 addr) -> uint8 {
-  auto data = read_(addr);
-  if(auto result = cheat.find<1>(addr, data)) data = result();
   return data;
 }
 
-auto Bus::read_(uint16 addr) -> uint8 {
-  if(auto data = cartridge.read(addr)) return data();
-  if(addr >= 0xc000) return ram[addr & 0x1fff];
-  return 0x00;
+auto CPU::write(uint16 addr, uint8 data) -> void {
+  if(cartridge.write(addr, data)) {
+  } else if(addr >= 0xc000) {
+    ram[addr & 0x1fff] = data;
+  }
 }
 
-auto Bus::write(uint16 addr, uint8 data) -> void {
-  if(cartridge.write(addr, data)) return;
-  if(addr >= 0xc000) ram[addr & 0x1fff] = data;
-}
+auto CPU::in(uint8 addr) -> uint8 {
+  if(Model::GameGear() && addr < 0x06) {
+    if(addr == 0x00) {
+      bool start = !platform->inputPoll(ID::Port::Hardware, ID::Device::GameGearControls, 6);
+      return start << 7 | 0x7f;
+    }
+    return 0xff;  //Ports $03, $04, and $05 are for the Gear to Gear Cable
+  }
 
-auto Bus::in(uint8 addr) -> uint8 {
   switch(addr >> 6) {
 
   case 0: {
-    if(Model::GameGear() && (addr < 0x06)) {
-      if(addr == 0x00) {
-        bool start = !platform->inputPoll(ID::Port::Hardware, ID::Device::GameGearControls, 6);
-        return start << 7 | 0x7f;
-      }
-      return 0xff;  //Ports $03, $04, and $05 are for the Gear to Gear Cable
-    } else if(!addr.bit(0)) {
+    if(!addr.bit(0)) {
       uint8 data = 0x00;
-      data.bit(2) = disableIO;
-      data.bit(3) = disableBIOS;
-      data.bit(4) = disableRAM;
-      data.bit(5) = disableMyCard;
-      data.bit(6) = disableCartridge;
-      data.bit(7) = disableExpansion;
+      data.bit(2) = disable.io;
+      data.bit(3) = disable.bios;
+      data.bit(4) = disable.ram;
+      data.bit(5) = disable.mycard;
+      data.bit(6) = disable.cartridge;
+      data.bit(7) = disable.expansion;
       return data;
     } else {
       return 0xff;  //SMS1 = MDR, SMS2 = 0xff
@@ -93,7 +94,7 @@ auto Bus::in(uint8 addr) -> uint8 {
   unreachable;
 }
 
-auto Bus::out(uint8 addr, uint8 data) -> void {
+auto CPU::out(uint8 addr, uint8 data) -> void {
   if(addr == 0x06) {
     if(Model::GameGear()) return psg.balance(data);
   }
@@ -102,12 +103,12 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
 
   case 0: {
     if(!addr.bit(0)) {
-      disableIO        = data.bit(2);
-      disableBIOS      = data.bit(3);
-      disableRAM       = data.bit(4);
-      disableMyCard    = data.bit(5);
-      disableCartridge = data.bit(6);
-      disableExpansion = data.bit(7);
+      disable.io = data.bit(2);
+      disable.bios = data.bit(3);
+      disable.ram = data.bit(4);
+      disable.mycard = data.bit(5);
+      disable.cartridge = data.bit(6);
+      disable.expansion = data.bit(7);
     } else {
       //Writing to TH lines has no effect in Japanese systems.
       /*
@@ -145,16 +146,4 @@ auto Bus::out(uint8 addr, uint8 data) -> void {
   }
 
   }
-}
-
-auto Bus::power() -> void {
-  ramMask = Model::SG1000() ? 0x3ff : 0x1fff;
-  disableIO        = false;
-  disableBIOS      = true;
-  disableRAM       = false;
-  disableMyCard    = true;
-  disableCartridge = false;
-  disableExpansion = true;
-}
-
 }

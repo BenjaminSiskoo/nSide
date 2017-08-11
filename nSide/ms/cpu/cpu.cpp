@@ -3,6 +3,7 @@
 namespace MasterSystem {
 
 CPU cpu;
+#include "bus.cpp"
 #include "serialization.cpp"
 
 auto CPU::Enter() -> void {
@@ -53,16 +54,21 @@ auto CPU::setINT(bool value) -> void {
 }
 
 auto CPU::power() -> void {
+  Z80::bus = this;
   Z80::power();
   create(CPU::Enter, system.colorburst());
 
   r.pc = 0x0000;  //reset vector address
 
   memory::fill(&state, sizeof(State));
-}
 
-CPU::CPU() {
-  Z80::bus = &MasterSystem::bus;
+  ramMask = Model::SG1000() ? 0x3ff : 0x1fff;
+  disable.io = false;
+  disable.bios = true;
+  disable.ram = false;
+  disable.mycard = true;
+  disable.cartridge = false;
+  disable.expansion = true;
 }
 
 }

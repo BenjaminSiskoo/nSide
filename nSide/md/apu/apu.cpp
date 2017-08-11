@@ -3,6 +3,7 @@
 namespace MegaDrive {
 
 APU apu;
+#include "bus.cpp"
 #include "serialization.cpp"
 
 auto APU::Enter() -> void {
@@ -56,7 +57,7 @@ auto APU::load(Markup::Node node) -> bool {
 }
 
 auto APU::power() -> void {
-  Z80::bus = &busAPU;
+  Z80::bus = this;
   Z80::power();
   reset();
 }

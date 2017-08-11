@@ -49,7 +49,6 @@ namespace MasterSystem {
 
   #include <ms/system/system.hpp>
   #include <ms/cartridge/cartridge.hpp>
-  #include <ms/bus/bus.hpp>
 }
 
 #include <ms/interface/interface.hpp>

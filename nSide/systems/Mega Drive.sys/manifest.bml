@@ -1,8 +1,7 @@
 system name:Mega Drive
-  bus
-    //rom name=tmss.rom size=0x800
+  cpu version=0
     ram name=work.ram size=0x10000 volatile
-  cpu
+    rom name=tmss.rom size=0x800
   apu
     ram name=audio.ram size=0x2000 volatile
   vdp

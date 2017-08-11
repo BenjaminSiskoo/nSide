@@ -16,6 +16,7 @@ Settings::Settings() {
   set("Library/DevState", 1);
 
   set("Video/Driver", ruby::Video::optimalDriver());
+  set("Video/Driver/Crashed", false);
   set("Video/Synchronize", false);
   set("Video/Shader", "Blur");
   set("Video/BlurEmulation", true);
@@ -42,6 +43,7 @@ Settings::Settings() {
   set("Video/Fullscreen/Exclusive", false);
 
   set("Audio/Driver", ruby::Audio::optimalDriver());
+  set("Audio/Driver/Crashed", false);
   set("Audio/Device", "");
   set("Audio/Frequency", 48000);
   set("Audio/Latency", 0);
@@ -53,11 +55,12 @@ Settings::Settings() {
   set("Audio/Reverb/Enable", false);
 
   set("Input/Driver", ruby::Input::optimalDriver());
+  set("Input/Driver/Crashed", false);
   set("Input/Frequency", 5);
   set("Input/FocusLoss/Pause", false);
   set("Input/FocusLoss/AllowInput", false);
 }
 
-auto Settings::quit() -> void {
+auto Settings::save() -> void {
   file::write(locate("settings.bml"), BML::serialize(*this));
 }
