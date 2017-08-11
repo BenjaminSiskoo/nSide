@@ -65,6 +65,7 @@ auto Cartridge::load() -> bool {
 auto Cartridge::save() -> void {
   auto document = BML::unserialize(information.manifest);
 
+  if(document["board/ram/volatile"]) return;
   if(auto name = document["board/ram/name"].text()) {
     if(auto fp = platform->open(pathID(), name, File::Write)) {
       fp->write(ram.data, ram.size);
