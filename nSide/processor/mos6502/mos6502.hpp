@@ -63,7 +63,6 @@ struct MOS6502 {
   auto instruction() -> void;
 
   //instructions.cpp
-
   auto instructionAbsoluteModify(fp alu) -> void;
   auto instructionAbsoluteModify(fp alu, uint8 index) -> void;
   auto instructionAbsoluteRead(fp alu, uint8& data) -> void;
@@ -132,6 +131,9 @@ struct MOS6502 {
   //disassembler.cpp
   auto disassemble(uint16 pc) -> string;
 
+  //set to false to disable BCD mode in ADC, SBC instructions
+  bool BCD = true;
+
   struct Flags {
     bool c;  //carry
     bool z;  //zero
@@ -164,8 +166,6 @@ struct MOS6502 {
     Flags  p;
     uint8  mdr;
   } r;
-
-  bool BCD = true;
 
   uint8 xaaNoise;
   uint8 lxaNoise;

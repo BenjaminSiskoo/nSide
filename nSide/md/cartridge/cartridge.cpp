@@ -20,39 +20,43 @@ auto Cartridge::load() -> bool {
   auto document = BML::unserialize(information.manifest);
   information.title = document["information/title"].text();
 
-  if(!region() || region() == "Auto") {
-    if(document["board/region"].text() == "ntsc-j") information.region = "NTSC-J";
-    if(document["board/region"].text() == "ntsc-u") information.region = "NTSC-U";
-    if(document["board/region"].text() == "pal") information.region = "PAL";
+  if(information.region == "Auto") {
+    if(auto region = document["board/region"].text()) {
+      information.region = region.upcase();
+    } else {
+      information.region = "NTSC-J";
+    }
   }
 
   if(auto node = document["board/rom"]) {
-    rom.size = node["size"].natural();
-    auto addrRange = node["map/address"].text().split("-", 1L);
-    rom.addrLo = addrRange(0) ? addrRange(0).hex() : 0x000000;
-    rom.addrHi = addrRange(1) ? addrRange(1).hex() : 0x3fffff;
-    rom.mask = 0;
+    rom.size = node["size"].natural() >> 1;
+    rom.mask = bit::round(rom.size) - 1;
     if(rom.size) {
-      rom.data = new uint8[rom.size];
+      rom.data = new uint16[rom.mask + 1]();
       if(auto name = node["name"].text()) {
         if(auto fp = platform->open(pathID(), name, File::Read, File::Required)) {
-          fp->read(rom.data, rom.size);
+          for(uint n : range(rom.size)) rom.data[n] = fp->readm(2);
         }
       }
     }
   }
 
   if(auto node = document["board/ram"]) {
-    ram.size = node["size"].natural();
-    auto addrRange = node["map/address"].text().split("-", 1L);
-    ram.addrLo = addrRange(0) ? addrRange(0).hex() : 0x200000;
-    ram.addrHi = addrRange(1) ? addrRange(1).hex() : 0x3fffff;
-    ram.mask = node["map/mask"].natural();
+    if(auto mode = node["mode"].text()) {
+      if(mode == "lo"  ) ram.bits = 0x00ff;
+      if(mode == "hi"  ) ram.bits = 0xff00;
+      if(mode == "word") ram.bits = 0xffff;
+    }
+    ram.size = node["size"].natural() >> (ram.bits == 0xffff);
+    ram.mask = bit::round(ram.size) - 1;
     if(ram.size) {
-      ram.data = new uint8[ram.size];
+      ram.data = new uint16[ram.mask + 1]();
       if(auto name = node["name"].text()) {
         if(auto fp = platform->open(pathID(), name, File::Read)) {
-          fp->read(ram.data, ram.size);
+          for(uint n : range(ram.size)) {
+            if(ram.bits != 0xffff) ram.data[n] = fp->readm(1) * 0x0101;
+            if(ram.bits == 0xffff) ram.data[n] = fp->readm(2);
+          }
         }
       }
     }
@@ -68,7 +72,10 @@ auto Cartridge::save() -> void {
   if(document["board/ram/volatile"]) return;
   if(auto name = document["board/ram/name"].text()) {
     if(auto fp = platform->open(pathID(), name, File::Write)) {
-      fp->write(ram.data, ram.size);
+      for(uint n : range(ram.size)) {
+        if(ram.bits != 0xffff) fp->writem(ram.data[n], 1);
+        if(ram.bits == 0xffff) fp->writem(ram.data[n], 2);
+      }
     }
   }
 }
@@ -86,53 +93,21 @@ auto Cartridge::power() -> void {
   for(auto n : range(8)) bank[n] = n;
 }
 
-alwaysinline auto mirror(uint addr, uint size) -> uint {
-  if(size == 0) return 0;
-  uint base = 0;
-  uint mask = 1 << 23;
-  while(addr >= size) {
-    while(!(addr & mask)) mask >>= 1;
-    addr -= mask;
-    if(size > mask) {
-      size -= mask;
-      base += mask;
-    }
-    mask >>= 1;
+auto Cartridge::read(uint24 address) -> uint16 {
+  if(address.bit(21) && ram.size && ramEnable) {
+    return ram.data[address >> 1 & ram.mask];
+  } else {
+    address = bank[address.bits(19,21)] << 19 | address.bits(0,18);
+    return rom.data[address >> 1 & rom.mask];
   }
-  return base + addr;
 }
 
-auto Cartridge::read(uint24 addr) -> uint16 {
-  uint16 data = 0x0000;
-  if(addr >= rom.addrLo && addr <= rom.addrHi) {
-    uint24 romAddr = mirror(bank[addr >> 19 & 7] << 19 | (addr & 0x7ffff), rom.size);
-    data.byte(1) = rom.data[romAddr + 0];
-    data.byte(0) = rom.data[romAddr + 1];
-  }
-  if(ram.size && addr >= (ram.addrLo & ~1) && addr <= (ram.addrHi | 1) && ramEnable) {
-    if(ram.mask & 1) addr >>= 1;
-    addr = mirror(addr, ram.size);
-    if(ram.mask & 1) {
-      data.byte(1 - ram.addrLo.bit(0)) = ram.data[addr];
-    } else {
-      data.byte(1) = ram.data[addr + 0];
-      data.byte(0) = ram.data[addr + 1];
-    }
-  }
-  return data;
-}
-
-auto Cartridge::write(uint24 addr, uint16 data) -> void {
+auto Cartridge::write(uint24 address, uint16 data) -> void {
   //emulating RAM write protect bit breaks some commercial software
-  if(ram.size && addr >= (ram.addrLo & ~1) && addr <= (ram.addrHi | 1) && ramEnable /* && ramWritable */) {
-    if(ram.mask & 1) addr >>= 1;
-    addr = mirror(addr, ram.size);
-    if(ram.mask & 1) {
-      ram.data[addr] = data.byte(1 - ram.addrLo.bit(0));
-    } else {
-      ram.data[addr + 0] = data.byte(1);
-      ram.data[addr + 1] = data.byte(0);
-    }
+  if(address.bit(21) && ram.size && ramEnable /* && ramWritable */) {
+    if(ram.bits == 0x00ff) data = data.byte(0) * 0x0101;
+    if(ram.bits == 0xff00) data = data.byte(1) * 0x0101;
+    ram.data[address >> 1 & ram.mask] = data;
   }
 }
 

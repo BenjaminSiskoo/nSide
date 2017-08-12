@@ -56062,7 +56062,7 @@ cartridge sha256:9b6b0099f2b97ec3a18fef7a4935bfad235fdb83669dd99c3731a69506322cb
   name:Magic Knight Rayearth (Japan)
   cheat
     description:Infinite Gold
-    code:7E0D8A3F+7E0D8B42+7E0D8C0F
+    code:7e0d8a=3f+7e0d8b=42+7e0d8c=0f
   cheat
     description:No random battles
     code:c02a90=80
@@ -85946,7 +85946,7 @@ cartridge sha256:c06af1a1c2a804e4169fd9bfd6eee7073545d88c97febc96c345dd10efd7754
   name:Super Mario Bros. Deluxe (USA, Europe) (Rev B)
   cheat
     description:Invincibility - Star effect
-    code:01FFDAC1+01FFDBC1
+    code:01ff=c1?da+01ff=c1?db
   cheat
     description:Fireballs go through all enemies and obstacles
     code:40bb=28?18+40cb=28?18

@@ -10,7 +10,6 @@ struct System {
   auto runToSave() -> void;
 
   auto init() -> void;
-  auto term() -> void;
   auto load(Emulator::Interface*) -> bool;
   auto save() -> void;
   auto unload() -> void;

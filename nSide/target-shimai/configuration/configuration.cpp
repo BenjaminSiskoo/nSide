@@ -15,8 +15,7 @@ Settings::Settings() {
   set("Library/IgnoreManifests", false);
   set("Library/DevState", 1);
 
-  set("Video/Driver", ruby::Video::optimalDriver());
-  set("Video/Driver/Crashed", false);
+  set("Video/Driver", ruby::Video::safestDriver());
   set("Video/Synchronize", false);
   set("Video/Shader", "Blur");
   set("Video/BlurEmulation", true);
@@ -42,8 +41,7 @@ Settings::Settings() {
   set("Video/Fullscreen/IntegralScaling", true);
   set("Video/Fullscreen/Exclusive", false);
 
-  set("Audio/Driver", ruby::Audio::optimalDriver());
-  set("Audio/Driver/Crashed", false);
+  set("Audio/Driver", ruby::Audio::safestDriver());
   set("Audio/Device", "");
   set("Audio/Frequency", 48000);
   set("Audio/Latency", 0);
@@ -54,11 +52,12 @@ Settings::Settings() {
   set("Audio/Balance", 50);
   set("Audio/Reverb/Enable", false);
 
-  set("Input/Driver", ruby::Input::optimalDriver());
-  set("Input/Driver/Crashed", false);
+  set("Input/Driver", ruby::Input::safestDriver());
   set("Input/Frequency", 5);
   set("Input/FocusLoss/Pause", false);
   set("Input/FocusLoss/AllowInput", false);
+
+  set("Crashed", false);
 }
 
 auto Settings::save() -> void {

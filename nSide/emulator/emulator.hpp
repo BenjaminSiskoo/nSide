@@ -13,12 +13,12 @@ using namespace nall;
 namespace Emulator {
   static const string Name           = "nSide";
   static const string OriginalName   = "higan";
-  static const string Version        = "009.13";
-  static const string FromVersion    = "103.32";
+  static const string Version        = "009.14";
+  static const string FromVersion    = "104";
   static const string Author         = "hex_usr";
   static const string OriginalAuthor = "byuu";
   static const string License        = "GPLv3";
-  static const string Website        = "http://byuu.org/";
+  static const string Website        = "https://board.byuu.org/";
   static const string_vector Contributors = {
     "Alyosha_TAS (Atari 2600 PIA, TIA, timing details)",
     "Andreas Naive (S-DD1 decompression algorithm)",
@@ -67,7 +67,7 @@ namespace Emulator {
   };
 
   //incremented only when serialization format changes
-  static const string SerializerVersion = "009.13(103.32)";
+  static const string SerializerVersion = "009.14(104)";
 
   namespace Constants {
     namespace Colorburst {

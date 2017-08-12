@@ -124,7 +124,7 @@ auto MOS6502::algorithmROR(uint8 i) -> uint8 {
 }
 
 auto MOS6502::algorithmSBC(uint8 i) -> uint8 {
-  i ^= 0xff;
+  i = ~i;
   int16 o;
   if(!BCD || !D) {
     o = A + i + C;

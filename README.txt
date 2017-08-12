@@ -1,6 +1,6 @@
-﻿nSide v009r13 (2017-06-21)
+﻿nSide v009r14 (2017-08-12)
 
-A fork of higan v103 by byuu (http://byuu.org/emulation/higan/), which was
+A fork of higan v104 by byuu (http://byuu.org/emulation/higan/), which was
 renamed to exclude "higan" at byuu's request.
 
 nSide adds new devices to the Famicom emulator's controller ports. The supported
@@ -33,7 +33,7 @@ including ones that use the NES Four Score such as A Nightmare on Elm Street. If
 the expansion slot is set to Gamepad, JoyPair, or 4-Players Adaptor, this can
 result in controller inputs meant for Player 3 controlling Player 1 as well.
 
-The interface also has a Save Screenshot function, which can save a screenshot
+The interface now has a Save Screenshot function, which can save a screenshot
 in PNG format at any time while a game is running. Please be aware that the PNG
 compression is somewhat poor.
 
@@ -104,7 +104,10 @@ Super Famicom:
   Known to affect actual hardware.
 
 Master System:
-  *Many, many bugs. This core is still in alpha.
+  *Alex Kidd: High-Tech World does not darken the lower part of the screen
+  where text displays, making it nearly impossible to read due to the light
+  yellow background. Especially noticeable, as the game includes a written
+  geography test as a mandatory challenge.
 
 Mega Drive:
   *Many, many bugs. This core is still in alpha.
@@ -198,89 +201,89 @@ Changes from higan: Famicom
    Added support for the 4-Players Adaptor.
 
    Added new board types:
-    NES-EVENT              // Nintendo World Championships 1990
-    NES-QJ                 // Super Spike V'Ball / Nintendo World Cup
-    NES-SF1ROM             // Bases Loaded II (1.2)
-    HVC-UN1ROM             // 戦場の狼 (Senjou no Ookami) (JPN)
-    PAL-ZZ                 // Super Mario Bros. / Tetris / Nintendo World Cup
-    BANDAI-74*161/02/74    // Oeka Kids (JPN)
-    BANDAI-74*161/161/32   // Kamen Rider Club (JPN)
-    BANDAI-PT-554          // Family Trainer 3 - Aerobics Studio (JPN)
-    IREM-74*161/161/21/138 // ナポレオン戦記 (Napoleon Senki) (JPN)
-    IREM-G101              // Image Fight (JPN)
-    IREM-H3001             // 大工の源さん2 (Daiku no Gen-san 2) (JPN)
-    IREM-HOLYDIVER         // Holy Diver (JPN)
-    IREM-TAM-S1            // 快傑ヤンチャ丸 (Kaiketsu Yanchamaru 2) (JPN)
-    JALECO-JF-05..08       // 忍者じゃじゃ丸くん (Ninja Jajamaru-kun) (JPN)
-    JALECO-JF-09           // じゃじゃ丸の大冒険 (Jajamaru no Daibouken) (JPN)
-    JALECO-JF-10           // うる生やつら ルムのウエヂングベル (Urusei Yatsura) (JPN)
-    JALECO-JF-11           // 妖怪倶楽部 (Youkai Club) (JPN)
-    JALECO-JF-14           // バイオ戦士DAN インクリーサーとの闘い (Bio Senshi DAN) (JPN)
-    JALECO-JF-16           // 宇宙船コスモキャリア (Uchuusen: Cosmo Carrier) (JPN)
-    JALECO-JF-24           // Magic John (JPN)
-    JALECO-JF-25           // 忍者じゃじゃ丸 銀河大作戦 (Ninja Jajamaru G.D.) (JPN)
+    NES-EVENT               //Nintendo World Championships 1990
+    NES-QJ                  //Super Spike V'Ball / Nintendo World Cup
+    NES-SF1ROM              //Bases Loaded II (1.2)
+    HVC-UN1ROM              //戦場の狼 (Senjou no Ookami) (JPN)
+    PAL-ZZ                  //Super Mario Bros. / Tetris / Nintendo World Cup
+    BANDAI-74*161/02/74     //Oeka Kids (JPN)
+    BANDAI-74*161/161/32    //Kamen Rider Club (JPN)
+    BANDAI-PT-554           //Family Trainer 3 - Aerobics Studio (JPN)
+    IREM-74*161/161/21/138  //ナポレオン戦記 (Napoleon Senki) (JPN)
+    IREM-G101               //Image Fight (JPN)
+    IREM-H3001              //大工の源さん2 (Daiku no Gen-san 2) (JPN)
+    IREM-HOLYDIVER          //Holy Diver (JPN)
+    IREM-TAM-S1             //快傑ヤンチャ丸 (Kaiketsu Yanchamaru 2) (JPN)
+    JALECO-JF-05..08        //忍者じゃじゃ丸くん (Ninja Jajamaru-kun) (JPN)
+    JALECO-JF-09            //じゃじゃ丸の大冒険 (Jajamaru no Daibouken) (JPN)
+    JALECO-JF-10            //うる生やつら ルムのウエヂングベル (Urusei Yatsura) (JPN)
+    JALECO-JF-11            //妖怪倶楽部 (Youkai Club) (JPN)
+    JALECO-JF-14            //バイオ戦士DAN インクリーサーとの闘い (Bio Senshi DAN) (JPN)
+    JALECO-JF-16            //宇宙船コスモキャリア (Uchuusen: Cosmo Carrier) (JPN)
+    JALECO-JF-24            //Magic John (JPN)
+    JALECO-JF-25            //忍者じゃじゃ丸 銀河大作戦 (Ninja Jajamaru G.D.) (JPN)
     NAMCOT-129
-    NAMCOT-163             // 貝獣物語 (Kaijuu Monogatari) (JPN)
+    NAMCOT-163              //貝獣物語 (Kaijuu Monogatari) (JPN)
     NAMCOT-175
     NAMCOT-340
-    NAMCOT-34xx            // SkyKid (JPN), The Quest of Ki (JPN)
-    SUNSOFT-1              // アトランチスの謎 (Atlantis no Nazo) (JPN)
-    SUNSOFT-4              // After Burner (JPN)
+    NAMCOT-34xx             //SkyKid (JPN), The Quest of Ki (JPN)
+    SUNSOFT-1               //アトランチスの謎 (Atlantis no Nazo) (JPN)
+    SUNSOFT-4               //After Burner (JPN)
     TAITO-TC0190FMC
     TAITO-TC0350FMR
     TAITO-TC0690FMC
 
    Added aliases for existing board classes:
-    HVC-??????      to NES-??????  // Games released in Japan
-    NES-HROM        to NES-NROM    // Donkey Kong Jr. (JPN)
-    NES-RROM        to NES-NROM    // Duck Hunt (JPN)
-    NES-RROM-128    to NES-NROM    // Clu Clu Land (USA)
-    NES-RTROM       to NES-NROM    // Excitebike (JPN)
-    NES-SNWEPROM    to NES-SxROM   // Final Fantasy II Prototype (USA)
-    NES-SROM        to NES-NROM    // Mario Bros. (JPN)
-    NES-STROM       to NES-NROM    // Pinball (JPN)
-    BANDAI-FCG-1    to BANDAI-FCG  // ドラゴンボール　大魔王復活 (JPN)
-                                   // (Dragon Ball: Dai Maou Fukkatsu)
-    BANDAI-FCG-2    to BANDAI-FCG  // ドラゴンボール３　悟空伝 (JPN)
-                                   // (Dragon Ball 3: Gokuu Den)
-    BANDAI-JUMP2    to BANDAI-FCG  // ファミコンジャンプII 最強の７人 (JPN)
-                                   // (Famicom Jump II: Saikyou no 7 Nin)
-    BANDAI-LZ93D50  to BANDAI-FCG  // クレヨンしんちゃん オラとポイポイ (JPN)
-                                   // (Crayon Shin-chan: Ora to Poi Poi)
-    IREM-BNROM      to NES-BNROM   // 魔鐘 (JPN)
-                                   // (Mashou)
-    IREM-FCG-1      to BANDAI-FCG  // 西村京太郎ミステリー ブルートレイン殺人事件 (JPN)
-                                   // (Nishimura Kyoutarou Mystery: Blue Train
-                                   // Satsujin Jiken)
-    IREM-NROM-128   to NES-NROM    // Zippy Race (JPN)
-    IREM-NROM-256   to NES-NROM    // Spelunker (JPN)
-    IREM-UNROM      to NES-UNROM   // Spelunker II (JPN)
-    KONAMI-CNROM    to NES-CNROM   // Gradius (JPN)
-    KONAMI-NROM-128 to NES-NROM    // Road Fighter (JPN)
-    KONAMI-SLROM    to NES-SLROM   // The Adventures of Bayou Billy (USA)
-    KONAMI-TLROM    to NES-TLROM   // Super C (USA)
-    KONAMI-UNROM    to NES-UNROM   // Life Force (USA)
-    NAMCOT-3301     to NES-NROM    // Galaxian (JPN)
-    NAMCOT-3302     to NES-NROM    // Mappy (JPN)
-    NAMCOT-3305     to NES-NROM    // The Tower of Druaga (JPN)
-    NAMCOT-3311     to NES-NROM    // Tag Team Pro-Wrestling (JPN)
-    NAMCOT-3312     to NES-NROM    // Dig Dug II (JPN)
+    HVC-??????      to NES-??????   //Games released in Japan
+    NES-HROM        to NES-NROM     //Donkey Kong Jr. (JPN)
+    NES-RROM        to NES-NROM     //Duck Hunt (JPN)
+    NES-RROM-128    to NES-NROM     //Clu Clu Land (USA)
+    NES-RTROM       to NES-NROM     //Excitebike (JPN)
+    NES-SNWEPROM    to NES-SxROM    //Final Fantasy II Prototype (USA)
+    NES-SROM        to NES-NROM     //Mario Bros. (JPN)
+    NES-STROM       to NES-NROM     //Pinball (JPN)
+    BANDAI-FCG-1    to BANDAI-FCG   //ドラゴンボール　大魔王復活 (JPN)
+                                    //(Dragon Ball: Dai Maou Fukkatsu)
+    BANDAI-FCG-2    to BANDAI-FCG   //ドラゴンボール３　悟空伝 (JPN)
+                                    //(Dragon Ball 3: Gokuu Den)
+    BANDAI-JUMP2    to BANDAI-FCG   //ファミコンジャンプII 最強の７人 (JPN)
+                                    //(Famicom Jump II: Saikyou no 7 Nin)
+    BANDAI-LZ93D50  to BANDAI-FCG   //クレヨンしんちゃん オラとポイポイ (JPN)
+                                    //(Crayon Shin-chan: Ora to Poi Poi)
+    IREM-BNROM      to NES-BNROM    //魔鐘 (JPN)
+                                    //(Mashou)
+    IREM-FCG-1      to BANDAI-FCG   //西村京太郎ミステリー ブルートレイン殺人事件 (JPN)
+                                    //(Nishimura Kyoutarou Mystery: Blue Train
+                                    //Satsujin Jiken)
+    IREM-NROM-128   to NES-NROM     //Zippy Race (JPN)
+    IREM-NROM-256   to NES-NROM     //Spelunker (JPN)
+    IREM-UNROM      to NES-UNROM    //Spelunker II (JPN)
+    KONAMI-CNROM    to NES-CNROM    //Gradius (JPN)
+    KONAMI-NROM-128 to NES-NROM     //Road Fighter (JPN)
+    KONAMI-SLROM    to NES-SLROM    //The Adventures of Bayou Billy (USA)
+    KONAMI-TLROM    to NES-TLROM    //Super C (USA)
+    KONAMI-UNROM    to NES-UNROM    //Life Force (USA)
+    NAMCOT-3301     to NES-NROM     //Galaxian (JPN)
+    NAMCOT-3302     to NES-NROM     //Mappy (JPN)
+    NAMCOT-3305     to NES-NROM     //The Tower of Druaga (JPN)
+    NAMCOT-3311     to NES-NROM     //Tag Team Pro-Wrestling (JPN)
+    NAMCOT-3312     to NES-NROM     //Dig Dug II (JPN)
     TENGEN-800008
 
    Added unlicensed aliases for existing board classes:
-    TENGEN-800003 to NES-NROM     // Pac-Man (Unlicensed) (USA)
-    TENGEN-800008 to NES-CNROM    // Tetris: The Soviet Mind Game (USA)
-    TENGEN-800042 to SUNSOFT-4    // After Burner (USA)
+    TENGEN-800003 to NES-NROM      //Pac-Man (Unlicensed) (USA)
+    TENGEN-800008 to NES-CNROM     //Tetris: The Soviet Mind Game (USA)
+    TENGEN-800042 to SUNSOFT-4     //After Burner (USA)
 
    Added unlicensed board types: (note that they are sectioned off separately
    from the licensed ones for easy removal):
-    CAMERICA-BF909x        // Micro Machines
+    CAMERICA-BF909x         //Micro Machines
     CAMERICA-ALGN
     CAMERICA-ALGQ
-    COLORDREAMS-74*377.cpp // Bible Adventures
-    MLT-ACTION52           // Action 52
-    AVE-NINA-xx            // Impossible Mission II
-    SingleChip             // Magic Floor (nocash)
+    COLORDREAMS-74*377.cpp  //Bible Adventures
+    MLT-ACTION52            //Action 52
+    AVE-NINA-xx             //Impossible Mission II
+    SingleChip              //Magic Floor (nocash)
    Many games published on Camerica boards were made by Codemasters who is
   notorious for exploiting rarely-used aspects of the NES. This is not a problem
   with the Camerica board but with Famicom hardware timing.
@@ -334,7 +337,7 @@ Changes from higan: Famicom
       while $1000-1FFF is a 4KB switchable bank. Needed to play Videomation.
       Added support for CNROM security CHR chip enables. Each game has a
       specific CHR bank that is read from
-      manifest["cartridge/board/security/pass"], and that bank is the only one
+      manifest["board/security/pass"], and that bank is the only one
       that maps in the CHR. Spy vs. Spy uses 0x1.
     AxROM (AMROM only; AOROM has no quality database coverage)
     BNROM
@@ -344,7 +347,7 @@ Changes from higan: Famicom
   on every CHR ROM/RAM read.
 
    Added support for VRC2a, which is similar to VRC2c except that CHR banks are
-  right-shifted by 1. "cartridge/chip/pinout/chr-shift" indicates the shift
+  right-shifted by 1. "board/chip/pinout/chr-shift" indicates the shift
   amount, with 0 used by VRC2b and VRC2c, and 1 used by VRC2a.
   VRC2a was used in ツインビー3 ポコポコ大魔王 (TwinBee 3: The Aimless Demon King).
   VRC2b was used in 魂斗羅 (Contra).
@@ -377,9 +380,6 @@ Changes from higan: Famicom
    Added support for the Camerica boards ALGQ, BF9096 and BF9097. Needed to play
   Fire Hawk and the Quattro multicarts.
 
-   Added the exportMemory function, which can dump WRAM, CIRAM, CGRAM, OAM,
-  cartridge PRG RAM, and cartridge CHR RAM.
-
    Added limited support for the VS. System. Only UniSystem games will work
   right now (Tennis and Baseball are DualSystem games that would require
   emulating 2 Famicoms). The Start and Select buttons are disabled in favor of
@@ -407,6 +407,9 @@ Changes from higan: Famicom
   of lack of true DualSystem support. The height is set to 464 if using the
   PlayChoice-10's dual screen mode (set in PlayChoice-10.sys/manifest.bml).
 
+   Added the exportMemory function, which can dump WRAM, CIRAM, CGRAM, OAM,
+  cartridge PRG RAM, and cartridge CHR RAM.
+
 =======================================================
 Changes from higan: processor/mos6502 (affects Famicom)
 =======================================================
@@ -416,13 +419,10 @@ Changes from higan: processor/mos6502 (affects Famicom)
 =================================
 Changes from higan: Super Famicom
 =================================
-   Expanded exportMemory to dump expansion chip-specific memory.
-
    Added a second cursor design that will be shown whenever the Super Scope is
   in Turbo mode. This is not just a simple recolor.
 
-   Moved the APU RAM from the SMP to the DSP. This is just an implementation
-  detail and has no or very little observable effect.
+   Expanded exportMemory to dump expansion chip-specific memory.
 
 ==============================================================
 Changes from higan: processor/wdc65816 (affects Super Famicom)
@@ -462,16 +462,16 @@ Changes from higan: Game Boy
 ====================================
 Changes from higan: Game Boy Advance
 ====================================
+   Added cheat code support. In the Game Boy Advance, it is slightly annoying
+  to use compared to other consoles beside the Mega Drive; a cheat code
+  will only take effect if its data width matches the CPU's access width
+  exactly (8-bit, 16-bit, or 32-bit).
+
    Added the exportMemory function, which can dump External WRAM, Internal WRAM,
   VRAM, and PRAM (Palette RAM).
   However, dumping External WRAM causes a crash with about 3/4 of the data
   dumped, so it has been temporarily disabled (External WRAM is 262144 bytes
   long, the longest of any file dumped by any emulator's exportMemory function).
-
-   Added cheat code support. In the Game Boy Advance, it is slightly annoying
-  to use compared to other consoles beside the Mega Drive; a cheat code
-  will only take effect if its data width matches the CPU's access width
-  exactly (8-bit, 16-bit, or 32-bit).
 
 ============================
 Changes from higan: cart-pal
