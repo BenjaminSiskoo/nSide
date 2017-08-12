@@ -20,7 +20,7 @@ auto Cartridge::load() -> bool {
   auto document = BML::unserialize(information.manifest);
   information.title = document["information/title"].text();
 
-  if(!region() || region() == "Auto") {
+  if(information.region == "Auto") {
     if(document["board/region"].text() == "ntsc") information.region = "NTSC";
     if(document["board/region"].text() == "pal") information.region = "PAL";
     if(document["board/region"].text() == "secam") information.region = "SECAM";
