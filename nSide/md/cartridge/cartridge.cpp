@@ -20,7 +20,7 @@ auto Cartridge::load() -> bool {
   auto document = BML::unserialize(information.manifest);
   information.title = document["information/title"].text();
 
-  if(information.region == "Auto") {
+  if(!region() || region() == "Auto") {
     if(auto region = document["board/region"].text()) {
       information.region = region.upcase();
     } else {
