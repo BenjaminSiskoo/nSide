@@ -1,12 +1,7 @@
 build := release
 include ../nall/GNUmakefile
 
-ifndef target
-  target := nSide-t
-endif
-ifeq ($(target),tomoko)
-  $(error "tomoko is unsupported; it is only a reference for nSide's UI")
-endif
+target := nSide-t
 objects := libco emulator audio video resource
 # console := true
 
