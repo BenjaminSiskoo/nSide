@@ -39,12 +39,13 @@ auto VDP::main() -> void {
       step(2);
 
       uint12 color = palette(16 | io.backdropColor);
-      if(background.output.priority || !sprite.output.color) {
-        color = palette(background.output.palette << 4 | background.output.color);
-      } else if(sprite.output.color) {
-        color = palette(16 | sprite.output.color);
+      if(!io.leftClip || x >= 8) {
+        if(background.output.priority || !sprite.output.color) {
+          color = palette(background.output.palette << 4 | background.output.color);
+        } else if(sprite.output.color) {
+          color = palette(16 | sprite.output.color);
+        }
       }
-      if(x <= 7 && io.leftClip) color = palette(16 | io.backdropColor);
       if(!io.displayEnable) color = 0;
       *screen++ = color;
     }

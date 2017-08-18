@@ -22,7 +22,7 @@ auto CPU::write(uint16 addr, uint8 data) -> void {
 }
 
 auto CPU::in(uint8 addr) -> uint8 {
-  if(Model::GameGear() && addr < 0x06) {
+  if(Model::GameGear() && addr <= 0x06) {
     if(addr == 0x00) {
       bool start = !platform->inputPoll(ID::Port::Hardware, ID::Device::GameGearControls, 6);
       return start << 7 | 0x7f;
@@ -79,7 +79,7 @@ auto CPU::in(uint8 addr) -> uint8 {
       bool two   = !platform->inputPoll(ID::Port::Hardware, ID::Device::GameGearControls, 5);
       if(!up && !down) up = 1, down = 1;
       if(!left && !right) left = 1, right = 1;
-      if(addr.bit(0) == 0) {
+      if(addr == 0xc0 || addr == 0xdc) {
         return up << 0 | down << 1 | left << 2 | right << 3 | one << 4 | two << 5 | 1 << 6 | 1 << 7;
       } else {
         return 0xff;

@@ -373,7 +373,7 @@ auto MOS6502::instructionSAXZeroPage(uint8 index) -> void {
 L store(zeroPage + index, A & X);
 }
 
-auto MOS6502::instructionSHAAbsolute(uint8 index) -> void {
+auto MOS6502::instructionAHXAbsolute(uint8 index) -> void {
   //Takes one fewer cycle than other AbsoluteModify instructions
   uint16 absolute = operand();
   absolute |= operand() << 8;
@@ -381,7 +381,7 @@ auto MOS6502::instructionSHAAbsolute(uint8 index) -> void {
 L write(absolute + index, A & X & (absolute.byte(1) + 1));
 }
 
-auto MOS6502::instructionSHAIndirectY() -> void {
+auto MOS6502::instructionAHXIndirectY() -> void {
   auto zeroPage = operand();
   uint16 absolute = load(zeroPage + 0);
   absolute |= load(zeroPage + 1) << 8;

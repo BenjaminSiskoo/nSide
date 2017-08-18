@@ -118,8 +118,8 @@ struct MOS6502 {
   auto instructionSAXIndirectX() -> void;
   auto instructionSAXZeroPage() -> void;
   auto instructionSAXZeroPage(uint8 index) -> void;
-  auto instructionSHAAbsolute(uint8 index) -> void;
-  auto instructionSHAIndirectY() -> void;
+  auto instructionAHXAbsolute(uint8 index) -> void;
+  auto instructionAHXIndirectY() -> void;
   auto instructionSHXAbsolute(uint8 index) -> void;
   auto instructionSHYAbsolute(uint8 index) -> void;
   auto instructionSTP() -> void;
