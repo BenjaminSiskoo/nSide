@@ -42,10 +42,17 @@ struct VDP : Thread {
   } dma;
 
   //render.cpp
-  auto frame() -> void;
   auto scanline() -> void;
   auto run() -> void;
-  auto outputPixel(uint11 color) -> void;
+  auto outputPixel(uint32 color) -> void;
+
+  struct Pixel {
+    inline auto above() const -> bool { return priority == 1 && color; }
+    inline auto below() const -> bool { return priority == 0 && color; }
+
+    uint6 color;
+    uint1 priority;
+  };
 
   struct Background {
     enum class ID : uint { PlaneA, Window, PlaneB } id;
@@ -90,10 +97,7 @@ struct VDP : Thread {
       uint10 verticalScroll;
     } state;
 
-    struct Output {
-      uint6 color;
-      uint1 priority;
-    } output;
+    Pixel output;
   };
   Background planeA{Background::ID::PlaneA};
   Background window{Background::ID::Window};
@@ -128,10 +132,7 @@ struct VDP : Thread {
       uint7  link;
     };
 
-    struct Output {
-      uint6 color;
-      uint1 priority;
-    } output;
+    Pixel output;
 
     array<Object, 80> oam;
     array<Object, 20> objects;
@@ -244,9 +245,10 @@ private:
 
   struct State {
     uint32* output = nullptr;
-    uint hdot;
-    uint hcounter;
-    uint vcounter;
+    uint16 hdot;
+    uint16 hcounter;
+    uint16 vcounter;
+    uint1 field;
   } state;
 
   uint32 buffer[1280 * 512];

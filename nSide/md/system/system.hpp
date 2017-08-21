@@ -17,6 +17,9 @@ struct System {
   auto unload() -> void;
   auto power() -> void;
 
+  //video.cpp
+  auto configureVideoPalette() -> void;
+
   //serialization.cpp
   auto serializeInit() -> void;
   auto serialize() -> serializer;

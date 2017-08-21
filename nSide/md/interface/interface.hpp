@@ -57,6 +57,8 @@ struct Interface : Emulator::Interface {
 };
 
 struct Settings {
+  bool colorEmulation = true;
+
   uint controllerPort1 = 0;
   uint controllerPort2 = 0;
   uint extensionPort = 0;

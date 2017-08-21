@@ -122,33 +122,37 @@ auto Interface::videoResolution() -> VideoResolution {
 }
 
 auto Interface::videoColors() -> uint32 {
-  return (1 << 9) * 3;
+  return 3 * (1 << 9);
 }
 
 auto Interface::videoColor(uint32 color) -> uint64 {
-  uint R = color.bits(0,2);
-  uint G = color.bits(3,5);
-  uint B = color.bits(6,8);
-  uint intensity = color.bits(9,10);
+  uint R = color.bits(0, 2);
+  uint G = color.bits(3, 5);
+  uint B = color.bits(6, 8);
+  uint M = color.bits(9,10);
 
-  switch(intensity) {
-  case 0:  //shadow
-    break;
-  case 1:  //normal
-    R <<= 1;
-    G <<= 1;
-    B <<= 1;
-    break;
-  case 2:  //highlight
-    R += 7;
-    G += 7;
-    B += 7;
-    break;
+  if(M == 1) R <<= 1, G <<= 1, B <<= 1;
+  if(M == 2) R  += 7, G  += 7, B  += 7;
+
+  uint64 r;
+  uint64 g;
+  uint64 b;
+
+  if(settings.colorEmulation) {
+    static const uint16 gammaRamp[15] = {
+      0x0000, 0x1b3c, 0x3105, 0x46cf,
+      0x5726, 0x677d, 0x77d4, 0x82b9,
+      0x9310, 0x9df4, 0xae4c, 0xbea3,
+      0xcefa, 0xe4c3, 0xffff,
+    };
+    r = gammaRamp[R];
+    g = gammaRamp[G];
+    b = gammaRamp[B];
+  } else {
+    r = image::normalize(R, 4, 16) + image::normalize(R, 4, 16) / 14;
+    g = image::normalize(G, 4, 16) + image::normalize(G, 4, 16) / 14;
+    b = image::normalize(B, 4, 16) + image::normalize(B, 4, 16) / 14;
   }
-
-  uint64 r = image::normalize(R, 4, 16) + image::normalize(R, 4, 16) / 14;
-  uint64 g = image::normalize(G, 4, 16) + image::normalize(G, 4, 16) / 14;
-  uint64 b = image::normalize(B, 4, 16) + image::normalize(B, 4, 16) / 14;
 
   return r << 32 | g << 16 | b << 0;
 }
@@ -220,14 +224,21 @@ auto Interface::cheatSet(const string_vector& list) -> void {
 }
 
 auto Interface::cap(const string& name) -> bool {
+  if(name == "Color Emulation") return true;
   return false;
 }
 
 auto Interface::get(const string& name) -> any {
+  if(name == "Color Emulation") return settings.colorEmulation;
   return {};
 }
 
 auto Interface::set(const string& name, const any& value) -> bool {
+  if(name == "Color Emulation" && value.is<bool>()) {
+    settings.colorEmulation = value.get<bool>();
+    system.configureVideoPalette();
+    return true;
+  }
   return false;
 }
 

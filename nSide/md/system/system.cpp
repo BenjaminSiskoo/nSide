@@ -5,6 +5,7 @@ namespace MegaDrive {
 System system;
 Scheduler scheduler;
 Cheat cheat;
+#include "video.cpp"
 #include "serialization.cpp"
 
 auto System::run() -> void {
