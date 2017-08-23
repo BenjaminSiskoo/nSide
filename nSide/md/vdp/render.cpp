@@ -32,7 +32,8 @@ auto VDP::run() -> void {
     auto color = cram.read(fg.color);
     outputPixel(1 << 9 | color);
   } else {
-    uint mode = a.priority || b.priority;
+    uint mode = a.priority || b.priority;  //0 = shadow, 1 = normal, 2 = highlight
+
     if(&fg == &s) switch(s.color) {
     case 0x0e:
     case 0x1e:
@@ -41,6 +42,7 @@ auto VDP::run() -> void {
     case 0x3f: mode  = 0; fg = bg; break;
     default:   mode |= s.priority; break;
     }
+
     auto color = cram.read(fg.color);
     outputPixel(mode << 9 | color);
   }
