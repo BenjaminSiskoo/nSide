@@ -25,13 +25,13 @@ auto PPU::Object::power() -> void {
   t.itemCount = 0;
   t.tileCount = 0;
 
-  io.aboveEnable = false;
-  io.belowEnable = false;
-  io.interlace = false;
+  io.aboveEnable = random();
+  io.belowEnable = random();
+  io.interlace = random();
 
-  io.baseSize = 0;
-  io.nameselect = 0;
-  io.tiledataAddress = 0x0000;
+  io.baseSize = random();
+  io.nameselect = random();
+  io.tiledataAddress = (random() & 7) << 13;
   io.firstSprite = 0;
 
   for(auto& p : io.priority) p = 0;

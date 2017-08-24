@@ -1,15 +1,15 @@
 auto PPU::Background::power() -> void {
-  io.tiledataAddress = 0x0000;
-  io.screenAddress = 0x0000;
-  io.screenSize = ScreenSize::Size32x32;
+  io.tiledataAddress = (random() & 0x0f) << 12;
+  io.screenAddress = (random() & 0xfc) << 8;
+  io.screenSize = random();
   io.mosaic = 0;
-  io.tileSize = TileSize::Size8x8;
+  io.tileSize = random();
   io.mode = 0;
   for(auto& p : io.priority) p = 0;
-  io.aboveEnable = false;
-  io.belowEnable = false;
-  io.hoffset = 0x0000;
-  io.voffset = 0x0000;
+  io.aboveEnable = random();
+  io.belowEnable = random();
+  io.hoffset = random();
+  io.voffset = random();
 
   //x = 0;
   y = 0;

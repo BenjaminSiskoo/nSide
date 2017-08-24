@@ -1,17 +1,18 @@
 auto PPU::Screen::power() -> void {
-  for(auto& n : cgram) n = random(0x0000) & 0x7fff;
+  random.seed();
+  for(auto& n : cgram) n = random() & 0x7fff;
 
-  io.blendMode = false;
-  io.directColor = false;
-  io.colorMode = false;
-  io.colorHalve = false;
-  io.bg1.colorEnable = false;
-  io.bg2.colorEnable = false;
-  io.bg3.colorEnable = false;
-  io.bg4.colorEnable = false;
-  io.obj.colorEnable = false;
-  io.back.colorEnable = false;
-  io.color = 0;
+  io.blendMode = random();
+  io.directColor = random();
+  io.colorMode = random();
+  io.colorHalve = random();
+  io.bg1.colorEnable = random();
+  io.bg2.colorEnable = random();
+  io.bg3.colorEnable = random();
+  io.bg4.colorEnable = random();
+  io.obj.colorEnable = random();
+  io.back.colorEnable = random();
+  io.color = random() & 0x7fff;
 }
 
 //color addition / subtraction

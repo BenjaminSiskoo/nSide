@@ -22,7 +22,7 @@ auto GamepadMic::data() -> uint3 {
 }
 
 auto GamepadMic::mic() -> bool {
-  return platform->inputPoll(port, ID::Device::GamepadMic, Mic) && random(1) & 1;
+  return platform->inputPoll(port, ID::Device::GamepadMic, Mic) && random.bias(1) & 1;
 }
 
 auto GamepadMic::latch(bool data) -> void {

@@ -49,7 +49,7 @@ auto VSSystem::power() -> void {
   busS.map(reader, writer, "4020-5fff", 0, 0, 0x0020);
   busS.map(reader, writer, "6000-7fff");
 
-  for(auto& byte : ram) byte = random(0x55);
+  for(auto& byte : ram) byte = random.bias(0x55);
 
   ramSide = forceSubRAM ? 1 : 0;
   resetButtons();

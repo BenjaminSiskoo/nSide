@@ -52,17 +52,7 @@ private:
   friend class Cartridge;
 };
 
-struct Random {
-  auto seed(uint seed) -> void;
-  auto operator()(uint result) -> uint;
-  auto serialize(serializer& s) -> void;
-
-private:
-  uint iter = 0;
-};
-
 extern System system;
-extern Random random;
 
 auto Model::Famicom() -> bool { return system.model() == System::Model::Famicom; }
 auto Model::VSSystem() -> bool { return system.model() == System::Model::VSSystem; }

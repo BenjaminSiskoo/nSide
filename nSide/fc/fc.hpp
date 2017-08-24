@@ -14,6 +14,7 @@
 #include <emulator/emulator.hpp>
 #include <emulator/thread.hpp>
 #include <emulator/scheduler.hpp>
+#include <emulator/random.hpp>
 #include <emulator/cheat.hpp>
 
 #include <processor/mos6502/mos6502.hpp>
@@ -23,8 +24,10 @@ namespace Famicom {
   #define platform Emulator::platform
   namespace File = Emulator::File;
   using Scheduler = Emulator::Scheduler;
+  using Random = Emulator::Random;
   using Cheat = Emulator::Cheat;
   extern Scheduler scheduler;
+  extern Random random;
   extern Cheat cheat;
 
   struct Thread : Emulator::Thread {

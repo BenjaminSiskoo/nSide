@@ -42,6 +42,9 @@ auto DSP::load(Markup::Node node) -> bool {
 }
 
 auto DSP::power() -> void {
+  random.seed();
+  for(auto& byte : apuram) byte = random();
+
   spc_dsp.init(apuram);
   spc_dsp.reset();
 //spc_dsp.set_output(samplebuffer, 8192);  //power()

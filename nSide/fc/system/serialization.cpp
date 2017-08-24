@@ -42,9 +42,9 @@ auto System::serialize(serializer& s) -> void {
 }
 
 auto System::serializeAll(serializer& s) -> void {
+  random.serialize(s);
   for(auto& cartridge : cartridgeSlot) cartridge.serialize(s);
   system.serialize(s);
-  random.serialize(s);
 
   cpuM.serialize(s);
   apuM.serialize(s);
