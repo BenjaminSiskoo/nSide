@@ -58,6 +58,8 @@ auto PlayChoice10::power() -> void {
   watchdog        = 0;  //0: enable,               1: disable
   ppuReset        = 0;  //0: reset,                1: run
 
+  random.array(wram, sizeof(wram));
+
   channel  = 0;  //channel 1 on-screen
   sramBank = 1;
 

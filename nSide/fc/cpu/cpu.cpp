@@ -52,8 +52,7 @@ auto CPU::power() -> void {
   writer = {&CPU::writeCPU, this};
   bus.map(reader, writer, "4000-4017");
 
-  random.seed();
-  for(auto& byte : ram) byte = random.bias(0x55);
+  random.array(ram, sizeof(ram));
 
   reset();
 }

@@ -4,6 +4,7 @@ namespace Atari2600 {
 
 System system;
 Scheduler scheduler;
+Random random;
 Cheat cheat;
 #include "video.cpp"
 #include "serialization.cpp"
@@ -78,6 +79,8 @@ auto System::power() -> void {
 
   Emulator::audio.reset();
   Emulator::audio.setInterface(interface);
+
+  random.entropy(Random::Entropy::Low);
 
   scheduler.reset();
   cpu.power();

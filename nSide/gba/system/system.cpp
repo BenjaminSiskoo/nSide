@@ -17,6 +17,7 @@ auto System::runToSave() -> void {
   scheduler.synchronize(cpu);
   scheduler.synchronize(ppu);
   scheduler.synchronize(apu);
+  scheduler.synchronize(player);
 }
 
 auto System::load(Emulator::Interface* interface) -> bool {

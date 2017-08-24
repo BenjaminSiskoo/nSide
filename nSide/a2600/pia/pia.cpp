@@ -42,6 +42,8 @@ auto PIA::power() -> void {
   //PIA's clock rate is the same in all regions
   create(Enter, Emulator::Constants::Colorburst::NTSC);
 
+  random.array(ram, sizeof(ram));
+
   io.tvtype = TVType::Color;
   io.difficulty0 = Difficulty::B;
   io.difficulty1 = Difficulty::B;

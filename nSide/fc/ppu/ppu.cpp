@@ -107,7 +107,7 @@ auto PPU::power() -> void {
   //$2003  OAMADDR
   io.oamAddress = 0x00;
 
-  for(auto& n : ciram) n = 0xff;
+  for(auto& n : ciram) n = random.bias(0xff);
 
   reset();
 }
@@ -157,7 +157,8 @@ auto PPU::reset() -> void {
   _extOut = 0;
 
   for(auto& n : cgram) n = 0;
-  for(auto& n : oam) n = 0;
+  random.array(oam, sizeof(oam));
+  for(auto i : range(64)) oam[i << 2 | 2] &= 0xe3;
 }
 
 auto PPU::scanline() -> void {

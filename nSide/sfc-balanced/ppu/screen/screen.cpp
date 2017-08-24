@@ -1,6 +1,6 @@
 auto PPU::Screen::power() -> void {
-  random.seed();
-  for(auto& n : cgram) n = random() & 0x7fff;
+  random.array((uint8*)cgram, sizeof(cgram));
+  for(auto& word : cgram) word &= 0x7fff;
 
   io.blendMode = random();
   io.directColor = random();
