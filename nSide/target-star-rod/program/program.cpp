@@ -30,23 +30,9 @@ Program::Program(string_vector args) {
 
   higan_settings = BML::unserialize(string::read(locateHigan("settings.bml")));
 
-  video = Video::create();
-  video->setContext(presentation->viewport.handle());
-  video->setBlocking(settings["Video/Synchronize"].boolean());
-  video->setSmooth(false);
-  if(!video->ready()) debugger->print("Failed to initialize video driver\n");
-
-  audio = Audio::create();
-  audio->setExclusive(false);
-  audio->setContext(presentation->viewport.handle());
-  audio->setDevice("");
-  audio->setBlocking(settings["Audio/Synchronize"].boolean());
-  audio->setChannels(2);
-  if(!audio->ready()) debugger->print("Failed to initialize audio driver\n");
-
-  input = Input::create();
-  input->setContext(presentation->viewport.handle());
-  if(!input->ready()) debugger->print("Failed to initialize input driver\n");
+  initializeVideoDriver();
+  initializeAudioDriver();
+  initializeInputDriver();
 
   args.takeLeft();  //ignore program location in argument parsing
   for(auto& argument : args) {

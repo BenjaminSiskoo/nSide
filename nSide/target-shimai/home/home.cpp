@@ -76,7 +76,7 @@ auto Home::reset() -> void {
 auto Home::run() -> void {
   graphics->run();
   sound->run();
-  if(graphics->step == 0 && !program->hasQuit) controls->run();
+  if(graphics->step == 0) controls->run();
 }
 
 auto Home::loadSprites(vector<Sprite*>& sprites) -> void {

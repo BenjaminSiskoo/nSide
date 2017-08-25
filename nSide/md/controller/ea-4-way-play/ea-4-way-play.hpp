@@ -10,7 +10,8 @@ struct EA4WayPlay : Controller {
   auto readData() -> uint8 override;
   auto writeData(uint8 data) -> void override;
 
-  static uint3 player;
+  static uint2 player;
+  static boolean signature;
   static boolean select;
 //static boolean localSelect[4];
 //static uint3 counter[4];

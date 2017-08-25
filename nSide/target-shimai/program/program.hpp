@@ -27,6 +27,9 @@ struct Program : Emulator::Platform {
   auto saveState(uint slot) -> bool;
 
   //utility.cpp
+  auto initializeVideoDriver() -> void;
+  auto initializeAudioDriver() -> void;
+  auto initializeInputDriver() -> void;
   auto powerCycle() -> void;
   auto rotateDisplay() -> void;
   auto connectDevices() -> void;

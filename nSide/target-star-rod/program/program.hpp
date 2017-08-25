@@ -24,6 +24,9 @@ struct Program : Emulator::Platform {
   auto saveState(uint slot) -> bool;
 
   //utility.cpp
+  auto initializeVideoDriver() -> void;
+  auto initializeAudioDriver() -> void;
+  auto initializeInputDriver() -> void;
   auto message(const string& text) -> void;
   auto updateAudioEffects() -> void;
 
