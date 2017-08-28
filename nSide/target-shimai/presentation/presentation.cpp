@@ -112,7 +112,10 @@ auto Presentation::resizeViewport(bool resizeWindow) -> void {
   } else {
     if(settings["Video/Fullscreen/AspectCorrection"].boolean()) emulatorWidth *= aspectCorrection;
 
-    if(settings["Video/Fullscreen/IntegralScaling"].boolean()) {
+    if(!emulator) {
+      emulatorWidth = viewportWidth;
+      emulatorHeight = viewportHeight;
+    } else if(settings["Video/Fullscreen/IntegralScaling"].boolean()) {
       uint multiplier = min(viewportWidth / emulatorWidth, viewportHeight / emulatorHeight);
       emulatorWidth *= multiplier;
       emulatorHeight *= multiplier;

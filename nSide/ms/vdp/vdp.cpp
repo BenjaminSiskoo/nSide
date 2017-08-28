@@ -74,6 +74,10 @@ auto VDP::step(uint clocks) -> void {
 }
 
 auto VDP::refresh() -> void {
+  if(Model::SG1000()) {
+    Emulator::video.refresh(buffer + 24 * 256, 256 * sizeof(uint32), 256, 192);
+  }
+
   if(Model::MasterSystem()) {
     //center the video output vertically in the viewport
     uint32* screen = buffer;
@@ -109,6 +113,10 @@ auto VDP::power() -> void {
 }
 
 auto VDP::palette(uint5 index) -> uint12 {
+  if(Model::SG1000()) {
+    return index & 15;
+  }
+
   if(Model::MasterSystem()) {
     return cram[index];
   }
