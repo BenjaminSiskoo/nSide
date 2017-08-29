@@ -6,11 +6,10 @@ struct FightingPad : Controller {
   FightingPad(uint port);
   auto main() -> void override;
 
-  auto readData() -> uint8 override;
-  auto writeData(uint8 data) -> void override;
+  auto readData() -> uint7 override;
+  auto writeData(uint7 data) -> void override;
 
   uint1 select = 1;
-  uint1 latch;
   uint3 counter;
   uint32 timeout;
 };

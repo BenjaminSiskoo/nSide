@@ -22,8 +22,8 @@ struct Controller : Thread {
   static auto Enter() -> void;
   virtual auto main() -> void;
 
-  virtual auto readData() -> uint8 { return 0xff; }
-  virtual auto writeData(uint8 data) -> void {}
+  virtual auto readData() -> uint7 { return 0x7f; }
+  virtual auto writeData(uint7 data) -> void {}
 
   const uint port;
 };
@@ -31,6 +31,8 @@ struct Controller : Thread {
 struct ControllerPort {
   auto connect(uint deviceID) -> void;
 
+  auto readData() -> uint8;
+  auto writeData(uint8 data) -> void;
   auto readControl() -> uint8;
   auto writeControl(uint8 data) -> void;
 
@@ -39,6 +41,7 @@ struct ControllerPort {
   auto serialize(serializer&) -> void;
 
   uint port;
+  boolean latch;
   uint8 control;
   Controller* device = nullptr;
 };

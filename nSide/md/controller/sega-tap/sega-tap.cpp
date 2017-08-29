@@ -4,7 +4,7 @@ SegaTap::SegaTap(uint port) : Controller(port) {
   th = 1;
 }
 
-auto SegaTap::readData() -> uint8 {
+auto SegaTap::readData() -> uint7 {
   uint4 data;
 
   //Controller signatures:
@@ -24,10 +24,10 @@ auto SegaTap::readData() -> uint8 {
   default: data = counter < 32 ? buffer[counter - 8] : uint4(0xf); break;
   }
 
-  return latch << 7 | th << 6 | tr << 5 | tr << 4 | data;
+  return th << 6 | tr << 5 | tr << 4 | data;
 }
 
-auto SegaTap::writeData(uint8 data) -> void {
+auto SegaTap::writeData(uint7 data) -> void {
   if(!th && data.bit(6)) {
     counter = 0;
     uint index = 0;
@@ -57,5 +57,4 @@ auto SegaTap::writeData(uint8 data) -> void {
   }
   tr     = data.bit(5);
   th     = data.bit(6);
-  latch  = data.bit(7);
 }

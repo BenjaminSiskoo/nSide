@@ -1,7 +1,7 @@
 ControlPad::ControlPad(uint port) : Controller(port) {
 }
 
-auto ControlPad::readData() -> uint8 {
+auto ControlPad::readData() -> uint7 {
   uint6 data;
 
   if(select == 0) {
@@ -20,10 +20,9 @@ auto ControlPad::readData() -> uint8 {
   }
 
   data = ~data;
-  return latch << 7 | select << 6 | data;
+  return select << 6 | data;
 }
 
-auto ControlPad::writeData(uint8 data) -> void {
+auto ControlPad::writeData(uint7 data) -> void {
   select = data.bit(6);
-  latch = data.bit(7);
 }

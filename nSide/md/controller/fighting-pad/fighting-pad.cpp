@@ -12,7 +12,7 @@ auto FightingPad::main() -> void {
   synchronize(cpu);
 }
 
-auto FightingPad::readData() -> uint8 {
+auto FightingPad::readData() -> uint7 {
   uint6 data;
 
   if(select == 0) {
@@ -52,15 +52,14 @@ auto FightingPad::readData() -> uint8 {
   }
 
   data = ~data;
-  return latch << 7 | select << 6 | data;
+  return select << 6 | data;
 }
 
-auto FightingPad::writeData(uint8 data) -> void {
+auto FightingPad::writeData(uint7 data) -> void {
   if(!select && data.bit(6)) {  //0->1 transition
     if(++counter == 5) counter = 0;
   }
 
   select = data.bit(6);
-  latch = data.bit(7);
   timeout = 1600;  //~1.6ms
 }

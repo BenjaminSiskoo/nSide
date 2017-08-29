@@ -30,10 +30,10 @@ auto EA4WayPlay::main() -> void {
 }
 */
 
-auto EA4WayPlay::readData() -> uint8 {
+auto EA4WayPlay::readData() -> uint7 {
   if(port == ID::Port::Controller1) {
     if(signature) {
-      return latch << 7 | select << 6 | 0b110000;  //bits 0 and 1 must be low
+      return select << 6 | 0b110000;  //bits 0 and 1 must be low
     }
 
     uint6 data;
@@ -41,8 +41,7 @@ auto EA4WayPlay::readData() -> uint8 {
     if(select == 0) {
       data.bit(0) = platform->inputPoll(port, ID::Device::EA4WayPlay, Up    + player * 8);
       data.bit(1) = platform->inputPoll(port, ID::Device::EA4WayPlay, Down  + player * 8);
-      data.bit(2) = 1;
-      data.bit(3) = 1;
+      data.bits(2,3) = ~0;
       data.bit(4) = platform->inputPoll(port, ID::Device::EA4WayPlay, A     + player * 8);
       data.bit(5) = platform->inputPoll(port, ID::Device::EA4WayPlay, Start + player * 8);
     } else {
@@ -85,13 +84,13 @@ auto EA4WayPlay::readData() -> uint8 {
     */
 
     data = ~data;
-    return latch << 7 | select << 6 | data;
+    return select << 6 | data;
   } else if(port == ID::Port::Controller2) {
-    return latch << 7 | signature << 6 | player << 4 | 0b1111;
+    return signature << 6 | player << 4 | 0b1111;
   }
 }
 
-auto EA4WayPlay::writeData(uint8 data) -> void {
+auto EA4WayPlay::writeData(uint7 data) -> void {
   if(port == ID::Port::Controller1) {
     select = data.bit(6);
   } else if(port == ID::Port::Controller2) {
@@ -104,6 +103,4 @@ auto EA4WayPlay::writeData(uint8 data) -> void {
 //  if(!localSelect[player] && select) counter[player] = (counter[player] + 1) % 5;
 //  localSelect[player] = select;
 //}
-
-  latch = data.bit(7);
 }

@@ -72,6 +72,15 @@ auto ControllerPort::connect(uint deviceID) -> void {
   if(auto device = extensionPort.device) cpu.peripherals.append(device);
 }
 
+auto ControllerPort::readData() -> uint8 {
+  return device->readData() | latch << 7;
+}
+
+auto ControllerPort::writeData(uint8 data) -> void {
+  device->writeData(data);
+  latch = data.bit(7);
+}
+
 auto ControllerPort::readControl() -> uint8 {
   return control;
 }
