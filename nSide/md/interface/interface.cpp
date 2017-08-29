@@ -53,6 +53,17 @@ Interface::Interface() {
     controllerPort2.devices.append(device);
   }
 
+  { Device device{ID::Device::Mouse, "Mouse"};
+    device.inputs.append({1, "X-axis"});
+    device.inputs.append({1, "Y-axis"});
+    device.inputs.append({0, "Left"  });
+    device.inputs.append({0, "Middle"});
+    device.inputs.append({0, "Right" });
+    device.inputs.append({0, "Start" });
+    controllerPort1.devices.append(device);
+    controllerPort2.devices.append(device);
+  }
+
   { Device device{ID::Device::SegaTap, "Sega Tap"};
     for(char p = 'A'; p <= 'D'; p++) {
       device.inputs.append({0, {"Port ", p, " - ", "Up"   }});
