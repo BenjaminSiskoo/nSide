@@ -1,0 +1,12 @@
+cartridge sha256:a8d9fa0136afd0a51739d28b325aeab3eab9ba77f08479d7b68d46a74f8bd673
+  :board region=ntsc-j
+  :  rom name=program.rom size=0x200000
+  :  lock-on
+  :    rom name=upmem.rom size=0x40000
+  :
+  :information
+  :  serial:   MK-1563
+  :  revision: 1.0
+  :  name:     Sonic & Knuckles
+  :  title:    Sonic & Knuckles
+

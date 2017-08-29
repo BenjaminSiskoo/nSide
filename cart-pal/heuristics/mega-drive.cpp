@@ -11,6 +11,8 @@ struct MegaDriveCartridge {
 MegaDriveCartridge::MegaDriveCartridge(string location, uint8_t* data, uint size) {
   if(size < 0x200) return;
 
+  uint romSize = size;
+
   string ramMode = "none";
 
   uint32_t ramFrom = 0;
@@ -37,6 +39,24 @@ MegaDriveCartridge::MegaDriveCartridge(string location, uint8_t* data, uint size
   if(ramMode != "none") ramSize = bit::round(min(0x20000, ramSize));
   if(ramMode == "none") ramSize = 0;
 
+  bool lockon = false;
+  uint32_t upmemFrom = 0;
+  uint32_t upmemTo = 0;
+
+  if(data[0x01e0] == 'R' && data[0x01e1] == 'O') {
+    lockon = true;
+    upmemFrom |= data[0x01e4] << 16;
+    upmemFrom |= data[0x01e5] <<  8;
+    upmemFrom |= data[0x01e6] <<  0;
+
+    upmemTo |= data[0x01e7] << 16;
+    upmemTo |= data[0x01e8] <<  8;
+    upmemTo |= data[0x01e9] <<  0;
+  }
+
+  uint32_t upmemSize = lockon ? upmemTo - upmemFrom + 1 : 0;
+  romSize -= upmemSize;
+
   string_vector regions;
   string region = slice((const char*)&data[0x1f0], 0, 16).trimRight(" ");
   if(!regions) {
@@ -60,9 +80,13 @@ MegaDriveCartridge::MegaDriveCartridge(string location, uint8_t* data, uint size
   }
 
   manifest.append("board region=", regions.left(), "\n");
-  manifest.append("  rom name=program.rom size=0x", hex(size), "\n");
+  manifest.append("  rom name=program.rom size=0x", hex(romSize), "\n");
   if(ramSize && ramMode != "none")
   manifest.append("  ram name=save.ram size=0x", hex(ramSize), " offset=0x", hex(ramFrom), " mode=", ramMode, "\n");
+  if(lockon)
+  manifest.append("  lock-on\n");
+  if(upmemSize)
+  manifest.append("    rom name=upmem.rom size=0x", hex(upmemSize), "\n");
   manifest.append("\n");
   manifest.append("information\n");
   manifest.append("  title: ", Location::prefix(location), "\n");

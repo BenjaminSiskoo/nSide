@@ -5,7 +5,19 @@ namespace MegaDrive {
 Cartridge cartridge;
 #include "serialization.cpp"
 
-auto Cartridge::load() -> bool {
+auto Cartridge::manifest() const -> string {
+  string manifest = information.manifest;
+  if(lockon && lockon->rom.size) manifest.append("\n[[Lock-On]]\n\n", lockon->information.manifest);
+  return manifest;
+}
+
+auto Cartridge::title() const -> string {
+  string title = information.title;
+  if(lockon && lockon->rom.size) title.append(" + ", lockon->information.title);
+  return title;
+}
+
+auto Cartridge::load(bool lockedOn) -> bool {
   information = {};
 
   if(auto loaded = platform->load(ID::MegaDrive, "Mega Drive", "md", {"Auto", "NTSC-J", "NTSC-U", "PAL"})) {
@@ -62,11 +74,41 @@ auto Cartridge::load() -> bool {
     }
   }
 
-  information.sha256 = Hash::SHA256(rom.data, rom.size).digest();
+  if(document["board/lock-on"]) {
+    lockon = new Cartridge;
+    if(!lockedOn) lockon->load(true);
+    if(auto node = document["board/lock-on/rom"]) {
+      upmem.size = node["size"].natural() >> 1;
+      upmem.mask = bit::round(upmem.size) - 1;
+      if(upmem.size) {
+        upmem.data = new uint16[upmem.mask + 1]();
+        if(auto name = node["name"].text()) {
+          if(auto fp = platform->open(pathID(), name, File::Read, File::Required)) {
+            for(uint n : range(upmem.size)) upmem.data[n] = fp->readm(2);
+          }
+        }
+      }
+    }
+  }
+
+  Hash::SHA256 sha;
+  for(uint index : range(rom.size)) {
+    uint16 word = rom.data[index];
+    sha.input((uint8_t)word.byte(1));
+    sha.input((uint8_t)word.byte(0));
+  }
+  for(uint index : range(upmem.size)) {
+    uint16 word = upmem.data[index];
+    sha.input((uint8_t)word.byte(1));
+    sha.input((uint8_t)word.byte(0));
+  }
+  information.sha256 = sha.digest();
   return true;
 }
 
 auto Cartridge::save() -> void {
+  if(lockon) lockon->save();
+
   auto document = BML::unserialize(information.manifest);
 
   if(document["board/ram/volatile"]) return;
@@ -81,6 +123,8 @@ auto Cartridge::save() -> void {
 }
 
 auto Cartridge::unload() -> void {
+  if(lockon) lockon->unload();
+
   delete[] rom.data;
   delete[] ram.data;
   rom = {};
@@ -88,21 +132,33 @@ auto Cartridge::unload() -> void {
 }
 
 auto Cartridge::power() -> void {
+  if(lockon) lockon->power();
+
   ramEnable = 1;
   ramWritable = 1;
   for(auto n : range(8)) bank[n] = n;
 }
 
 auto Cartridge::read(uint24 address) -> uint16 {
-  if(address.bit(21) && ram.size && ramEnable) {
-    return ram.data[address >> 1 & ram.mask];
-  } else {
-    address = bank[address.bits(19,21)] << 19 | address.bits(0,18);
-    return rom.data[address >> 1 & rom.mask];
+  if(lockon && address.bit(21)) {
+    if(ramEnable && address.bit(20)) return upmem.data[address >> 1 & upmem.mask];
+    return lockon->read(address);
   }
+
+  if(!rom.size) return 0x0000;
+
+  uint romAddress = bank[address.bits(19,21)] << 19 | address.bits(0,18);
+  uint16 data = rom.data[romAddress >> 1 & rom.mask];
+  if(address.bit(21) && ram.size && ramEnable) {
+    data &= ~ram.bits;
+    data |= ram.data[address >> 1 & ram.mask] & ram.bits;
+  }
+  return data;
 }
 
 auto Cartridge::write(uint24 address, uint16 data) -> void {
+  if(lockon && address.bit(21)) return lockon->write(address, data);
+
   //emulating RAM write protect bit breaks some commercial software
   if(address.bit(21) && ram.size && ramEnable /* && ramWritable */) {
     if(ram.bits == 0x00ff) data = data.byte(0) * 0x0101;
@@ -116,6 +172,8 @@ auto Cartridge::readIO(uint24 addr) -> uint16 {
 }
 
 auto Cartridge::writeIO(uint24 addr, uint16 data) -> void {
+  if(lockon) lockon->writeIO(addr, data);
+
   if(addr == 0xa130f1) ramEnable = data.bit(0), ramWritable = data.bit(1);
   if(addr == 0xa130f3) bank[1] = data;
   if(addr == 0xa130f5) bank[2] = data;

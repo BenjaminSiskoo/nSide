@@ -2,10 +2,10 @@ struct Cartridge {
   auto pathID() const -> uint { return information.pathID; }
   auto region() const -> string { return information.region; }
   auto sha256() const -> string { return information.sha256; }
-  auto manifest() const -> string { return information.manifest; }
-  auto title() const -> string { return information.title; }
+  auto manifest() const -> string;
+  auto title() const -> string;
 
-  auto load() -> bool;
+  auto load(bool lockedOn = false) -> bool;
   auto save() -> void;
   auto unload() -> void;
   auto power() -> void;
@@ -36,10 +36,13 @@ struct Cartridge {
 
   Memory rom;
   Memory ram;
+  Memory upmem;
 
   uint1 ramEnable;
   uint1 ramWritable;
   uint6 bank[8];
+
+  unique_pointer<Cartridge> lockon;
 };
 
 extern Cartridge cartridge;
