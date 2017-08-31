@@ -11,21 +11,24 @@ struct MegaDriveCartridge {
 MegaDriveCartridge::MegaDriveCartridge(string location, uint8_t* data, uint size) {
   if(size < 0x200) return;
 
+  static auto read16 = [&](uint addr) -> uint16_t {
+    return data[addr + 0] << 8 | data[addr + 1] << 0;
+  };
+
+  static auto read24 = [&](uint addr) -> uint32_t {
+    return data[addr + 0] << 16 | data[addr + 1] << 8 | data[addr + 2] << 0;
+  };
+
+  static auto read32 = [&](uint addr) -> uint32_t {
+    return read16(addr + 0) << 16 | read16(addr + 2) << 0;
+  };
+
   uint romSize = size;
 
   string ramMode = "none";
 
-  uint32_t ramFrom = 0;
-  ramFrom |= data[0x01b4] << 24;
-  ramFrom |= data[0x01b5] << 16;
-  ramFrom |= data[0x01b6] <<  8;
-  ramFrom |= data[0x01b7] <<  0;
-
-  uint32_t ramTo = 0;
-  ramTo |= data[0x01b8] << 24;
-  ramTo |= data[0x01b9] << 16;
-  ramTo |= data[0x01ba] <<  8;
-  ramTo |= data[0x01bb] <<  0;
+  uint32_t ramFrom = read32(0x01b4);
+  uint32_t ramTo = read32(0x01b8);
 
   if(!(ramFrom & 1) && !(ramTo & 1)) ramMode = "hi";
   if( (ramFrom & 1) &&  (ramTo & 1)) ramMode = "lo";
@@ -45,13 +48,8 @@ MegaDriveCartridge::MegaDriveCartridge(string location, uint8_t* data, uint size
 
   if(data[0x01e0] == 'R' && data[0x01e1] == 'O') {
     lockon = true;
-    upmemFrom |= data[0x01e4] << 16;
-    upmemFrom |= data[0x01e5] <<  8;
-    upmemFrom |= data[0x01e6] <<  0;
-
-    upmemTo |= data[0x01e7] << 16;
-    upmemTo |= data[0x01e8] <<  8;
-    upmemTo |= data[0x01e9] <<  0;
+    upmemFrom = read24(0x01e4);
+    upmemTo = read24(0x01e7);
   }
 
   uint32_t upmemSize = lockon ? upmemTo - upmemFrom + 1 : 0;

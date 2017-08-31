@@ -66,6 +66,8 @@ CartPal cart_pal;
 
 #include <nall/main.hpp>
 auto nall::main(string_vector args) -> void {
+  Application::setName("cart-pal");
+
   if(args.size() == 2 && args[1] == "--name") {
     return print("cart-pal");
   }

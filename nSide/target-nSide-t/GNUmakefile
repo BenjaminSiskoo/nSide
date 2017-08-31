@@ -71,7 +71,7 @@ obj/ui-dip-switches.o: $(ui)/dip-switches/dip-switches.cpp $(call rwildcard,$(ui
 obj/ui-presentation.o: $(ui)/presentation/presentation.cpp $(call rwildcard,$(ui)/)
 
 obj/ui-resource.o:
-	$(windres) data/resource.rc obj/ui-resource.o
+	$(windres) data/nSide.rc obj/ui-resource.o
 
 # targets
 build: $(objects)
@@ -97,9 +97,9 @@ else ifeq ($(platform),macosx)
 	cp -R systems/* ~/Library/Application\ Support/$(name)/
 else ifneq ($(filter $(platform),linux bsd),)
 	mkdir -p $(prefix)/bin/
-	mkdir -p $(prefix)/share/$(name)/
 	mkdir -p $(prefix)/share/applications/
 	mkdir -p $(prefix)/share/icons/
+	mkdir -p $(prefix)/share/$(name)/
 	cp out/$(name) $(prefix)/bin/$(name)
 	cp -R systems/* $(prefix)/share/$(name)/
 	cp data/$(name).desktop $(prefix)/share/applications/$(name).desktop

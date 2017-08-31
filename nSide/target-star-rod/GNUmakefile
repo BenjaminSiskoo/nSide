@@ -68,7 +68,7 @@ obj/star-rod-bg.o: $(ui)/bg/bg.cpp $(call rwildcard,$(ui)/)
 obj/star-rod-palette.o: $(ui)/palette/palette.cpp $(call rwildcard,$(ui)/)
 
 obj/star-rod-resource.o:
-	$(windres) data/resource.rc obj/star-rod-resource.o
+	$(windres) data/star-rod.rc obj/star-rod-resource.o
 
 # targets
 build: $(objects)
