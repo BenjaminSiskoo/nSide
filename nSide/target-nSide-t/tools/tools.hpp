@@ -1,5 +1,6 @@
 struct CheatDatabase : Window {
   CheatDatabase();
+  auto refreshLocale() -> void;
   auto findCodes() -> void;
   auto addCodes() -> void;
 
@@ -18,6 +19,7 @@ struct CheatEditor : TabFrameItem {
   enum : uint { Slots = 128 };
 
   CheatEditor(TabFrame*);
+  auto refreshLocale() -> void;
   auto doChangeSelected() -> void;
   auto doModify() -> void;
   auto doRefresh() -> void;
@@ -54,6 +56,7 @@ struct StateManager : TabFrameItem {
   enum : uint { Slots = 32 };
 
   StateManager(TabFrame*);
+  auto refreshLocale() -> void;
   auto doChangeSelected() -> void;
   auto doRefresh() -> void;
   auto doUpdateControls() -> void;
@@ -78,6 +81,7 @@ struct StateManager : TabFrameItem {
 
 struct ManifestViewer : TabFrameItem {
   ManifestViewer(TabFrame*);
+  auto refreshLocale() -> void;
   auto doRefresh() -> void;
 
   VerticalLayout layout{this};
@@ -86,6 +90,7 @@ struct ManifestViewer : TabFrameItem {
 
 struct ToolsManager : Window {
   ToolsManager();
+  auto refreshLocale() -> void;
   auto show(uint tool) -> void;
 
   VerticalLayout layout{this};

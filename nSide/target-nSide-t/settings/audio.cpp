@@ -1,12 +1,11 @@
 AudioSettings::AudioSettings(TabFrame* parent) : TabFrameItem(parent) {
   setIcon(Icon::Device::Speaker);
-  setText("Audio");
+  refreshLocale();
 
   layout.setMargin(5);
 
-  driverLabel.setFont(Font().setBold()).setText("Driver");
+  driverLabel.setFont(Font().setBold());
 
-  deviceLabel.setText("Device:");
   deviceList.onChange([&] {
     settings["Audio/Device"].setValue(deviceList.selected().text());
     program->initializeAudioDriver();
@@ -20,38 +19,48 @@ AudioSettings::AudioSettings(TabFrame* parent) : TabFrameItem(parent) {
     }
   }
 
-  frequencyLabel.setText("Frequency:");
   frequencyList.onChange([&] {
     settings["Audio/Frequency"].setValue(frequencyList.selected().text());
     program->updateAudioDriver();
   });
 
-  latencyLabel.setText("Latency:");
   latencyList.onChange([&] {
     settings["Audio/Latency"].setValue(latencyList.selected().text());
     program->updateAudioDriver();
   });
 
-  exclusiveMode.setText("Exclusive mode");
   exclusiveMode.setChecked(settings["Audio/Exclusive"].boolean()).onToggle([&] {
     settings["Audio/Exclusive"].setValue(exclusiveMode.checked());
     program->updateAudioDriver();
   });
 
-  effectsLabel.setFont(Font().setBold()).setText("Effects");
+  effectsLabel.setFont(Font().setBold());
 
-  volumeLabel.setText("Volume:");
   volumeValue.setAlignment(0.5);
   volumeSlider.setLength(501).setPosition(settings["Audio/Volume"].natural()).onChange([&] { updateEffects(); });
 
-  balanceLabel.setText("Balance:");
   balanceValue.setAlignment(0.5);
   balanceSlider.setLength(101).setPosition(settings["Audio/Balance"].natural()).onChange([&] { updateEffects(); });
 
-  reverbEnable.setText("Reverb").setChecked(settings["Audio/Reverb/Enable"].boolean()).onToggle([&] { updateEffects(); });
+  reverbEnable.setChecked(settings["Audio/Reverb/Enable"].boolean()).onToggle([&] { updateEffects(); });
 
   updateDevice();
   updateEffects(true);
+}
+
+auto AudioSettings::refreshLocale() -> void {
+  setText(locale["Settings/Audio"]);
+
+  driverLabel.setText(locale["Settings/Audio/Driver"]);
+  deviceLabel.setText(locale["Settings/Audio/Driver/Device"]);
+  frequencyLabel.setText(locale["Settings/Audio/Driver/Frequency"]);
+  latencyLabel.setText(locale["Settings/Audio/Driver/Latency"]);
+  exclusiveMode.setText(locale["Settings/Audio/Driver/ExclusiveMode"]);
+
+  effectsLabel.setText(locale["Settings/Audio/Effects"]);
+  volumeLabel.setText(locale["Settings/Audio/Effects/Volume"]);
+  balanceLabel.setText(locale["Settings/Audio/Effects/Balance"]);
+  reverbEnable.setText(locale["Settings/Audio/Effects/Reverb"]);
 }
 
 auto AudioSettings::updateDevice() -> void {

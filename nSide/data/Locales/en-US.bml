@@ -1,0 +1,178 @@
+System
+  Atari: Atari
+    Atari2600: Atari 2600
+  Nintendo: Nintendo
+    Famicom: Nintendo Entertainment System
+    SuperFamicom: Super Nintendo Entertainment System
+    GameBoy: Game Boy
+    GameBoyColor: Game Boy Color
+    GameBoyAdvance: Game Boy Advance
+    VS.System: VS. System
+    PlayChoice-10: PlayChoice-10
+    FamicomBox: FamicomBox
+  Sega: Sega
+    SG-1000: SG-1000
+    MasterSystem: Master System
+    MegaDrive: Genesis
+    GameGear: Game Gear
+  NEC: NEC
+    PCEngine: TurboGrafx-16
+    SuperGrafx: SuperGrafx
+  Bandai: Bandai
+    WonderSwan: WonderSwan
+    WonderSwanColor: WonderSwan Color
+    SwanCrystal: SwanCrystal
+
+Menu
+  Library: Library
+    LoadROMFile...: Load ROM File ...
+    ImportROMFiles...: Import ROM Files ...
+  System: System
+    PowerCycle: Power Cycle
+    Unload: Unload
+  Settings: Settings
+    VideoScale: Video Scale
+      Small: Small
+      Medium: Medium
+      Large: Large
+    VideoEmulation: Video Emulation
+      Blurring: Blurring
+      Colors: Colors
+    Scanlines: Scanlines
+    VideoShader: Video Shader
+      None: None
+      Blur: Blur
+    SynchronizeVideo: Synchronize Video
+    SynchronizeAudio: Synchronize Audio
+    MuteAudio: Mute Audio
+    ShowStatusBar: Show Status Bar
+    Video...: Video ...
+    Audio...: Audio ...
+    Input...: Input ...
+    Hotkeys...: Hotkeys ...
+    Advanced...: Advanced ...
+  Tools: Tools
+    SaveQuickState: Save Quick State
+    LoadQuickState: Load Quick State
+    Slot: Slot %d
+    CheatEditor...: Cheat Editor ...
+    StateManager...: State Manager ...
+    ManifestViewer...: Manifest Viewer ...
+  Help: Help
+    Documentation...: Documentation for higan ...
+    About...: About ...
+
+Status
+  NoCartridgeLoaded: No cartridge loaded
+  FPS: FPS: %d
+  Paused: Paused
+  PowerCycled: Power cycled
+  DisplayRotated: Display rotated
+  RotateUnsupported: Display rotation not supported
+  State
+    quick: quick
+    managed: managed
+    DoesNotExist: Slot %2$d %1$s state does not exist
+    Incompatible: Slot %2$d %1$s state incompatible
+    Load: Loaded %1$s state from slot %2$d
+    Unsupported: Failed to save %1$s state to slot %2$d
+    Unprivileged: Unable to write %1$s state to slot %2$d
+    Save: Saved %1$s state to slot %2$d
+    Select: Selected quick state slot %d
+  SaveScreenshot: Screenshot saved
+
+Error
+  Crash: Driver crash detected. Video/Audio/Input drivers have been disabled.
+  VideoDriver: Failed to initialize video driver
+  AudioDriver: Failed to initialize audio driver
+  InputDriver: Failed to initialize input driver
+
+Settings: Settings
+  Video: Video
+    ColorAdjustment: Color Adjustment
+      Saturation: Saturation:
+      Gamma: Gamma:
+      Luminance: Luminance:
+    OverscanMask: Overscan Mask
+      Horizontal: Horizontal:
+      Vertical: Vertical:
+    WindowedMode: Windowed Mode
+    FullscreenMode: Fullscreen Mode
+    AspectCorrection: Aspect correction
+    IntegralScaling: Integral scaling
+    AdaptiveSizing: Adaptive sizing
+    ExclusiveMode: Exclusive mode
+  Audio: Audio
+    Driver: Driver
+      Device: Device:
+      Frequency: Frequency:
+      Latency: Latency:
+      ExclusiveMode: Exclusive mode
+    Effects: Effects
+      Volume: Volume:
+      Balance: Balance:
+      Reverb: Reverb
+  Input: Input
+    WhenFocusIsLost: When Focus is Lost:
+      PauseEmulation: Pause Emulation
+      AllowInput: Allow Input
+    Name: Name
+    Mapping: Mapping
+    MouseXAxis: Mouse X-axis
+    MouseYAxis: Mouse Y-axis
+    MouseLeft: Mouse Left
+    MouseMiddle: Mouse Middle
+    MouseRight: Mouse Right
+    Reset: Reset
+    Erase: Erase
+    PressKey: Press a key or button to map [%s] ...
+    MappingAssigned: Mapping assigned.
+  Hotkeys: Hotkeys
+    Name: Name
+    Mapping: Mapping
+    ToggleLogic: Toggle AND/OR
+    Reset: Reset
+    Erase: Erase
+    PressKey: Press a key or button to map [%s] ...
+    MappingAssigned: Mapping assigned.
+  Advanced: Advanced
+    DriverSelection: Driver Selection
+      Video: Video:
+      Audio: Audio:
+      Input: Input:
+    GameLibrary: Game Library
+      Location: Location:
+      Change...: Change ...
+      IgnoreManifests: Ignore Manifests
+    DevelopmentState: Development State
+      ShowFull: Only show full cores
+      ShowAlpha: Show full and alpha cores
+      ShowPreAlpha: Show all cores, including pre-alpha
+
+Tools: Tools
+  CheatDatabase
+    SelectAll: Select All
+    UnselectAll: Unselect All
+    AddCodes: Add Codes
+  CheatEditor: Cheat Editor
+    Table
+      Slot: Slot
+      Codes: Code(s)
+      Description: Description
+    Edit
+      Codes: Code(s):
+      Description: Description:
+    FindCodes...: Find Codes ...
+    Reset: Reset
+    Erase: Erase
+  StateManager: State Manager
+    Table
+      Slot: Slot
+      Description: Description
+    Edit
+      Description: Description:
+    Save: Save
+    Load: Load
+    Reset: Reset
+    Erase: Erase
+  ManifestViewer: Manifest Viewer

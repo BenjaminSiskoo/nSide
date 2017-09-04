@@ -12,7 +12,7 @@ SettingsManager::SettingsManager() {
   layout.setMargin(5);
   statusBar.setFont(Font().setBold());
 
-  setTitle("Settings");
+  refreshLocale();
   setSize({600, 405});
   setAlignment({0.0, 1.0});
   setDismissable();
@@ -21,6 +21,10 @@ SettingsManager::SettingsManager() {
     input.mappingList.resizeColumns();
     hotkeys.mappingList.resizeColumns();
   });
+}
+
+auto SettingsManager::refreshLocale() -> void {
+  setTitle(locale["Settings"]);
 }
 
 auto SettingsManager::setVisible(bool visible) -> SettingsManager& {

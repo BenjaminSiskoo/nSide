@@ -6,74 +6,69 @@ unique_pointer<Presentation> presentation;
 Presentation::Presentation() {
   presentation = this;
 
-  libraryMenu.setText("Library");
-  refreshLibraryMenu();
+  refreshLocale();
 
-  systemMenu.setText("System").setVisible(false);
-  reloadSystem.setText("Power Cycle").onActivate([&] { program->powerCycle(); });
-  unloadSystem.setText("Unload").onActivate([&] { program->unloadMedium(); });
+  systemMenu.setVisible(false);
+  reloadSystem.onActivate([&] { program->powerCycle(); });
+  unloadSystem.onActivate([&] { program->unloadMedium(); });
 
-  settingsMenu.setText("Settings");
-  videoScaleMenu.setText("Video Scale");
-  videoScaleSmall.setText("Small").onActivate([&] {
+  videoScaleSmall.onActivate([&] {
     settings["Video/Windowed/Scale"].setValue("Small");
     resizeViewport();
   });
-  videoScaleMedium.setText("Medium").onActivate([&] {
+  videoScaleMedium.onActivate([&] {
     settings["Video/Windowed/Scale"].setValue("Medium");
     resizeViewport();
   });
-  videoScaleLarge.setText("Large").onActivate([&] {
+  videoScaleLarge.onActivate([&] {
     settings["Video/Windowed/Scale"].setValue("Large");
     resizeViewport();
   });
-  videoEmulationMenu.setText("Video Emulation");
-  blurEmulation.setText("Blurring").setChecked(settings["Video/BlurEmulation"].boolean()).onToggle([&] {
+  blurEmulation.setChecked(settings["Video/BlurEmulation"].boolean()).onToggle([&] {
     settings["Video/BlurEmulation"].setValue(blurEmulation.checked());
     if(emulator) emulator->set("Blur Emulation", blurEmulation.checked());
   });
-  colorEmulation.setText("Colors").setChecked(settings["Video/ColorEmulation"].boolean()).onToggle([&] {
+  colorEmulation.setChecked(settings["Video/ColorEmulation"].boolean()).onToggle([&] {
     settings["Video/ColorEmulation"].setValue(colorEmulation.checked());
     if(emulator) emulator->set("Color Emulation", colorEmulation.checked());
   });
-  scanlineEmulation.setText("Scanlines").setChecked(settings["Video/ScanlineEmulation"].boolean()).setVisible(false).onToggle([&] {
+  scanlineEmulation.setChecked(settings["Video/ScanlineEmulation"].boolean()).setVisible(false).onToggle([&] {
     settings["Video/ScanlineEmulation"].setValue(scanlineEmulation.checked());
     if(emulator) emulator->set("Scanline Emulation", scanlineEmulation.checked());
   });
-  videoShaderMenu.setText("Video Shader");
-  videoShaderNone.setText("None").onActivate([&] {
+  videoShaderNone.onActivate([&] {
     settings["Video/Shader"].setValue("None");
     program->updateVideoShader();
   });
-  videoShaderBlur.setText("Blur").onActivate([&] {
+  videoShaderBlur.onActivate([&] {
     settings["Video/Shader"].setValue("Blur");
     program->updateVideoShader();
   });
-//videoShaderAuto.setText("Auto").onActivate([&] {
+//videoShaderAuto.onActivate([&] {
 //  settings["Video/Shader"].setValue("Auto");
 //  program->updateVideoShader();
 //});
   loadShaders();
-  synchronizeVideo.setText("Synchronize Video").setChecked(settings["Video/Synchronize"].boolean()).setVisible(false).onToggle([&] {
+  synchronizeVideo.setChecked(settings["Video/Synchronize"].boolean()).setVisible(false).onToggle([&] {
     settings["Video/Synchronize"].setValue(synchronizeVideo.checked());
     video->setBlocking(synchronizeVideo.checked());
   });
-  synchronizeAudio.setText("Synchronize Audio").setChecked(settings["Audio/Synchronize"].boolean()).onToggle([&] {
+  synchronizeAudio.setChecked(settings["Audio/Synchronize"].boolean()).onToggle([&] {
     settings["Audio/Synchronize"].setValue(synchronizeAudio.checked());
     audio->setBlocking(synchronizeAudio.checked());
   });
-  muteAudio.setText("Mute Audio").setChecked(settings["Audio/Mute"].boolean()).onToggle([&] {
+  muteAudio.setChecked(settings["Audio/Mute"].boolean()).onToggle([&] {
     settings["Audio/Mute"].setValue(muteAudio.checked());
     program->updateAudioEffects();
   });
-  showStatusBar.setText("Show Status Bar").setChecked(settings["UserInterface/ShowStatusBar"].boolean()).onToggle([&] {
+  showStatusBar.setChecked(settings["UserInterface/ShowStatusBar"].boolean()).onToggle([&] {
     settings["UserInterface/ShowStatusBar"].setValue(showStatusBar.checked());
     statusBar.setVisible(showStatusBar.checked());
     if(visible()) resizeViewport();
   });
-  showVideoSettings.setText("Video ...").onActivate([&] { settingsManager->show(0); });
-  showAudioSettings.setText("Audio ...").onActivate([&] { settingsManager->show(1); });
-  showInputSettings.setText("Input ...").onActivate([&] {
+  showVideoSettings.onActivate([&] { settingsManager->show(0); });
+  showAudioSettings.onActivate([&] { settingsManager->show(1); });
+  showInputSettings.onActivate([&] {
     if(emulator) {
       //default input panel to current core's input settings
       for(auto item : settingsManager->input.emulatorList.items()) {
@@ -86,41 +81,38 @@ Presentation::Presentation() {
     }
     settingsManager->show(2);
   });
-  showHotkeySettings.setText("Hotkeys ...").onActivate([&] { settingsManager->show(3); });
-  showAdvancedSettings.setText("Advanced ...").onActivate([&] { settingsManager->show(4); });
+  showHotkeySettings.onActivate([&] { settingsManager->show(3); });
+  showAdvancedSettings.onActivate([&] { settingsManager->show(4); });
 
-  toolsMenu.setText("Tools").setVisible(false);
-  saveQuickStateMenu.setText("Save Quick State");
-  saveSlot0.setText("Slot 0").onActivate([&] { program->saveState(0); });
-  saveSlot1.setText("Slot 1").onActivate([&] { program->saveState(1); });
-  saveSlot2.setText("Slot 2").onActivate([&] { program->saveState(2); });
-  saveSlot3.setText("Slot 3").onActivate([&] { program->saveState(3); });
-  saveSlot4.setText("Slot 4").onActivate([&] { program->saveState(4); });
-  saveSlot5.setText("Slot 5").onActivate([&] { program->saveState(5); });
-  saveSlot6.setText("Slot 6").onActivate([&] { program->saveState(6); });
-  saveSlot7.setText("Slot 7").onActivate([&] { program->saveState(7); });
-  saveSlot8.setText("Slot 8").onActivate([&] { program->saveState(8); });
-  saveSlot9.setText("Slot 9").onActivate([&] { program->saveState(9); });
-  loadQuickStateMenu.setText("Load Quick State");
-  loadSlot0.setText("Slot 0").onActivate([&] { program->loadState(0); });
-  loadSlot1.setText("Slot 1").onActivate([&] { program->loadState(1); });
-  loadSlot2.setText("Slot 2").onActivate([&] { program->loadState(2); });
-  loadSlot3.setText("Slot 3").onActivate([&] { program->loadState(3); });
-  loadSlot4.setText("Slot 4").onActivate([&] { program->loadState(4); });
-  loadSlot5.setText("Slot 5").onActivate([&] { program->loadState(5); });
-  loadSlot6.setText("Slot 6").onActivate([&] { program->loadState(6); });
-  loadSlot7.setText("Slot 7").onActivate([&] { program->loadState(7); });
-  loadSlot8.setText("Slot 8").onActivate([&] { program->loadState(8); });
-  loadSlot9.setText("Slot 9").onActivate([&] { program->loadState(9); });
-  cheatEditor.setText("Cheat Editor ...").onActivate([&] { toolsManager->show(0); });
-  stateManager.setText("State Manager ...").onActivate([&] { toolsManager->show(1); });
-  manifestViewer.setText("Manifest Viewer ...").onActivate([&] { toolsManager->show(2); });
+  toolsMenu.setVisible(false);
+  saveSlot0.onActivate([&] { program->saveState(0); });
+  saveSlot1.onActivate([&] { program->saveState(1); });
+  saveSlot2.onActivate([&] { program->saveState(2); });
+  saveSlot3.onActivate([&] { program->saveState(3); });
+  saveSlot4.onActivate([&] { program->saveState(4); });
+  saveSlot5.onActivate([&] { program->saveState(5); });
+  saveSlot6.onActivate([&] { program->saveState(6); });
+  saveSlot7.onActivate([&] { program->saveState(7); });
+  saveSlot8.onActivate([&] { program->saveState(8); });
+  saveSlot9.onActivate([&] { program->saveState(9); });
+  loadSlot0.onActivate([&] { program->loadState(0); });
+  loadSlot1.onActivate([&] { program->loadState(1); });
+  loadSlot2.onActivate([&] { program->loadState(2); });
+  loadSlot3.onActivate([&] { program->loadState(3); });
+  loadSlot4.onActivate([&] { program->loadState(4); });
+  loadSlot5.onActivate([&] { program->loadState(5); });
+  loadSlot6.onActivate([&] { program->loadState(6); });
+  loadSlot7.onActivate([&] { program->loadState(7); });
+  loadSlot8.onActivate([&] { program->loadState(8); });
+  loadSlot9.onActivate([&] { program->loadState(9); });
+  cheatEditor.onActivate([&] { toolsManager->show(0); });
+  stateManager.onActivate([&] { toolsManager->show(1); });
+  manifestViewer.onActivate([&] { toolsManager->show(2); });
 
-  helpMenu.setText("Help");
-  documentation.setText("Documentation for higan ...").onActivate([&] {
+  documentation.onActivate([&] {
     invoke("http://doc.byuu.org/higan/");
   });
-  about.setText("About ...").onActivate([&] {
+  about.onActivate([&] {
     aboutWindow->setVisible().setFocused();
   });
 
@@ -159,6 +151,69 @@ Presentation::Presentation() {
   #endif
 }
 
+auto Presentation::refreshLocale() -> void {
+  libraryMenu.setText(locale["Menu/Library"]);
+  refreshLibraryMenu();
+
+  systemMenu.setText(locale["Menu/System"]);
+  reloadSystem.setText(locale["Menu/System/PowerCycle"]);
+  unloadSystem.setText(locale["Menu/System/Unload"]);
+
+  settingsMenu.setText(locale["Menu/Settings"]);
+  videoScaleMenu.setText(locale["Menu/Settings/VideoScale"]);
+  videoScaleSmall.setText(locale["Menu/Settings/VideoScale/Small"]);
+  videoScaleMedium.setText(locale["Menu/Settings/VideoScale/Medium"]);
+  videoScaleLarge.setText(locale["Menu/Settings/VideoScale/Large"]);
+  videoEmulationMenu.setText(locale["Menu/Settings/VideoEmulation"]);
+  blurEmulation.setText(locale["Menu/Settings/VideoEmulation/Blurring"]);
+  colorEmulation.setText(locale["Menu/Settings/VideoEmulation/Colors"]);
+  scanlineEmulation.setText(locale["Menu/Settings/VideoEmulation/Scanlines"]);
+  videoShaderMenu.setText(locale["Menu/Settings/VideoShader"]);
+  videoShaderNone.setText(locale["Menu/Settings/VideoShader/None"]);
+  videoShaderBlur.setText(locale["Menu/Settings/VideoShader/Blur"]);
+//videoShaderAuto.setText(locale["Menu/Settings/VideoShader/Auto"]);
+  synchronizeVideo.setText(locale["Menu/Settings/SynchronizeVideo"]);
+  synchronizeAudio.setText(locale["Menu/Settings/SynchronizeAudio"]);
+  muteAudio.setText(locale["Menu/Settings/MuteAudio"]);
+  showStatusBar.setText(locale["Menu/Settings/ShowStatusBar"]);
+  showVideoSettings.setText(locale["Menu/Settings/Video..."]);
+  showAudioSettings.setText(locale["Menu/Settings/Audio..."]);
+  showInputSettings.setText(locale["Menu/Settings/Input..."]);
+  showHotkeySettings.setText(locale["Menu/Settings/Hotkeys..."]);
+  showAdvancedSettings.setText(locale["Menu/Settings/Advanced..."]);
+
+  toolsMenu.setText(locale["Menu/Tools"]).setVisible(false);
+  saveQuickStateMenu.setText(locale["Menu/Tools/SaveQuickState"]);
+  saveSlot0.setText(locale["Menu/Tools/Slot"].replace("%d", "0"));
+  saveSlot1.setText(locale["Menu/Tools/Slot"].replace("%d", "1"));
+  saveSlot2.setText(locale["Menu/Tools/Slot"].replace("%d", "2"));
+  saveSlot3.setText(locale["Menu/Tools/Slot"].replace("%d", "3"));
+  saveSlot4.setText(locale["Menu/Tools/Slot"].replace("%d", "4"));
+  saveSlot5.setText(locale["Menu/Tools/Slot"].replace("%d", "5"));
+  saveSlot6.setText(locale["Menu/Tools/Slot"].replace("%d", "6"));
+  saveSlot7.setText(locale["Menu/Tools/Slot"].replace("%d", "7"));
+  saveSlot8.setText(locale["Menu/Tools/Slot"].replace("%d", "8"));
+  saveSlot9.setText(locale["Menu/Tools/Slot"].replace("%d", "9"));
+  loadQuickStateMenu.setText(locale["Menu/Tools/LoadQuickState"]);
+  loadSlot0.setText(locale["Menu/Tools/Slot"].replace("%d", "0"));
+  loadSlot1.setText(locale["Menu/Tools/Slot"].replace("%d", "1"));
+  loadSlot2.setText(locale["Menu/Tools/Slot"].replace("%d", "2"));
+  loadSlot3.setText(locale["Menu/Tools/Slot"].replace("%d", "3"));
+  loadSlot4.setText(locale["Menu/Tools/Slot"].replace("%d", "4"));
+  loadSlot5.setText(locale["Menu/Tools/Slot"].replace("%d", "5"));
+  loadSlot6.setText(locale["Menu/Tools/Slot"].replace("%d", "6"));
+  loadSlot7.setText(locale["Menu/Tools/Slot"].replace("%d", "7"));
+  loadSlot8.setText(locale["Menu/Tools/Slot"].replace("%d", "8"));
+  loadSlot9.setText(locale["Menu/Tools/Slot"].replace("%d", "9"));
+  cheatEditor.setText(locale["Menu/Tools/CheatEditor..."]);
+  stateManager.setText(locale["Menu/Tools/StateManager..."]);
+  manifestViewer.setText(locale["Menu/Tools/ManifestViewer..."]);
+
+  helpMenu.setText(locale["Menu/Help"]);
+  documentation.setText(locale["Menu/Help/Documentation..."]);
+  about.setText(locale["Menu/Help/About..."]);
+}
+
 auto Presentation::refreshLibraryMenu() -> void {
   libraryMenu.reset();
   string_vector manufacturers;
@@ -170,13 +225,15 @@ auto Presentation::refreshLibraryMenu() -> void {
   }
   for(auto& manufacturer : manufacturers) {
     Menu manufacturerMenu{&libraryMenu};
-    manufacturerMenu.setText(manufacturer);
+    manufacturerMenu.setText(locale[{"System/", string{manufacturer}.replace(" ", "")}]);
     for(auto& emulator : program->emulators) {
       if(emulator->information.manufacturer != manufacturer) continue;
       if(emulator->information.devState > settings["Library/DevState"].natural()) continue;
       for(auto& medium : emulator->media) {
         auto item = new MenuItem{&manufacturerMenu};
-        item->setText({emulator->information.devState == 2 ? "(!) " : "", medium.name, " ..."}).onActivate([=] {
+        string prefix = emulator->information.devState == 2 ? "(!) " : "";
+        string name = locale[{"System/", manufacturer, "/", string{medium.name}.replace(" ", "")}];
+        item->setText({prefix, name, " ..."}).onActivate([=] {
           program->loadMedium(*emulator, medium);
         });
       }
@@ -185,14 +242,14 @@ auto Presentation::refreshLibraryMenu() -> void {
   //add cart-pal menu options -- but only if cart-pal binary is present
   if(execute("cart-pal", "--name").output.strip() == "cart-pal") {
     libraryMenu.append(MenuSeparator());
-    libraryMenu.append(MenuItem().setText("Load ROM File ...").onActivate([&] {
+    libraryMenu.append(MenuItem().setText(locale["Menu/Library/LoadROMFile..."]).onActivate([&] {
       audio->clear();
       if(auto location = execute("cart-pal", "--import")) {
         program->mediumQueue.append(location.output.strip());
         program->loadMedium();
       }
     }));
-    libraryMenu.append(MenuItem().setText("Import ROM Files ...").onActivate([&] {
+    libraryMenu.append(MenuItem().setText(locale["Menu/Library/ImportROMFiles..."]).onActivate([&] {
       invoke("cart-pal");
     }));
   }

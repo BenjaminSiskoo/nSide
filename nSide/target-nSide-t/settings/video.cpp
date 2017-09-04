@@ -1,40 +1,58 @@
 VideoSettings::VideoSettings(TabFrame* parent) : TabFrameItem(parent) {
   setIcon(Icon::Device::Display);
-  setText("Video");
+  refreshLocale();
 
   layout.setMargin(5);
 
-  colorAdjustmentLabel.setFont(Font().setBold()).setText("Color Adjustment");
-  saturationLabel.setText("Saturation:");
+  colorAdjustmentLabel.setFont(Font().setBold());
   saturationValue.setAlignment(0.5);
   saturationSlider.setLength(201).setPosition(settings["Video/Saturation"].natural()).onChange([&] { updateColor(); });
-  gammaLabel.setText("Gamma:");
   gammaValue.setAlignment(0.5);
   gammaSlider.setLength(101).setPosition(settings["Video/Gamma"].natural() - 100).onChange([&] { updateColor(); });
-  luminanceLabel.setText("Luminance:");
   luminanceValue.setAlignment(0.5);
   luminanceSlider.setLength(101).setPosition(settings["Video/Luminance"].natural()).onChange([&] { updateColor(); });
 
-  overscanMaskLabel.setFont(Font().setBold()).setText("Overscan Mask");
-  horizontalMaskLabel.setText("Horizontal:");
+  overscanMaskLabel.setFont(Font().setBold());
   horizontalMaskValue.setAlignment(0.5);
   horizontalMaskSlider.setLength(25).setPosition(settings["Video/Overscan/Horizontal"].natural()).onChange([&] { updateViewport(); });
-  verticalMaskLabel.setText("Vertical:");
   verticalMaskValue.setAlignment(0.5);
   verticalMaskSlider.setLength(25).setPosition(settings["Video/Overscan/Vertical"].natural()).onChange([&] { updateViewport(); });
 
-  windowedModeLabel.setFont(Font().setBold()).setText("Windowed Mode");
-  windowedModeAspectCorrection.setText("Aspect correction").setChecked(settings["Video/Windowed/AspectCorrection"].boolean()).onToggle([&] { updateViewport(); });
-  windowedModeIntegralScaling.setText("Integral scaling").setChecked(settings["Video/Windowed/IntegralScaling"].boolean()).onToggle([&] { updateViewport(); });
-  windowedModeAdaptive.setText("Adaptive sizing").setChecked(settings["Video/Windowed/Adaptive"].boolean()).onToggle([&] { updateViewport(); });
+  windowedModeLabel.setFont(Font().setBold());
+  windowedModeAspectCorrection.setChecked(settings["Video/Windowed/AspectCorrection"].boolean()).onToggle([&] { updateViewport(); });
+  windowedModeIntegralScaling.setChecked(settings["Video/Windowed/IntegralScaling"].boolean()).onToggle([&] { updateViewport(); });
+  windowedModeAdaptive.setChecked(settings["Video/Windowed/Adaptive"].boolean()).onToggle([&] { updateViewport(); });
 
-  fullscreenModeLabel.setFont(Font().setBold()).setText("Fullscreen Mode");
-  fullscreenModeAspectCorrection.setText("Aspect correction").setChecked(settings["Video/Fullscreen/AspectCorrection"].boolean()).onToggle([&] { updateViewport(); });
-  fullscreenModeIntegralScaling.setText("Integral scaling").setChecked(settings["Video/Fullscreen/IntegralScaling"].boolean()).onToggle([&] { updateViewport(); });
-  fullscreenModeExclusive.setText("Exclusive mode").setChecked(settings["Video/Fullscreen/Exclusive"].boolean()).onToggle([&] { updateViewport(); });
+  fullscreenModeLabel.setFont(Font().setBold());
+  fullscreenModeAspectCorrection.setChecked(settings["Video/Fullscreen/AspectCorrection"].boolean()).onToggle([&] { updateViewport(); });
+  fullscreenModeIntegralScaling.setChecked(settings["Video/Fullscreen/IntegralScaling"].boolean()).onToggle([&] { updateViewport(); });
+  fullscreenModeExclusive.setChecked(settings["Video/Fullscreen/Exclusive"].boolean()).onToggle([&] { updateViewport(); });
 
   updateColor(true);
   updateViewport(true);
+}
+
+auto VideoSettings::refreshLocale() -> void {
+  setText(locale["Settings/Video"]);
+
+  colorAdjustmentLabel.setText(locale["Settings/Video/ColorAdjustment"]);
+  saturationLabel.setText(locale["Settings/Video/ColorAdjustment/Saturation"]);
+  gammaLabel.setText(locale["Settings/Video/ColorAdjustment/Gamma"]);
+  luminanceLabel.setText(locale["Settings/Video/ColorAdjustment/Luminance"]);
+
+  overscanMaskLabel.setText(locale["Settings/Video/OverscanMask"]);
+  horizontalMaskLabel.setText(locale["Settings/Video/OverscanMask/Horizontal"]);
+  verticalMaskLabel.setText(locale["Settings/Video/OverscanMask/Vertical"]);
+
+  windowedModeLabel.setText(locale["Settings/Video/WindowedMode"]);
+  windowedModeAspectCorrection.setText(locale["Settings/Video/AspectCorrection"]);
+  windowedModeIntegralScaling.setText(locale["Settings/Video/IntegralScaling"]);
+  windowedModeAdaptive.setText(locale["Settings/Video/AdaptiveSizing"]);
+
+  fullscreenModeLabel.setText(locale["Settings/Video/FullscreenMode"]);
+  fullscreenModeAspectCorrection.setText(locale["Settings/Video/AspectCorrection"]);
+  fullscreenModeIntegralScaling.setText(locale["Settings/Video/IntegralScaling"]);
+  fullscreenModeExclusive.setText(locale["Settings/Video/ExclusiveMode"]);
 }
 
 auto VideoSettings::updateColor(bool initializing) -> void {

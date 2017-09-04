@@ -14,6 +14,7 @@ extern Emulator::Interface* emulator;
 #include "program/program.hpp"
 #include "configuration/configuration.hpp"
 #include "input/input.hpp"
+#include "locale/locale.hpp"
 #include "settings/settings.hpp"
 #include "tools/tools.hpp"
 #include "presentation/presentation.hpp"

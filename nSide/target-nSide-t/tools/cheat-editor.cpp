@@ -1,6 +1,6 @@
 CheatEditor::CheatEditor(TabFrame* parent) : TabFrameItem(parent) {
   setIcon(Icon::Edit::Replace);
-  setText("Cheat Editor");
+  refreshLocale();
 
   layout.setMargin(5);
   cheatList.append(TableViewHeader().setVisible()
@@ -20,16 +20,24 @@ CheatEditor::CheatEditor(TabFrame* parent) : TabFrameItem(parent) {
     cheats[cell.parent().offset()].enabled = cell.checked();
     synchronizeCodes();
   });
-  codeLabel.setText("Code(s):");
   codeValue.onChange([&] { doModify(); });
-  descriptionLabel.setText("Description:");
   descriptionValue.onChange([&] { doModify(); });
-  findCodesButton.setText("Find Codes ...").onActivate([&] { cheatDatabase->findCodes(); });
-  resetButton.setText("Reset").onActivate([&] { doReset(); });
-  eraseButton.setText("Erase").onActivate([&] { doErase(); });
+  findCodesButton.onActivate([&] { cheatDatabase->findCodes(); });
+  resetButton.onActivate([&] { doReset(); });
+  eraseButton.onActivate([&] { doErase(); });
 
   //do not display "Find Codes" button if there is no cheat database to look up codes in
   if(!file::exists(locate("cheats.bml"))) findCodesButton.setVisible(false);
+}
+
+auto CheatEditor::refreshLocale() -> void {
+  setText(locale["Tools/CheatEditor"]);
+
+  codeLabel.setText(locale["Tools/CheatEditor/Edit/Codes"]);
+  descriptionLabel.setText(locale["Tools/CheatEditor/Edit/Description"]);
+  findCodesButton.setText(locale["Tools/CheatEditor/FindCodes..."]);
+  resetButton.setText(locale["Tools/CheatEditor/Reset"]);
+  eraseButton.setText(locale["Tools/CheatEditor/Erase"]);
 }
 
 auto CheatEditor::doChangeSelected() -> void {

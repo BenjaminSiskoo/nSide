@@ -40,11 +40,14 @@ Program::Program(string_vector args) {
   emulators.append(new Famicom::PlayChoice10Interface);
   emulators.append(new Famicom::FamicomBoxInterface);
 
+  if(!settings["UserInterface/Locale"]) settings["UserInterface/Locale"].setValue("Auto");
+  locale.load(settings["UserInterface/Locale"].text());
+
   new Presentation;
   presentation->setVisible();
 
   if(settings["Crashed"].boolean()) {
-    MessageDialog().setText("Driver crash detected. Video/Audio/Input drivers have been disabled.").information();
+    MessageDialog().setText(locale["Error/Crash"]).information();
     settings["Video/Driver"].setValue("None");
     settings["Audio/Driver"].setValue("None");
     settings["Input/Driver"].setValue("None");

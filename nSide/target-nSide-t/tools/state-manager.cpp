@@ -1,6 +1,6 @@
 StateManager::StateManager(TabFrame* parent) : TabFrameItem(parent) {
   setIcon(Icon::Application::FileManager);
-  setText("State Manager");
+  refreshLocale();
 
   layout.setMargin(5);
   stateList.append(TableViewHeader().setVisible()
@@ -15,14 +15,23 @@ StateManager::StateManager(TabFrame* parent) : TabFrameItem(parent) {
   }
   stateList.onActivate([&] { doLoad(); });
   stateList.onChange([&] { doChangeSelected(); });
-  descriptionLabel.setText("Description:");
   descriptionValue.onChange([&] { doChangeDescription(); });
-  saveButton.setText("Save").onActivate([&] { doSave(); });
-  loadButton.setText("Load").onActivate([&] { doLoad(); });
-  resetButton.setText("Reset").onActivate([&] { doReset(); });
-  eraseButton.setText("Erase").onActivate([&] { doErase(); });
+  saveButton.onActivate([&] { doSave(); });
+  loadButton.onActivate([&] { doLoad(); });
+  resetButton.onActivate([&] { doReset(); });
+  eraseButton.onActivate([&] { doErase(); });
 
   doUpdateControls();
+}
+
+auto StateManager::refreshLocale() -> void {
+  setText(locale["Tools/StateManager"]);
+
+  descriptionLabel.setText(locale["Tools/StateManager/Edit/Description"]);
+  saveButton.setText(locale["Tools/StateManager/Save"]);
+  loadButton.setText(locale["Tools/StateManager/Load"]);
+  resetButton.setText(locale["Tools/StateManager/Reset"]);
+  eraseButton.setText(locale["Tools/StateManager/Erase"]);
 }
 
 auto StateManager::doUpdateControls() -> void {

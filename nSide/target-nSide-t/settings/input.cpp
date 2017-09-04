@@ -1,14 +1,13 @@
 InputSettings::InputSettings(TabFrame* parent) : TabFrameItem(parent) {
   setIcon(Icon::Device::Joypad);
-  setText("Input");
+  refreshLocale();
 
   layout.setMargin(5);
-  focusLabel.setText("When Focus is Lost:");
-  pauseEmulation.setText("Pause Emulation").setChecked(settings["Input/FocusLoss/Pause"].boolean()).onToggle([&] {
+  pauseEmulation.setChecked(settings["Input/FocusLoss/Pause"].boolean()).onToggle([&] {
     settings["Input/FocusLoss/Pause"].setValue(pauseEmulation.checked());
     allowInput.setEnabled(!pauseEmulation.checked());
   }).doToggle();
-  allowInput.setText("Allow Input").setChecked(settings["Input/FocusLoss/AllowInput"].boolean()).onToggle([&] {
+  allowInput.setChecked(settings["Input/FocusLoss/AllowInput"].boolean()).onToggle([&] {
     settings["Input/FocusLoss/AllowInput"].setValue(allowInput.checked());
   });
   refreshEmulatorList();
@@ -20,13 +19,13 @@ InputSettings::InputSettings(TabFrame* parent) : TabFrameItem(parent) {
   assignMouse1.setVisible(false).onActivate([&] { assignMouseInput(0); });
   assignMouse2.setVisible(false).onActivate([&] { assignMouseInput(1); });
   assignMouse3.setVisible(false).onActivate([&] { assignMouseInput(2); });
-  resetButton.setText("Reset").onActivate([&] {
+  resetButton.onActivate([&] {
     if(MessageDialog("Are you sure you want to erase all mappings for this device?").setParent(*settingsManager).question() == "Yes") {
       for(auto& mapping : activeDevice().mappings) mapping.unbind();
       refreshMappings();
     }
   });
-  eraseButton.setText("Erase").onActivate([&] {
+  eraseButton.onActivate([&] {
     if(auto mapping = mappingList.selected()) {
       activeDevice().mappings[mapping.offset()].unbind();
       refreshMappings();
@@ -34,6 +33,17 @@ InputSettings::InputSettings(TabFrame* parent) : TabFrameItem(parent) {
   });
 
   reloadPorts();
+}
+
+auto InputSettings::refreshLocale() -> void {
+  setText(locale["Settings/Input"]);
+
+  focusLabel.setText(locale["Settings/Input/WhenFocusIsLost"]);
+  pauseEmulation.setText(locale["Settings/Input/WhenFocusIsLost/PauseEmulation"]);
+  allowInput.setText(locale["Settings/Input/WhenFocusIsLost/AllowInput"]);
+
+  resetButton.setText(locale["Settings/Input/Reset"]);
+  eraseButton.setText(locale["Settings/Input/Erase"]);
 }
 
 auto InputSettings::refreshEmulatorList() -> void {
@@ -54,12 +64,12 @@ auto InputSettings::updateControls() -> void {
     auto& input = activeDevice().mappings[mapping.offset()];
 
     if(input.isDigital()) {
-      assignMouse1.setVisible().setText("Mouse Left");
-      assignMouse2.setVisible().setText("Mouse Middle");
-      assignMouse3.setVisible().setText("Mouse Right");
+      assignMouse1.setVisible().setText(locale["Settings/Input/MouseLeft"]);
+      assignMouse2.setVisible().setText(locale["Settings/Input/MouseMiddle"]);
+      assignMouse3.setVisible().setText(locale["Settings/Input/MouseRight"]);
     } else if(input.isAnalog()) {
-      assignMouse1.setVisible().setText("Mouse X-axis");
-      assignMouse2.setVisible().setText("Mouse Y-axis");
+      assignMouse1.setVisible().setText(locale["Settings/Input/MouseXAxis"]);
+      assignMouse2.setVisible().setText(locale["Settings/Input/MouseYAxis"]);
     }
   }
 }
@@ -104,8 +114,8 @@ auto InputSettings::reloadMappings() -> void {
   eraseButton.setEnabled(false);
   mappingList.reset();
   mappingList.append(TableViewHeader().setVisible()
-    .append(TableViewColumn().setText("Name"))
-    .append(TableViewColumn().setText("Mapping").setExpandable())
+    .append(TableViewColumn().setText(locale["Settings/Input/Name"]))
+    .append(TableViewColumn().setText(locale["Settings/Input/Mapping"]).setExpandable())
   );
   for(auto& mapping : activeDevice().mappings) {
     mappingList.append(TableViewItem()
@@ -131,7 +141,7 @@ auto InputSettings::assignMapping() -> void {
   if(auto mapping = mappingList.selected()) {
     activeMapping = &activeDevice().mappings[mapping.offset()];
     settingsManager->layout.setEnabled(false);
-    settingsManager->statusBar.setText({"Press a key or button to map [", activeMapping->name, "] ..."});
+    settingsManager->statusBar.setText(locale["Settings/Input/PressKey"].replace("%s", activeMapping->name));
   }
 }
 
@@ -155,7 +165,7 @@ auto InputSettings::inputEvent(shared_pointer<HID::Device> device, uint group, u
 
   if(activeMapping->bind(device, group, input, oldValue, newValue)) {
     activeMapping = nullptr;
-    settingsManager->statusBar.setText("Mapping assigned.");
+    settingsManager->statusBar.setText(locale["Settings/Input/MappingAssigned"]);
     refreshMappings();
     timer.onActivate([&] {
       timer.setEnabled(false);

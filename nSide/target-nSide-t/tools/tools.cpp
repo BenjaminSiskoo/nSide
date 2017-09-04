@@ -11,7 +11,7 @@ ToolsManager::ToolsManager() {
 
   layout.setMargin(5);
 
-  setTitle("Tools");
+  refreshLocale();
   setSize({600, 405});
   setAlignment({1.0, 1.0});
   setDismissable();
@@ -20,6 +20,10 @@ ToolsManager::ToolsManager() {
     cheatEditor.cheatList.resizeColumns();
     stateManager.stateList.resizeColumns();
   });
+}
+
+auto ToolsManager::refreshLocale() -> void {
+  setTitle(locale["Tools"]);
 }
 
 auto ToolsManager::show(uint tool) -> void {

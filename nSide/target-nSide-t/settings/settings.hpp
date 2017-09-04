@@ -35,6 +35,7 @@ struct VideoSettings : TabFrameItem {
       CheckLabel fullscreenModeIntegralScaling{&fullscreenModeLayout, Size{0, 0}};
       CheckLabel fullscreenModeExclusive{&fullscreenModeLayout, Size{0, 0}};
 
+  auto refreshLocale() -> void;
   auto updateColor(bool initializing = false) -> void;
   auto updateViewport(bool initializing = false) -> void;
 };
@@ -63,6 +64,7 @@ struct AudioSettings : TabFrameItem {
       HorizontalSlider balanceSlider{&balanceLayout, Size{~0, 0}};
     CheckLabel reverbEnable{&layout, Size{~0, 0}};
 
+  auto refreshLocale() -> void;
   auto updateDevice() -> void;
   auto updateEffects(bool initializing = false) -> void;
 };
@@ -88,6 +90,7 @@ struct InputSettings : TabFrameItem {
       Button resetButton{&controlLayout, Size{80, 0}};
       Button eraseButton{&controlLayout, Size{80, 0}};
 
+  auto refreshLocale() -> void;
   auto refreshEmulatorList() -> void;
   auto updateControls() -> void;
   auto activeEmulator() -> InputEmulator&;
@@ -116,6 +119,7 @@ struct HotkeySettings : TabFrameItem {
       Button resetButton{&controlLayout, Size{80, 0}};
       Button eraseButton{&controlLayout, Size{80, 0}};
 
+  auto refreshLocale() -> void;
   auto reloadMappings() -> void;
   auto refreshMappings() -> void;
   auto assignMapping() -> void;
@@ -129,6 +133,9 @@ struct AdvancedSettings : TabFrameItem {
   AdvancedSettings(TabFrame*);
 
   VerticalLayout layout{this};
+    HorizontalLayout localeLayout{&layout, Size{~0, 0}};
+      Label localeLabel{&localeLayout, Size{100, 0}, 2};
+      ComboButton localeSelect{&localeLayout, Size{~0, 0}};
     Label driverLabel{&layout, Size{~0, 0}, 2};
     HorizontalLayout driverLayout{&layout, Size{~0, 0}};
       Label videoLabel{&driverLayout, Size{0, 0}};
@@ -143,11 +150,14 @@ struct AdvancedSettings : TabFrameItem {
       LineEdit libraryLocation{&libraryLayout, Size{~0, 0}};
       Button libraryChange{&libraryLayout, Size{0, 0}};
     CheckLabel ignoreManifests{&layout, Size{~0, 0}};
+    Label devStateLabel{&layout, Size{~0, 0}};
     HorizontalLayout devStateLayout{&layout, Size{~0, 0}};
       RadioLabel devStateFull{&devStateLayout, Size{~0, 0}};
       RadioLabel devStateAlpha{&devStateLayout, Size{~0, 0}};
       RadioLabel devStatePreAlpha{&devStateLayout, Size{~0, 0}};
       Group devStateGroup{&devStateFull, &devStateAlpha, &devStatePreAlpha};
+
+  auto refreshLocale() -> void;
 };
 
 struct SettingsManager : Window {
@@ -162,6 +172,7 @@ struct SettingsManager : Window {
       AdvancedSettings advanced{&panel};
   StatusBar statusBar{this};
 
+  auto refreshLocale() -> void;
   auto setVisible(bool visible = true) -> SettingsManager&;
   auto show(uint setting) -> void;
 };

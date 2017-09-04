@@ -1,25 +1,25 @@
 HotkeySettings::HotkeySettings(TabFrame* parent) : TabFrameItem(parent) {
   setIcon(Icon::Device::Keyboard);
-  setText("Hotkeys");
+  refreshLocale();
 
   layout.setMargin(5);
   mappingList.onActivate([&] { assignMapping(); });
   mappingList.onChange([&] {
     eraseButton.setEnabled((bool)mappingList.selected());
   });
-  toggleLogicButton.setText("Toggle AND/OR").onActivate([&] {
+  toggleLogicButton.onActivate([&] {
     if(auto item = mappingList.selected()) {
       inputManager->hotkeys[item.offset()]->toggleLogic();
       refreshMappings();
     }
   });
-  resetButton.setText("Reset").onActivate([&] {
+  resetButton.onActivate([&] {
     if(MessageDialog("Are you sure you want to erase all hotkey mappings?").setParent(*settingsManager).question() == "Yes") {
       for(auto& mapping : inputManager->hotkeys) mapping->unbind();
       refreshMappings();
     }
   });
-  eraseButton.setText("Erase").onActivate([&] {
+  eraseButton.onActivate([&] {
     if(auto item = mappingList.selected()) {
       inputManager->hotkeys[item.offset()]->unbind();
       refreshMappings();
@@ -30,11 +30,19 @@ HotkeySettings::HotkeySettings(TabFrame* parent) : TabFrameItem(parent) {
   refreshMappings();
 }
 
+auto HotkeySettings::refreshLocale() -> void {
+  setText(locale["Settings/Hotkeys"]);
+
+  toggleLogicButton.setText(locale["Settings/Hotkeys/ToggleLogic"]);
+  resetButton.setText(locale["Settings/Hotkeys/Reset"]);
+  eraseButton.setText(locale["Settings/Hotkeys/Erase"]);
+}
+
 auto HotkeySettings::reloadMappings() -> void {
   mappingList.reset();
   mappingList.append(TableViewHeader().setVisible()
-    .append(TableViewColumn().setText("Name"))
-    .append(TableViewColumn().setText("Mapping").setExpandable())
+    .append(TableViewColumn().setText(locale["Settings/Hotkeys/Name"]))
+    .append(TableViewColumn().setText(locale["Settings/Hotkeys/Mapping"]).setExpandable())
   );
   for(auto& hotkey : inputManager->hotkeys) {
     mappingList.append(TableViewItem()
@@ -60,7 +68,7 @@ auto HotkeySettings::assignMapping() -> void {
   if(auto item = mappingList.selected()) {
     activeMapping = inputManager->hotkeys[item.offset()];
     settingsManager->layout.setEnabled(false);
-    settingsManager->statusBar.setText({"Press a key or button to map [", activeMapping->name, "] ..."});
+    settingsManager->statusBar.setText(locale["Settings/Hotkeys/PressKey"].replace("%s", activeMapping->name));
   }
 }
 
@@ -70,7 +78,7 @@ auto HotkeySettings::inputEvent(shared_pointer<HID::Device> device, uint group, 
 
   if(activeMapping->bind(device, group, input, oldValue, newValue)) {
     activeMapping = nullptr;
-    settingsManager->statusBar.setText("Mapping assigned.");
+    settingsManager->statusBar.setText(locale["Settings/Hotkeys/MappingAssigned"]);
     refreshMappings();
     timer.onActivate([&] {
       timer.setEnabled(false);

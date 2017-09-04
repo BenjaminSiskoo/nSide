@@ -85,7 +85,7 @@ auto Program::videoRefresh(const uint32* data, uint pitch, uint width, uint heig
   current = chrono::timestamp();
   if(current != previous) {
     previous = current;
-    statusText = {"FPS: ", frameCounter};
+    statusText = locale["Status/FPS"].replace("%d", frameCounter);
     frameCounter = 0;
   }
 }

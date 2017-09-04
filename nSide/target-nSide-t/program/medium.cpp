@@ -33,7 +33,7 @@ auto Program::loadMedium(Emulator::Interface& interface, const Emulator::Interfa
 
   presentation->resizeViewport();
   presentation->setTitle(emulator->title());
-  presentation->systemMenu.setText(medium.name).setVisible(true);
+  presentation->systemMenu.setText(locale[{"System/", emulator->information.manufacturer, "/", medium.name}]).setVisible(true);
   presentation->toolsMenu.setVisible(true);
   presentation->updateEmulator();
   toolsManager->cheatEditor.loadCheats();

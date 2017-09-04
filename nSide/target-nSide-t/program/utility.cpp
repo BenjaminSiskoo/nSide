@@ -8,7 +8,7 @@ auto Program::initializeVideoDriver() -> void {
   video->setBlocking(settings["Video/Synchronize"].boolean());
 
   if(!video->ready()) {
-    MessageDialog().setText("Failed to initialize video driver").warning();
+    MessageDialog().setText(locale["Error/VideoDriver"]).warning();
     video = Video::create("None");
   }
 
@@ -42,7 +42,7 @@ auto Program::initializeAudioDriver() -> void {
   audio->setBlocking(settings["Audio/Synchronize"].boolean());
 
   if(!audio->ready()) {
-    MessageDialog().setText("Failed to initialize audio driver").warning();
+    MessageDialog().setText(locale["Error/AudioDriver"]).warning();
     audio = Audio::create("None");
   }
 
@@ -59,7 +59,7 @@ auto Program::initializeInputDriver() -> void {
   input->onChange({&InputManager::onChange, &inputManager()});
 
   if(!input->ready()) {
-    MessageDialog().setText("Failed to initialize input driver").warning();
+    MessageDialog().setText(locale["Error/InputDriver"]).warning();
     input = Input::create("None");
   }
 }
@@ -67,16 +67,16 @@ auto Program::initializeInputDriver() -> void {
 auto Program::powerCycle() -> void {
   if(!emulator) return;
   emulator->power();
-  showMessage("Power cycled");
+  showMessage(locale["Status/PowerCycled"]);
 }
 
 auto Program::rotateDisplay() -> void {
   if(!emulator) return;
-  if(!emulator->cap("Rotate Display")) return showMessage("Display rotation not supported");
+  if(!emulator->cap("Rotate Display")) return showMessage(locale["Status/RotateUnsupported"]);
   auto rotate = emulator->get("Rotate Display");
   emulator->set("Rotate Display", !rotate.get<bool>());
   presentation->resizeViewport();
-  showMessage("Display rotated");
+  showMessage(locale["Status/DisplayRotated"]);
 }
 
 auto Program::connectDevices() -> void {
@@ -105,9 +105,9 @@ auto Program::updateStatusText() -> void {
   if((currentTime - statusTime) <= 2) {
     text = statusMessage;
   } else if(!emulator || emulator->loaded() == false) {
-    text = "No cartridge loaded";
+    text = locale["Status/NoCartridgeLoaded"];
   } else if(pause || (!presentation->focused() && settings["Input/FocusLoss/Pause"].boolean())) {
-    text = "Paused";
+    text = locale["Status/Paused"];
   } else {
     text = statusText;
   }

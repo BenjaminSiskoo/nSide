@@ -11,6 +11,7 @@ struct AboutWindow : Window {
 
 struct Presentation : Window {
   Presentation();
+  auto refreshLocale() -> void;
   auto refreshLibraryMenu() -> void;
   auto updateEmulator() -> void;
   auto clearViewport() -> void;

@@ -8,24 +8,36 @@ auto Program::stateName(uint slot, bool managed) -> string {
 
 auto Program::loadState(uint slot, bool managed) -> bool {
   if(!emulator) return false;
-  string type = managed ? "managed" : "quick";
+  string type = locale[{"Status/State/", managed ? "managed" : "quick"}];
   auto location = stateName(slot, managed);
   auto memory = file::read(location);
-  if(memory.size() == 0) return showMessage({"Slot ", slot, " ", type, " state does not exist"}), false;
+  if(memory.size() == 0) {
+    showMessage(locale["Status/State/DoesNotExist"].replace("%1$s", type).replace("%2$d", slot));
+    return false;
+  }
   serializer s(memory.data(), memory.size());
-  if(emulator->unserialize(s) == false) return showMessage({"Slot ", slot, " ", type, " state incompatible"}), false;
-  return showMessage({"Loaded ", type, " state from slot ", slot}), true;
+  if(emulator->unserialize(s) == false) {
+    showMessage(locale["Status/State/Incompatible"].replace("%1$s", type).replace("%2$d", slot));
+    return false;
+  }
+  showMessage(locale["Status/State/Load"].replace("%1$s", type).replace("%2$d", slot));
+  return true;
 }
 
 auto Program::saveState(uint slot, bool managed) -> bool {
   if(!emulator) return false;
-  string type = managed ? "managed" : "quick";
+  string type = locale[{"Status/State/", managed ? "managed" : "quick"}];
   auto location = stateName(slot, managed);
   serializer s = emulator->serialize();
-  if(s.size() == 0) return showMessage({"Failed to save ", type, " state to slot ", slot}), false;
+  if(s.size() == 0) {
+    showMessage(locale["Status/State/Unsupported"].replace("%1$s", type).replace("%2$d", slot));
+    return false;
+  }
   directory::create(Location::path(location));
   if(file::write(location, s.data(), s.size()) == false) {
-    return showMessage({"Unable to write ", type, " state to slot ", slot}), false;
+    showMessage(locale["Status/State/Unprivileged"].replace("%1$s", type).replace("%2$d", slot));
+    return false;
   }
-  return showMessage({"Saved ", type, " state to slot ", slot}), true;
+  showMessage(locale["Status/State/Save"].replace("%1$s", type).replace("%2$d", slot));
+  return true;
 }

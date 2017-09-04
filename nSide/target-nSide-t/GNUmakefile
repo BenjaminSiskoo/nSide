@@ -19,7 +19,7 @@ include ws/GNUmakefile
 include processor/GNUmakefile
 
 ui_objects := ui-nSide ui-program ui-configuration ui-input
-ui_objects += ui-settings ui-tools ui-dip-switches ui-presentation
+ui_objects += ui-locale ui-settings ui-tools ui-dip-switches ui-presentation
 ui_objects += ruby hiro
 ui_objects += $(if $(call streq,$(platform),windows),ui-resource)
 
@@ -64,6 +64,7 @@ obj/ui-nSide.o: $(ui)/nSide.cpp $(call rwildcard,$(ui)/)
 obj/ui-program.o: $(ui)/program/program.cpp $(call rwildcard,$(ui)/)
 obj/ui-configuration.o: $(ui)/configuration/configuration.cpp $(call rwildcard,$(ui)/)
 obj/ui-input.o: $(ui)/input/input.cpp $(call rwildcard,$(ui)/)
+obj/ui-locale.o: $(ui)/locale/locale.cpp $(call rwildcard,$(ui)/)
 obj/ui-library.o: $(ui)/library/library.cpp $(call rwildcard,$(ui)/)
 obj/ui-settings.o: $(ui)/settings/settings.cpp $(call rwildcard,$(ui)/)
 obj/ui-tools.o: $(ui)/tools/tools.cpp $(call rwildcard,$(ui)/)
@@ -91,20 +92,24 @@ ifeq ($(shell id -un),root)
 else ifeq ($(platform),windows)
 else ifeq ($(platform),macosx)
 	mkdir -p ~/Library/Application\ Support/$(name)/
+	mkdir -p ~/Library/Application\ Support/$(name)/Locales/
 	mkdir -p ~/Emulation/System/
 	cp -R out/$(name).app /Applications/$(name).app
 	cp data/cheats.bml ~/Library/Application\ Support/$(name)/
 	cp -R systems/* ~/Library/Application\ Support/$(name)/
+	cp -R data/Locales/* ~/Library/Application\ Support/$(name)/Locales
 else ifneq ($(filter $(platform),linux bsd),)
 	mkdir -p $(prefix)/bin/
 	mkdir -p $(prefix)/share/applications/
 	mkdir -p $(prefix)/share/icons/
 	mkdir -p $(prefix)/share/$(name)/
+	mkdir -p $(prefix)/share/$(name)/Locales/
 	cp out/$(name) $(prefix)/bin/$(name)
 	cp -R systems/* $(prefix)/share/$(name)/
 	cp data/$(name).desktop $(prefix)/share/applications/$(name).desktop
 	cp data/$(name).png $(prefix)/share/icons/$(name).png
 	cp data/cheats.bml $(prefix)/share/$(name)/cheats.bml
+	cp -R data/Locales/* $(prefix)/share/$(name)/Locales
 endif
 
 uninstall:

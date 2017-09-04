@@ -1,18 +1,25 @@
 CheatDatabase::CheatDatabase() {
   cheatDatabase = this;
+  refreshLocale();
 
   layout.setMargin(5);
-  selectAllButton.setText("Select All").onActivate([&] {
+  selectAllButton.onActivate([&] {
     for(auto& item : cheatList.items()) item.setChecked(true);
   });
-  unselectAllButton.setText("Unselect All").onActivate([&] {
+  unselectAllButton.onActivate([&] {
     for(auto& item : cheatList.items()) item.setChecked(false);
   });
-  addCodesButton.setText("Add Codes").onActivate([&] { addCodes(); });
+  addCodesButton.onActivate([&] { addCodes(); });
 
   setSize({800, 400});
   setAlignment({0.5, 1.0});
   setDismissable();
+}
+
+auto CheatDatabase::refreshLocale() -> void {
+  selectAllButton.setText(locale["Tools/CheatDatabase/SelectAll"]);
+  unselectAllButton.setText(locale["Tools/CheatDatabase/UnselectAll"]);
+  addCodesButton.setText(locale["Tools/CheatDatabase/AddCodes"]);
 }
 
 auto CheatDatabase::findCodes() -> void {
