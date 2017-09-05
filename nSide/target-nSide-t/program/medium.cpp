@@ -33,7 +33,12 @@ auto Program::loadMedium(Emulator::Interface& interface, const Emulator::Interfa
 
   presentation->resizeViewport();
   presentation->setTitle(emulator->title());
-  presentation->systemMenu.setText(locale[{"System/", emulator->information.manufacturer, "/", medium.name}]).setVisible(true);
+  string query = {
+    "System/",
+    string{emulator->information.manufacturer}.replace(" ", ""), "/",
+    string{medium.name}.replace(" ", "")
+  };
+  presentation->systemMenu.setText(locale[query]).setVisible(true);
   presentation->toolsMenu.setVisible(true);
   presentation->updateEmulator();
   toolsManager->cheatEditor.loadCheats();

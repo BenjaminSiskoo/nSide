@@ -20,9 +20,8 @@ bg4(Background::ID::BG4) {
   ppu2.version = 3;  //allowed values: 1, 2, 3
 
   for(uint l : range(16)) {
-    for(uint i : range(4096)) {
-      mosaicTable[l][i] = (i / (l + 1)) * (l + 1);
-    }
+    for(uint i : range(512)) mosaicTableLo[l][i] = (i / (l + 1)) * (l + 1);
+    for(uint i : range(512)) mosaicTableHi[l][i] = (i / ((l << 1) + 2)) * ((l << 1) + 2);
   }
 }
 
@@ -142,9 +141,6 @@ auto PPU::power() -> void {
   io.bgPriority = false;
   io.bgMode = 0;
 
-  //$2106  MOSAIC
-  io.mosaicCountdown = 0;
-
   //$210d  BG1HOFS
   io.hoffsetMode7 = random();
 
@@ -207,12 +203,6 @@ auto PPU::power() -> void {
   window.power();
   screen.power();
 
-  //bg line counters
-  io.bg_y[Background::ID::BG1] = 0;
-  io.bg_y[Background::ID::BG2] = 0;
-  io.bg_y[Background::ID::BG3] = 0;
-  io.bg_y[Background::ID::BG4] = 0;
-
   frame();
 }
 
@@ -223,26 +213,6 @@ auto PPU::scanline() -> void {
     //RTO flag reset
     obj.io.timeOver  = false;
     obj.io.rangeOver = false;
-  }
-
-  if(vcounter() == 1) {
-    //mosaic reset
-    for(int bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) io.bg_y[bg_id] = 1;
-    io.mosaicCountdown = max(bg1.io.mosaic, bg2.io.mosaic, bg3.io.mosaic, bg4.io.mosaic) + 1;
-    io.mosaicCountdown--;
-  } else {
-    for(int bg_id = Background::ID::BG1; bg_id <= Background::ID::BG4; bg_id++) {
-      auto bg = &bg1;
-      switch(bg_id) {
-      case Background::ID::BG1: bg = &bg1; break;
-      case Background::ID::BG2: bg = &bg2; break;
-      case Background::ID::BG3: bg = &bg3; break;
-      case Background::ID::BG4: bg = &bg4; break;
-      }
-      if(!bg->io.mosaic || !io.mosaicCountdown) io.bg_y[bg_id] = vcounter();
-    }
-    if(!io.mosaicCountdown) io.mosaicCountdown = max(bg1.io.mosaic, bg2.io.mosaic, bg3.io.mosaic, bg4.io.mosaic) + 1;
-    io.mosaicCountdown--;
   }
 
   if(vcounter() == 241) {

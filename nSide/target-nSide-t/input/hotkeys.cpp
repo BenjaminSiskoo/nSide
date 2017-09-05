@@ -37,7 +37,7 @@ auto InputManager::appendHotkeys() -> void {
     hotkey->name = "Decrement Quick State";
     hotkey->press = [&] {
       if(--quickStateSlot < 0) quickStateSlot = 9;
-      program->showMessage(locale["Utility/SelectQuickstate"].replace("%d", quickStateSlot));
+      program->showMessage(locale["Status/SelectQuickstate"].replace("%d", quickStateSlot));
     };
     hotkeys.append(hotkey);
   }
@@ -46,7 +46,7 @@ auto InputManager::appendHotkeys() -> void {
     hotkey->name = "Increment Quick State";
     hotkey->press = [&] {
       if(++quickStateSlot > 9) quickStateSlot = 0;
-      program->showMessage(locale["Utility/SelectQuickstate"].replace("%d", quickStateSlot));
+      program->showMessage(locale["Status/SelectQuickstate"].replace("%d", quickStateSlot));
     };
     hotkeys.append(hotkey);
   }
@@ -100,7 +100,7 @@ auto InputManager::appendHotkeys() -> void {
         ".png"
       };
       Emulator::video.screenshot({program->mediumPaths.right(), filename});
-      program->showMessage(locale["Utility/SaveScreenshot"]);
+      program->showMessage(locale["Status/SaveScreenshot"]);
     };
     hotkeys.append(hotkey);
   }

@@ -11,6 +11,7 @@ AdvancedSettings::AdvancedSettings(TabFrame* parent) : TabFrameItem(parent) {
   if(settings["UserInterface/Locale"].text() == "Auto") localeAuto.setSelected();
   localeSelect.append(localeAuto);
   for(auto& filename : directory::files(locate("Locales/"), "*.bml")) {
+    if(filename == "default.bml") continue;
     string locale = string{filename}.trimRight(".bml", 1L);
     ComboButtonItem item;
     item.setText(locale);

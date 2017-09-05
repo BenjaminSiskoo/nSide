@@ -70,8 +70,6 @@ debug_private:
   } latch;
 
   struct IO {
-    uint16 bg_y[4];
-
     //$2100  INIDSP
     bool displayDisable;
     uint4 displayBrightness;
@@ -85,9 +83,6 @@ debug_private:
     //$2105  BGMODE
     bool bgPriority;
     uint8 bgMode;
-
-    //$2106  MOSAIC
-    uint16 mosaicCountdown;
 
     //$210d  BG1HOFS
     uint16 hoffsetMode7;
@@ -148,7 +143,8 @@ debug_private:
     uint16 vcounter;
   } io;
 
-  uint16 mosaicTable[16][4096];
+  uint16 mosaicTableLo[16][512];
+  uint16 mosaicTableHi[16][512];
 
   #include "cache/cache.hpp"
   #include "background/background.hpp"

@@ -26,8 +26,6 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(display.interlace);
   s.integer(display.overscan);
 
-  s.array(io.bg_y);
-
   s.integer(latch.vram);
   s.integer(latch.oam);
   s.integer(latch.cgram);
@@ -50,8 +48,6 @@ auto PPU::serialize(serializer& s) -> void {
 
   s.integer(io.bgPriority);
   s.integer(io.bgMode);
-
-  s.integer(io.mosaicCountdown);
 
   s.integer(io.hoffsetMode7);
   s.integer(io.voffsetMode7);
@@ -100,21 +96,23 @@ auto PPU::Background::serialize(serializer& s) -> void {
   s.integer(io.tiledataAddress);
   s.integer(io.screenAddress);
   s.integer(io.screenSize);
-  s.integer(io.mosaic);
   s.integer(io.tileSize);
-
   s.integer(io.mode);
   s.array(io.priority);
-
   s.integer(io.aboveEnable);
   s.integer(io.belowEnable);
-
   s.integer(io.hoffset);
   s.integer(io.voffset);
 
+  s.integer(mosaic.size);
+  s.integer(mosaic.enable);
+  s.integer(mosaic.vcounter);
+  s.integer(mosaic.hcounter);
+  s.integer(mosaic.voffset);
+  s.integer(mosaic.hoffset);
+
   //s.integer(x);
   s.integer(y);
-
   //s.integer(tileCounter);
   s.integer(tile);
   s.integer(priority);

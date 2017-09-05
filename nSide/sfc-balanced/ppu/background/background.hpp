@@ -1,13 +1,18 @@
 struct Background {
   Background(uint id) : id(id) {}
 
+  alwaysinline auto hires() const -> bool;
+  alwaysinline auto voffset() const -> uint16;
+
+  auto scanline() -> void;
+  auto begin() -> void;
   auto power() -> void;
 
   alwaysinline auto getTile(uint x, uint y) -> uint16;
 
-  auto scanline() -> void;
   alwaysinline auto directColor(uint8 palette, uint16 tile) const -> uint16;
   auto render() -> void;
+  alwaysinline auto beginMode7() -> void;
   alwaysinline auto renderMode7() -> void;
 
   auto serialize(serializer&) -> void;
@@ -24,28 +29,40 @@ struct Background {
     uint16 tiledataAddress;
     uint16 screenAddress;
     uint2 screenSize;
-    uint4 mosaic;
-    bool tileSize;
+    uint1 tileSize;
 
-    uint mode;
-    uint priority[2];
+    uint8 mode;
+    uint8 priority[2];
 
-    bool aboveEnable;
-    bool belowEnable;
+    uint1 aboveEnable;
+    uint1 belowEnable;
 
     uint16 hoffset;
     uint16 voffset;
   } io;
 
-  struct {
-    //int x;
-    int y;
+  struct Latch {
+    uint16 voffset;
+  } latch;
 
-    uint tile;
-    uint priority;
-    uint paletteNumber;
-    uint paletteIndex;
-  };
+  struct Mosaic {
+    static uint4 size;
+    uint1 enable;
+
+    uint16 vcounter;
+    uint16 hcounter;
+
+    uint16 voffset;
+    uint16 hoffset;
+  } mosaic;
+
+  //int x;
+  int y;
+
+  uint16 tile;
+  uint8 priority;
+  uint3 paletteNumber;
+  uint8 paletteIndex;
 
   struct {
     uint16 hoffset, voffset;
