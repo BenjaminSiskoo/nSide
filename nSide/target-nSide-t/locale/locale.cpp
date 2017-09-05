@@ -19,7 +19,7 @@ auto Locale::load(string name) -> void {
     if(file::exists(locate({"Locales/", name, ".bml"}))) break;
     auto parts = name.split("-");
     if(parts.size() < 1) {
-      name = "en";
+      name = "default";
       break;
     }
     parts.removeRight();
@@ -30,9 +30,6 @@ auto Locale::load(string name) -> void {
 }
 
 auto Locale::operator[](const string& path) -> string {
-  return document[path].text();
-}
-
-auto Locale::operator()(const string& path) -> string {
-  return document(path).text();
+  if(const auto& node = document[path]) return node.text();
+  return path;
 }

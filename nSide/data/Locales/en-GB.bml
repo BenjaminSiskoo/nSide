@@ -2,8 +2,8 @@ System
   Atari: Atari
     Atari2600: Atari 2600
   Nintendo: Nintendo
-    Famicom: Famicom
-    SuperFamicom: Super Famicom
+    Famicom: Nintendo Entertainment System
+    SuperFamicom: Super Nintendo Entertainment System
     GameBoy: Game Boy
     GameBoyColor: Game Boy Color
     GameBoyAdvance: Game Boy Advance
@@ -16,7 +16,7 @@ System
     MegaDrive: Mega Drive
     GameGear: Game Gear
   NEC: NEC
-    PCEngine: PC Engine
+    PCEngine: TurboGrafx
     SuperGrafx: SuperGrafx
   Bandai: Bandai
     WonderSwan: WonderSwan
@@ -37,13 +37,13 @@ Menu
       Large: Large
     VideoEmulation: Video Emulation
       Blurring: Blurring
-      Colors: Colors
+      Colors: Colours
     Scanlines: Scanlines
     VideoShader: Video Shader
       None: None
       Blur: Blur
-    SynchronizeVideo: Synchronize Video
-    SynchronizeAudio: Synchronize Audio
+    SynchronizeVideo: Synchronise Video
+    SynchronizeAudio: Synchronise Audio
     MuteAudio: Mute Audio
     ShowStatusBar: Show Status Bar
     Video...: Video ...
@@ -83,13 +83,13 @@ Status
 
 Error
   Crash: Driver crash detected. Video/Audio/Input drivers have been disabled.
-  VideoDriver: Failed to initialize video driver
-  AudioDriver: Failed to initialize audio driver
-  InputDriver: Failed to initialize input driver
+  VideoDriver: Failed to initialise video driver
+  AudioDriver: Failed to initialise audio driver
+  InputDriver: Failed to initialise input driver
 
 Settings: Settings
   Video: Video
-    ColorAdjustment: Color Adjustment
+    ColorAdjustment: Colour Adjustment
       Saturation: Saturation:
       Gamma: Gamma:
       Luminance: Luminance:

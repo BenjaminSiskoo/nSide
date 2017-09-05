@@ -10,6 +10,7 @@ Settings::Settings() {
   };
 
   set("UserInterface/ShowStatusBar", true);
+  set("UserInterface/Locale", "Auto");
 
   set("Library/Location", {Path::user(), "Emulation/"});
   set("Library/IgnoreManifests", false);
