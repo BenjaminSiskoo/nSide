@@ -110,8 +110,12 @@ Presentation::Presentation() {
   manifestViewer.onActivate([&] { toolsManager->show(2); });
 
   documentation.onActivate([&] {
-    invoke("http://doc.byuu.org/higan/");
+    invoke("https://doc.byuu.org/higan/");
   });
+  //Wait for this web page to go online before adding this menu item
+//credits.setText("Credits ...").onActivate([&] {
+//  invoke("https://doc.byuu.org/higan/credits/");
+//});
   about.onActivate([&] {
     aboutWindow->setVisible().setFocused();
   });

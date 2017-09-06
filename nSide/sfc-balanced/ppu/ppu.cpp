@@ -44,8 +44,6 @@ auto PPU::main() -> void {
   step(10);
 
   //H =   10 (cache mode7 registers + OAM address reset)
-  bg1.m7cache.hoffset = io.hoffsetMode7;
-  bg1.m7cache.voffset = io.voffsetMode7;
   bg1.m7cache.a = io.m7a;
   bg1.m7cache.b = io.m7b;
   bg1.m7cache.c = io.m7c;
@@ -53,7 +51,14 @@ auto PPU::main() -> void {
   bg1.m7cache.x = io.m7x;
   bg1.m7cache.y = io.m7y;
   if(vcounter() == vdisp() && !io.displayDisable) obj.addressReset();
-  step(502);
+  step(18);
+
+  //H =   28
+  bg1.begin();
+  bg2.begin();
+  bg3.begin();
+  bg4.begin();
+  step(484);
 
   //H =  512 (render)
   if(vcounter() == 0) obj.renderRTO();

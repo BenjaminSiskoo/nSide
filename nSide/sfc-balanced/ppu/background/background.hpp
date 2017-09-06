@@ -42,6 +42,7 @@ struct Background {
   } io;
 
   struct Latch {
+    uint16 hoffset;
     uint16 voffset;
   } latch;
 
@@ -65,8 +66,6 @@ struct Background {
   uint8 paletteIndex;
 
   struct {
-    uint16 hoffset, voffset;
-
     uint16 a, b, c, d, x, y;
   } m7cache;
 

@@ -56,49 +56,58 @@ auto PropertiesViewer::updateProperties() -> void {
       "\n"
     );
 
+    uint4 size = 1u + SFC::PPU::Background::Mosaic::size;
     output.append("$2106  MOSAIC\n"
-      "  BG1 Mosaic = ", 1u + SFC::ppu.bg1.io.mosaic, "×", 1u + SFC::ppu.bg1.io.mosaic, "\n",
-      "  BG2 Mosaic = ", 1u + SFC::ppu.bg2.io.mosaic, "×", 1u + SFC::ppu.bg2.io.mosaic, "\n",
-      "  BG3 Mosaic = ", 1u + SFC::ppu.bg3.io.mosaic, "×", 1u + SFC::ppu.bg3.io.mosaic, "\n",
-      "  BG4 Mosaic = ", 1u + SFC::ppu.bg4.io.mosaic, "×", 1u + SFC::ppu.bg4.io.mosaic, "\n",
+      "  BG1 Mosaic = ", SFC::ppu.bg1.mosaic.enable ? "Enabled" : "Disabled", "\n",
+      "  BG2 Mosaic = ", SFC::ppu.bg2.mosaic.enable ? "Enabled" : "Disabled", "\n",
+      "  BG3 Mosaic = ", SFC::ppu.bg3.mosaic.enable ? "Enabled" : "Disabled", "\n",
+      "  BG4 Mosaic = ", SFC::ppu.bg4.mosaic.enable ? "Enabled" : "Disabled", "\n",
+      "  Size = ", size, "×", size, "\n",
       "\n"
     );
 
     static string_vector screenSizes = {"32x×32y", "64x×32y", "32x×64y", "64x×64y"};
 
     output.append("$2107  BG1SC\n"
+                  "$2108  BG2SC\n"
+                  "$2109  BG3SC\n"
+                  "$210a  BG4SC\n"
       "  BG1 Screen Size = ", screenSizes[SFC::ppu.bg1.io.screenSize], "\n",
       "  BG1 Screen Address = $", hex(SFC::ppu.bg1.io.screenAddress << 1, 4L), "\n",
-      "\n"
-    );
-
-    output.append("$2108  BG2SC\n"
       "  BG2 Screen Size = ", screenSizes[SFC::ppu.bg2.io.screenSize], "\n",
       "  BG2 Screen Address = $", hex(SFC::ppu.bg2.io.screenAddress << 1, 4L), "\n",
-      "\n"
-    );
-
-    output.append("$2109  BG3SC\n"
       "  BG3 Screen Size = ", screenSizes[SFC::ppu.bg3.io.screenSize], "\n",
       "  BG3 Screen Address = $", hex(SFC::ppu.bg3.io.screenAddress << 1, 4L), "\n",
-      "\n"
-    );
-
-    output.append("$210a  BG4SC\n"
       "  BG4 Screen Size = ", screenSizes[SFC::ppu.bg4.io.screenSize], "\n",
       "  BG4 Screen Address = $", hex(SFC::ppu.bg4.io.screenAddress << 1, 4L), "\n",
       "\n"
     );
 
     output.append("$210b  BG12NBA\n"
+                  "$210c  BG34NBA\n"
       "  BG1 Tiledata Address = $", hex(SFC::ppu.bg1.io.tiledataAddress << 1, 4L), "\n",
       "  BG2 Tiledata Address = $", hex(SFC::ppu.bg2.io.tiledataAddress << 1, 4L), "\n",
+      "  BG3 Tiledata Address = $", hex(SFC::ppu.bg3.io.tiledataAddress << 1, 4L), "\n",
+      "  BG4 Tiledata Address = $", hex(SFC::ppu.bg4.io.tiledataAddress << 1, 4L), "\n",
       "\n"
     );
 
-    output.append("$210c  BG34NBA\n"
-      "  BG3 Tiledata Address = $", hex(SFC::ppu.bg3.io.tiledataAddress << 1, 4L), "\n",
-      "  BG4 Tiledata Address = $", hex(SFC::ppu.bg4.io.tiledataAddress << 1, 4L), "\n",
+    output.append("$210d  BG1HOFS\n"
+                  "$210e  BG1VOFS\n"
+                  "$210f  BG2HOFS\n"
+                  "$2110  BG2VOFS\n"
+                  "$2111  BG3HOFS\n"
+                  "$2112  BG3VOFS\n"
+                  "$2113  BG4HOFS\n"
+                  "$2114  BG4VOFS\n"
+      "  BG1 H Offset = $", hex(SFC::ppu.bg1.io.hoffset, 4L), "\n",
+      "  BG1 V Offset = $", hex(SFC::ppu.bg1.io.voffset, 4L), "\n",
+      "  BG2 H Offset = $", hex(SFC::ppu.bg2.io.hoffset, 4L), "\n",
+      "  BG2 V Offset = $", hex(SFC::ppu.bg2.io.voffset, 4L), "\n",
+      "  BG3 H Offset = $", hex(SFC::ppu.bg3.io.hoffset, 4L), "\n",
+      "  BG3 V Offset = $", hex(SFC::ppu.bg3.io.voffset, 4L), "\n",
+      "  BG4 H Offset = $", hex(SFC::ppu.bg4.io.hoffset, 4L), "\n",
+      "  BG4 V Offset = $", hex(SFC::ppu.bg4.io.voffset, 4L), "\n",
       "\n"
     );
 

@@ -62,8 +62,6 @@ auto PPU::Background::scanline() -> void {
   screenX = io.screenSize & 1 ? 32 << 5 : 0;
   screenY = io.screenSize & 2 ? 32 << 5 : 0;
   if(io.screenSize == ScreenSize::Size64x64) screenY <<= 1;
-
-  begin();
 }
 
 auto PPU::Background::begin() -> void {
@@ -72,12 +70,12 @@ auto PPU::Background::begin() -> void {
   if(y == 1) {
     mosaic.vcounter = mosaic.size + 1;
     mosaic.voffset = 1;
-  //latch.hoffset = io.hoffset;
+    latch.hoffset = io.hoffset;
     latch.voffset = io.voffset;
   } else if(--mosaic.vcounter == 0) {
     mosaic.vcounter = mosaic.size + 1;
     mosaic.voffset += mosaic.size + 1;
-  //latch.hoffset = io.hoffset;
+    latch.hoffset = io.hoffset;
     latch.voffset = io.voffset;
   }
 
@@ -86,7 +84,7 @@ auto PPU::Background::begin() -> void {
 
   if(io.mode == Mode::Mode7) return beginMode7();
   if(!mosaic.enable) {
-  //latch.hoffset = io.hoffset;
+    latch.hoffset = io.hoffset;
     latch.voffset = io.voffset;
   }
 }
@@ -145,12 +143,12 @@ auto PPU::Background::render() -> void {
   bool   mirrorX, mirrorY;
 
   uint16 prev_x = 0xffff, prev_y = 0xffff, prev_optx = 0xffff;
-  for(uint16 x : range(width)) {
-    hoffset = hscroll + mtable[x];
+  for(uint16 px : range(width)) {
+    hoffset = hscroll + mtable[px];
     voffset = vscroll + py;
 
     if(isOPTMode) {
-      offsetX = x + (hscroll & 7);
+      offsetX = px + (hscroll & 7);
 
       //tile 0 is unaffected by offset-per-tile mode...
       if(offsetX >= 8) {
@@ -170,12 +168,12 @@ auto PPU::Background::render() -> void {
             if(!(hval & 0x8000)) {
               hoffset = offsetX + (hval & ~7);
             } else {
-              voffset = y + hval;
+              voffset = py + hval;
             }
           }
         } else {
           if(hval & validMask) hoffset = offsetX + (hval & ~7);
-          if(vval & validMask) voffset = y + vval;
+          if(vval & validMask) voffset = py + vval;
         }
       }
     }
@@ -216,11 +214,11 @@ auto PPU::Background::render() -> void {
       }
 
       if(!hires()) {
-        if(io.aboveEnable && !wt_above[x]) ppu.screen.output.plotAbove(x, col, priority, id, false);
-        if(io.belowEnable && !wt_below[x]) ppu.screen.output.plotBelow(x, col, priority, id, false);
+        if(io.aboveEnable && !wt_above[px]) ppu.screen.output.plotAbove(px, col, priority, id, false);
+        if(io.belowEnable && !wt_below[px]) ppu.screen.output.plotBelow(px, col, priority, id, false);
       } else {
-        int hx = x >> 1;
-        if(x & 1) {
+        int hx = px >> 1;
+        if(px & 1) {
           if(io.aboveEnable && !wt_above[hx]) ppu.screen.output.plotAbove(hx, col, priority, id, false);
         } else {
           if(io.belowEnable && !wt_below[hx]) ppu.screen.output.plotBelow(hx, col, priority, id, false);

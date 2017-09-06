@@ -84,6 +84,8 @@ struct Presentation : Window {
       MenuItem manifestViewer{&toolsMenu};
     Menu helpMenu{&menuBar};
       MenuItem documentation{&helpMenu};
+      //Wait for https://doc.byuu.org/higan/credits/ before adding this menu item
+    //MenuItem credits{&helpMenu};
       MenuItem about{&helpMenu};
 
   FixedLayout layout{this};

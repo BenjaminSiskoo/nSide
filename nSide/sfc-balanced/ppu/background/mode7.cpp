@@ -1,5 +1,5 @@
 auto PPU::Background::beginMode7() -> void {
-//latch.hoffset = ppu.io.hoffsetMode7;
+  latch.hoffset = ppu.io.hoffsetMode7;
   latch.voffset = ppu.io.voffsetMode7;
 }
 
@@ -12,9 +12,6 @@ auto PPU::Background::beginMode7() -> void {
 //interlace and pseudo-hires support are automatic via main rendering routine
 
 auto PPU::Background::renderMode7() -> void {
-  int32 px, py;
-  int32 tx, ty, tile, palette;
-
   int a = (int16)m7cache.a;
   int b = (int16)m7cache.b;
   int c = (int16)m7cache.c;
@@ -22,10 +19,8 @@ auto PPU::Background::renderMode7() -> void {
 
   int cx = (int13)m7cache.x;
   int cy = (int13)m7cache.y;
-  int hoffset = (int13)m7cache.hoffset;
-  int voffset = (int13)m7cache.voffset;
-
-  int _pri, _x;
+  int hoffset = (int13)latch.hoffset;
+  int voffset = (int13)latch.voffset;
 
   ppu.window.buildTables(id);
   uint8* wt_above = ppu.window.cache[id].above;
@@ -44,6 +39,13 @@ auto PPU::Background::renderMode7() -> void {
   int psy = ((c * clip(hoffset - cx)) & ~63) + ((d * clip(voffset - cy)) & ~63) + ((d * y) & ~63) + (cy << 8);
   #undef clip
 
+  int px;
+  int py;
+
+  uint tile;
+  uint palette;
+  uint priority;
+  int _x;
   for(int x : range(256)) {
     px = psx + (a * mtable[x]);
     py = psy + (c * mtable[x]);
@@ -89,9 +91,9 @@ auto PPU::Background::renderMode7() -> void {
     }
 
     if(id == ID::BG1) {
-      _pri = io.priority[0];
+      priority = io.priority[0];
     } else {
-      _pri = io.priority[(palette >> 7) ? 1 : 0];
+      priority = io.priority[(palette >> 7) ? 1 : 0];
       palette &= 0x7f;
     }
 
@@ -108,10 +110,10 @@ auto PPU::Background::renderMode7() -> void {
     }
 
     if(io.aboveEnable && !wt_above[_x]) {
-      ppu.screen.output.plotAbove(_x, color, _pri, id, false);
+      ppu.screen.output.plotAbove(_x, color, priority, id, false);
     }
     if(io.belowEnable && !wt_below[_x]) {
-      ppu.screen.output.plotBelow(_x, color, _pri, id, false);
+      ppu.screen.output.plotBelow(_x, color, priority, id, false);
     }
   }
 }
