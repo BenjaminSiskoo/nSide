@@ -1,12 +1,14 @@
 StateManager::StateManager(TabFrame* parent) : TabFrameItem(parent) {
   setIcon(Icon::Application::FileManager);
-  refreshLocale();
 
   layout.setMargin(5);
   stateList.append(TableViewHeader().setVisible()
     .append(TableViewColumn().setText("Slot").setForegroundColor({0, 128, 0}).setAlignment(1.0))
     .append(TableViewColumn().setText("Description").setExpandable())
   );
+
+  refreshLocale();
+
   for(auto slot : range(Slots)) {
     stateList.append(TableViewItem()
       .append(TableViewCell().setText(1 + slot))
@@ -26,6 +28,9 @@ StateManager::StateManager(TabFrame* parent) : TabFrameItem(parent) {
 
 auto StateManager::refreshLocale() -> void {
   setText(locale["Tools/StateManager"]);
+
+  stateList.header().column(0).setText(locale["Tools/StateManager/Table/Slot"]);
+  stateList.header().column(1).setText(locale["Tools/StateManager/Table/Description"]);
 
   descriptionLabel.setText(locale["Tools/StateManager/Edit/Description"]);
   saveButton.setText(locale["Tools/StateManager/Save"]);

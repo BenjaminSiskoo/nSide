@@ -1,6 +1,5 @@
 CheatEditor::CheatEditor(TabFrame* parent) : TabFrameItem(parent) {
   setIcon(Icon::Edit::Replace);
-  refreshLocale();
 
   layout.setMargin(5);
   cheatList.append(TableViewHeader().setVisible()
@@ -8,6 +7,9 @@ CheatEditor::CheatEditor(TabFrame* parent) : TabFrameItem(parent) {
     .append(TableViewColumn().setText("Code(s)"))
     .append(TableViewColumn().setText("Description").setExpandable())
   );
+
+  refreshLocale();
+
   for(auto slot : range(Slots)) {
     cheatList.append(TableViewItem()
       .append(TableViewCell().setCheckable().setText(1 + slot))
@@ -32,6 +34,10 @@ CheatEditor::CheatEditor(TabFrame* parent) : TabFrameItem(parent) {
 
 auto CheatEditor::refreshLocale() -> void {
   setText(locale["Tools/CheatEditor"]);
+
+  cheatList.header().column(0).setText(locale["Tools/CheatEditor/Table/Slot"]);
+  cheatList.header().column(1).setText(locale["Tools/CheatEditor/Table/Codes"]);
+  cheatList.header().column(2).setText(locale["Tools/CheatEditor/Table/Description"]);
 
   codeLabel.setText(locale["Tools/CheatEditor/Edit/Codes"]);
   descriptionLabel.setText(locale["Tools/CheatEditor/Edit/Description"]);
