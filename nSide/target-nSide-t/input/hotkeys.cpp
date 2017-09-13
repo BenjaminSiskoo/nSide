@@ -60,6 +60,18 @@ auto InputManager::appendHotkeys() -> void {
   }
 
   { auto hotkey = new InputHotkey;
+    hotkey->name = "Next Frame";
+    hotkey->press = [] {
+      if(!::emulator) return;
+
+      program->pause = false;
+      ::emulator->run();
+      program->pause = true;
+    };
+    hotkeys.append(hotkey);
+  }
+
+  { auto hotkey = new InputHotkey;
     hotkey->name = "Fast Forward";
     hotkey->press = [] {
       video->setBlocking(false);
