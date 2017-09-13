@@ -14,7 +14,10 @@ HotkeySettings::HotkeySettings(TabFrame* parent) : TabFrameItem(parent) {
     }
   });
   resetButton.onActivate([&] {
-    if(MessageDialog("Are you sure you want to erase all hotkey mappings?").setParent(*settingsManager).question() == "Yes") {
+    string prompt = locale["Settings/Hotkeys/ResetConfirmation"];
+    string yes = locale["Settings/Hotkeys/ResetConfirmation/Yes"];
+    string no = locale["Settings/Hotkeys/ResetConfirmation/No"];
+    if(MessageDialog(prompt).setParent(*settingsManager).question({yes, no}) == yes) {
       for(auto& mapping : inputManager->hotkeys) mapping->unbind();
       refreshMappings();
     }

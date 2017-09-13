@@ -127,6 +127,9 @@ Settings: Settings
     Erase: Erase
     PressKey: Press a key or button to map [%s] ...
     MappingAssigned: Mapping assigned.
+    ResetConfirmation: Are you sure you want to erase all mappings for this device?
+      Yes: Yes
+      No: No
   Hotkeys: Hotkeys
     Name: Name
     Mapping: Mapping

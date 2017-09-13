@@ -20,7 +20,10 @@ InputSettings::InputSettings(TabFrame* parent) : TabFrameItem(parent) {
   assignMouse2.setVisible(false).onActivate([&] { assignMouseInput(1); });
   assignMouse3.setVisible(false).onActivate([&] { assignMouseInput(2); });
   resetButton.onActivate([&] {
-    if(MessageDialog("Are you sure you want to erase all mappings for this device?").setParent(*settingsManager).question() == "Yes") {
+    string prompt = locale["Settings/Input/ResetConfirmation"];
+    string yes = locale["Settings/Input/ResetConfirmation/Yes"];
+    string no = locale["Settings/Input/ResetConfirmation/No"];
+    if(MessageDialog(prompt).setParent(*settingsManager).question({yes, no}) == yes) {
       for(auto& mapping : activeDevice().mappings) mapping.unbind();
       refreshMappings();
     }
